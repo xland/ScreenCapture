@@ -21,7 +21,14 @@ public:
 protected:
     bool nativeEvent(const QByteArray& eventType, void *message, qintptr *result) override;
 private:
+    void initDesktopImage();
+private:
     Ui::MainWindow *ui;
+    QPixmap* desktopImage;
+    int winX{0};
+    int winY{0};
+    int winBottom{0};
+    int winRight{0};
 };
 
 #endif // MAINWINDOW_H
