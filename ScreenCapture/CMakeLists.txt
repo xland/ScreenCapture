@@ -5,6 +5,11 @@ project(ScreenCapture VERSION 0.1 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(Qt6 6.4 REQUIRED COMPONENTS Quick)
+find_package(Qt6Core REQUIRED)
+find_package(Qt6Widgets REQUIRED)
+
+include_directories(${Qt6Widgets_INCLUDE_DIRS})
+include_directories(${Qt6Core_INCLUDE_DIRS})
 
 qt_standard_project_setup()
 
@@ -12,6 +17,8 @@ qt_add_executable(appScreenCapture
     main.cpp
     screenimageprovider.h
     screenimageprovider.cpp
+    MainWindow.h
+    MainWindow.cpp
 )
 
 qt_add_qml_module(appScreenCapture

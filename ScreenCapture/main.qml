@@ -4,9 +4,14 @@ import QtQuick.Controls
 
 ApplicationWindow {
     visible: true
-    visibility: "FullScreen"
+//    x:-100
+//    y:-1000
+//    width:totalWidth
+//    height: totalHeight
+    flags: Qt.FramelessWindowHint
+//    visibility: "FullScreen"
     Image {
-        id: name
-        source: "image://ScreenImage"
+        id: backgroundImage
+        source: "image://ScreenImage/1"
     }
 }
