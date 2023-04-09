@@ -1,6 +1,7 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <Windows.h>
+#include "screenimageprovider.h"
 
 
 static BOOL CALLBACK enumWindowCallback(HWND hwnd, LPARAM lparam) {
@@ -16,8 +17,9 @@ static BOOL CALLBACK enumWindowCallback(HWND hwnd, LPARAM lparam) {
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
-EnumWindows(enumWindowCallback, NULL);
+    EnumWindows(enumWindowCallback, NULL);
     QQmlApplicationEngine engine;
+    engine.addImageProvider(QLatin1String("ScreenImage"), new ScreenImageProvider);
     const QUrl url(u"qrc:/ScreenCapture/Main.qml"_qs);
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreationFailed,
         &app, []() { QCoreApplication::exit(-1); },
