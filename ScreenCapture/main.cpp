@@ -10,6 +10,8 @@
 #include <QWindow>
 
 
+int absoluteX = 0,absoluteY = 0;
+
 static BOOL CALLBACK enumWindowCallback(HWND hwnd, LPARAM lparam)
 {
     if(!IsWindowVisible(hwnd)) return TRUE;
@@ -26,7 +28,6 @@ QPixmap* getDesktopImage()
     auto screens = QGuiApplication::screens();
     QList<QRectF> rects;
     QList<QPixmap> images;
-    qreal tempX = 0,tempY = 0;
     for(auto s:screens){
         auto ratio = s->devicePixelRatio();
         auto g = s->geometry();
@@ -34,8 +35,8 @@ QPixmap* getDesktopImage()
         auto y = g.y();
         auto w = g.width()*ratio;
         auto h = g.height()*ratio;
-        if(x < tempX) tempX = x;
-        if(y < tempY) tempY = y;
+        if(x < absoluteX) absoluteX = x;
+        if(y < absoluteY) absoluteY = y;
         QRectF r(x,y,w,h);
         rects.append(std::move(r));
         QPixmap pixmap = s->grabWindow();
@@ -43,7 +44,7 @@ QPixmap* getDesktopImage()
     }
     qreal tempBottom = 0,tempRight = 0;
     for(auto& r:rects){
-        r.moveTopLeft({r.x()-tempX,r.y()-tempY});
+        r.moveTopLeft({r.x()-absoluteX,r.y()-absoluteY});
         if(tempBottom < r.bottom()) tempBottom = r.bottom();
         if(tempRight < r.right()) tempRight = r.right();
     }
@@ -58,30 +59,21 @@ QPixmap* getDesktopImage()
     return desktopImage;
 }
 
-WNDPROC OldProc;
+//WNDPROC OldProc;
 
-LRESULT CALLBACK WindowHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
-{
-    if (msg == WM_GETMINMAXINFO)
-    {
-        MINMAXINFO* maxInfo = (MINMAXINFO*)lParam;
-        maxInfo->ptMaxPosition.x = GetSystemMetrics(SM_XVIRTUALSCREEN);
-        maxInfo->ptMaxPosition.y = GetSystemMetrics(SM_YVIRTUALSCREEN);
-        maxInfo->ptMaxSize.x = GetSystemMetrics(SM_CXVIRTUALSCREEN);
-        maxInfo->ptMaxSize.y = GetSystemMetrics(SM_CYVIRTUALSCREEN);
-        return 0;
-
-
-//        MINMAXINFO* mminfo = (PMINMAXINFO)lParam;
-//        mminfo->ptMinTrackSize.x = minWidth;
-//        mminfo->ptMinTrackSize.y = minHeight;
-//        mminfo->ptMaxPosition.x = 0;
-//        mminfo->ptMaxPosition.y = 0;
-//        mminfo->
+//LRESULT CALLBACK WindowHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+//{
+//    if (msg == WM_GETMINMAXINFO)
+//    {
+//        MINMAXINFO* maxInfo = (MINMAXINFO*)lParam;
+//        maxInfo->ptMaxPosition.x = GetSystemMetrics(SM_XVIRTUALSCREEN);
+//        maxInfo->ptMaxPosition.y = GetSystemMetrics(SM_YVIRTUALSCREEN);
+//        maxInfo->ptMaxSize.x = GetSystemMetrics(SM_CXVIRTUALSCREEN);
+//        maxInfo->ptMaxSize.y = GetSystemMetrics(SM_CYVIRTUALSCREEN);
 //        return 0;
-    }
-    return CallWindowProc(OldProc, hwnd, msg, wParam, lParam);
-}
+//    }
+//    return CallWindowProc(OldProc, hwnd, msg, wParam, lParam);
+//}
 
 int main(int argc, char *argv[])
 {
@@ -94,13 +86,15 @@ int main(int argc, char *argv[])
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreationFailed,
         &app, []() { QCoreApplication::exit(-1); },
         Qt::QueuedConnection);
+    engine.rootContext()->setContextProperty("absoluteX",absoluteX);
+    engine.rootContext()->setContextProperty("absoluteY",absoluteY);
     engine.rootContext()->setContextProperty("totalWidth",desktopImage->width());
     engine.rootContext()->setContextProperty("totalHeight",desktopImage->height());
     engine.load(url);
-    auto window = qobject_cast<QWindow*>(engine.rootObjects().at(0));
-    auto hwnd = (HWND)window->winId();
-    OldProc = (WNDPROC)SetWindowLongPtr(hwnd, GWLP_WNDPROC, (LONG_PTR)WindowHandler);
-    qDebug()<< "winid" << hwnd;
-    int a = 1;
+//    auto window = qobject_cast<QWindow*>(engine.rootObjects().at(0));
+//    auto hwnd = (HWND)window->winId();
+//    OldProc = (WNDPROC)SetWindowLongPtr(hwnd, GWLP_WNDPROC, (LONG_PTR)WindowHandler);
+//    qDebug()<< "winid" << hwnd;
+//    int a = 1;
     return app.exec();
 }

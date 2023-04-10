@@ -3,15 +3,24 @@ import QtQuick.Window
 import QtQuick.Controls
 
 ApplicationWindow {
+    id:root
     visible: true
-//    x:-100
-//    y:-1000
-//    width:totalWidth
-//    height: totalHeight
+    x:absoluteX
+    y:absoluteY
+    width:totalWidth
+    height: totalHeight
     flags: Qt.FramelessWindowHint
-//    visibility: "FullScreen"
     Image {
         id: backgroundImage
-        source: "image://ScreenImage/1"
+        source: "image://ScreenImage"
+        sourceSize.width: root.width
+        sourceSize.height: root.height
+    }
+    MouseArea{
+        id:rootArea
+        anchors.fill: parent
+        onClicked: {
+            root.close();
+        }
     }
 }

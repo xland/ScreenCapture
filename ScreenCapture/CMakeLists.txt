@@ -15,10 +15,8 @@ qt_standard_project_setup()
 
 qt_add_executable(appScreenCapture
     main.cpp
-    screenimageprovider.h
-    screenimageprovider.cpp
-    MainWindow.h
-    MainWindow.cpp
+    ScreenImageProvider.h
+    ScreenImageProvider.cpp
 )
 
 qt_add_qml_module(appScreenCapture
