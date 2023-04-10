@@ -3,6 +3,9 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QWidget>
+#include <QHBoxLayout>
+#include <QQuickWidget>
 
 
 
@@ -29,6 +32,7 @@ private:
     int winY{0};
     int winBottom{0};
     int winRight{0};
+    QQuickWidget* mainView {nullptr};
 };
 
 #endif // MAINWINDOW_H

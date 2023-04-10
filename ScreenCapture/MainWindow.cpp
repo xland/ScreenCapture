@@ -5,6 +5,8 @@
 #include <QScreen>
 #include <QPainter>
 #include <QFile>
+#include <QQmlEngine>
+#include "ScreenImageProvider.h"
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -12,8 +14,18 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    initDesktopImage();
     this->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
+    initDesktopImage();
+
+    mainView = new QQuickWidget(this);
+    mainView->setParent(this, Qt::Widget);
+    mainView->engine()->addImageProvider(QLatin1String("ScreenImage"), new ScreenImageProvider(desktopImage));
+    ui->centralwidget->layout()->addWidget(mainView);
+    mainView->setResizeMode(QQuickWidget::SizeRootObjectToView);
+    const QUrl url(u"qrc:/MainView.qml"_qs);
+    mainView->setSource(url);
+
+
     int x = (int)winX;
     int y = (int)winY;
     this->setGeometry(x,y,desktopImage->width(),desktopImage->height());
@@ -23,6 +35,7 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow()
 {
     delete desktopImage;
+    if(mainView) delete mainView;
     delete ui;
 }
 
@@ -69,8 +82,8 @@ void MainWindow::initDesktopImage()
     for (int i = 0; i < rects.count(); ++i) {
         painter.drawImage(rects.at(i),images.at(i).toImage());
     }
-    QFile file("desktopImage.png");
-    file.open(QIODevice::WriteOnly);
-    desktopImage->save(&file, "PNG");
+//    QFile file("desktopImage.png");
+//    file.open(QIODevice::WriteOnly);
+//    desktopImage->save(&file, "PNG");
 }
 
