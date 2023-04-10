@@ -19,7 +19,7 @@ static BOOL CALLBACK enumWindowCallback(HWND hwnd, LPARAM lparam)
     RECT rect;
     GetWindowRect(hwnd,&rect);
     if(rect.top <= 0 && rect.left <= 0 && rect.bottom <= 0 && rect.right <= 0) return TRUE;
-    qDebug() << hwnd;
+//    qDebug() << hwnd;
     return TRUE;
 }
 
@@ -59,22 +59,6 @@ QPixmap* getDesktopImage()
     return desktopImage;
 }
 
-//WNDPROC OldProc;
-
-//LRESULT CALLBACK WindowHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
-//{
-//    if (msg == WM_GETMINMAXINFO)
-//    {
-//        MINMAXINFO* maxInfo = (MINMAXINFO*)lParam;
-//        maxInfo->ptMaxPosition.x = GetSystemMetrics(SM_XVIRTUALSCREEN);
-//        maxInfo->ptMaxPosition.y = GetSystemMetrics(SM_YVIRTUALSCREEN);
-//        maxInfo->ptMaxSize.x = GetSystemMetrics(SM_CXVIRTUALSCREEN);
-//        maxInfo->ptMaxSize.y = GetSystemMetrics(SM_CYVIRTUALSCREEN);
-//        return 0;
-//    }
-//    return CallWindowProc(OldProc, hwnd, msg, wParam, lParam);
-//}
-
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
@@ -88,13 +72,10 @@ int main(int argc, char *argv[])
         Qt::QueuedConnection);
     engine.rootContext()->setContextProperty("absoluteX",absoluteX);
     engine.rootContext()->setContextProperty("absoluteY",absoluteY);
-    engine.rootContext()->setContextProperty("totalWidth",desktopImage->width());
-    engine.rootContext()->setContextProperty("totalHeight",desktopImage->height());
+    qDebug()<<desktopImage->width();
+    qDebug()<<desktopImage->height();
+    engine.rootContext()->setContextProperty("totalWidth",desktopImage->width()/1.5); //todo
+    engine.rootContext()->setContextProperty("totalHeight",desktopImage->height()/1.5); //todo
     engine.load(url);
-//    auto window = qobject_cast<QWindow*>(engine.rootObjects().at(0));
-//    auto hwnd = (HWND)window->winId();
-//    OldProc = (WNDPROC)SetWindowLongPtr(hwnd, GWLP_WNDPROC, (LONG_PTR)WindowHandler);
-//    qDebug()<< "winid" << hwnd;
-//    int a = 1;
     return app.exec();
 }

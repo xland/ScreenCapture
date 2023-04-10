@@ -17,12 +17,13 @@ qt_add_executable(appScreenCapture
     main.cpp
     ScreenImageProvider.h
     ScreenImageProvider.cpp
+    Res.qrc
 )
 
 qt_add_qml_module(appScreenCapture
     URI ScreenCapture
     VERSION 1.0
-    QML_FILES Main.qml
+    QML_FILES Main.qml CaptureArea.qml
 )
 
 set_target_properties(appScreenCapture PROPERTIES
