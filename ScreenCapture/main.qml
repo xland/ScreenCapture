@@ -1,14 +1,15 @@
 import QtQuick
 import QtQuick.Window
 import QtQuick.Controls
+import ScreenCapture.Cutter 1.0
 
 ApplicationWindow {
     id:root
     visible: true
-    x:absoluteX
-    y:absoluteY
-    width:totalWidth
-    height: totalHeight
+    x:Cutter.absoluteX
+    y:Cutter.absoluteY
+    width:Cutter.totalWidth
+    height: Cutter.totalHeight
     flags: Qt.FramelessWindowHint
     property string borderColor: "#88000000"
     Image {
@@ -24,6 +25,7 @@ ApplicationWindow {
         anchors.bottom: parent.bottom
         width: 100
         color:borderColor
+        visible: false
     }
     Rectangle {
         id:topRect
@@ -32,6 +34,7 @@ ApplicationWindow {
         anchors.right: parent.right
         height: 100
         color:borderColor
+        visible: false
     }
     Rectangle {
         id:rightRect
@@ -40,6 +43,7 @@ ApplicationWindow {
         anchors.bottom: parent.bottom
         width: 100
         color:borderColor
+        visible: false
     }
     Rectangle {
         id:bottomRect
@@ -48,6 +52,7 @@ ApplicationWindow {
         anchors.bottom: parent.bottom
         height: 100
         color:borderColor
+        visible: false
     }
     MouseArea{
         id:rootArea

@@ -15,8 +15,9 @@ qt_standard_project_setup()
 
 qt_add_executable(appScreenCapture
     main.cpp
-    ScreenImageProvider.h
-    ScreenImageProvider.cpp
+    ScreenImageProvider.h ScreenImageProvider.cpp
+    Cutter.h Cutter.cpp
+    ScreenShoter.h ScreenShoter.cpp
     Res.qrc
 )
 

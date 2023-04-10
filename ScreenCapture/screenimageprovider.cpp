@@ -1,24 +1,20 @@
 
 #include "screenimageprovider.h"
-#include <QScreen>
+#include "ScreenShoter.h"
 #include <QPixmap>
-#include <QGuiApplication>
-#include <QPainter>
-#include <QFile>
 
-ScreenImageProvider::ScreenImageProvider(QPixmap* desktopImage)
-    : QQuickImageProvider(QQuickImageProvider::Pixmap),
-    desktopImage{desktopImage}
+ScreenImageProvider::ScreenImageProvider()
+    : QQuickImageProvider(QQuickImageProvider::Pixmap)
 {
 
 }
 ScreenImageProvider::~ScreenImageProvider()
 {
-    delete desktopImage;
 }
 
 QPixmap ScreenImageProvider::requestPixmap(const QString &id, QSize *size, const QSize &requestedSize)
 {
-    return *desktopImage;
+    auto image = ScreenShoter::Get()->desktopImage;
+    return *image;
 }
 

@@ -8,7 +8,7 @@
 class ScreenImageProvider: public QQuickImageProvider
 {
 public:
-    ScreenImageProvider(QPixmap* desktopImage);
+    ScreenImageProvider();
     ~ScreenImageProvider();
     QPixmap requestPixmap(const QString &id, QSize *size, const QSize &requestedSize) override;
 private:
