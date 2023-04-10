@@ -10,5 +10,9 @@ Rectangle
         sourceSize.width: root.width
         sourceSize.height: root.height
     }
+    MouseArea{
+        anchors.fill: parent
+        onClicked: { }
+    }
 }
 

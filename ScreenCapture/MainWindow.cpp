@@ -38,6 +38,10 @@ MainWindow::~MainWindow()
     if(mainView) delete mainView;
     delete ui;
 }
+void MainWindow::Close()
+{
+    QApplication::quit();
+}
 
 bool MainWindow::nativeEvent(const QByteArray& eventType, void *message, qintptr *result)
 {

@@ -21,6 +21,7 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+    Q_INVOKABLE void Close();
 protected:
     bool nativeEvent(const QByteArray& eventType, void *message, qintptr *result) override;
 private:
