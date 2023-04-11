@@ -24,6 +24,29 @@ void Cutter::getHoveredWindowRect()
                      << shoter->desktopWindowRects[i].bottom();
             return;
         }
-
     }
+}
+void Cutter::setCutAreaLeft(int val)
+{
+    if(val == cutAreaLeft) return;
+    cutAreaLeft = val;
+    emit cutAreaLeftChanged(val);
+}
+void Cutter::setCutAreaTop(int val)
+{
+    if(val == cutAreaTop) return;
+    cutAreaTop = val;
+    emit cutAreaTopChanged(val);
+}
+void Cutter::setCutAreaRight(int val)
+{
+    if(val == cutAreaRight) return;
+    cutAreaRight = val;
+    emit cutAreaRightChanged(val);
+}
+void Cutter::setCutAreaBottom(int val)
+{
+    if(val == cutAreaBottom) return;
+    cutAreaBottom = val;
+    emit cutAreaBottomChanged(val);
 }

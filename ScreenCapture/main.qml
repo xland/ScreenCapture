@@ -59,9 +59,14 @@ ApplicationWindow {
         id:rootArea
         anchors.fill: parent
         acceptedButtons: Qt.LeftButton | Qt.RightButton
+        hoverEnabled:true
         onClicked: {
             root.close();
         }
+        onPositionChanged:{
+            Cutter.getHoveredWindowRect()
+        }
+
 //        Component.onCompleted: {
 //            let someValue = Cutter.getHoveredWindowRect();
 //            console.log(someValue.x);
@@ -70,9 +75,6 @@ ApplicationWindow {
 //        }
     }
     Component.onCompleted: {
-        console.log(Cutter.cutAreaLeft);
-        console.log(Cutter.cutAreaTop);
-        console.log(Cutter.cutAreaRight);
-        console.log(Cutter.cutAreaBottom);
+        console.log(Cutter.cutAreaLeft ,Cutter.cutAreaTop,Cutter.cutAreaRight,Cutter.cutAreaBottom);
     }
 }

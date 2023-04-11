@@ -38,10 +38,10 @@ private:
     int getCutAreaRight(){return cutAreaRight;}
     int getCutAreaBottom(){return cutAreaBottom;}
 
-    void setCutAreaLeft(int val){cutAreaLeft = val; emit cutAreaLeftChanged(val);}
-    void setCutAreaTop(int val){cutAreaTop = val; emit cutAreaTopChanged(val);}
-    void setCutAreaRight(int val){cutAreaRight = val; emit cutAreaRightChanged(val);}
-    void setCutAreaBottom(int val){cutAreaBottom = val; emit cutAreaBottomChanged(val);}
+    void setCutAreaLeft(int val);
+    void setCutAreaTop(int val);
+    void setCutAreaRight(int val);
+    void setCutAreaBottom(int val);
 
     int cutAreaLeft = 0;
     int cutAreaTop = 0;
