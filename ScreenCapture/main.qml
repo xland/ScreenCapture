@@ -14,6 +14,8 @@ ApplicationWindow {
     property string maskColor: "#88000000"
     property string crossLineColor: "#330958d9"
     Image {
+        x:0
+        y:0
         id: backgroundImage
         source: "image://ScreenImage/background"
         sourceSize.width: root.width
@@ -170,7 +172,7 @@ ApplicationWindow {
             color: "#dddddd"
         }
     }
-//    Component.onCompleted: {
-//        console.log(Cutter.cutAreaLeft ,Cutter.cutAreaTop,Cutter.cutAreaRight,Cutter.cutAreaBottom);
-//    }
+    Component.onCompleted: {
+        console.log(Cutter.absoluteX ,Cutter.absoluteY,Cutter.totalWidth,Cutter.totalHeight);
+    }
 }

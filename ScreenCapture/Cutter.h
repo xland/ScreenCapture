@@ -45,10 +45,10 @@ signals:
     void colorHexChanged(QString val);
 private:
     explicit Cutter(QObject *parent = nullptr);
-    int getAbsoluteX() const { return ScreenShoter::Get()->absoluteX; }
-    int getAbsoluteY() const { return ScreenShoter::Get()->absoluteY; }
-    int getTotalWidth() const { return ScreenShoter::Get()->totalWidth; }
-    int getTotalHeight() const { return ScreenShoter::Get()->totalHeight; }
+    int getAbsoluteX() const { return ScreenShoter::Get()->windowX; }
+    int getAbsoluteY() const { return ScreenShoter::Get()->windowY; }
+    int getTotalWidth() const { return ScreenShoter::Get()->windowWidth; }
+    int getTotalHeight() const { return ScreenShoter::Get()->windowHeight; }
 
     int getCutAreaLeft(){return cutAreaLeft;}
     int getCutAreaTop(){return cutAreaTop;}

@@ -23,36 +23,38 @@ void ScreenShoter::Dispose()
 void ScreenShoter::shotScreen()
 {
     auto screens = QGuiApplication::screens();
-    QList<QRectF> rects;
-    QList<QPixmap> images;
+    auto rect = QGuiApplication::primaryScreen()->virtualGeometry(); //0,-300,4480,960
+    windowX = rect.x();
+    windowY = rect.y();
+    windowHeight = rect.height();
+    windowWidth = rect.width();
+    QList<QRect> rects;
+    QList<QPixmap> pixmaps;
+    int tempX{0},tempY{0},tempHeight{0},tempWidth{0};
     for(auto s:screens){
-        auto ratio = s->devicePixelRatio();
+        auto pix = s->grabWindow();
         auto g = s->geometry();
-        auto x = g.x();
-        auto y = g.y();
-        auto w = g.width()*ratio;
-        auto h = g.height()*ratio;
-        if(x < absoluteX) absoluteX = x;
-        if(y < absoluteY) absoluteY = y;
-        QRectF r(x,y,w,h);
-        rects.append(std::move(r));
-        QPixmap pixmap = s->grabWindow();
-        images.append(std::move(pixmap));
+        if(g.x() < tempX) tempX = g.x();
+        if(g.y() < tempY) tempY = g.y();
+        QRect rect(g.x(),g.y(),pix.width(),pix.height());
+        rects.append(std::move(rect));
+        pixmaps.append(std::move(pix));
     }
-    for(auto& r:rects){
-        r.moveTopLeft({r.x()-absoluteX,r.y()-absoluteY});
-        if(totalHeight < r.bottom()) totalHeight = r.bottom();
-        if(totalWidth < r.right()) totalWidth = r.right();
+    windowX += rects[0].width()/2;
+    for(int i = 0; i < rects.count(); ++i){
+        rects[i].moveTopLeft({rects[i].x()-tempX,rects[i].y()-tempY});
+        if(tempHeight < rects[i].bottom()) tempHeight = rects[i].bottom();
+        if(tempWidth < rects[i].right()) tempWidth = rects[i].right();
     }
-    QPixmap pixmap(totalWidth,totalHeight);
+    QPixmap pixmap(tempWidth,tempHeight);
     QPainter painter(&pixmap);
-    for (int i = 0; i < rects.count(); ++i) {
-        painter.drawImage(rects.at(i),images.at(i).toImage());
+    for(int i = 0; i < rects.count(); ++i){
+        painter.drawPixmap(rects[i],pixmaps[i]);
     }
     desktopImage = pixmap.toImage();
-    //    QFile file("desktopImage.png");
-    //    file.open(QIODevice::WriteOnly);
-    //    desktopImage->save(&file, "PNG");
+//    QFile file("desktopImage.png");
+//    file.open(QIODevice::WriteOnly);
+//    desktopImage.save(&file, "PNG");
 }
 void ScreenShoter::enumDesktopWindows()
 {

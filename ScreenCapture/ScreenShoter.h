@@ -11,10 +11,10 @@ public:
     static void Init(QObject *parent);
     static ScreenShoter* Get();
     static void Dispose();
-    int absoluteX = 0;
-    int absoluteY = 0;
-    int totalWidth = 0;
-    int totalHeight = 0;
+    int windowX = 0;
+    int windowY = 0;
+    int windowWidth = 0;
+    int windowHeight = 0;
     QImage desktopImage;
     QList<QRect> desktopWindowRects;
 

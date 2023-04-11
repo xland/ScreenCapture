@@ -26,7 +26,7 @@ QImage ScreenImageProvider::requestImage(const QString &id, QSize *size, const Q
         auto color = image.pixelColor(position);
         cutter->setMouseX(position.x());
         cutter->setMouseY(position.y());
-        cutter->setColorHex(color.name(QColor::HexRgb));
+        cutter->setColorHex(color.name(QColor::HexRgb).toUpper());
         cutter->setColorRgb("rgb("+QString::number(color.red())+","+QString::number(color.green())+","+QString::number(color.blue())+")" );
         int x{0},y{0},width{230},height{160};
         x = position.x() - width/16;
