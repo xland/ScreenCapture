@@ -15,9 +15,12 @@ public:
     int totalWidth = 0;
     int totalHeight = 0;
     QPixmap* desktopImage;
+    QList<QRect> desktopWindowRects;
 
 private:
     ScreenShoter();
+    void shotScreen();
+    void enumDesktopWindows();
 };
 
 #endif // SCREENSHOTER_H

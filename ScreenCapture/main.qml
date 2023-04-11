@@ -11,48 +11,49 @@ ApplicationWindow {
     width:Cutter.totalWidth
     height: Cutter.totalHeight
     flags: Qt.FramelessWindowHint
-    property string borderColor: "#88000000"
+    property string maskColor: "#88000000"
     Image {
         id: backgroundImage
         source: "image://ScreenImage"
         sourceSize.width: root.width
         sourceSize.height: root.height
     }
+//    Rectangle{
+//        anchors.fill: parent
+//        color:maskColor
+//    }
+
     Rectangle {
         id:leftRect
-        anchors.left: parent.left
-        anchors.top:parent.top
-        anchors.bottom: parent.bottom
-        width: 100
-        color:borderColor
-        visible: false
+        x:0
+        y:0
+        height: parent.height
+        width: Cutter.cutAreaLeft
+        color:maskColor
     }
     Rectangle {
         id:topRect
-        anchors.left: leftRect.right
-        anchors.top:parent.top
-        anchors.right: parent.right
-        height: 100
-        color:borderColor
-        visible: false
+        x:Cutter.cutAreaLeft
+        y:0
+        height:Cutter.cutAreaTop
+        width: parent.width - Cutter.cutAreaLeft
+        color:maskColor
     }
     Rectangle {
         id:rightRect
-        anchors.right: parent.right
-        anchors.top:topRect.bottom
-        anchors.bottom: parent.bottom
-        width: 100
-        color:borderColor
-        visible: false
+        x:Cutter.cutAreaRight
+        y:Cutter.cutAreaTop
+        height:parent.height - Cutter.cutAreaTop
+        width: parent.width - Cutter.cutAreaRight
+        color:maskColor
     }
     Rectangle {
         id:bottomRect
-        anchors.left: leftRect.right
-        anchors.right: rightRect.left
-        anchors.bottom: parent.bottom
-        height: 100
-        color:borderColor
-        visible: false
+        x:Cutter.cutAreaLeft
+        y:Cutter.cutAreaBottom
+        height:parent.height - Cutter.cutAreaBottom
+        width: Cutter.cutAreaRight-Cutter.cutAreaLeft
+        color:maskColor
     }
     MouseArea{
         id:rootArea
@@ -61,8 +62,17 @@ ApplicationWindow {
         onClicked: {
             root.close();
         }
-//        onPress: {
-
+//        Component.onCompleted: {
+//            let someValue = Cutter.getHoveredWindowRect();
+//            console.log(someValue.x);
 //        }
+//        onPress: {
+//        }
+    }
+    Component.onCompleted: {
+        console.log(Cutter.cutAreaLeft);
+        console.log(Cutter.cutAreaTop);
+        console.log(Cutter.cutAreaRight);
+        console.log(Cutter.cutAreaBottom);
     }
 }

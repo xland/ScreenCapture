@@ -1,27 +1,13 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
-#include <Windows.h>
 #include "ScreenImageProvider.h"
 #include "ScreenShoter.h"
 #include "Cutter.h"
 
-QList<QVariant> desktopWindowRects;
-
-static BOOL CALLBACK enumWindowCallback(HWND hwnd, LPARAM lparam)
-{
-    if(!IsWindowVisible(hwnd)) return TRUE;
-    if(IsIconic(hwnd)) return TRUE;
-    RECT rect;
-    GetWindowRect(hwnd,&rect);
-    if(rect.top <= 0 && rect.left <= 0 && rect.bottom <= 0 && rect.right <= 0) return TRUE;
-//    qDebug() << hwnd;
-    return TRUE;
-}
-
 int main(int argc, char *argv[])
 {
+    QGuiApplication::setHighDpiScaleFactorRoundingPolicy(Qt::HighDpiScaleFactorRoundingPolicy::Floor);
     QGuiApplication app(argc, argv);
-    EnumWindows(enumWindowCallback, NULL);
     QQmlApplicationEngine engine;
     ScreenShoter::Init();
     qmlRegisterSingletonType<Cutter>("ScreenCapture.Cutter", 1, 0, "Cutter", [](QQmlEngine* engine, QJSEngine* scriptEngine){

@@ -4,6 +4,7 @@
 #include <QFile>
 #include <QScreen>
 #include <QGuiApplication>
+#include <Windows.h>
 
 static ScreenShoter* instance;
 
@@ -16,6 +17,9 @@ void ScreenShoter::Dispose()
     delete instance;
 }
 ScreenShoter::ScreenShoter()
+{
+}
+void ScreenShoter::shotScreen()
 {
     auto screens = QGuiApplication::screens();
     QList<QRectF> rects;
@@ -44,14 +48,30 @@ ScreenShoter::ScreenShoter()
     for (int i = 0; i < rects.count(); ++i) {
         painter.drawImage(rects.at(i),images.at(i).toImage());
     }
-//    QFile file("desktopImage.png");
-//    file.open(QIODevice::WriteOnly);
-//    desktopImage->save(&file, "PNG");
+    //    QFile file("desktopImage.png");
+    //    file.open(QIODevice::WriteOnly);
+    //    desktopImage->save(&file, "PNG");
+}
+void ScreenShoter::enumDesktopWindows()
+{
+    EnumWindows([](HWND hwnd, LPARAM lparam){
+        if(!IsWindowVisible(hwnd)) return TRUE;
+        if(IsIconic(hwnd)) return TRUE;
+        RECT rect;
+        GetWindowRect(hwnd,&rect);
+        if(rect.top <= 0 && rect.left <= 0 && rect.bottom <= 0 && rect.right <= 0) return TRUE;
+        QRect item(rect.left,rect.top,rect.right-rect.left,rect.bottom-rect.top);
+        instance->desktopWindowRects.append(std::move(item));
+        //todo 枚举每个窗口的子窗口
+        return TRUE;
+    }, NULL);
 }
 void ScreenShoter::Init()
 {
     if(!instance){
         instance = new ScreenShoter();
+        instance->enumDesktopWindows();
+        instance->shotScreen();
     }
 
 }
