@@ -1,12 +1,25 @@
 
 #include "Cutter.h"
-#include "qdebug.h"
 #include <QCursor>
+
+static Cutter* instance;
 
 Cutter::Cutter(QObject *parent)
     : QObject{parent}
 {
     getHoveredWindowRect();
+}
+Cutter::~Cutter()
+{
+
+}
+void Cutter::Init(QObject *parent)
+{
+    instance = new Cutter(parent);
+}
+Cutter* Cutter::Get()
+{
+    return instance;
 }
 void Cutter::getHoveredWindowRect()
 {
@@ -49,4 +62,30 @@ void Cutter::setCutAreaBottom(int val)
     if(val == cutAreaBottom) return;
     cutAreaBottom = val;
     emit cutAreaBottomChanged(val);
+}
+
+
+void Cutter::setMouseX(int val)
+{
+    if(val == mouseX) return;
+    mouseX = val;
+    emit mouseXChanged(val);
+}
+void Cutter::setMouseY(int val)
+{
+    if(val == mouseY) return;
+    mouseY = val;
+    emit mouseYChanged(val);
+}
+void Cutter::setColorRgb(QString val)
+{
+    if(val == colorRgb) return;
+    colorRgb = val;
+    emit colorRgbChanged(val);
+}
+void Cutter::setColorHex(QString val)
+{
+    if(val == colorHex) return;
+    colorHex = val;
+    emit colorHexChanged(val);
 }

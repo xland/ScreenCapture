@@ -10,11 +10,12 @@ ApplicationWindow {
     y:Cutter.absoluteY
     width:Cutter.totalWidth
     height: Cutter.totalHeight
-    flags: Qt.FramelessWindowHint
+    flags: Qt.FramelessWindowHint|Qt.WindowStaysOnTopHint
     property string maskColor: "#88000000"
+    property string crossLineColor: "#330958d9"
     Image {
         id: backgroundImage
-        source: "image://ScreenImage"
+        source: "image://ScreenImage/background"
         sourceSize.width: root.width
         sourceSize.height: root.height
     }
@@ -66,6 +67,7 @@ ApplicationWindow {
         onPositionChanged:{
             mouseTipRect.x = mouse.x+30;
             mouseTipRect.y = mouse.y+30;
+            cursorImage.source = "image://ScreenImage/cursor?"+mouse.x+","+mouse.y;
             mouseTipRect.visible = true;
             Cutter.getHoveredWindowRect();
         }
@@ -74,10 +76,99 @@ ApplicationWindow {
         id:mouseTipRect
         x:0
         y:0
-        width:400
-        height:600
-        color:"#66000000"
+        width:232
+        height:310
+        color:"#AA000000"
         visible: false
+        border.width: 1
+        border.color:"#000000"
+        Image {
+            id: cursorImage
+            x:1
+            y:1
+            Rectangle{
+                x:0
+                y:75
+                height: 10
+                width:110
+                color:crossLineColor
+            }
+            Rectangle{
+                x:120
+                y:75
+                height: 10
+                width:110
+                color:crossLineColor
+            }
+            Rectangle{
+                x:110
+                y:0
+                height: 75
+                width:10
+                color:crossLineColor
+            }
+            Rectangle{
+                x:110
+                y:85
+                height: 75
+                width:10
+                color:crossLineColor
+            }
+        }
+        Text {
+            id:mouseTipText1
+            anchors.top: cursorImage.bottom
+            anchors.topMargin: 6
+            anchors.left: parent.left
+            anchors.leftMargin: 8
+            text: "坐标：x: "+Cutter.mouseX+"  y: "+Cutter.mouseY
+            color: "#ffffff"
+            verticalAlignment: Text.AlignVCenter
+        }
+        Text {
+            id:mouseTipText2
+            anchors.top: mouseTipText1.bottom
+            anchors.topMargin: 6
+            anchors.left: parent.left
+            anchors.leftMargin: 8
+            verticalAlignment: Text.AlignVCenter
+            text: "RGB："+Cutter.colorRgb
+            color: "#ffffff"
+        }
+        Text {
+            id:mouseTipText3
+            anchors.top: mouseTipText2.bottom
+            anchors.topMargin: 6
+            anchors.left: parent.left
+            anchors.leftMargin: 8
+            verticalAlignment: Text.AlignVCenter
+            text: "HEX："+Cutter.colorHex
+            color: "#ffffff"
+        }
+        Text {
+            id:mouseTipText4
+            anchors.top: mouseTipText3.bottom
+            anchors.topMargin: 6
+            anchors.left: parent.left
+            anchors.leftMargin: 8
+            font.pointSize: 7
+            verticalAlignment: Text.AlignVCenter
+            font.italic:true
+            text: "Alt+X Copy RGB Color"
+            color: "#dddddd"
+        }
+        Text {
+            id:mouseTipText5
+            anchors.top: mouseTipText4.bottom
+            anchors.topMargin: 6
+            anchors.left: parent.left
+            anchors.leftMargin: 8
+            verticalAlignment: Text.AlignVCenter
+            font.pointSize: 7
+            font.italic:true
+            text: "Alt+C Copy HEX Color"
+            color: "#dddddd"
+        }
     }
 //    Component.onCompleted: {
 //        console.log(Cutter.cutAreaLeft ,Cutter.cutAreaTop,Cutter.cutAreaRight,Cutter.cutAreaBottom);

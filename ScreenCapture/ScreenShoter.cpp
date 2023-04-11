@@ -8,17 +8,18 @@
 
 static ScreenShoter* instance;
 
+ScreenShoter::ScreenShoter(QObject *parent)
+    : QObject{parent}
+{
+}
 ScreenShoter::~ScreenShoter()
 {
-    delete desktopImage;
 }
 void ScreenShoter::Dispose()
 {
     delete instance;
 }
-ScreenShoter::ScreenShoter()
-{
-}
+
 void ScreenShoter::shotScreen()
 {
     auto screens = QGuiApplication::screens();
@@ -43,11 +44,12 @@ void ScreenShoter::shotScreen()
         if(totalHeight < r.bottom()) totalHeight = r.bottom();
         if(totalWidth < r.right()) totalWidth = r.right();
     }
-    desktopImage = new QPixmap(totalWidth,totalHeight);
-    QPainter painter(desktopImage);
+    QPixmap pixmap(totalWidth,totalHeight);
+    QPainter painter(&pixmap);
     for (int i = 0; i < rects.count(); ++i) {
         painter.drawImage(rects.at(i),images.at(i).toImage());
     }
+    desktopImage = pixmap.toImage();
     //    QFile file("desktopImage.png");
     //    file.open(QIODevice::WriteOnly);
     //    desktopImage->save(&file, "PNG");
@@ -66,10 +68,10 @@ void ScreenShoter::enumDesktopWindows()
         return TRUE;
     }, NULL);
 }
-void ScreenShoter::Init()
+void ScreenShoter::Init(QObject *parent)
 {
     if(!instance){
-        instance = new ScreenShoter();
+        instance = new ScreenShoter(parent);
         instance->enumDesktopWindows();
         instance->shotScreen();
     }

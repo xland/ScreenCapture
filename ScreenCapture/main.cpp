@@ -9,9 +9,10 @@ int main(int argc, char *argv[])
     QGuiApplication::setHighDpiScaleFactorRoundingPolicy(Qt::HighDpiScaleFactorRoundingPolicy::Floor);
     QGuiApplication app(argc, argv);
     QQmlApplicationEngine engine;
-    ScreenShoter::Init();
+    ScreenShoter::Init(&app);
+    Cutter::Init(&app);
     qmlRegisterSingletonType<Cutter>("ScreenCapture.Cutter", 1, 0, "Cutter", [](QQmlEngine* engine, QJSEngine* scriptEngine){
-        return new Cutter();
+        return Cutter::Get();
     });
     engine.addImageProvider(QLatin1String("ScreenImage"), new ScreenImageProvider);
     const QUrl url(u"qrc:/ScreenCapture/Main.qml"_qs);
