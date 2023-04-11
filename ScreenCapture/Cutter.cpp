@@ -18,10 +18,10 @@ void Cutter::getHoveredWindowRect()
             setCutAreaTop(shoter->desktopWindowRects[i].top());
             setCutAreaRight(shoter->desktopWindowRects[i].right());
             setCutAreaBottom(shoter->desktopWindowRects[i].bottom());
-            qDebug() << "position" << shoter->desktopWindowRects[i].left()
-                     << shoter->desktopWindowRects[i].top()
-                     << shoter->desktopWindowRects[i].right()
-                     << shoter->desktopWindowRects[i].bottom();
+//            qDebug() << "position" << shoter->desktopWindowRects[i].left()
+//                     << shoter->desktopWindowRects[i].top()
+//                     << shoter->desktopWindowRects[i].right()
+//                     << shoter->desktopWindowRects[i].bottom();
             return;
         }
     }

@@ -64,17 +64,22 @@ ApplicationWindow {
             root.close();
         }
         onPositionChanged:{
-            Cutter.getHoveredWindowRect()
+            mouseTipRect.x = mouse.x+30;
+            mouseTipRect.y = mouse.y+30;
+            mouseTipRect.visible = true;
+            Cutter.getHoveredWindowRect();
         }
-
-//        Component.onCompleted: {
-//            let someValue = Cutter.getHoveredWindowRect();
-//            console.log(someValue.x);
-//        }
-//        onPress: {
-//        }
     }
-    Component.onCompleted: {
-        console.log(Cutter.cutAreaLeft ,Cutter.cutAreaTop,Cutter.cutAreaRight,Cutter.cutAreaBottom);
+    Rectangle {
+        id:mouseTipRect
+        x:0
+        y:0
+        width:400
+        height:600
+        color:"#66000000"
+        visible: false
     }
+//    Component.onCompleted: {
+//        console.log(Cutter.cutAreaLeft ,Cutter.cutAreaTop,Cutter.cutAreaRight,Cutter.cutAreaBottom);
+//    }
 }
