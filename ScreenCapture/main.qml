@@ -13,6 +13,9 @@ ApplicationWindow {
     flags: Qt.FramelessWindowHint|Qt.WindowStaysOnTopHint
     property string maskColor: "#88000000"
     property string crossLineColor: "#330958d9"
+    property int mousePressX: 0
+    property int mousePressY: 0
+    property bool isCutAreaSet: false
     Image {
         x:0
         y:0
@@ -105,10 +108,17 @@ ApplicationWindow {
         acceptedButtons: Qt.LeftButton | Qt.RightButton
         hoverEnabled:true
         focus: true
-        onClicked: ()=>{
-            root.close();
-        }
+        cursorShape: Qt.CrossCursor
         onPositionChanged:(mouse)=>{
+            if(mouse.buttons === Qt.NoButton && !isCutAreaSet){
+                  Cutter.getHoveredWindowRect();
+            }else if(mouse.buttons === Qt.LeftButton){
+                  Cutter.cutAreaLeft = mousePressX
+                  Cutter.cutAreaTop = mousePressY
+                  Cutter.cutAreaRight = mouse.x
+                  Cutter.cutAreaBottom = mouse.y
+                  isCutAreaSet = true
+            }
             mouseTipRect.x = mouse.x+20;
             mouseTipRect.y = mouse.y+20;
             if(mouseTipRect.x + mouseTipRect.width > Cutter.totalWidth){
@@ -119,8 +129,26 @@ ApplicationWindow {
             }
             cursorImage.source = "image://ScreenImage/cursor?"+mouse.x+","+mouse.y;
             mouseTipRect.visible = true;
-            Cutter.getHoveredWindowRect();
         }
+        onPressed: (mouse)=>{
+                       if(mouse.button !== Qt.LeftButton){
+                           if(isCutAreaSet){
+                              isCutAreaSet = false;
+                               Cutter.getHoveredWindowRect();
+                               return;
+                           }
+                           root.close();
+                           return;
+                       }
+                       mousePressX = mouse.x;
+                       mousePressY = mouse.y;
+                   }
+        onReleased: (mouse)=>{
+            if(mouse.button === Qt.LeftButton){
+                isCutAreaSet = true;
+            }
+        }
+
         Keys.onPressed: (event) => {
             if (event.modifiers & Qt.AltModifier){
                 if(event.key === Qt.Key_X){
@@ -203,7 +231,7 @@ ApplicationWindow {
             color: "#cccccc"
         }
     }
-    Component.onCompleted: {
-        console.log(Cutter.absoluteX ,Cutter.absoluteY,Cutter.totalWidth,Cutter.totalHeight);
-    }
+//    Component.onCompleted: {
+//        console.log(Cutter.absoluteX ,Cutter.absoluteY,Cutter.totalWidth,Cutter.totalHeight);
+//    }
 }

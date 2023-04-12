@@ -16,7 +16,7 @@ class Cutter : public QObject
 
     Q_PROPERTY (int cutAreaLeft READ getCutAreaLeft WRITE setCutAreaLeft NOTIFY cutAreaLeftChanged)
     Q_PROPERTY (int cutAreaTop READ getCutAreaTop WRITE setCutAreaTop NOTIFY cutAreaTopChanged)
-    Q_PROPERTY (int cutAreaRight READ getCutAreaRight WRITE setCutAreaBottom NOTIFY cutAreaRightChanged)
+    Q_PROPERTY (int cutAreaRight READ getCutAreaRight WRITE setCutAreaRight NOTIFY cutAreaRightChanged)
     Q_PROPERTY (int cutAreaBottom READ getCutAreaBottom WRITE setCutAreaBottom NOTIFY cutAreaBottomChanged)
 
 
