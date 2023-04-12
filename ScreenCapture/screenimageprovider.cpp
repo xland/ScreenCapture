@@ -28,8 +28,8 @@ QImage ScreenImageProvider::requestImage(const QString &id, QSize *size, const Q
         if(mouseY >= shoter->desktopImage.height()) mouseY = shoter->desktopImage.height()-1;
         auto color = shoter->desktopImage.pixelColor(mouseX,mouseY);
         Cutter* cutter = Cutter::Get();
-        cutter->setMouseX(position.x());
-        cutter->setMouseY(position.y());
+        cutter->setMouseX(mouseX);
+        cutter->setMouseY(mouseY);
         cutter->setColorHex(color.name(QColor::HexRgb).toUpper());
         cutter->setColorRgb("rgb("+QString::number(color.red())+","+QString::number(color.green())+","+QString::number(color.blue())+")" );
         int x{0},y{0},width{230},height{160};

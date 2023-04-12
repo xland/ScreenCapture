@@ -25,7 +25,6 @@ ApplicationWindow {
 //        anchors.fill: parent
 //        color:maskColor
 //    }
-
     Rectangle {
         id:leftRect
         x:0
@@ -58,6 +57,48 @@ ApplicationWindow {
         width: Cutter.cutAreaRight-Cutter.cutAreaLeft
         color:maskColor
     }
+    Rectangle{
+        x:Cutter.cutAreaLeft
+        y:Cutter.cutAreaTop
+        width:Cutter.cutAreaRight-Cutter.cutAreaLeft
+        height:Cutter.cutAreaBottom - Cutter.cutAreaTop
+        border.color: "#4096ff"
+        border.width: 3
+        color: "transparent"
+        ResizeButton{
+            x:-4
+            y:-3
+        }
+        ResizeButton{
+            x:-4
+            y:parent.height/2-4
+        }
+        ResizeButton{
+            x:-4
+            y:parent.height-8
+        }
+        ResizeButton{
+            x:parent.width-8
+            y:-3
+        }
+        ResizeButton{
+            x:parent.width-8
+            y:parent.height/2-4
+        }
+        ResizeButton{
+            x:parent.width-8
+            y:parent.height-8
+        }
+        ResizeButton{
+            x:parent.width/2-8
+            y:-3
+        }
+        ResizeButton{
+            x:parent.width/2-8
+            y:parent.height-6
+        }
+    }
+
     MouseArea{
         id:rootArea
         anchors.fill: parent
@@ -92,7 +133,7 @@ ApplicationWindow {
     }
     Rectangle {
         id:mouseTipRect
-        width:231.5
+        width:232
         height:234
         color:"#CC000000"
         visible: false

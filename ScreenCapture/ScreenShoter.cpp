@@ -53,9 +53,9 @@ void ScreenShoter::shotScreen()
     desktopImage = pixmap.toImage();
     scalFactor = (qreal)tempHeight / (qreal)windowHeight;
     scalFactor = round(scalFactor*100)/100;
-    QFile file("desktopImage.png");
-    file.open(QIODevice::WriteOnly);
-    desktopImage.save(&file, "PNG");
+//    QFile file("desktopImage.png");
+//    file.open(QIODevice::WriteOnly);
+//    desktopImage.save(&file, "PNG");
 }
 void ScreenShoter::enumDesktopWindows()
 {
