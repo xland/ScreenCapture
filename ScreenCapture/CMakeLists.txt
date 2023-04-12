@@ -24,7 +24,7 @@ qt_add_executable(appScreenCapture
 qt_add_qml_module(appScreenCapture
     URI ScreenCapture
     VERSION 1.0
-    QML_FILES Main.qml CaptureArea.qml ResizeButton.qml
+    QML_FILES Main.qml ResizeButton.qml MouseTip.qml
 )
 
 set_target_properties(appScreenCapture PROPERTIES
