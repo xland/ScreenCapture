@@ -29,7 +29,7 @@ public:
     ~Cutter();
     static void Init(QObject *parent);
     static Cutter* Get();
-    Q_INVOKABLE void getHoveredWindowRect();
+    Q_INVOKABLE void createCutAreaByWindowRect();
     Q_INVOKABLE void copyColor(bool isRgb);
     void setMouseX(int val);
     void setMouseY(int val);

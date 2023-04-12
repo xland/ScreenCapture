@@ -9,7 +9,7 @@ static Cutter* instance;
 Cutter::Cutter(QObject *parent)
     : QObject{parent}
 {
-    getHoveredWindowRect();
+    createCutAreaByWindowRect();
 }
 Cutter::~Cutter()
 {
@@ -32,7 +32,7 @@ void Cutter::copyColor(bool isRgb)
         clipboard->setText(colorHex);
     }
 }
-void Cutter::getHoveredWindowRect()
+void Cutter::createCutAreaByWindowRect()
 {
     auto position = QCursor::pos();
     auto shoter = ScreenShoter::Get();
