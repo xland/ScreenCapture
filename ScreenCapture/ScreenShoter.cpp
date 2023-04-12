@@ -65,7 +65,11 @@ void ScreenShoter::enumDesktopWindows()
         RECT rect;
         GetWindowRect(hwnd,&rect);
         if(rect.top <= 0 && rect.left <= 0 && rect.bottom <= 0 && rect.right <= 0) return TRUE;
-        QRect item(rect.left,rect.top,rect.right-rect.left,rect.bottom-rect.top);
+        auto left = qreal(rect.left/instance->scalFactor);
+        auto top = qreal(rect.top/instance->scalFactor);
+        auto width = qreal((rect.right-rect.left)/instance->scalFactor);
+        auto height = qreal((rect.bottom-rect.top)/instance->scalFactor);
+        QRect item(left,top,width,height);
         instance->desktopWindowRects.append(std::move(item));
         //todo 枚举每个窗口的子窗口
         return TRUE;
@@ -75,8 +79,8 @@ void ScreenShoter::Init(QObject *parent)
 {
     if(!instance){
         instance = new ScreenShoter(parent);
-        instance->enumDesktopWindows();
         instance->shotScreen();
+        instance->enumDesktopWindows();
     }
 
 }
