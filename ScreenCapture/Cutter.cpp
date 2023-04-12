@@ -3,6 +3,7 @@
 #include <QCursor>
 #include <QApplication>
 #include <QClipboard>
+#include <QMessageBox>
 
 static Cutter* instance;
 
@@ -49,6 +50,13 @@ void Cutter::moveMousePosition(int type)
     }else if(type == 3){
         //todo
         QCursor::setPos(position.x(),position.y()+1);
+    }
+}
+void Cutter::askForQuit()
+{
+    auto reply = QMessageBox::question(nullptr,"系统提示","确定要退出截图吗");
+    if (reply == QMessageBox::Yes) {
+        QApplication::quit();
     }
 }
 void Cutter::createCutAreaByWindowRect()

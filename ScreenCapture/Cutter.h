@@ -32,6 +32,7 @@ public:
     Q_INVOKABLE void createCutAreaByWindowRect();
     Q_INVOKABLE void copyColor(bool isRgb);
     Q_INVOKABLE void moveMousePosition(int type);
+    Q_INVOKABLE void askForQuit();
     void setMouseX(int val);
     void setMouseY(int val);
     void setColorRgb(QString val);

@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Window
 import QtQuick.Controls
+import QtQuick.Dialogs
 import ScreenCapture.Cutter 1.0
 
 ApplicationWindow {
@@ -215,6 +216,18 @@ ApplicationWindow {
       Cutter.cutAreaTop += 1
     }
   }
+  function setMouseTip(mouse) {
+    mouseTipRect.x = mouse.x + 20
+    mouseTipRect.y = mouse.y + 20
+    if (mouseTipRect.x + mouseTipRect.width > Cutter.totalWidth) {
+      mouseTipRect.x = mouse.x - 20 - mouseTipRect.width
+    }
+    if (mouseTipRect.y + mouseTipRect.height > Cutter.totalHeight) {
+      mouseTipRect.y = mouse.y - 20 - mouseTipRect.height
+    }
+    mouseTipRect.imageSource = "image://ScreenImage/cursor?" + mouse.x + "," + mouse.y
+    mouseTipRect.visible = true
+  }
 
   Image {
     x: 0
@@ -305,7 +318,13 @@ ApplicationWindow {
   MouseTip {
     id: mouseTipRect
   }
-
+  Popup {
+    id: dialog
+    modal: true
+    Text {
+      text: "你确定要退出截图吗？"
+    }
+  }
   MouseArea {
     id: rootArea
     anchors.fill: parent
@@ -335,16 +354,7 @@ ApplicationWindow {
                              moveCutAreaByMouse(mouse)
                            }
                          }
-                         mouseTipRect.x = mouse.x + 20
-                         mouseTipRect.y = mouse.y + 20
-                         if (mouseTipRect.x + mouseTipRect.width > Cutter.totalWidth) {
-                           mouseTipRect.x = mouse.x - 20 - mouseTipRect.width
-                         }
-                         if (mouseTipRect.y + mouseTipRect.height > Cutter.totalHeight) {
-                           mouseTipRect.y = mouse.y - 20 - mouseTipRect.height
-                         }
-                         mouseTipRect.imageSource = "image://ScreenImage/cursor?" + mouse.x + "," + mouse.y
-                         mouseTipRect.visible = true
+                         setMouseTip(mouse)
                        }
     onPressed: mouse => {
                  if (mouse.button !== Qt.LeftButton) {
@@ -414,9 +424,9 @@ ApplicationWindow {
                           Cutter.copyColor(false)
                         }
                       } else if (event.key === Qt.Key_Escape) {
-                        //todo confirm
-                        //https://doc-snapshots.qt.io/qt6-dev/qml-qtquick-dialogs-messagedialog.html#details
-                        Qt.quit()
+                        root.flags = Qt.FramelessWindowHint
+                        Cutter.askForQuit()
+                        root.flags = Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint
                       } else if (event.key === Qt.Key_Left) {
                         Cutter.moveMousePosition(0)
                         if (cutAreaCreateState === 2) {

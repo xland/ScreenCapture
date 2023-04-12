@@ -1,4 +1,5 @@
 #include <QGuiApplication>
+#include <QApplication>
 #include <QQmlApplicationEngine>
 #include "ScreenImageProvider.h"
 #include "ScreenShoter.h"
@@ -9,7 +10,7 @@ int main(int argc, char *argv[])
 //    QGuiApplication::setHighDpiScaleFactorRoundingPolicy(Qt::HighDpiScaleFactorRoundingPolicy::Floor);
 //    QGuiApplication::setHighDpiScaleFactorRoundingPolicy(Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
 //    qputenv("QT_SCALE_FACTOR", "1");
-    QGuiApplication app(argc, argv);
+    QApplication  app(argc, argv);
     QQmlApplicationEngine engine;
     ScreenShoter::Init(&app);
     Cutter::Init(&app);
