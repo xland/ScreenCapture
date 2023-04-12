@@ -162,7 +162,7 @@ ApplicationWindow {
       }
     }
   }
-  function moveCutArea(mouse) {
+  function moveCutAreaByMouse(mouse) {
     if (mouse.x - mousePressX < 0) {
       Cutter.cutAreaLeft = 0
       mousePressX = mouse.x - Cutter.cutAreaLeft
@@ -186,6 +186,33 @@ ApplicationWindow {
     } else {
       Cutter.cutAreaTop = mouse.y - mousePressY
       Cutter.cutAreaBottom = heightForMoving + Cutter.cutAreaTop
+    }
+  }
+  function moveCutAreaByKey(type) {
+    if (type === 0) {
+      if (Cutter.cutAreaLeft - 1 < 0) {
+        return
+      }
+      Cutter.cutAreaLeft -= 1
+      Cutter.cutAreaRight -= 1
+    } else if (type === 1) {
+      if (Cutter.cutAreaTop - 1 < 0) {
+        return
+      }
+      Cutter.cutAreaTop -= 1
+      Cutter.cutAreaBottom -= 1
+    } else if (type === 2) {
+      if (Cutter.cutAreaRight + 1 > Cutter.totalWidth) {
+        return
+      }
+      Cutter.cutAreaLeft += 1
+      Cutter.cutAreaRight += 1
+    } else if (type === 3) {
+      if (Cutter.cutAreaBottom + 1 > Cutter.totalHeight) {
+        return
+      }
+      Cutter.cutAreaBottom += 1
+      Cutter.cutAreaTop += 1
     }
   }
 
@@ -302,7 +329,7 @@ ApplicationWindow {
                            }
                          } else if (cutAreaCreateState === 4) {
                            if (mouse.buttons === Qt.LeftButton) {
-                             moveCutArea(mouse)
+                             moveCutAreaByMouse(mouse)
                            }
                          }
                          mouseTipRect.x = mouse.x + 20
@@ -387,6 +414,26 @@ ApplicationWindow {
                         //todo confirm
                         //https://doc-snapshots.qt.io/qt6-dev/qml-qtquick-dialogs-messagedialog.html#details
                         Qt.quit()
+                      } else if (event.key === Qt.Key_Left) {
+                        Cutter.moveMousePosition(0)
+                        if (cutAreaCreateState === 2) {
+                          moveCutAreaByKey(0)
+                        }
+                      } else if (event.key === Qt.Key_Up) {
+                        Cutter.moveMousePosition(1)
+                        if (cutAreaCreateState === 2) {
+                          moveCutAreaByKey(1)
+                        }
+                      } else if (event.key === Qt.Key_Right) {
+                        Cutter.moveMousePosition(2)
+                        if (cutAreaCreateState === 2) {
+                          moveCutAreaByKey(2)
+                        }
+                      } else if (event.key === Qt.Key_Down) {
+                        Cutter.moveMousePosition(3)
+                        if (cutAreaCreateState === 2) {
+                          moveCutAreaByKey(3)
+                        }
                       }
                     }
   }

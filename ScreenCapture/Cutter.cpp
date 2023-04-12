@@ -32,6 +32,25 @@ void Cutter::copyColor(bool isRgb)
         clipboard->setText(colorHex);
     }
 }
+void Cutter::moveMousePosition(int type)
+{
+    auto position = QCursor::pos();
+    if(type == 0){
+        auto x = position.x() -1;
+        if(x < 0) x = 0;
+        QCursor::setPos(x,position.y());
+    }else if(type == 1){
+        auto y = position.y() -1;
+        if(y < 0) y = 0;
+        QCursor::setPos(position.x(),y);
+    }else if(type == 2){
+        //todo
+        QCursor::setPos(position.x()+1,position.y());
+    }else if(type == 3){
+        //todo
+        QCursor::setPos(position.x(),position.y()+1);
+    }
+}
 void Cutter::createCutAreaByWindowRect()
 {
     auto position = QCursor::pos();
