@@ -26,10 +26,11 @@ class Cutter : public QObject
     Q_PROPERTY (QString colorHex READ getColorHex WRITE setColorHex NOTIFY colorHexChanged)
 
 public:
-    Q_INVOKABLE void getHoveredWindowRect();
     ~Cutter();
     static void Init(QObject *parent);
     static Cutter* Get();
+    Q_INVOKABLE void getHoveredWindowRect();
+    Q_INVOKABLE void copyColor(bool isRgb);
     void setMouseX(int val);
     void setMouseY(int val);
     void setColorRgb(QString val);

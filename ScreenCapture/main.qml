@@ -63,24 +63,38 @@ ApplicationWindow {
         anchors.fill: parent
         acceptedButtons: Qt.LeftButton | Qt.RightButton
         hoverEnabled:true
-        onClicked: {
+        focus: true
+        onClicked: ()=>{
             root.close();
         }
-        onPositionChanged:{
-            mouseTipRect.x = mouse.x+30;
-            mouseTipRect.y = mouse.y+30;
+        onPositionChanged:(mouse)=>{
+            mouseTipRect.x = mouse.x+20;
+            mouseTipRect.y = mouse.y+20;
+            if(mouseTipRect.x + mouseTipRect.width > Cutter.totalWidth){
+                mouseTipRect.x = mouse.x-20-mouseTipRect.width
+            }
+            if(mouseTipRect.y + mouseTipRect.height > Cutter.totalHeight){
+                mouseTipRect.y = mouse.y-20-mouseTipRect.height
+            }
             cursorImage.source = "image://ScreenImage/cursor?"+mouse.x+","+mouse.y;
             mouseTipRect.visible = true;
             Cutter.getHoveredWindowRect();
         }
+        Keys.onPressed: (event) => {
+            if (event.modifiers & Qt.AltModifier){
+                if(event.key === Qt.Key_X){
+                    Cutter.copyColor(true);
+                }else if(event.key === Qt.Key_C){
+                    Cutter.copyColor(false);
+                }
+            }
+        }
     }
     Rectangle {
         id:mouseTipRect
-        x:0
-        y:0
-        width:232
-        height:310
-        color:"#AA000000"
+        width:231.5
+        height:234
+        color:"#CC000000"
         visible: false
         border.width: 1
         border.color:"#000000"
@@ -134,7 +148,7 @@ ApplicationWindow {
             anchors.left: parent.left
             anchors.leftMargin: 8
             verticalAlignment: Text.AlignVCenter
-            text: "RGB："+Cutter.colorRgb
+            text: "颜色："+Cutter.colorRgb+"  "+Cutter.colorHex
             color: "#ffffff"
         }
         Text {
@@ -144,32 +158,8 @@ ApplicationWindow {
             anchors.left: parent.left
             anchors.leftMargin: 8
             verticalAlignment: Text.AlignVCenter
-            text: "HEX："+Cutter.colorHex
-            color: "#ffffff"
-        }
-        Text {
-            id:mouseTipText4
-            anchors.top: mouseTipText3.bottom
-            anchors.topMargin: 6
-            anchors.left: parent.left
-            anchors.leftMargin: 8
-            font.pointSize: 7
-            verticalAlignment: Text.AlignVCenter
-            font.italic:true
-            text: "Alt+X Copy RGB Color"
-            color: "#dddddd"
-        }
-        Text {
-            id:mouseTipText5
-            anchors.top: mouseTipText4.bottom
-            anchors.topMargin: 6
-            anchors.left: parent.left
-            anchors.leftMargin: 8
-            verticalAlignment: Text.AlignVCenter
-            font.pointSize: 7
-            font.italic:true
-            text: "Alt+C Copy HEX Color"
-            color: "#dddddd"
+            text: "复制：rgb: Alt+X  hex: Alt+C"
+            color: "#cccccc"
         }
     }
     Component.onCompleted: {

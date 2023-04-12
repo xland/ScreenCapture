@@ -1,6 +1,8 @@
 
 #include "Cutter.h"
 #include <QCursor>
+#include <QApplication>
+#include <QClipboard>
 
 static Cutter* instance;
 
@@ -20,6 +22,15 @@ void Cutter::Init(QObject *parent)
 Cutter* Cutter::Get()
 {
     return instance;
+}
+void Cutter::copyColor(bool isRgb)
+{
+    QClipboard* clipboard = QApplication::clipboard();
+    if(isRgb){
+        clipboard->setText(colorRgb);
+    }else{
+        clipboard->setText(colorHex);
+    }
 }
 void Cutter::getHoveredWindowRect()
 {

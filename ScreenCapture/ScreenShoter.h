@@ -15,6 +15,7 @@ public:
     int windowY = 0;
     int windowWidth = 0;
     int windowHeight = 0;
+    qreal scalFactor;
     QImage desktopImage;
     QList<QRect> desktopWindowRects;
 

@@ -40,7 +40,6 @@ void ScreenShoter::shotScreen()
         rects.append(std::move(rect));
         pixmaps.append(std::move(pix));
     }
-    windowX += rects[0].width()/2;
     for(int i = 0; i < rects.count(); ++i){
         rects[i].moveTopLeft({rects[i].x()-tempX,rects[i].y()-tempY});
         if(tempHeight < rects[i].bottom()) tempHeight = rects[i].bottom();
@@ -52,9 +51,11 @@ void ScreenShoter::shotScreen()
         painter.drawPixmap(rects[i],pixmaps[i]);
     }
     desktopImage = pixmap.toImage();
-//    QFile file("desktopImage.png");
-//    file.open(QIODevice::WriteOnly);
-//    desktopImage.save(&file, "PNG");
+    scalFactor = (qreal)tempHeight / (qreal)windowHeight;
+    scalFactor = round(scalFactor*100)/100;
+    QFile file("desktopImage.png");
+    file.open(QIODevice::WriteOnly);
+    desktopImage.save(&file, "PNG");
 }
 void ScreenShoter::enumDesktopWindows()
 {

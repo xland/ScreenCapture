@@ -7,6 +7,8 @@
 int main(int argc, char *argv[])
 {
 //    QGuiApplication::setHighDpiScaleFactorRoundingPolicy(Qt::HighDpiScaleFactorRoundingPolicy::Floor);
+//    QGuiApplication::setHighDpiScaleFactorRoundingPolicy(Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
+//    qputenv("QT_SCALE_FACTOR", "1");
     QGuiApplication app(argc, argv);
     QQmlApplicationEngine engine;
     ScreenShoter::Init(&app);
