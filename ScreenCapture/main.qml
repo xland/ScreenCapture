@@ -15,8 +15,10 @@ ApplicationWindow {
   property string crossLineColor: "#330958d9"
   property int mousePressX: 0
   property int mousePressY: 0
-  property int cutAreaCreateState: 0 //0未开始，1创建中，2创建完成,3修改中
-  property int mouseInArea: -1
+  property int widthForMoving: 0
+  property int heightForMoving: 0
+  property int cutAreaCreateState: 0 //0未开始，1创建中，2创建完成,3修改中,4移动中
+  property int mouseInArea: -1 //0左上,1上,2右上,3右,4右下,5下,6左下,7左,8中
   function setMouseArea(mouse) {
     let span = 5
     if (mouse.x < Cutter.cutAreaLeft + span) {
@@ -54,7 +56,6 @@ ApplicationWindow {
       }
     }
   }
-
   function createCutAreaByDrag(mouse) {
     let left = mousePressX, top = mousePressY, right = mouse.x, bottom = mouse.y
     if (mouse.x < left) {
@@ -161,6 +162,32 @@ ApplicationWindow {
       }
     }
   }
+  function moveCutArea(mouse) {
+    if (mouse.x - mousePressX < 0) {
+      Cutter.cutAreaLeft = 0
+      mousePressX = mouse.x - Cutter.cutAreaLeft
+      Cutter.cutAreaRight = widthForMoving
+    } else if (mouse.x - mousePressX + widthForMoving > Cutter.totalWidth) {
+      Cutter.cutAreaLeft = Cutter.totalWidth - widthForMoving
+      Cutter.cutAreaRight = Cutter.totalWidth
+      mousePressX = mouse.x - Cutter.cutAreaLeft
+    } else {
+      Cutter.cutAreaLeft = mouse.x - mousePressX
+      Cutter.cutAreaRight = widthForMoving + Cutter.cutAreaLeft
+    }
+    if (mouse.y - mousePressY < 0) {
+      Cutter.cutAreaTop = 0
+      Cutter.cutAreaBottom = heightForMoving
+      mousePressY = mouse.y - Cutter.cutAreaTop
+    } else if (mouse.y - mousePressY + heightForMoving > Cutter.totalHeight) {
+      Cutter.cutAreaTop = Cutter.totalHeight - heightForMoving
+      Cutter.cutAreaBottom = Cutter.totalHeight
+      mousePressY = mouse.y - Cutter.cutAreaTop
+    } else {
+      Cutter.cutAreaTop = mouse.y - mousePressY
+      Cutter.cutAreaBottom = heightForMoving + Cutter.cutAreaTop
+    }
+  }
 
   Image {
     x: 0
@@ -207,6 +234,7 @@ ApplicationWindow {
     color: maskColor
   }
   Rectangle {
+    id: cutArea
     x: Cutter.cutAreaLeft
     y: Cutter.cutAreaTop
     width: Cutter.cutAreaRight - Cutter.cutAreaLeft
@@ -230,7 +258,6 @@ ApplicationWindow {
       x: parent.width - 8
       y: -3
     }
-
     ResizeButton {
       x: parent.width - 7
       y: parent.height / 2 - 4
@@ -273,6 +300,10 @@ ApplicationWindow {
                            if (mouse.buttons === Qt.LeftButton) {
                              resizeCutArea(mouse)
                            }
+                         } else if (cutAreaCreateState === 4) {
+                           if (mouse.buttons === Qt.LeftButton) {
+                             moveCutArea(mouse)
+                           }
                          }
                          mouseTipRect.x = mouse.x + 20
                          mouseTipRect.y = mouse.y + 20
@@ -300,38 +331,47 @@ ApplicationWindow {
                      mousePressX = mouse.x
                      mousePressY = mouse.y
                    } else if (cutAreaCreateState === 2) {
-                     cutAreaCreateState = 3
-                     mousePressX = mouse.x
-                     mousePressY = mouse.y
                      if (mouseInArea === 0) {
+                       cutAreaCreateState = 3
                        Cutter.cutAreaTop = mouse.y
                        Cutter.cutAreaLeft = mouse.x
                      } else if (mouseInArea === 1) {
+                       cutAreaCreateState = 3
                        Cutter.cutAreaTop = mouse.y
                      } else if (mouseInArea === 2) {
+                       cutAreaCreateState = 3
                        Cutter.cutAreaTop = mouse.y
                        Cutter.cutAreaRight = mouse.x
                      } else if (mouseInArea === 3) {
+                       cutAreaCreateState = 3
                        Cutter.cutAreaRight = mouse.x
                      } else if (mouseInArea === 4) {
+                       cutAreaCreateState = 3
                        Cutter.cutAreaRight = mouse.x
                        Cutter.cutAreaBottom = mouse.y
                      } else if (mouseInArea === 5) {
+                       cutAreaCreateState = 3
                        Cutter.cutAreaBottom = mouse.y
                      } else if (mouseInArea === 6) {
+                       cutAreaCreateState = 3
                        Cutter.cutAreaLeft = mouse.x
                        Cutter.cutAreaBottom = mouse.y
                      } else if (mouseInArea === 7) {
+                       cutAreaCreateState = 3
                        Cutter.cutAreaLeft = mouse.x
                      } else {
-
+                       cutAreaCreateState = 4
+                       mousePressX = mouse.x - Cutter.cutAreaLeft
+                       mousePressY = mouse.y - Cutter.cutAreaTop
+                       heightForMoving = cutArea.height
+                       widthForMoving = cutArea.width
                      }
                    }
                  }
                }
     onReleased: mouse => {
                   if (mouse.button === Qt.LeftButton) {
-                    if (cutAreaCreateState === 1 || cutAreaCreateState === 3) {
+                    if (cutAreaCreateState === 1 || cutAreaCreateState === 3 || cutAreaCreateState === 4) {
                       cutAreaCreateState = 2
                     }
                   }
