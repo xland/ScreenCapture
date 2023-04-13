@@ -228,7 +228,9 @@ ApplicationWindow {
     mouseTipRect.imageSource = "image://ScreenImage/cursor?" + mouse.x + "," + mouse.y
     mouseTipRect.visible = true
   }
-
+  FontLoader {
+    source: "font.ttf"
+  }
   Image {
     x: 0
     y: 0
@@ -236,6 +238,11 @@ ApplicationWindow {
     source: "image://ScreenImage/background"
     sourceSize.width: root.width
     sourceSize.height: root.height
+  }
+  Text {
+    font.family: "iconfont"
+    text: "\ue6ec"
+    color: "#000000"
   }
   //    Rectangle{
   //        anchors.fill: parent
@@ -273,47 +280,8 @@ ApplicationWindow {
     width: Cutter.cutAreaRight - Cutter.cutAreaLeft
     color: maskColor
   }
-  Rectangle {
+  CutArea {
     id: cutArea
-    x: Cutter.cutAreaLeft
-    y: Cutter.cutAreaTop
-    width: Cutter.cutAreaRight - Cutter.cutAreaLeft
-    height: Cutter.cutAreaBottom - Cutter.cutAreaTop
-    border.color: "#4096ff"
-    border.width: 3
-    color: "transparent"
-    ResizeButton {
-      x: -4
-      y: -3
-    }
-    ResizeButton {
-      x: -4
-      y: parent.height / 2 - 4
-    }
-    ResizeButton {
-      x: -4
-      y: parent.height - 8
-    }
-    ResizeButton {
-      x: parent.width - 8
-      y: -3
-    }
-    ResizeButton {
-      x: parent.width - 7
-      y: parent.height / 2 - 4
-    }
-    ResizeButton {
-      x: parent.width - 8
-      y: parent.height - 8
-    }
-    ResizeButton {
-      x: parent.width / 2 - 8
-      y: -3
-    }
-    ResizeButton {
-      x: parent.width / 2 - 8
-      y: parent.height - 6
-    }
   }
   MouseTip {
     id: mouseTipRect

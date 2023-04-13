@@ -4,6 +4,7 @@
 #include "ScreenImageProvider.h"
 #include "ScreenShoter.h"
 #include "Cutter.h"
+#include <QFontDatabase>
 
 int main(int argc, char *argv[])
 {
@@ -11,6 +12,11 @@ int main(int argc, char *argv[])
 //    QGuiApplication::setHighDpiScaleFactorRoundingPolicy(Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
 //    qputenv("QT_SCALE_FACTOR", "1");
     QApplication  app(argc, argv);
+//    const int font_id = QFontDatabase::addApplicationFont("qrc:/font.ttf");
+//    auto list = QFontDatabase::applicationFontFamilies(font_id);
+//    for (int var = 0; var < list.count(); ++var) {
+//        qDebug() << list[var];
+//    }
     QQmlApplicationEngine engine;
     ScreenShoter::Init(&app);
     Cutter::Init(&app);
