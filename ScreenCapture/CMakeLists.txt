@@ -24,7 +24,7 @@ qt_add_executable(appScreenCapture
 qt_add_qml_module(appScreenCapture
     URI ScreenCapture
     VERSION 1.0
-    QML_FILES Main.qml MouseTip.qml CutArea.qml  font.ttf
+    QML_FILES Main.qml MouseTip.qml CutArea.qml DrawTool.qml font.ttf
 )
 
 set_target_properties(appScreenCapture PROPERTIES

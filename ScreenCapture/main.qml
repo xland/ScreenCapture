@@ -228,9 +228,6 @@ ApplicationWindow {
     mouseTipRect.imageSource = "image://ScreenImage/cursor?" + mouse.x + "," + mouse.y
     mouseTipRect.visible = true
   }
-  FontLoader {
-    source: "font.ttf"
-  }
   Image {
     x: 0
     y: 0
@@ -239,15 +236,6 @@ ApplicationWindow {
     sourceSize.width: root.width
     sourceSize.height: root.height
   }
-  Text {
-    font.family: "iconfont"
-    text: "\ue6ec"
-    color: "#000000"
-  }
-  //    Rectangle{
-  //        anchors.fill: parent
-  //        color:maskColor
-  //    }
   Rectangle {
     id: leftRect
     x: 0
@@ -285,13 +273,6 @@ ApplicationWindow {
   }
   MouseTip {
     id: mouseTipRect
-  }
-  Popup {
-    id: dialog
-    modal: true
-    Text {
-      text: "你确定要退出截图吗？"
-    }
   }
   MouseArea {
     id: rootArea
@@ -417,6 +398,13 @@ ApplicationWindow {
                         }
                       }
                     }
+  }
+  DrawTool {
+    id: toolBar
+    visible: cutAreaCreateState === 2
+    anchors.right: cutArea.right
+    anchors.top: cutArea.bottom
+    anchors.topMargin: 8
   }
 
   //    Component.onCompleted: {
