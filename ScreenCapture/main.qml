@@ -226,7 +226,11 @@ ApplicationWindow {
       mouseTipRect.y = mouse.y - 20 - mouseTipRect.height
     }
     mouseTipRect.imageSource = "image://ScreenImage/cursor?" + mouse.x + "," + mouse.y
-    mouseTipRect.visible = true
+    if (cutAreaCreateState === 0 || (cutAreaCreateState === 2 && mouseInArea === 8)) {
+      mouseTipRect.visible = true
+    } else {
+      mouseTipRect.visible = false
+    }
   }
   Image {
     x: 0
@@ -270,9 +274,6 @@ ApplicationWindow {
   }
   CutArea {
     id: cutArea
-  }
-  MouseTip {
-    id: mouseTipRect
   }
   MouseArea {
     id: rootArea
@@ -401,10 +402,15 @@ ApplicationWindow {
   }
   DrawTool {
     id: toolBar
-    visible: cutAreaCreateState === 2
+    visible: cutAreaCreateState >= 2
     anchors.right: cutArea.right
     anchors.top: cutArea.bottom
     anchors.topMargin: 8
+    anchors.rightMargin: 6
+  }
+
+  MouseTip {
+    id: mouseTipRect
   }
 
   //    Component.onCompleted: {
