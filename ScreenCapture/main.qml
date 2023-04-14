@@ -3,6 +3,7 @@ import QtQuick.Window
 import QtQuick.Controls
 import QtQuick.Dialogs
 import ScreenCapture.Cutter 1.0
+import "ShapeCreator.js" as ShapeCreator
 
 ApplicationWindow {
   id: root
@@ -18,7 +19,7 @@ ApplicationWindow {
   property int mousePressY: 0
   property int widthForMoving: 0
   property int heightForMoving: 0
-  property int cutAreaCreateState: 0 //0未开始，1创建中，2创建完成,3修改中,4移动中
+  property int cutAreaState: 0 //0未开始，1创建中，2创建完成,3修改中,4移动中,5绘制中
   property int mouseInArea: -1 //0左上,1上,2右上,3右,4右下,5下,6左下,7左,8中
   function setMouseArea(mouse) {
     let span = 5
@@ -226,7 +227,7 @@ ApplicationWindow {
       mouseTipRect.y = mouse.y - 20 - mouseTipRect.height
     }
     mouseTipRect.imageSource = "image://ScreenImage/cursor?" + mouse.x + "," + mouse.y
-    if (cutAreaCreateState === 0 || (cutAreaCreateState === 2 && mouseInArea === 8)) {
+    if (cutAreaState === 0 || (cutAreaState === 2 && mouseInArea === 8)) {
       mouseTipRect.visible = true
     } else {
       mouseTipRect.visible = false
@@ -283,74 +284,75 @@ ApplicationWindow {
     focus: true
     cursorShape: Qt.CrossCursor
     onPositionChanged: mouse => {
-                         if (cutAreaCreateState === 0) {
+                         if (cutAreaState === 0) {
                            if (mouse.buttons === Qt.NoButton) {
                              Cutter.createCutAreaByWindowRect()
                            }
-                         } else if (cutAreaCreateState === 1) {
+                         } else if (cutAreaState === 1) {
                            if (mouse.buttons === Qt.LeftButton) {
                              createCutAreaByDrag(mouse)
                            }
-                         } else if (cutAreaCreateState === 2) {
+                         } else if (cutAreaState === 2) {
                            if (mouse.buttons === Qt.NoButton) {
                              setMouseArea(mouse)
                            }
-                         } else if (cutAreaCreateState === 3) {
+                         } else if (cutAreaState === 3) {
                            if (mouse.buttons === Qt.LeftButton) {
                              resizeCutArea(mouse)
                            }
-                         } else if (cutAreaCreateState === 4) {
+                         } else if (cutAreaState === 4) {
                            if (mouse.buttons === Qt.LeftButton) {
                              moveCutAreaByMouse(mouse)
                            }
                          }
+
                          setMouseTip(mouse)
                        }
     onPressed: mouse => {
                  if (mouse.button !== Qt.LeftButton) {
-                   if (cutAreaCreateState !== 0) {
-                     cutAreaCreateState = 0
+                   if (cutAreaState !== 0) {
+                     cutAreaState = 0
                      cursorShape = Qt.CrossCursor
                      Cutter.createCutAreaByWindowRect()
                    } else {
                      root.close()
                    }
                  } else {
-                   if (cutAreaCreateState === 0) {
-                     cutAreaCreateState = 1
+                   if (cutAreaState === 0) {
+                     cutAreaState = 1
                      mousePressX = mouse.x
                      mousePressY = mouse.y
-                   } else if (cutAreaCreateState === 2) {
+                   } else if (cutAreaState === 2) {
                      if (mouseInArea === 0) {
-                       cutAreaCreateState = 3
+                       cutAreaState = 3
                        Cutter.cutAreaTop = mouse.y
                        Cutter.cutAreaLeft = mouse.x
                      } else if (mouseInArea === 1) {
-                       cutAreaCreateState = 3
+                       cutAreaState = 3
                        Cutter.cutAreaTop = mouse.y
                      } else if (mouseInArea === 2) {
-                       cutAreaCreateState = 3
+                       cutAreaState = 3
                        Cutter.cutAreaTop = mouse.y
                        Cutter.cutAreaRight = mouse.x
                      } else if (mouseInArea === 3) {
-                       cutAreaCreateState = 3
+                       cutAreaState = 3
                        Cutter.cutAreaRight = mouse.x
                      } else if (mouseInArea === 4) {
-                       cutAreaCreateState = 3
+                       cutAreaState = 3
                        Cutter.cutAreaRight = mouse.x
                        Cutter.cutAreaBottom = mouse.y
                      } else if (mouseInArea === 5) {
-                       cutAreaCreateState = 3
+                       cutAreaState = 3
                        Cutter.cutAreaBottom = mouse.y
                      } else if (mouseInArea === 6) {
-                       cutAreaCreateState = 3
+                       cutAreaState = 3
                        Cutter.cutAreaLeft = mouse.x
                        Cutter.cutAreaBottom = mouse.y
                      } else if (mouseInArea === 7) {
-                       cutAreaCreateState = 3
+                       cutAreaState = 3
                        Cutter.cutAreaLeft = mouse.x
                      } else {
-                       cutAreaCreateState = 4
+                       cutAreaState = 4
                        mousePressX = mouse.x - Cutter.cutAreaLeft
                        mousePressY = mouse.y - Cutter.cutAreaTop
                        heightForMoving = cutArea.height
@@ -361,8 +363,8 @@ ApplicationWindow {
                }
     onReleased: mouse => {
                   if (mouse.button === Qt.LeftButton) {
-                    if (cutAreaCreateState === 1 || cutAreaCreateState === 3 || cutAreaCreateState === 4) {
-                      cutAreaCreateState = 2
+                    if (cutAreaState === 1 || cutAreaState === 3 || cutAreaState === 4) {
+                      cutAreaState = 2
                     }
                   }
                 }
@@ -379,47 +381,57 @@ ApplicationWindow {
                         root.flags = Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint
                       } else if (event.key === Qt.Key_Left) {
                         Cutter.moveMousePosition(0)
-                        if (cutAreaCreateState === 2) {
+                        if (cutAreaState === 2) {
                           moveCutAreaByKey(0)
                         }
                       } else if (event.key === Qt.Key_Up) {
                         Cutter.moveMousePosition(1)
-                        if (cutAreaCreateState === 2) {
+                        if (cutAreaState === 2) {
                           moveCutAreaByKey(1)
                         }
                       } else if (event.key === Qt.Key_Right) {
                         Cutter.moveMousePosition(2)
-                        if (cutAreaCreateState === 2) {
+                        if (cutAreaState === 2) {
                           moveCutAreaByKey(2)
                         }
                       } else if (event.key === Qt.Key_Down) {
                         Cutter.moveMousePosition(3)
-                        if (cutAreaCreateState === 2) {
+                        if (cutAreaState === 2) {
                           moveCutAreaByKey(3)
                         }
                       }
                     }
   }
   DrawTool {
-    id: toolBar
-    visible: cutAreaCreateState >= 2
+    id: drawTool
+    visible: cutAreaState >= 2
     anchors.right: cutArea.right
     anchors.top: cutArea.bottom
     anchors.topMargin: 8
     anchors.rightMargin: 6
+    onStartDraw: () => {
+                   cutAreaState = 5
+                   rootArea.cursorShape = Qt.CrossCursor
+                 }
   }
 
   MouseTip {
     id: mouseTipRect
   }
-
-  Component.onCompleted: {
-    let component = Qt.createComponent("ShapeRect.qml")
-    component.createObject(root, {
-                             "x": 100,
-                             "y": 100
-                           })
+  MouseArea {
+    visible: cutAreaState === 5
+    anchors.fill: parent
+    acceptedButtons: Qt.LeftButton | Qt.RightButton
+    hoverEnabled: true
+    cursorShape: Qt.CrossCursor
+    onPressed: mouse => {
+                 ShapeCreator.createReact(mouse)
+               }
+    onPositionChanged: mouse => {}
   }
+  //  Component.onCompleted: {
+
+  //  }
   //  sourceRectangle.grabToImage(function(result) {
   //             result.saveToFile("something.png")
   //          })

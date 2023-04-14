@@ -5,6 +5,7 @@ Rectangle {
     source: "font.ttf"
   }
   property int selectedIndex: -1
+  signal startDraw
   function unSelectAllBtns() {
     for (var i = 0; i < 10; i++) {
       root.children[i].unSelect()
@@ -21,6 +22,7 @@ Rectangle {
     anchors.left: parent.left
     onBeforeSelected: () => {
                         unSelectAllBtns()
+                        startDraw()
                       }
   }
   DrawBtn {

@@ -2,7 +2,6 @@ import QtQuick
 import ScreenCapture.Cutter 1.0
 
 Rectangle {
-
   component ResizeButton: Rectangle {
     border.width: 1
     color: "#4096ff"
@@ -11,7 +10,6 @@ Rectangle {
     height: 10
     border.color: "#ffffff"
   }
-
   x: Cutter.cutAreaLeft
   y: Cutter.cutAreaTop
   width: Cutter.cutAreaRight - Cutter.cutAreaLeft
