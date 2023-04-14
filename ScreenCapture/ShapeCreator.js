@@ -7,29 +7,22 @@ function createRect(mouse) {
   pressPos.x = mouse.x
   pressPos.y = mouse.y
   var component = Qt.createComponent("ShapeRect.qml")
-  var shape = component.createObject(root, {
-                                       "anchors": {
-                                         "leftMargin": mouse.x,
-                                         "topMargin": mouse.y,
-                                         "rightMargin": mouse.x,
-                                         "bottomMargin": mouse.y
-                                       }
-                                     })
+  var shape = component.createObject(root, {})
   shapes.push(shape)
 }
 function resizeRect(mouse) {
   if (mouse.x < pressPos.x) {
-    shapes[0].anchors.leftMargin = mouse.x
-    shapes[0].anchors.rightMargin = pressPos.x
+    shapes[0].x = mouse.x
+    shapes[0].width = pressPos.x - mouse.x
   } else {
-    shapes[0].anchors.leftMargin = pressPos.x
-    shapes[0].anchors.rightMargin = mouse.x
+    shapes[0].x = pressPos.x
+    shapes[0].width = mouse.x - pressPos.x
   }
   if (mouse.y < pressPos.y) {
-    shapes[0].anchors.topMargin = mouse.y
-    shapes[0].anchors.bottomMargin = pressPos.y
+    shapes[0].y = mouse.y
+    shapes[0].height = pressPos.y - mouse.y
   } else {
-    shapes[0].anchors.topMargin = pressPos.y
-    shapes[0].anchors.bottomMargin = mouse.y
+    shapes[0].y = pressPos.y
+    shapes[0].height = mouse.y - pressPos.y
   }
 }
