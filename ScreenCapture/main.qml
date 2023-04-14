@@ -413,7 +413,14 @@ ApplicationWindow {
     id: mouseTipRect
   }
 
-  //    Component.onCompleted: {
-  //        console.log(Cutter.absoluteX ,Cutter.absoluteY,Cutter.totalWidth,Cutter.totalHeight);
-  //    }
+  Component.onCompleted: {
+    let component = Qt.createComponent("ShapeRect.qml")
+    component.createObject(root, {
+                             "x": 100,
+                             "y": 100
+                           })
+  }
+  //  sourceRectangle.grabToImage(function(result) {
+  //             result.saveToFile("something.png")
+  //          })
 }

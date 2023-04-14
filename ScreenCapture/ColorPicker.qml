@@ -78,4 +78,9 @@ Rectangle {
       color: "#eb2f96"
     }
   }
+  MouseArea {
+    anchors.fill: parent
+    hoverEnabled: true
+    cursorShape: Qt.PointingHandCursor
+  }
 }
