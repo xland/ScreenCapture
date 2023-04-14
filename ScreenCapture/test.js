@@ -1,0 +1,5 @@
+.pragma library
+
+function func() {
+
+}

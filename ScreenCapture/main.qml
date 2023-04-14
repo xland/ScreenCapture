@@ -425,9 +425,15 @@ ApplicationWindow {
     hoverEnabled: true
     cursorShape: Qt.CrossCursor
     onPressed: mouse => {
-                 ShapeCreator.createReact(mouse)
+                 if (mouse.buttons === Qt.LeftButton) {
+                   ShapeCreator.createRect(mouse)
+                 }
                }
-    onPositionChanged: mouse => {}
+    onPositionChanged: mouse => {
+                         if (mouse.buttons === Qt.LeftButton) {
+                           ShapeCreator.resizeRect(mouse)
+                         }
+                       }
   }
   //  Component.onCompleted: {
 

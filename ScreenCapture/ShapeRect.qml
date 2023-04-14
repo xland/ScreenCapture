@@ -1,9 +1,10 @@
 import QtQuick
 
 Rectangle {
-  x: 300
-  y: 300
+  id: root
+  anchors.left: parent.left
+  anchors.top: parent.top
+  anchors.right: parent.right
+  anchors.bottom: parent.bottom
   color: "#7799AA"
-  width: 200
-  height: 200
 }

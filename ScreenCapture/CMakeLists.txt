@@ -26,6 +26,7 @@ qt_add_qml_module(appScreenCapture
     VERSION 1.0
     QML_FILES Main.qml MouseTip.qml CutArea.qml DrawTool.qml
     ColorPicker.qml DrawRectTool.qml DrawBtn.qml ShapeCreator.js
+    test.js
     ShapeRect.qml
     font.ttf
 )
