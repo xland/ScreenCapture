@@ -1,4 +1,3 @@
-
 #ifndef SCREENSHOTER_H
 #define SCREENSHOTER_H
 #include <QImage>

@@ -32,7 +32,7 @@ void ScreenShoter::shotScreen()
     QList<QPixmap> pixmaps;
     int tempX{0},tempY{0},tempHeight{0},tempWidth{0};
     for(auto s:screens){
-        auto pix = s->grabWindow();
+        auto pix = s->grabWindow(0);
         auto g = s->geometry();
         if(g.x() < tempX) tempX = g.x();
         if(g.y() < tempY) tempY = g.y();

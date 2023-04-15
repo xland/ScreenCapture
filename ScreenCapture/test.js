@@ -1,5 +1,0 @@
-.pragma library
-
-function func() {
-
-}
