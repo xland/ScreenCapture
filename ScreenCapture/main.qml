@@ -18,41 +18,41 @@ ApplicationWindow {
   property int mousePressY: 0
   property int widthForMoving: 0
   property int heightForMoving: 0
-  property int cutAreaState: 0 //0æœªå¼€å§‹ï¼Œ1åˆ›å»ºä¸­ï¼Œ2åˆ›å»ºå®Œæˆ,3ä¿®æ”¹ä¸­,4ç§»åŠ¨ä¸­,5ç»˜åˆ¶ä¸­
-  property int mouseInArea: -1 //0å·¦ä¸Š,1ä¸Š,2å³ä¸Š,3å³,4å³ä¸‹,5ä¸‹,6å·¦ä¸‹,7å·¦,8ä¸­
+  property int cutAreaState: 0 //0Î´¿ªÊ¼£¬1´´½¨ÖĞ£¬2´´½¨Íê³É,3ĞŞ¸ÄÖĞ,4ÒÆ¶¯ÖĞ,5»æÖÆÖĞ
+  property int mouseInArea: -1 //0×óÉÏ,1ÉÏ,2ÓÒÉÏ,3ÓÒ,4ÓÒÏÂ,5ÏÂ,6×óÏÂ,7×ó,8ÖĞ
   function setMouseArea(mouse) {
     let span = 5
     if (mouse.x < Cutter.cutAreaLeft + span) {
       if (mouse.y < Cutter.cutAreaTop) {
-        mouseInArea = 0 //å·¦ä¸Š
+        mouseInArea = 0 //×óÉÏ
         rootArea.cursorShape = Qt.SizeFDiagCursor
       } else if (mouse.y > Cutter.cutAreaBottom) {
-        mouseInArea = 6 //å·¦ä¸‹
+        mouseInArea = 6 //×óÏÂ
         rootArea.cursorShape = Qt.SizeBDiagCursor
       } else {
-        mouseInArea = 7 //å·¦
+        mouseInArea = 7 //×ó
         rootArea.cursorShape = Qt.SizeHorCursor
       }
     } else if (mouse.x > Cutter.cutAreaRight - span) {
       if (mouse.y < Cutter.cutAreaTop) {
-        mouseInArea = 2 //å³ä¸Š
+        mouseInArea = 2 //ÓÒÉÏ
         rootArea.cursorShape = Qt.SizeBDiagCursor
       } else if (mouse.y > Cutter.cutAreaBottom) {
-        mouseInArea = 4 //å³ä¸‹
+        mouseInArea = 4 //ÓÒÏÂ
         rootArea.cursorShape = Qt.SizeFDiagCursor
       } else {
-        mouseInArea = 3 //å³
+        mouseInArea = 3 //ÓÒ
         rootArea.cursorShape = Qt.SizeHorCursor
       }
     } else {
       if (mouse.y < Cutter.cutAreaTop + span) {
-        mouseInArea = 1 //ä¸Š
+        mouseInArea = 1 //ÉÏ
         rootArea.cursorShape = Qt.SizeVerCursor
       } else if (mouse.y > Cutter.cutAreaBottom - span) {
-        mouseInArea = 5 //ä¸‹
+        mouseInArea = 5 //ÏÂ
         rootArea.cursorShape = Qt.SizeVerCursor
       } else {
-        mouseInArea = 8 //ä¸­
+        mouseInArea = 8 //ÖĞ
         rootArea.cursorShape = Qt.SizeAllCursor
       }
     }
@@ -441,3 +441,4 @@ ApplicationWindow {
   //             result.saveToFile("something.png")
   //          })
 }
+
