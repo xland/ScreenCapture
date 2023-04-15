@@ -4,12 +4,12 @@ project(ScreenCapture VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Qt6 6.4 REQUIRED COMPONENTS Quick Widgets)
-find_package(Qt6Core REQUIRED)
-find_package(Qt6Widgets REQUIRED)
+find_package(Qt5 5.15 REQUIRED COMPONENTS Quick Widgets)
+find_package(Qt5Core REQUIRED)
+find_package(Qt5Widgets REQUIRED)
 
-include_directories(${Qt6Widgets_INCLUDE_DIRS})
-include_directories(${Qt6Core_INCLUDE_DIRS})
+include_directories(${Qt5Widgets_INCLUDE_DIRS})
+include_directories(${Qt5Core_INCLUDE_DIRS})
 
 qt_standard_project_setup()
 
@@ -40,7 +40,7 @@ set_target_properties(appScreenCapture PROPERTIES
 )
 
 target_link_libraries(appScreenCapture
-    PRIVATE Qt6::Quick Qt6::Widgets
+    PRIVATE Qt5::Quick Qt5::Widgets
 )
 
 install(TARGETS appScreenCapture

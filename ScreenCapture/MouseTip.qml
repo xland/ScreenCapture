@@ -1,4 +1,4 @@
-import QtQuick
+import QtQuick 2.15
 import ScreenCapture.Cutter 1.0
 
 Rectangle {
