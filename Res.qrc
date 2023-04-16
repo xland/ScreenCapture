@@ -11,5 +11,6 @@
         <file>ShapeRect.qml</file>
         <file>Resizer.js</file>
         <file>ShapeCreator.js</file>
+        <file>Dragger.qml</file>
     </qresource>
 </RCC>
