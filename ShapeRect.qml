@@ -44,10 +44,16 @@ MouseArea {
     cursorShape: Qt.CrossCursor
     onPressed: mouse => {
                    if (mouse.buttons === Qt.LeftButton) {
-                       startX = mouse.x
-                       startY = mouse.y
-                       endX = mouse.x
-                       endY = mouse.y
+                       if (my.showDragger) {
+                           //绘图完成后的点击,接下去要画第二个了
+                           my.showDragger = false
+                       } else {
+                           //开始绘图前的点击
+                           startX = mouse.x
+                           startY = mouse.y
+                           endX = mouse.x
+                           endY = mouse.y
+                       }
                    }
                }
     onPositionChanged: mouse => {
@@ -61,6 +67,7 @@ MouseArea {
                 }
     Shape {
         id: shape
+        containsMode: Shape.FillContains
         ShapePath {
             id: path
             strokeWidth: 3
@@ -83,6 +90,33 @@ MouseArea {
                 y: startY
             }
         }
+    }
+
+    MouseArea {
+        id: shapeMouseArea
+        anchors.fill: parent
+        containmentMask: shape
+        hoverEnabled: true
+        cursorShape: Qt.SizeAllCursor
+        property real pressX: 0
+        property real pressY: 0
+        onPressed: mouse => {
+                       shapeMouseArea.pressX = mouse.x
+                       shapeMouseArea.pressY = mouse.y
+                   }
+        onPositionChanged: mouse => {
+                               if (mouse.buttons === Qt.LeftButton) {
+                                   let spanX = mouse.x - shapeMouseArea.pressX
+                                   let spanY = mouse.y - shapeMouseArea.pressY
+                                   startX += spanX
+                                   startY += spanY
+                                   endX += spanX
+                                   endY += spanY
+                                   setDraggerPosition()
+                                   shapeMouseArea.pressX = mouse.x
+                                   shapeMouseArea.pressY = mouse.y
+                               }
+                           }
     }
     //左上
     Dragger {
