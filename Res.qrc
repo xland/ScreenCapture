@@ -8,9 +8,12 @@
         <file>DrawTool.qml</file>
         <file>main.qml</file>
         <file>MouseTip.qml</file>
-        <file>ShapeRect.qml</file>
+        <file>ShapeRect_bak.qml</file>
         <file>Resizer.js</file>
         <file>ShapeCreator.js</file>
         <file>Dragger.qml</file>
+        <file>ShapeRectCircle_bak.qml</file>
+        <file>ShapeRect.qml</file>
+        <file>GlobalState.js</file>
     </qresource>
 </RCC>

@@ -421,27 +421,11 @@ ApplicationWindow {
     MouseTip {
         id: mouseTipRect
     }
-    MouseArea {
+    ShapeRect {
         id: shapeContainer
         visible: cutAreaState === 5
-        anchors.fill: parent
-        acceptedButtons: Qt.LeftButton | Qt.RightButton
-        hoverEnabled: true
-        cursorShape: Qt.CrossCursor
-        onPressed: mouse => {
-                       if (mouse.buttons === Qt.LeftButton) {
-                           ShapeCreator.createRect(mouse)
-                       }
-                   }
-        onPositionChanged: mouse => {
-                               if (mouse.buttons === Qt.LeftButton) {
-                                   ShapeCreator.resizeRect(mouse)
-                               }
-                           }
-        onReleased: () => {
-                        ShapeCreator.createDragger()
-                    }
     }
+
     //  Component.onCompleted: {
 
     //  }

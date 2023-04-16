@@ -44,15 +44,20 @@ function createDragger() {
     //左上
     objs[0].x = shapes[0].x1 - span
     objs[0].y = shapes[0].y1 - span
+    objs[0].onXChanged = () => {}
+
     //上
     objs[1].cursor = Qt.SizeVerCursor
+    objs[1].axis = Drag.YAxis
     objs[1].x = shapes[0].x1 + (shapes[0].x2 - shapes[0].x1) / 2
     objs[1].y = shapes[0].y1 - span
+
     //右上
     objs[2].cursor = Qt.SizeBDiagCursor
     objs[2].x = shapes[0].x2 - span
     objs[2].y = shapes[0].y1 - span
     //右
+    objs[3].axis = Drag.XAxis
     objs[3].cursor = Qt.SizeHorCursor
     objs[3].x = shapes[0].x2 - span
     objs[3].y = shapes[0].y1 + (shapes[0].y2 - shapes[0].y1) / 2
@@ -60,6 +65,7 @@ function createDragger() {
     objs[4].x = shapes[0].x2 - span
     objs[4].y = shapes[0].y2 - span
     //下
+    objs[5].axis = Drag.YAxis
     objs[5].cursor = Qt.SizeVerCursor
     objs[5].x = shapes[0].x1 + (shapes[0].x2 - shapes[0].x1) / 2
     objs[5].y = shapes[0].y2 - span
@@ -68,6 +74,7 @@ function createDragger() {
     objs[6].x = shapes[0].x1 - span
     objs[6].y = shapes[0].y2 - span
     //左
+    objs[7].axis = Drag.XAxis
     objs[7].cursor = Qt.SizeHorCursor
     objs[7].x = shapes[0].x1 - span
     objs[7].y = shapes[0].y1 + (shapes[0].y2 - shapes[0].y1) / 2
