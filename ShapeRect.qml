@@ -1,5 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Shapes 1.15
+import "app.js" as App
 
 MouseArea {
     property string customColor: "red"
@@ -44,6 +45,7 @@ MouseArea {
     cursorShape: Qt.CrossCursor
     onPressed: mouse => {
                    if (mouse.buttons === Qt.LeftButton) {
+                       console.log("b", App.pressPosition.x)
                        if (my.showDragger) {
                            //绘图完成后的点击,接下去要画第二个了
                            my.showDragger = false

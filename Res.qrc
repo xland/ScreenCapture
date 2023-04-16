@@ -14,6 +14,6 @@
         <file>Dragger.qml</file>
         <file>ShapeRectCircle_bak.qml</file>
         <file>ShapeRect.qml</file>
-        <file>GlobalState.js</file>
+        <file>app.js</file>
     </qresource>
 </RCC>

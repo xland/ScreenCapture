@@ -1,4 +1,5 @@
 import QtQuick 2.15
+import "app.js" as App
 
 Rectangle {
     FontLoader {
@@ -21,6 +22,9 @@ Rectangle {
         code: "\ue86d"
         anchors.left: parent.left
         onBeforeSelected: () => {
+                              console.log("a1", App.pressPosition.x)
+                              App.pressPosition.x = 100
+                              console.log("a2", App.pressPosition.x)
                               unSelectAllBtns()
                               startDraw()
                           }
