@@ -21,15 +21,16 @@ ApplicationWindow {
         sourceSize.width: root.width
         sourceSize.height: root.height
     }
+
     //    ShapeRect {
     //        id: shapeContainer
     //        visible: cutAreaState === 5
     //    }
-    CutArea {
-        id: cutArea
-    }
     WindowMouseArea {
         id: windowMouseArea
+    }
+    CutArea {
+        id: cutArea
     }
     DrawTool {
         id: drawTool

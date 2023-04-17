@@ -7,36 +7,32 @@ MouseArea {
     property alias startY: path.startY
     property real endX: 0
     property real endY: 0
+    property bool showDragger: false
+    property real span: draggerLeftTop.width / 2
     function setDraggerPosition() {
-        draggerLeftTop.x = startX - my.span
-        draggerLeftTop.y = startY - my.span
+        draggerLeftTop.x = startX - span
+        draggerLeftTop.y = startY - span
 
         draggerTop.x = startX + (endX - startX) / 2
-        draggerTop.y = startY - my.span
+        draggerTop.y = startY - span
 
-        draggerRightTop.x = endX - my.span
-        draggerRightTop.y = startY - my.span
+        draggerRightTop.x = endX - span
+        draggerRightTop.y = startY - span
 
-        draggerRight.x = endX - my.span
+        draggerRight.x = endX - span
         draggerRight.y = startY + (endY - startY) / 2
 
-        draggerRightBottom.x = endX - my.span
-        draggerRightBottom.y = endY - my.span
+        draggerRightBottom.x = endX - span
+        draggerRightBottom.y = endY - span
 
         draggerBottom.x = startX + (endX - startX) / 2
-        draggerBottom.y = endY - my.span
+        draggerBottom.y = endY - span
 
-        draggerLeftBottom.x = startX - my.span
-        draggerLeftBottom.y = endY - my.span
+        draggerLeftBottom.x = startX - span
+        draggerLeftBottom.y = endY - span
 
-        draggerLeft.x = startX - my.span
+        draggerLeft.x = startX - span
         draggerLeft.y = startY + (endY - startY) / 2
-    }
-
-    QtObject {
-        id: my
-        property bool showDragger: false
-        property real span: draggerLeftTop.width / 2
     }
     anchors.fill: parent
     acceptedButtons: Qt.LeftButton | Qt.RightButton
@@ -45,9 +41,9 @@ MouseArea {
     onPressed: mouse => {
                    if (mouse.buttons === Qt.LeftButton) {
                        console.log("b", App.pressPosition.x)
-                       if (my.showDragger) {
+                       if (showDragger) {
                            //绘图完成后的点击,接下去要画第二个了
-                           my.showDragger = false
+                           showDragger = false
                        } else {
                            //开始绘图前的点击
                            startX = mouse.x
@@ -64,7 +60,7 @@ MouseArea {
                            }
                        }
     onReleased: () => {
-                    my.showDragger = true
+                    showDragger = true
                 }
     Shape {
         id: shape
@@ -92,7 +88,6 @@ MouseArea {
             }
         }
     }
-
     MouseArea {
         id: shapeMouseArea
         anchors.fill: parent
@@ -122,98 +117,98 @@ MouseArea {
     //左上
     Dragger {
         id: draggerLeftTop
-        visible: my.showDragger
-        x: startX - my.span
-        y: startY - my.span
+        visible: showDragger
+        x: startX - span
+        y: startY - span
         onMoved: (x, y) => {
-                     startX = x + my.span
-                     startY = y + my.span
+                     startX = x + span
+                     startY = y + span
                      setDraggerPosition()
                  }
     }
     //上
     Dragger {
         id: draggerTop
-        visible: my.showDragger
+        visible: showDragger
         cursor: Qt.SizeVerCursor
         x: startX + (endX - startX) / 2
-        y: startY - my.span
+        y: startY - span
         onMoved: (x, y) => {
-                     startY = y + my.span
+                     startY = y + span
                      setDraggerPosition()
                  }
     }
     //右上
     Dragger {
         id: draggerRightTop
-        visible: my.showDragger
+        visible: showDragger
         cursor: Qt.SizeBDiagCursor
-        x: endX - my.span
-        y: startY - my.span
+        x: endX - span
+        y: startY - span
         onMoved: (x, y) => {
-                     endX = x + my.span
-                     startY = y + my.span
+                     endX = x + span
+                     startY = y + span
                      setDraggerPosition()
                  }
     }
     //右
     Dragger {
         id: draggerRight
-        visible: my.showDragger
+        visible: showDragger
         cursor: Qt.SizeHorCursor
-        x: endX - my.span
+        x: endX - span
         y: startY + (endY - startY) / 2
         onMoved: (x, y) => {
-                     endX = x + my.span
+                     endX = x + span
                      setDraggerPosition()
                  }
     }
     //右下
     Dragger {
         id: draggerRightBottom
-        visible: my.showDragger
-        x: endX - my.span
-        y: endY - my.span
+        visible: showDragger
+        x: endX - span
+        y: endY - span
         onMoved: (x, y) => {
-                     endX = x + my.span
-                     endY = y + my.span
+                     endX = x + span
+                     endY = y + span
                      setDraggerPosition()
                  }
     }
     //下
     Dragger {
         id: draggerBottom
-        visible: my.showDragger
+        visible: showDragger
         cursor: Qt.SizeVerCursor
         x: startX + (endX - startX) / 2
-        y: endY - my.span
+        y: endY - span
         onMoved: (x, y) => {
-                     endY = y + my.span
+                     endY = y + span
                      setDraggerPosition()
                  }
     }
     //左下
     Dragger {
         id: draggerLeftBottom
-        visible: my.showDragger
+        visible: showDragger
         cursor: Qt.SizeBDiagCursor
-        x: startX - my.span
-        y: endY - my.span
+        x: startX - span
+        y: endY - span
         onMoved: (x, y) => {
-                     startX = x + my.span
-                     endY = y + my.span
+                     startX = x + span
+                     endY = y + span
                      setDraggerPosition()
                  }
     }
     //左
     Dragger {
         id: draggerLeft
-        visible: my.showDragger
+        visible: showDragger
         cursor: Qt.SizeHorCursor
-        x: startX - my.span
+        x: startX - span
         y: startY + (endY - startY) / 2
         onMoved: (x, y) => {
-                     startX = x + my.span
+                     startX = x + span
                      setDraggerPosition()
                  }
     }

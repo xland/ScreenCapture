@@ -2,6 +2,7 @@ import QtQuick 2.15
 import ScreenCapture.Cutter 1.0
 import "CutArea.js" as CutArea
 import "MouseTip.js" as MouseTip
+import "ShapeCreator.js" as ShapeCreator
 
 MouseArea {
     id: root
@@ -48,6 +49,10 @@ MouseArea {
                                if (mouse.buttons === Qt.NoButton) {
                                    CutArea.setCursorByMousePositionWhenDrawing(mouse)
                                } else if (mouse.buttons === Qt.LeftButton) {
+                                   if (App.drawToolState === 1) {
+                                       ShapeCreator.shapes[0].endX = mouse.x
+                                       ShapeCreator.shapes[0].endY = mouse.y
+                                   }
                                    if (mouseInArea !== 9) {
                                        CutArea.resizeCutArea(mouse)
                                    }
@@ -76,6 +81,8 @@ MouseArea {
                                    //改变大小
                                    CutArea.setCursorByMousePositionWhenDrawing(mouse)
                                    App.cutAreaState = 3
+                               } else {
+                                   ShapeCreator.createShape(mouse)
                                }
                            }
                        }
@@ -88,6 +95,9 @@ MouseArea {
                             CutArea.updatePoint()
                         } else if (App.cutAreaState === 1 || App.cutAreaState === 4) {
                             App.cutAreaState = 2
+                        }
+                        if (App.drawToolState === 1) {
+                            ShapeCreator.shapes[0].showDragger = true
                         }
                     }
                 }
