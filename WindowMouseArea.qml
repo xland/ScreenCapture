@@ -5,7 +5,7 @@ import "MouseTip.js" as MouseTip
 
 MouseArea {
     id: root
-    property int mouseInArea: -1 //0左上,1上,2右上,3右,4右下,5下,6左下,7左,8中
+    property int mouseInArea: -1 //0左上,1上,2右上,3右,4右下,5下,6左下,7左,8中,9绘图区域
     property int mousePressX: 0
     property int mousePressY: 0
     anchors.fill: parent
@@ -14,35 +14,45 @@ MouseArea {
     hoverEnabled: true
     cursorShape: Qt.CrossCursor
     onPositionChanged: mouse => {
-                           if (App.cutAreaState === 0) {
-                               if (mouse.buttons === Qt.NoButton) {
-                                   //高亮窗口区域
-                                   Cutter.createCutAreaByWindowRect()
+                           if (App.drawToolState === 0) {
+                               if (App.cutAreaState === 0) {
+                                   if (mouse.buttons === Qt.NoButton) {
+                                       //高亮窗口区域
+                                       Cutter.createCutAreaByWindowRect()
+                                   }
+                               } else if (App.cutAreaState === 1) {
+                                   //todo 出现大小控制工具
+                                   if (mouse.buttons === Qt.LeftButton) {
+                                       CutArea.createCutAreaByDrag(mouse)
+                                   }
+                               } else if (App.cutAreaState === 2) {
+                                   //设置Cursor
+                                   if (mouse.buttons === Qt.NoButton) {
+                                       CutArea.setCursorByMousePosition(mouse)
+                                   }
+                               } else if (App.cutAreaState === 3) {
+                                   //改变大小
+                                   if (mouse.buttons === Qt.LeftButton) {
+                                       CutArea.resizeCutArea(mouse)
+                                   }
+                               } else if (App.cutAreaState === 4) {
+                                   if (mouse.buttons === Qt.LeftButton) {
+                                       //移动截图区域
+                                       CutArea.moveCutAreaByDrag(mouse)
+                                   }
                                }
-                           } else if (App.cutAreaState === 1) {
-                               //todo 出现大小控制工具
-                               if (mouse.buttons === Qt.LeftButton) {
-                                   CutArea.createCutAreaByDrag(mouse)
-                               }
-                           } else if (App.cutAreaState === 2) {
+                               //放大镜
+                               MouseTip.setMouseTip(mouse)
+                           } else {
                                //设置Cursor
                                if (mouse.buttons === Qt.NoButton) {
-                                   CutArea.setCursorByMousePosition(mouse)
-                               }
-                           } else if (App.cutAreaState === 3) {
-                               //改变大小
-                               if (mouse.buttons === Qt.LeftButton) {
-                                   CutArea.resizeCutArea(mouse)
-                               }
-                           } else if (App.cutAreaState === 4) {
-                               if (mouse.buttons === Qt.LeftButton) {
-                                   //移动截图区域
-                                   CutArea.moveCutAreaByDrag(mouse)
+                                   CutArea.setCursorByMousePositionWhenDrawing(mouse)
+                               } else if (mouse.buttons === Qt.LeftButton) {
+                                   if (mouseInArea !== 9) {
+                                       CutArea.resizeCutArea(mouse)
+                                   }
                                }
                            }
-
-                           //放大镜
-                           MouseTip.setMouseTip(mouse)
                        }
     onPressed: mouse => {
                    if (mouse.buttons === Qt.LeftButton) {
@@ -51,17 +61,23 @@ MouseArea {
                        if (App.cutAreaState === 0) {
                            App.cutAreaState = 1
                        } else if (App.cutAreaState === 2) {
-                           if (mouseInArea != 8 && mouseInArea != -1) {
-                               //改变大小
-                               App.cutAreaState = 3
-                               CutArea.resizeCutArea(mouse)
+                           if (App.drawToolState === 0) {
+                               if (mouseInArea != 8 && mouseInArea != -1) {
+                                   //改变大小
+                                   App.cutAreaState = 3
+                                   CutArea.setCursorByMousePosition(mouse)
+                                   CutArea.resizeCutArea(mouse)
+                               } else {
+                                   //移动位置
+                                   App.cutAreaState = 4
+                               }
                            } else {
-                               //移动位置
-                               App.cutAreaState = 4
+                               if (mouseInArea !== 9) {
+                                   //改变大小
+                                   CutArea.setCursorByMousePositionWhenDrawing(mouse)
+                                   App.cutAreaState = 3
+                               }
                            }
-                       } else if (App.cutAreaState === 4) {
-
-                           //开始绘图，也有可能要拖动改变选区
                        }
                    }
                }

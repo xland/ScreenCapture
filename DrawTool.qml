@@ -15,7 +15,11 @@ Row {
         code: "\ue86d"
         isSelected: App.drawToolState === 1
         onClick: () => {
-                     App.drawToolState = 1
+                     if (App.drawToolState === 1) {
+                         App.drawToolState = 0
+                     } else {
+                         App.drawToolState = 1
+                     }
                  }
     }
     DrawBtn {
@@ -23,7 +27,11 @@ Row {
         code: "\ueb0c"
         isSelected: App.drawToolState === 2
         onClick: () => {
-                     App.drawToolState = 2
+                     if (App.drawToolState === 2) {
+                         App.drawToolState = 0
+                     } else {
+                         App.drawToolState = 2
+                     }
                  }
     }
     DrawBtn {
@@ -31,7 +39,11 @@ Row {
         code: "\ue601"
         isSelected: App.drawToolState === 3
         onClick: () => {
-                     App.drawToolState = 3
+                     if (App.drawToolState === 3) {
+                         App.drawToolState = 0
+                     } else {
+                         App.drawToolState = 3
+                     }
                  }
     }
     DrawBtn {
@@ -39,7 +51,11 @@ Row {
         code: "\ue82e"
         isSelected: App.drawToolState === 4
         onClick: () => {
-                     App.drawToolState = 4
+                     if (App.drawToolState === 4) {
+                         App.drawToolState = 0
+                     } else {
+                         App.drawToolState = 4
+                     }
                  }
     }
     DrawBtn {
@@ -47,7 +63,11 @@ Row {
         code: "\ue6ec"
         isSelected: App.drawToolState === 5
         onClick: () => {
-                     App.drawToolState = 5
+                     if (App.drawToolState === 5) {
+                         App.drawToolState = 0
+                     } else {
+                         App.drawToolState = 5
+                     }
                  }
     }
     DrawBtn {
@@ -55,7 +75,11 @@ Row {
         code: "\ue6b8"
         isSelected: App.drawToolState === 6
         onClick: () => {
-                     App.drawToolState = 6
+                     if (App.drawToolState === 6) {
+                         App.drawToolState = 0
+                     } else {
+                         App.drawToolState = 6
+                     }
                  }
     }
     DrawBtn {

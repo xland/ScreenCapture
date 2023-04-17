@@ -144,3 +144,36 @@ function setCursorByMousePosition(mouse) {
         }
     }
 }
+
+//设置cursor样式，并记录鼠标所在区域（绘图中）
+function setCursorByMousePositionWhenDrawing(mouse) {
+    let span = 4
+    if (mouse.x < Cutter.cutAreaLeft && mouse.x > Cutter.cutAreaLeft - span && mouse.y > Cutter.cutAreaTop - span && mouse.y < Cutter.cutAreaTop) {
+        root.mouseInArea = 0 //左上
+        root.cursorShape = Qt.SizeFDiagCursor
+    } else if (mouse.x < Cutter.cutAreaLeft && mouse.x > Cutter.cutAreaLeft - span && mouse.y > Cutter.cutAreaBottom && mouse.y < Cutter.cutAreaBottom + span) {
+        root.mouseInArea = 6 //左下
+        root.cursorShape = Qt.SizeBDiagCursor
+    } else if (mouse.x < Cutter.cutAreaLeft && mouse.x > Cutter.cutAreaLeft - span && mouse.y > Cutter.cutAreaTop && mouse.y < Cutter.cutAreaBottom) {
+        root.mouseInArea = 7 //左
+        root.cursorShape = Qt.SizeHorCursor
+    } else if (mouse.x < Cutter.cutAreaRight + span && mouse.x > Cutter.cutAreaRight && mouse.y > Cutter.cutAreaTop - span && mouse.y < Cutter.cutAreaTop) {
+        root.mouseInArea = 2 //右上
+        root.cursorShape = Qt.SizeBDiagCursor
+    } else if (mouse.x < Cutter.cutAreaRight + span && mouse.x > Cutter.cutAreaRight && mouse.y > Cutter.cutAreaBottom && mouse.y < Cutter.cutAreaBottom + span) {
+        root.mouseInArea = 4 //右下
+        root.cursorShape = Qt.SizeFDiagCursor
+    } else if (mouse.x < Cutter.cutAreaRight + span && mouse.x > Cutter.cutAreaRight && mouse.y > Cutter.cutAreaTop && mouse.y < Cutter.cutAreaBottom) {
+        root.mouseInArea = 3 //右
+        root.cursorShape = Qt.SizeHorCursor
+    } else if (mouse.x > Cutter.cutAreaLeft && mouse.x < Cutter.cutAreaRight && mouse.y > Cutter.cutAreaTop - span && mouse.y < Cutter.cutAreaTop) {
+        root.mouseInArea = 1 //上
+        root.cursorShape = Qt.SizeVerCursor
+    } else if (mouse.x > Cutter.cutAreaLeft && mouse.x < Cutter.cutAreaRight && mouse.y > Cutter.cutAreaBottom && mouse.y < Cutter.cutAreaBottom + span) {
+        root.mouseInArea = 5 //下
+        root.cursorShape = Qt.SizeVerCursor
+    } else {
+        root.mouseInArea = 9
+        root.cursorShape = Qt.CrossCursor
+    }
+}

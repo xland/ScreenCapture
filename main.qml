@@ -21,6 +21,10 @@ ApplicationWindow {
         sourceSize.width: root.width
         sourceSize.height: root.height
     }
+    //    ShapeRect {
+    //        id: shapeContainer
+    //        visible: cutAreaState === 5
+    //    }
     CutArea {
         id: cutArea
     }
@@ -387,10 +391,6 @@ ApplicationWindow {
     //                                }
     //                            }
     //                        }
-    //    }
-    //    ShapeRect {
-    //        id: shapeContainer
-    //        visible: cutAreaState === 5
     //    }
 
     //  Component.onCompleted: {

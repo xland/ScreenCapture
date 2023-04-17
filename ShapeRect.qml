@@ -1,6 +1,5 @@
 import QtQuick 2.15
 import QtQuick.Shapes 1.15
-import "app.js" as App
 
 MouseArea {
     property string customColor: "red"

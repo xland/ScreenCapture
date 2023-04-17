@@ -5,7 +5,7 @@ Rectangle {
     height: 30
     color: "#F8F8F8"
     width: 200
-    visible: App.drawToolState === 1
+    visible: App.drawToolState === 1 && App.cutAreaState === 2
     DrawBtn {
         id: dot
         code: "\ue608"
@@ -40,6 +40,9 @@ Rectangle {
         anchors.left: splitter.right
         anchors.leftMargin: 3
         anchors.top: dot.top
+        onClick: () => {
+                     App.rectCircle.isRect = !App.rectCircle.isRect
+                 }
     }
     DrawBtn {
         id: emptyCircle
@@ -47,6 +50,9 @@ Rectangle {
         isSelected: !App.rectCircle.isRect
         anchors.left: emptyRect.right
         anchors.top: dot.top
+        onClick: () => {
+                     App.rectCircle.isRect = !App.rectCircle.isRect
+                 }
     }
     ColorPicker {
         anchors.left: emptyCircle.right
