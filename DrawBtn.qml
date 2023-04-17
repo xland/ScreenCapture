@@ -4,14 +4,7 @@ Rectangle {
     id: root
     property alias code: iconText.text
     property bool isSelected: false
-    signal beforeSelected
-    function unSelect() {
-        if (root.isSelected) {
-            root.isSelected = false
-            root.color = "#F8F8F8"
-            iconText.color = "#555555"
-        }
-    }
+    signal click
     width: 36
     height: 30
     color: "#F8F8F8"
@@ -42,17 +35,22 @@ Rectangle {
                   }
         onClicked: () => {
                        if (root.isSelected) {
-                           root.isSelected = false
                            root.color = "#F8F8F8"
                            iconText.color = "#555555"
                        } else {
-                           root.beforeSelected()
-                           root.isSelected = true
                            root.color = "#1677ff"
                            iconText.color = "#FFFFFF"
                        }
+                       click()
                    }
     }
+    onIsSelectedChanged: (val1, val2) => {
+                             if (!root.isSelected) {
+                                 root.color = "#F8F8F8"
+                                 iconText.color = "#555"
+                             }
+                         }
+
     Component.onCompleted: {
         if (root.isSelected) {
             root.color = "#1677ff"

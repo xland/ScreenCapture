@@ -1,113 +1,81 @@
 import QtQuick 2.15
-import "app.js" as App
+import ScreenCapture.Cutter 1.0
 
-Rectangle {
-    FontLoader {
-        source: "font.ttf"
-    }
-    property int selectedIndex: -1
-    signal startDraw
-    function unSelectAllBtns() {
-        for (var i = 0; i < 10; i++) {
-            root.children[i].unSelect()
-        }
-    }
-
+Row {
     id: root
+    visible: App.cutAreaState === 2
+    anchors.right: parent.right
+    anchors.rightMargin: Cutter.totalWidth - Cutter.cutAreaRight
+    anchors.top: parent.top
+    anchors.topMargin: Cutter.cutAreaBottom + 8
     width: 360
     height: 30
-    color: "transparent"
     DrawBtn {
         id: rectBtn
         code: "\ue86d"
-        anchors.left: parent.left
-        onBeforeSelected: () => {
-                              console.log("a1", App.pressPosition.x)
-                              App.pressPosition.x = 100
-                              console.log("a2", App.pressPosition.x)
-                              unSelectAllBtns()
-                              startDraw()
-                          }
+        isSelected: App.drawToolState === 1
+        onClick: () => {
+                     App.drawToolState = 1
+                 }
     }
     DrawBtn {
         id: arrawBtn
         code: "\ueb0c"
-        anchors.left: rectBtn.right
-        onBeforeSelected: () => {
-                              unSelectAllBtns()
-                          }
+        isSelected: App.drawToolState === 2
+        onClick: () => {
+                     App.drawToolState = 2
+                 }
     }
     DrawBtn {
         id: penBtn
         code: "\ue601"
-        anchors.left: arrawBtn.right
-        onBeforeSelected: () => {
-                              unSelectAllBtns()
-                          }
+        isSelected: App.drawToolState === 3
+        onClick: () => {
+                     App.drawToolState = 3
+                 }
     }
     DrawBtn {
         id: mosaicBtn
         code: "\ue82e"
-        anchors.left: penBtn.right
-        onBeforeSelected: () => {
-                              unSelectAllBtns()
-                          }
+        isSelected: App.drawToolState === 4
+        onClick: () => {
+                     App.drawToolState = 4
+                 }
     }
     DrawBtn {
         id: textBtn
         code: "\ue6ec"
-        anchors.left: mosaicBtn.right
-        onBeforeSelected: () => {
-                              unSelectAllBtns()
-                          }
+        isSelected: App.drawToolState === 5
+        onClick: () => {
+                     App.drawToolState = 5
+                 }
     }
     DrawBtn {
         id: eraserBtn
         code: "\ue6b8"
-        anchors.left: textBtn.right
-        onBeforeSelected: () => {
-                              unSelectAllBtns()
-                          }
+        isSelected: App.drawToolState === 6
+        onClick: () => {
+                     App.drawToolState = 6
+                 }
     }
     DrawBtn {
         id: undoBtn
         code: "\ued85"
-        anchors.left: eraserBtn.right
-        onBeforeSelected: () => {
-                              unSelectAllBtns()
-                          }
+        onClick: () => {}
     }
     DrawBtn {
         id: redoBtn
         code: "\ued8a"
-        anchors.left: undoBtn.right
-        onBeforeSelected: () => {
-                              unSelectAllBtns()
-                          }
+        onClick: () => {}
     }
     DrawBtn {
         id: clipboardBtrn
         code: "\ue87f"
-        anchors.left: redoBtn.right
-        onBeforeSelected: () => {
-                              unSelectAllBtns()
-                          }
+        onClick: () => {}
     }
     DrawBtn {
         id: saveBtn
         code: "\ue62f"
-        anchors.left: clipboardBtrn.right
-        onBeforeSelected: () => {
-                              unSelectAllBtns()
-                          }
-    }
-
-    DrawRectTool {
-        id: drawRectTool
-        visible: rectBtn.isSelected
-        anchors.left: root.left
-        anchors.top: root.top
-        anchors.topMargin: 34
-        z: 999
+        onClick: () => {}
     }
 }

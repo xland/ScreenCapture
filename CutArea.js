@@ -43,13 +43,11 @@ function resizeCutArea(mouse) {
 //更新左上，右下坐标
 function updatePoint() {
     if (Cutter.cutAreaLeft > Cutter.cutAreaRight) {
-        console.log(11)
         let temp = Cutter.cutAreaRight
         Cutter.cutAreaRight = Cutter.cutAreaLeft
         Cutter.cutAreaLeft = temp
     }
     if (Cutter.cutAreaTop > Cutter.cutAreaBottom) {
-        console.log(22)
         let temp = Cutter.cutAreaBottom
         Cutter.cutAreaBottom = Cutter.cutAreaTop
         Cutter.cutAreaTop = temp

@@ -4,12 +4,12 @@ import ScreenCapture.Cutter 1.0
 
 Shape {
     component ResizeButton: Rectangle {
-      border.width: 1
-      color: "#52c41a"
-      radius: 5
-      width: 10
-      height: 10
-      border.color: "#ffffff"
+        border.width: 1
+        color: "#52c41a"
+        radius: 5
+        width: 10
+        height: 10
+        border.color: "#ffffff"
     }
     id: root
     anchors.fill: parent
@@ -58,36 +58,36 @@ Shape {
         }
     }
     ResizeButton {
-      x: Cutter.cutAreaLeft - path.strokeWidth*1.5
-      y: Cutter.cutAreaTop - path.strokeWidth*1.5
+        x: Cutter.cutAreaLeft - path.strokeWidth * 1.5
+        y: Cutter.cutAreaTop - path.strokeWidth * 1.5
     }
     ResizeButton {
-      x: Cutter.cutAreaLeft + (Cutter.cutAreaRight-Cutter.cutAreaLeft)/2
-      y: Cutter.cutAreaTop - path.strokeWidth*1.5
+        x: Cutter.cutAreaLeft + (Cutter.cutAreaRight - Cutter.cutAreaLeft) / 2
+        y: Cutter.cutAreaTop - path.strokeWidth * 1.5
     }
     ResizeButton {
-      x: Cutter.cutAreaRight- path.strokeWidth*1.5
-      y: Cutter.cutAreaTop - path.strokeWidth*1.5
+        x: Cutter.cutAreaRight - path.strokeWidth * 1.5
+        y: Cutter.cutAreaTop - path.strokeWidth * 1.5
     }
     ResizeButton {
-      x:  Cutter.cutAreaRight- path.strokeWidth*1.5
-      y: Cutter.cutAreaTop + (Cutter.cutAreaBottom-Cutter.cutAreaTop)/2
+        x: Cutter.cutAreaRight - path.strokeWidth * 1.5
+        y: Cutter.cutAreaTop + (Cutter.cutAreaBottom - Cutter.cutAreaTop) / 2
     }
     ResizeButton {
-      x:  Cutter.cutAreaRight- path.strokeWidth*1.5
-      y: Cutter.cutAreaBottom - path.strokeWidth*1.5
+        x: Cutter.cutAreaRight - path.strokeWidth * 1.5
+        y: Cutter.cutAreaBottom - path.strokeWidth * 1.5
     }
     ResizeButton {
-      x: Cutter.cutAreaLeft + (Cutter.cutAreaRight-Cutter.cutAreaLeft)/2
-      y: Cutter.cutAreaBottom - path.strokeWidth*1.5
+        x: Cutter.cutAreaLeft + (Cutter.cutAreaRight - Cutter.cutAreaLeft) / 2
+        y: Cutter.cutAreaBottom - path.strokeWidth * 1.5
     }
     ResizeButton {
-      x: Cutter.cutAreaLeft - path.strokeWidth*1.5
-      y: Cutter.cutAreaBottom - path.strokeWidth*1.5
+        x: Cutter.cutAreaLeft - path.strokeWidth * 1.5
+        y: Cutter.cutAreaBottom - path.strokeWidth * 1.5
     }
     ResizeButton {
-        x: Cutter.cutAreaLeft - path.strokeWidth*1.5
-        y: Cutter.cutAreaTop + (Cutter.cutAreaBottom-Cutter.cutAreaTop)/2
+        x: Cutter.cutAreaLeft - path.strokeWidth * 1.5
+        y: Cutter.cutAreaTop + (Cutter.cutAreaBottom - Cutter.cutAreaTop) / 2
     }
     //    Component.onCompleted: {
     //        console.log("cutarea", App.cutAreaState)

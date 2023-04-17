@@ -3,6 +3,9 @@ import QtQuick.Controls 2.15
 import ScreenCapture.Cutter 1.0
 
 ApplicationWindow {
+    FontLoader {
+        source: "font.ttf"
+    }
     id: root
     visible: true
     x: Cutter.absoluteX
@@ -21,13 +24,21 @@ ApplicationWindow {
     CutArea {
         id: cutArea
     }
-    MouseTip {
-        id: mouseTipRect
-    }
     WindowMouseArea {
         id: windowMouseArea
     }
-
+    DrawTool {
+        id: drawTool
+    }
+    DrawRectTool {
+        id: drawRectTool
+        anchors.left: drawTool.left
+        anchors.top: drawTool.top
+        anchors.topMargin: 34
+    }
+    MouseTip {
+        id: mouseTipRect
+    }
     //    property string maskColor: "#88000000"
     //    property string crossLineColor: "#330958d9"
     //    property int mousePressX: 0
@@ -376,18 +387,6 @@ ApplicationWindow {
     //                                }
     //                            }
     //                        }
-    //    }
-    //    DrawTool {
-    //        id: drawTool
-    //        visible: cutAreaState >= 2
-    //        anchors.right: cutArea.right
-    //        anchors.top: cutArea.bottom
-    //        anchors.topMargin: 8
-    //        anchors.rightMargin: 6
-    //        onStartDraw: () => {
-    //                         cutAreaState = 5
-    //                         rootArea.cursorShape = Qt.CrossCursor
-    //                     }
     //    }
     //    ShapeRect {
     //        id: shapeContainer
