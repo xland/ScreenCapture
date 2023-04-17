@@ -35,7 +35,7 @@ QImage ScreenImageProvider::requestImage(const QString &id, QSize *size, const Q
         int x{0},y{0},width{230},height{160};
         x = mouseX - width/16;
         y = mouseY - height/16;
-        QRect rect(x,y,width/8,height/8);
+        QRect rect(x,y,width/8+1,height/8);
         auto result = shoter->desktopImage.copy(rect).scaled(width,height);
         return result;
     }

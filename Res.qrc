@@ -12,8 +12,11 @@
         <file>ShapeCreator.js</file>
         <file>Dragger.qml</file>
         <file>ShapeRect.qml</file>
-        <file>app.js</file>
         <file>CutArea.qml</file>
         <file>App.qml</file>
+        <file>qmldir</file>
+        <file>WindowMouseArea.qml</file>
+        <file>CutArea.js</file>
+        <file>MouseTip.js</file>
     </qresource>
 </RCC>

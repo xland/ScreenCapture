@@ -2,17 +2,22 @@ import QtQuick 2.15
 import ScreenCapture.Cutter 1.0
 
 Rectangle {
-    width: 232
-    height: 234
+    property string crossLineColor: "#330958d9"
+    id: root
+    x: App.mouseTip.x
+    y: App.mouseTip.y
+    width: App.mouseTip.width
+    height: App.mouseTip.height
     color: "#CC000000"
     border.width: 1
     border.color: "#000000"
-    visible: false
-    property alias imageSource: cursorImage.source
+    visible: App.mouseTip.visible
+    antialiasing: true
     Image {
+        y:1
         id: cursorImage
-        x: 1
-        y: 1
+        source: App.mouseTip.src
+        anchors.horizontalCenter: parent.horizontalCenter
         Rectangle {
             x: 0
             y: 75
