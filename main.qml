@@ -72,101 +72,101 @@ ApplicationWindow {
         Cutter.cutAreaRight = right
         Cutter.cutAreaBottom = bottom
     }
-    function resizeCutArea(mouse) {
-        if (mouseInArea === 0) {
-            Cutter.cutAreaLeft = mouse.x
-            Cutter.cutAreaTop = mouse.y
-            if (Cutter.cutAreaLeft > Cutter.cutAreaRight
-                    && Cutter.cutAreaTop > Cutter.cutAreaBottom) {
-                mouseInArea = 4
-                Cutter.cutAreaLeft = Cutter.cutAreaRight
-                Cutter.cutAreaTop = Cutter.cutAreaBottom
-            } else if (Cutter.cutAreaLeft > Cutter.cutAreaRight) {
-                mouseInArea = 2
-                rootArea.cursorShape = Qt.SizeBDiagCursor
-                Cutter.cutAreaLeft = Cutter.cutAreaRight
-            } else if (Cutter.cutAreaTop > Cutter.cutAreaBottom) {
-                mouseInArea = 6
-                rootArea.cursorShape = Qt.SizeBDiagCursor
-                Cutter.cutAreaTop = Cutter.cutAreaBottom
-            }
-        } else if (mouseInArea === 1) {
-            Cutter.cutAreaTop = mouse.y
-            if (Cutter.cutAreaTop > Cutter.cutAreaBottom) {
-                mouseInArea = 5
-                Cutter.cutAreaTop = Cutter.cutAreaBottom
-            }
-        } else if (mouseInArea === 2) {
-            Cutter.cutAreaRight = mouse.x
-            Cutter.cutAreaTop = mouse.y
-            if (Cutter.cutAreaLeft > Cutter.cutAreaRight
-                    && Cutter.cutAreaTop > Cutter.cutAreaBottom) {
-                mouseInArea = 6
-                Cutter.cutAreaLeft = Cutter.cutAreaRight
-                Cutter.cutAreaTop = Cutter.cutAreaBottom
-            } else if (Cutter.cutAreaLeft > Cutter.cutAreaRight) {
-                mouseInArea = 0
-                rootArea.cursorShape = Qt.SizeFDiagCursor
-                Cutter.cutAreaLeft = Cutter.cutAreaRight
-            } else if (Cutter.cutAreaTop > Cutter.cutAreaBottom) {
-                mouseInArea = 4
-                rootArea.cursorShape = Qt.SizeFDiagCursor
-                Cutter.cutAreaBottom = Cutter.cutAreaTop
-            }
-        } else if (mouseInArea === 3) {
-            Cutter.cutAreaRight = mouse.x
-            if (Cutter.cutAreaLeft > Cutter.cutAreaRight) {
-                mouseInArea = 7
-                Cutter.cutAreaLeft = Cutter.cutAreaRight
-            }
-        } else if (mouseInArea === 4) {
-            Cutter.cutAreaRight = mouse.x
-            Cutter.cutAreaBottom = mouse.y
-            if (Cutter.cutAreaLeft > Cutter.cutAreaRight
-                    && Cutter.cutAreaTop > Cutter.cutAreaBottom) {
-                mouseInArea = 0
-                Cutter.cutAreaLeft = Cutter.cutAreaRight
-                Cutter.cutAreaTop = Cutter.cutAreaBottom
-            } else if (Cutter.cutAreaLeft > Cutter.cutAreaRight) {
-                mouseInArea = 6
-                rootArea.cursorShape = Qt.SizeBDiagCursor
-                Cutter.cutAreaLeft = Cutter.cutAreaRight
-            } else if (Cutter.cutAreaTop > Cutter.cutAreaBottom) {
-                mouseInArea = 2
-                rootArea.cursorShape = Qt.SizeBDiagCursor
-                Cutter.cutAreaTop = Cutter.cutAreaBottom
-            }
-        } else if (mouseInArea === 5) {
-            Cutter.cutAreaBottom = mouse.y
-            if (Cutter.cutAreaTop > Cutter.cutAreaBottom) {
-                mouseInArea = 1
-                Cutter.cutAreaTop = Cutter.cutAreaBottom
-            }
-        } else if (mouseInArea === 6) {
-            Cutter.cutAreaLeft = mouse.x
-            Cutter.cutAreaBottom = mouse.y
-            if (Cutter.cutAreaLeft > Cutter.cutAreaRight
-                    && Cutter.cutAreaTop > Cutter.cutAreaBottom) {
-                mouseInArea = 2
-                Cutter.cutAreaLeft = Cutter.cutAreaRight
-                Cutter.cutAreaTop = Cutter.cutAreaBottom
-            } else if (Cutter.cutAreaLeft > Cutter.cutAreaRight) {
-                mouseInArea = 4
-                rootArea.cursorShape = Qt.SizeFDiagCursor
-                Cutter.cutAreaRight = Cutter.cutAreaLeft
-            } else if (Cutter.cutAreaTop > Cutter.cutAreaBottom) {
-                mouseInArea = 0
-                rootArea.cursorShape = Qt.SizeFDiagCursor
-                Cutter.cutAreaBottom = Cutter.cutAreaTop
-            }
-        } else if (mouseInArea === 7) {
-            Cutter.cutAreaLeft = mouse.x
-            if (Cutter.cutAreaLeft > Cutter.cutAreaRight) {
-                mouseInArea = 3
-                Cutter.cutAreaLeft = Cutter.cutAreaRight
-            }
-        }
-    }
+    //    function resizeCutArea(mouse) {
+    //        if (mouseInArea === 0) {
+    //            Cutter.cutAreaLeft = mouse.x
+    //            Cutter.cutAreaTop = mouse.y
+    //            if (Cutter.cutAreaLeft > Cutter.cutAreaRight
+    //                    && Cutter.cutAreaTop > Cutter.cutAreaBottom) {
+    //                mouseInArea = 4
+    //                Cutter.cutAreaLeft = Cutter.cutAreaRight
+    //                Cutter.cutAreaTop = Cutter.cutAreaBottom
+    //            } else if (Cutter.cutAreaLeft > Cutter.cutAreaRight) {
+    //                mouseInArea = 2
+    //                rootArea.cursorShape = Qt.SizeBDiagCursor
+    //                Cutter.cutAreaLeft = Cutter.cutAreaRight
+    //            } else if (Cutter.cutAreaTop > Cutter.cutAreaBottom) {
+    //                mouseInArea = 6
+    //                rootArea.cursorShape = Qt.SizeBDiagCursor
+    //                Cutter.cutAreaTop = Cutter.cutAreaBottom
+    //            }
+    //        } else if (mouseInArea === 1) {
+    //            Cutter.cutAreaTop = mouse.y
+    //            if (Cutter.cutAreaTop > Cutter.cutAreaBottom) {
+    //                mouseInArea = 5
+    //                Cutter.cutAreaTop = Cutter.cutAreaBottom
+    //            }
+    //        } else if (mouseInArea === 2) {
+    //            Cutter.cutAreaRight = mouse.x
+    //            Cutter.cutAreaTop = mouse.y
+    //            if (Cutter.cutAreaLeft > Cutter.cutAreaRight
+    //                    && Cutter.cutAreaTop > Cutter.cutAreaBottom) {
+    //                mouseInArea = 6
+    //                Cutter.cutAreaLeft = Cutter.cutAreaRight
+    //                Cutter.cutAreaTop = Cutter.cutAreaBottom
+    //            } else if (Cutter.cutAreaLeft > Cutter.cutAreaRight) {
+    //                mouseInArea = 0
+    //                rootArea.cursorShape = Qt.SizeFDiagCursor
+    //                Cutter.cutAreaLeft = Cutter.cutAreaRight
+    //            } else if (Cutter.cutAreaTop > Cutter.cutAreaBottom) {
+    //                mouseInArea = 4
+    //                rootArea.cursorShape = Qt.SizeFDiagCursor
+    //                Cutter.cutAreaBottom = Cutter.cutAreaTop
+    //            }
+    //        } else if (mouseInArea === 3) {
+    //            Cutter.cutAreaRight = mouse.x
+    //            if (Cutter.cutAreaLeft > Cutter.cutAreaRight) {
+    //                mouseInArea = 7
+    //                Cutter.cutAreaLeft = Cutter.cutAreaRight
+    //            }
+    //        } else if (mouseInArea === 4) {
+    //            Cutter.cutAreaRight = mouse.x
+    //            Cutter.cutAreaBottom = mouse.y
+    //            if (Cutter.cutAreaLeft > Cutter.cutAreaRight
+    //                    && Cutter.cutAreaTop > Cutter.cutAreaBottom) {
+    //                mouseInArea = 0
+    //                Cutter.cutAreaLeft = Cutter.cutAreaRight
+    //                Cutter.cutAreaTop = Cutter.cutAreaBottom
+    //            } else if (Cutter.cutAreaLeft > Cutter.cutAreaRight) {
+    //                mouseInArea = 6
+    //                rootArea.cursorShape = Qt.SizeBDiagCursor
+    //                Cutter.cutAreaLeft = Cutter.cutAreaRight
+    //            } else if (Cutter.cutAreaTop > Cutter.cutAreaBottom) {
+    //                mouseInArea = 2
+    //                rootArea.cursorShape = Qt.SizeBDiagCursor
+    //                Cutter.cutAreaTop = Cutter.cutAreaBottom
+    //            }
+    //        } else if (mouseInArea === 5) {
+    //            Cutter.cutAreaBottom = mouse.y
+    //            if (Cutter.cutAreaTop > Cutter.cutAreaBottom) {
+    //                mouseInArea = 1
+    //                Cutter.cutAreaTop = Cutter.cutAreaBottom
+    //            }
+    //        } else if (mouseInArea === 6) {
+    //            Cutter.cutAreaLeft = mouse.x
+    //            Cutter.cutAreaBottom = mouse.y
+    //            if (Cutter.cutAreaLeft > Cutter.cutAreaRight
+    //                    && Cutter.cutAreaTop > Cutter.cutAreaBottom) {
+    //                mouseInArea = 2
+    //                Cutter.cutAreaLeft = Cutter.cutAreaRight
+    //                Cutter.cutAreaTop = Cutter.cutAreaBottom
+    //            } else if (Cutter.cutAreaLeft > Cutter.cutAreaRight) {
+    //                mouseInArea = 4
+    //                rootArea.cursorShape = Qt.SizeFDiagCursor
+    //                Cutter.cutAreaRight = Cutter.cutAreaLeft
+    //            } else if (Cutter.cutAreaTop > Cutter.cutAreaBottom) {
+    //                mouseInArea = 0
+    //                rootArea.cursorShape = Qt.SizeFDiagCursor
+    //                Cutter.cutAreaBottom = Cutter.cutAreaTop
+    //            }
+    //        } else if (mouseInArea === 7) {
+    //            Cutter.cutAreaLeft = mouse.x
+    //            if (Cutter.cutAreaLeft > Cutter.cutAreaRight) {
+    //                mouseInArea = 3
+    //                Cutter.cutAreaLeft = Cutter.cutAreaRight
+    //            }
+    //        }
+    //    }
     function moveCutAreaByMouse(mouse) {
         if (mouse.x - mousePressX < 0) {
             Cutter.cutAreaLeft = 0
@@ -244,43 +244,41 @@ ApplicationWindow {
         sourceSize.width: root.width
         sourceSize.height: root.height
     }
-    Rectangle {
-        id: leftRect
-        x: 0
-        y: 0
-        height: parent.height
-        width: Cutter.cutAreaLeft
-        color: maskColor
-    }
-    Rectangle {
-        id: topRect
-        x: Cutter.cutAreaLeft
-        y: 0
-        height: Cutter.cutAreaTop
-        width: parent.width - Cutter.cutAreaLeft
-        color: maskColor
-    }
-    Rectangle {
-        id: rightRect
-        x: Cutter.cutAreaRight
-        y: Cutter.cutAreaTop
-        height: parent.height - Cutter.cutAreaTop
-        width: parent.width - Cutter.cutAreaRight
-        color: maskColor
-    }
-    Rectangle {
-        id: bottomRect
-        x: Cutter.cutAreaLeft
-        y: Cutter.cutAreaBottom
-        height: parent.height - Cutter.cutAreaBottom
-        width: Cutter.cutAreaRight - Cutter.cutAreaLeft
-        color: maskColor
-    }
-    CutArea {
-        id: cutArea
-    }
+    //    Rectangle {
+    //        id: leftRect
+    //        x: 0
+    //        y: 0
+    //        height: parent.height
+    //        width: Cutter.cutAreaLeft
+    //        color: maskColor
+    //    }
+    //    Rectangle {
+    //        id: topRect
+    //        x: Cutter.cutAreaLeft
+    //        y: 0
+    //        height: Cutter.cutAreaTop
+    //        width: parent.width - Cutter.cutAreaLeft
+    //        color: maskColor
+    //    }
+    //    Rectangle {
+    //        id: rightRect
+    //        x: Cutter.cutAreaRight
+    //        y: Cutter.cutAreaTop
+    //        height: parent.height - Cutter.cutAreaTop
+    //        width: parent.width - Cutter.cutAreaRight
+    //        color: maskColor
+    //    }
+    //    Rectangle {
+    //        id: bottomRect
+    //        x: Cutter.cutAreaLeft
+    //        y: Cutter.cutAreaBottom
+    //        height: parent.height - Cutter.cutAreaBottom
+    //        width: Cutter.cutAreaRight - Cutter.cutAreaLeft
+    //        color: maskColor
+    //    }
     MouseArea {
         id: rootArea
+        visible: false
         anchors.fill: parent
         acceptedButtons: Qt.LeftButton | Qt.RightButton
         hoverEnabled: true
@@ -301,7 +299,8 @@ ApplicationWindow {
                                    }
                                } else if (cutAreaState === 3) {
                                    if (mouse.buttons === Qt.LeftButton) {
-                                       resizeCutArea(mouse)
+
+                                       //                                       resizeCutArea(mouse)
                                    }
                                } else if (cutAreaState === 4) {
                                    if (mouse.buttons === Qt.LeftButton) {
@@ -420,10 +419,14 @@ ApplicationWindow {
 
     MouseTip {
         id: mouseTipRect
+        visible: false
     }
     ShapeRect {
         id: shapeContainer
         visible: cutAreaState === 5
+    }
+    CutArea {
+        id: cutArea
     }
 
     //  Component.onCompleted: {

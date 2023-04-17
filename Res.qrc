@@ -2,18 +2,18 @@
     <qresource prefix="/">
         <file>font.ttf</file>
         <file>ColorPicker.qml</file>
-        <file>CutArea.qml</file>
+        <file>CutArea_bak.qml</file>
         <file>DrawBtn.qml</file>
         <file>DrawRectTool.qml</file>
         <file>DrawTool.qml</file>
         <file>main.qml</file>
         <file>MouseTip.qml</file>
-        <file>ShapeRect_bak.qml</file>
         <file>Resizer.js</file>
         <file>ShapeCreator.js</file>
         <file>Dragger.qml</file>
-        <file>ShapeRectCircle_bak.qml</file>
         <file>ShapeRect.qml</file>
         <file>app.js</file>
+        <file>CutArea.qml</file>
+        <file>App.qml</file>
     </qresource>
 </RCC>
