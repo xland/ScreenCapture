@@ -45,16 +45,11 @@ MouseArea {
                                //放大镜
                                MouseTip.setMouseTip(mouse)
                            } else {
-                               //设置Cursor
-                               if (mouse.buttons === Qt.NoButton) {
-                                   CutArea.setCursorByMousePositionWhenDrawing(mouse)
-                               } else if (mouse.buttons === Qt.LeftButton) {
+                               root.cursorShape = Qt.CrossCursor
+                               if (mouse.buttons === Qt.LeftButton) {
                                    if (App.drawToolState === 1) {
                                        ShapeCreator.shapes[0].endX = mouse.x
                                        ShapeCreator.shapes[0].endY = mouse.y
-                                   }
-                                   if (mouseInArea !== 9) {
-                                       CutArea.resizeCutArea(mouse)
                                    }
                                }
                            }
@@ -77,13 +72,7 @@ MouseArea {
                                    App.cutAreaState = 4
                                }
                            } else {
-                               if (mouseInArea !== 9) {
-                                   //改变大小
-                                   CutArea.setCursorByMousePositionWhenDrawing(mouse)
-                                   App.cutAreaState = 3
-                               } else {
-                                   ShapeCreator.createShape(mouse)
-                               }
+                               ShapeCreator.createShape(mouse)
                            }
                        }
                    }

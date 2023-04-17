@@ -1,7 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Shapes 1.15
 
-MouseArea {
+Shape {
     property string customColor: "red"
     property alias startX: path.startX
     property alias startY: path.startY
@@ -34,58 +34,29 @@ MouseArea {
         draggerLeft.x = startX - span
         draggerLeft.y = startY + (endY - startY) / 2
     }
+    id: shape
     anchors.fill: parent
-    acceptedButtons: Qt.LeftButton | Qt.RightButton
-    hoverEnabled: true
-    cursorShape: Qt.CrossCursor
-    onPressed: mouse => {
-                   if (mouse.buttons === Qt.LeftButton) {
-                       console.log("b", App.pressPosition.x)
-                       if (showDragger) {
-                           //绘图完成后的点击,接下去要画第二个了
-                           showDragger = false
-                       } else {
-                           //开始绘图前的点击
-                           startX = mouse.x
-                           startY = mouse.y
-                           endX = mouse.x
-                           endY = mouse.y
-                       }
-                   }
-               }
-    onPositionChanged: mouse => {
-                           if (mouse.buttons === Qt.LeftButton) {
-                               endX = mouse.x
-                               endY = mouse.y
-                           }
-                       }
-    onReleased: () => {
-                    showDragger = true
-                }
-    Shape {
-        id: shape
-        containsMode: Shape.FillContains
-        ShapePath {
-            id: path
-            strokeWidth: 3
-            strokeColor: customColor
-            fillColor: "transparent"
-            PathLine {
-                x: endX
-                y: startY
-            }
-            PathLine {
-                x: endX
-                y: endY
-            }
-            PathLine {
-                x: startX
-                y: endY
-            }
-            PathLine {
-                x: startX
-                y: startY
-            }
+    containsMode: Shape.FillContains
+    ShapePath {
+        id: path
+        strokeWidth: 3
+        strokeColor: customColor
+        fillColor: "transparent"
+        PathLine {
+            x: endX
+            y: startY
+        }
+        PathLine {
+            x: endX
+            y: endY
+        }
+        PathLine {
+            x: startX
+            y: endY
+        }
+        PathLine {
+            x: startX
+            y: startY
         }
     }
     MouseArea {

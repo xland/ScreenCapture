@@ -146,6 +146,7 @@ function setCursorByMousePosition(mouse) {
 }
 
 //设置cursor样式，并记录鼠标所在区域（绘图中）
+//暂时没用到，以后可能有需要
 function setCursorByMousePositionWhenDrawing(mouse) {
     let span = 4
     if (mouse.x < Cutter.cutAreaLeft && mouse.x > Cutter.cutAreaLeft - span && mouse.y > Cutter.cutAreaTop - span && mouse.y < Cutter.cutAreaTop) {
