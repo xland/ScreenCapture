@@ -12,6 +12,8 @@ Rectangle {
         isSelected: !App.rectCircle.isFill
         onClick: () => {
                      App.rectCircle.isFill = !App.rectCircle.isFill
+                     App.rectCircle.fillColor = "transparent"
+                     ShapeCreator.shapes[0].customColor = "blue"
                  }
     }
     DrawBtn {
@@ -21,7 +23,11 @@ Rectangle {
         anchors.top: dot.top
         isSelected: App.rectCircle.isFill
         onClick: () => {
+                     requestUpdate()
                      App.rectCircle.isFill = !App.rectCircle.isFill
+                     App.rectCircle.fillColor = "red"
+                     console.log("update", App.rectCircle.fillColor)
+                     App.shapes[0].customColor = "blue"
                  }
     }
     Rectangle {

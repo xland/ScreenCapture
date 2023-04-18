@@ -10,8 +10,9 @@ QtObject {
     property QtObject rectCircle: QtObject {
         property bool isRect: true
         property bool isFill: false
-        property real borderWidth: 3
-        property string color: "red"
+        property string fillColor: "transparent"
+        property real strokeWidth: 3
+        property string strokeColor: "red"
     }
 
     property QtObject mouseTip: QtObject {

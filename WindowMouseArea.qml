@@ -2,13 +2,38 @@ import QtQuick 2.15
 import ScreenCapture.Cutter 1.0
 import "CutArea.js" as CutArea
 import "MouseTip.js" as MouseTip
-import "ShapeCreator.js" as ShapeCreator
+import "Shapes.js" as Shapes
 
 MouseArea {
-    id: root
     property int mouseInArea: -1 //0左上,1上,2右上,3右,4右下,5下,6左下,7左,8中,9绘图区域
     property int mousePressX: 0
     property int mousePressY: 0
+    function createComponent(name, obj) {
+        var result
+        var component = Qt.createComponent(name + ".qml")
+        if (component.status === Component.Ready) {
+            result = component.createObject(root, obj)
+            if (result === null) {
+                console.log("Error creating object")
+            }
+        } else if (component.status === Component.Error) {
+            console.log("Error loading component:", component.errorString())
+        }
+        return result
+    }
+
+    function createShape(mouse) {
+        if (App.drawToolState === 1) {
+            let shape = createComponent("ShapeRect", {
+                                            "startX1": mouse.x,
+                                            "startY1": mouse.y,
+                                            "endX": mouse.x,
+                                            "endY": mouse.y
+                                        })
+            Shapes.shapes.splice(0, 0, shape)
+        }
+    }
+    id: root
     anchors.fill: parent
     visible: true //todo 绘图状态时要控制这里不显示
     acceptedButtons: Qt.LeftButton | Qt.RightButton
@@ -48,8 +73,8 @@ MouseArea {
                                root.cursorShape = Qt.CrossCursor
                                if (mouse.buttons === Qt.LeftButton) {
                                    if (App.drawToolState === 1) {
-                                       ShapeCreator.shapes[0].endX = mouse.x
-                                       ShapeCreator.shapes[0].endY = mouse.y
+                                       Shapes.shapes[0].endX = mouse.x
+                                       Shapes.shapes[0].endY = mouse.y
                                    }
                                }
                            }
@@ -72,8 +97,15 @@ MouseArea {
                                    App.cutAreaState = 4
                                }
                            } else {
-                               ShapeCreator.createShape(mouse)
+                               if (Shapes.shapes.length > 0) {
+                                   Shapes.shapes[0].done()
+                               }
+                               createShape(mouse)
                            }
+                       }
+                   } else {
+                       if (ShapeCreator.shapes.length > 0) {
+                           ShapeCreator.shapes[0].done()
                        }
                    }
                }
@@ -86,7 +118,7 @@ MouseArea {
                             App.cutAreaState = 2
                         }
                         if (App.drawToolState === 1) {
-                            ShapeCreator.shapes[0].showDragger = true
+                            Shapes.shapes[0].showDragger = true
                         }
                     }
                 }

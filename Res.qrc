@@ -9,7 +9,7 @@
         <file>main.qml</file>
         <file>MouseTip.qml</file>
         <file>Resizer.js</file>
-        <file>ShapeCreator.js</file>
+        <file>Shapes.js</file>
         <file>Dragger.qml</file>
         <file>ShapeRect.qml</file>
         <file>CutArea.qml</file>

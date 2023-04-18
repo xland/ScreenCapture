@@ -1,0 +1,2 @@
+.pragma library
+var shapes = []

@@ -14,7 +14,7 @@ Rectangle {
     visible: App.mouseTip.visible
     antialiasing: true
     Image {
-        y:1
+        y: 1
         id: cursorImage
         source: App.mouseTip.src
         anchors.horizontalCenter: parent.horizontalCenter

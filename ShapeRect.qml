@@ -1,186 +1,233 @@
 import QtQuick 2.15
 import QtQuick.Shapes 1.15
 
-Shape {
+Item {
     property string customColor: "red"
-    property alias startX: path.startX
-    property alias startY: path.startY
+    property real startX1: 0
+    property real startY1: 0
     property real endX: 0
     property real endY: 0
     property bool showDragger: false
     property real span: draggerLeftTop.width / 2
     function setDraggerPosition() {
-        draggerLeftTop.x = startX - span
-        draggerLeftTop.y = startY - span
+        draggerLeftTop.x = startX1 - span
+        draggerLeftTop.y = startY1 - span
 
-        draggerTop.x = startX + (endX - startX) / 2
-        draggerTop.y = startY - span
+        draggerTop.x = startX1 + (endX - startX1) / 2 - span
+        draggerTop.y = startY1 - span
 
         draggerRightTop.x = endX - span
-        draggerRightTop.y = startY - span
+        draggerRightTop.y = startY1 - span
 
         draggerRight.x = endX - span
-        draggerRight.y = startY + (endY - startY) / 2
+        draggerRight.y = startY1 + (endY - startY1) / 2 - span
 
         draggerRightBottom.x = endX - span
         draggerRightBottom.y = endY - span
 
-        draggerBottom.x = startX + (endX - startX) / 2
+        draggerBottom.x = startX1 + (endX - startX1) / 2 - span
         draggerBottom.y = endY - span
 
-        draggerLeftBottom.x = startX - span
+        draggerLeftBottom.x = startX1 - span
         draggerLeftBottom.y = endY - span
 
-        draggerLeft.x = startX - span
-        draggerLeft.y = startY + (endY - startY) / 2
+        draggerLeft.x = startX1 - span
+        draggerLeft.y = startY1 + (endY - startY1) / 2 - span
     }
-    id: shape
+    function done() {
+        if (showDragger) {
+            showDragger = false
+            shapeMouseArea.cursorShape = Qt.CrossCursor
+            //解绑
+            circleShape.visible = !App.rectCircle.isRect
+            rectShape.visible = App.rectCircle.isRect
+
+            circleShape.strokeColor = App.rectCircle.strokeColor
+            rectShape.strokeColor = App.rectCircle.strokeColor
+
+            circleShape.fillColor = App.rectCircle.fillColor
+            rectShape.fillColor = App.rectCircle.fillColor
+
+            circleShape.strokeWidth = App.rectCircle.strokeWidth
+            rectShape.strokeWidth = App.rectCircle.strokeWidth
+        }
+    }
+
+    id: root
     anchors.fill: parent
-    containsMode: Shape.FillContains
-    ShapePath {
-        id: path
-        strokeWidth: 3
-        strokeColor: customColor
-        fillColor: "transparent"
-        PathLine {
-            x: endX
-            y: startY
+    Shape {
+        id: rectShape
+        containsMode: Shape.FillContains
+        visible: App.rectCircle.isRect
+        anchors.fill: parent
+        ShapePath {
+            strokeWidth: App.rectCircle.strokeWidth
+            strokeColor: customColor
+            fillColor: customColor
+            startX: startX1
+            startY: startY1
+            PathLine {
+                x: endX
+                y: startY1
+            }
+            PathLine {
+                x: endX
+                y: endY
+            }
+            PathLine {
+                x: startX1
+                y: endY
+            }
+            PathLine {
+                x: startX1
+                y: startY1
+            }
         }
-        PathLine {
-            x: endX
-            y: endY
-        }
-        PathLine {
-            x: startX
-            y: endY
-        }
-        PathLine {
-            x: startX
-            y: startY
+    }
+    Shape {
+        id: circleShape
+        visible: !App.rectCircle.isRect
+        antialiasing: true
+        layer.enabled: true
+        layer.samples: 8
+        anchors.fill: parent
+        ShapePath {
+            fillColor: customColor
+            strokeColor: customColor
+            strokeWidth: App.rectCircle.strokeWidth
+            PathAngleArc {
+                centerX: startX1 + (endX - startX1) / 2
+                centerY: startY1 + (endY - startY1) / 2
+                radiusX: (endX - startX1) / 2
+                radiusY: (endY - startY1) / 2
+                startAngle: 0
+                sweepAngle: 360
+            }
         }
     }
     MouseArea {
-        id: shapeMouseArea
-        anchors.fill: parent
-        containmentMask: shape
-        hoverEnabled: true
-        cursorShape: Qt.SizeAllCursor
         property real pressX: 0
         property real pressY: 0
+        id: shapeMouseArea
+        anchors.fill: parent
+        containmentMask: App.rectCircle.isRect ? rectShape : circleShape
+        hoverEnabled: true
+        cursorShape: Qt.SizeAllCursor
+        visible: showDragger
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
+        propagateComposedEvents: true
         onPressed: mouse => {
-                       shapeMouseArea.pressX = mouse.x
-                       shapeMouseArea.pressY = mouse.y
+                       if (mouse.buttons === Qt.LeftButton) {
+                           shapeMouseArea.pressX = mouse.x
+                           shapeMouseArea.pressY = mouse.y
+                       } else {
+                           done()
+                       }
                    }
         onPositionChanged: mouse => {
                                if (mouse.buttons === Qt.LeftButton) {
                                    let spanX = mouse.x - shapeMouseArea.pressX
                                    let spanY = mouse.y - shapeMouseArea.pressY
-                                   startX += spanX
-                                   startY += spanY
+                                   startX1 += spanX
+                                   startY1 += spanY
                                    endX += spanX
                                    endY += spanY
                                    setDraggerPosition()
                                    shapeMouseArea.pressX = mouse.x
                                    shapeMouseArea.pressY = mouse.y
+                               } else {
+                                   mouse.accepted = false
                                }
                            }
-    }
-    //左上
-    Dragger {
-        id: draggerLeftTop
-        visible: showDragger
-        x: startX - span
-        y: startY - span
-        onMoved: (x, y) => {
-                     startX = x + span
-                     startY = y + span
-                     setDraggerPosition()
-                 }
-    }
-    //上
-    Dragger {
-        id: draggerTop
-        visible: showDragger
-        cursor: Qt.SizeVerCursor
-        x: startX + (endX - startX) / 2
-        y: startY - span
-        onMoved: (x, y) => {
-                     startY = y + span
-                     setDraggerPosition()
-                 }
-    }
-    //右上
-    Dragger {
-        id: draggerRightTop
-        visible: showDragger
-        cursor: Qt.SizeBDiagCursor
-        x: endX - span
-        y: startY - span
-        onMoved: (x, y) => {
-                     endX = x + span
-                     startY = y + span
-                     setDraggerPosition()
-                 }
-    }
-    //右
-    Dragger {
-        id: draggerRight
-        visible: showDragger
-        cursor: Qt.SizeHorCursor
-        x: endX - span
-        y: startY + (endY - startY) / 2
-        onMoved: (x, y) => {
-                     endX = x + span
-                     setDraggerPosition()
-                 }
-    }
-    //右下
-    Dragger {
-        id: draggerRightBottom
-        visible: showDragger
-        x: endX - span
-        y: endY - span
-        onMoved: (x, y) => {
-                     endX = x + span
-                     endY = y + span
-                     setDraggerPosition()
-                 }
-    }
-    //下
-    Dragger {
-        id: draggerBottom
-        visible: showDragger
-        cursor: Qt.SizeVerCursor
-        x: startX + (endX - startX) / 2
-        y: endY - span
-        onMoved: (x, y) => {
-                     endY = y + span
-                     setDraggerPosition()
-                 }
-    }
-    //左下
-    Dragger {
-        id: draggerLeftBottom
-        visible: showDragger
-        cursor: Qt.SizeBDiagCursor
-        x: startX - span
-        y: endY - span
-        onMoved: (x, y) => {
-                     startX = x + span
-                     endY = y + span
-                     setDraggerPosition()
-                 }
-    }
-    //左
-    Dragger {
-        id: draggerLeft
-        visible: showDragger
-        cursor: Qt.SizeHorCursor
-        x: startX - span
-        y: startY + (endY - startY) / 2
-        onMoved: (x, y) => {
-                     startX = x + span
-                     setDraggerPosition()
-                 }
+        //左上
+        Dragger {
+            id: draggerLeftTop
+            x: startX1 - span
+            y: startY1 - span
+            onMoved: (x, y) => {
+                         startX1 = x + span
+                         startY1 = y + span
+                         setDraggerPosition()
+                     }
+        }
+        //上
+        Dragger {
+            id: draggerTop
+            cursor: Qt.SizeVerCursor
+            x: startX1 + (endX - startX1) / 2 - span
+            y: startY1 - span
+            onMoved: (x, y) => {
+                         startY1 = y + span
+                         setDraggerPosition()
+                     }
+        }
+        //右上
+        Dragger {
+            id: draggerRightTop
+            cursor: Qt.SizeBDiagCursor
+            x: endX - span
+            y: startY1 - span
+            onMoved: (x, y) => {
+                         endX = x + span
+                         startY1 = y + span
+                         setDraggerPosition()
+                     }
+        }
+        //右
+        Dragger {
+            id: draggerRight
+            cursor: Qt.SizeHorCursor
+            x: endX - span
+            y: startY1 + (endY - startY1) / 2 - span
+            onMoved: (x, y) => {
+                         endX = x + span
+                         setDraggerPosition()
+                     }
+        }
+        //右下
+        Dragger {
+            id: draggerRightBottom
+            x: endX - span
+            y: endY - span
+            onMoved: (x, y) => {
+                         endX = x + span
+                         endY = y + span
+                         setDraggerPosition()
+                     }
+        }
+        //下
+        Dragger {
+            id: draggerBottom
+            cursor: Qt.SizeVerCursor
+            x: startX1 + (endX - startX1) / 2 - span
+            y: endY - span
+            onMoved: (x, y) => {
+                         endY = y + span
+                         setDraggerPosition()
+                     }
+        }
+        //左下
+        Dragger {
+            id: draggerLeftBottom
+            cursor: Qt.SizeBDiagCursor
+            x: startX1 - span
+            y: endY - span
+            onMoved: (x, y) => {
+                         startX1 = x + span
+                         endY = y + span
+                         setDraggerPosition()
+                     }
+        }
+        //左
+        Dragger {
+            id: draggerLeft
+            cursor: Qt.SizeHorCursor
+            x: startX1 - span
+            y: startY1 + (endY - startY1) / 2 - span
+            onMoved: (x, y) => {
+                         startX1 = x + span
+                         setDraggerPosition()
+                     }
+        }
     }
 }
