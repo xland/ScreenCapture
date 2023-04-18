@@ -24,12 +24,18 @@ MouseArea {
 
     function createShape(mouse) {
         if (App.drawToolState === 1) {
-            let shape = createComponent("ShapeRect", {
-                                            "startX1": mouse.x,
-                                            "startY1": mouse.y,
-                                            "endX": mouse.x,
-                                            "endY": mouse.y
-                                        })
+            let config = {
+                "startX1": mouse.x,
+                "startY1": mouse.y,
+                "endX": mouse.x,
+                "endY": mouse.y,
+                "isRect": App.rectCircle.isRect,
+                "isFill": App.rectCircle.isFill,
+                "bgColor": App.rectCircle.bgColor,
+                "borderWidth": App.rectCircle.borderWidth,
+                "borderColor": App.rectCircle.borderColor
+            }
+            let shape = createComponent("ShapeRect", config)
             Shapes.shapes.splice(0, 0, shape)
         }
     }
@@ -104,8 +110,8 @@ MouseArea {
                            }
                        }
                    } else {
-                       if (ShapeCreator.shapes.length > 0) {
-                           ShapeCreator.shapes[0].done()
+                       if (Shapes.shapes.length > 0) {
+                           Shapes.shapes[0].done()
                        }
                    }
                }

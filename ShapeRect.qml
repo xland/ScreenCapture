@@ -2,7 +2,11 @@ import QtQuick 2.15
 import QtQuick.Shapes 1.15
 
 Item {
-    property string customColor: "red"
+    property bool isRect: true
+    property bool isFill: false
+    property string bgColor: "transparent"
+    property real borderWidth: 3
+    property string borderColor: "red"
     property real startX1: 0
     property real startY1: 0
     property real endX: 0
@@ -38,32 +42,49 @@ Item {
         if (showDragger) {
             showDragger = false
             shapeMouseArea.cursorShape = Qt.CrossCursor
-            //解绑
-            circleShape.visible = !App.rectCircle.isRect
-            rectShape.visible = App.rectCircle.isRect
-
-            circleShape.strokeColor = App.rectCircle.strokeColor
-            rectShape.strokeColor = App.rectCircle.strokeColor
-
-            circleShape.fillColor = App.rectCircle.fillColor
-            rectShape.fillColor = App.rectCircle.fillColor
-
-            circleShape.strokeWidth = App.rectCircle.strokeWidth
-            rectShape.strokeWidth = App.rectCircle.strokeWidth
         }
     }
+    onBgColorChanged: () => {
+                          circleShapePath.fillColor = bgColor
+                          rectShapePath.fillColor = bgColor
+                          rectShapePath.changed()
+                      }
 
     id: root
     anchors.fill: parent
     Shape {
-        id: rectShape
-        containsMode: Shape.FillContains
-        visible: App.rectCircle.isRect
+        id: circleShape
+        visible: !isRect
+        antialiasing: true
+        layer.enabled: true
+        layer.samples: 8
         anchors.fill: parent
+        containsMode: Shape.FillContains
         ShapePath {
-            strokeWidth: App.rectCircle.strokeWidth
-            strokeColor: customColor
-            fillColor: customColor
+            id: circleShapePath
+            fillColor: bgColor
+            strokeColor: borderColor
+            strokeWidth: borderWidth
+            PathAngleArc {
+                centerX: startX1 + (endX - startX1) / 2
+                centerY: startY1 + (endY - startY1) / 2
+                radiusX: (endX - startX1) / 2
+                radiusY: (endY - startY1) / 2
+                startAngle: 0
+                sweepAngle: 360
+            }
+        }
+    }
+    Shape {
+        id: rectShape
+        visible: isRect
+        anchors.fill: parent
+        containsMode: Shape.FillContains
+        ShapePath {
+            id: rectShapePath
+            strokeWidth: borderWidth
+            strokeColor: borderColor
+            fillColor: bgColor
             startX: startX1
             startY: startY1
             PathLine {
@@ -84,61 +105,53 @@ Item {
             }
         }
     }
-    Shape {
-        id: circleShape
-        visible: !App.rectCircle.isRect
-        antialiasing: true
-        layer.enabled: true
-        layer.samples: 8
-        anchors.fill: parent
-        ShapePath {
-            fillColor: customColor
-            strokeColor: customColor
-            strokeWidth: App.rectCircle.strokeWidth
-            PathAngleArc {
-                centerX: startX1 + (endX - startX1) / 2
-                centerY: startY1 + (endY - startY1) / 2
-                radiusX: (endX - startX1) / 2
-                radiusY: (endY - startY1) / 2
-                startAngle: 0
-                sweepAngle: 360
-            }
-        }
-    }
     MouseArea {
         property real pressX: 0
         property real pressY: 0
         id: shapeMouseArea
         anchors.fill: parent
-        containmentMask: App.rectCircle.isRect ? rectShape : circleShape
         hoverEnabled: true
-        cursorShape: Qt.SizeAllCursor
+        cursorShape: Qt.CrossCursor
         visible: showDragger
         acceptedButtons: Qt.LeftButton | Qt.RightButton
         propagateComposedEvents: true
         onPressed: mouse => {
-                       if (mouse.buttons === Qt.LeftButton) {
-                           shapeMouseArea.pressX = mouse.x
-                           shapeMouseArea.pressY = mouse.y
+                       let p = Qt.point(mouse.x, mouse.y)
+                       if (rectShape.contains(p) || circleShape.contains(p)) {
+                           if (mouse.buttons === Qt.LeftButton) {
+                               shapeMouseArea.pressX = mouse.x
+                               shapeMouseArea.pressY = mouse.y
+                           } else {
+                               done()
+                           }
                        } else {
-                           done()
+                           mouse.accepted = false
                        }
                    }
         onPositionChanged: mouse => {
-                               if (mouse.buttons === Qt.LeftButton) {
-                                   let spanX = mouse.x - shapeMouseArea.pressX
-                                   let spanY = mouse.y - shapeMouseArea.pressY
-                                   startX1 += spanX
-                                   startY1 += spanY
-                                   endX += spanX
-                                   endY += spanY
-                                   setDraggerPosition()
-                                   shapeMouseArea.pressX = mouse.x
-                                   shapeMouseArea.pressY = mouse.y
+                               let p = Qt.point(mouse.x, mouse.y)
+                               if (rectShape.contains(p) || circleShape.contains(p)) {
+                                   shapeMouseArea.cursorShape = Qt.SizeAllCursor
+                                   if (mouse.buttons === Qt.LeftButton) {
+                                       let spanX = mouse.x - shapeMouseArea.pressX
+                                       let spanY = mouse.y - shapeMouseArea.pressY
+                                       startX1 += spanX
+                                       startY1 += spanY
+                                       endX += spanX
+                                       endY += spanY
+                                       setDraggerPosition()
+                                       shapeMouseArea.pressX = mouse.x
+                                       shapeMouseArea.pressY = mouse.y
+                                   }
                                } else {
+                                   shapeMouseArea.cursorShape = Qt.CrossCursor
                                    mouse.accepted = false
                                }
                            }
+        onReleased: () => {
+                        mouse.accepted = false
+                    }
+
         //左上
         Dragger {
             id: draggerLeftTop

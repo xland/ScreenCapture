@@ -1,4 +1,5 @@
 import QtQuick 2.15
+import "Shapes.js" as Shapes
 
 Rectangle {
     id: root
@@ -12,8 +13,8 @@ Rectangle {
         isSelected: !App.rectCircle.isFill
         onClick: () => {
                      App.rectCircle.isFill = !App.rectCircle.isFill
-                     App.rectCircle.fillColor = "transparent"
-                     ShapeCreator.shapes[0].customColor = "blue"
+                     App.rectCircle.bgColor = "transparent"
+                     Shapes.shapes[0].bgColor = "transparent"
                  }
     }
     DrawBtn {
@@ -23,11 +24,9 @@ Rectangle {
         anchors.top: dot.top
         isSelected: App.rectCircle.isFill
         onClick: () => {
-                     requestUpdate()
                      App.rectCircle.isFill = !App.rectCircle.isFill
-                     App.rectCircle.fillColor = "red"
-                     console.log("update", App.rectCircle.fillColor)
-                     App.shapes[0].customColor = "blue"
+                     App.rectCircle.bgColor = "red"
+                     Shapes.shapes[0].bgColor = "red"
                  }
     }
     Rectangle {
@@ -48,6 +47,7 @@ Rectangle {
         anchors.top: dot.top
         onClick: () => {
                      App.rectCircle.isRect = !App.rectCircle.isRect
+                     Shapes.shapes[0].isRect = App.rectCircle.isRect
                  }
     }
     DrawBtn {
@@ -58,6 +58,7 @@ Rectangle {
         anchors.top: dot.top
         onClick: () => {
                      App.rectCircle.isRect = !App.rectCircle.isRect
+                     Shapes.shapes[0].isRect = App.rectCircle.isRect
                  }
     }
     ColorPicker {
