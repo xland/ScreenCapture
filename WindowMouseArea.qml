@@ -37,6 +37,8 @@ MouseArea {
             }
             let shape = createComponent("ShapeRect", config)
             Shapes.shapes.splice(0, 0, shape)
+        } else if (App.drawToolState === 2) {
+
         }
     }
     id: root

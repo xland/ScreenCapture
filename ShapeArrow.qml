@@ -2,15 +2,19 @@ import QtQuick 2.15
 import QtQuick.Shapes 1.15
 
 Item {
-    property bool isRect: true
     property bool isFill: false
     property string bgColor: "transparent"
-    property real borderWidth: 3
     property string borderColor: "red"
-    property real startX1: 0
-    property real startY1: 0
-    property real endX: 0
-    property real endY: 0
+    property variant points: [{
+            "x": 100,
+            "y": 100
+        }, {
+            "x": 160,
+            "y": 120
+        }, {
+            "x": 360,
+            "y": 180
+        }]
     property bool showDragger: false
     property real span: draggerLeftTop.width / 2
     function setDraggerPosition() {
@@ -118,7 +122,6 @@ Item {
         propagateComposedEvents: true
         onPressed: mouse => {
                        let p = Qt.point(mouse.x, mouse.y)
-
                        if (rectShape.contains(p) || circleShape.contains(p)) {
                            if (mouse.buttons === Qt.LeftButton) {
                                shapeMouseArea.pressX = mouse.x

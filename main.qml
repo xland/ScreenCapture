@@ -42,153 +42,16 @@ ApplicationWindow {
         anchors.top: drawTool.top
         anchors.topMargin: 34
     }
+    DrawArrowTool {
+        id: drawArrowTool
+        anchors.left: drawTool.left
+        anchors.top: drawTool.top
+        anchors.topMargin: 34
+    }
     MouseTip {
         id: mouseTipRect
     }
-    //    property string maskColor: "#88000000"
-    //    property string crossLineColor: "#330958d9"
-    //    property int mousePressX: 0
-    //    property int mousePressY: 0
-    //    property int widthForMoving: 0
-    //    property int heightForMoving: 0
-    //    property int cutAreaState: 0 //0未开始，1创建中，2创建完成,3修改中,4移动中,5绘制中
-    //    property int mouseInArea: -1 //0左上,1上,2右上,3右,4右下,5下,6左下,7左,8中
-    //    function createCutAreaByDrag(mouse) {
-    //        let left = mousePressX, top = mousePressY, right = mouse.x, bottom = mouse.y
-    //        if (mouse.x < left) {
-    //            left = mouse.x
-    //            right = mousePressX
-    //        }
-    //        if (mouse.y < top) {
-    //            top = mouse.y
-    //            bottom = mousePressY
-    //        }
-    //        Cutter.cutAreaLeft = left
-    //        Cutter.cutAreaTop = top
-    //        Cutter.cutAreaRight = right
-    //        Cutter.cutAreaBottom = bottom
-    //    }
-    //    function resizeCutArea(mouse) {
-    //        if (mouseInArea === 0) {
-    //            Cutter.cutAreaLeft = mouse.x
-    //            Cutter.cutAreaTop = mouse.y
-    //            if (Cutter.cutAreaLeft > Cutter.cutAreaRight
-    //                    && Cutter.cutAreaTop > Cutter.cutAreaBottom) {
-    //                mouseInArea = 4
-    //                Cutter.cutAreaLeft = Cutter.cutAreaRight
-    //                Cutter.cutAreaTop = Cutter.cutAreaBottom
-    //            } else if (Cutter.cutAreaLeft > Cutter.cutAreaRight) {
-    //                mouseInArea = 2
-    //                rootArea.cursorShape = Qt.SizeBDiagCursor
-    //                Cutter.cutAreaLeft = Cutter.cutAreaRight
-    //            } else if (Cutter.cutAreaTop > Cutter.cutAreaBottom) {
-    //                mouseInArea = 6
-    //                rootArea.cursorShape = Qt.SizeBDiagCursor
-    //                Cutter.cutAreaTop = Cutter.cutAreaBottom
-    //            }
-    //        } else if (mouseInArea === 1) {
-    //            Cutter.cutAreaTop = mouse.y
-    //            if (Cutter.cutAreaTop > Cutter.cutAreaBottom) {
-    //                mouseInArea = 5
-    //                Cutter.cutAreaTop = Cutter.cutAreaBottom
-    //            }
-    //        } else if (mouseInArea === 2) {
-    //            Cutter.cutAreaRight = mouse.x
-    //            Cutter.cutAreaTop = mouse.y
-    //            if (Cutter.cutAreaLeft > Cutter.cutAreaRight
-    //                    && Cutter.cutAreaTop > Cutter.cutAreaBottom) {
-    //                mouseInArea = 6
-    //                Cutter.cutAreaLeft = Cutter.cutAreaRight
-    //                Cutter.cutAreaTop = Cutter.cutAreaBottom
-    //            } else if (Cutter.cutAreaLeft > Cutter.cutAreaRight) {
-    //                mouseInArea = 0
-    //                rootArea.cursorShape = Qt.SizeFDiagCursor
-    //                Cutter.cutAreaLeft = Cutter.cutAreaRight
-    //            } else if (Cutter.cutAreaTop > Cutter.cutAreaBottom) {
-    //                mouseInArea = 4
-    //                rootArea.cursorShape = Qt.SizeFDiagCursor
-    //                Cutter.cutAreaBottom = Cutter.cutAreaTop
-    //            }
-    //        } else if (mouseInArea === 3) {
-    //            Cutter.cutAreaRight = mouse.x
-    //            if (Cutter.cutAreaLeft > Cutter.cutAreaRight) {
-    //                mouseInArea = 7
-    //                Cutter.cutAreaLeft = Cutter.cutAreaRight
-    //            }
-    //        } else if (mouseInArea === 4) {
-    //            Cutter.cutAreaRight = mouse.x
-    //            Cutter.cutAreaBottom = mouse.y
-    //            if (Cutter.cutAreaLeft > Cutter.cutAreaRight
-    //                    && Cutter.cutAreaTop > Cutter.cutAreaBottom) {
-    //                mouseInArea = 0
-    //                Cutter.cutAreaLeft = Cutter.cutAreaRight
-    //                Cutter.cutAreaTop = Cutter.cutAreaBottom
-    //            } else if (Cutter.cutAreaLeft > Cutter.cutAreaRight) {
-    //                mouseInArea = 6
-    //                rootArea.cursorShape = Qt.SizeBDiagCursor
-    //                Cutter.cutAreaLeft = Cutter.cutAreaRight
-    //            } else if (Cutter.cutAreaTop > Cutter.cutAreaBottom) {
-    //                mouseInArea = 2
-    //                rootArea.cursorShape = Qt.SizeBDiagCursor
-    //                Cutter.cutAreaTop = Cutter.cutAreaBottom
-    //            }
-    //        } else if (mouseInArea === 5) {
-    //            Cutter.cutAreaBottom = mouse.y
-    //            if (Cutter.cutAreaTop > Cutter.cutAreaBottom) {
-    //                mouseInArea = 1
-    //                Cutter.cutAreaTop = Cutter.cutAreaBottom
-    //            }
-    //        } else if (mouseInArea === 6) {
-    //            Cutter.cutAreaLeft = mouse.x
-    //            Cutter.cutAreaBottom = mouse.y
-    //            if (Cutter.cutAreaLeft > Cutter.cutAreaRight
-    //                    && Cutter.cutAreaTop > Cutter.cutAreaBottom) {
-    //                mouseInArea = 2
-    //                Cutter.cutAreaLeft = Cutter.cutAreaRight
-    //                Cutter.cutAreaTop = Cutter.cutAreaBottom
-    //            } else if (Cutter.cutAreaLeft > Cutter.cutAreaRight) {
-    //                mouseInArea = 4
-    //                rootArea.cursorShape = Qt.SizeFDiagCursor
-    //                Cutter.cutAreaRight = Cutter.cutAreaLeft
-    //            } else if (Cutter.cutAreaTop > Cutter.cutAreaBottom) {
-    //                mouseInArea = 0
-    //                rootArea.cursorShape = Qt.SizeFDiagCursor
-    //                Cutter.cutAreaBottom = Cutter.cutAreaTop
-    //            }
-    //        } else if (mouseInArea === 7) {
-    //            Cutter.cutAreaLeft = mouse.x
-    //            if (Cutter.cutAreaLeft > Cutter.cutAreaRight) {
-    //                mouseInArea = 3
-    //                Cutter.cutAreaLeft = Cutter.cutAreaRight
-    //            }
-    //        }
-    //    }
-    //    function moveCutAreaByMouse(mouse) {
-    //        if (mouse.x - mousePressX < 0) {
-    //            Cutter.cutAreaLeft = 0
-    //            mousePressX = mouse.x - Cutter.cutAreaLeft
-    //            Cutter.cutAreaRight = widthForMoving
-    //        } else if (mouse.x - mousePressX + widthForMoving > Cutter.totalWidth) {
-    //            Cutter.cutAreaLeft = Cutter.totalWidth - widthForMoving
-    //            Cutter.cutAreaRight = Cutter.totalWidth
-    //            mousePressX = mouse.x - Cutter.cutAreaLeft
-    //        } else {
-    //            Cutter.cutAreaLeft = mouse.x - mousePressX
-    //            Cutter.cutAreaRight = widthForMoving + Cutter.cutAreaLeft
-    //        }
-    //        if (mouse.y - mousePressY < 0) {
-    //            Cutter.cutAreaTop = 0
-    //            Cutter.cutAreaBottom = heightForMoving
-    //            mousePressY = mouse.y - Cutter.cutAreaTop
-    //        } else if (mouse.y - mousePressY + heightForMoving > Cutter.totalHeight) {
-    //            Cutter.cutAreaTop = Cutter.totalHeight - heightForMoving
-    //            Cutter.cutAreaBottom = Cutter.totalHeight
-    //            mousePressY = mouse.y - Cutter.cutAreaTop
-    //        } else {
-    //            Cutter.cutAreaTop = mouse.y - mousePressY
-    //            Cutter.cutAreaBottom = heightForMoving + Cutter.cutAreaTop
-    //        }
-    //    }
+
     //    function moveCutAreaByKey(type) {
     //        if (type === 0) {
     //            if (Cutter.cutAreaLeft - 1 < 0) {

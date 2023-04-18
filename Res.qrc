@@ -18,5 +18,7 @@
         <file>WindowMouseArea.qml</file>
         <file>CutArea.js</file>
         <file>MouseTip.js</file>
+        <file>DrawArrowTool.qml</file>
+        <file>ShapeArrow.qml</file>
     </qresource>
 </RCC>
