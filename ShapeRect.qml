@@ -48,6 +48,7 @@ Item {
                           circleShapePath.fillColor = bgColor
                           rectShapePath.fillColor = bgColor
                           rectShapePath.changed()
+                          circleShapePath.changed()
                       }
 
     id: root

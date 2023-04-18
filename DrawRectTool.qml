@@ -14,7 +14,9 @@ Rectangle {
         onClick: () => {
                      App.rectCircle.isFill = !App.rectCircle.isFill
                      App.rectCircle.bgColor = "transparent"
-                     Shapes.shapes[0].bgColor = "transparent"
+                     if (Shapes.shapes.length > 0 && Shapes.shapes[0].showDragger) {
+                         Shapes.shapes[0].bgColor = "transparent"
+                     }
                  }
     }
     DrawBtn {
@@ -26,7 +28,9 @@ Rectangle {
         onClick: () => {
                      App.rectCircle.isFill = !App.rectCircle.isFill
                      App.rectCircle.bgColor = "red"
-                     Shapes.shapes[0].bgColor = "red"
+                     if (Shapes.shapes.length > 0 && Shapes.shapes[0].showDragger) {
+                         Shapes.shapes[0].bgColor = "red"
+                     }
                  }
     }
     Rectangle {
@@ -47,7 +51,9 @@ Rectangle {
         anchors.top: dot.top
         onClick: () => {
                      App.rectCircle.isRect = !App.rectCircle.isRect
-                     Shapes.shapes[0].isRect = App.rectCircle.isRect
+                     if (Shapes.shapes.length > 0 && Shapes.shapes[0].showDragger) {
+                         Shapes.shapes[0].isRect = App.rectCircle.isRect
+                     }
                  }
     }
     DrawBtn {
@@ -58,7 +64,9 @@ Rectangle {
         anchors.top: dot.top
         onClick: () => {
                      App.rectCircle.isRect = !App.rectCircle.isRect
-                     Shapes.shapes[0].isRect = App.rectCircle.isRect
+                     if (Shapes.shapes.length > 0 && Shapes.shapes[0].showDragger) {
+                         Shapes.shapes[0].isRect = App.rectCircle.isRect
+                     }
                  }
     }
     ColorPicker {
