@@ -5,6 +5,7 @@
 #include <QClipboard>
 #include <QMessageBox>
 
+
 static Cutter* instance;
 
 Cutter::Cutter(QObject *parent)
@@ -51,6 +52,41 @@ void Cutter::moveMousePosition(int type)
         //todo
         QCursor::setPos(position.x(),position.y()+1);
     }
+}
+QVariant Cutter::getArrowPoints(QPointF start,QPointF end,qreal width,qreal height)
+{
+    QVariantList list;
+    list.append(start);
+
+    QLineF tarLine (start,end);
+    qreal v = tarLine.angle();
+    qreal centerX = end.x() - height * std::cos(v);
+    qreal centerY = end.y() - height * std::sin(v);
+    qreal tempA = width/4*std::cos(90 - v);
+    qreal tempB = width/4*std::sin(90 - v);
+    qreal x = centerX - tempA;
+    qreal y = centerY - tempB;
+    list.append(QPointF(x,y));
+    x = x - tempA;
+    y = y - tempB;
+    list.append(QPointF(x,y));
+
+    list.append(end);
+
+    tempA = width/4*std::sin(v);
+    tempB = width/4*std::cos(v);
+    x = centerX + tempA*2;
+    y = centerY + tempB*2;
+    list.append(QPointF(x,y));
+
+
+    x = centerX + tempA;
+    y = centerY + tempB;
+    list.append(QPointF(x,y));
+
+    list.append(start);
+    QVariant result = QVariant(list);
+    return result;
 }
 void Cutter::askForQuit()
 {

@@ -48,6 +48,8 @@ Item {
             shapeMouseArea.cursorShape = Qt.CrossCursor
         }
     }
+    Component.completed: () => {}
+
     onBgColorChanged: () => {
                           circleShapePath.fillColor = bgColor
                           rectShapePath.fillColor = bgColor
@@ -135,7 +137,8 @@ Item {
                    }
         onPositionChanged: mouse => {
                                let p = Qt.point(mouse.x, mouse.y)
-                               if (rectShape.contains(p) || circleShape.contains(p)) {
+                               if (rectShape.contains(p)
+                                   || circleShape.contains(p)) {
                                    shapeMouseArea.cursorShape = Qt.SizeAllCursor
                                    if (mouse.buttons === Qt.LeftButton) {
                                        let spanX = mouse.x - shapeMouseArea.pressX
