@@ -20,5 +20,7 @@
         <file>MouseTip.js</file>
         <file>DrawArrowTool.qml</file>
         <file>ShapeArrow.qml</file>
+        <file>DrawPenTool.qml</file>
+        <file>CanvasPen.qml</file>
     </qresource>
 </RCC>

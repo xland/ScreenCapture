@@ -6,8 +6,8 @@ import "Shapes.js" as Shapes
 
 MouseArea {
     property int mouseInArea: -1 //0左上,1上,2右上,3右,4右下,5下,6左下,7左,8中,9绘图区域
-    property int mousePressX: 0
-    property int mousePressY: 0
+    property real mousePressX: 0
+    property real mousePressY: 0
     function createComponent(name, obj) {
         var result
         var component = Qt.createComponent(name + ".qml")
@@ -45,6 +45,16 @@ MouseArea {
                 "borderColor": App.arrow.borderColor
             }
             let shape = createComponent("ShapeArrow", config)
+            Shapes.shapes.splice(0, 0, shape)
+        } else if (App.drawToolState === 3) {
+            let config = {
+                "lastX": mousePressX,
+                "lastY": mousePressY,
+                "curX": mousePressX,
+                "curY": mousePressY
+            }
+            console.log(JSON.stringify(config))
+            let shape = createComponent("CanvasPen", config)
             Shapes.shapes.splice(0, 0, shape)
         }
     }
@@ -94,6 +104,9 @@ MouseArea {
                                        let start = Qt.point(root.mousePressX, root.mousePressY)
                                        let end = Qt.point(mouse.x, mouse.y)
                                        Shapes.shapes[0].pathPointChanged(start, end)
+                                   } else if (App.drawToolState === 3) {
+                                       Shapes.shapes[0].color = "red"
+                                       Shapes.shapes[0].startDraw(mouse.x, mouse.y)
                                    }
                                }
                            }
@@ -116,8 +129,13 @@ MouseArea {
                                    App.cutAreaState = 4
                                }
                            } else {
-                               Shapes.done()
-                               createShape(mouse)
+                               if (App.drawToolState === 3 && Shapes.shapes[0] && Shapes.shapes[0].drawing) {
+                                   Shapes.shapes[0].lastX = mouse.x
+                                   Shapes.shapes[0].lastY = mouse.y
+                               } else {
+                                   Shapes.done()
+                                   createShape(mouse)
+                               }
                            }
                        }
                    } else {
@@ -136,6 +154,8 @@ MouseArea {
                             Shapes.shapes[0].showDragger = true
                         } else if (App.drawToolState === 2) {
                             Shapes.shapes[0].showDragger = true
+                        } else if (App.drawToolState === 3) {
+
                         }
                     }
                 }
