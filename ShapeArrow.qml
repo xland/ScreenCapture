@@ -92,17 +92,16 @@ Item {
         acceptedButtons: Qt.LeftButton | Qt.RightButton
         propagateComposedEvents: true
         onPressed: mouse => {
-                       let p = Qt.point(mouse.x, mouse.y)
-                       if (arrowShape.contains(p)) {
-                           if (mouse.buttons === Qt.LeftButton) {
+                       if (mouse.buttons === Qt.LeftButton) {
+                           let p = Qt.point(mouse.x, mouse.y)
+                           if (arrowShape.contains(p)) {
                                shapeMouseArea.pressX = mouse.x
                                shapeMouseArea.pressY = mouse.y
                                shapeMouseArea.draging = true
                                shapeMouseArea.cursorShape = Qt.SizeAllCursor
-                           } else {
-                               done()
                            }
                        } else {
+                           done()
                            mouse.accepted = false
                        }
                    }
@@ -130,18 +129,18 @@ Item {
                            }
         onReleased: mouse => {
                         shapeMouseArea.draging = false
-                        shapeMouseArea.cursorShape = Qt.CrossCursor
                         mouse.accepted = false
                     }
-    }
-    Dragger {
-        id: draggerStart
-        cursor: Qt.SizeAllCursor
-        onMoved: () => movePosition()
-    }
-    Dragger {
-        id: draggerEnd
-        cursor: Qt.SizeAllCursor
-        onMoved: () => movePosition()
+
+        Dragger {
+            id: draggerStart
+            cursor: Qt.SizeAllCursor
+            onMoved: () => movePosition()
+        }
+        Dragger {
+            id: draggerEnd
+            cursor: Qt.SizeAllCursor
+            onMoved: () => movePosition()
+        }
     }
 }

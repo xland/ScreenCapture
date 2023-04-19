@@ -116,16 +116,12 @@ MouseArea {
                                    App.cutAreaState = 4
                                }
                            } else {
-                               if (Shapes.shapes.length > 0) {
-                                   Shapes.shapes[0].done()
-                               }
+                               Shapes.done()
                                createShape(mouse)
                            }
                        }
                    } else {
-                       if (Shapes.shapes.length > 0) {
-                           Shapes.shapes[0].done()
-                       }
+                       Shapes.done()
                    }
                }
     onReleased: mouse => {
