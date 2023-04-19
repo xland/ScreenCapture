@@ -53,7 +53,6 @@ MouseArea {
                 "curX": mousePressX,
                 "curY": mousePressY
             }
-            console.log(JSON.stringify(config))
             let shape = createComponent("CanvasPen", config)
             Shapes.shapes.splice(0, 0, shape)
         }
@@ -129,13 +128,8 @@ MouseArea {
                                    App.cutAreaState = 4
                                }
                            } else {
-                               if (App.drawToolState === 3 && Shapes.shapes[0] && Shapes.shapes[0].drawing) {
-                                   Shapes.shapes[0].lastX = mouse.x
-                                   Shapes.shapes[0].lastY = mouse.y
-                               } else {
-                                   Shapes.done()
-                                   createShape(mouse)
-                               }
+                               Shapes.done()
+                               createShape(mouse)
                            }
                        }
                    } else {

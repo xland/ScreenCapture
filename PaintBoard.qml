@@ -6,7 +6,7 @@ Canvas {
     anchors.fill: parent
     antialiasing: true
     layer.enabled: true
-    layer.samples: 12
+    layer.samples: 8
     function getPaintContext(param) {
         var ctx = getContext('2d')
         ctx.lineWidth = param.strokeWidth
@@ -40,6 +40,19 @@ Canvas {
             ctx.lineTo(param.points[i].x, param.points[i].y)
         }
         endPaint(param, ctx)
+    }
+    function drawPen(param) {
+        var ctx = getContext('2d')
+        ctx.lineWidth = 2
+        ctx.strokeStyle = param.strokeColor
+        ctx.beginPath()
+        for (var i = 0; i < param.points.length; i += 2) {
+            ctx.moveTo(param.points[i].x, param.points[i].y)
+            ctx.lineTo(param.points[i + 1].x, param.points[i + 1].y)
+        }
+        ctx.stroke()
+        ctx.save()
+        root.requestPaint()
     }
 
     Component.onCompleted: {

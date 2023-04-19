@@ -106,6 +106,8 @@ Item {
     }
     Shape {
         id: rectShape
+        antialiasing: true
+        layer.samples: 8
         visible: isRect
         anchors.fill: parent
         containsMode: Shape.FillContains
