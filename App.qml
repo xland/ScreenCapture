@@ -14,6 +14,12 @@ QtObject {
         property real borderWidth: 3
         property string borderColor: "red"
     }
+    property QtObject arrow: QtObject {
+        property bool isFill: true
+        property string bgColor: "red"
+        property real borderWidth: 1
+        property string borderColor: "red"
+    }
 
     property QtObject mouseTip: QtObject {
         property real x: 0

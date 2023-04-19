@@ -38,7 +38,18 @@ MouseArea {
             let shape = createComponent("ShapeRect", config)
             Shapes.shapes.splice(0, 0, shape)
         } else if (App.drawToolState === 2) {
-
+            let config = {
+                "startX1": mouse.x,
+                "startY1": mouse.y,
+                "endX": mouse.x,
+                "endY": mouse.y,
+                "isFill": App.arrow.isFill,
+                "bgColor": App.arrow.bgColor,
+                "borderWidth": App.arrow.borderWidth,
+                "borderColor": App.arrow.borderColor
+            }
+            let shape = createComponent("ShapeArrow", config)
+            Shapes.shapes.splice(0, 0, shape)
         }
     }
     id: root
@@ -83,6 +94,10 @@ MouseArea {
                                    if (App.drawToolState === 1) {
                                        Shapes.shapes[0].endX = mouse.x
                                        Shapes.shapes[0].endY = mouse.y
+                                   } else if (App.drawToolState === 2) {
+                                       let start = Qt.point(root.mousePressX, root.mousePressY)
+                                       let end = Qt.point(mouse.x, mouse.y)
+                                       Shapes.shapes[0].pathPointChanged(start, end)
                                    }
                                }
                            }

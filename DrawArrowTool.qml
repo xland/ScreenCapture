@@ -8,12 +8,34 @@ Rectangle {
     color: "#F8F8F8"
     width: 100
     visible: App.drawToolState === 2 && App.cutAreaState === 2
-    ColorPicker {
-        anchors.left: root.left
-        anchors.top: root.top
+    DrawBtn {
+        id: empty
+        code: "\ue61a"
+        isSelected: !App.rectCircle.isFill
+        onClick: () => {
+                     App.arrow.isFill = !App.rectCircle.isFill
+                     App.arrow.bgColor = "transparent"
+                     if (Shapes.shapes.length > 0 && Shapes.shapes[0].showDragger) {
+                         Shapes.shapes[0].bgColor = "transparent"
+                     }
+                 }
     }
-    Component.onCompleted: () => {
-                               let arr = Cutter.getArrowPoints(Qt.point(200, 200), Qt.point(600, 100), 10, 12)
-                               console.log(JSON.stringify(arr))
-                           }
+    DrawBtn {
+        id: fill
+        code: "\ue62c"
+        anchors.left: empty.right
+        anchors.top: empty.top
+        isSelected: App.rectCircle.isFill
+        onClick: () => {
+                     App.arrow.isFill = !App.rectCircle.isFill
+                     App.arrow.bgColor = "red"
+                     if (Shapes.shapes.length > 0 && Shapes.shapes[0].showDragger) {
+                         Shapes.shapes[0].bgColor = "red"
+                     }
+                 }
+    }
+    ColorPicker {
+        anchors.left: fill.right
+        anchors.top: fill.top
+    }
 }
