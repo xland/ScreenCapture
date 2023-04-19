@@ -22,5 +22,6 @@
         <file>ShapeArrow.qml</file>
         <file>DrawPenTool.qml</file>
         <file>CanvasPen.qml</file>
+        <file>PaintBoard.qml</file>
     </qresource>
 </RCC>

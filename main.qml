@@ -14,6 +14,7 @@ ApplicationWindow {
     width: Cutter.totalWidth
     height: Cutter.totalHeight
     flags: Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint
+
     Image {
         x: 0
         y: 0
@@ -22,6 +23,10 @@ ApplicationWindow {
         sourceSize.width: root.width
         sourceSize.height: root.height
     }
+    PaintBoard {
+        id: paintBoard
+    }
+
     WindowMouseArea {
         id: windowMouseArea
     }

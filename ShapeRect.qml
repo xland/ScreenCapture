@@ -38,12 +38,38 @@ Item {
         draggerLeft.x = startX1 - span
         draggerLeft.y = startY1 + (endY - startY1) / 2 - span
     }
-    function done() {
-        if (showDragger) {
-            showDragger = false
-            shapeMouseArea.cursorShape = Qt.CrossCursor
+    function getDrawInfo() {
+        let result = {
+            "type": "Rect",
+            "strokeWidth": borderWidth,
+            "strokeColor": borderColor,
+            "fillColor": bgColor,
+            "isFill": isFill,
+            "points": []
         }
+        if (isRect) {
+            result.points.push({
+                                   "x": startX1,
+                                   "y": startY1
+                               })
+            result.points.push({
+                                   "x": endX - startX1,
+                                   "y": endY - startY1
+                               })
+        } else {
+            result.type = "Circle"
+            result.points.push({
+                                   "x": startX1,
+                                   "y": startY1
+                               })
+            result.points.push({
+                                   "x": endX - startX1,
+                                   "y": endY - startY1
+                               })
+        }
+        return result
     }
+
     onBgColorChanged: () => {
                           circleShapePath.fillColor = bgColor
                           rectShapePath.fillColor = bgColor
@@ -61,12 +87,14 @@ Item {
         layer.samples: 8
         anchors.fill: parent
         containsMode: Shape.FillContains
+
         ShapePath {
             id: circleShapePath
             fillColor: bgColor
             strokeColor: borderColor
             strokeWidth: borderWidth
             PathAngleArc {
+                id: pathAngleArc
                 centerX: startX1 + (endX - startX1) / 2
                 centerY: startY1 + (endY - startY1) / 2
                 radiusX: (endX - startX1) / 2
@@ -86,8 +114,10 @@ Item {
             strokeWidth: borderWidth
             strokeColor: borderColor
             fillColor: bgColor
-            startX: startX1
-            startY: startY1
+            PathMove {
+                x: startX1
+                y: startY1
+            }
             PathLine {
                 x: endX
                 y: startY1
@@ -118,7 +148,6 @@ Item {
         propagateComposedEvents: true
         onPressed: mouse => {
                        let p = Qt.point(mouse.x, mouse.y)
-
                        if (rectShape.contains(p) || circleShape.contains(p)) {
                            if (mouse.buttons === Qt.LeftButton) {
                                shapeMouseArea.pressX = mouse.x

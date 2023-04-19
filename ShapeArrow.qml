@@ -1,6 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Shapes 1.15
 import ScreenCapture.Cutter 1.0
+import "Shapes.js" as Shapes
 
 Item {
     property bool isFill: false
@@ -22,11 +23,26 @@ Item {
         draggerEnd.x = end.x - draggerStart.width / 2
         draggerEnd.y = end.y - draggerStart.width / 2
     }
-    function done() {
-        if (showDragger) {
-            showDragger = false
-            shapeMouseArea.cursorShape = Qt.CrossCursor
+    function getDrawInfo() {
+        let result = {
+            "type": "Arrow",
+            "strokeWidth": borderWidth,
+            "strokeColor": borderColor,
+            "fillColor": bgColor,
+            "isFill": isFill,
+            "points": []
         }
+        result.points.push({
+                               "x": arrowShapePath.startX,
+                               "y": arrowShapePath.startY
+                           })
+        for (var i = 0; i < arrowShapePath.pathElements.length; i++) {
+            result.points.push({
+                                   "x": arrowShapePath.pathElements[i].x,
+                                   "y": arrowShapePath.pathElements[i].y
+                               })
+        }
+        return result
     }
     function movePosition() {
         let start = Qt.point(draggerStart.x + draggerStart.width / 2, draggerStart.y + draggerStart.width / 2)
@@ -54,6 +70,7 @@ Item {
             fillColor: bgColor
             startX: 0
             startY: 0
+
             PathLine {
                 x: 0
                 y: 0
@@ -101,8 +118,7 @@ Item {
                                shapeMouseArea.cursorShape = Qt.SizeAllCursor
                            }
                        } else {
-                           done()
-                           mouse.accepted = false
+                           Shapes.done()
                        }
                    }
         onPositionChanged: mouse => {
