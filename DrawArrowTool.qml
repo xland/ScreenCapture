@@ -11,9 +11,9 @@ Rectangle {
     DrawBtn {
         id: empty
         code: "\ue61a"
-        isSelected: !App.rectCircle.isFill
+        isSelected: !App.arrow.isFill
         onClick: () => {
-                     App.arrow.isFill = !App.rectCircle.isFill
+                     App.arrow.isFill = false
                      App.arrow.bgColor = "transparent"
                      if (Shapes.shapes.length > 0 && Shapes.shapes[0].showDragger) {
                          Shapes.shapes[0].bgColor = "transparent"
@@ -25,9 +25,9 @@ Rectangle {
         code: "\ue62c"
         anchors.left: empty.right
         anchors.top: empty.top
-        isSelected: App.rectCircle.isFill
+        isSelected: App.arrow.isFill
         onClick: () => {
-                     App.arrow.isFill = !App.rectCircle.isFill
+                     App.arrow.isFill = true
                      App.arrow.bgColor = "red"
                      if (Shapes.shapes.length > 0 && Shapes.shapes[0].showDragger) {
                          Shapes.shapes[0].bgColor = "red"

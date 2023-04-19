@@ -39,10 +39,6 @@ MouseArea {
             Shapes.shapes.splice(0, 0, shape)
         } else if (App.drawToolState === 2) {
             let config = {
-                "startX1": mouse.x,
-                "startY1": mouse.y,
-                "endX": mouse.x,
-                "endY": mouse.y,
                 "isFill": App.arrow.isFill,
                 "bgColor": App.arrow.bgColor,
                 "borderWidth": App.arrow.borderWidth,
@@ -141,6 +137,8 @@ MouseArea {
                             App.cutAreaState = 2
                         }
                         if (App.drawToolState === 1) {
+                            Shapes.shapes[0].showDragger = true
+                        } else if (App.drawToolState === 2) {
                             Shapes.shapes[0].showDragger = true
                         }
                     }

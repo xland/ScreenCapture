@@ -150,7 +150,7 @@ Item {
                                    mouse.accepted = false
                                }
                            }
-        onReleased: () => {
+        onReleased: mouse => {
                         mouse.accepted = false
                     }
 
