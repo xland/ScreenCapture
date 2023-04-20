@@ -9,4 +9,5 @@ function done() {
     paintBoard["draw" + result.type](result)
     shapes[0].destroy()
     shapes.splice(0, 1)
+    console.log("destroy", result.type)
 }

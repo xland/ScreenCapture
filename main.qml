@@ -13,6 +13,8 @@ ApplicationWindow {
     y: Cutter.absoluteY
     width: Cutter.totalWidth
     height: Cutter.totalHeight
+    //    width: 600
+    //    height: 600
     flags: Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint
 
     Image {
