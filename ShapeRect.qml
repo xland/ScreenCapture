@@ -1,5 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Shapes 1.15
+import "Shapes.js" as Shapes
 
 Item {
     property bool isRect: true
@@ -141,6 +142,7 @@ Item {
     MouseArea {
         property real pressX: 0
         property real pressY: 0
+        property bool dragging: false
         id: shapeMouseArea
         anchors.fill: parent
         hoverEnabled: true
@@ -149,23 +151,21 @@ Item {
         acceptedButtons: Qt.LeftButton | Qt.RightButton
         propagateComposedEvents: true
         onPressed: mouse => {
-                       let p = Qt.point(mouse.x, mouse.y)
-                       if (rectShape.contains(p) || circleShape.contains(p)) {
-                           if (mouse.buttons === Qt.LeftButton) {
+                       if (mouse.buttons === Qt.LeftButton) {
+                           let p = Qt.point(mouse.x, mouse.y)
+                           if ((isRect && rectShape.contains(p)) || (!isRect && circleShape.contains(p))) {
                                shapeMouseArea.pressX = mouse.x
                                shapeMouseArea.pressY = mouse.y
-                           } else {
-                               done()
+                               shapeMouseArea.dragging = true
                            }
                        } else {
-                           mouse.accepted = false
+                           Shapes.done()
                        }
                    }
         onPositionChanged: mouse => {
                                let p = Qt.point(mouse.x, mouse.y)
-                               if (rectShape.contains(p) || circleShape.contains(p)) {
-                                   shapeMouseArea.cursorShape = Qt.SizeAllCursor
-                                   if (mouse.buttons === Qt.LeftButton) {
+                               if (mouse.buttons === Qt.LeftButton) {
+                                   if (shapeMouseArea.dragging) {
                                        let spanX = mouse.x - shapeMouseArea.pressX
                                        let spanY = mouse.y - shapeMouseArea.pressY
                                        startX1 += spanX
@@ -177,8 +177,11 @@ Item {
                                        shapeMouseArea.pressY = mouse.y
                                    }
                                } else {
-                                   shapeMouseArea.cursorShape = Qt.CrossCursor
-                                   mouse.accepted = false
+                                   if ((isRect && rectShape.contains(p)) || (!isRect && circleShape.contains(p))) {
+                                       shapeMouseArea.cursorShape = Qt.SizeAllCursor
+                                   } else {
+                                       shapeMouseArea.cursorShape = Qt.CrossCursor
+                                   }
                                }
                            }
         onReleased: mouse => {

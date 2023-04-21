@@ -8,20 +8,6 @@ MouseArea {
     property int mouseInArea: -1 //0左上,1上,2右上,3右,4右下,5下,6左下,7左,8中,9绘图区域
     property real mousePressX: 0
     property real mousePressY: 0
-    function createComponent(name, obj) {
-        var result
-        var component = Qt.createComponent(name + ".qml")
-        if (component.status === Component.Ready) {
-            result = component.createObject(root, obj)
-            if (result === null) {
-                console.log("Error creating object")
-            }
-        } else if (component.status === Component.Error) {
-            console.log("Error loading component:", component.errorString())
-        }
-        return result
-    }
-
     function createShape(mouse) {
         if (App.drawToolState === 1) {
             let config = {
@@ -35,8 +21,7 @@ MouseArea {
                 "borderWidth": App.rectCircle.borderWidth,
                 "borderColor": App.rectCircle.borderColor
             }
-            let shape = createComponent("ShapeRect", config)
-            Shapes.shapes.splice(0, 0, shape)
+            Shapes.createComponent("ShapeRect", config, root)
         } else if (App.drawToolState === 2) {
             let config = {
                 "isFill": App.arrow.isFill,
@@ -44,8 +29,7 @@ MouseArea {
                 "borderWidth": App.arrow.borderWidth,
                 "borderColor": App.arrow.borderColor
             }
-            let shape = createComponent("ShapeArrow", config)
-            Shapes.shapes.splice(0, 0, shape)
+            Shapes.createComponent("ShapeArrow", config, root)
         } else if (App.drawToolState === 3) {
             let config = {
                 "lastX": mousePressX,
@@ -53,8 +37,7 @@ MouseArea {
                 "curX": mousePressX,
                 "curY": mousePressY
             }
-            let shape = createComponent("CanvasPen", config)
-            Shapes.shapes.splice(0, 0, shape)
+            Shapes.createComponent("CanvasPen", config, root)
         }
     }
     id: root
@@ -62,6 +45,7 @@ MouseArea {
     visible: true //todo 绘图状态时要控制这里不显示
     acceptedButtons: Qt.LeftButton | Qt.RightButton
     hoverEnabled: true
+    focus: true
     cursorShape: Qt.CrossCursor
     onPositionChanged: mouse => {
                            if (App.drawToolState === 0) {
@@ -133,7 +117,11 @@ MouseArea {
                            }
                        }
                    } else {
-                       Shapes.done()
+                       if (Shapes.shapes.length < 1) {
+                           Qt.quit()
+                       } else {
+                           Shapes.done()
+                       }
                    }
                }
     onReleased: mouse => {
@@ -153,4 +141,59 @@ MouseArea {
                         }
                     }
                 }
+    Keys.onPressed: event => {
+                        if (event.modifiers & Qt.AltModifier) {
+                            if (event.key === Qt.Key_X) {
+                                Cutter.copyColor(true)
+                            } else if (event.key === Qt.Key_C) {
+                                Cutter.copyColor(false)
+                            }
+                        } else if (event.key === Qt.Key_Escape) {
+
+                            //                            console.log(111)
+                            //                            root.parent.flags = Qt.FramelessWindowHint
+                            //                            let r = Cutter.askForQuit()
+                            //                            if (!r) {
+                            //                                console.log(222)
+                            //                                root.parent.flags = Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint
+                            //                            }
+                        } else if (event.key === Qt.Key_Left) {
+                            Cutter.moveMousePosition(0)
+                            if (App.cutAreaState === 2) {
+                                if (Cutter.cutAreaLeft - 1 < 0) {
+                                    return
+                                }
+                                Cutter.cutAreaLeft -= 1
+                                Cutter.cutAreaRight -= 1
+                            }
+                        } else if (event.key === Qt.Key_Up) {
+                            Cutter.moveMousePosition(1)
+                            if (App.cutAreaState === 2) {
+
+                                if (Cutter.cutAreaTop - 1 < 0) {
+                                    return
+                                }
+                                Cutter.cutAreaTop -= 1
+                                Cutter.cutAreaBottom -= 1
+                            }
+                        } else if (event.key === Qt.Key_Right) {
+                            Cutter.moveMousePosition(2)
+                            if (App.cutAreaState === 2) {
+                                if (Cutter.cutAreaRight + 1 > Cutter.totalWidth) {
+                                    return
+                                }
+                                Cutter.cutAreaLeft += 1
+                                Cutter.cutAreaRight += 1
+                            }
+                        } else if (event.key === Qt.Key_Down) {
+                            Cutter.moveMousePosition(3)
+                            if (App.cutAreaState === 2) {
+                                if (Cutter.cutAreaBottom + 1 > Cutter.totalHeight) {
+                                    return
+                                }
+                                Cutter.cutAreaBottom += 1
+                                Cutter.cutAreaTop += 1
+                            }
+                        }
+                    }
 }

@@ -92,11 +92,17 @@ QVariant Cutter::getArrowPoints(QPointF start,QPointF end,qreal width,qreal heig
     QVariant result = QVariant(list);
     return result;
 }
-void Cutter::askForQuit()
+bool Cutter::askForQuit()
 {
-    auto reply = QMessageBox::question(nullptr,"系统提示","确定要退出截图吗");
-    if (reply == QMessageBox::Yes) {
+    //todo
+    QMessageBox msgBox(QMessageBox::Icon::Question,"系统提示","确定要退出截图吗",QMessageBox::Yes|QMessageBox::No);
+    msgBox.setWindowFlags(Qt::WindowStaysOnTopHint);
+    auto code = msgBox.exec();
+    if (code == QDialog::Accepted) {
         QApplication::quit();
+        return true;
+    }else{
+        return false;
     }
 }
 void Cutter::createCutAreaByWindowRect()

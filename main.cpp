@@ -3,6 +3,7 @@
 #include "ScreenImageProvider.h"
 #include "ScreenShoter.h"
 #include "Cutter.h"
+#include "WebSocketTest.h"
 
 int main(int argc, char *argv[])
 {
@@ -12,6 +13,7 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;
     ScreenShoter::Init(&app);
     Cutter::Init(&app);
+//    WebSocketTest::Init(&app);
     qmlRegisterSingletonType<Cutter>("ScreenCapture.Cutter", 1, 0, "Cutter", [](QQmlEngine* engine, QJSEngine* scriptEngine){
         return Cutter::Get();
     });

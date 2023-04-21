@@ -1,4 +1,4 @@
-QT += quick widgets core gui
+QT += quick widgets core gui websockets
 
 CONFIG += c++20
 
@@ -16,12 +16,16 @@ DEFINES += QT_DEPRECATED_WARNINGS
 HEADERS += \
         Cutter.h \
         ScreenImageProvider.h \
-        ScreenShoter.h
+        ScreenShoter.h \
+        WebSocketClient.h \
+        WebSocketTest.h
 
 SOURCES += \
         Cutter.cpp \
         ScreenImageProvider.cpp \
         ScreenShoter.cpp \
+        WebSocketClient.cpp \
+        WebSocketTest.cpp \
         main.cpp
 
 RESOURCES += \
