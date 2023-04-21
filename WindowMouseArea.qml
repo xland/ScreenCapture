@@ -38,6 +38,12 @@ MouseArea {
                 "curY": mousePressY
             }
             Shapes.createComponent("CanvasPen", config, root)
+        } else if (App.drawToolState === 4) {
+            let config = {
+                "startX": mousePressX,
+                "startY": mousePressY
+            }
+            Shapes.createComponent("PaintMosaic", config, root)
         }
     }
     id: root

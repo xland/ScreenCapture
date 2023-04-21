@@ -23,6 +23,7 @@
         <file>DrawPenTool.qml</file>
         <file>CanvasPen.qml</file>
         <file>PaintBoard.qml</file>
-        <file>PainterMosaic.qml</file>
+        <file>PaintMosaic.qml</file>
+        <file>DrawMosaicTool.qml</file>
     </qresource>
 </RCC>

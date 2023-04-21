@@ -52,7 +52,13 @@ ApplicationWindow {
         anchors.topMargin: 34
     }
     DrawPenTool {
-        id: drawpenTool
+        id: drawPenTool
+        anchors.left: drawTool.left
+        anchors.top: drawTool.top
+        anchors.topMargin: 34
+    }
+    DrawMosaicTool {
+        id: drawMosaicTool
         anchors.left: drawTool.left
         anchors.top: drawTool.top
         anchors.topMargin: 34

@@ -7,7 +7,7 @@ Rectangle {
     height: 30
     color: "#F8F8F8"
     width: 100
-    visible: App.drawToolState === 3 && App.cutAreaState === 2
+    visible: App.drawToolState === 4 && App.cutAreaState === 2
     DrawBtn {
         id: dot
         code: "\ue608"
