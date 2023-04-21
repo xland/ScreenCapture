@@ -15,57 +15,50 @@ ApplicationWindow {
     height: Cutter.totalHeight
     //    width: 300
     //    height: 300
-    //    flags: Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint
+    //        flags: Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint
     flags: Qt.FramelessWindowHint
 
-    Image {
-        x: 0
-        y: 0
-        id: backgroundImage
-        source: "image://ScreenImage/background"
-        sourceSize.width: root.width
-        sourceSize.height: root.height
-    }
+
     PaintBoard {
         id: paintBoard
     }
 
-    WindowMouseArea {
-        id: windowMouseArea
-    }
-    CutArea {
-        id: cutArea
-    }
-    DrawTool {
-        id: drawTool
-    }
-    DrawRectTool {
-        id: drawRectTool
-        anchors.left: drawTool.left
-        anchors.top: drawTool.top
-        anchors.topMargin: 34
-    }
-    DrawArrowTool {
-        id: drawArrowTool
-        anchors.left: drawTool.left
-        anchors.top: drawTool.top
-        anchors.topMargin: 34
-    }
-    DrawPenTool {
-        id: drawPenTool
-        anchors.left: drawTool.left
-        anchors.top: drawTool.top
-        anchors.topMargin: 34
-    }
-    DrawMosaicTool {
-        id: drawMosaicTool
-        anchors.left: drawTool.left
-        anchors.top: drawTool.top
-        anchors.topMargin: 34
-    }
-    MouseTip {
-        id: mouseTipRect
-    }
+    //    WindowMouseArea {
+    //        id: windowMouseArea
+    //    }
+    //    CutArea {
+    //        id: cutArea
+    //    }
+    //    DrawTool {
+    //        id: drawTool
+    //    }
+    //    DrawRectTool {
+    //        id: drawRectTool
+    //        anchors.left: drawTool.left
+    //        anchors.top: drawTool.top
+    //        anchors.topMargin: 34
+    //    }
+    //    DrawArrowTool {
+    //        id: drawArrowTool
+    //        anchors.left: drawTool.left
+    //        anchors.top: drawTool.top
+    //        anchors.topMargin: 34
+    //    }
+    //    DrawPenTool {
+    //        id: drawPenTool
+    //        anchors.left: drawTool.left
+    //        anchors.top: drawTool.top
+    //        anchors.topMargin: 34
+    //    }
+    //    DrawMosaicTool {
+    //        id: drawMosaicTool
+    //        anchors.left: drawTool.left
+    //        anchors.top: drawTool.top
+    //        anchors.topMargin: 34
+    //    }
+    //    MouseTip {
+    //        id: mouseTipRect
+    //    }
 
     //    function moveCutAreaByKey(type) {
     //        if (type === 0) {
