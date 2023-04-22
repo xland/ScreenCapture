@@ -40,8 +40,10 @@ MouseArea {
             Shapes.createComponent("ShapePen", config, root)
         } else if (App.drawToolState === 4) {
             let config = {
-                "startX": mousePressX,
-                "startY": mousePressY
+                "startX1": mousePressX,
+                "startY1": mousePressY,
+                "endX": mousePressX,
+                "endY": mousePressY
             }
             Shapes.createComponent("ShapeMosaic", config, root)
         }
@@ -96,6 +98,8 @@ MouseArea {
                                    } else if (App.drawToolState === 3) {
                                        Shapes.instance.color = "red"
                                        Shapes.instance.startDraw(mouse.x, mouse.y)
+                                   } else if (App.drawToolState === 4) {
+                                       Shapes.instance.positionChanged(mouse.x, mouse.y)
                                    }
                                }
                            }
@@ -123,7 +127,7 @@ MouseArea {
                            }
                        }
                    } else {
-                       if (Shapes.instance) {
+                       if (!Shapes.instance) {
                            Qt.quit()
                        } else {
                            Shapes.done()
@@ -156,6 +160,7 @@ MouseArea {
                             }
                         } else if (event.key === Qt.Key_Escape) {
 
+                            //todo
                             //                            console.log(111)
                             //                            root.parent.flags = Qt.FramelessWindowHint
                             //                            let r = Cutter.askForQuit()

@@ -2,6 +2,7 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import ScreenCapture.Cutter 1.0
 import QtQuick.Shapes 1.15
+import QtGraphicalEffects 1.15
 
 ApplicationWindow {
     FontLoader {
@@ -17,18 +18,22 @@ ApplicationWindow {
     //    height: 300
     //    flags: Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint
     flags: Qt.FramelessWindowHint
-
-    Image {
-        x: 0
-        y: 0
-        id: backgroundImage
-        source: "image://ScreenImage/background"
-        sourceSize.width: root.width
-        sourceSize.height: root.height
+    Item {
+        id: board
+        anchors.fill: parent
+        Image {
+            x: 0
+            y: 0
+            id: backgroundImage
+            source: "image://ScreenImage/background"
+            sourceSize.width: root.width
+            sourceSize.height: root.height
+        }
+        PaintBoard {
+            id: paintBoard
+        }
     }
-    PaintBoard {
-        id: paintBoard
-    }
+    ShapeMosaic {}
 
     WindowMouseArea {
         id: windowMouseArea
