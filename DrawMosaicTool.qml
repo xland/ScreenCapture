@@ -11,11 +11,23 @@ Rectangle {
     DrawBtn {
         id: dot
         code: "\ue608"
-        isSelected: true
-        onClick: () => {}
+        isSelected: false
+        onClick: () => {
+                     App.mosaic.isRect = !App.mosaic.isRect
+                 }
     }
-    ColorPicker {
+    DrawBtn {
+        id: rect
+        code: "\ueaa2"
+        isSelected: true
         anchors.left: dot.right
         anchors.top: dot.top
+        onClick: () => {
+                     App.mosaic.isRect = !App.mosaic.isRect
+                 }
+    }
+    ColorPicker {
+        anchors.left: rect.right
+        anchors.top: rect.top
     }
 }

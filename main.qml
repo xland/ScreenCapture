@@ -67,37 +67,6 @@ ApplicationWindow {
         id: mouseTipRect
     }
 
-    //    function moveCutAreaByKey(type) {
-    //        if (type === 0) {
-    //            if (Cutter.cutAreaLeft - 1 < 0) {
-    //                return
-    //            }
-    //            Cutter.cutAreaLeft -= 1
-    //            Cutter.cutAreaRight -= 1
-    //        } else if (type === 1) {
-    //            if (Cutter.cutAreaTop - 1 < 0) {
-    //                return
-    //            }
-    //            Cutter.cutAreaTop -= 1
-    //            Cutter.cutAreaBottom -= 1
-    //        } else if (type === 2) {
-    //            if (Cutter.cutAreaRight + 1 > Cutter.totalWidth) {
-    //                return
-    //            }
-    //            Cutter.cutAreaLeft += 1
-    //            Cutter.cutAreaRight += 1
-    //        } else if (type === 3) {
-    //            if (Cutter.cutAreaBottom + 1 > Cutter.totalHeight) {
-    //                return
-    //            }
-    //            Cutter.cutAreaBottom += 1
-    //            Cutter.cutAreaTop += 1
-    //        }
-    //    }
-    //    Component.onCompleted: {
-    //        console.log("main", App.cutAreaState)
-    //    }
-
     //  Component.onCompleted: {
 
     //  }

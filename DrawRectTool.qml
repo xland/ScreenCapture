@@ -14,8 +14,8 @@ Rectangle {
         onClick: () => {
                      App.rectCircle.isFill = !App.rectCircle.isFill
                      App.rectCircle.bgColor = "transparent"
-                     if (Shapes.shapes.length > 0 && Shapes.shapes[0].showDragger) {
-                         Shapes.shapes[0].bgColor = "transparent"
+                     if (Shapes.instance && Shapes.instance.showDragger) {
+                         Shapes.instance.bgColor = "transparent"
                      }
                  }
     }
@@ -28,8 +28,8 @@ Rectangle {
         onClick: () => {
                      App.rectCircle.isFill = !App.rectCircle.isFill
                      App.rectCircle.bgColor = "red"
-                     if (Shapes.shapes.length > 0 && Shapes.shapes[0].showDragger) {
-                         Shapes.shapes[0].bgColor = "red"
+                     if (Shapes.instance && Shapes.instance.showDragger) {
+                         Shapes.instance.bgColor = "red"
                      }
                  }
     }
@@ -51,8 +51,8 @@ Rectangle {
         anchors.top: dot.top
         onClick: () => {
                      App.rectCircle.isRect = !App.rectCircle.isRect
-                     if (Shapes.shapes.length > 0 && Shapes.shapes[0].showDragger) {
-                         Shapes.shapes[0].isRect = App.rectCircle.isRect
+                     if (Shapes.instance && Shapes.instance.showDragger) {
+                         Shapes.instance.isRect = App.rectCircle.isRect
                      }
                  }
     }
@@ -64,8 +64,8 @@ Rectangle {
         anchors.top: dot.top
         onClick: () => {
                      App.rectCircle.isRect = !App.rectCircle.isRect
-                     if (Shapes.shapes.length > 0 && Shapes.shapes[0].showDragger) {
-                         Shapes.shapes[0].isRect = App.rectCircle.isRect
+                     if (Shapes.instance && Shapes.instance.showDragger) {
+                         Shapes.instance.isRect = App.rectCircle.isRect
                      }
                  }
     }

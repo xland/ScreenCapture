@@ -37,13 +37,13 @@ MouseArea {
                 "curX": mousePressX,
                 "curY": mousePressY
             }
-            Shapes.createComponent("CanvasPen", config, root)
+            Shapes.createComponent("ShapePen", config, root)
         } else if (App.drawToolState === 4) {
             let config = {
                 "startX": mousePressX,
                 "startY": mousePressY
             }
-            Shapes.createComponent("PaintMosaic", config, root)
+            Shapes.createComponent("ShapeMosaic", config, root)
         }
     }
     id: root
@@ -87,15 +87,15 @@ MouseArea {
                                root.cursorShape = Qt.CrossCursor
                                if (mouse.buttons === Qt.LeftButton) {
                                    if (App.drawToolState === 1) {
-                                       Shapes.shapes[0].endX = mouse.x
-                                       Shapes.shapes[0].endY = mouse.y
+                                       Shapes.instance.endX = mouse.x
+                                       Shapes.instance.endY = mouse.y
                                    } else if (App.drawToolState === 2) {
                                        let start = Qt.point(root.mousePressX, root.mousePressY)
                                        let end = Qt.point(mouse.x, mouse.y)
-                                       Shapes.shapes[0].pathPointChanged(start, end)
+                                       Shapes.instance.pathPointChanged(start, end)
                                    } else if (App.drawToolState === 3) {
-                                       Shapes.shapes[0].color = "red"
-                                       Shapes.shapes[0].startDraw(mouse.x, mouse.y)
+                                       Shapes.instance.color = "red"
+                                       Shapes.instance.startDraw(mouse.x, mouse.y)
                                    }
                                }
                            }
@@ -123,7 +123,7 @@ MouseArea {
                            }
                        }
                    } else {
-                       if (Shapes.shapes.length < 1) {
+                       if (Shapes.instance) {
                            Qt.quit()
                        } else {
                            Shapes.done()
@@ -139,9 +139,9 @@ MouseArea {
                             App.cutAreaState = 2
                         }
                         if (App.drawToolState === 1) {
-                            Shapes.shapes[0].showDragger = true
+                            Shapes.instance.showDragger = true
                         } else if (App.drawToolState === 2) {
-                            Shapes.shapes[0].showDragger = true
+                            Shapes.instance.showDragger = true
                         } else if (App.drawToolState === 3) {
 
                         }

@@ -20,6 +20,9 @@ QtObject {
         property real borderWidth: 1
         property string borderColor: "red"
     }
+    property QtObject mosaic: QtObject {
+        property bool isRect: true
+    }
 
     property QtObject mouseTip: QtObject {
         property real x: 0

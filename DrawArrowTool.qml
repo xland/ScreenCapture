@@ -15,8 +15,8 @@ Rectangle {
         onClick: () => {
                      App.arrow.isFill = false
                      App.arrow.bgColor = "transparent"
-                     if (Shapes.shapes.length > 0 && Shapes.shapes[0].showDragger) {
-                         Shapes.shapes[0].bgColor = "transparent"
+                     if (Shapes.instance && Shapes.instance.showDragger) {
+                         Shapes.instance.bgColor = "transparent"
                      }
                  }
     }
@@ -29,8 +29,8 @@ Rectangle {
         onClick: () => {
                      App.arrow.isFill = true
                      App.arrow.bgColor = "red"
-                     if (Shapes.shapes.length > 0 && Shapes.shapes[0].showDragger) {
-                         Shapes.shapes[0].bgColor = "red"
+                     if (Shapes.instance && Shapes.instance.showDragger) {
+                         Shapes.instance.bgColor = "red"
                      }
                  }
     }
