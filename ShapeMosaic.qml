@@ -9,32 +9,59 @@ Item {
     property real endY: 0
     property bool showDragger: false
     property real span: draggerLeftTop.width / 2
+    function setDraggerPosition() {
+        draggerLeftTop.x = startX1 - span
+        draggerLeftTop.y = startY1 - span
 
-    function positionChanged(x, y) {
-        if (startX1 > x) {
-            endX = startX1
-            startX1 = x
+        draggerTop.x = startX1 + (endX - startX1) / 2 - span
+        draggerTop.y = startY1 - span
+
+        draggerRightTop.x = endX - span
+        draggerRightTop.y = startY1 - span
+
+        draggerRight.x = endX - span
+        draggerRight.y = startY1 + (endY - startY1) / 2 - span
+
+        draggerRightBottom.x = endX - span
+        draggerRightBottom.y = endY - span
+
+        draggerBottom.x = startX1 + (endX - startX1) / 2 - span
+        draggerBottom.y = endY - span
+
+        draggerLeftBottom.x = startX1 - span
+        draggerLeftBottom.y = endY - span
+
+        draggerLeft.x = startX1 - span
+        draggerLeft.y = startY1 + (endY - startY1) / 2 - span
+    }
+    function updatePosition() {
+        shader.width = endX - startX1
+        shader.height = endY - startY1
+        shader.x = startX1
+        shader.y = startY1
+        shaderImg.x = 0 - startX1
+        shaderImg.y = 0 - startY1
+        setDraggerPosition()
+    }
+
+    function positionChanged(x1, y1, x2, y2) {
+        if (x1 > x2) {
+            startX1 = x2
+            endX = x1
         } else {
-            endX = x
+            startX1 = x1
+            endX = x2
         }
-        if (startY1 > y) {
-            endY = startY1
-            startY1 = y
+        if (y1 > y2) {
+            startY1 = y2
+            endY = y1
         } else {
-            endY = y
+            startY1 = y1
+            endY = y2
         }
         if (shaderImg.source) {
-            //            shader.sourceSize.width = endX - startX1
-            //            shader.sourceSize.height = endY - startY1
-            shader.width = endX - startX1
-            shader.height = endY - startY1
-            shader.x = startX1
-            shader.y = startY1
-            shaderImg.x = 0 - startX1
-            shaderImg.y = 0 - startY1
+            updatePosition()
         }
-
-        //        shadersource: "image://ScreenImage/background"
     }
 
     id: root
@@ -43,17 +70,23 @@ Item {
     Item {
         id: shader
         clip: true
+        visible: false
         Image {
             id: shaderImg
-            //        visible: false
         }
     }
-
     FastBlur {
         id: blur
         anchors.fill: shader
         source: shader
         radius: 32
+    }
+    Rectangle {
+        border.color: "#000"
+        border.width: 1
+        anchors.fill: blur
+        antialiasing: true
+        color: "transparent"
     }
     MouseArea {
         property real pressX: 0
@@ -68,8 +101,7 @@ Item {
         propagateComposedEvents: true
         onPressed: mouse => {
                        if (mouse.buttons === Qt.LeftButton) {
-                           let p = Qt.point(mouse.x, mouse.y)
-                           if ((isRect && rectShape.contains(p)) || (!isRect && circleShape.contains(p))) {
+                           if (shapeMouseArea.cursorShape === Qt.SizeAllCursor) {
                                shapeMouseArea.pressX = mouse.x
                                shapeMouseArea.pressY = mouse.y
                                shapeMouseArea.dragging = true
@@ -79,7 +111,6 @@ Item {
                        }
                    }
         onPositionChanged: mouse => {
-                               let p = Qt.point(mouse.x, mouse.y)
                                if (mouse.buttons === Qt.LeftButton) {
                                    if (shapeMouseArea.dragging) {
                                        let spanX = mouse.x - shapeMouseArea.pressX
@@ -88,12 +119,12 @@ Item {
                                        startY1 += spanY
                                        endX += spanX
                                        endY += spanY
-                                       setDraggerPosition()
+                                       updatePosition()
                                        shapeMouseArea.pressX = mouse.x
                                        shapeMouseArea.pressY = mouse.y
                                    }
                                } else {
-                                   if ((isRect && rectShape.contains(p)) || (!isRect && circleShape.contains(p))) {
+                                   if (mouse.x > startX1 && mouse.y > startY1 && mouse.x < endX && mouse.y < endY) {
                                        shapeMouseArea.cursorShape = Qt.SizeAllCursor
                                    } else {
                                        shapeMouseArea.cursorShape = Qt.CrossCursor
@@ -112,7 +143,7 @@ Item {
             onMoved: (x, y) => {
                          startX1 = x + span
                          startY1 = y + span
-                         setDraggerPosition()
+                         updatePosition()
                      }
         }
         //上
@@ -123,7 +154,7 @@ Item {
             y: startY1 - span
             onMoved: (x, y) => {
                          startY1 = y + span
-                         setDraggerPosition()
+                         updatePosition()
                      }
         }
         //右上
@@ -135,7 +166,7 @@ Item {
             onMoved: (x, y) => {
                          endX = x + span
                          startY1 = y + span
-                         setDraggerPosition()
+                         updatePosition()
                      }
         }
         //右
@@ -146,7 +177,7 @@ Item {
             y: startY1 + (endY - startY1) / 2 - span
             onMoved: (x, y) => {
                          endX = x + span
-                         setDraggerPosition()
+                         updatePosition()
                      }
         }
         //右下
@@ -157,7 +188,7 @@ Item {
             onMoved: (x, y) => {
                          endX = x + span
                          endY = y + span
-                         setDraggerPosition()
+                         updatePosition()
                      }
         }
         //下
@@ -168,7 +199,7 @@ Item {
             y: endY - span
             onMoved: (x, y) => {
                          endY = y + span
-                         setDraggerPosition()
+                         updatePosition()
                      }
         }
         //左下
@@ -180,7 +211,7 @@ Item {
             onMoved: (x, y) => {
                          startX1 = x + span
                          endY = y + span
-                         setDraggerPosition()
+                         updatePosition()
                      }
         }
         //左
@@ -191,7 +222,7 @@ Item {
             y: startY1 + (endY - startY1) / 2 - span
             onMoved: (x, y) => {
                          startX1 = x + span
-                         setDraggerPosition()
+                         updatePosition()
                      }
         }
     }

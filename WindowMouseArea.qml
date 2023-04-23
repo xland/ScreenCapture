@@ -99,7 +99,7 @@ MouseArea {
                                        Shapes.instance.color = "red"
                                        Shapes.instance.startDraw(mouse.x, mouse.y)
                                    } else if (App.drawToolState === 4) {
-                                       Shapes.instance.positionChanged(mouse.x, mouse.y)
+                                       Shapes.instance.positionChanged(mouse.x, mouse.y, root.mousePressX, root.mousePressY)
                                    }
                                }
                            }
@@ -148,6 +148,8 @@ MouseArea {
                             Shapes.instance.showDragger = true
                         } else if (App.drawToolState === 3) {
 
+                        } else if (App.drawToolState === 4) {
+                            Shapes.instance.showDragger = true
                         }
                     }
                 }

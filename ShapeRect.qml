@@ -152,8 +152,7 @@ Item {
         propagateComposedEvents: true
         onPressed: mouse => {
                        if (mouse.buttons === Qt.LeftButton) {
-                           let p = Qt.point(mouse.x, mouse.y)
-                           if ((isRect && rectShape.contains(p)) || (!isRect && circleShape.contains(p))) {
+                           if (shapeMouseArea.cursorShape === Qt.SizeAllCursor) {
                                shapeMouseArea.pressX = mouse.x
                                shapeMouseArea.pressY = mouse.y
                                shapeMouseArea.dragging = true
