@@ -33,7 +33,6 @@ ApplicationWindow {
             id: paintBoard
         }
     }
-    ShapeMosaic {}
 
     WindowMouseArea {
         id: windowMouseArea

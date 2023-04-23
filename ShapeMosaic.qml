@@ -9,6 +9,7 @@ Item {
     property real endY: 0
     property bool showDragger: false
     property real span: draggerLeftTop.width / 2
+
     function positionChanged(x, y) {
         if (startX1 > x) {
             endX = startX1
@@ -22,101 +23,38 @@ Item {
         } else {
             endY = y
         }
-        //        shader.width = endX - startX1
-        //        shader.height = endY - startY1
-        //        shader.x = startX1
-        //        shader.y = startY1
-        //        shader.sourceRect = Qt.rect(shader.x, shader.y, shader.width, shader.height)
-        //        blur.source = shader
-        //        blur.update()
-        //        console.log(shader.x, shader.y, shader.width, shader.height)
+        if (shaderImg.source) {
+            //            shader.sourceSize.width = endX - startX1
+            //            shader.sourceSize.height = endY - startY1
+            shader.width = endX - startX1
+            shader.height = endY - startY1
+            shader.x = startX1
+            shader.y = startY1
+            shaderImg.x = 0 - startX1
+            shaderImg.y = 0 - startY1
+        }
+
+        //        shadersource: "image://ScreenImage/background"
     }
 
     id: root
     anchors.fill: parent
-    //    ShaderEffectSource {
-    //        id: shader
-    //        sourceItem: parent.parent.children[0]
-    //        recursive: true
-    //        x: 0
-    //        y: 0
-    //        width: 510
-    //        height: 510
-    //        sourceRect: Qt.rect(shader.x, shader.y, shader.width, shader.height)
-    //    }
-    //    FastBlur {
-    //        id: blur
-    //        anchors.fill: shader
-    //        source: shader
-    //        radius: 32
-    //    }
-    Shape {
-        id: rectShape
-        antialiasing: true
-        visible: true
-        anchors.fill: parent
-        containsMode: Shape.FillContains
-        ShapePath {
-            id: rectShapePath
-            strokeWidth: 6
-            strokeColor: "#fff"
-            fillColor: "#fff"
-            //            PathMove {
-            //                x: 300
-            //                y: 300
-            //            }
-            //            PathLine {
-            //                x: 600
-            //                y: 300
-            //            }
-            //            PathLine {
-            //                x: 600
-            //                y: 600
-            //            }
-            //            PathLine {
-            //                x: 300
-            //                y: 600
-            //            }
-            //            PathLine {
-            //                x: 300
-            //                y: 300
-            //            }
-            PathMove {
-                x: startX1
-                y: startY1
-            }
-            PathLine {
-                x: endX
-                y: startY1
-            }
-            PathLine {
-                x: endX
-                y: endY
-            }
-            PathLine {
-                x: startX1
-                y: endY
-            }
-            PathLine {
-                x: startX1
-                y: startY1
-            }
+
+    Item {
+        id: shader
+        clip: true
+        Image {
+            id: shaderImg
+            //        visible: false
         }
     }
 
-    MaskedBlur {
+    FastBlur {
         id: blur
-        anchors.fill: parent
-        source: parent.parent.children[0]
-        maskSource: rectShape
-        radius: 16
-        samples: 24
-        onMaskSourceChanged: () => {
-                                 root.update()
-                                 console.log(123)
-                             }
+        anchors.fill: shader
+        source: shader
+        radius: 32
     }
-
     MouseArea {
         property real pressX: 0
         property real pressY: 0
@@ -256,5 +194,10 @@ Item {
                          setDraggerPosition()
                      }
         }
+    }
+    Component.onCompleted: {
+        parent.parent.children[0].grabToImage(function (result) {
+            shaderImg.source = result.url
+        })
     }
 }

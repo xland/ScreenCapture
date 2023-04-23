@@ -7,6 +7,7 @@ Canvas {
     antialiasing: true
     layer.enabled: true
     layer.samples: 8
+    smooth: true
     function getPaintContext(param) {
 
         return ctx
