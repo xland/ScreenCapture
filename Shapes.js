@@ -1,6 +1,7 @@
 .pragma library
 var instance
 var paintBoard
+var paintMask
 function createComponent(name, config, parent) {
     var component = Qt.createComponent(name + ".qml")
     if (component.status === 1) {

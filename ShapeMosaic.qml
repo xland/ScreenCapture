@@ -8,7 +8,17 @@ Item {
     property real endX: 0
     property real endY: 0
     property bool showDragger: false
-    property real span: draggerLeftTop.width / 2
+    //    property real span: draggerLeftTop.width / 2
+    function getDrawInfo() {
+        let result = {//            "type": "Mosaic",
+            //            "strokeWidth": borderWidth,
+            //            "strokeColor": borderColor,
+            //            "fillColor": bgColor,
+            //            "isFill": isFill,
+            //            "points": []
+        }
+        return result
+    }
     function setDraggerPosition() {
         draggerLeftTop.x = startX1 - span
         draggerLeftTop.y = startY1 - span
@@ -39,196 +49,51 @@ Item {
         shader.height = endY - startY1
         shader.x = startX1
         shader.y = startY1
-        shaderImg.x = 0 - startX1
-        shaderImg.y = 0 - startY1
         setDraggerPosition()
     }
 
-    function positionChanged(x1, y1, x2, y2) {
-        if (x1 > x2) {
-            startX1 = x2
-            endX = x1
-        } else {
-            startX1 = x1
-            endX = x2
-        }
-        if (y1 > y2) {
-            startY1 = y2
-            endY = y1
-        } else {
-            startY1 = y1
-            endY = y2
-        }
-        if (shaderImg.source) {
-            updatePosition()
-        }
+    function positionChanged(x1, y1) {//        if (!shaderImg.source) {
+        //            root.parent.parent.children[0].grabToImage(function (result) {
+        //                shaderImg.source = result.url
+        //                console.log(123)
+        //            })
+        //        }
+
+        //        var ctx = mask.getContext('2d')
+        //        ctx.lineWidth = 32
+        //        ctx.strokeStyle = "#000000"
+        //        ctx.beginPath()
+        //        ctx.moveTo(startX1, startY1)
+        //        ctx.lineTo(x1, y1)
+        //        startX1 = x1
+        //        startY1 = y1
+        //        ctx.stroke()
+        //        mask.requestPaint()
     }
 
     id: root
     anchors.fill: parent
-
-    Item {
-        id: shader
-        clip: true
-        visible: false
-        Image {
-            id: shaderImg
-        }
-    }
-    FastBlur {
-        id: blur
-        anchors.fill: shader
-        source: shader
-        radius: 32
-    }
-    Rectangle {
-        border.color: "#000"
-        border.width: 1
-        anchors.fill: blur
-        antialiasing: true
-        color: "transparent"
-    }
-    MouseArea {
-        property real pressX: 0
-        property real pressY: 0
-        property bool dragging: false
-        id: shapeMouseArea
+    Canvas {
+        id: mask
         anchors.fill: parent
-        hoverEnabled: true
-        cursorShape: Qt.CrossCursor
-        visible: showDragger
-        acceptedButtons: Qt.LeftButton | Qt.RightButton
-        propagateComposedEvents: true
-        onPressed: mouse => {
-                       if (mouse.buttons === Qt.LeftButton) {
-                           if (shapeMouseArea.cursorShape === Qt.SizeAllCursor) {
-                               shapeMouseArea.pressX = mouse.x
-                               shapeMouseArea.pressY = mouse.y
-                               shapeMouseArea.dragging = true
-                           }
-                       } else {
-                           Shapes.done()
-                       }
-                   }
-        onPositionChanged: mouse => {
-                               if (mouse.buttons === Qt.LeftButton) {
-                                   if (shapeMouseArea.dragging) {
-                                       let spanX = mouse.x - shapeMouseArea.pressX
-                                       let spanY = mouse.y - shapeMouseArea.pressY
-                                       startX1 += spanX
-                                       startY1 += spanY
-                                       endX += spanX
-                                       endY += spanY
-                                       updatePosition()
-                                       shapeMouseArea.pressX = mouse.x
-                                       shapeMouseArea.pressY = mouse.y
-                                   }
-                               } else {
-                                   if (mouse.x > startX1 && mouse.y > startY1 && mouse.x < endX && mouse.y < endY) {
-                                       shapeMouseArea.cursorShape = Qt.SizeAllCursor
-                                   } else {
-                                       shapeMouseArea.cursorShape = Qt.CrossCursor
-                                   }
-                               }
-                           }
-        onReleased: mouse => {
-                        mouse.accepted = false
-                    }
-
-        //左上
-        Dragger {
-            id: draggerLeftTop
-            x: startX1 - span
-            y: startY1 - span
-            onMoved: (x, y) => {
-                         startX1 = x + span
-                         startY1 = y + span
-                         updatePosition()
-                     }
-        }
-        //上
-        Dragger {
-            id: draggerTop
-            cursor: Qt.SizeVerCursor
-            x: startX1 + (endX - startX1) / 2 - span
-            y: startY1 - span
-            onMoved: (x, y) => {
-                         startY1 = y + span
-                         updatePosition()
-                     }
-        }
-        //右上
-        Dragger {
-            id: draggerRightTop
-            cursor: Qt.SizeBDiagCursor
-            x: endX - span
-            y: startY1 - span
-            onMoved: (x, y) => {
-                         endX = x + span
-                         startY1 = y + span
-                         updatePosition()
-                     }
-        }
-        //右
-        Dragger {
-            id: draggerRight
-            cursor: Qt.SizeHorCursor
-            x: endX - span
-            y: startY1 + (endY - startY1) / 2 - span
-            onMoved: (x, y) => {
-                         endX = x + span
-                         updatePosition()
-                     }
-        }
-        //右下
-        Dragger {
-            id: draggerRightBottom
-            x: endX - span
-            y: endY - span
-            onMoved: (x, y) => {
-                         endX = x + span
-                         endY = y + span
-                         updatePosition()
-                     }
-        }
-        //下
-        Dragger {
-            id: draggerBottom
-            cursor: Qt.SizeVerCursor
-            x: startX1 + (endX - startX1) / 2 - span
-            y: endY - span
-            onMoved: (x, y) => {
-                         endY = y + span
-                         updatePosition()
-                     }
-        }
-        //左下
-        Dragger {
-            id: draggerLeftBottom
-            cursor: Qt.SizeBDiagCursor
-            x: startX1 - span
-            y: endY - span
-            onMoved: (x, y) => {
-                         startX1 = x + span
-                         endY = y + span
-                         updatePosition()
-                     }
-        }
-        //左
-        Dragger {
-            id: draggerLeft
-            cursor: Qt.SizeHorCursor
-            x: startX1 - span
-            y: startY1 + (endY - startY1) / 2 - span
-            onMoved: (x, y) => {
-                         startX1 = x + span
-                         updatePosition()
-                     }
+        onPaint: {
+            var ctx = getContext('2d')
+            ctx.fillStyle = "transparent"
+            ctx.fillRect(0, 0, width, height)
+            ctx.lineWidth = 42
+            ctx.strokeStyle = "#000000"
+            ctx.beginPath()
+            ctx.moveTo(0, 0)
+            ctx.lineTo(600, 600)
+            ctx.stroke()
         }
     }
-    Component.onCompleted: {
-        parent.parent.children[0].grabToImage(function (result) {
-            shaderImg.source = result.url
-        })
+    MaskedBlur {
+        id: blur
+        anchors.fill: parent
+        source: board
+        maskSource: mask
+        radius: 12
+        samples: 28
     }
 }

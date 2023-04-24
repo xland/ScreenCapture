@@ -17,22 +17,13 @@ ApplicationWindow {
     //    height: 300
     //    flags: Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint
     flags: Qt.FramelessWindowHint
-    Item {
-        id: board
-        anchors.fill: parent
-        Image {
-            x: 0
-            y: 0
-            id: backgroundImage
-            source: "image://ScreenImage/background"
-            sourceSize.width: root.width
-            sourceSize.height: root.height
-        }
-        PaintBoard {
-            id: paintBoard
-        }
+    PaintBoard {
+        id: paintBoard
     }
-
+    PaintMask {
+        id: paintMask
+        source: paintBoard
+    }
     WindowMouseArea {
         id: windowMouseArea
     }
@@ -75,10 +66,9 @@ ApplicationWindow {
     MouseTip {
         id: mouseTipRect
     }
+    //    Component.onCompleted: {
 
-    //  Component.onCompleted: {
-
-    //  }
+    //    }
     //  sourceRectangle.grabToImage(function(result) {
     //             result.saveToFile("something.png")
     //          })
