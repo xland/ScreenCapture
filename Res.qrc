@@ -2,7 +2,6 @@
     <qresource prefix="/">
         <file>font.ttf</file>
         <file>ColorPicker.qml</file>
-        <file>CutArea_bak.qml</file>
         <file>DrawBtn.qml</file>
         <file>DrawRectTool.qml</file>
         <file>DrawTool.qml</file>
@@ -23,8 +22,10 @@
         <file>DrawPenTool.qml</file>
         <file>ShapePen.qml</file>
         <file>PaintBoard.qml</file>
-        <file>ShapeMosaic.qml</file>
+        <file>ShapeMosaic_bak.qml</file>
         <file>DrawMosaicTool.qml</file>
         <file>DrawEraserTool.qml</file>
+        <file>ShapeMosaic.qml</file>
+        <file>PaintMask.qml</file>
     </qresource>
 </RCC>
