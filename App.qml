@@ -23,6 +23,9 @@ QtObject {
     property QtObject mosaic: QtObject {
         property bool isRect: true
     }
+    property QtObject eraser: QtObject {
+        property bool isRect: true
+    }
 
     property QtObject mouseTip: QtObject {
         property real x: 0

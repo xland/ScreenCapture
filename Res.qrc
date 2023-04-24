@@ -25,5 +25,6 @@
         <file>PaintBoard.qml</file>
         <file>ShapeMosaic.qml</file>
         <file>DrawMosaicTool.qml</file>
+        <file>DrawEraserTool.qml</file>
     </qresource>
 </RCC>

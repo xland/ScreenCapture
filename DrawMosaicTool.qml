@@ -11,7 +11,7 @@ Rectangle {
     DrawBtn {
         id: dot
         code: "\ue608"
-        isSelected: false
+        isSelected: !App.mosaic.isRect
         onClick: () => {
                      App.mosaic.isRect = !App.mosaic.isRect
                  }
@@ -19,7 +19,7 @@ Rectangle {
     DrawBtn {
         id: rect
         code: "\ueaa2"
-        isSelected: true
+        isSelected: App.mosaic.isRect
         anchors.left: dot.right
         anchors.top: dot.top
         onClick: () => {

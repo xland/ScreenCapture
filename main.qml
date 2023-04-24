@@ -67,6 +67,12 @@ ApplicationWindow {
         anchors.top: drawTool.top
         anchors.topMargin: 34
     }
+    DrawEraserTool {
+        id: drawEraserTool
+        anchors.left: drawTool.left
+        anchors.top: drawTool.top
+        anchors.topMargin: 34
+    }
     MouseTip {
         id: mouseTipRect
     }

@@ -156,9 +156,11 @@ Item {
                                shapeMouseArea.pressX = mouse.x
                                shapeMouseArea.pressY = mouse.y
                                shapeMouseArea.dragging = true
+                           } else {
+                               mouse.accepted = false
                            }
                        } else {
-                           Shapes.done()
+                           mouse.accepted = false
                        }
                    }
         onPositionChanged: mouse => {
