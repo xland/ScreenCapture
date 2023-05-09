@@ -18,6 +18,9 @@ MainWindow::MainWindow(QWidget* parent)
     scene->setSceneRect(0.0, 0.0, this->width(), this->height());
     ui->graphicsView->setScene(scene);
     auto imgItem = scene->addPixmap(*(ScreenShoter::Get()->desktopImage));
+
+//    auto imgCur = img->scaled(QSize(446, 440) * scalFactor, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+//    imgCur.setDevicePixelRatio(scalFactor);
     imgItem->setPos(0, 0);
 }
 
