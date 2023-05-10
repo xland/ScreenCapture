@@ -3,7 +3,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-
+#include "Canvas.h"
 
 
 QT_BEGIN_NAMESPACE
@@ -28,6 +28,7 @@ private slots:
 private:
     void btnMainToolSelected();
     Ui::MainWindow* ui;
+    Canvas* canvas;
     QString style = R"(#%1{background:#f6f6f6;}
 #%1 QPushButton{color:#414141;font-size:16px;border:none;}
 #%1 QPushButton:hover{background:#e5e5e5;}

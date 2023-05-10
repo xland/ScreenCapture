@@ -1,7 +1,6 @@
 
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
-#include "Canvas.h"
 #include "Icon.h"
 #include <QPixmap>
 #include <QPainter>
@@ -19,7 +18,7 @@ MainWindow::MainWindow(QWidget* parent)
     //todo
     this->showMaximized();
 
-    auto canvas = new Canvas(ui->graphicsView);
+    canvas = new Canvas(ui->graphicsView);
     ui->graphicsView->setScene(canvas);
     initToolMain();
     initToolRect();
@@ -113,8 +112,12 @@ void MainWindow::btnMainToolSelected()
 {
     for (auto item : ui->toolMain->children())
     {
+        auto btn = qobject_cast<QPushButton*>(item);
+        if (!btn)
+        {
+            continue;
+        }
         auto name = item->objectName();
-        auto btn = static_cast<QPushButton*>(item);
         qDebug() << name << btn->isChecked();
         if (btn->isChecked())
         {
@@ -122,6 +125,7 @@ void MainWindow::btnMainToolSelected()
             {
                 ui->toolRect->move(ui->toolMain->x(), ui->toolMain->y() + ui->toolMain->height() + 6);
                 ui->toolRect->show();
+                canvas->state = Canvas::State::rect;
             }
             else if (name == "btnArrow")
             {

@@ -12,8 +12,18 @@ class Canvas : public QGraphicsScene
 {
     Q_OBJECT
 public:
+    enum class State
+    {
+        start,
+        rect,
+        rectFill,
+        ellipse,
+        ellipseFill
+    };
     explicit Canvas(QObject* parent = nullptr);
     ~Canvas();
+public:
+    State state = State::start;
 protected:
     void mouseMoveEvent(QGraphicsSceneMouseEvent* mouseEvent) override;
     void mousePressEvent(QGraphicsSceneMouseEvent* mouseEvent) override;
@@ -24,6 +34,7 @@ private:
     QPointF mousePressPoint;
     bool isMouseDown = false;
     QGraphicsPathItem* maskPathItem;
+    QGraphicsPathItem* rectPathItem;
     qreal maskBorderWidth = 3.0;
 };
 

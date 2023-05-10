@@ -47,21 +47,7 @@ void Canvas::initMask()
 
 
 }
-void Canvas::mouseMoveEvent(QGraphicsSceneMouseEvent* mouseEvent)
-{
-    if (isMouseDown)
-    {
-        auto curPoint = mouseEvent->scenePos();
-        auto path = maskPathItem->path();
-        path.setElementPositionAt(5, mousePressPoint.x(), mousePressPoint.y());
-        path.setElementPositionAt(6, curPoint.x(), mousePressPoint.y());
-        path.setElementPositionAt(7, curPoint.x(), curPoint.y());
-        path.setElementPositionAt(8, mousePressPoint.x(), curPoint.y());
-        path.setElementPositionAt(9, mousePressPoint.x(), mousePressPoint.y());
-        maskPathItem->setPath(path);
 
-    }
-}
 void Canvas::mousePressEvent(QGraphicsSceneMouseEvent* mouseEvent)
 {
     if (mouseEvent->button() == Qt::RightButton)
@@ -73,9 +59,47 @@ void Canvas::mousePressEvent(QGraphicsSceneMouseEvent* mouseEvent)
     {
         mousePressPoint = mouseEvent->scenePos();
         isMouseDown = true;
+        if (state == State::rect)
+        {
+            QPainterPath rectPath;
+            rectPath.moveTo(mousePressPoint);
+            rectPath.lineTo(mousePressPoint.x() + 1, mousePressPoint.y());
+            rectPath.lineTo(mousePressPoint.x() + 1, mousePressPoint.y() + 1);
+            rectPath.lineTo(mousePressPoint.x(), mousePressPoint.y() + 1);
+            rectPath.lineTo(mousePressPoint);
+            auto c = rectPath.elementCount();
+            QPen pen(QBrush(Qt::red), 2);
+            rectPathItem = addPath(rectPath, pen, QBrush(Qt::transparent));
+        }
     }
-
 }
+
+void Canvas::mouseMoveEvent(QGraphicsSceneMouseEvent* mouseEvent)
+{
+    if (isMouseDown)
+    {
+        auto curPoint = mouseEvent->scenePos();
+        if (state == State::start)
+        {
+            auto path = maskPathItem->path();
+            path.setElementPositionAt(5, mousePressPoint.x(), mousePressPoint.y());
+            path.setElementPositionAt(6, curPoint.x(), mousePressPoint.y());
+            path.setElementPositionAt(7, curPoint.x(), curPoint.y());
+            path.setElementPositionAt(8, mousePressPoint.x(), curPoint.y());
+            path.setElementPositionAt(9, mousePressPoint.x(), mousePressPoint.y());
+            maskPathItem->setPath(path);
+        }
+        else if (state == State::rect)
+        {
+            auto path = rectPathItem->path();
+            path.setElementPositionAt(1, curPoint.x(), mousePressPoint.y());
+            path.setElementPositionAt(2, curPoint.x(), curPoint.y());
+            path.setElementPositionAt(3, mousePressPoint.x(), curPoint.y());
+            rectPathItem->setPath(path);
+        }
+    }
+}
+
 void Canvas::mouseReleaseEvent(QGraphicsSceneMouseEvent* mouseEvent)
 {
     if (mouseEvent->button() == Qt::LeftButton)
