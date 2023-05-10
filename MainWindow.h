@@ -3,7 +3,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QGraphicsScene>
+#include "Icon.h"
 
 
 
@@ -19,10 +19,17 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget* parent = nullptr);
     ~MainWindow();
+    void initTool();
+    void showToolMain(int x, int y);
+    void showToolSub(int x, int y);
+public:
+    Icon::Name selectedIcon = Icon::Name::none;
+
+private slots:
 
 private:
     Ui::MainWindow* ui;
-    QGraphicsScene* scene;
+    QString selectedBtnStyle = "background:#1677ff;color:#fff;";
 };
 
 #endif // MAINWINDOW_H
