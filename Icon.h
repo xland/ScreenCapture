@@ -14,7 +14,7 @@ public:
     enum class Name
     {
         none,
-        rect,
+        rectEllipse,
         arrow,
         line,
         mosaic,
@@ -25,7 +25,12 @@ public:
         copy,
         ok,
         number,
-        eraser
+        eraser,
+        dot,
+        rect,
+        rectFill,
+        ellipse,
+        ellipseFill
     };
     static void Init();
     static QFont font;

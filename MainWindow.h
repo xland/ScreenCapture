@@ -3,7 +3,6 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include "Icon.h"
 
 
 
@@ -19,17 +18,20 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget* parent = nullptr);
     ~MainWindow();
-    void initTool();
+    void initToolMain();
+    void initToolRect();
     void showToolMain(int x, int y);
     void showToolSub(int x, int y);
-public:
-    Icon::Name selectedIcon = Icon::Name::none;
 
 private slots:
 
 private:
+    void btnMainToolSelected();
     Ui::MainWindow* ui;
-    QString selectedBtnStyle = "background:#1677ff;color:#fff;";
+    QString style = R"(#%1{background:#f6f6f6;}
+#%1 QPushButton{color:#414141;font-size:16px;border:none;}
+#%1 QPushButton:hover{background:#e5e5e5;}
+#%1 QPushButton:checked{background:#1677ff;color:#fff;})";
 };
 
 #endif // MAINWINDOW_H
