@@ -7,7 +7,9 @@
 #include <QPushButton>
 #include <QDebug>
 #include <QLabel>
+#include <QMouseEvent>
 #include "ScreenShoter.h"
+
 
 
 MainWindow::MainWindow(QWidget* parent)
@@ -17,30 +19,120 @@ MainWindow::MainWindow(QWidget* parent)
     ui->setupUi(this);
     this->setWindowFlags(Qt::Window | Qt::FramelessWindowHint);   //| Qt::WindowStaysOnTopHint
 
+    initMask();
+    canvasImg = new QImage(ScreenShoter::Get()->screenRects[0].size(), QImage::Format_ARGB32_Premultiplied);
+    canvasImg->fill(0);
+    painter = new QPainter(canvasImg);
     //todo
     this->showMaximized();
-//    canvas = new Canvas(ui->graphicsView);
-//    ui->graphicsView->setScene(canvas);
-    ui->graphicsView->hide();
-
-    auto screenShoter = ScreenShoter::Get();
-    ui->bgLabel->setGeometry(screenShoter->screenRects[0]);
-    ui->bgLabel->setPixmap(screenShoter->desktopImages[0]);
-
-    canvas = new Canvas(ui->centralwidget);
-    ui->canvasContainer->layout()->addWidget(canvas);
-    ui->canvasContainer->setGeometry(screenShoter->screenRects[0]);
-
     initToolMain();
     initToolRect();
-
 }
 
 MainWindow::~MainWindow()
 {
+    delete painter;
+    delete canvasImg;
     delete ui;
 }
 
+void MainWindow::initMask()
+{
+    auto screenShoter = ScreenShoter::Get();
+    maskPath.moveTo(0 - maskBorderWidth, 0 - maskBorderWidth);
+    maskPath.lineTo(screenShoter->screenRects[0].width() + maskBorderWidth, 0 - maskBorderWidth);
+    maskPath.lineTo(screenShoter->screenRects[0].width() + maskBorderWidth, screenShoter->screenRects[0].height() + maskBorderWidth);
+    maskPath.lineTo(0 - maskBorderWidth, screenShoter->screenRects[0].height() + maskBorderWidth);
+    maskPath.lineTo(0 - maskBorderWidth, 0 - maskBorderWidth);
+
+    maskPath.moveTo(0 - maskBorderWidth, 0 - maskBorderWidth);
+    maskPath.lineTo(screenShoter->screenRects[0].width() + maskBorderWidth, 0 - maskBorderWidth);
+    maskPath.lineTo(screenShoter->screenRects[0].width() + maskBorderWidth, screenShoter->screenRects[0].height() + maskBorderWidth);
+    maskPath.lineTo(0 - maskBorderWidth, screenShoter->screenRects[0].height() + maskBorderWidth);
+    maskPath.lineTo(0 - maskBorderWidth, 0 - maskBorderWidth);
+}
+
+void MainWindow::paintEvent(QPaintEvent* e)
+{
+    painter->setCompositionMode(QPainter::CompositionMode_DestinationOver);
+    painter->setPen(Qt::NoPen);
+    painter->fillRect(QRect(100, 100, 100, 100), QBrush(Qt::black));
+
+    painter->setPen(Qt::NoPen);
+    painter->setRenderHint(QPainter::Antialiasing);
+    painter->setCompositionMode(QPainter::CompositionMode_Clear);
+    painter->fillRect(QRect(150, 150, 100, 100), QBrush(Qt::black));
+
+    QPainter p(this);
+    p.drawPixmap(0, 0, ScreenShoter::Get()->desktopImages[0]);
+    p.drawImage(0, 0, *canvasImg);
+    p.end();
+}
+
+void MainWindow::mousePressEvent(QMouseEvent* mouseEvent)
+{
+    if (mouseEvent->button() == Qt::RightButton)
+    {
+        qApp->exit();
+        return;
+    }
+    else if (mouseEvent->button() == Qt::LeftButton)
+    {
+        mousePressPoint = mouseEvent->pos();
+        isMouseDown = true;
+        if (state == State::start)
+        {
+            auto mainWin = (MainWindow*)(qApp->activeWindow());
+            mainWin->hideTool();
+        }
+        else if (state == State::rect)
+        {
+            QPainterPath path;
+            path.moveTo(mousePressPoint);
+            path.lineTo(mousePressPoint.x() + 1, mousePressPoint.y());
+            path.lineTo(mousePressPoint.x() + 1, mousePressPoint.y() + 1);
+            path.lineTo(mousePressPoint.x(), mousePressPoint.y() + 1);
+            path.lineTo(mousePressPoint);
+            paths.append(path);
+        }
+    }
+}
+
+void MainWindow::mouseMoveEvent(QMouseEvent* mouseEvent)
+{
+    if (isMouseDown)
+    {
+        auto curPoint = mouseEvent->pos();
+        if (state == State::start)
+        {
+            maskPath.setElementPositionAt(5, mousePressPoint.x(), mousePressPoint.y());
+            maskPath.setElementPositionAt(6, curPoint.x(), mousePressPoint.y());
+            maskPath.setElementPositionAt(7, curPoint.x(), curPoint.y());
+            maskPath.setElementPositionAt(8, mousePressPoint.x(), curPoint.y());
+            maskPath.setElementPositionAt(9, mousePressPoint.x(), mousePressPoint.y());
+            repaint();
+        }
+        else if (state == State::rect)
+        {
+            auto& path = paths.last();
+            path.setElementPositionAt(1, curPoint.x(), mousePressPoint.y());
+            path.setElementPositionAt(2, curPoint.x(), curPoint.y());
+            path.setElementPositionAt(3, mousePressPoint.x(), curPoint.y());
+            repaint();
+        }
+    }
+}
+
+void MainWindow::mouseReleaseEvent(QMouseEvent* mouseEvent)
+{
+    if (mouseEvent->button() == Qt::LeftButton)
+    {
+        isMouseDown = false;
+        auto mainWin = (MainWindow*)(qApp->activeWindow());
+        //todo 这个位置要动态的，工具条应该出现在正确的位置上
+        mainWin->showToolMain(maskPath.elementAt(7).x, maskPath.elementAt(7).y);
+    }
+}
 
 void MainWindow::initToolMain()
 {
@@ -136,7 +228,7 @@ void MainWindow::btnMainToolSelected()
             {
                 ui->toolRect->move(ui->toolMain->x(), ui->toolMain->y() + ui->toolMain->height() + 4);
                 ui->toolRect->show();
-                canvas->state = Canvas::State::rect;
+                state = State::rect;
             }
             else if (name == "btnArrow")
             {
