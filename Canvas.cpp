@@ -1,35 +1,86 @@
 
 #include "Canvas.h"
-#include "ScreenShoter.h"
-#include <QPainterPath>
-#include <QGraphicsView>
-#include <QGraphicsPixmapItem>
-#include <QApplication>
 #include <QColor>
+#include <QBrush>
+#include <QApplication>
+#include <QMouseEvent>
 #include <QDebug>
+#include <QPen>
+#include <QImage>
 #include "MainWindow.h"
+#include "ScreenShoter.h"
 
-Canvas::Canvas(QObject* parent)
-    : QGraphicsScene{parent}
+Canvas::Canvas(QWidget* parent)
+    : QWidget{parent}
 {
-    auto screenShoter = ScreenShoter::Get();
-    auto view = static_cast<QGraphicsView*>(parent);
-    view->setGeometry(screenShoter->screenRects[0]);
-    setSceneRect(screenShoter->screenRects[0]);
-    //todo 多屏支持
-    auto imgItem = addPixmap(screenShoter->desktopImages[0]);
-    imgItem->setPos(0, 0);
     initMask();
-
+    auto screenShoter = ScreenShoter::Get();
+    canvasImg = new QImage(screenShoter->screenRects[0].size(), QImage::Format_ARGB32_Premultiplied);
+    canvasImg->fill(0);
+    painter = new QPainter(canvasImg);
 }
 Canvas::~Canvas()
 {
-
+    delete painter;
+    delete canvasImg;
 }
+
+void Canvas::paintEvent(QPaintEvent* e)
+{
+    painter->setCompositionMode(QPainter::CompositionMode_DestinationOver);
+    painter->setPen(Qt::NoPen);
+    painter->fillRect(QRect(100, 100, 100, 100), QBrush(Qt::black));
+
+    painter->setPen(Qt::NoPen);
+    painter->setRenderHint(QPainter::Antialiasing);
+    painter->setCompositionMode(QPainter::CompositionMode_Clear);
+    painter->fillRect(QRect(150, 150, 100, 100), QBrush(Qt::black));
+
+
+    QPainter p1(this);
+    p1.drawImage(0, 0, *canvasImg);
+    p1.end();
+
+//    QPainter painter(this);
+//    painter.setPen(QPen(Qt::red, 13));
+//    painter.drawRect(QRect(50, 50, 200, 200));
+//    painter.save();
+
+//    QPainterPath path;
+//    path.addRect(QRect(100, 100, 200, 200));
+//    painter.setPen(QPen(Qt::black, 13));
+//    painter.setClipPath(path, Qt::IntersectClip);
+
+//    painter.drawPath(path);
+//    painter.end();
+
+    //如果做到一个path里，那么就没办法让橡皮擦的路径遮盖其他的路径
+//    QPainter painter(this);
+//    painter.setRenderHint(QPainter::Antialiasing, true);
+//    QPen pen(QBrush(QColor(22, 119, 255)), maskBorderWidth);
+//    QBrush brush(QColor(0, 0, 0, 120));
+//    painter.setPen(pen);
+//    painter.setBrush(brush);
+//    painter.drawPath(maskPath);
+
+//    pen.setColor(Qt::red);
+//    brush.setColor(Qt::black);
+//    for (int var = 0; var < paths.count(); ++var)
+//    {
+//        painter.setPen(pen);
+//        painter.setBrush(brush);
+//        if (var > 0)
+//        {
+//            painter.setCompositionMode(QPainter::CompositionMode_Clear);
+//        }
+
+//        painter.drawPath(paths[var]);
+//    }
+}
+
 void Canvas::initMask()
 {
     auto screenShoter = ScreenShoter::Get();
-    QPainterPath maskPath;
     maskPath.moveTo(0 - maskBorderWidth, 0 - maskBorderWidth);
     maskPath.lineTo(screenShoter->screenRects[0].width() + maskBorderWidth, 0 - maskBorderWidth);
     maskPath.lineTo(screenShoter->screenRects[0].width() + maskBorderWidth, screenShoter->screenRects[0].height() + maskBorderWidth);
@@ -41,14 +92,9 @@ void Canvas::initMask()
     maskPath.lineTo(screenShoter->screenRects[0].width() + maskBorderWidth, screenShoter->screenRects[0].height() + maskBorderWidth);
     maskPath.lineTo(0 - maskBorderWidth, screenShoter->screenRects[0].height() + maskBorderWidth);
     maskPath.lineTo(0 - maskBorderWidth, 0 - maskBorderWidth);
-
-    QPen pen(QBrush(QColor(22, 119, 255)), maskBorderWidth);
-    maskPathItem = addPath(maskPath, pen, QBrush(QColor(0, 0, 0, 120)));
-
-
 }
 
-void Canvas::mousePressEvent(QGraphicsSceneMouseEvent* mouseEvent)
+void Canvas::mousePressEvent(QMouseEvent* mouseEvent)
 {
     if (mouseEvent->button() == Qt::RightButton)
     {
@@ -57,58 +103,58 @@ void Canvas::mousePressEvent(QGraphicsSceneMouseEvent* mouseEvent)
     }
     else if (mouseEvent->button() == Qt::LeftButton)
     {
-        mousePressPoint = mouseEvent->scenePos();
+        mousePressPoint = mouseEvent->pos();
         isMouseDown = true;
-        if (state == State::rect)
-        {
-            QPainterPath rectPath;
-            rectPath.moveTo(mousePressPoint);
-            rectPath.lineTo(mousePressPoint.x() + 1, mousePressPoint.y());
-            rectPath.lineTo(mousePressPoint.x() + 1, mousePressPoint.y() + 1);
-            rectPath.lineTo(mousePressPoint.x(), mousePressPoint.y() + 1);
-            rectPath.lineTo(mousePressPoint);
-            auto c = rectPath.elementCount();
-            QPen pen(QBrush(Qt::red), 2);
-            rectPathItem = addPath(rectPath, pen, QBrush(Qt::transparent));
-        }
-    }
-}
-
-void Canvas::mouseMoveEvent(QGraphicsSceneMouseEvent* mouseEvent)
-{
-    if (isMouseDown)
-    {
-        auto curPoint = mouseEvent->scenePos();
         if (state == State::start)
         {
-            auto path = maskPathItem->path();
-            path.setElementPositionAt(5, mousePressPoint.x(), mousePressPoint.y());
-            path.setElementPositionAt(6, curPoint.x(), mousePressPoint.y());
-            path.setElementPositionAt(7, curPoint.x(), curPoint.y());
-            path.setElementPositionAt(8, mousePressPoint.x(), curPoint.y());
-            path.setElementPositionAt(9, mousePressPoint.x(), mousePressPoint.y());
-            maskPathItem->setPath(path);
+            auto mainWin = (MainWindow*)(qApp->activeWindow());
+            mainWin->hideTool();
         }
         else if (state == State::rect)
         {
-            auto path = rectPathItem->path();
-            path.setElementPositionAt(1, curPoint.x(), mousePressPoint.y());
-            path.setElementPositionAt(2, curPoint.x(), curPoint.y());
-            path.setElementPositionAt(3, mousePressPoint.x(), curPoint.y());
-            rectPathItem->setPath(path);
+            QPainterPath path;
+            path.moveTo(mousePressPoint);
+            path.lineTo(mousePressPoint.x() + 1, mousePressPoint.y());
+            path.lineTo(mousePressPoint.x() + 1, mousePressPoint.y() + 1);
+            path.lineTo(mousePressPoint.x(), mousePressPoint.y() + 1);
+            path.lineTo(mousePressPoint);
+            paths.append(path);
         }
     }
 }
 
-void Canvas::mouseReleaseEvent(QGraphicsSceneMouseEvent* mouseEvent)
+void Canvas::mouseMoveEvent(QMouseEvent* mouseEvent)
+{
+    if (isMouseDown)
+    {
+        auto curPoint = mouseEvent->pos();
+        if (state == State::start)
+        {
+            maskPath.setElementPositionAt(5, mousePressPoint.x(), mousePressPoint.y());
+            maskPath.setElementPositionAt(6, curPoint.x(), mousePressPoint.y());
+            maskPath.setElementPositionAt(7, curPoint.x(), curPoint.y());
+            maskPath.setElementPositionAt(8, mousePressPoint.x(), curPoint.y());
+            maskPath.setElementPositionAt(9, mousePressPoint.x(), mousePressPoint.y());
+            repaint();
+        }
+        else if (state == State::rect)
+        {
+            auto& path = paths.last();
+            path.setElementPositionAt(1, curPoint.x(), mousePressPoint.y());
+            path.setElementPositionAt(2, curPoint.x(), curPoint.y());
+            path.setElementPositionAt(3, mousePressPoint.x(), curPoint.y());
+            repaint();
+        }
+    }
+}
+
+void Canvas::mouseReleaseEvent(QMouseEvent* mouseEvent)
 {
     if (mouseEvent->button() == Qt::LeftButton)
     {
         isMouseDown = false;
         auto mainWin = (MainWindow*)(qApp->activeWindow());
-        auto path = maskPathItem->path();
-        mainWin->showToolMain(path.elementAt(7).x, path.elementAt(7).y);
-
+        //todo 这个位置要动态的，工具条应该出现在正确的位置上
+        mainWin->showToolMain(maskPath.elementAt(7).x, maskPath.elementAt(7).y);
     }
 }
-

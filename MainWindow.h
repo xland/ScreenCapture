@@ -23,6 +23,8 @@ public:
     void showToolMain(int x, int y);
     void showToolSub(int x, int y);
 
+    void hideTool();
+
 private slots:
 
 private:

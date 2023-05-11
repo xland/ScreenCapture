@@ -6,6 +6,8 @@
 #include <QPainter>
 #include <QPushButton>
 #include <QDebug>
+#include <QLabel>
+#include "ScreenShoter.h"
 
 
 MainWindow::MainWindow(QWidget* parent)
@@ -17,9 +19,18 @@ MainWindow::MainWindow(QWidget* parent)
 
     //todo
     this->showMaximized();
+//    canvas = new Canvas(ui->graphicsView);
+//    ui->graphicsView->setScene(canvas);
+    ui->graphicsView->hide();
 
-    canvas = new Canvas(ui->graphicsView);
-    ui->graphicsView->setScene(canvas);
+    auto screenShoter = ScreenShoter::Get();
+    ui->bgLabel->setGeometry(screenShoter->screenRects[0]);
+    ui->bgLabel->setPixmap(screenShoter->desktopImages[0]);
+
+    canvas = new Canvas(ui->centralwidget);
+    ui->canvasContainer->layout()->addWidget(canvas);
+    ui->canvasContainer->setGeometry(screenShoter->screenRects[0]);
+
     initToolMain();
     initToolRect();
 
@@ -118,12 +129,12 @@ void MainWindow::btnMainToolSelected()
             continue;
         }
         auto name = item->objectName();
-        qDebug() << name << btn->isChecked();
+//        qDebug() << name << btn->isChecked();
         if (btn->isChecked())
         {
             if (name == "btnRectEllipse")
             {
-                ui->toolRect->move(ui->toolMain->x(), ui->toolMain->y() + ui->toolMain->height() + 6);
+                ui->toolRect->move(ui->toolMain->x(), ui->toolMain->y() + ui->toolMain->height() + 4);
                 ui->toolRect->show();
                 canvas->state = Canvas::State::rect;
             }
@@ -135,10 +146,13 @@ void MainWindow::btnMainToolSelected()
         }
     }
 }
-
+void MainWindow::hideTool()
+{
+    ui->toolMain->hide();
+}
 void MainWindow::showToolMain(int x, int y)
 {
-    ui->toolMain->move(x - ui->toolMain->width(), y + 10);
+    ui->toolMain->move(x - ui->toolMain->width(), y + 6);
     ui->toolMain->show();
 }
 void MainWindow::showToolSub(int x, int y)
