@@ -271,7 +271,7 @@ void MainWindow::mouseRelease(QMouseEvent* mouseEvent)
             auto& path = paths.last();
             qreal x2 = -999.0, x1 = 999999999.0;
             qreal y2 = -999.0, y1 = 999999999.0;
-            for (int var = 5; var < 9; ++var)
+            for (int var = 0; var < 5; ++var)
             {
                 auto ele = maskPath.elementAt(var);
                 if (ele.x < x1)
