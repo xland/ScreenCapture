@@ -41,18 +41,19 @@ MainWindow::~MainWindow()
 }
 bool MainWindow::eventFilter(QObject* obj, QEvent* event)
 {
+    Q_UNUSED(obj);
     QMouseEvent* e = static_cast<QMouseEvent*>(event);
     if (event->type() == QEvent::MouseMove)
     {
-        mouseMoveEvent1(e);
+        mouseMove(e);
     }
     else if (event->type() == QEvent::MouseButtonPress)
     {
-        mousePressEvent1(e);
+        mousePress(e);
     }
     else if (event->type() == QEvent::MouseButtonRelease)
     {
-        mouseReleaseEvent1(e);
+        mouseRelease(e);
     }
     return false;
 }
@@ -84,15 +85,6 @@ void MainWindow::initMask()
 
 void MainWindow::paintEvent(QPaintEvent* e)
 {
-//    painter->setCompositionMode(QPainter::CompositionMode_DestinationOver);
-//    painter->setPen(Qt::NoPen);
-//    painter->fillRect(QRect(100, 100, 100, 100), QBrush(Qt::black));
-
-//    painter->setPen(Qt::NoPen);
-//    painter->setRenderHint(QPainter::Antialiasing);
-//    painter->setCompositionMode(QPainter::CompositionMode_Clear);
-//    painter->fillRect(QRect(150, 150, 100, 100), QBrush(Qt::black));
-
     QPainter p(this);
     p.drawPixmap(0, 0, ScreenShoter::Get()->desktopImages[0]);
     p.drawImage(0, 0, *canvasImg1);
@@ -102,7 +94,7 @@ void MainWindow::paintEvent(QPaintEvent* e)
     p.end();
 }
 
-void MainWindow::mousePressEvent1(QMouseEvent* mouseEvent)
+void MainWindow::mousePress(QMouseEvent* mouseEvent)
 {
     if (mouseEvent->button() == Qt::RightButton)
     {
@@ -126,6 +118,7 @@ void MainWindow::mousePressEvent1(QMouseEvent* mouseEvent)
             path.lineTo(mousePressPoint.x(), mousePressPoint.y() + 1);
             path.lineTo(mousePressPoint);
             paths.append(path);
+
         }
         else if (state == "Eraser")
         {
@@ -139,7 +132,7 @@ void MainWindow::mousePressEvent1(QMouseEvent* mouseEvent)
     }
 }
 
-void MainWindow::mouseMoveEvent1(QMouseEvent* mouseEvent)
+void MainWindow::mouseMove(QMouseEvent* mouseEvent)
 {
     auto curPoint = mouseEvent->pos();
     if (isMouseDown)
@@ -179,7 +172,7 @@ void MainWindow::mouseMoveEvent1(QMouseEvent* mouseEvent)
     }
     else
     {
-        if (state == "StartResize")
+        if (state == "Start")
         {
 
             if (curPoint.x() < maskPath.elementAt(5).x + maskBorderWidth && curPoint.y() < maskPath.elementAt(5).y + maskBorderWidth)
@@ -221,10 +214,21 @@ void MainWindow::mouseMoveEvent1(QMouseEvent* mouseEvent)
                 setCursor(Qt::SizeVerCursor);
             }
         }
+        else if (state == "RectEllipse")
+        {
+            if (paths.count() > 0)
+            {
+                auto& path = paths.last();
+                if (path.contains(curPoint))
+                {
+                    setCursor(Qt::SizeAllCursor);
+                }
+            }
+        }
     }
 }
 
-void MainWindow::mouseReleaseEvent1(QMouseEvent* mouseEvent)
+void MainWindow::mouseRelease(QMouseEvent* mouseEvent)
 {
     if (mouseEvent->button() == Qt::LeftButton)
     {
@@ -259,18 +263,43 @@ void MainWindow::mouseReleaseEvent1(QMouseEvent* mouseEvent)
             maskPath.setElementPositionAt(7, x2, y2);
             maskPath.setElementPositionAt(8, x1, y2);
             maskPath.setElementPositionAt(9, x1, y1);
-            state = "StartResize";
             //todo 这个位置要动态的，工具条应该出现在正确的位置上
             mainWin->showToolMain(x2, y2);
         }
         else if (state == "RectEllipse")
         {
             auto& path = paths.last();
+            qreal x2 = -999.0, x1 = 999999999.0;
+            qreal y2 = -999.0, y1 = 999999999.0;
+            for (int var = 5; var < 9; ++var)
+            {
+                auto ele = maskPath.elementAt(var);
+                if (ele.x < x1)
+                {
+                    x1 = ele.x;
+                }
+                if (ele.x > x2)
+                {
+                    x2 = ele.x;
+                }
+                if (ele.y < y1)
+                {
+                    y1 = ele.y;
+                }
+                if (ele.y > y2)
+                {
+                    y2 = ele.y;
+                }
+            }
+            path.setElementPositionAt(0, x1, y1);
+            path.setElementPositionAt(1, x2, y1);
+            path.setElementPositionAt(2, x2, y2);
+            path.setElementPositionAt(3, x1, y2);
+            path.setElementPositionAt(4, x1, y1);
             painter2->setPen(QPen(QBrush(Qt::red), 2));
             painter2->setBrush(Qt::NoBrush);
             painter2->drawPath(path);
         }
-
     }
 }
 
@@ -378,6 +407,7 @@ void MainWindow::switchTool(const QString& toolName)
         if (name == toolName)
         {
             state = name.remove("tool");
+            setCursor(Qt::CrossCursor);
             tool->move(ui->toolMain->x(), ui->toolMain->y() + ui->toolMain->height() + 4);
             tool->show();
         }
