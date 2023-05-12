@@ -70,8 +70,6 @@ void CanvasBak::mousePressEvent(QGraphicsSceneMouseEvent* mouseEvent)
         isMouseDown = true;
         if (state == State::start)
         {
-            auto mainWin = (MainWindow*)(qApp->activeWindow());
-            mainWin->hideTool();
         }
         else if (state == State::rect)
         {
@@ -119,14 +117,12 @@ void CanvasBak::mouseMoveEvent(QGraphicsSceneMouseEvent* mouseEvent)
 
 void CanvasBak::mouseReleaseEvent(QGraphicsSceneMouseEvent* mouseEvent)
 {
-    if (mouseEvent->button() == Qt::LeftButton)
-    {
-        isMouseDown = false;
-        auto mainWin = (MainWindow*)(qApp->activeWindow());
-        auto path = maskPathItem->path();
-        //todo 这个位置要动态的，工具条应该出现在正确的位置上
-        mainWin->showToolMain(path.elementAt(7).x, path.elementAt(7).y);
-
-    }
+//    if (mouseEvent->button() == Qt::LeftButton)
+//    {
+//        isMouseDown = false;
+//        auto path = maskPathItem->path();
+//        //todo 这个位置要动态的，工具条应该出现在正确的位置上
+//        showToolMain(path.elementAt(7).x, path.elementAt(7).y);
+//    }
 }
 

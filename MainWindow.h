@@ -12,15 +12,6 @@ QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
 
-enum class State
-{
-    start,
-    rect,
-    rectFill,
-    ellipse,
-    ellipseFill
-};
-
 class MainWindow : public QMainWindow
 
 {
@@ -29,22 +20,23 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget* parent = nullptr);
     ~MainWindow();
-    void initToolMain();
-    void initToolRect();
-    void showToolMain(int x, int y);
-    void showToolSub(int x, int y);
-
-    void hideTool();
 protected:
-    void mouseMoveEvent(QMouseEvent* mouseEvent) override;
-    void mousePressEvent(QMouseEvent* mouseEvent) override;
-    void mouseReleaseEvent(QMouseEvent* mouseEvent) override;
+    bool eventFilter(QObject* obj, QEvent* event) override;
     void paintEvent(QPaintEvent*) override;
 private slots:
 
 private:
+    void mouseMoveEvent1(QMouseEvent* mouseEvent);
+    void mousePressEvent1(QMouseEvent* mouseEvent);
+    void mouseReleaseEvent1(QMouseEvent* mouseEvent);
     void btnMainToolSelected();
     void initMask();
+    void initToolMain();
+    void initToolRect();
+    void initToolEraser();
+    void initCanvasImg();
+    void switchTool(const QString& toolName);
+    void showToolMain(int x, int y);
     Ui::MainWindow* ui;
     QString style = R"(#%1{background:#f6f6f6;}
 #%1 QPushButton{color:#414141;font-size:16px;border:none;}
@@ -54,9 +46,11 @@ private:
     bool isMouseDown = false;
     QPainterPath maskPath;
     qreal maskBorderWidth = 2.0;
-    QPainter* painter;
-    QImage* canvasImg;
-    State state = State::start;
+    QPainter* painter1;
+    QPainter* painter2;
+    QImage* canvasImg1;
+    QImage* canvasImg2;
+    QString state = "Start";
     QVector<QPainterPath> paths;
 };
 
