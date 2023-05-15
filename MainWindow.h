@@ -39,6 +39,7 @@ private:
     void initCanvasImg();
     void switchTool(const QString& toolName);
     void showToolMain(int x, int y);
+    int pointInMaskArea(const QPointF& curPoint);
     Ui::MainWindow* ui;
     QString style = R"(#%1{background:#f6f6f6;}
 #%1 QPushButton{color:#414141;font-size:16px;border:none;}

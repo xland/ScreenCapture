@@ -58,7 +58,6 @@ bool MainWindow::eventFilter(QObject* obj, QEvent* event)
     }
     else if (event->type() == QEvent::MouseButtonRelease)
     {
-        //todo 会执行三次
         flag = mouseRelease(e);
     }
     if (!flag)
@@ -95,6 +94,51 @@ void MainWindow::initMask()
     maskPath.lineTo(0 - maskBorderWidth, 0 - maskBorderWidth);
 }
 
+int MainWindow::pointInMaskArea(const QPointF& curPoint)
+{
+    QRectF rect(QPointF(maskPath.elementAt(5).x, maskPath.elementAt(5).y), QPointF(maskPath.elementAt(7).x, maskPath.elementAt(7).y));
+    if (rect.contains(curPoint))
+    {
+        return 8;
+    }
+    else
+    {
+        if (curPoint.x() < rect.left() && curPoint.y() < rect.top())
+        {
+            return 0;
+        }
+        else if (curPoint.x() > rect.left() && curPoint.y() < rect.top() && curPoint.x() < rect.right())
+        {
+            return 1;
+        }
+        else if (curPoint.x() > rect.right() && curPoint.y() < rect.top())
+        {
+            return 2;
+        }
+        else if (curPoint.x() > rect.right() && curPoint.y() > rect.top() && curPoint.y() < rect.bottom())
+        {
+            return 3;
+        }
+        else if (curPoint.x() > rect.right()  && curPoint.y() > rect.bottom())
+        {
+            return 4;
+        }
+        else if (curPoint.x() > rect.left() && curPoint.x() < rect.right() && curPoint.y() > rect.bottom())
+        {
+            return 5;
+        }
+        else if (curPoint.x() < rect.left()  && curPoint.y() > rect.bottom())
+        {
+            return 6;
+        }
+        else if (curPoint.x() < rect.left()  && curPoint.y() > rect.top() && curPoint.y() < rect.bottom())
+        {
+            return 7;
+        }
+    }
+
+}
+
 void MainWindow::paintEvent(QPaintEvent* e)
 {
     QPainter p(this);
@@ -122,6 +166,22 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
         {
             ui->toolMain->hide();
             return false;
+        }
+        else if (state == "areaReady")
+        {
+            int areaIndex = pointInMaskArea(mousePressPoint);
+            if (areaIndex == 0)
+            {
+                maskPath.setElementPositionAt(5, mousePressPoint.x(), mousePressPoint.y());
+                maskPath.setElementPositionAt(6, maskPath.elementAt(6).x, mousePressPoint.y());
+                maskPath.setElementPositionAt(9, mousePressPoint.x(), mousePressPoint.y());
+                maskPath.setElementPositionAt(8, mousePressPoint.x(), maskPath.elementAt(8).y);
+                repaint();
+            }
+            else if (areaIndex == 1)
+            {
+                maskPath.setElementPositionAt(5, mousePressPoint.x(), mousePressPoint.y());
+            }
         }
         else if (state == "RectEllipse")
         {
@@ -194,51 +254,30 @@ bool MainWindow::mouseMove(QMouseEvent* mouseEvent)
     {
         if (state == "areaReady")
         {
-            if (curPoint.x() < maskPath.elementAt(5).x + maskBorderWidth && curPoint.y() < maskPath.elementAt(5).y + maskBorderWidth)
+            int areaIndex = pointInMaskArea(curPoint);
+            if (areaIndex == 0 || areaIndex == 4)
             {
                 setCursor(Qt::SizeFDiagCursor);
                 return true;
             }
-            else if (curPoint.x() > maskPath.elementAt(6).x - maskBorderWidth && curPoint.y() < maskPath.elementAt(6).y + maskBorderWidth)
+            else if (areaIndex == 1 || areaIndex == 5)
+            {
+                setCursor(Qt::SizeVerCursor);
+                return true;
+            }
+            else if (areaIndex == 2 || areaIndex == 6)
             {
                 setCursor(Qt::SizeBDiagCursor);
                 return true;
             }
-            else if (curPoint.x() > maskPath.elementAt(7).x - maskBorderWidth && curPoint.y() > maskPath.elementAt(7).y - maskBorderWidth)
+            else if (areaIndex == 3 || areaIndex == 7)
             {
-                setCursor(Qt::SizeFDiagCursor);
+                setCursor(Qt::SizeHorCursor);
                 return true;
             }
-            else if (curPoint.x() < maskPath.elementAt(8).x + maskBorderWidth && curPoint.y() > maskPath.elementAt(8).y - maskBorderWidth)
-            {
-                setCursor(Qt::SizeBDiagCursor);
-                return true;
-            }
-            else if (curPoint.x() > maskPath.elementAt(5).x + maskBorderWidth && curPoint.y() > maskPath.elementAt(5).y + maskBorderWidth &&
-                curPoint.x() < maskPath.elementAt(7).x - maskBorderWidth && curPoint.y() < maskPath.elementAt(7).y - maskBorderWidth
-            )
+            else if (areaIndex == 8)
             {
                 setCursor(Qt::SizeAllCursor);
-                return true;
-            }
-            else if (curPoint.x() < maskPath.elementAt(5).x + maskBorderWidth)
-            {
-                setCursor(Qt::SizeHorCursor);
-                return true;
-            }
-            else if (curPoint.x() > maskPath.elementAt(6).x - maskBorderWidth)
-            {
-                setCursor(Qt::SizeHorCursor);
-                return true;
-            }
-            else if (curPoint.y() < maskPath.elementAt(5).y + maskBorderWidth)
-            {
-                setCursor(Qt::SizeVerCursor);
-                return true;
-            }
-            else if (curPoint.y() > maskPath.elementAt(7).y - maskBorderWidth)
-            {
-                setCursor(Qt::SizeVerCursor);
                 return true;
             }
         }
