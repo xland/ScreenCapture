@@ -43,6 +43,7 @@ private:
     QString style = R"(#%1{background:#f6f6f6;}
 #%1 QPushButton{color:#414141;font-size:16px;border:none;}
 #%1 QPushButton:hover{background:#e5e5e5;}
+#%1 QPushButton:disabled {color:#999;}
 #%1 QPushButton:checked{background:#1677ff;color:#fff;})";
     QPointF mousePressPoint;
     bool isMouseDown = false;
@@ -54,6 +55,7 @@ private:
     QImage* canvasImg2;
     QString state = "Start";
     QVector<QPainterPath> paths;
+    int undoIndex = -1;
 };
 
 #endif // MAINWINDOW_H
