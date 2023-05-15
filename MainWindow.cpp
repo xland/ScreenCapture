@@ -61,8 +61,11 @@ bool MainWindow::eventFilter(QObject* obj, QEvent* event)
         //todo 会执行三次
         flag = mouseRelease(e);
     }
-    return QObject::eventFilter(obj, event);
-
+    if (!flag)
+    {
+        return QObject::eventFilter(obj, event);
+    }
+    return true;
 }
 void MainWindow::initCanvasImg()
 {
@@ -117,13 +120,11 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
         isMouseDown = true;
         if (state == "Start")
         {
-            qDebug() << "start";
             ui->toolMain->hide();
             return false;
         }
         else if (state == "RectEllipse")
         {
-            qDebug() << "RectEllipse";
             QPainterPath path;
             path.moveTo(mousePressPoint);
             path.lineTo(mousePressPoint.x() + 1, mousePressPoint.y());
@@ -193,14 +194,9 @@ bool MainWindow::mouseMove(QMouseEvent* mouseEvent)
     {
         if (state == "areaReady")
         {
-            if (ui->toolMain->geometry().contains(curPoint))
+            if (curPoint.x() < maskPath.elementAt(5).x + maskBorderWidth && curPoint.y() < maskPath.elementAt(5).y + maskBorderWidth)
             {
-
-                return false;
-            }
-            else if (curPoint.x() < maskPath.elementAt(5).x + maskBorderWidth && curPoint.y() < maskPath.elementAt(5).y + maskBorderWidth)
-            {
-                setCursor(Qt::PointingHandCursor);
+                setCursor(Qt::SizeFDiagCursor);
                 return true;
             }
             else if (curPoint.x() > maskPath.elementAt(6).x - maskBorderWidth && curPoint.y() < maskPath.elementAt(6).y + maskBorderWidth)
@@ -309,7 +305,6 @@ bool MainWindow::mouseRelease(QMouseEvent* mouseEvent)
         }
         else if (state == "RectEllipse")
         {
-            qDebug() << "123";
             auto& path = paths.last();
             qreal x2 = -999.0, x1 = 999999999.0;
             qreal y2 = -999.0, y1 = 999999999.0;
@@ -341,6 +336,7 @@ bool MainWindow::mouseRelease(QMouseEvent* mouseEvent)
             painter2->setPen(QPen(QBrush(Qt::red), 2));
             painter2->setBrush(Qt::NoBrush);
             painter2->drawPath(path);
+
             setCursor(Qt::CrossCursor);
             return true;
         }
@@ -368,11 +364,11 @@ void MainWindow::initToolMain()
 
     ui->btnUndo->setFont(Icon::font);
     ui->btnUndo->setText(Icon::icons[Icon::Name::undo]);
-    QObject::connect(ui->btnUndo,  &QPushButton::clicked, this, &MainWindow::btnMainToolSelected);
+    QObject::connect(ui->btnUndo,  &QPushButton::clicked, this, &MainWindow::undo);
 
     ui->btnRedo->setFont(Icon::font);
     ui->btnRedo->setText(Icon::icons[Icon::Name::redo]);
-    QObject::connect(ui->btnRedo,  &QPushButton::clicked, this, &MainWindow::btnMainToolSelected);
+    QObject::connect(ui->btnRedo,  &QPushButton::clicked, this, &MainWindow::redo);
 
     ui->btnOk->setFont(Icon::font);
     ui->btnOk->setText(Icon::icons[Icon::Name::ok]);
@@ -463,9 +459,28 @@ void MainWindow::switchTool(const QString& toolName)
     }
 }
 
+void MainWindow::undo()
+{
+    paths.removeLast();
+    canvasImg2->fill(0);
+    for (int var = 0; var < paths.count(); ++var)
+    {
+        painter2->setPen(QPen(QBrush(Qt::red), 2));
+        painter2->setBrush(Qt::NoBrush);
+        painter2->drawPath(paths[var]);
+    }
+    memcpy(canvasImg1->bits(), canvasImg2->bits(), canvasImg1->sizeInBytes());
+    repaint();
+
+}
+void MainWindow::redo()
+{
+
+}
+
 void MainWindow::btnMainToolSelected()
 {
-    for (auto item : ui->toolMain->children())
+    for (auto item : ui->mainToolMenuContainer->children())
     {
         auto name = item->objectName();
         auto btn = qobject_cast<QPushButton*>(item);

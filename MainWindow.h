@@ -30,6 +30,8 @@ private:
     bool mousePress(QMouseEvent* mouseEvent);
     bool mouseRelease(QMouseEvent* mouseEvent);
     void btnMainToolSelected();
+    void undo();
+    void redo();
     void initMask();
     void initToolMain();
     void initToolRect();
