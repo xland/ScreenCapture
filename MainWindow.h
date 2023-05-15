@@ -26,9 +26,9 @@ protected:
 private slots:
 
 private:
-    void mouseMove(QMouseEvent* mouseEvent);
-    void mousePress(QMouseEvent* mouseEvent);
-    void mouseRelease(QMouseEvent* mouseEvent);
+    bool mouseMove(QMouseEvent* mouseEvent);
+    bool mousePress(QMouseEvent* mouseEvent);
+    bool mouseRelease(QMouseEvent* mouseEvent);
     void btnMainToolSelected();
     void initMask();
     void initToolMain();
