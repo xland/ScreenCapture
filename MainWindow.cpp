@@ -23,7 +23,7 @@ MainWindow::MainWindow(QWidget* parent)
     this->setWindowFlags(Qt::Window | Qt::FramelessWindowHint);   //todo | Qt::WindowStaysOnTopHint
     this->setCursor(Qt::CrossCursor);
     this->setMouseTracking(true);
-    this->installEventFilter(this);
+    qApp->installEventFilter(this);
     initMask();
     initCanvasImg();
     initToolMain();
@@ -42,21 +42,27 @@ MainWindow::~MainWindow()
 }
 bool MainWindow::eventFilter(QObject* obj, QEvent* event)
 {
-    Q_UNUSED(obj);
+    if (obj->objectName() != "centralwidget")
+    {
+        return QObject::eventFilter(obj, event);
+    }
     QMouseEvent* e = static_cast<QMouseEvent*>(event);
+    bool flag = false;
     if (event->type() == QEvent::MouseMove)
     {
-        mouseMove(e);
+        flag = mouseMove(e);
     }
     else if (event->type() == QEvent::MouseButtonPress)
     {
-        mousePress(e);
+        flag = mousePress(e);
     }
     else if (event->type() == QEvent::MouseButtonRelease)
     {
-        return mouseRelease(e);
+        //todo 会执行三次
+        flag = mouseRelease(e);
     }
-    return false;
+    return QObject::eventFilter(obj, event);
+
 }
 void MainWindow::initCanvasImg()
 {
@@ -99,6 +105,7 @@ void MainWindow::paintEvent(QPaintEvent* e)
 
 bool MainWindow::mousePress(QMouseEvent* mouseEvent)
 {
+
     if (mouseEvent->button() == Qt::RightButton)
     {
         qApp->exit();
@@ -110,10 +117,13 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
         isMouseDown = true;
         if (state == "Start")
         {
+            qDebug() << "start";
             ui->toolMain->hide();
+            return false;
         }
         else if (state == "RectEllipse")
         {
+            qDebug() << "RectEllipse";
             QPainterPath path;
             path.moveTo(mousePressPoint);
             path.lineTo(mousePressPoint.x() + 1, mousePressPoint.y());
@@ -121,6 +131,7 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
             path.lineTo(mousePressPoint.x(), mousePressPoint.y() + 1);
             path.lineTo(mousePressPoint);
             paths.append(path);
+            return true;
 
         }
         else if (state == "Eraser")
@@ -131,8 +142,8 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
             painter1->setCompositionMode(QPainter::CompositionMode_DestinationOver);
             canvasImg1->fill(0);
             painter1->drawImage(0, 0, *canvasImg2);
+            return true;
         }
-        return true;
     }
     return false;
 }
@@ -182,50 +193,58 @@ bool MainWindow::mouseMove(QMouseEvent* mouseEvent)
     {
         if (state == "areaReady")
         {
-//            if (ui->toolMain->geometry().contains(curPoint))
-//            {
-//                qDebug() << ui->toolMain->geometry() << curPoint;
-//                return false;
-//            }
-            if (curPoint.x() < maskPath.elementAt(5).x + maskBorderWidth && curPoint.y() < maskPath.elementAt(5).y + maskBorderWidth)
+            if (ui->toolMain->geometry().contains(curPoint))
             {
-                setCursor(Qt::SizeFDiagCursor);
+
+                return false;
+            }
+            else if (curPoint.x() < maskPath.elementAt(5).x + maskBorderWidth && curPoint.y() < maskPath.elementAt(5).y + maskBorderWidth)
+            {
+                setCursor(Qt::PointingHandCursor);
+                return true;
             }
             else if (curPoint.x() > maskPath.elementAt(6).x - maskBorderWidth && curPoint.y() < maskPath.elementAt(6).y + maskBorderWidth)
             {
                 setCursor(Qt::SizeBDiagCursor);
+                return true;
             }
             else if (curPoint.x() > maskPath.elementAt(7).x - maskBorderWidth && curPoint.y() > maskPath.elementAt(7).y - maskBorderWidth)
             {
                 setCursor(Qt::SizeFDiagCursor);
+                return true;
             }
             else if (curPoint.x() < maskPath.elementAt(8).x + maskBorderWidth && curPoint.y() > maskPath.elementAt(8).y - maskBorderWidth)
             {
                 setCursor(Qt::SizeBDiagCursor);
+                return true;
             }
             else if (curPoint.x() > maskPath.elementAt(5).x + maskBorderWidth && curPoint.y() > maskPath.elementAt(5).y + maskBorderWidth &&
                 curPoint.x() < maskPath.elementAt(7).x - maskBorderWidth && curPoint.y() < maskPath.elementAt(7).y - maskBorderWidth
             )
             {
                 setCursor(Qt::SizeAllCursor);
+                return true;
             }
             else if (curPoint.x() < maskPath.elementAt(5).x + maskBorderWidth)
             {
                 setCursor(Qt::SizeHorCursor);
+                return true;
             }
             else if (curPoint.x() > maskPath.elementAt(6).x - maskBorderWidth)
             {
                 setCursor(Qt::SizeHorCursor);
+                return true;
             }
             else if (curPoint.y() < maskPath.elementAt(5).y + maskBorderWidth)
             {
                 setCursor(Qt::SizeVerCursor);
+                return true;
             }
             else if (curPoint.y() > maskPath.elementAt(7).y - maskBorderWidth)
             {
                 setCursor(Qt::SizeVerCursor);
+                return true;
             }
-            return false;
         }
         else if (state == "RectEllipse")
         {
@@ -285,10 +304,12 @@ bool MainWindow::mouseRelease(QMouseEvent* mouseEvent)
             //todo 这个位置要动态的，工具条应该出现在正确的位置上
             mainWin->showToolMain(x2, y2);
             state = "areaReady";
+
             return true;
         }
         else if (state == "RectEllipse")
         {
+            qDebug() << "123";
             auto& path = paths.last();
             qreal x2 = -999.0, x1 = 999999999.0;
             qreal y2 = -999.0, y1 = 999999999.0;
@@ -465,6 +486,7 @@ void MainWindow::showToolMain(int x, int y)
     //todo 计算合适的位置
     ui->toolMain->move(x - ui->toolMain->width(), y + 6);
     ui->toolMain->show();
-    ui->toolMain->setFocus(Qt::OtherFocusReason);
+//    ui->toolMain->raise();
+    this->activateWindow();
 }
 
