@@ -94,6 +94,86 @@ void MainWindow::initMask()
     maskPath.lineTo(0 - maskBorderWidth, 0 - maskBorderWidth);
 }
 
+void MainWindow::resizeMask(const QPointF& point)
+{
+    if (resizeMaskIndex == 0)
+    {
+        maskPath.setElementPositionAt(5, point.x(), point.y());
+        maskPath.setElementPositionAt(6, maskPath.elementAt(6).x, point.y());
+        maskPath.setElementPositionAt(9, point.x(), point.y());
+        maskPath.setElementPositionAt(8, point.x(), maskPath.elementAt(8).y);
+        repaint();
+    }
+    else if (resizeMaskIndex == 1)
+    {
+        maskPath.setElementPositionAt(5, maskPath.elementAt(5).x, point.y());
+        maskPath.setElementPositionAt(6, maskPath.elementAt(6).x, point.y());
+        maskPath.setElementPositionAt(9, maskPath.elementAt(9).x, point.y());
+        repaint();
+    }
+    else if (resizeMaskIndex == 2)
+    {
+        maskPath.setElementPositionAt(5, maskPath.elementAt(5).x, point.y());
+        maskPath.setElementPositionAt(6, point.x(), point.y());
+        maskPath.setElementPositionAt(7, point.x(), maskPath.elementAt(7).y);
+        maskPath.setElementPositionAt(9, maskPath.elementAt(9).x, point.y());
+        repaint();
+    }
+    else if (resizeMaskIndex == 3)
+    {
+        maskPath.setElementPositionAt(6, point.x(), maskPath.elementAt(6).y);
+        maskPath.setElementPositionAt(7, point.x(), maskPath.elementAt(7).y);
+        repaint();
+    }
+    else if (resizeMaskIndex == 4)
+    {
+        maskPath.setElementPositionAt(6, point.x(), maskPath.elementAt(6).y);
+        maskPath.setElementPositionAt(7, point.x(), point.y());
+        maskPath.setElementPositionAt(8, maskPath.elementAt(8).x, point.y());
+        repaint();
+    }
+    else if (resizeMaskIndex == 5)
+    {
+        maskPath.setElementPositionAt(7, maskPath.elementAt(7).x, point.y());
+        maskPath.setElementPositionAt(8, maskPath.elementAt(8).x, point.y());
+        repaint();
+    }
+    else if (resizeMaskIndex == 6)
+    {
+        maskPath.setElementPositionAt(7, maskPath.elementAt(7).x, point.y());
+        maskPath.setElementPositionAt(8, point.x(), point.y());
+        maskPath.setElementPositionAt(9, point.x(), maskPath.elementAt(9).y);
+        maskPath.setElementPositionAt(5, point.x(), maskPath.elementAt(5).y);
+        repaint();
+    }
+    else if (resizeMaskIndex == 7)
+    {
+        maskPath.setElementPositionAt(8, point.x(), maskPath.elementAt(8).y);
+        maskPath.setElementPositionAt(9, point.x(), maskPath.elementAt(9).y);
+        maskPath.setElementPositionAt(5, point.x(), maskPath.elementAt(5).y);
+        repaint();
+    }
+    else if (resizeMaskIndex == 8)
+    {
+        if (point == mousePressPoint)
+        {
+            return;
+        }
+        else
+        {
+            qreal xSpan = point.x() - mousePressPoint.x();
+            qreal ySpan = point.y() - mousePressPoint.y();
+            maskPath.setElementPositionAt(5, maskPath.elementAt(5).x + xSpan, maskPath.elementAt(5).y + ySpan);
+            maskPath.setElementPositionAt(6, maskPath.elementAt(6).x + xSpan, maskPath.elementAt(6).y + ySpan);
+            maskPath.setElementPositionAt(7, maskPath.elementAt(7).x + xSpan, maskPath.elementAt(7).y + ySpan);
+            maskPath.setElementPositionAt(8, maskPath.elementAt(8).x + xSpan, maskPath.elementAt(8).y + ySpan);
+            maskPath.setElementPositionAt(9, maskPath.elementAt(9).x + xSpan, maskPath.elementAt(9).y + ySpan);
+            mousePressPoint = point;
+            repaint();
+        }
+    }
+}
+
 int MainWindow::pointInMaskArea(const QPointF& curPoint)
 {
     QRectF rect(QPointF(maskPath.elementAt(5).x, maskPath.elementAt(5).y), QPointF(maskPath.elementAt(7).x, maskPath.elementAt(7).y));
@@ -167,21 +247,11 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
             ui->toolMain->hide();
             return false;
         }
-        else if (state == "areaReady")
+        else if (state == "maskReady")
         {
-            int areaIndex = pointInMaskArea(mousePressPoint);
-            if (areaIndex == 0)
-            {
-                maskPath.setElementPositionAt(5, mousePressPoint.x(), mousePressPoint.y());
-                maskPath.setElementPositionAt(6, maskPath.elementAt(6).x, mousePressPoint.y());
-                maskPath.setElementPositionAt(9, mousePressPoint.x(), mousePressPoint.y());
-                maskPath.setElementPositionAt(8, mousePressPoint.x(), maskPath.elementAt(8).y);
-                repaint();
-            }
-            else if (areaIndex == 1)
-            {
-                maskPath.setElementPositionAt(5, mousePressPoint.x(), mousePressPoint.y());
-            }
+            ui->toolMain->hide();
+            resizeMaskIndex = pointInMaskArea(mousePressPoint);
+            resizeMask(mousePressPoint);
         }
         else if (state == "RectEllipse")
         {
@@ -211,7 +281,7 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
 
 bool MainWindow::mouseMove(QMouseEvent* mouseEvent)
 {
-    auto curPoint = mouseEvent->pos();
+    QPointF curPoint = mouseEvent->pos();
     if (isMouseDown)
     {
         if (state == "Start")
@@ -223,6 +293,10 @@ bool MainWindow::mouseMove(QMouseEvent* mouseEvent)
             maskPath.setElementPositionAt(9, mousePressPoint.x(), mousePressPoint.y());
             repaint();
             return true;
+        }
+        else if (state == "maskReady")
+        {
+            resizeMask(curPoint);
         }
         else if (state == "RectEllipse")
         {
@@ -252,7 +326,7 @@ bool MainWindow::mouseMove(QMouseEvent* mouseEvent)
     }
     else
     {
-        if (state == "areaReady")
+        if (state == "maskReady")
         {
             int areaIndex = pointInMaskArea(curPoint);
             if (areaIndex == 0 || areaIndex == 4)
@@ -337,10 +411,15 @@ bool MainWindow::mouseRelease(QMouseEvent* mouseEvent)
             maskPath.setElementPositionAt(8, x1, y2);
             maskPath.setElementPositionAt(9, x1, y1);
             //todo 这个位置要动态的，工具条应该出现在正确的位置上
-            mainWin->showToolMain(x2, y2);
-            state = "areaReady";
+            mainWin->showToolMain();
+            state = "maskReady";
 
             return true;
+        }
+        else if (state == "maskReady")
+        {
+            //todo 这个位置要动态的，工具条应该出现在正确的位置上
+            mainWin->showToolMain();
         }
         else if (state == "RectEllipse")
         {
@@ -585,12 +664,22 @@ void MainWindow::btnMainToolSelected()
     }
 }
 
-void MainWindow::showToolMain(int x, int y)
+void MainWindow::showToolMain()
 {
-    //todo 计算合适的位置
-    ui->toolMain->move(x - ui->toolMain->width(), y + 6);
+    auto ele1 = maskPath.elementAt(7);
+    auto ele2 = maskPath.elementAt(6);
+    if (this->height() - ele1.y > 80)
+    {
+        ui->toolMain->move(ele1.x - ui->toolMain->width(), ele1.y + 6);
+    }
+    else if (ele2.y > 80)
+    {
+        ui->toolMain->move(ele2.x - ui->toolMain->width(), ele2.y - 6 - 32); //todo 子按钮的位置
+    }
+    else
+    {
+        ui->toolMain->move(ele1.x - ui->toolMain->width(), ele1.y - 6 - 32);
+    }
     ui->toolMain->show();
-//    ui->toolMain->raise();
-    this->activateWindow();
 }
 

@@ -33,12 +33,13 @@ private:
     void undo();
     void redo();
     void initMask();
+    void resizeMask(const QPointF& point);
     void initToolMain();
     void initToolRect();
     void initToolEraser();
     void initCanvasImg();
     void switchTool(const QString& toolName);
-    void showToolMain(int x, int y);
+    void showToolMain();
     int pointInMaskArea(const QPointF& curPoint);
     Ui::MainWindow* ui;
     QString style = R"(#%1{background:#f6f6f6;}
@@ -57,6 +58,7 @@ private:
     QString state = "Start";
     QVector<QPainterPath> paths;
     int undoIndex = -1;
+    int resizeMaskIndex = -1;
 };
 
 #endif // MAINWINDOW_H
