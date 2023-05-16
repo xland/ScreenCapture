@@ -937,6 +937,40 @@
      </item>
     </layout>
    </widget>
+   <widget class="QPushButton" name="dragger0">
+    <property name="geometry">
+     <rect>
+      <x>330</x>
+      <y>340</y>
+      <width>8</width>
+      <height>8</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>8</width>
+      <height>8</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>8</width>
+      <height>8</height>
+     </size>
+    </property>
+    <property name="cursor">
+     <cursorShape>SizeFDiagCursor</cursorShape>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border:1px solid #000;</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="flat">
+     <bool>true</bool>
+    </property>
+   </widget>
   </widget>
  </widget>
  <resources/>

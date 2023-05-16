@@ -33,6 +33,7 @@ private:
     void undo();
     void redo();
     void initMask();
+    void draggerMousePress();
     void resizeMask(const QPointF& point);
     void initToolMain();
     void initToolRect();

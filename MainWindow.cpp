@@ -30,6 +30,7 @@ MainWindow::MainWindow(QWidget* parent)
     initToolRect();
     initToolEraser();
     this->showMaximized(); //todo
+    QObject::connect(ui->dragger0,  &QPushButton::pressed, this, &MainWindow::draggerMousePress);
 }
 
 MainWindow::~MainWindow()
@@ -40,6 +41,13 @@ MainWindow::~MainWindow()
     delete canvasImg2;
     delete ui;
 }
+
+void MainWindow::draggerMousePress()
+{
+    qDebug() << "press";
+    this->mousePressPoint = QCursor::pos();
+}
+
 bool MainWindow::eventFilter(QObject* obj, QEvent* event)
 {
     if (obj->objectName() != "centralwidget")
@@ -381,7 +389,7 @@ bool MainWindow::mouseRelease(QMouseEvent* mouseEvent)
     {
         isMouseDown = false;
         auto mainWin = (MainWindow*)(qApp->activeWindow());
-        if (state == "Start")
+        if (state == "Start" || state == "maskReady")
         {
             qreal x2 = -999.0, x1 = 999999999.0;
             qreal y2 = -999.0, y1 = 999999999.0;
@@ -415,11 +423,6 @@ bool MainWindow::mouseRelease(QMouseEvent* mouseEvent)
             state = "maskReady";
 
             return true;
-        }
-        else if (state == "maskReady")
-        {
-            //todo 这个位置要动态的，工具条应该出现在正确的位置上
-            mainWin->showToolMain();
         }
         else if (state == "RectEllipse")
         {
@@ -470,7 +473,7 @@ void MainWindow::initToolMain()
 
     ui->btnArrow->setFont(Icon::font);
     ui->btnArrow->setText(Icon::icons[Icon::Name::arrow]);
-    QObject::connect(ui->btnArrow,  &QPushButton::clicked, this, &MainWindow::btnMainToolSelected);
+    connect(ui->btnArrow,  &QPushButton::clicked, this, &MainWindow::btnMainToolSelected);
 
     ui->btnLine->setFont(Icon::font);
     ui->btnLine->setText(Icon::icons[Icon::Name::line]);
@@ -666,19 +669,45 @@ void MainWindow::btnMainToolSelected()
 
 void MainWindow::showToolMain()
 {
-    auto ele1 = maskPath.elementAt(7);
-    auto ele2 = maskPath.elementAt(6);
-    if (this->height() - ele1.y > 80)
+    auto ele0 = maskPath.elementAt(5);
+    auto ele1 = maskPath.elementAt(6);
+    auto ele2 = maskPath.elementAt(7);
+    if (this->height() - ele2.y > 80)
     {
-        ui->toolMain->move(ele1.x - ui->toolMain->width(), ele1.y + 6);
+        auto x = ele2.x - ui->toolMain->width();
+        if (x > 0)
+        {
+            ui->toolMain->move(x, ele2.y + 6);
+        }
+        else
+        {
+            ui->toolMain->move(ele0.x, ele2.y + 6);
+        }
+        ui->toolMain->show();
+        return;
     }
-    else if (ele2.y > 80)
+    if (ele1.y > 80)
     {
-        ui->toolMain->move(ele2.x - ui->toolMain->width(), ele2.y - 6 - 32); //todo 子按钮的位置
+        auto x = ele1.x - ui->toolMain->width();
+        if (x > 0)
+        {
+            ui->toolMain->move(x, ele1.y - 6 - 32);
+        }
+        else
+        {
+            ui->toolMain->move(ele0.x, ele1.y - 6 - 32);
+        }
+        ui->toolMain->show();
+        return;
+    }
+    auto x = ele1.x - ui->toolMain->width() - 6;
+    if (x > 0)
+    {
+        ui->toolMain->move(x, ele1.y + 6);
     }
     else
     {
-        ui->toolMain->move(ele1.x - ui->toolMain->width(), ele1.y - 6 - 32);
+        ui->toolMain->move(ele0.x + 6, ele1.y + 6);
     }
     ui->toolMain->show();
 }
