@@ -20,6 +20,7 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget* parent = nullptr);
     ~MainWindow();
+public:
 protected:
     bool eventFilter(QObject* obj, QEvent* event) override;
     void paintEvent(QPaintEvent*) override;
@@ -30,11 +31,28 @@ private:
     bool mousePress(QMouseEvent* mouseEvent);
     bool mouseRelease(QMouseEvent* mouseEvent);
     void btnMainToolSelected();
+
+    void DoneRectEllipse();
+
+    int undoIndex = -1;
     void undo();
     void redo();
+
+    int resizeMaskIndex = -1;
     void initMask();
-    void draggerMousePress();
     void resizeMask(const QPointF& point);
+
+    int showDraggerCount = 0;
+    int draggerIndex = -1;
+    QVector<QRectF> dragers;
+    void initDragger();
+    void draggerPressed(int draggerIndex);
+    void draggerReleased();
+    void showDragger(qreal x1, qreal y1, qreal x2, qreal y2);
+    void resizePath(const QPointF& point);
+    bool isMouseInDragger(const QPointF& point);
+
+
     void initToolMain();
     void initToolRect();
     void initToolEraser();
@@ -43,6 +61,7 @@ private:
     void showToolMain();
     int pointInMaskArea(const QPointF& curPoint);
     Ui::MainWindow* ui;
+    QString state = "Start";
     QString style = R"(#%1{background:#f6f6f6;}
 #%1 QPushButton{color:#414141;font-size:16px;border:none;}
 #%1 QPushButton:hover{background:#e5e5e5;}
@@ -56,10 +75,7 @@ private:
     QPainter* painter2;
     QImage* canvasImg1;
     QImage* canvasImg2;
-    QString state = "Start";
     QVector<QPainterPath> paths;
-    int undoIndex = -1;
-    int resizeMaskIndex = -1;
 };
 
 #endif // MAINWINDOW_H

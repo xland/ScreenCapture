@@ -88,10 +88,20 @@ void MainWindow::initDragger()
 
 void MainWindow::draggerPressed(int draggerIndex)
 {
+    preState = state;
     state = "lastPathDrag";
     isMouseDown = true;
     this->draggerIndex = draggerIndex;
     mousePressPoint = QCursor::pos();
+}
+
+void MainWindow::draggerReleased()
+{
+    state = preState;
+//    if (!isMouseDown)
+//    {
+//        DoneRectEllipse();
+//    }
 }
 
 
@@ -282,19 +292,6 @@ void MainWindow::resizePath(const QPointF& point)
     repaint();
 }
 
-bool MainWindow::isMouseInDragger(const QPointF& point)
-{
-    for (int var = 0; var < showDraggerCount; ++var)
-    {
-        if (dragers[var].contains(point))
-        {
-            draggerIndex = var;
-            return true;
-        }
-    }
-    return false;
-}
-
 int MainWindow::pointInMaskArea(const QPointF& curPoint)
 {
     QRectF rect(QPointF(maskPath.elementAt(5).x, maskPath.elementAt(5).y), QPointF(maskPath.elementAt(7).x, maskPath.elementAt(7).y));
@@ -348,18 +345,10 @@ void MainWindow::paintEvent(QPaintEvent* e)
     p.drawPixmap(0, 0, ScreenShoter::Get()->desktopImages[0]);
     p.drawImage(0, 0, *canvasImg1);
 
-    if (showDraggerCount > 0)
+    for (int var = 0; var < showDraggerCount; ++var)
     {
-        QPainterPath draggerPath;
-        for (int var = 0; var < showDraggerCount; ++var)
-        {
-            draggerPath.addRect(dragers[var]);
-        }
-        p.setPen(QPen(QBrush(QColor(0, 0, 0)), 1));
-        p.setBrush(Qt::NoBrush);
-        p.drawPath(draggerPath);
-    }
 
+    }
 
     p.setPen(QPen(QBrush(QColor(22, 119, 255)), maskBorderWidth));
     p.setBrush(QBrush(QColor(0, 0, 0, 120)));
@@ -369,6 +358,7 @@ void MainWindow::paintEvent(QPaintEvent* e)
 
 bool MainWindow::mousePress(QMouseEvent* mouseEvent)
 {
+
     if (mouseEvent->button() == Qt::RightButton)
     {
         qApp->exit();
@@ -391,11 +381,6 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
         }
         else if (state == "RectEllipse")
         {
-            if (isMouseInDragger(mousePressPoint))
-            {
-                state = "lastPathDrag";
-                return true;
-            }
             QPainterPath path;
             path.moveTo(mousePressPoint);
             path.lineTo(mousePressPoint.x() + 1, mousePressPoint.y());
@@ -404,6 +389,7 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
             path.lineTo(mousePressPoint);
             paths.append(path);
             return true;
+
         }
         else if (state == "Eraser")
         {
@@ -505,42 +491,16 @@ bool MainWindow::mouseMove(QMouseEvent* mouseEvent)
         {
             if (paths.count() > 0)
             {
-                if (isMouseInDragger(curPoint))
+                auto& path = paths.last();
+                if (path.contains(curPoint))
                 {
-                    switch (draggerIndex)
-                    {
-                        case 0:
-                        case 4:
-                            setCursor(Qt::SizeFDiagCursor);
-                            break;
-                        case 1:
-                        case 5:
-                            setCursor(Qt::SizeVerCursor);
-                            break;
-                        case 2:
-                        case 6:
-                            setCursor(Qt::SizeBDiagCursor);
-                            break;
-                        case 3:
-                        case 7:
-                            setCursor(Qt::SizeHorCursor);
-                            break;
-                    }
-                    return true;
+                    setCursor(Qt::SizeAllCursor);
                 }
                 else
                 {
-                    auto& path = paths.last();
-                    if (path.contains(curPoint))
-                    {
-                        setCursor(Qt::SizeAllCursor);
-                    }
-                    else
-                    {
-                        setCursor(Qt::CrossCursor);
-                    }
-                    return true;
+                    setCursor(Qt::CrossCursor);
                 }
+                return true;
             }
         }
     }
@@ -591,7 +551,6 @@ bool MainWindow::mouseRelease(QMouseEvent* mouseEvent)
         else if (state == "RectEllipse")
         {
             DoneRectEllipse();
-            repaint();
             return true;
         }
     }
@@ -638,15 +597,22 @@ void MainWindow::DoneRectEllipse()
 
 void MainWindow::showDragger(qreal x1, qreal y1, qreal x2, qreal y2)
 {
-    dragers[0].moveTo(x1 - 4, y1 - 4);
-    dragers[1].moveTo(x1 + (x2 - x1) / 2 - 4, y1 - 4);
-    dragers[2].moveTo(x2 - 4, y1 - 4);
-    dragers[3].moveTo(x2 - 4, y1 + (y2 - y1) / 2 - 4);
-    dragers[4].moveTo(x2 - 4, y2 - 4);
-    dragers[5].moveTo(x1 + (x2 - x1) / 2 - 4, y2 - 4);
-    dragers[6].moveTo(x1 - 4, y2 - 4);
-    dragers[7].moveTo(x1 - 4, y1 + (y2 - y1) / 2 - 4);
-    showDraggerCount = 8;
+    ui->dragger0->move(x1 - 4, y1 - 4);
+    ui->dragger1->move(x1 + (x2 - x1) / 2 - 4, y1 - 4);
+    ui->dragger2->move(x2 - 4, y1 - 4);
+    ui->dragger3->move(x2 - 4, y1 + (y2 - y1) / 2 - 4);
+    ui->dragger4->move(x2 - 4, y2 - 4);
+    ui->dragger5->move(x1 + (x2 - x1) / 2 - 4, y2 - 4);
+    ui->dragger6->move(x1 - 4, y2 - 4);
+    ui->dragger7->move(x1 - 4, y1 + (y2 - y1) / 2 - 4);
+    ui->dragger0->show();
+    ui->dragger1->show();
+    ui->dragger2->show();
+    ui->dragger3->show();
+    ui->dragger4->show();
+    ui->dragger5->show();
+    ui->dragger6->show();
+    ui->dragger7->show();
 }
 
 void MainWindow::initToolMain()
