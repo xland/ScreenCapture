@@ -36,33 +36,37 @@ void MainWindow::paintEvent(QPaintEvent* e)
 
     QPainter p(this);
     p.setRenderHint(QPainter::Antialiasing, true);
-    //    p.setRenderHint(QPainter::SmoothPixmapTransform, false);
     p.drawPixmap(0, 0, ScreenShoter::Get()->desktopImages[0]);
     p.drawImage(0, 0, *canvasImg1);
-
-    p.setPen(QPen(QBrush(QColor(22, 119, 255)), maskBorderWidth));
-    p.setBrush(QBrush(QColor(0, 0, 0, 120)));
-    p.drawPath(maskPath);
+    paintPath(maskPath, &p);
     p.end();
 }
 
-void MainWindow::paintPath(PathModel& path)
+void MainWindow::paintPath(PathModel& path, QPainter* painter)
 {
     if (path.needBorder)
     {
-        painter2->setPen(QPen(QBrush(path.borderColor), 2.0));
+        painter->setPen(QPen(QBrush(path.borderColor), 2.0));
     }
     else
     {
-        painter2->setPen(Qt::NoPen);
+        painter->setPen(Qt::NoPen);
     }
     if (path.needFill)
     {
-        painter2->setBrush(QBrush(path.fillColor));
+        painter->setBrush(QBrush(path.fillColor));
     }
     else
     {
-        painter2->setBrush(Qt::NoBrush);
+        painter->setBrush(Qt::NoBrush);
     }
-    painter2->drawPath(path);
+    if (path.isEraser)
+    {
+        painter->setCompositionMode(QPainter::CompositionMode_Clear);
+    }
+    else
+    {
+        painter->setCompositionMode(QPainter::CompositionMode_SourceOver);
+    }
+    painter->drawPath(path);
 }

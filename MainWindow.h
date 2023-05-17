@@ -45,15 +45,12 @@ private:
     QImage* canvasImg1;
     QImage* canvasImg2;
     void initCanvasImg();
-    void paintPath(PathModel& path);
+    void paintPath(PathModel& path, QPainter* painter);
 
-    void resetPathPoint(QPainterPath& path);
-
-    int undoIndex = -1;
     void undo();
     void redo();
 
-    QPainterPath maskPath;
+    PathModel maskPath;
     qreal maskBorderWidth = 2.0;
     int resizeMaskIndex = -1;
     void initMask();

@@ -4,6 +4,10 @@
 
 void MainWindow::initMask()
 {
+    maskPath.borderColor = QColor(22, 119, 255);
+    maskPath.fillColor = QColor(0, 0, 0, 120);
+    maskPath.needFill = true;
+
     auto screenShoter = ScreenShoter::Get();
     maskPath.moveTo(0 - maskBorderWidth, 0 - maskBorderWidth);
     maskPath.lineTo(screenShoter->screenRects[0].width() + maskBorderWidth, 0 - maskBorderWidth);
@@ -16,6 +20,7 @@ void MainWindow::initMask()
     maskPath.lineTo(screenShoter->screenRects[0].width() + maskBorderWidth, screenShoter->screenRects[0].height() + maskBorderWidth);
     maskPath.lineTo(0 - maskBorderWidth, screenShoter->screenRects[0].height() + maskBorderWidth);
     maskPath.lineTo(0 - maskBorderWidth, 0 - maskBorderWidth);
+
 }
 
 int MainWindow::pointInMaskArea(const QPointF& curPoint)

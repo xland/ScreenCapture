@@ -71,7 +71,7 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
                     draggerIndex = 8;
                     return true;
                 }
-                paintPath(path);
+                paintPath(path, painter2);
             }
             showDraggerCount = 0;
             PathModel path;
@@ -87,13 +87,13 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
         {
             if (paths.count() > 0)
             {
-                paintPath(paths.last());
+                paintPath(paths.last(), painter2);
             }
             showDraggerCount = 0;
             PathModel path;
+            path.isEraser = true;
             path.moveTo(mousePressPoint);
             paths.append(path);
-            painter1->setCompositionMode(QPainter::CompositionMode_DestinationOver);
             canvasImg1->fill(0);
             painter1->drawImage(0, 0, *canvasImg2);
             return true;
@@ -129,9 +129,7 @@ bool MainWindow::mouseMove(QMouseEvent* mouseEvent)
             path.setElementPositionAt(2, curPoint.x(), curPoint.y());
             path.setElementPositionAt(3, mousePressPoint.x(), curPoint.y());
             memcpy(canvasImg1->bits(), canvasImg2->bits(), canvasImg1->sizeInBytes());
-            painter1->setPen(QPen(QBrush(Qt::red), 2));
-            painter1->setBrush(Qt::NoBrush);
-            painter1->drawPath(path);
+            paintPath(path, painter1);
             repaint();
             return true;
         }
@@ -144,11 +142,7 @@ bool MainWindow::mouseMove(QMouseEvent* mouseEvent)
         {
             auto& path = paths.last();
             path.lineTo(curPoint.x(), curPoint.y());
-            painter1->setRenderHint(QPainter::Antialiasing);
-            painter1->setCompositionMode(QPainter::CompositionMode_Clear);
-            painter1->setPen(QPen(QBrush(Qt::red), 12));
-            painter1->setBrush(Qt::NoBrush);
-            painter1->drawPath(path);
+            paintPath(path, painter1);
             repaint();
             return true;
         }
@@ -237,7 +231,7 @@ bool MainWindow::mouseRelease(QMouseEvent* mouseEvent)
         isMouseDown = false;
         if (state == "Start" || state == "maskReady")
         {
-            resetPathPoint(maskPath);
+            maskPath.resetPoint5();
             showToolMain();
             state = "maskReady";
             return true;
@@ -245,7 +239,7 @@ bool MainWindow::mouseRelease(QMouseEvent* mouseEvent)
         else if (state == "RectEllipse")
         {
             auto& path = paths.last();
-            resetPathPoint(path);
+            path.resetPoint5();
             repaint();
             ui->btnUndo->setStyleSheet("");
             setDraggerPosition(path.elementAt(0).x, path.elementAt(0).y, path.elementAt(2).x, path.elementAt(2).y);
@@ -256,7 +250,7 @@ bool MainWindow::mouseRelease(QMouseEvent* mouseEvent)
         else if (state == "lastPathDrag")
         {
             auto& path = paths.last();
-            resetPathPoint(path);
+            path.resetPoint5();
             state = preState;
             return true;
         }
