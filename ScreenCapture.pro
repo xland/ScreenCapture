@@ -14,6 +14,7 @@ SOURCES += \
     MainWindowDragger.cpp \
     MainWindowMask.cpp \
     MainWindowMouse.cpp \
+    MainWindowTool.cpp \
     MainWindowUndoRedo.cpp \
     ScreenShoter.cpp \
     main.cpp \

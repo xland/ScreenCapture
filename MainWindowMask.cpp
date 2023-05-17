@@ -20,10 +20,10 @@ void MainWindow::initMask()
 
 int MainWindow::pointInMaskArea(const QPointF& curPoint)
 {
-    qreal left = maskPath.elementAt(5).x;
-    qreal top = maskPath.elementAt(5).y;
-    qreal right = maskPath.elementAt(7).x;
-    qreal bottom = maskPath.elementAt(7).y;
+    qreal left = maskPath.elementAt(0).x;
+    qreal top = maskPath.elementAt(0).y;
+    qreal right = maskPath.elementAt(2).x;
+    qreal bottom = maskPath.elementAt(2).y;
     if (curPoint.x() < left && curPoint.y() < top)
     {
         return 0;
@@ -66,59 +66,59 @@ void MainWindow::resizeMask(const QPointF& point)
 {
     if (resizeMaskIndex == 0)
     {
-        maskPath.setElementPositionAt(5, point.x(), point.y());
-        maskPath.setElementPositionAt(6, maskPath.elementAt(6).x, point.y());
-        maskPath.setElementPositionAt(9, point.x(), point.y());
-        maskPath.setElementPositionAt(8, point.x(), maskPath.elementAt(8).y);
+        maskPath.setElementPositionAt(0, point.x(), point.y());
+        maskPath.setElementPositionAt(1, maskPath.elementAt(1).x, point.y());
+        maskPath.setElementPositionAt(4, point.x(), point.y());
+        maskPath.setElementPositionAt(3, point.x(), maskPath.elementAt(3).y);
         repaint();
     }
     else if (resizeMaskIndex == 1)
     {
-        maskPath.setElementPositionAt(5, maskPath.elementAt(5).x, point.y());
-        maskPath.setElementPositionAt(6, maskPath.elementAt(6).x, point.y());
-        maskPath.setElementPositionAt(9, maskPath.elementAt(9).x, point.y());
+        maskPath.setElementPositionAt(0, maskPath.elementAt(0).x, point.y());
+        maskPath.setElementPositionAt(1, maskPath.elementAt(1).x, point.y());
+        maskPath.setElementPositionAt(4, maskPath.elementAt(4).x, point.y());
         repaint();
     }
     else if (resizeMaskIndex == 2)
     {
-        maskPath.setElementPositionAt(5, maskPath.elementAt(5).x, point.y());
-        maskPath.setElementPositionAt(6, point.x(), point.y());
-        maskPath.setElementPositionAt(7, point.x(), maskPath.elementAt(7).y);
-        maskPath.setElementPositionAt(9, maskPath.elementAt(9).x, point.y());
+        maskPath.setElementPositionAt(0, maskPath.elementAt(0).x, point.y());
+        maskPath.setElementPositionAt(1, point.x(), point.y());
+        maskPath.setElementPositionAt(2, point.x(), maskPath.elementAt(2).y);
+        maskPath.setElementPositionAt(4, maskPath.elementAt(4).x, point.y());
         repaint();
     }
     else if (resizeMaskIndex == 3)
     {
-        maskPath.setElementPositionAt(6, point.x(), maskPath.elementAt(6).y);
-        maskPath.setElementPositionAt(7, point.x(), maskPath.elementAt(7).y);
+        maskPath.setElementPositionAt(1, point.x(), maskPath.elementAt(1).y);
+        maskPath.setElementPositionAt(2, point.x(), maskPath.elementAt(2).y);
         repaint();
     }
     else if (resizeMaskIndex == 4)
     {
-        maskPath.setElementPositionAt(6, point.x(), maskPath.elementAt(6).y);
-        maskPath.setElementPositionAt(7, point.x(), point.y());
-        maskPath.setElementPositionAt(8, maskPath.elementAt(8).x, point.y());
+        maskPath.setElementPositionAt(1, point.x(), maskPath.elementAt(1).y);
+        maskPath.setElementPositionAt(2, point.x(), point.y());
+        maskPath.setElementPositionAt(3, maskPath.elementAt(3).x, point.y());
         repaint();
     }
     else if (resizeMaskIndex == 5)
     {
-        maskPath.setElementPositionAt(7, maskPath.elementAt(7).x, point.y());
-        maskPath.setElementPositionAt(8, maskPath.elementAt(8).x, point.y());
+        maskPath.setElementPositionAt(2, maskPath.elementAt(2).x, point.y());
+        maskPath.setElementPositionAt(3, maskPath.elementAt(3).x, point.y());
         repaint();
     }
     else if (resizeMaskIndex == 6)
     {
-        maskPath.setElementPositionAt(7, maskPath.elementAt(7).x, point.y());
-        maskPath.setElementPositionAt(8, point.x(), point.y());
-        maskPath.setElementPositionAt(9, point.x(), maskPath.elementAt(9).y);
-        maskPath.setElementPositionAt(5, point.x(), maskPath.elementAt(5).y);
+        maskPath.setElementPositionAt(2, maskPath.elementAt(2).x, point.y());
+        maskPath.setElementPositionAt(3, point.x(), point.y());
+        maskPath.setElementPositionAt(4, point.x(), maskPath.elementAt(4).y);
+        maskPath.setElementPositionAt(0, point.x(), maskPath.elementAt(0).y);
         repaint();
     }
     else if (resizeMaskIndex == 7)
     {
-        maskPath.setElementPositionAt(8, point.x(), maskPath.elementAt(8).y);
-        maskPath.setElementPositionAt(9, point.x(), maskPath.elementAt(9).y);
-        maskPath.setElementPositionAt(5, point.x(), maskPath.elementAt(5).y);
+        maskPath.setElementPositionAt(3, point.x(), maskPath.elementAt(3).y);
+        maskPath.setElementPositionAt(4, point.x(), maskPath.elementAt(4).y);
+        maskPath.setElementPositionAt(0, point.x(), maskPath.elementAt(0).y);
         repaint();
     }
     else if (resizeMaskIndex == 8)
@@ -131,11 +131,11 @@ void MainWindow::resizeMask(const QPointF& point)
         {
             qreal xSpan = point.x() - mousePressPoint.x();
             qreal ySpan = point.y() - mousePressPoint.y();
-            maskPath.setElementPositionAt(5, maskPath.elementAt(5).x + xSpan, maskPath.elementAt(5).y + ySpan);
-            maskPath.setElementPositionAt(6, maskPath.elementAt(6).x + xSpan, maskPath.elementAt(6).y + ySpan);
-            maskPath.setElementPositionAt(7, maskPath.elementAt(7).x + xSpan, maskPath.elementAt(7).y + ySpan);
-            maskPath.setElementPositionAt(8, maskPath.elementAt(8).x + xSpan, maskPath.elementAt(8).y + ySpan);
-            maskPath.setElementPositionAt(9, maskPath.elementAt(9).x + xSpan, maskPath.elementAt(9).y + ySpan);
+            maskPath.setElementPositionAt(0, maskPath.elementAt(0).x + xSpan, maskPath.elementAt(0).y + ySpan);
+            maskPath.setElementPositionAt(1, maskPath.elementAt(1).x + xSpan, maskPath.elementAt(1).y + ySpan);
+            maskPath.setElementPositionAt(2, maskPath.elementAt(2).x + xSpan, maskPath.elementAt(2).y + ySpan);
+            maskPath.setElementPositionAt(3, maskPath.elementAt(3).x + xSpan, maskPath.elementAt(3).y + ySpan);
+            maskPath.setElementPositionAt(4, maskPath.elementAt(4).x + xSpan, maskPath.elementAt(4).y + ySpan);
             mousePressPoint = point;
             repaint();
         }

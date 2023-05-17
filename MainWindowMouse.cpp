@@ -57,8 +57,20 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
         {
             if (isMouseInDragger(mousePressPoint))
             {
+                preState = state;
                 state = "lastPathDrag";
                 return true;
+            }
+            if (paths.count() > 0)
+            {
+                auto& path = paths.last();
+                if (path.contains(mousePressPoint))
+                {
+                    preState = state;
+                    state = "lastPathDrag";
+                    draggerIndex = 8;
+                    return true;
+                }
             }
             QPainterPath path;
             path.moveTo(mousePressPoint);
@@ -90,11 +102,11 @@ bool MainWindow::mouseMove(QMouseEvent* mouseEvent)
     {
         if (state == "Start")
         {
-            maskPath.setElementPositionAt(5, mousePressPoint.x(), mousePressPoint.y());
-            maskPath.setElementPositionAt(6, curPoint.x(), mousePressPoint.y());
-            maskPath.setElementPositionAt(7, curPoint.x(), curPoint.y());
-            maskPath.setElementPositionAt(8, mousePressPoint.x(), curPoint.y());
-            maskPath.setElementPositionAt(9, mousePressPoint.x(), mousePressPoint.y());
+            maskPath.setElementPositionAt(0, mousePressPoint.x(), mousePressPoint.y());
+            maskPath.setElementPositionAt(1, curPoint.x(), mousePressPoint.y());
+            maskPath.setElementPositionAt(2, curPoint.x(), curPoint.y());
+            maskPath.setElementPositionAt(3, mousePressPoint.x(), curPoint.y());
+            maskPath.setElementPositionAt(4, mousePressPoint.x(), mousePressPoint.y());
             repaint();
             return true;
         }
@@ -218,43 +230,30 @@ bool MainWindow::mouseRelease(QMouseEvent* mouseEvent)
         isMouseDown = false;
         if (state == "Start" || state == "maskReady")
         {
-            qreal x2 = -999.0, x1 = 999999999.0;
-            qreal y2 = -999.0, y1 = 999999999.0;
-            for (int var = 5; var < 9; ++var)
-            {
-                auto ele = maskPath.elementAt(var);
-                if (ele.x < x1)
-                {
-                    x1 = ele.x;
-                }
-                if (ele.x > x2)
-                {
-                    x2 = ele.x;
-                }
-                if (ele.y < y1)
-                {
-                    y1 = ele.y;
-                }
-                if (ele.y > y2)
-                {
-                    y2 = ele.y;
-                }
-            }
-            maskPath.setElementPositionAt(5, x1, y1);
-            maskPath.setElementPositionAt(6, x2, y1);
-            maskPath.setElementPositionAt(7, x2, y2);
-            maskPath.setElementPositionAt(8, x1, y2);
-            maskPath.setElementPositionAt(9, x1, y1);
-            //todo 这个位置要动态的，工具条应该出现在正确的位置上
+            resetPathPoint(maskPath);
             showToolMain();
             state = "maskReady";
-
             return true;
         }
         else if (state == "RectEllipse")
         {
-            DoneRectEllipse();
+            auto& path = paths.last();
+            resetPathPoint(path);
             repaint();
+            ui->btnUndo->setStyleSheet("");
+            setDraggerPosition(path.elementAt(0).x, path.elementAt(0).y, path.elementAt(2).x, path.elementAt(2).y);
+            setCursor(Qt::CrossCursor);
+            repaint();
+            //            painter2->setPen(QPen(QBrush(Qt::red), 2));
+            //            painter2->setBrush(Qt::NoBrush);
+            //            painter2->drawPath(path);
+            return true;
+        }
+        else if (state == "lastPathDrag")
+        {
+            auto& path = paths.last();
+            resetPathPoint(path);
+            state = preState;
             return true;
         }
     }

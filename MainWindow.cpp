@@ -39,46 +39,6 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-
-
-void MainWindow::DoneRectEllipse()
-{
-    auto& path = paths.last();
-    qreal x2 = -999.0, x1 = 999999999.0;
-    qreal y2 = -999.0, y1 = 999999999.0;
-    for (int var = 0; var < 5; ++var)
-    {
-        auto ele = path.elementAt(var);
-        if (ele.x < x1)
-        {
-            x1 = ele.x;
-        }
-        if (ele.x > x2)
-        {
-            x2 = ele.x;
-        }
-        if (ele.y < y1)
-        {
-            y1 = ele.y;
-        }
-        if (ele.y > y2)
-        {
-            y2 = ele.y;
-        }
-    }
-    path.setElementPositionAt(0, x1, y1);
-    path.setElementPositionAt(1, x2, y1);
-    path.setElementPositionAt(2, x2, y2);
-    path.setElementPositionAt(3, x1, y2);
-    path.setElementPositionAt(4, x1, y1);
-    //            painter2->setPen(QPen(QBrush(Qt::red), 2));
-    //            painter2->setBrush(Qt::NoBrush);
-    //            painter2->drawPath(path);
-    ui->btnUndo->setStyleSheet("");
-    showDragger(x1, y1, x2, y2);
-    setCursor(Qt::CrossCursor);
-}
-
 void MainWindow::initToolMain()
 {
     ui->btnRectEllipse->setFont(Icon::font);
@@ -215,9 +175,9 @@ void MainWindow::btnMainToolSelected()
 
 void MainWindow::showToolMain()
 {
-    auto ele0 = maskPath.elementAt(5);
-    auto ele1 = maskPath.elementAt(6);
-    auto ele2 = maskPath.elementAt(7);
+    auto ele0 = maskPath.elementAt(0);
+    auto ele1 = maskPath.elementAt(1);
+    auto ele2 = maskPath.elementAt(2);
     if (this->height() - ele2.y > 80)
     {
         auto x = ele2.x - ui->toolMain->width();

@@ -1,4 +1,3 @@
-
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
@@ -27,39 +26,50 @@ protected:
 private slots:
 
 private:
+    void initToolMain();
+    void initToolRect();
+    void initToolEraser();
+    void btnMainToolSelected();
+    void switchTool(const QString& toolName);
+    void showToolMain();
+
+
+    QPointF mousePressPoint;
+    bool isMouseDown = false;
     bool mouseMove(QMouseEvent* mouseEvent);
     bool mousePress(QMouseEvent* mouseEvent);
     bool mouseRelease(QMouseEvent* mouseEvent);
-    void btnMainToolSelected();
 
-    void DoneRectEllipse();
+    QPainter* painter1;
+    QPainter* painter2;
+    QImage* canvasImg1;
+    QImage* canvasImg2;
+    void initCanvasImg();
+
+    void resetPathPoint(QPainterPath& path);
 
     int undoIndex = -1;
     void undo();
     void redo();
 
+    QPainterPath maskPath;
+    qreal maskBorderWidth = 2.0;
     int resizeMaskIndex = -1;
     void initMask();
     void resizeMask(const QPointF& point);
+    int pointInMaskArea(const QPointF& curPoint);
 
     int showDraggerCount = 0;
     int draggerIndex = -1;
+    QString preState;
     QVector<QRectF> dragers;
     void initDragger();
     void draggerPressed(int draggerIndex);
     void draggerReleased();
-    void showDragger(qreal x1, qreal y1, qreal x2, qreal y2);
+    void setDraggerPosition(qreal x1, qreal y1, qreal x2, qreal y2);
     void resizePath(const QPointF& point);
     bool isMouseInDragger(const QPointF& point);
 
-
-    void initToolMain();
-    void initToolRect();
-    void initToolEraser();
-    void initCanvasImg();
-    void switchTool(const QString& toolName);
-    void showToolMain();
-    int pointInMaskArea(const QPointF& curPoint);
     Ui::MainWindow* ui;
     QString state = "Start";
     QString style = R"(#%1{background:#f6f6f6;}
@@ -67,14 +77,6 @@ private:
 #%1 QPushButton:hover{background:#e5e5e5;}
 #%1 QPushButton:disabled {color:#999;}
 #%1 QPushButton:checked{background:#1677ff;color:#fff;})";
-    QPointF mousePressPoint;
-    bool isMouseDown = false;
-    QPainterPath maskPath;
-    qreal maskBorderWidth = 2.0;
-    QPainter* painter1;
-    QPainter* painter2;
-    QImage* canvasImg1;
-    QImage* canvasImg2;
     QVector<QPainterPath> paths;
 };
 
