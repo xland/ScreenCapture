@@ -20,6 +20,7 @@ void MainWindow::undo()
     {
         undoIndex -= 1;
     }
+    showDraggerCount = 0;
     canvasImg2->fill(0);
     for (int var = 0; var < paths.count(); ++var)
     {
@@ -27,9 +28,7 @@ void MainWindow::undo()
         {
             break;
         }
-        painter2->setPen(QPen(QBrush(Qt::red), 2));
-        painter2->setBrush(Qt::NoBrush);
-        painter2->drawPath(paths[var]);
+        paintPath(paths[var]);
     }
     memcpy(canvasImg1->bits(), canvasImg2->bits(), canvasImg1->sizeInBytes());
     repaint();
@@ -50,17 +49,17 @@ void MainWindow::redo()
     {
         return;
     }
+    showDraggerCount = 0;
     undoIndex += 1;
     canvasImg2->fill(0);
+    ui->btnUndo->setStyleSheet("");
     for (int var = 0; var < paths.count(); ++var)
     {
         if (var >= undoIndex)
         {
             break;
         }
-        painter2->setPen(QPen(QBrush(Qt::red), 2));
-        painter2->setBrush(Qt::NoBrush);
-        painter2->drawPath(paths[var]);
+        paintPath(paths[var]);
     }
     memcpy(canvasImg1->bits(), canvasImg2->bits(), canvasImg1->sizeInBytes());
     repaint();

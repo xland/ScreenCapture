@@ -21,7 +21,7 @@ void MainWindow::initCanvasImg()
 
 void MainWindow::paintEvent(QPaintEvent* e)
 {
-
+    Q_UNUSED(e);
     if (showDraggerCount > 0)
     {
         QPainterPath draggerPath;
@@ -46,10 +46,8 @@ void MainWindow::paintEvent(QPaintEvent* e)
     p.end();
 }
 
-void MainWindow::paintLastPath()
+void MainWindow::paintPath(PathModel& path)
 {
-    if (paths.count() < 1) return;
-    auto& path = paths.last();
     if (path.needBorder)
     {
         painter2->setPen(QPen(QBrush(path.borderColor), 2.0));

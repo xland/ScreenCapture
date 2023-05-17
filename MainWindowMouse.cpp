@@ -71,8 +71,8 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
                     draggerIndex = 8;
                     return true;
                 }
+                paintPath(path);
             }
-            paintLastPath();
             showDraggerCount = 0;
             PathModel path;
             path.moveTo(mousePressPoint);
@@ -85,7 +85,10 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
         }
         else if (state == "Eraser")
         {
-            paintLastPath();
+            if (paths.count() > 0)
+            {
+                paintPath(paths.last());
+            }
             showDraggerCount = 0;
             PathModel path;
             path.moveTo(mousePressPoint);
