@@ -14,7 +14,6 @@ void MainWindow::initCanvasImg()
     painter1 = new QPainter(canvasImg1);
     //    painter1->setRenderHint(QPainter::Antialiasing, true);
     //    painter1->setRenderHint(QPainter::SmoothPixmapTransform, false);
-
     painter2 = new QPainter(canvasImg2);
     //    painter2->setRenderHint(QPainter::Antialiasing, true);
     //    painter2->setRenderHint(QPainter::SmoothPixmapTransform, false);
@@ -51,7 +50,21 @@ void MainWindow::paintLastPath()
 {
     if (paths.count() < 1) return;
     auto& path = paths.last();
-    painter2->setPen(QPen(QBrush(Qt::red), 2));
-    painter2->setBrush(Qt::NoBrush);
+    if (path.needBorder)
+    {
+        painter2->setPen(QPen(QBrush(path.borderColor), 2));
+    }
+    else
+    {
+        painter2->setPen(Qt::NoPen);
+    }
+    if (path.needFill)
+    {
+        painter2->setBrush(QBrush(path.fillColor));
+    }
+    else
+    {
+        painter2->setBrush(Qt::NoBrush);
+    }
     painter2->drawPath(path);
 }

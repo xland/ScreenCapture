@@ -73,7 +73,8 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
                 }
             }
             paintLastPath();
-            QPainterPath path;
+            showDraggerCount = 0;
+            PathModel path;
             path.moveTo(mousePressPoint);
             path.lineTo(mousePressPoint.x() + 1, mousePressPoint.y());
             path.lineTo(mousePressPoint.x() + 1, mousePressPoint.y() + 1);
@@ -85,7 +86,8 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
         else if (state == "Eraser")
         {
             paintLastPath();
-            QPainterPath path;
+            showDraggerCount = 0;
+            PathModel path;
             path.moveTo(mousePressPoint);
             paths.append(path);
             painter1->setCompositionMode(QPainter::CompositionMode_DestinationOver);

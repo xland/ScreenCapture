@@ -16,6 +16,7 @@ SOURCES += \
     MainWindowMouse.cpp \
     MainWindowTool.cpp \
     MainWindowUndoRedo.cpp \
+    PathModel.cpp \
     ScreenShoter.cpp \
     main.cpp \
     MainWindow.cpp
@@ -23,6 +24,7 @@ SOURCES += \
 HEADERS += \
     Icon.h \
     MainWindow.h \
+    PathModel.h \
     ScreenShoter.h
 
 FORMS += \

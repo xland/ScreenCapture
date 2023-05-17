@@ -2,9 +2,9 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QPainterPath>
 #include <QPainter>
 #include <QImage>
+#include "PathModel.h"
 
 
 QT_BEGIN_NAMESPACE
@@ -65,7 +65,6 @@ private:
     QString preState;
     QVector<QRectF> dragers;
     void initDragger();
-    void draggerPressed(int draggerIndex);
     void draggerReleased();
     void setDraggerPosition(qreal x1, qreal y1, qreal x2, qreal y2);
     void resizePath(const QPointF& point);
@@ -78,7 +77,7 @@ private:
 #%1 QPushButton:hover{background:#e5e5e5;}
 #%1 QPushButton:disabled {color:#999;}
 #%1 QPushButton:checked{background:#1677ff;color:#fff;})";
-    QVector<QPainterPath> paths;
+    QVector<PathModel> paths;
 };
 
 #endif // MAINWINDOW_H

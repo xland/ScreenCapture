@@ -9,14 +9,6 @@ void MainWindow::initDragger()
     }
 }
 
-void MainWindow::draggerPressed(int draggerIndex)
-{
-    state = "lastPathDrag";
-    isMouseDown = true;
-    this->draggerIndex = draggerIndex;
-    mousePressPoint = QCursor::pos();
-}
-
 void MainWindow::resizePath(const QPointF& point)
 {
     auto& path = paths.last();
