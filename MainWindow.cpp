@@ -26,6 +26,7 @@ MainWindow::MainWindow(QWidget* parent)
     initCanvasImg();
     initToolMain();
     initToolRect();
+    initToolArrow();
     initToolEraser();
     this->showMaximized(); //todo
 }
@@ -128,6 +129,20 @@ void MainWindow::initToolRect()
 
     ui->toolRectEllipse->hide();
     ui->toolRectEllipse->setStyleSheet(style.arg("toolRectEllipse"));
+}
+
+void MainWindow::initToolArrow()
+{
+    ui->btnArrowFill->setFont(Icon::font);
+    ui->btnArrowFill->setText(Icon::icons[Icon::Name::arrowFill]);
+    QObject::connect(ui->btnArrowFill,  &QPushButton::clicked, this, &MainWindow::btnMainToolSelected);
+
+    ui->btnArrowEmpty->setFont(Icon::font);
+    ui->btnArrowEmpty->setText(Icon::icons[Icon::Name::arrowEmpty]);
+    QObject::connect(ui->btnArrowEmpty,  &QPushButton::clicked, this, &MainWindow::btnMainToolSelected);
+
+    ui->toolArrow->hide();
+    ui->toolArrow->setStyleSheet(style.arg("toolArrow"));
 }
 
 void MainWindow::switchTool(const QString& toolName)

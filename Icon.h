@@ -30,7 +30,9 @@ public:
         rect,
         rectFill,
         ellipse,
-        ellipseFill
+        ellipseFill,
+        arrowFill,
+        arrowEmpty
     };
     static void Init();
     static QFont font;

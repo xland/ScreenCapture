@@ -28,6 +28,7 @@ private slots:
 private:
     void initToolMain();
     void initToolRect();
+    void initToolArrow();
     void initToolEraser();
     void btnMainToolSelected();
     void switchTool(const QString& toolName);

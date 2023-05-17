@@ -32,5 +32,9 @@ void Icon::Init()
     icons.insert(Name::rect, QChar(0xe790));
     icons.insert(Name::ellipse, QChar(0xe610));
     icons.insert(Name::ellipseFill, QChar(0xe6bb));
+
+
+    icons.insert(Name::arrowFill, QChar(0xe61a));
+    icons.insert(Name::arrowEmpty, QChar(0xe62c));
 }
 
