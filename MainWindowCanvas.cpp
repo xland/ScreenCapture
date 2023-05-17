@@ -46,3 +46,12 @@ void MainWindow::paintEvent(QPaintEvent* e)
     p.drawPath(maskPath);
     p.end();
 }
+
+void MainWindow::paintLastPath()
+{
+    if (paths.count() < 1) return;
+    auto& path = paths.last();
+    painter2->setPen(QPen(QBrush(Qt::red), 2));
+    painter2->setBrush(Qt::NoBrush);
+    painter2->drawPath(path);
+}

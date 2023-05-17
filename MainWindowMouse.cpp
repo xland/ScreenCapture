@@ -72,6 +72,7 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
                     return true;
                 }
             }
+            paintLastPath();
             QPainterPath path;
             path.moveTo(mousePressPoint);
             path.lineTo(mousePressPoint.x() + 1, mousePressPoint.y());
@@ -83,6 +84,7 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
         }
         else if (state == "Eraser")
         {
+            paintLastPath();
             QPainterPath path;
             path.moveTo(mousePressPoint);
             paths.append(path);
@@ -244,9 +246,6 @@ bool MainWindow::mouseRelease(QMouseEvent* mouseEvent)
             setDraggerPosition(path.elementAt(0).x, path.elementAt(0).y, path.elementAt(2).x, path.elementAt(2).y);
             setCursor(Qt::CrossCursor);
             repaint();
-            //            painter2->setPen(QPen(QBrush(Qt::red), 2));
-            //            painter2->setBrush(Qt::NoBrush);
-            //            painter2->drawPath(path);
             return true;
         }
         else if (state == "lastPathDrag")

@@ -45,6 +45,7 @@ private:
     QImage* canvasImg1;
     QImage* canvasImg2;
     void initCanvasImg();
+    void paintLastPath();
 
     void resetPathPoint(QPainterPath& path);
 
