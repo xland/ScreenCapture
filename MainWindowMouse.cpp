@@ -85,6 +85,10 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
         }
         else if (state == "Arrow")
         {
+            if (paths.count() > 0)
+            {
+                paintPath(paths.last(), painter2);
+            }
             showDraggerCount = 0;
             PathModel path;
             path.borderWidth = 1.0;
@@ -95,6 +99,17 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
             path.lineTo(QPointF(3, 3));
             path.lineTo(QPointF(4, 4));
             path.lineTo(mousePressPoint);
+            paths.append(path);
+        }
+        else if (state == "Pen")
+        {
+            if (paths.count() > 0)
+            {
+                paintPath(paths.last(), painter2);
+            }
+            showDraggerCount = 0;
+            PathModel path;
+            path.moveTo(mousePressPoint);
             paths.append(path);
         }
         else if (state == "Eraser")
@@ -188,6 +203,15 @@ bool MainWindow::mouseMove(QMouseEvent* mouseEvent)
             memcpy(canvasImg1->bits(), canvasImg2->bits(), canvasImg1->sizeInBytes());
             paintPath(path, painter1);
             repaint();
+            return true;
+        }
+        else if (state == "Pen")
+        {
+            auto& path = paths.last();
+            path.lineTo(curPoint.x(), curPoint.y());
+            paintPath(path, painter1);
+            repaint();
+            return true;
         }
         else if (state == "Eraser")
         {
@@ -297,6 +321,14 @@ bool MainWindow::mouseRelease(QMouseEvent* mouseEvent)
             setCursor(Qt::CrossCursor);
             repaint();
             return true;
+        }
+        else if (state == "Arrow")
+        {
+            ui->btnUndo->setStyleSheet("");
+        }
+        else if (state == "Pen")
+        {
+            ui->btnUndo->setStyleSheet("");
         }
         else if (state == "lastPathDrag")
         {

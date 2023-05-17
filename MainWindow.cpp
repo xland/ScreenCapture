@@ -27,6 +27,7 @@ MainWindow::MainWindow(QWidget* parent)
     initToolMain();
     initToolRect();
     initToolArrow();
+    initToolPen();
     initToolEraser();
     this->showMaximized(); //todo
 }
@@ -50,9 +51,9 @@ void MainWindow::initToolMain()
     ui->btnArrow->setText(Icon::icons[Icon::Name::arrow]);
     connect(ui->btnArrow,  &QPushButton::clicked, this, &MainWindow::btnMainToolSelected);
 
-    ui->btnLine->setFont(Icon::font);
-    ui->btnLine->setText(Icon::icons[Icon::Name::line]);
-    QObject::connect(ui->btnLine,  &QPushButton::clicked, this, &MainWindow::btnMainToolSelected);
+    ui->btnPen->setFont(Icon::font);
+    ui->btnPen->setText(Icon::icons[Icon::Name::line]);
+    QObject::connect(ui->btnPen,  &QPushButton::clicked, this, &MainWindow::btnMainToolSelected);
 
     ui->btnMosaic->setFont(Icon::font);
     ui->btnMosaic->setText(Icon::icons[Icon::Name::mosaic]);
@@ -93,6 +94,16 @@ void MainWindow::initToolMain()
     ui->toolMain->hide();
     ui->toolMain->setStyleSheet(style.arg("toolMain"));
 
+}
+
+void MainWindow::initToolPen()
+{
+    ui->btnPenDot->setFont(Icon::font);
+    ui->btnPenDot->setText(Icon::icons[Icon::Name::dot]);
+    QObject::connect(ui->btnPenDot,  &QPushButton::clicked, this, &MainWindow::btnMainToolSelected);
+
+    ui->toolPen->hide();
+    ui->toolPen->setStyleSheet(style.arg("toolPen"));
 }
 
 void MainWindow::initToolEraser()
