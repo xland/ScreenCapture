@@ -10,7 +10,11 @@ CONFIG += c++17
 
 SOURCES += \
     Icon.cpp \
+    MainWindowCanvas.cpp \
+    MainWindowDragger.cpp \
+    MainWindowMask.cpp \
     MainWindowMouse.cpp \
+    MainWindowUndoRedo.cpp \
     ScreenShoter.cpp \
     main.cpp \
     MainWindow.cpp
