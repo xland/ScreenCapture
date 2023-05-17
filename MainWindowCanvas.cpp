@@ -46,7 +46,7 @@ void MainWindow::paintPath(PathModel& path, QPainter* painter)
 {
     if (path.needBorder)
     {
-        painter->setPen(QPen(QBrush(path.borderColor), 2.0));
+        painter->setPen(QPen(QBrush(path.borderColor), path.borderWidth));
     }
     else
     {

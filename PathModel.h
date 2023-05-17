@@ -14,6 +14,7 @@ public:
     bool needFill = false;
     bool needBorder = true;
     bool needPaint = true;
+    bool needDelete = true;
     bool isEraser;
 
 
