@@ -12,20 +12,15 @@ void MainWindow::initCanvasImg()
     canvasImg2->setDevicePixelRatio(scaleFactor);
     canvasImg2->fill(0);
     painter1 = new QPainter(canvasImg1);
-    //    painter1->setRenderHint(QPainter::Antialiasing, true);
+    painter1->setRenderHint(QPainter::Antialiasing, true);
     //    painter1->setRenderHint(QPainter::SmoothPixmapTransform, false);
     painter2 = new QPainter(canvasImg2);
-    //    painter2->setRenderHint(QPainter::Antialiasing, true);
+    painter2->setRenderHint(QPainter::Antialiasing, true);
     //    painter2->setRenderHint(QPainter::SmoothPixmapTransform, false);
 }
 
 void MainWindow::paintEvent(QPaintEvent* e)
 {
-    QPainter p(this);
-    //    p.setRenderHint(QPainter::Antialiasing, true);
-    //    p.setRenderHint(QPainter::SmoothPixmapTransform, false);
-    p.drawPixmap(0, 0, ScreenShoter::Get()->desktopImages[0]);
-    p.drawImage(0, 0, *canvasImg1);
 
     if (showDraggerCount > 0)
     {
@@ -34,11 +29,16 @@ void MainWindow::paintEvent(QPaintEvent* e)
         {
             draggerPath.addRect(dragers[var]);
         }
-        p.setPen(QPen(QBrush(QColor(0, 0, 0)), 1));
-        p.setBrush(Qt::NoBrush);
-        p.drawPath(draggerPath);
+        painter1->setPen(QPen(QBrush(Qt::black), 0.5));
+        painter1->setBrush(Qt::NoBrush);
+        painter1->drawPath(draggerPath);
     }
 
+    QPainter p(this);
+    p.setRenderHint(QPainter::Antialiasing, true);
+    //    p.setRenderHint(QPainter::SmoothPixmapTransform, false);
+    p.drawPixmap(0, 0, ScreenShoter::Get()->desktopImages[0]);
+    p.drawImage(0, 0, *canvasImg1);
 
     p.setPen(QPen(QBrush(QColor(22, 119, 255)), maskBorderWidth));
     p.setBrush(QBrush(QColor(0, 0, 0, 120)));
@@ -52,7 +52,7 @@ void MainWindow::paintLastPath()
     auto& path = paths.last();
     if (path.needBorder)
     {
-        painter2->setPen(QPen(QBrush(path.borderColor), 2));
+        painter2->setPen(QPen(QBrush(path.borderColor), 2.0));
     }
     else
     {
