@@ -30,6 +30,7 @@ private:
     void initToolRect();
     void initToolArrow();
     void initToolPen();
+    void initToolMosaic();
     void initToolEraser();
     void btnMainToolSelected();
     void switchTool(const QString& toolName);
@@ -46,8 +47,11 @@ private:
     QPainter* painter2;
     QImage* canvasImg1;
     QImage* canvasImg2;
+    QImage* mosaicImg;
     void initCanvasImg();
+    void initMosaicImg();
     void paintPath(PathModel& path, QPainter* painter);
+    void paintMosaic(PathModel& path, QPainter* painter, qreal x1, qreal y1, qreal x2, qreal y2);
 
     void undo();
     void redo();

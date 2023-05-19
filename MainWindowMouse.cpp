@@ -3,6 +3,7 @@
 #include <QDebug>
 #include <QMouseEvent>
 #include <QCoreApplication>
+#include "ScreenShoter.h"
 
 bool MainWindow::eventFilter(QObject* obj, QEvent* event)
 {
@@ -112,6 +113,23 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
             path.moveTo(mousePressPoint);
             paths.append(path);
         }
+        else if (state == "Mosaic")
+        {
+            if (paths.count() > 0)
+            {
+                paintPath(paths.last(), painter2);
+            }
+            showDraggerCount = 0;
+            PathModel path;
+            path.isMosaic = true;
+            path.isEraser = true;
+            path.borderWidth = 38;
+//            painter1->drawImage(0, 0, *path.mosaicBg);
+//            painter1->drawPixmap(0, 0, ScreenShoter::Get()->desktopImages[0]);
+//            painter1->drawImage(0, 0, *canvasImg1);
+            path.moveTo(mousePressPoint);
+            paths.append(path);
+        }
         else if (state == "Eraser")
         {
             if (paths.count() > 0)
@@ -121,6 +139,7 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
             showDraggerCount = 0;
             PathModel path;
             path.isEraser = true;
+            path.borderWidth = 12;
             path.moveTo(mousePressPoint);
             paths.append(path);
             canvasImg1->fill(0);
@@ -208,15 +227,42 @@ bool MainWindow::mouseMove(QMouseEvent* mouseEvent)
         else if (state == "Pen")
         {
             auto& path = paths.last();
-            path.lineTo(curPoint.x(), curPoint.y());
+            path.lineTo(curPoint);
             paintPath(path, painter1);
             repaint();
+            return true;
+        }
+        else if (state == "Mosaic")
+        {
+            auto& path = paths.last();
+            path.lineTo(curPoint);
+            paintPath(path, painter1);
+            repaint();
+            return true;
+
+//            auto& path = paths.last();
+//            auto ele = path.elementAt(path.elementCount() - 1);
+//            auto edgeWidth = path.borderWidth / 2;
+//            QLineF tarLine(QPointF(ele.x, ele.y), curPoint);
+//            //角度变弧度，以适应std::cos，std::sin
+//            qreal v = tarLine.angle() * 3.14159265 / 180;
+//            auto xSpan = edgeWidth * std::sin(v);
+//            auto ySpan = edgeWidth * std::cos(v);
+//            path.moveTo(ele.x - xSpan, ele.y - ySpan);
+//            path.lineTo(ele.x + xSpan, ele.y + ySpan);
+//            path.lineTo(curPoint.x() + xSpan, curPoint.y() + ySpan);
+//            path.lineTo(curPoint.x() - xSpan, curPoint.y() - ySpan);
+//            path.closeSubpath();
+//            painter1->setClipPath(path);
+//            painter1->drawImage(0, 0, *path.mosaicBg);
+//            path.moveTo(curPoint);
+//            repaint();
             return true;
         }
         else if (state == "Eraser")
         {
             auto& path = paths.last();
-            path.lineTo(curPoint.x(), curPoint.y());
+            path.lineTo(curPoint);
             paintPath(path, painter1);
             repaint();
             return true;

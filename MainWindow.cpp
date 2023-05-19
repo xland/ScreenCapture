@@ -27,6 +27,7 @@ MainWindow::MainWindow(QWidget* parent)
     initToolMain();
     initToolRect();
     initToolArrow();
+    initToolMosaic();
     initToolPen();
     initToolEraser();
     this->showMaximized(); //todo
@@ -106,6 +107,16 @@ void MainWindow::initToolPen()
     ui->toolPen->setStyleSheet(style.arg("toolPen"));
 }
 
+void MainWindow::initToolMosaic()
+{
+    ui->btnMosaicDot->setFont(Icon::font);
+    ui->btnMosaicDot->setText(Icon::icons[Icon::Name::dot]);
+    QObject::connect(ui->btnMosaicDot,  &QPushButton::clicked, this, &MainWindow::btnMainToolSelected);
+
+    ui->toolMosaic->hide();
+    ui->toolMosaic->setStyleSheet(style.arg("toolMosaic"));
+}
+
 void MainWindow::initToolEraser()
 {
     ui->btnEraserDot->setFont(Icon::font);
@@ -172,6 +183,10 @@ void MainWindow::switchTool(const QString& toolName)
             setCursor(Qt::CrossCursor);
             tool->move(ui->toolMain->x(), ui->toolMain->y() + ui->toolMain->height() + 4);
             tool->show();
+            if (state == "Mosaic")
+            {
+                initMosaicImg();
+            }
         }
         else
         {
