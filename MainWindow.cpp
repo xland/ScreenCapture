@@ -179,6 +179,10 @@ void MainWindow::switchTool(const QString& toolName)
         }
         if (name == toolName)
         {
+            if (state == "Mosaic")
+            {
+                layerBgPainter->drawImage(0, 0, *layerDrawingImg);
+            }
             state = name.remove("tool");
             setCursor(Qt::CrossCursor);
             tool->move(ui->toolMain->x(), ui->toolMain->y() + ui->toolMain->height() + 4);

@@ -32,8 +32,16 @@ void MainWindow::undo()
         }
         if (paths[var].isEraser)
         {
+            //todo 优化：多个路径归一
             memcpy(layerDrawingImg->bits(), layerBgImg->bits(), layerDrawingImg->sizeInBytes());
             layerBgPainter->drawPixmap(0, 0, ScreenShoter::Get()->desktopImages[0]);
+            paintPath(paths[var], layerDrawingPainter);
+            layerBgPainter->drawImage(0, 0, *layerDrawingImg);
+        }
+        else if (paths[var].isMosaic)
+        {
+            //todo 优化：多个路径归一
+            initMosaicImg();
             paintPath(paths[var], layerDrawingPainter);
             layerBgPainter->drawImage(0, 0, *layerDrawingImg);
         }
@@ -83,8 +91,16 @@ void MainWindow::redo()
         }
         if (paths[var].isEraser)
         {
+            //todo 优化：多个路径归一
             memcpy(layerDrawingImg->bits(), layerBgImg->bits(), layerDrawingImg->sizeInBytes());
             layerBgPainter->drawPixmap(0, 0, ScreenShoter::Get()->desktopImages[0]);
+            paintPath(paths[var], layerDrawingPainter);
+            layerBgPainter->drawImage(0, 0, *layerDrawingImg);
+        }
+        else if (paths[var].isMosaic)
+        {
+            //todo 优化：多个路径归一
+            initMosaicImg();
             paintPath(paths[var], layerDrawingPainter);
             layerBgPainter->drawImage(0, 0, *layerDrawingImg);
         }

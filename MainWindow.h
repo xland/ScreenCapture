@@ -48,11 +48,9 @@ private:
     QPainter* layerBgPainter;
     QImage* layerDrawingImg;
     QImage* layerBgImg;
-    QImage* mosaicImg;
     void initCanvasImg();
     void initMosaicImg();
     void paintPath(PathModel& path, QPainter* painter);
-    void paintMosaic(PathModel& path, QPainter* painter, qreal x1, qreal y1, qreal x2, qreal y2);
     void endOneDraw();
 
     void undo();

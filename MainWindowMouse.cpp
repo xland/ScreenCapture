@@ -106,16 +106,9 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
         }
         else if (state == "Mosaic")
         {
-            endOneDraw();
-            memcpy(layerDrawingImg->bits(), layerBgImg->bits(), layerDrawingImg->sizeInBytes());
-            showDraggerCount = 0;
             PathModel path;
             path.isMosaic = true;
-            path.isEraser = true;
             path.borderWidth = 38;
-//            layerDrawingPainter->drawImage(0, 0, *path.mosaicBg);
-//            layerDrawingPainter->drawPixmap(0, 0, ScreenShoter::Get()->desktopImages[0]);
-//            layerDrawingPainter->drawImage(0, 0, *canvasImg1);
             path.moveTo(mousePressPoint);
             paths.append(path);
         }
@@ -230,25 +223,8 @@ bool MainWindow::mouseMove(QMouseEvent* mouseEvent)
             auto& path = paths.last();
             path.lineTo(curPoint);
             paintPath(path, layerDrawingPainter);
+            isDrawing = true;
             repaint();
-            return true;
-//            auto& path = paths.last();
-//            auto ele = path.elementAt(path.elementCount() - 1);
-//            auto edgeWidth = path.borderWidth / 2;
-//            QLineF tarLine(QPointF(ele.x, ele.y), curPoint);
-//            //角度变弧度，以适应std::cos，std::sin
-//            qreal v = tarLine.angle() * 3.14159265 / 180;
-//            auto xSpan = edgeWidth * std::sin(v);
-//            auto ySpan = edgeWidth * std::cos(v);
-//            path.moveTo(ele.x - xSpan, ele.y - ySpan);
-//            path.lineTo(ele.x + xSpan, ele.y + ySpan);
-//            path.lineTo(curPoint.x() + xSpan, curPoint.y() + ySpan);
-//            path.lineTo(curPoint.x() - xSpan, curPoint.y() - ySpan);
-//            path.closeSubpath();
-//            layerDrawingPainter->setClipPath(path);
-//            layerDrawingPainter->drawImage(0, 0, *path.mosaicBg);
-//            path.moveTo(curPoint);
-//            repaint();
             return true;
         }
         else if (state == "Eraser")
@@ -371,6 +347,11 @@ bool MainWindow::mouseRelease(QMouseEvent* mouseEvent)
         else if (state == "Eraser")
         {
             layerBgPainter->drawImage(0, 0, *layerDrawingImg);
+            ui->btnUndo->setStyleSheet("");
+            repaint();
+        }
+        else if (state == "Mosaic")
+        {
             ui->btnUndo->setStyleSheet("");
             repaint();
         }
