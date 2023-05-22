@@ -32,7 +32,10 @@ public:
         ellipse,
         ellipseFill,
         arrowFill,
-        arrowEmpty
+        arrowEmpty,
+        bold,
+        italic,
+
     };
     static void Init();
     static QFont font;

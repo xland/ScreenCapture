@@ -36,5 +36,8 @@ void Icon::Init()
 
     icons.insert(Name::arrowFill, QChar(0xe61a));
     icons.insert(Name::arrowEmpty, QChar(0xe62c));
+
+    icons.insert(Name::bold, QChar(0xe7c2));
+    icons.insert(Name::italic, QChar(0xe61c));
 }
 

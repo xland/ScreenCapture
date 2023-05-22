@@ -32,9 +32,11 @@ private:
     void initToolPen();
     void initToolMosaic();
     void initToolEraser();
+    void initToolText();
     void btnMainToolSelected();
     void switchTool(const QString& toolName);
     void showToolMain();
+    void resizeInputToContent();
 
 
     QPointF mousePressPoint;

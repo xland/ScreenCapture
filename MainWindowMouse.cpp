@@ -1,6 +1,7 @@
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
 #include <QDebug>
+#include <QLineEdit>
 #include <QMouseEvent>
 #include <QCoreApplication>
 #include "ScreenShoter.h"
@@ -111,6 +112,12 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
             path.borderWidth = 38;
             path.moveTo(mousePressPoint);
             paths.append(path);
+        }
+        else if (state == "Text")
+        {
+            ui->lineEdit->move(mousePressPoint.x() - ui->lineEdit->width() / 2, mousePressPoint.y() - ui->lineEdit->height() / 2);
+            ui->lineEdit->show();
+            ui->lineEdit->setFocus(Qt::OtherFocusReason);
         }
         else if (state == "Eraser")
         {
@@ -309,6 +316,10 @@ bool MainWindow::mouseMove(QMouseEvent* mouseEvent)
                     return true;
                 }
             }
+        }
+        else if (state == "Text")
+        {
+            setCursor(Qt::IBeamCursor);
         }
     }
     return false;

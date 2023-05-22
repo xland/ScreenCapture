@@ -9,6 +9,7 @@
 #include <QDebug>
 #include <QPainterPath>
 #include <QCoreApplication>
+#include <QLineEdit>
 
 
 
@@ -30,6 +31,7 @@ MainWindow::MainWindow(QWidget* parent)
     initToolMosaic();
     initToolPen();
     initToolEraser();
+    initToolText();
     this->showMaximized(); //todo
 }
 
@@ -40,6 +42,17 @@ MainWindow::~MainWindow()
     delete layerDrawingImg;
     delete layerBgImg;
     delete ui;
+}
+
+void MainWindow::resizeInputToContent()
+{
+    auto font = ui->lineEdit->font();
+    QFontMetrics fm(font);
+    auto size = fm.size(Qt::TextSingleLine, ui->lineEdit->text());
+    auto w = size.width() + 18;
+    auto h = size.height() + 12;
+    if (w < 12) w = 12;
+    ui->lineEdit->setFixedSize(w, h);
 }
 
 void MainWindow::initToolMain()
@@ -165,6 +178,23 @@ void MainWindow::initToolArrow()
 
     ui->toolArrow->hide();
     ui->toolArrow->setStyleSheet(style.arg("toolArrow"));
+}
+
+void MainWindow::initToolText()
+{
+    ui->btnTextBold->setFont(Icon::font);
+    ui->btnTextBold->setText(Icon::icons[Icon::Name::bold]);
+    QObject::connect(ui->btnTextBold,  &QPushButton::clicked, this, &MainWindow::btnMainToolSelected);
+
+    ui->btnTextItalic->setFont(Icon::font);
+    ui->btnTextItalic->setText(Icon::icons[Icon::Name::italic]);
+    QObject::connect(ui->btnTextItalic,  &QPushButton::clicked, this, &MainWindow::btnMainToolSelected);
+
+    ui->toolText->hide();
+    ui->toolText->setStyleSheet(style.arg("toolText"));
+
+    ui->lineEdit->hide();
+    connect(ui->lineEdit, &QLineEdit::textChanged, this, &MainWindow::resizeInputToContent);
 }
 
 void MainWindow::switchTool(const QString& toolName)
