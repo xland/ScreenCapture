@@ -9,23 +9,32 @@ void MainWindow::initCanvasImg()
 {
     auto scaleFactor = metric(PdmDevicePixelRatioScaled) / devicePixelRatioFScale();
     auto imgSize = ScreenShoter::Get()->screenRects[0].size() * scaleFactor;
-    canvasImg1 = new QImage(imgSize, QImage::Format_ARGB32);
-    canvasImg1->setDevicePixelRatio(scaleFactor);
-    canvasImg1->fill(0);
-    canvasImg2 = new QImage(imgSize, QImage::Format_ARGB32);
-    canvasImg2->setDevicePixelRatio(scaleFactor);
-    canvasImg2->fill(0);
-    painter1 = new QPainter(canvasImg1);
-    painter1->setRenderHint(QPainter::Antialiasing, false);
-//    painter1->setRenderHint(QPainter::SmoothPixmapTransform, true);
-    painter2 = new QPainter(canvasImg2);
-    painter2->setRenderHint(QPainter::Antialiasing, false);
-//    painter2->setRenderHint(QPainter::SmoothPixmapTransform, true);
+    layerDrawingImg = new QImage(imgSize, QImage::Format_ARGB32);
+    layerDrawingImg->setDevicePixelRatio(scaleFactor);
+    layerDrawingImg->fill(0);
+    layerDrawingPainter = new QPainter(layerDrawingImg);
+    layerDrawingPainter->setRenderHint(QPainter::Antialiasing, true);
+    //    layerDrawingPainter->setRenderHint(QPainter::SmoothPixmapTransform, true);
+
+    layerBgImg = new QImage(imgSize, QImage::Format_ARGB32);
+    layerBgImg->setDevicePixelRatio(scaleFactor);
+    layerBgPainter = new QPainter(layerBgImg);
+    layerBgPainter->setRenderHint(QPainter::Antialiasing, true);
+    //layerBgPainter->setRenderHint(QPainter::SmoothPixmapTransform, true);
+    layerBgPainter->drawPixmap(0, 0, ScreenShoter::Get()->desktopImages[0]);
 }
 
 void MainWindow::paintEvent(QPaintEvent* e)
 {
     Q_UNUSED(e);
+    QPainter p(this);
+    p.setRenderHint(QPainter::Antialiasing, true);
+//  p.setRenderHint(QPainter::SmoothPixmapTransform, true);
+    p.drawImage(0, 0, *layerBgImg);
+    if (isDrawing)
+    {
+        p.drawImage(0, 0, *layerDrawingImg);
+    }
     if (showDraggerCount > 0)
     {
         QPainterPath draggerPath;
@@ -33,24 +42,25 @@ void MainWindow::paintEvent(QPaintEvent* e)
         {
             draggerPath.addRect(dragers[var]);
         }
-        painter1->setPen(QPen(QBrush(Qt::black), 0.6));
-        painter1->setBrush(Qt::NoBrush);
-        painter1->drawPath(draggerPath);
+        p.setPen(QPen(QBrush(Qt::black), 0.6));
+        p.setBrush(Qt::NoBrush);
+        p.drawPath(draggerPath);
     }
-
-    QPainter p(this);
-    p.setRenderHint(QPainter::Antialiasing, false);
-//  p.setRenderHint(QPainter::SmoothPixmapTransform, true);
-    if (state == "Mosaic")
-    {
-        p.drawImage(0, 0, *mosaicImg);
-    }
-    else
-    {
-        p.drawPixmap(0, 0, ScreenShoter::Get()->desktopImages[0]);
-    }
-    p.drawImage(0, 0, *canvasImg1);
     paintPath(maskPath, &p);
+}
+
+void MainWindow::endOneDraw()
+{
+    if (paths.count() > 0)
+    {
+        auto& path = paths.last();
+        if (!path.isEraser)
+        {
+            paintPath(path, layerBgPainter);
+            isDrawing = false;
+            showDraggerCount = 0;
+        }
+    }
 }
 
 void MainWindow::initMosaicImg()
@@ -62,7 +72,7 @@ void MainWindow::initMosaicImg()
     mosaicImg = new QImage(imgSize, QImage::Format_ARGB32);
     QPainter painter(mosaicImg);
     painter.drawPixmap(0, 0, ScreenShoter::Get()->desktopImages[0]);
-    painter.drawImage(0, 0, *canvasImg1);
+    painter.drawImage(0, 0, *layerDrawingImg);
     painter.setPen(Qt::NoPen);
     for (int var1 = 0; var1 < imgSize.width(); var1 += mosaicRectSize)
     {
@@ -82,8 +92,8 @@ void MainWindow::initMosaicImg()
             painter.drawRect(rect);
         }
     }
-    painter1->drawPixmap(0, 0, ScreenShoter::Get()->desktopImages[0]);
-    painter1->drawImage(0, 0, *canvasImg1);
+    layerDrawingPainter->drawPixmap(0, 0, ScreenShoter::Get()->desktopImages[0]);
+    layerDrawingPainter->drawImage(0, 0, *layerDrawingImg);
     qDebug() << QDateTime::currentDateTime().toMSecsSinceEpoch() - start.toMSecsSinceEpoch();
 }
 

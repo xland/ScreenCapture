@@ -72,9 +72,8 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
                     draggerIndex = 8;
                     return true;
                 }
-                paintPath(path, painter2);
             }
-            showDraggerCount = 0;
+            endOneDraw();
             PathModel path;
             path.moveTo(mousePressPoint);
             path.lineTo(mousePressPoint.x() + 1, mousePressPoint.y());
@@ -86,11 +85,7 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
         }
         else if (state == "Arrow")
         {
-            if (paths.count() > 0)
-            {
-                paintPath(paths.last(), painter2);
-            }
-            showDraggerCount = 0;
+            endOneDraw();
             PathModel path;
             path.borderWidth = 1.0;
             path.moveTo(mousePressPoint);
@@ -104,47 +99,36 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
         }
         else if (state == "Pen")
         {
-            if (paths.count() > 0)
-            {
-                paintPath(paths.last(), painter2);
-            }
-            showDraggerCount = 0;
+            endOneDraw();
             PathModel path;
             path.moveTo(mousePressPoint);
             paths.append(path);
         }
         else if (state == "Mosaic")
         {
-            if (paths.count() > 0)
-            {
-                paintPath(paths.last(), painter2);
-            }
-            memcpy(canvasImg1->bits(), canvasImg2->bits(), canvasImg1->sizeInBytes());
+            endOneDraw();
+            memcpy(layerDrawingImg->bits(), layerBgImg->bits(), layerDrawingImg->sizeInBytes());
             showDraggerCount = 0;
             PathModel path;
             path.isMosaic = true;
             path.isEraser = true;
             path.borderWidth = 38;
-//            painter1->drawImage(0, 0, *path.mosaicBg);
-//            painter1->drawPixmap(0, 0, ScreenShoter::Get()->desktopImages[0]);
-//            painter1->drawImage(0, 0, *canvasImg1);
+//            layerDrawingPainter->drawImage(0, 0, *path.mosaicBg);
+//            layerDrawingPainter->drawPixmap(0, 0, ScreenShoter::Get()->desktopImages[0]);
+//            layerDrawingPainter->drawImage(0, 0, *canvasImg1);
             path.moveTo(mousePressPoint);
             paths.append(path);
         }
         else if (state == "Eraser")
         {
-            if (paths.count() > 0)
-            {
-                paintPath(paths.last(), painter2);
-            }
-            showDraggerCount = 0;
+            endOneDraw();
+            memcpy(layerDrawingImg->bits(), layerBgImg->bits(), layerDrawingImg->sizeInBytes());
+            layerBgPainter->drawPixmap(0, 0, ScreenShoter::Get()->desktopImages[0]);
             PathModel path;
             path.isEraser = true;
-            path.borderWidth = 12;
+            path.borderWidth = 24;
             path.moveTo(mousePressPoint);
             paths.append(path);
-            canvasImg1->fill(0);
-            painter1->drawImage(0, 0, *canvasImg2);
             return true;
         }
     }
@@ -177,14 +161,20 @@ bool MainWindow::mouseMove(QMouseEvent* mouseEvent)
             path.setElementPositionAt(1, curPoint.x(), mousePressPoint.y());
             path.setElementPositionAt(2, curPoint.x(), curPoint.y());
             path.setElementPositionAt(3, mousePressPoint.x(), curPoint.y());
-            memcpy(canvasImg1->bits(), canvasImg2->bits(), canvasImg1->sizeInBytes());
-            paintPath(path, painter1);
+            layerDrawingImg->fill(0);
+            paintPath(path, layerDrawingPainter);
+            isDrawing = true;
             repaint();
             return true;
         }
         else if (state == "lastPathDrag")
         {
             resizePath(curPoint);
+            auto& path = paths.last();
+            layerDrawingImg->fill(0);
+            paintPath(path, layerDrawingPainter);
+            isDrawing = true;
+            repaint();
             return true;
         }
         else if (state == "Arrow")
@@ -220,8 +210,9 @@ bool MainWindow::mouseMove(QMouseEvent* mouseEvent)
             qreal x4 = centerX + tempA / 2;
             qreal y4 = centerY + tempB / 2;
             path.setElementPositionAt(5, x4, y4);
-            memcpy(canvasImg1->bits(), canvasImg2->bits(), canvasImg1->sizeInBytes());
-            paintPath(path, painter1);
+            layerDrawingImg->fill(0);
+            paintPath(path, layerDrawingPainter);
+            isDrawing = true;
             repaint();
             return true;
         }
@@ -229,7 +220,8 @@ bool MainWindow::mouseMove(QMouseEvent* mouseEvent)
         {
             auto& path = paths.last();
             path.lineTo(curPoint);
-            paintPath(path, painter1);
+            paintPath(path, layerDrawingPainter);
+            isDrawing = true;
             repaint();
             return true;
         }
@@ -237,10 +229,9 @@ bool MainWindow::mouseMove(QMouseEvent* mouseEvent)
         {
             auto& path = paths.last();
             path.lineTo(curPoint);
-            paintPath(path, painter1);
+            paintPath(path, layerDrawingPainter);
             repaint();
             return true;
-
 //            auto& path = paths.last();
 //            auto ele = path.elementAt(path.elementCount() - 1);
 //            auto edgeWidth = path.borderWidth / 2;
@@ -254,8 +245,8 @@ bool MainWindow::mouseMove(QMouseEvent* mouseEvent)
 //            path.lineTo(curPoint.x() + xSpan, curPoint.y() + ySpan);
 //            path.lineTo(curPoint.x() - xSpan, curPoint.y() - ySpan);
 //            path.closeSubpath();
-//            painter1->setClipPath(path);
-//            painter1->drawImage(0, 0, *path.mosaicBg);
+//            layerDrawingPainter->setClipPath(path);
+//            layerDrawingPainter->drawImage(0, 0, *path.mosaicBg);
 //            path.moveTo(curPoint);
 //            repaint();
             return true;
@@ -264,7 +255,8 @@ bool MainWindow::mouseMove(QMouseEvent* mouseEvent)
         {
             auto& path = paths.last();
             path.lineTo(curPoint);
-            paintPath(path, painter1);
+            paintPath(path, layerDrawingPainter);
+            isDrawing = true;
             repaint();
             return true;
         }
@@ -375,6 +367,12 @@ bool MainWindow::mouseRelease(QMouseEvent* mouseEvent)
         else if (state == "Pen")
         {
             ui->btnUndo->setStyleSheet("");
+        }
+        else if (state == "Eraser")
+        {
+            layerBgPainter->drawImage(0, 0, *layerDrawingImg);
+            ui->btnUndo->setStyleSheet("");
+            repaint();
         }
         else if (state == "lastPathDrag")
         {

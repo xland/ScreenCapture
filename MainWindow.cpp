@@ -35,10 +35,10 @@ MainWindow::MainWindow(QWidget* parent)
 
 MainWindow::~MainWindow()
 {
-    delete painter1;
-    delete painter2;
-    delete canvasImg1;
-    delete canvasImg2;
+    delete layerDrawingPainter;
+    delete layerBgPainter;
+    delete layerDrawingImg;
+    delete layerBgImg;
     delete ui;
 }
 

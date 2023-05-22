@@ -1,5 +1,6 @@
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
+#include "ScreenShoter.h"
 
 //todo 移动位置和大小后，没法还原
 
@@ -20,17 +21,28 @@ void MainWindow::undo()
     {
         return;
     }
+    isDrawing = false;
     showDraggerCount = 0;
-    canvasImg2->fill(0);
+    layerBgPainter->drawPixmap(0, 0, ScreenShoter::Get()->desktopImages[0]);
     for (int var = 0; var < paths.count(); ++var)
     {
         if (!paths[var].needPaint)
         {
             break;
         }
-        paintPath(paths[var], painter2);
+        if (paths[var].isEraser)
+        {
+            memcpy(layerDrawingImg->bits(), layerBgImg->bits(), layerDrawingImg->sizeInBytes());
+            layerBgPainter->drawPixmap(0, 0, ScreenShoter::Get()->desktopImages[0]);
+            paintPath(paths[var], layerDrawingPainter);
+            layerBgPainter->drawImage(0, 0, *layerDrawingImg);
+        }
+        else
+        {
+            paintPath(paths[var], layerBgPainter);
+        }
+
     }
-    memcpy(canvasImg1->bits(), canvasImg2->bits(), canvasImg1->sizeInBytes());
     repaint();
     ui->btnRedo->setStyleSheet("");
     if (var == 0)
@@ -61,16 +73,26 @@ void MainWindow::redo()
         return;
     }
     showDraggerCount = 0;
-    canvasImg2->fill(0);
+    isDrawing = false;
+    layerBgPainter->drawPixmap(0, 0, ScreenShoter::Get()->desktopImages[0]);
     for (int var = 0; var < paths.count(); ++var)
     {
         if (!paths[var].needPaint)
         {
             break;
         }
-        paintPath(paths[var], painter2);
+        if (paths[var].isEraser)
+        {
+            memcpy(layerDrawingImg->bits(), layerBgImg->bits(), layerDrawingImg->sizeInBytes());
+            layerBgPainter->drawPixmap(0, 0, ScreenShoter::Get()->desktopImages[0]);
+            paintPath(paths[var], layerDrawingPainter);
+            layerBgPainter->drawImage(0, 0, *layerDrawingImg);
+        }
+        else
+        {
+            paintPath(paths[var], layerBgPainter);
+        }
     }
-    memcpy(canvasImg1->bits(), canvasImg2->bits(), canvasImg1->sizeInBytes());
     repaint();
     ui->btnUndo->setStyleSheet("");
     if (var == paths.count() - 1)

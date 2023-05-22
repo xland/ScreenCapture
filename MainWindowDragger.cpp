@@ -80,11 +80,7 @@ void MainWindow::resizePath(const QPointF& point)
         }
     }
     setDraggerPosition(path.elementAt(0).x, path.elementAt(0).y, path.elementAt(2).x, path.elementAt(2).y);
-    memcpy(canvasImg1->bits(), canvasImg2->bits(), canvasImg1->sizeInBytes());
-    painter1->setPen(QPen(QBrush(Qt::red), 2));
-    painter1->setBrush(Qt::NoBrush);
-    painter1->drawPath(path);
-    repaint();
+
 }
 
 bool MainWindow::isMouseInDragger(const QPointF& point)

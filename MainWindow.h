@@ -39,19 +39,21 @@ private:
 
     QPointF mousePressPoint;
     bool isMouseDown = false;
+    bool isDrawing = false;
     bool mouseMove(QMouseEvent* mouseEvent);
     bool mousePress(QMouseEvent* mouseEvent);
     bool mouseRelease(QMouseEvent* mouseEvent);
 
-    QPainter* painter1;
-    QPainter* painter2;
-    QImage* canvasImg1;
-    QImage* canvasImg2;
+    QPainter* layerDrawingPainter;
+    QPainter* layerBgPainter;
+    QImage* layerDrawingImg;
+    QImage* layerBgImg;
     QImage* mosaicImg;
     void initCanvasImg();
     void initMosaicImg();
     void paintPath(PathModel& path, QPainter* painter);
     void paintMosaic(PathModel& path, QPainter* painter, qreal x1, qreal y1, qreal x2, qreal y2);
+    void endOneDraw();
 
     void undo();
     void redo();
