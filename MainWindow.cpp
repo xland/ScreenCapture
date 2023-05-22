@@ -182,6 +182,10 @@ void MainWindow::initToolArrow()
 
 void MainWindow::initToolText()
 {
+    ui->btnTextDot->setFont(Icon::font);
+    ui->btnTextDot->setText(Icon::icons[Icon::Name::dot]);
+    QObject::connect(ui->btnTextDot,  &QPushButton::clicked, this, &MainWindow::btnMainToolSelected);
+
     ui->btnTextBold->setFont(Icon::font);
     ui->btnTextBold->setText(Icon::icons[Icon::Name::bold]);
     QObject::connect(ui->btnTextBold,  &QPushButton::clicked, this, &MainWindow::btnMainToolSelected);
