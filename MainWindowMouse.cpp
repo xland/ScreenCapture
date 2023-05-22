@@ -119,6 +119,7 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
             {
                 paintPath(paths.last(), painter2);
             }
+            memcpy(canvasImg1->bits(), canvasImg2->bits(), canvasImg1->sizeInBytes());
             showDraggerCount = 0;
             PathModel path;
             path.isMosaic = true;
@@ -361,7 +362,6 @@ bool MainWindow::mouseRelease(QMouseEvent* mouseEvent)
         {
             auto& path = paths.last();
             path.resetPoint5();
-            repaint();
             ui->btnUndo->setStyleSheet("");
             setDraggerPosition(path.elementAt(0).x, path.elementAt(0).y, path.elementAt(2).x, path.elementAt(2).y);
             setCursor(Qt::CrossCursor);

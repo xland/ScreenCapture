@@ -23,6 +23,36 @@ void MainWindow::initCanvasImg()
 //    painter2->setRenderHint(QPainter::SmoothPixmapTransform, true);
 }
 
+void MainWindow::paintEvent(QPaintEvent* e)
+{
+    Q_UNUSED(e);
+    if (showDraggerCount > 0)
+    {
+        QPainterPath draggerPath;
+        for (int var = 0; var < showDraggerCount; ++var)
+        {
+            draggerPath.addRect(dragers[var]);
+        }
+        painter1->setPen(QPen(QBrush(Qt::black), 0.6));
+        painter1->setBrush(Qt::NoBrush);
+        painter1->drawPath(draggerPath);
+    }
+
+    QPainter p(this);
+    p.setRenderHint(QPainter::Antialiasing, false);
+//  p.setRenderHint(QPainter::SmoothPixmapTransform, true);
+    if (state == "Mosaic")
+    {
+        p.drawImage(0, 0, *mosaicImg);
+    }
+    else
+    {
+        p.drawPixmap(0, 0, ScreenShoter::Get()->desktopImages[0]);
+    }
+    p.drawImage(0, 0, *canvasImg1);
+    paintPath(maskPath, &p);
+}
+
 void MainWindow::initMosaicImg()
 {
     auto start = QDateTime::currentDateTime();
@@ -55,36 +85,6 @@ void MainWindow::initMosaicImg()
     painter1->drawPixmap(0, 0, ScreenShoter::Get()->desktopImages[0]);
     painter1->drawImage(0, 0, *canvasImg1);
     qDebug() << QDateTime::currentDateTime().toMSecsSinceEpoch() - start.toMSecsSinceEpoch();
-}
-
-void MainWindow::paintEvent(QPaintEvent* e)
-{
-    Q_UNUSED(e);
-    if (showDraggerCount > 0)
-    {
-        QPainterPath draggerPath;
-        for (int var = 0; var < showDraggerCount; ++var)
-        {
-            draggerPath.addRect(dragers[var]);
-        }
-        painter1->setPen(QPen(QBrush(Qt::black), 0.6));
-        painter1->setBrush(Qt::NoBrush);
-        painter1->drawPath(draggerPath);
-    }
-
-    QPainter p(this);
-    p.setRenderHint(QPainter::Antialiasing, false);
-//  p.setRenderHint(QPainter::SmoothPixmapTransform, true);
-    if (state == "Mosaic")
-    {
-        p.drawImage(0, 0, *mosaicImg);
-    }
-    else
-    {
-        p.drawPixmap(0, 0, ScreenShoter::Get()->desktopImages[0]);
-    }
-    p.drawImage(0, 0, *canvasImg1);
-    paintPath(maskPath, &p);
 }
 
 void MainWindow::paintPath(PathModel& path, QPainter* painter)
