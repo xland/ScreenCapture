@@ -10,6 +10,7 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    ColorSelector.cpp \
     Icon.cpp \
     MainWindowCanvas.cpp \
     MainWindowDragger.cpp \
@@ -23,12 +24,14 @@ SOURCES += \
     MainWindow.cpp
 
 HEADERS += \
+    ColorSelector.h \
     Icon.h \
     MainWindow.h \
     PathModel.h \
     ScreenShoter.h
 
 FORMS += \
+    ColorSelector.ui \
     MainWindow.ui
 
 LIBS += -luser32

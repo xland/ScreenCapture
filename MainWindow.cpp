@@ -19,6 +19,7 @@ MainWindow::MainWindow(QWidget* parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    colorSelector = new ColorSelector(this);
     this->setWindowFlags(Qt::Window | Qt::FramelessWindowHint);   //todo | Qt::WindowStaysOnTopHint
     this->setCursor(Qt::CrossCursor);
     this->setMouseTracking(true);
@@ -34,12 +35,11 @@ MainWindow::MainWindow(QWidget* parent)
     initToolEraser();
     initToolText();
     this->showMaximized(); //todo
-
-//    ui->colorSelector->hide();
 }
 
 MainWindow::~MainWindow()
 {
+
     delete layerDrawingPainter;
     delete layerBgPainter;
     delete layerDrawingImg;
@@ -232,14 +232,14 @@ void MainWindow::switchTool(const QString& toolName)
             {
                 if (state != "Eraser")
                 {
-//                    auto p = tool->geometry().topRight();
-//                    ui->colorSelector->move(110, 110);
-//                    ui->colorSelector->show();
-//                    ui->colorSelector->raise();
-//                    ui->colorSelector->setVisible(true);
-                    tool->resize(tool->width() + ui->colorSelector->width(), tool->height());
-                    tool->layout()->addWidget(ui->colorSelector);
-
+//                    if (!tool->property("hasSetColor").isValid())
+//                    {
+//                        tool->setProperty("hasSetColor", true);
+//                        tool->resize(tool->width() + colorSelector->width(), tool->height());
+//                    }
+//                    tool->layout()->addWidget(colorSelector);
+                    colorSelector->move(tool->geometry().topRight());
+                    colorSelector->show();
                 }
             }
         }
