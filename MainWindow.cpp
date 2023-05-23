@@ -10,6 +10,7 @@
 #include <QPainterPath>
 #include <QCoreApplication>
 #include <QLineEdit>
+#include <QLayout>
 
 
 
@@ -33,6 +34,8 @@ MainWindow::MainWindow(QWidget* parent)
     initToolEraser();
     initToolText();
     this->showMaximized(); //todo
+
+//    ui->colorSelector->hide();
 }
 
 MainWindow::~MainWindow()
@@ -218,12 +221,26 @@ void MainWindow::switchTool(const QString& toolName)
                 layerBgPainter->drawImage(0, 0, *layerDrawingImg);
             }
             state = name.remove("tool");
-            setCursor(Qt::CrossCursor);
             tool->move(ui->toolMain->x(), ui->toolMain->y() + ui->toolMain->height() + 4);
+            setCursor(Qt::CrossCursor);
             tool->show();
             if (state == "Mosaic")
             {
                 initMosaicImg();
+            }
+            else
+            {
+                if (state != "Eraser")
+                {
+//                    auto p = tool->geometry().topRight();
+//                    ui->colorSelector->move(110, 110);
+//                    ui->colorSelector->show();
+//                    ui->colorSelector->raise();
+//                    ui->colorSelector->setVisible(true);
+                    tool->resize(tool->width() + ui->colorSelector->width(), tool->height());
+                    tool->layout()->addWidget(ui->colorSelector);
+
+                }
             }
         }
         else
