@@ -93,6 +93,15 @@ bool MainWindow::isMouseInDragger(const QPointF& point)
             return true;
         }
     }
+    if (paths.count() > 0)
+    {
+        auto& path = paths.last();
+        if (path.contains(point))
+        {
+            draggerIndex = 8;
+            return true;
+        }
+    }
     return false;
 }
 

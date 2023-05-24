@@ -140,7 +140,15 @@ void MainWindow::paintPath(PathModel& path, QPainter* painter)
     {
         painter->setCompositionMode(QPainter::CompositionMode_SourceOver);
     }
-    painter->drawPath(path);
+    if (path.isEllipse)
+    {
+        painter->drawEllipse(path.boundingRect());
+    }
+    else
+    {
+        painter->drawPath(path);
+    }
+
 }
 
 PathModel& MainWindow::createPath()

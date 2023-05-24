@@ -63,27 +63,20 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
                 state = "lastPathDrag";
                 return true;
             }
-            if (paths.count() > 0)
-            {
-                auto& path = paths.last();
-                if (path.contains(mousePressPoint))
-                {
-                    preState = state;
-                    state = "lastPathDrag";
-                    draggerIndex = 8;
-                    return true;
-                }
-            }
             endOneDraw();
             auto& path = createPath();
             path.borderWidth = dotRectEllipse->size;
             path.needFill = ui->btnRectEllipseFill->isChecked();
+            path.isEllipse = ui->btnEllipse->isChecked();
             path.moveTo(mousePressPoint);
             path.lineTo(mousePressPoint.x() + 1, mousePressPoint.y());
             path.lineTo(mousePressPoint.x() + 1, mousePressPoint.y() + 1);
             path.lineTo(mousePressPoint.x(), mousePressPoint.y() + 1);
             path.lineTo(mousePressPoint);
-            repaint();
+
+//            myPath.moveTo(center);
+//            myPath.arcTo(boundingRect, startAngle,
+//                         sweepLength);
             return true;
         }
         else if (state == "Arrow")

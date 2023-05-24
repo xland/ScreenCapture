@@ -41,15 +41,18 @@ void PathModel::resetPoint5()
 
 void PathModel::initPatch(QImage* bgImg, qreal scaleFactor)
 {
-    auto rect = controlPointRect().toRect();
-    patchPosition  = rect.topLeft();
-    patchPosition.setX(patchPosition.x() - borderWidth);
-    patchPosition.setY(patchPosition.y() - borderWidth);
-    auto point = patchPosition * scaleFactor;
-    rect.moveTo(point);
-    rect.setWidth(rect.width() + borderWidth * 2);
-    rect.setHeight(rect.height() + borderWidth * 2);
-    rect.setSize(rect.size() * scaleFactor);
-    patchImg =  bgImg->copy(rect); //todo 定义时的初始化，浪费资源
-    patchImg.save("patchImg.png");
+    if (patchImg.isNull())
+    {
+        auto rect = controlPointRect().toRect();
+        patchPosition  = rect.topLeft();
+        patchPosition.setX(patchPosition.x() - borderWidth);
+        patchPosition.setY(patchPosition.y() - borderWidth);
+        auto point = patchPosition * scaleFactor;
+        rect.moveTo(point);
+        rect.setWidth(rect.width() + borderWidth * 2);
+        rect.setHeight(rect.height() + borderWidth * 2);
+        rect.setSize(rect.size() * scaleFactor);
+        patchImg =  bgImg->copy(rect); //todo 定义时的初始化，浪费资源
+        patchImg.save("patchImg.png");
+    }
 }

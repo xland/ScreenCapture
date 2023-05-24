@@ -18,6 +18,7 @@ public:
     bool needDelete = true;
     bool isEraser = false;
     bool isMosaic = false;
+    bool isEllipse = false;
 
 
     qreal borderWidth = 2.0;
