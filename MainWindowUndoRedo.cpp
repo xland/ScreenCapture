@@ -3,11 +3,12 @@
 #include "ScreenShoter.h"
 
 //todo 移动位置和大小后，没法还原
+//todo 上一步之后，画了新东西，要清除内存
+//todo 按右键的时候需要执行一次 endOneDraw
 void MainWindow::jobLoop()
 {
     isDrawing = false;
     showDraggerCount = 0;
-    ScreenShoter::Get()->desktopImages[0].save("desktopImages.png");
     memcpy(layerBgImg->bits(), ScreenShoter::Get()->desktopImages[0].bits(), layerBgImg->sizeInBytes());
     for (int var = 0; var < paths.count(); ++var)
     {
@@ -17,29 +18,23 @@ void MainWindow::jobLoop()
         }
         if (paths[var].isEraser)
         {
-            memcpy(layerDrawingImg->bits(), layerBgImg->bits(), layerDrawingImg->sizeInBytes());
-            memcpy(layerBgImg->bits(), ScreenShoter::Get()->desktopImages[0].bits(), layerBgImg->sizeInBytes());
-            paintPath(paths[var], layerDrawingPainter);
-//            while (paths[var + 1].isEraser && paths[var + 1].needPaint)
-//            {
-//                var += 1;
-//                paintPath(paths[var], layerDrawingPainter);
-//            }
-            layerBgPainter->drawImage(0, 0, *layerDrawingImg);
+//            memcpy(layerDrawingImg->bits(), layerBgImg->bits(), layerDrawingImg->sizeInBytes());
+//            memcpy(layerBgImg->bits(), ScreenShoter::Get()->desktopImages[0].bits(), layerBgImg->sizeInBytes());
+//            paintPath(paths[var], layerDrawingPainter);
+//            layerBgPainter->drawImage(0, 0, *layerDrawingImg);
+            layerBgPainter->setCompositionMode(QPainter::CompositionMode_SourceOver);
+            layerBgPainter->drawImage(paths[var].patchPosition, paths[var].patchImg);
         }
         else if (paths[var].isMosaic)
         {
-            initMosaic();
-            paintPath(paths[var], layerBgPainter);
-//            while (paths[var + 1].isMosaic && paths[var + 1].needPaint)
-//            {
-//                var += 1;
-//                paintPath(paths[var], layerBgPainter);
-//            }
-            memcpy(layerDrawingImg->bits(), layerMosaicImg->bits(), layerDrawingImg->sizeInBytes());
-            layerDrawingPainter->drawImage(0, 0, *layerBgImg);
-            memcpy(layerBgImg->bits(), layerDrawingImg->bits(), layerBgImg->sizeInBytes());
-            layerDrawingImg->fill(0);
+//            initMosaic();
+//            paintPath(paths[var], layerBgPainter);
+//            memcpy(layerDrawingImg->bits(), layerMosaicImg->bits(), layerDrawingImg->sizeInBytes());
+//            layerDrawingPainter->drawImage(0, 0, *layerBgImg);
+//            memcpy(layerBgImg->bits(), layerDrawingImg->bits(), layerBgImg->sizeInBytes());
+//            layerDrawingImg->fill(0);
+            layerBgPainter->setCompositionMode(QPainter::CompositionMode_SourceOver);
+            layerBgPainter->drawImage(paths[var].patchPosition, paths[var].patchImg);
         }
         else
         {
@@ -50,6 +45,7 @@ void MainWindow::jobLoop()
 }
 void MainWindow::undo()
 {
+    endOneDraw();
     bool flag = false;
     int var = paths.count() - 1;
     for (; var >= 0; --var)

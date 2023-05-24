@@ -54,6 +54,8 @@ private:
     QImage* layerDrawingImg;
     QImage* layerBgImg;
     QImage* layerMosaicImg;
+    QVector<QImage> historyImgs;
+    QVector<QPoint> historyPoints;
     void initLayer();
     void initMosaic();
     void paintPath(PathModel& path, QPainter* painter);
@@ -94,8 +96,6 @@ private:
 #%1 QPushButton:disabled {color:#999;}
 #%1 QPushButton:checked{background:#1677ff;color:#fff;})";
     QVector<PathModel> paths;
-    QVector<QImage> historyImgs;
-    QVector<QPoint> historyPoints;
     qreal scaleFactor;
 };
 

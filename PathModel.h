@@ -4,13 +4,14 @@
 #include <QPainterPath>
 #include <QColor>
 #include <QBrush>
+#include <QImage>
 
 class PathModel : public QPainterPath
 {
 public:
     explicit PathModel();
     void resetPoint5();
-    void initMosaicBg(qreal scaleFactor, QImage* curImg);
+    void initPatch(QImage* bgImg, qreal scaleFactor);
 
     bool needFill;
     bool needPaint = true;
@@ -21,8 +22,8 @@ public:
 
     qreal borderWidth = 2.0;
     QColor color;
-    qreal mosaicRectSize = 6.0;
-    QImage* mosaicBg;
+    QPoint patchPosition;
+    QImage patchImg;
 signals:
 
 };

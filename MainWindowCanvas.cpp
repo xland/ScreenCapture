@@ -75,6 +75,7 @@ void MainWindow::endOneDraw()
         if (path.isEraser)
         {
             layerBgPainter->drawImage(0, 0, *layerDrawingImg);
+            path.initPatch(layerBgImg, scaleFactor);
         }
         else if (path.isMosaic)
         {
@@ -82,26 +83,12 @@ void MainWindow::endOneDraw()
             layerDrawingPainter->drawImage(0, 0, *layerBgImg);
             memcpy(layerBgImg->bits(), layerDrawingImg->bits(), layerBgImg->sizeInBytes());
             layerDrawingImg->fill(0);
+            path.initPatch(layerBgImg, scaleFactor);
         }
         else
         {
             paintPath(path, layerBgPainter);
         }
-        auto rect = path.controlPointRect().toRect();
-        auto point  = rect.topLeft();
-        point.setX(point.x() - path.borderWidth);
-        point.setY(point.y() - path.borderWidth);
-        point = point * scaleFactor;
-        rect.moveTo(point);
-        rect.setWidth(rect.width() + path.borderWidth * 2);
-        rect.setHeight(rect.height() + path.borderWidth * 2);
-        rect.setSize(rect.size() * scaleFactor);
-        auto img =  layerBgImg->copy(rect);
-        historyImgs.append(img);
-        historyPoints.append(point);
-        img.save("part.png");
-//        historyImgs.append(layerBgImg->copy());
-//        path.controlPointRect()
     }
 }
 
