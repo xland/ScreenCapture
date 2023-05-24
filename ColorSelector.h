@@ -15,6 +15,7 @@ class ColorSelector : public QWidget
 public:
     explicit ColorSelector(QWidget* parent = nullptr);
     ~ColorSelector();
+    QColor currentColor();
 //    bool mousePress(QMouseEvent* mouseEvent);
 //    bool mouseRelease(QMouseEvent* mouseEvent);
 protected:

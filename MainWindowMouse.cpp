@@ -158,6 +158,7 @@ bool MainWindow::mouseMove(QMouseEvent* mouseEvent)
         else if (state == "RectEllipse")
         {
             auto& path = paths.last();
+            path.needDelete = false;
             path.setElementPositionAt(1, curPoint.x(), mousePressPoint.y());
             path.setElementPositionAt(2, curPoint.x(), curPoint.y());
             path.setElementPositionAt(3, mousePressPoint.x(), curPoint.y());
@@ -340,6 +341,11 @@ bool MainWindow::mouseRelease(QMouseEvent* mouseEvent)
         else if (state == "RectEllipse")
         {
             auto& path = paths.last();
+            if (path.needDelete)
+            {
+                paths.removeLast();
+                return true;
+            }
             path.resetPoint5();
             ui->btnUndo->setStyleSheet("");
             setDraggerPosition(path.elementAt(0).x, path.elementAt(0).y, path.elementAt(2).x, path.elementAt(2).y);

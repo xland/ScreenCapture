@@ -78,14 +78,10 @@ void ColorSelector::mousePressEvent(QMouseEvent* event)
         repaint();
     }
 }
-//bool ColorSelector::mousePress(QMouseEvent* mouseEvent)
-//{
-//    return true;
-//}
-//bool ColorSelector::mouseRelease(QMouseEvent* mouseEvent)
-//{
-//    return true;
-//}
+QColor ColorSelector::currentColor()
+{
+    return colors[0];
+}
 
 void ColorSelector::paintEvent(QPaintEvent*)
 {
