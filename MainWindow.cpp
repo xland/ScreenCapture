@@ -20,14 +20,13 @@ MainWindow::MainWindow(QWidget* parent)
 {
     ui->setupUi(this);
     colorSelector = new ColorSelector(this);
-    buttonDot = new ButtonBot(this);
     this->setWindowFlags(Qt::Window | Qt::FramelessWindowHint);   //todo | Qt::WindowStaysOnTopHint
     this->setCursor(Qt::CrossCursor);
     this->setMouseTracking(true);
     qApp->installEventFilter(this);
     initMask();
     initDragger();
-    initCanvasImg();
+    initLayer();
     initToolMain();
     initToolRect();
     initToolArrow();
@@ -116,34 +115,32 @@ void MainWindow::initToolMain()
 
 void MainWindow::initToolPen()
 {
-    ui->btnPenDot->setFont(Icon::font);
-    ui->btnPenDot->setText(Icon::icons[Icon::Name::dot]);
-    QObject::connect(ui->btnPenDot,  &QPushButton::clicked, this, &MainWindow::btnMainToolSelected);
-
+    dotPen = new ButtonDot(this);
+    dotPen->setCheckable(false);
+    auto box = qobject_cast<QHBoxLayout*>(ui->toolPen->layout());
+    box->insertWidget(0, dotPen);
     ui->toolPen->hide();
     ui->toolPen->setStyleSheet(style.arg("toolPen"));
 }
 
 void MainWindow::initToolMosaic()
 {
-    ui->btnMosaicDot->setFont(Icon::font);
-    ui->btnMosaicDot->setText(Icon::icons[Icon::Name::dot]);
-    QObject::connect(ui->btnMosaicDot,  &QPushButton::clicked, this, &MainWindow::btnMainToolSelected);
-
+    auto box = qobject_cast<QHBoxLayout*>(ui->toolMosaic->layout());
+    dotMosaic = new ButtonDot(this);
+    dotMosaic->setCheckable(false);
+    dotMosaic->setFontSize(20);
+    box->insertWidget(0, dotMosaic);
     ui->toolMosaic->hide();
     ui->toolMosaic->setStyleSheet(style.arg("toolMosaic"));
 }
 
 void MainWindow::initToolEraser()
 {
-    ui->btnEraserDot->setFont(Icon::font);
-    ui->btnEraserDot->setText(Icon::icons[Icon::Name::dot]);
-    QObject::connect(ui->btnEraserDot,  &QPushButton::clicked, this, &MainWindow::btnMainToolSelected);
-
-    ui->btnEraserRect->setFont(Icon::font);
-    ui->btnEraserRect->setText(Icon::icons[Icon::Name::rectFill]);
-    QObject::connect(ui->btnEraserRect,  &QPushButton::clicked, this, &MainWindow::btnMainToolSelected);
-
+    auto box = qobject_cast<QHBoxLayout*>(ui->toolEraser->layout());
+    dotEraser = new ButtonDot(this);
+    dotEraser->setCheckable(false);
+    dotEraser->setFontSize(20);
+    box->insertWidget(0, dotEraser);
     ui->toolEraser->hide();
     ui->toolEraser->setStyleSheet(style.arg("toolEraser"));
 }
@@ -151,7 +148,8 @@ void MainWindow::initToolEraser()
 void MainWindow::initToolRect()
 {
     auto box = qobject_cast<QHBoxLayout*>(ui->btnRectEllipseFill->parentWidget()->layout());
-    box->insertWidget(0, buttonDot);
+    dotRectEllipse = new ButtonDot(this);
+    box->insertWidget(0, dotRectEllipse);
 
     ui->btnRectEllipseFill->setFont(Icon::font);
     ui->btnRectEllipseFill->setText(Icon::icons[Icon::Name::rectFill]);
@@ -216,32 +214,29 @@ void MainWindow::switchTool(const QString& toolName)
         }
         if (name == toolName)
         {
+            tool->hide();
             if (state == "Mosaic")
             {
                 layerBgPainter->drawImage(0, 0, *layerDrawingImg);
             }
+            colorSelector->hide();
             state = name.remove("tool");
             tool->move(ui->toolMain->x(), ui->toolMain->y() + ui->toolMain->height() + 4);
             setCursor(Qt::CrossCursor);
-            tool->show();
             if (state == "Mosaic")
             {
-                initMosaicImg();
+//                repaint();
+                initMosaic();
             }
             else
             {
                 if (state != "Eraser")
                 {
-//                    if (!tool->property("hasSetColor").isValid())
-//                    {
-//                        tool->setProperty("hasSetColor", true);
-//                        tool->resize(tool->width() + colorSelector->width(), tool->height());
-//                    }
-//                    tool->layout()->addWidget(colorSelector);
                     colorSelector->move(tool->geometry().topRight());
                     colorSelector->show();
                 }
             }
+            tool->show();
         }
         else
         {

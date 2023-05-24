@@ -41,7 +41,7 @@ void MainWindow::undo()
         else if (paths[var].isMosaic)
         {
             //todo 优化：多个路径归一
-            initMosaicImg();
+            initMosaic();
             paintPath(paths[var], layerDrawingPainter);
             layerBgPainter->drawImage(0, 0, *layerDrawingImg);
         }
@@ -100,7 +100,7 @@ void MainWindow::redo()
         else if (paths[var].isMosaic)
         {
             //todo 优化：多个路径归一
-            initMosaicImg();
+            initMosaic();
             paintPath(paths[var], layerDrawingPainter);
             layerBgPainter->drawImage(0, 0, *layerDrawingImg);
         }

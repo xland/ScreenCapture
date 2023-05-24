@@ -76,6 +76,7 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
             }
             endOneDraw();
             auto& path = createPath();
+            path.borderWidth = dotRectEllipse->size;
             path.needFill = ui->btnRectEllipseFill->isChecked();
             path.moveTo(mousePressPoint);
             path.lineTo(mousePressPoint.x() + 1, mousePressPoint.y());
@@ -101,15 +102,17 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
         {
             endOneDraw();
             auto& path = createPath();
+            path.borderWidth = dotPen->size;
             path.needFill = false;
             path.moveTo(mousePressPoint);
         }
         else if (state == "Mosaic")
         {
+            endOneDraw();
             auto& path = createPath();
+            path.borderWidth = dotMosaic->size;
             path.needFill = false;
             path.isMosaic = true;
-            path.borderWidth = 38;
             path.moveTo(mousePressPoint);
         }
         else if (state == "Text")
@@ -124,6 +127,7 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
             memcpy(layerDrawingImg->bits(), layerBgImg->bits(), layerDrawingImg->sizeInBytes());
             layerBgPainter->drawPixmap(0, 0, ScreenShoter::Get()->desktopImages[0]);
             auto& path = createPath();
+            path.borderWidth = dotEraser->size;
             path.needFill = false;
             path.isEraser = true;
             path.borderWidth = 24;
@@ -229,8 +233,8 @@ bool MainWindow::mouseMove(QMouseEvent* mouseEvent)
         {
             auto& path = paths.last();
             path.lineTo(curPoint);
-            paintPath(path, layerDrawingPainter);
-            isDrawing = true;
+            paintPath(path, layerBgPainter);
+            isDrawing = false;
             repaint();
             return true;
         }

@@ -1,9 +1,11 @@
-#include "ButtonBot.h"
+#include "ButtonDot.h"
 #include <QDebug>
 #include <Icon.h>
 
-ButtonBot::ButtonBot(QWidget* parent): QPushButton(parent)
+
+ButtonDot::ButtonDot(QWidget* parent): QPushButton(parent)
 {
+    setCursor(Qt::PointingHandCursor);
     setMouseTracking(true);
     setMinimumSize(34, 32);
     setCheckable(true);
@@ -15,7 +17,7 @@ ButtonBot::ButtonBot(QWidget* parent): QPushButton(parent)
     setStyleSheet("font-size: " + QString::number(size + 10) + "px;");
 }
 
-void ButtonBot::wheelEvent(QWheelEvent* event)
+void ButtonDot::wheelEvent(QWheelEvent* event)
 {
     if (event->angleDelta().y() > 0)
     {
@@ -27,5 +29,11 @@ void ButtonBot::wheelEvent(QWheelEvent* event)
     }
     if (size > 58) size = 58;
     if (size < 1) size = 1;
+    setStyleSheet("font-size: " + QString::number(size + 10) + "px;");
+}
+
+void ButtonDot::setFontSize(int size)
+{
+    this->size = size;
     setStyleSheet("font-size: " + QString::number(size + 10) + "px;");
 }

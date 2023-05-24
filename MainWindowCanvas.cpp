@@ -6,7 +6,7 @@
 #include <QDebug>
 
 
-void MainWindow::initCanvasImg()
+void MainWindow::initLayer()
 {
     auto scaleFactor = metric(PdmDevicePixelRatioScaled) / devicePixelRatioFScale();
     auto imgSize = ScreenShoter::Get()->screenRects[0].size() * scaleFactor;
@@ -23,6 +23,15 @@ void MainWindow::initCanvasImg()
     layerBgPainter->setRenderHint(QPainter::Antialiasing, true);
     //layerBgPainter->setRenderHint(QPainter::SmoothPixmapTransform, true);
     layerBgPainter->drawPixmap(0, 0, ScreenShoter::Get()->desktopImages[0]);
+
+    layerMosaicImg = new QImage(imgSize, QImage::Format_ARGB32);
+    layerMosaicImg->setDevicePixelRatio(scaleFactor);
+    layerMosaicImg->fill(0);
+    layerMosaicPainter = new QPainter(layerMosaicImg);
+    layerMosaicPainter->setRenderHint(QPainter::Antialiasing, true);
+    layerMosaicPainter->setPen(Qt::NoPen);
+    //layerBgPainter->setRenderHint(QPainter::SmoothPixmapTransform, true);
+
 }
 
 void MainWindow::paintEvent(QPaintEvent* e)
@@ -31,6 +40,10 @@ void MainWindow::paintEvent(QPaintEvent* e)
     QPainter p(this);
     p.setRenderHint(QPainter::Antialiasing, true);
 //  p.setRenderHint(QPainter::SmoothPixmapTransform, true);
+    if (state == "Mosaic")
+    {
+        p.drawImage(0, 0, *layerMosaicImg);
+    }
     p.drawImage(0, 0, *layerBgImg);
     if (isDrawing)
     {
@@ -56,76 +69,56 @@ void MainWindow::paintEvent(QPaintEvent* e)
 
 void MainWindow::endOneDraw()
 {
-
     isDrawing = false;
     showDraggerCount = 0;
     if (paths.count() > 0)
     {
         auto& path = paths.last();
-        if (!path.isEraser && !path.isMosaic)
+        if (path.isEraser)
+        {
+            layerBgPainter->drawImage(0, 0, *layerDrawingImg);
+        }
+        else if (path.isMosaic)
+        {
+            memcpy(layerDrawingImg->bits(), layerMosaicImg->bits(), layerDrawingImg->sizeInBytes());
+            layerDrawingPainter->drawImage(0, 0, *layerBgImg);
+            memcpy(layerBgImg->bits(), layerDrawingImg->bits(), layerBgImg->sizeInBytes());
+            layerDrawingImg->fill(0);
+        }
+        else
         {
             paintPath(path, layerBgPainter);
         }
     }
 }
 
-void MainWindow::initMosaicImg()
+void MainWindow::initMosaic()
 {
     //todo 优化空间，线性扫描，逐行绘制
-//    auto start = QDateTime::currentDateTime();
-//    auto w = layerDrawingImg->width();
-//    auto h = layerDrawingImg->height();
-//    int mosaicRectSize = 8;
-//    layerBgPainter->setPen(Qt::NoPen);
-//    layerBgPainter->drawImage(0, 0, *layerDrawingImg);
-//    for (int var1 = 0; var1 < w; var1 += mosaicRectSize)
-//    {
-//        for (int var2 = 0; var2 < h; var2 += mosaicRectSize)
-//        {
-//            auto color0 = layerDrawingImg->pixelColor(var1 + 4, var2 + 4);
-//            auto color1 = layerDrawingImg->pixelColor(var1 + 1, var2 + 1);
-//            auto color2 = layerDrawingImg->pixelColor(var1 + 7, var2 + 1);
-//            auto color3 = layerDrawingImg->pixelColor(var1 + 7, var2 + 7);
-//            auto color4 = layerDrawingImg->pixelColor(var1 + 1, var2 + 7);
-//            auto r = color0.red() + color1.red() + color2.red() + color3.red() + color4.red();
-//            auto g = color0.green() + color1.green() + color2.green() + color3.green() + color4.green();
-//            auto b = color0.blue() + color1.blue() + color2.blue() + color3.blue() + color4.blue();
-//            QColor c(r / 5, g / 5, b / 5);
-//            layerBgPainter->setBrush(QBrush(c));
-//            layerBgPainter->drawRect(QRectF(var1, var2, mosaicRectSize, mosaicRectSize));
-//            qDebug() << var1 << var2;
-//        }
-//    }
-//    qDebug() << QDateTime::currentDateTime().toMSecsSinceEpoch() - start.toMSecsSinceEpoch();
-    endOneDraw();
-    memcpy(layerDrawingImg->bits(), layerBgImg->bits(), layerDrawingImg->sizeInBytes());
+//    memcpy(layerMosaicImg->bits(), layerBgImg->bits(), layerMosaicImg->sizeInBytes());
     int mosaicRectSize = 6;
-    auto scaleFactor = metric(PdmDevicePixelRatioScaled) / devicePixelRatioFScale();
-    auto imgSize = ScreenShoter::Get()->screenRects[0].size() * scaleFactor;
-    QImage mosaicImg(imgSize, QImage::Format_ARGB32);
-    QPainter painter(&mosaicImg);
-    painter.drawImage(0, 0, *layerDrawingImg);
-    painter.setPen(Qt::NoPen);
-    for (int var1 = 0; var1 < imgSize.width(); var1 += mosaicRectSize)
+    for (int var1 = 0; var1 < layerBgImg->width(); var1 += mosaicRectSize)
     {
-        for (int var2 = 0; var2 < imgSize.height(); var2 += mosaicRectSize)
+        for (int var2 = 0; var2 < layerBgImg->height(); var2 += mosaicRectSize)
         {
-            QRect rect(var1, var2, mosaicRectSize, mosaicRectSize);
-            auto color0 = mosaicImg.pixelColor(rect.center());
-            auto color1 = mosaicImg.pixelColor(rect.topLeft());
-            auto color2 = mosaicImg.pixelColor(rect.topRight());
-            auto color3 = mosaicImg.pixelColor(rect.bottomRight());
-            auto color4 = mosaicImg.pixelColor(rect.bottomLeft());
+            auto color0 = layerBgImg->pixelColor(var1 + 1, var2 + 1);
+            auto color1 = layerBgImg->pixelColor(var1 + mosaicRectSize - 1, var2 + 1);
+            auto color2 = layerBgImg->pixelColor(var1 + mosaicRectSize - 1, var2 + mosaicRectSize - 1);
+            auto color3 = layerBgImg->pixelColor(var1 + 1, var2 + mosaicRectSize - 1);
+            auto color4 = layerBgImg->pixelColor(var1 + mosaicRectSize / 2, var2 + mosaicRectSize / 2);
             auto r = color0.red() + color1.red() + color2.red() + color3.red() + color4.red();
             auto g = color0.green() + color1.green() + color2.green() + color3.green() + color4.green();
             auto b = color0.blue() + color1.blue() + color2.blue() + color3.blue() + color4.blue();
             QColor c(r / 5, g / 5, b / 5);
-            painter.setBrush(QBrush(c));
-            painter.drawRect(rect);
+            for (int var3 = 0; var3 < mosaicRectSize; ++var3)
+            {
+                for (int var4 = 0; var4 < mosaicRectSize; ++var4)
+                {
+                    layerMosaicImg->setPixelColor(var1 + var3, var2 + var4, c);
+                }
+            }
         }
     }
-    layerBgPainter->drawImage(0, 0, mosaicImg);
-//    qDebug() << QDateTime::currentDateTime().toMSecsSinceEpoch() - start.toMSecsSinceEpoch();
 }
 
 void MainWindow::paintPath(PathModel& path, QPainter* painter)
@@ -137,7 +130,7 @@ void MainWindow::paintPath(PathModel& path, QPainter* painter)
     }
     else
     {
-        painter->setPen(QPen(QBrush(path.color), path.borderWidth));
+        painter->setPen(QPen(QBrush(path.color), path.borderWidth, Qt::SolidLine, Qt::RoundCap));
         painter->setBrush(Qt::NoBrush);
     }
     if (path.isEraser || path.isMosaic)
@@ -155,7 +148,6 @@ PathModel& MainWindow::createPath()
 {
     PathModel path;
     path.color = colorSelector->currentColor();
-    path.borderWidth = buttonDot->size;
     paths.append(path);
     return paths.last();
 }

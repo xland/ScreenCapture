@@ -1,18 +1,19 @@
-#ifndef BUTTONBOT_H
-#define BUTTONBOT_H
+#ifndef BUTTONDOT_H
+#define BUTTONDOT_H
 
 #include <QPushButton>
 #include <QObject>
 #include <QWheelEvent>
 
-class ButtonBot : public QPushButton
+class ButtonDot : public QPushButton
 {
     Q_OBJECT
 public:
-    ButtonBot(QWidget* parent = nullptr);
+    ButtonDot(QWidget* parent = nullptr);
+    void setFontSize(int size);
     int size = 2;
 protected:
     void wheelEvent(QWheelEvent* event) override;
 };
 
-#endif // BUTTONBOT_H
+#endif // BUTTONDOT_H
