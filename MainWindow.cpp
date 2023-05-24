@@ -215,10 +215,6 @@ void MainWindow::switchTool(const QString& toolName)
         if (name == toolName)
         {
             tool->hide();
-            if (state == "Mosaic")
-            {
-                layerBgPainter->drawImage(0, 0, *layerDrawingImg);
-            }
             colorSelector->hide();
             state = name.remove("tool");
             tool->move(ui->toolMain->x(), ui->toolMain->y() + ui->toolMain->height() + 4);

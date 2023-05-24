@@ -25,8 +25,8 @@ void ScreenShoter::shotScreen()
     auto screens = QGuiApplication::screens();
     for (auto s : screens)
     {
-        auto pix = s->grabWindow(0);
-        desktopImages.append(pix);
+        auto img = s->grabWindow(0).toImage();
+        desktopImages.append(img);
         screenRects.append(s->geometry());
     }
 }

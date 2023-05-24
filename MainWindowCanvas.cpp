@@ -8,7 +8,7 @@
 
 void MainWindow::initLayer()
 {
-    auto scaleFactor = metric(PdmDevicePixelRatioScaled) / devicePixelRatioFScale();
+    scaleFactor = metric(PdmDevicePixelRatioScaled) / devicePixelRatioFScale();
     auto imgSize = ScreenShoter::Get()->screenRects[0].size() * scaleFactor;
     layerDrawingImg = new QImage(imgSize, QImage::Format_ARGB32);
     layerDrawingImg->setDevicePixelRatio(scaleFactor);
@@ -22,7 +22,7 @@ void MainWindow::initLayer()
     layerBgPainter = new QPainter(layerBgImg);
     layerBgPainter->setRenderHint(QPainter::Antialiasing, true);
     //layerBgPainter->setRenderHint(QPainter::SmoothPixmapTransform, true);
-    layerBgPainter->drawPixmap(0, 0, ScreenShoter::Get()->desktopImages[0]);
+    layerBgPainter->drawImage(0, 0, ScreenShoter::Get()->desktopImages[0]);
 
     layerMosaicImg = new QImage(imgSize, QImage::Format_ARGB32);
     layerMosaicImg->setDevicePixelRatio(scaleFactor);
@@ -63,8 +63,6 @@ void MainWindow::paintEvent(QPaintEvent* e)
     p.setPen(QPen(QBrush(QColor(22, 119, 255)), maskBorderWidth));
     p.setBrush(QBrush(QColor(0, 0, 0, 120)));
     p.drawPath(maskPath);
-
-
 }
 
 void MainWindow::endOneDraw()
@@ -89,13 +87,27 @@ void MainWindow::endOneDraw()
         {
             paintPath(path, layerBgPainter);
         }
+        auto rect = path.controlPointRect().toRect();
+        auto point  = rect.topLeft();
+        point.setX(point.x() - path.borderWidth);
+        point.setY(point.y() - path.borderWidth);
+        point = point * scaleFactor;
+        rect.moveTo(point);
+        rect.setWidth(rect.width() + path.borderWidth * 2);
+        rect.setHeight(rect.height() + path.borderWidth * 2);
+        rect.setSize(rect.size() * scaleFactor);
+        auto img =  layerBgImg->copy(rect);
+        historyImgs.append(img);
+        historyPoints.append(point);
+        img.save("part.png");
+//        historyImgs.append(layerBgImg->copy());
+//        path.controlPointRect()
     }
 }
 
 void MainWindow::initMosaic()
 {
-    //todo 优化空间，线性扫描，逐行绘制
-//    memcpy(layerMosaicImg->bits(), layerBgImg->bits(), layerMosaicImg->sizeInBytes());
+    endOneDraw();
     int mosaicRectSize = 6;
     for (int var1 = 0; var1 < layerBgImg->width(); var1 += mosaicRectSize)
     {

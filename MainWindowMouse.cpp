@@ -83,6 +83,7 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
             path.lineTo(mousePressPoint.x() + 1, mousePressPoint.y() + 1);
             path.lineTo(mousePressPoint.x(), mousePressPoint.y() + 1);
             path.lineTo(mousePressPoint);
+            repaint();
             return true;
         }
         else if (state == "Arrow")
@@ -125,7 +126,7 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
         {
             endOneDraw();
             memcpy(layerDrawingImg->bits(), layerBgImg->bits(), layerDrawingImg->sizeInBytes());
-            layerBgPainter->drawPixmap(0, 0, ScreenShoter::Get()->desktopImages[0]);
+            layerBgPainter->drawImage(0, 0, ScreenShoter::Get()->desktopImages[0]);
             auto& path = createPath();
             path.borderWidth = dotEraser->size;
             path.needFill = false;
@@ -359,21 +360,25 @@ bool MainWindow::mouseRelease(QMouseEvent* mouseEvent)
         else if (state == "Arrow")
         {
             ui->btnUndo->setStyleSheet("");
+            return true;
         }
         else if (state == "Pen")
         {
             ui->btnUndo->setStyleSheet("");
+            return true;
         }
         else if (state == "Eraser")
         {
             layerBgPainter->drawImage(0, 0, *layerDrawingImg);
             ui->btnUndo->setStyleSheet("");
             repaint();
+            return true;
         }
         else if (state == "Mosaic")
         {
             ui->btnUndo->setStyleSheet("");
             repaint();
+            return true;
         }
         else if (state == "lastPathDrag")
         {

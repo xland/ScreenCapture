@@ -46,7 +46,7 @@ void PathModel::initMosaicBg(qreal scaleFactor, QImage* curImg)
     auto imgSize = ScreenShoter::Get()->screenRects[0].size() * scaleFactor;
     mosaicBg = new QImage(imgSize, QImage::Format_ARGB32);
     QPainter painter(mosaicBg);
-    painter.drawPixmap(0, 0, ScreenShoter::Get()->desktopImages[0]);
+    painter.drawImage(0, 0, ScreenShoter::Get()->desktopImages[0]);
     painter.drawImage(0, 0, *curImg);
     painter.setPen(Qt::NoPen);
     for (int var1 = 0; var1 < imgSize.width(); var1 += mosaicRectSize)

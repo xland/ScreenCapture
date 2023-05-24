@@ -1,7 +1,7 @@
 
 #ifndef SCREENSHOTER_H
 #define SCREENSHOTER_H
-#include <QPixmap>
+#include <QImage>
 #include <QObject>
 #include <QList>
 class ScreenShoter : public QObject
@@ -12,7 +12,7 @@ public:
     static void Dispose();
     static void Init(QObject* parent);
     static ScreenShoter* Get();
-    QList<QPixmap> desktopImages;
+    QList<QImage> desktopImages;
     QList<QRect> windowRects;
     QList<QRect> screenRects;
 
