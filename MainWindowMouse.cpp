@@ -75,20 +75,20 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
                 }
             }
             endOneDraw();
-            PathModel path;
+            auto& path = createPath();
+            path.needFill = ui->btnRectEllipseFill->isChecked();
             path.moveTo(mousePressPoint);
             path.lineTo(mousePressPoint.x() + 1, mousePressPoint.y());
             path.lineTo(mousePressPoint.x() + 1, mousePressPoint.y() + 1);
             path.lineTo(mousePressPoint.x(), mousePressPoint.y() + 1);
             path.lineTo(mousePressPoint);
-            paths.append(path);
             return true;
         }
         else if (state == "Arrow")
         {
             endOneDraw();
-            PathModel path;
-            path.borderWidth = 1.0;
+            auto& path = createPath();
+            path.needFill = ui->btnArrowFill->isChecked();
             path.moveTo(mousePressPoint);
             path.lineTo(QPointF(0, 0));
             path.lineTo(QPointF(1, 1));
@@ -96,22 +96,21 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
             path.lineTo(QPointF(3, 3));
             path.lineTo(QPointF(4, 4));
             path.lineTo(mousePressPoint);
-            paths.append(path);
         }
         else if (state == "Pen")
         {
             endOneDraw();
-            PathModel path;
+            auto& path = createPath();
+            path.needFill = false;
             path.moveTo(mousePressPoint);
-            paths.append(path);
         }
         else if (state == "Mosaic")
         {
-            PathModel path;
+            auto& path = createPath();
+            path.needFill = false;
             path.isMosaic = true;
             path.borderWidth = 38;
             path.moveTo(mousePressPoint);
-            paths.append(path);
         }
         else if (state == "Text")
         {
@@ -124,11 +123,11 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
             endOneDraw();
             memcpy(layerDrawingImg->bits(), layerBgImg->bits(), layerDrawingImg->sizeInBytes());
             layerBgPainter->drawPixmap(0, 0, ScreenShoter::Get()->desktopImages[0]);
-            PathModel path;
+            auto& path = createPath();
+            path.needFill = false;
             path.isEraser = true;
             path.borderWidth = 24;
             path.moveTo(mousePressPoint);
-            paths.append(path);
             return true;
         }
     }

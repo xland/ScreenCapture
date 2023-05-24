@@ -4,10 +4,6 @@
 
 void MainWindow::initMask()
 {
-    maskPath.borderColor = QColor(22, 119, 255);
-    maskPath.fillColor = QColor(0, 0, 0, 120);
-    maskPath.needFill = true;
-
     auto screenShoter = ScreenShoter::Get();
     maskPath.moveTo(0 - maskBorderWidth, 0 - maskBorderWidth);
     maskPath.lineTo(screenShoter->screenRects[0].width() + maskBorderWidth, 0 - maskBorderWidth);

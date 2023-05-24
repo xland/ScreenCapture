@@ -6,6 +6,7 @@
 #include <QImage>
 #include "PathModel.h"
 #include "ColorSelector.h"
+#include "ButtonBot.h"
 
 
 QT_BEGIN_NAMESPACE
@@ -54,6 +55,7 @@ private:
     void initCanvasImg();
     void initMosaicImg();
     void paintPath(PathModel& path, QPainter* painter);
+    PathModel& createPath();
     void endOneDraw();
 
     void undo();
@@ -78,6 +80,7 @@ private:
 
     Ui::MainWindow* ui;
     ColorSelector* colorSelector;
+    ButtonBot* buttonDot;
     QString state = "Start";
     QString style = R"(#%1{background:#f6f6f6;}
 #%1 QPushButton{color:#414141;font-size:16px;border:none;}

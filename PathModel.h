@@ -12,17 +12,15 @@ public:
     void resetPoint5();
     void initMosaicBg(qreal scaleFactor, QImage* curImg);
 
-    bool needFill = false;
-    bool needBorder = true;
+    bool needFill;
     bool needPaint = true;
     bool needDelete = true;
-    bool isEraser;
+    bool isEraser = false;
     bool isMosaic = false;
 
 
     qreal borderWidth = 2.0;
-    QColor borderColor = Qt::red;
-    QColor fillColor = Qt::transparent;
+    QColor color;
     qreal mosaicRectSize = 6.0;
     QImage* mosaicBg;
 signals:

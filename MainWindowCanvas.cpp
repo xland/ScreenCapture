@@ -1,4 +1,5 @@
 #include "MainWindow.h"
+#include "ui_MainWindow.h"
 #include "ScreenShoter.h"
 #include <QImage>
 #include <QDateTime>
@@ -46,7 +47,11 @@ void MainWindow::paintEvent(QPaintEvent* e)
         p.setBrush(Qt::NoBrush);
         p.drawPath(draggerPath);
     }
-    paintPath(maskPath, &p);
+    p.setPen(QPen(QBrush(QColor(22, 119, 255)), maskBorderWidth));
+    p.setBrush(QBrush(QColor(0, 0, 0, 120)));
+    p.drawPath(maskPath);
+
+
 }
 
 void MainWindow::endOneDraw()
@@ -125,20 +130,14 @@ void MainWindow::initMosaicImg()
 
 void MainWindow::paintPath(PathModel& path, QPainter* painter)
 {
-    if (path.needBorder)
-    {
-        painter->setPen(QPen(QBrush(path.borderColor), path.borderWidth));
-    }
-    else
-    {
-        painter->setPen(Qt::NoPen);
-    }
     if (path.needFill)
     {
-        painter->setBrush(QBrush(path.fillColor));
+        painter->setPen(Qt::NoPen);
+        painter->setBrush(QBrush(path.color));
     }
     else
     {
+        painter->setPen(QPen(QBrush(path.color), path.borderWidth));
         painter->setBrush(Qt::NoBrush);
     }
     if (path.isEraser || path.isMosaic)
@@ -150,4 +149,13 @@ void MainWindow::paintPath(PathModel& path, QPainter* painter)
         painter->setCompositionMode(QPainter::CompositionMode_SourceOver);
     }
     painter->drawPath(path);
+}
+
+PathModel& MainWindow::createPath()
+{
+    PathModel path;
+    path.color = colorSelector->currentColor();
+    path.borderWidth = buttonDot->size;
+    paths.append(path);
+    return paths.last();
 }

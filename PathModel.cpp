@@ -4,7 +4,7 @@
 #include <QDateTime>
 #include <QDebug>
 
-PathModel::PathModel(): isEraser{false}
+PathModel::PathModel()
 {
 
 }

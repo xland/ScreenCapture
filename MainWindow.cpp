@@ -20,6 +20,7 @@ MainWindow::MainWindow(QWidget* parent)
 {
     ui->setupUi(this);
     colorSelector = new ColorSelector(this);
+    buttonDot = new ButtonBot(this);
     this->setWindowFlags(Qt::Window | Qt::FramelessWindowHint);   //todo | Qt::WindowStaysOnTopHint
     this->setCursor(Qt::CrossCursor);
     this->setMouseTracking(true);
@@ -149,13 +150,12 @@ void MainWindow::initToolEraser()
 
 void MainWindow::initToolRect()
 {
-    ui->btnDot->setFont(Icon::font);
-    ui->btnDot->setText(Icon::icons[Icon::Name::dot]);
-    QObject::connect(ui->btnDot,  &QPushButton::clicked, this, &MainWindow::btnMainToolSelected);
+    auto box = qobject_cast<QHBoxLayout*>(ui->btnRectEllipseFill->parentWidget()->layout());
+    box->insertWidget(0, buttonDot);
 
-    ui->btnFill->setFont(Icon::font);
-    ui->btnFill->setText(Icon::icons[Icon::Name::rectFill]);
-    QObject::connect(ui->btnEllipse,  &QPushButton::clicked, this, &MainWindow::btnMainToolSelected);
+    ui->btnRectEllipseFill->setFont(Icon::font);
+    ui->btnRectEllipseFill->setText(Icon::icons[Icon::Name::rectFill]);
+    QObject::connect(ui->btnRectEllipseFill,  &QPushButton::clicked, this, &MainWindow::btnMainToolSelected);
 
     ui->btnRect->setFont(Icon::font);
     ui->btnRect->setText(Icon::icons[Icon::Name::rect]);
