@@ -47,9 +47,7 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
             path.textRect = ui->textInput->geometry();
             path.textRect.moveTo(path.textRect.x() + 5, path.textRect.y() + 5);
             path.color = colorSelector->currentColor();
-            qDebug() << path.color.red() << path.color.green() << path.color.blue();
             path.textFont = ui->textInput->font();
-            qDebug() << path.textFont.family();
             isDrawing = true;
             paintPath(path, layerDrawingPainter);
             ui->textInput->clear();
@@ -74,6 +72,7 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
             ui->toolMain->hide();
             resizeMaskIndex = pointInMaskArea(mousePressPoint);
             resizeMask(mousePressPoint);
+            return true;
         }
         else if (state == "RectEllipse")
         {
@@ -107,6 +106,7 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
             path.lineTo(QPointF(3, 3));
             path.lineTo(QPointF(4, 4));
             path.lineTo(mousePressPoint);
+            return true;
         }
         else if (state == "Pen")
         {
@@ -115,6 +115,7 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
             path.borderWidth = dotPen->size;
             path.needFill = false;
             path.moveTo(mousePressPoint);
+            return true;
         }
         else if (state == "Mosaic")
         {
@@ -124,12 +125,19 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
             path.needFill = false;
             path.isMosaic = true;
             path.moveTo(mousePressPoint);
+            return true;
         }
         else if (state == "Text")
         {
+            if (draggingTextState == 1)
+            {
+                return true;
+            }
+            endOneDraw();
             ui->textInput->move(mousePressPoint.x() - ui->textInput->width() / 2, mousePressPoint.y() - ui->textInput->height() / 2);
             ui->textInput->show();
             ui->textInput->setFocus(Qt::OtherFocusReason);
+            return true;
         }
         else if (state == "Eraser")
         {
@@ -257,6 +265,21 @@ bool MainWindow::mouseMove(QMouseEvent* mouseEvent)
             repaint();
             return true;
         }
+        else if (state == "Text")
+        {
+            if (draggingTextState == 1)
+            {
+                qreal xSpan = curPoint.x() - mousePressPoint.x();
+                qreal ySpan = curPoint.y() - mousePressPoint.y();
+                auto& path = paths.last();
+                path.textRect.moveTo(path.textRect.topLeft().x() + xSpan, path.textRect.topLeft().y() + ySpan);
+                layerDrawingImg->fill(0);
+                paintPath(path, layerDrawingPainter);
+                isDrawing = true;
+                repaint();
+                mousePressPoint = curPoint;
+            }
+        }
     }
     else
     {
@@ -328,6 +351,17 @@ bool MainWindow::mouseMove(QMouseEvent* mouseEvent)
         }
         else if (state == "Text")
         {
+            if (paths.count() > 0)
+            {
+                auto& path = paths.last();
+                if (path.isText && path.textRect.contains(curPoint.toPoint()))
+                {
+                    setCursor(Qt::SizeAllCursor);
+                    draggingTextState = 1;
+                    return true;
+                }
+            }
+            draggingTextState = 0;
             setCursor(Qt::IBeamCursor);
         }
     }

@@ -85,6 +85,7 @@ private:
     bool isMouseInDragger(const QPointF& point);
 
     Ui::MainWindow* ui;
+    int draggingTextState = 0;
     ColorSelector* colorSelector;
     ButtonDot* dotRectEllipse;
     ButtonDot* dotPen;
