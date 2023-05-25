@@ -37,6 +37,20 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
 {
     if (mouseEvent->button() == Qt::RightButton)
     {
+        if (ui->textInput->isVisible())
+        {
+            //todo
+            auto text = ui->textInput->toPlainText();
+            auto rect = ui->textInput->geometry();
+            rect.moveTo(rect.x() + 5, rect.y() + 5);
+            layerDrawingPainter->setFont(ui->textInput->font());
+            layerDrawingPainter->drawText(rect, Qt::AlignLeft | Qt::AlignTop, text, &rect);
+            isDrawing = true;
+            ui->textInput->clear();
+            ui->textInput->hide();
+            repaint();
+            return true;
+        }
         qApp->exit();
         return true;
     }
@@ -107,9 +121,9 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
         }
         else if (state == "Text")
         {
-            ui->lineEdit->move(mousePressPoint.x() - ui->lineEdit->width() / 2, mousePressPoint.y() - ui->lineEdit->height() / 2);
-            ui->lineEdit->show();
-            ui->lineEdit->setFocus(Qt::OtherFocusReason);
+            ui->textInput->move(mousePressPoint.x() - ui->textInput->width() / 2, mousePressPoint.y() - ui->textInput->height() / 2);
+            ui->textInput->show();
+            ui->textInput->setFocus(Qt::OtherFocusReason);
         }
         else if (state == "Eraser")
         {

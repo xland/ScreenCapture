@@ -25,6 +25,7 @@ public:
 protected:
     bool eventFilter(QObject* obj, QEvent* event) override;
     void paintEvent(QPaintEvent*) override;
+    void keyPressEvent(QKeyEvent* event) override;
 private slots:
 
 private:
@@ -89,6 +90,7 @@ private:
     ButtonDot* dotPen;
     ButtonDot* dotMosaic;
     ButtonDot* dotEraser;
+    ButtonDot* dotText;
     QString state = "Start";
     QString style = R"(#%1{background:#f6f6f6;}
 #%1 QPushButton{color:#414141;font-size:16px;border:none;}

@@ -19,6 +19,7 @@ public:
     bool isEraser = false;
     bool isMosaic = false;
     bool isEllipse = false;
+    bool isText = false;
 
 
     qreal borderWidth = 2.0;

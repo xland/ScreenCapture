@@ -19,6 +19,8 @@ MainWindow::MainWindow(QWidget* parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    this->setFocusPolicy(Qt::StrongFocus);
+    this->setFocus();
     colorSelector = new ColorSelector(this);
     this->setWindowFlags(Qt::Window | Qt::FramelessWindowHint);   //todo | Qt::WindowStaysOnTopHint
     this->setCursor(Qt::CrossCursor);
@@ -47,15 +49,19 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::keyPressEvent(QKeyEvent* event)
+{
+    if (event->key() == Qt::Key_Escape)
+    {
+        qApp->exit(0);
+    }
+}
+
 void MainWindow::resizeInputToContent()
 {
-    auto font = ui->lineEdit->font();
-    QFontMetrics fm(font);
-    auto size = fm.size(Qt::TextSingleLine, ui->lineEdit->text());
-    auto w = size.width() + 18;
-    auto h = size.height() + 12;
-    if (w < 12) w = 12;
-    ui->lineEdit->setFixedSize(w, h);
+    ui->textInput->document()->adjustSize();
+    auto size = ui->textInput->document()->size().toSize();
+    ui->textInput->resize(size.width() + 6, size.height());
 }
 
 void MainWindow::initToolMain()
@@ -183,9 +189,10 @@ void MainWindow::initToolArrow()
 
 void MainWindow::initToolText()
 {
-    ui->btnTextDot->setFont(Icon::font);
-    ui->btnTextDot->setText(Icon::icons[Icon::Name::dot]);
-    QObject::connect(ui->btnTextDot,  &QPushButton::clicked, this, &MainWindow::btnMainToolSelected);
+    auto box = qobject_cast<QHBoxLayout*>(ui->toolText->layout());
+    dotText = new ButtonDot(this);
+    dotText->setCheckable(false);
+    box->insertWidget(0, dotText);
 
     ui->btnTextBold->setFont(Icon::font);
     ui->btnTextBold->setText(Icon::icons[Icon::Name::bold]);
@@ -198,8 +205,9 @@ void MainWindow::initToolText()
     ui->toolText->hide();
     ui->toolText->setStyleSheet(style.arg("toolText"));
 
-    ui->lineEdit->hide();
-    connect(ui->lineEdit, &QLineEdit::textChanged, this, &MainWindow::resizeInputToContent);
+    ui->textInput->hide();
+    connect(ui->textInput, &QTextEdit::textChanged, this, &MainWindow::resizeInputToContent);
+//    connect(ui->textInput, SIGNAL(cursorPositionChanged()), this, SLOT(resizeInputToContent()));
 }
 
 void MainWindow::switchTool(const QString& toolName)
@@ -221,7 +229,6 @@ void MainWindow::switchTool(const QString& toolName)
             setCursor(Qt::CrossCursor);
             if (state == "Mosaic")
             {
-//                repaint();
                 initMosaic();
             }
             else
