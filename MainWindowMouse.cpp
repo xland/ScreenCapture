@@ -9,6 +9,10 @@
 
 bool MainWindow::eventFilter(QObject* obj, QEvent* event)
 {
+    if (event->type() == QEvent::MouseMove)
+    {
+        moveTipBox();
+    }
     if (obj->objectName() != "centralwidget")
     {
         return QObject::eventFilter(obj, event);
@@ -363,6 +367,7 @@ bool MainWindow::mouseMove(QMouseEvent* mouseEvent)
             }
             draggingTextState = 0;
             setCursor(Qt::IBeamCursor);
+            return true;
         }
     }
     return false;

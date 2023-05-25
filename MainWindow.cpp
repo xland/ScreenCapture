@@ -21,6 +21,7 @@ MainWindow::MainWindow(QWidget* parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    ui->tipBox->setMouseTracking(false);
     this->setFocusPolicy(Qt::StrongFocus);
     this->setFocus();
     colorSelector = new ColorSelector(this);
@@ -38,6 +39,7 @@ MainWindow::MainWindow(QWidget* parent)
     initToolPen();
     initToolEraser();
     initToolText();
+    moveTipBox();
     this->showMaximized(); //todo
 }
 
@@ -49,6 +51,25 @@ MainWindow::~MainWindow()
     delete layerDrawingImg;
     delete layerBgImg;
     delete ui;
+}
+
+void MainWindow::moveTipBox()
+{
+    auto position = QCursor::pos();
+    //todo 动态位置
+    ui->tipBox->move(position.x() + 6, position.y() + 6);
+    ui->tipPositionLabel->setText("位置: X: " + QString::number(position.x()) + "  Y: " + QString::number(position.y()));
+    position = position * scaleFactor;
+    auto color = layerBgImg->pixelColor(position * scaleFactor);
+    auto rgbStr = QString("%1,%2,%3").arg(QString::number(color.red()), QString::number(color.green()), QString::number(color.blue()));
+    auto hexStr = color.name(QColor::HexRgb).toUpper();
+    ui->tipRgbLabel->setText("RGB: " + rgbStr + "  HEX: " + hexStr);
+    int x{0}, y{0}, width = 181 * scaleFactor, height = 100 * scaleFactor;
+    x = position.x() - width / 16;
+    y = position.y() - height / 16;
+    QRect rect(x, y, width / 8, height / 8);
+    auto result = layerBgImg->copy(rect).scaled(width, height);
+    ui->tipImageLabel->setPixmap(QPixmap::fromImage(result));
 }
 
 void MainWindow::keyPressEvent(QKeyEvent* event)
@@ -331,6 +352,28 @@ void MainWindow::btnMainToolSelected()
             break;
         }
     }
+}
+
+void MainWindow::setGlassImg()
+{
+//    auto shoter = ScreenShoter::Get();
+//    auto position = QCursor::pos();
+//    auto mouseX = qRound((qreal)position.x() * shoter->scalFactor);
+//    auto mouseY = qRound((qreal)position.y() * shoter->scalFactor);
+//    if (mouseX >= shoter->desktopImage.width()) mouseX = shoter->desktopImage.width() - 1;
+//    if (mouseY >= shoter->desktopImage.height()) mouseY = shoter->desktopImage.height() - 1;
+//    auto color = shoter->desktopImage.pixelColor(mouseX, mouseY);
+//    Cutter* cutter = Cutter::Get();
+//    cutter->setMouseX(mouseX);
+//    cutter->setMouseY(mouseY);
+//    cutter->setColorHex(color.name(QColor::HexRgb).toUpper());
+//    cutter->setColorRgb("rgb(" + QString::number(color.red()) + "," + QString::number(color.green()) + "," + QString::number(color.blue()) + ")");
+//    int x{0}, y{0}, width{230}, height{160};
+//    x = mouseX - width / 16;
+//    y = mouseY - height / 16;
+//    QRect rect(x, y, width / 8, height / 8);
+//    auto result = shoter->desktopImage.copy(rect).scaled(width, height);
+//    return result;
 }
 
 void MainWindow::showToolMain()
