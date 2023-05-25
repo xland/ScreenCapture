@@ -12,6 +12,8 @@ public:
     ButtonDot(QWidget* parent = nullptr);
     void setFontSize(int size);
     int size = 2;
+signals:
+    void sizeChanged();
 protected:
     void wheelEvent(QWheelEvent* event) override;
 };

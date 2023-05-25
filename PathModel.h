@@ -5,6 +5,7 @@
 #include <QColor>
 #include <QBrush>
 #include <QImage>
+#include <QFont>
 
 class PathModel : public QPainterPath
 {
@@ -26,6 +27,9 @@ public:
     QColor color;
     QPoint patchPosition;
     QImage patchImg;
+    QString text;
+    QRect textRect;
+    QFont textFont;
 signals:
 
 };

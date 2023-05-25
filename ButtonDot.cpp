@@ -29,6 +29,7 @@ void ButtonDot::wheelEvent(QWheelEvent* event)
     }
     if (size > 58) size = 58;
     if (size < 1) size = 1;
+    emit sizeChanged();
     setStyleSheet("font-size: " + QString::number(size + 10) + "px;");
 }
 

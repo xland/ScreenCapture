@@ -75,6 +75,7 @@ void ColorSelector::mousePressEvent(QMouseEvent* event)
             return;
         }
         colors[0] = colors[hoverIndex];
+        emit colorChanged();
         repaint();
     }
 }

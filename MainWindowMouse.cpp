@@ -4,6 +4,7 @@
 #include <QLineEdit>
 #include <QMouseEvent>
 #include <QCoreApplication>
+#include <QTextFrame>
 #include "ScreenShoter.h"
 
 bool MainWindow::eventFilter(QObject* obj, QEvent* event)
@@ -40,12 +41,17 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
         if (ui->textInput->isVisible())
         {
             //todo
-            auto text = ui->textInput->toPlainText();
-            auto rect = ui->textInput->geometry();
-            rect.moveTo(rect.x() + 5, rect.y() + 5);
-            layerDrawingPainter->setFont(ui->textInput->font());
-            layerDrawingPainter->drawText(rect, Qt::AlignLeft | Qt::AlignTop, text, &rect);
+            auto& path = createPath();
+            path.isText = true;
+            path.text = ui->textInput->toPlainText();
+            path.textRect = ui->textInput->geometry();
+            path.textRect.moveTo(path.textRect.x() + 5, path.textRect.y() + 5);
+            path.color = colorSelector->currentColor();
+            qDebug() << path.color.red() << path.color.green() << path.color.blue();
+            path.textFont = ui->textInput->font();
+            qDebug() << path.textFont.family();
             isDrawing = true;
+            paintPath(path, layerDrawingPainter);
             ui->textInput->clear();
             ui->textInput->hide();
             repaint();

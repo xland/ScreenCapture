@@ -144,6 +144,12 @@ void MainWindow::paintPath(PathModel& path, QPainter* painter)
     {
         painter->drawEllipse(path.boundingRect());
     }
+    else if (path.isText)
+    {
+        painter->setPen(path.color);
+        painter->setFont(path.textFont);
+        painter->drawText(path.textRect, Qt::AlignLeft | Qt::AlignTop, path.text, &path.textRect);
+    }
     else
     {
         painter->drawPath(path);

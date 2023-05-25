@@ -16,12 +16,12 @@ public:
     explicit ColorSelector(QWidget* parent = nullptr);
     ~ColorSelector();
     QColor currentColor();
-//    bool mousePress(QMouseEvent* mouseEvent);
-//    bool mouseRelease(QMouseEvent* mouseEvent);
 protected:
     void paintEvent(QPaintEvent*) override;
     void mouseMoveEvent(QMouseEvent* event) override;
     void mousePressEvent(QMouseEvent* event) override;
+signals:
+    void colorChanged();
 private:
     QVector<QColor> colors;
     QVector<QRectF> rects;

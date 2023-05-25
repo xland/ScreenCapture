@@ -11,6 +11,8 @@
 #include <QCoreApplication>
 #include <QLineEdit>
 #include <QLayout>
+#include <QFont>
+#include <QFontMetrics>
 
 
 
@@ -61,7 +63,19 @@ void MainWindow::resizeInputToContent()
 {
     ui->textInput->document()->adjustSize();
     auto size = ui->textInput->document()->size().toSize();
-    ui->textInput->resize(size.width() + 6, size.height());
+    ui->textInput->resize(size.width() + 6, size.height() + 6);
+
+//    auto font = this->ui->textInput->font();
+//    font.setPointSize(this->dotText->size + 20);
+//    this->ui->textInput->setFont(font);
+//    QFontMetrics metrics(font);
+//    QString str = this->ui->textInput->toPlainText();
+//    if (str.isEmpty())
+//    {
+//        str = "A";
+//    }
+//    auto size = metrics.boundingRect(str).size();
+//    this->ui->textInput->resize(size.width() + 18, size.height() + 6);
 }
 
 void MainWindow::initToolMain()
@@ -189,25 +203,77 @@ void MainWindow::initToolArrow()
 
 void MainWindow::initToolText()
 {
+//    QString style = QString("background:transparent;border:1px solid #000;color:rgb(%1,%2,%3);");
+//    ui->textInput->setStyleSheet(style.arg("255", "0", "0"));
+//    ui->textInput->setStyleSheet(style.arg(QString::number(color.red()), QString::number(color.green()), QString::number(color.blue())));
+
     auto box = qobject_cast<QHBoxLayout*>(ui->toolText->layout());
     dotText = new ButtonDot(this);
+    dotText->setFontSize(16);
     dotText->setCheckable(false);
     box->insertWidget(0, dotText);
 
+    QFont font;
+    font.setFamily("Microsoft YaHei");
+    font.setPointSize(this->dotText->size + 20);
+    this->ui->textInput->setFont(font);
+
+    connect(dotText,  &ButtonDot::sizeChanged, this, [this]()
+    {
+        auto font = this->ui->textInput->font();
+        font.setPointSize(this->dotText->size + 20);
+        this->ui->textInput->setFont(font);
+        this->resizeInputToContent();
+    });
+
+    connect(colorSelector,  &ColorSelector::colorChanged, this, [this]()
+    {
+        QString style = QString("background:transparent;border:1px solid #000;color:rgb(%1,%2,%3);");
+        auto color = colorSelector->currentColor();
+        this->ui->textInput->setStyleSheet(style.arg(QString::number(color.red()), QString::number(color.green()), QString::number(color.blue())));
+    });
+
+    connect(ui->fontSelectBox, &QComboBox::currentTextChanged, this, [this]()
+    {
+        if (this->ui->fontSelectBox->currentText() == "微软雅黑")
+        {
+            auto font = this->ui->textInput->font();
+            font.setFamily("Microsoft YaHei");
+            this->ui->textInput->setFont(font);
+            this->resizeInputToContent();
+        }
+        else
+        {
+            auto font = this->ui->textInput->font();
+            font.setFamily("SimSun");
+            this->ui->textInput->setFont(font);
+            this->resizeInputToContent();
+        }
+    });
+
     ui->btnTextBold->setFont(Icon::font);
     ui->btnTextBold->setText(Icon::icons[Icon::Name::bold]);
-    QObject::connect(ui->btnTextBold,  &QPushButton::clicked, this, &MainWindow::btnMainToolSelected);
+    connect(ui->btnTextBold,  &QPushButton::clicked, this, [this]()
+    {
+        QFont font = this->ui->textInput->font();
+        font.setBold(this->ui->btnTextBold->isChecked());
+        this->ui->textInput->setFont(font);
+    });
 
     ui->btnTextItalic->setFont(Icon::font);
     ui->btnTextItalic->setText(Icon::icons[Icon::Name::italic]);
-    QObject::connect(ui->btnTextItalic,  &QPushButton::clicked, this, &MainWindow::btnMainToolSelected);
+    connect(ui->btnTextItalic,  &QPushButton::clicked, this, [this]()
+    {
+        QFont font = this->ui->textInput->font();
+        font.setItalic(ui->btnTextItalic->isChecked());
+        this->ui->textInput->setFont(font);
+    });
 
     ui->toolText->hide();
     ui->toolText->setStyleSheet(style.arg("toolText"));
 
     ui->textInput->hide();
     connect(ui->textInput, &QTextEdit::textChanged, this, &MainWindow::resizeInputToContent);
-//    connect(ui->textInput, SIGNAL(cursorPositionChanged()), this, SLOT(resizeInputToContent()));
 }
 
 void MainWindow::switchTool(const QString& toolName)
