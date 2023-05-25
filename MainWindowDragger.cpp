@@ -1,4 +1,5 @@
 #include "MainWindow.h"
+#include <QDebug>
 
 
 void MainWindow::initDragger()
@@ -80,7 +81,6 @@ void MainWindow::resizePath(const QPointF& point)
         }
     }
     setDraggerPosition(path.elementAt(0).x, path.elementAt(0).y, path.elementAt(2).x, path.elementAt(2).y);
-
 }
 
 bool MainWindow::isMouseInDragger(const QPointF& point)
@@ -107,13 +107,17 @@ bool MainWindow::isMouseInDragger(const QPointF& point)
 
 void MainWindow::setDraggerPosition(qreal x1, qreal y1, qreal x2, qreal y2)
 {
-    dragers[0].moveTo(x1 - 4, y1 - 4);
-    dragers[1].moveTo(x1 + (x2 - x1) / 2 - 4, y1 - 4);
-    dragers[2].moveTo(x2 - 4, y1 - 4);
-    dragers[3].moveTo(x2 - 4, y1 + (y2 - y1) / 2 - 4);
-    dragers[4].moveTo(x2 - 4, y2 - 4);
-    dragers[5].moveTo(x1 + (x2 - x1) / 2 - 4, y2 - 4);
-    dragers[6].moveTo(x1 - 4, y2 - 4);
-    dragers[7].moveTo(x1 - 4, y1 + (y2 - y1) / 2 - 4);
+    x1 -= 4;
+    y1 -= 4;
+    x2 -= 4;
+    y2 -= 4;
+    dragers[0].moveTo(x1, y1);
+    dragers[1].moveTo(x1 + (x2 - x1) / 2, y1);
+    dragers[2].moveTo(x2, y1);
+    dragers[3].moveTo(x2, y1 + (y2 - y1) / 2);
+    dragers[4].moveTo(x2, y2);
+    dragers[5].moveTo(x1 + (x2 - x1) / 2, y2);
+    dragers[6].moveTo(x1, y2);
+    dragers[7].moveTo(x1, y1 + (y2 - y1) / 2);
     showDraggerCount = 8;
 }

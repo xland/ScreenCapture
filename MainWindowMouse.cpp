@@ -73,10 +73,6 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
             path.lineTo(mousePressPoint.x() + 1, mousePressPoint.y() + 1);
             path.lineTo(mousePressPoint.x(), mousePressPoint.y() + 1);
             path.lineTo(mousePressPoint);
-
-//            myPath.moveTo(center);
-//            myPath.arcTo(boundingRect, startAngle,
-//                         sweepLength);
             return true;
         }
         else if (state == "Arrow")
@@ -297,20 +293,15 @@ bool MainWindow::mouseMove(QMouseEvent* mouseEvent)
                         case 7:
                             setCursor(Qt::SizeHorCursor);
                             break;
+                        case 8:
+                            setCursor(Qt::SizeAllCursor);
+                            break;
                     }
                     return true;
                 }
                 else
                 {
-                    auto& path = paths.last();
-                    if (path.contains(curPoint))
-                    {
-                        setCursor(Qt::SizeAllCursor);
-                    }
-                    else
-                    {
-                        setCursor(Qt::CrossCursor);
-                    }
+                    setCursor(Qt::CrossCursor);
                     return true;
                 }
             }
@@ -344,8 +335,8 @@ bool MainWindow::mouseRelease(QMouseEvent* mouseEvent)
                 return true;
             }
             path.resetPoint5();
-            ui->btnUndo->setStyleSheet("");
             setDraggerPosition(path.elementAt(0).x, path.elementAt(0).y, path.elementAt(2).x, path.elementAt(2).y);
+            ui->btnUndo->setStyleSheet("");
             setCursor(Qt::CrossCursor);
             repaint();
             return true;
@@ -377,6 +368,7 @@ bool MainWindow::mouseRelease(QMouseEvent* mouseEvent)
         {
             auto& path = paths.last();
             path.resetPoint5();
+            setDraggerPosition(path.elementAt(0).x, path.elementAt(0).y, path.elementAt(2).x, path.elementAt(2).y);
             state = preState;
             return true;
         }
