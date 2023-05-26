@@ -9,7 +9,7 @@
 
 bool MainWindow::eventFilter(QObject* obj, QEvent* event)
 {
-    if (event->type() == QEvent::MouseMove)
+    if (event->type() == QEvent::MouseMove && !isMouseDown && state == "Start")
     {
         moveTipBox();
     }
@@ -40,6 +40,7 @@ bool MainWindow::eventFilter(QObject* obj, QEvent* event)
 
 bool MainWindow::mousePress(QMouseEvent* mouseEvent)
 {
+    ui->tipBox->hide();
     if (mouseEvent->button() == Qt::RightButton)
     {
         if (ui->textInput->isVisible())

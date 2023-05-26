@@ -1302,7 +1302,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
       <number>0</number>
      </property>
      <property name="bottomMargin">
-      <number>3</number>
+      <number>0</number>
      </property>
      <item>
       <widget class="QLabel" name="tipImageLabel">
@@ -1336,13 +1336,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
          <number>12</number>
         </property>
         <property name="topMargin">
-         <number>0</number>
+         <number>3</number>
         </property>
         <property name="rightMargin">
          <number>12</number>
         </property>
         <property name="bottomMargin">
-         <number>0</number>
+         <number>3</number>
         </property>
         <item>
          <widget class="QLabel" name="tipPositionLabel">
