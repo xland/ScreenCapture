@@ -54,6 +54,7 @@ void MainWindow::btnMainToolSelected()
         }
         if (btn->isChecked())
         {
+            endOneDraw();
             switchTool(name.replace("btn", "tool"));
             break;
         }

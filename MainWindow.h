@@ -36,9 +36,11 @@ private:
     void initToolMosaic();
     void initToolEraser();
     void initToolText();
+
     void btnMainToolSelected();
     void switchTool(const QString& toolName);
     void showToolMain();
+
     void resizeInputToContent();
     void moveTipBox();
     void saveToFile();
@@ -64,6 +66,7 @@ private:
     void paintPath(PathModel& path, QPainter* painter);
     PathModel& createPath();
     void endOneDraw();
+    void drawArrow(QPointF& point);
 
     void undo();
     void redo();
