@@ -14,6 +14,10 @@
 #include <QFont>
 #include <QFontMetrics>
 #include <QClipboard>
+#include <QFileDialog>
+#include <QStandardPaths>
+#include <QDateTime>
+#include <QMessageBox>
 
 
 
@@ -173,15 +177,15 @@ void MainWindow::initToolMain()
 
     ui->btnSave->setFont(Icon::font);
     ui->btnSave->setText(Icon::icons[Icon::Name::save]);
-    QObject::connect(ui->btnSave,  &QPushButton::clicked, this, &MainWindow::btnMainToolSelected);
+    QObject::connect(ui->btnSave,  &QPushButton::clicked, this, &MainWindow::saveToFile);
 
     ui->btnCopy->setFont(Icon::font);
     ui->btnCopy->setText(Icon::icons[Icon::Name::copy]);
-    QObject::connect(ui->btnCopy,  &QPushButton::clicked, this, &MainWindow::btnMainToolSelected);
+    QObject::connect(ui->btnCopy,  &QPushButton::clicked, this, &MainWindow::saveToClipboard);
 
     ui->btnText->setFont(Icon::font);
     ui->btnText->setText(Icon::icons[Icon::Name::text]);
-    QObject::connect(ui->btnText,  &QPushButton::clicked, this, &MainWindow::btnMainToolSelected);
+    QObject::connect(ui->btnText,  &QPushButton::clicked, this, &MainWindow::saveToClipboard);
 
     ui->btnEraser->setFont(Icon::font);
     ui->btnEraser->setText(Icon::icons[Icon::Name::eraser]);
@@ -193,7 +197,6 @@ void MainWindow::initToolMain()
 
     ui->toolMain->hide();
     ui->toolMain->setStyleSheet(style.arg("toolMain"));
-
 }
 
 void MainWindow::initToolPen()
@@ -337,6 +340,38 @@ void MainWindow::initToolText()
 
     ui->textInput->hide();
     connect(ui->textInput, &QTextEdit::textChanged, this, &MainWindow::resizeInputToContent);
+}
+
+void MainWindow::saveToFile()
+{
+    auto filePath = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
+    filePath = QDir::cleanPath(filePath + QDir::separator() + "ScreenCapture" + QDateTime::currentDateTime().toString("yyyyMMddhhmmsszzz") + ".png");
+    filePath = QFileDialog::getSaveFileName(this, "保存文件", filePath, "Screen Capture (*.png)");
+    if (filePath.isEmpty())
+    {
+        return;
+    }
+    endOneDraw();
+    QRect rect;
+    rect.adjust(maskPath.elementAt(0).x * scaleFactor - maskBorderWidth,
+        maskPath.elementAt(0).y * scaleFactor - maskBorderWidth,
+        maskPath.elementAt(2).x * scaleFactor - maskBorderWidth,
+        maskPath.elementAt(2).y * scaleFactor - maskBorderWidth);
+    layerBgImg->copy(rect).save(filePath);
+    qApp->exit(0);
+}
+
+void MainWindow::saveToClipboard()
+{
+    endOneDraw();
+    QRect rect;
+    rect.adjust(maskPath.elementAt(0).x * scaleFactor - maskBorderWidth,
+        maskPath.elementAt(0).y * scaleFactor - maskBorderWidth,
+        maskPath.elementAt(2).x * scaleFactor - maskBorderWidth,
+        maskPath.elementAt(2).y * scaleFactor - maskBorderWidth);
+    auto img = layerBgImg->copy(rect);
+    QApplication::clipboard()->setImage(img);
+    qApp->exit(0);
 }
 
 void MainWindow::switchTool(const QString& toolName)

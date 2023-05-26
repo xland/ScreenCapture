@@ -41,6 +41,8 @@ private:
     void showToolMain();
     void resizeInputToContent();
     void moveTipBox();
+    void saveToFile();
+    void saveToClipboard();
 
 
     QPointF mousePressPoint;
