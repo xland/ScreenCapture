@@ -60,6 +60,15 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::mouseDoubleClickEvent(QMouseEvent* event)
+{
+    if (state != "Start")
+    {
+        endOneDraw();
+        saveToClipboard();
+    }
+}
+
 void MainWindow::moveTipBox()
 {
     auto position = QCursor::pos();

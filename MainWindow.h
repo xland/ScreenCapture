@@ -7,6 +7,7 @@
 #include "PathModel.h"
 #include "ColorSelector.h"
 #include "ButtonDot.h"
+#include <QDateTime>
 
 
 QT_BEGIN_NAMESPACE
@@ -26,6 +27,7 @@ protected:
     bool eventFilter(QObject* obj, QEvent* event) override;
     void paintEvent(QPaintEvent*) override;
     void keyPressEvent(QKeyEvent* event) override;
+    void mouseDoubleClickEvent(QMouseEvent* event) override;
 private slots:
 
 private:
@@ -61,6 +63,7 @@ private:
     QImage* layerMosaicImg;
     QVector<QImage> historyImgs;
     QVector<QPoint> historyPoints;
+    bool isDrawing = false;
     void initLayer();
     void initMosaic();
     void paintPath(PathModel& path, QPainter* painter);

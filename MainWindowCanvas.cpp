@@ -34,62 +34,8 @@ void MainWindow::initLayer()
 
 }
 
-void MainWindow::paintEvent(QPaintEvent* e)
-{
-    Q_UNUSED(e);
-    QPainter p(this);
-    p.setRenderHint(QPainter::Antialiasing, true);
-//  p.setRenderHint(QPainter::SmoothPixmapTransform, true);
-    if (state == "Mosaic")
-    {
-        p.drawImage(0, 0, *layerMosaicImg);
-    }
-    p.drawImage(0, 0, *layerBgImg);
-    p.drawImage(0, 0, *layerDrawingImg);
-    if (showDraggerCount > 0)
-    {
-        QPainterPath draggerPath;
-        for (int var = 0; var < showDraggerCount; ++var)
-        {
-            draggerPath.addRect(dragers[var]);
-        }
-        p.setPen(QPen(QBrush(Qt::black), 0.6));
-        p.setBrush(Qt::NoBrush);
-        p.drawPath(draggerPath);
-    }
-    p.setPen(QPen(QBrush(QColor(22, 119, 255)), maskBorderWidth));
-    p.setBrush(QBrush(QColor(0, 0, 0, 120)));
-    p.drawPath(maskPath);
-}
-
-void MainWindow::endOneDraw()
-{
-    if (paths.count() < 1) return;
-    showDraggerCount = 0;
-    auto& path = paths.last();
-    if (path.isEraser)
-    {
-        layerBgPainter->drawImage(0, 0, *layerDrawingImg);
-        path.initPatch(layerBgImg, scaleFactor);
-    }
-    else if (path.isMosaic)
-    {
-        memcpy(layerDrawingImg->bits(), layerMosaicImg->bits(), layerDrawingImg->sizeInBytes());
-        layerDrawingPainter->drawImage(0, 0, *layerBgImg);
-        memcpy(layerBgImg->bits(), layerDrawingImg->bits(), layerBgImg->sizeInBytes());
-        layerDrawingImg->fill(0);
-        path.initPatch(layerBgImg, scaleFactor);
-    }
-    else
-    {
-        paintPath(path, layerBgPainter);
-    }
-    repaint();
-}
-
 void MainWindow::initMosaic()
 {
-    endOneDraw();
     int mosaicRectSize = 6;
     for (int var1 = 0; var1 < layerBgImg->width(); var1 += mosaicRectSize)
     {
@@ -114,6 +60,81 @@ void MainWindow::initMosaic()
         }
     }
 }
+
+void MainWindow::paintEvent(QPaintEvent* e)
+{
+    Q_UNUSED(e);
+    QPainter p(this);
+    p.setRenderHint(QPainter::Antialiasing, true);
+//  p.setRenderHint(QPainter::SmoothPixmapTransform, true);
+    if (state == "Mosaic")
+    {
+        p.drawImage(0, 0, *layerMosaicImg);
+    }
+    p.drawImage(0, 0, *layerBgImg);
+    if (isDrawing)
+    {
+        p.drawImage(0, 0, *layerDrawingImg);
+    }
+    if (showDraggerCount > 0)
+    {
+        //todo 还搞个path干啥，直接画方框得了
+        QPainterPath draggerPath;
+        for (int var = 0; var < showDraggerCount; ++var)
+        {
+            draggerPath.addRect(dragers[var]);
+        }
+        p.setPen(QPen(QBrush(Qt::black), 0.6));
+        p.setBrush(Qt::NoBrush);
+        p.drawPath(draggerPath);
+    }
+    p.setPen(QPen(QBrush(QColor(22, 119, 255)), maskBorderWidth));
+    p.setBrush(QBrush(QColor(0, 0, 0, 120)));
+    p.drawPath(maskPath);
+}
+
+void MainWindow::endOneDraw()
+{
+    if (ui->textInput->isVisible())
+    {
+        auto& path = createPath();
+        path.isText = true;
+        path.text = ui->textInput->toPlainText();
+        path.textRect = ui->textInput->geometry();
+        path.textRect.moveTo(path.textRect.x() + 5, path.textRect.y() + 5);
+        path.color = colorSelector->currentColor();
+        path.textFont = ui->textInput->font();
+        paintPath(path, layerDrawingPainter);
+        isDrawing = true;
+        ui->textInput->clear();
+        ui->textInput->hide();
+    }
+    if (paths.count() < 1) return;
+    if (!isDrawing) return;
+    auto& path = paths.last();
+    if (path.isEraser)
+    {
+        layerBgPainter->drawImage(0, 0, *layerDrawingImg);
+        path.initPatch(layerBgImg, scaleFactor);
+    }
+    else if (path.isMosaic)
+    {
+        memcpy(layerDrawingImg->bits(), layerMosaicImg->bits(), layerDrawingImg->sizeInBytes());
+        layerDrawingPainter->drawImage(0, 0, *layerBgImg);
+        memcpy(layerBgImg->bits(), layerDrawingImg->bits(), layerBgImg->sizeInBytes());
+        path.initPatch(layerBgImg, scaleFactor);
+    }
+    else
+    {
+        paintPath(path, layerBgPainter);
+    }
+    layerDrawingImg->fill(0);
+    showDraggerCount = 0;
+    isDrawing = false;
+    repaint();
+}
+
+
 
 void MainWindow::paintPath(PathModel& path, QPainter* painter)
 {
@@ -196,5 +217,6 @@ void MainWindow::drawArrow(QPointF& curPoint)
     path.setElementPositionAt(5, x4, y4);
     layerDrawingImg->fill(0);
     paintPath(path, layerDrawingPainter);
+    isDrawing = true;
     repaint();
 }

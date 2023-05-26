@@ -54,6 +54,7 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
             path.color = colorSelector->currentColor();
             path.textFont = ui->textInput->font();
             paintPath(path, layerDrawingPainter);
+            isDrawing = true;
             ui->textInput->clear();
             ui->textInput->hide();
             repaint();
@@ -148,6 +149,7 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
             endOneDraw();
             memcpy(layerDrawingImg->bits(), layerBgImg->bits(), layerDrawingImg->sizeInBytes());
             layerBgPainter->drawImage(0, 0, ScreenShoter::Get()->desktopImages[0]);
+            isDrawing = true;
             auto& path = createPath();
             path.borderWidth = dotEraser->size;
             path.needFill = false;
@@ -189,6 +191,7 @@ bool MainWindow::mouseMove(QMouseEvent* mouseEvent)
             path.setElementPositionAt(3, mousePressPoint.x(), curPoint.y());
             layerDrawingImg->fill(0);
             paintPath(path, layerDrawingPainter);
+            isDrawing = true;
             repaint();
             return true;
         }
@@ -198,6 +201,7 @@ bool MainWindow::mouseMove(QMouseEvent* mouseEvent)
             auto& path = paths.last();
             layerDrawingImg->fill(0);
             paintPath(path, layerDrawingPainter);
+            isDrawing = true;
             repaint();
             return true;
         }
@@ -211,6 +215,7 @@ bool MainWindow::mouseMove(QMouseEvent* mouseEvent)
             auto& path = paths.last();
             path.lineTo(curPoint);
             paintPath(path, layerDrawingPainter);
+            isDrawing = true;
             repaint();
             return true;
         }
@@ -227,6 +232,7 @@ bool MainWindow::mouseMove(QMouseEvent* mouseEvent)
             auto& path = paths.last();
             path.lineTo(curPoint);
             paintPath(path, layerDrawingPainter);
+            isDrawing = true;
             repaint();
             return true;
         }
@@ -240,6 +246,7 @@ bool MainWindow::mouseMove(QMouseEvent* mouseEvent)
                 path.textRect.moveTo(path.textRect.topLeft().x() + xSpan, path.textRect.topLeft().y() + ySpan);
                 layerDrawingImg->fill(0);
                 paintPath(path, layerDrawingPainter);
+                isDrawing = true;
                 repaint();
                 mousePressPoint = curPoint;
             }
