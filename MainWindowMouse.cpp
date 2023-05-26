@@ -155,6 +155,7 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
             path.isEraser = true;
             path.borderWidth = 24;
             path.moveTo(mousePressPoint);
+            isDrawing = true;  //不然会闪一下
             return true;
         }
     }

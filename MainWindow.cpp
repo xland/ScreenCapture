@@ -163,6 +163,18 @@ void MainWindow::initToolMain()
     ui->btnMosaic->setText(Icon::icons[Icon::Name::mosaic]);
     QObject::connect(ui->btnMosaic,  &QPushButton::clicked, this, &MainWindow::btnMainToolSelected);
 
+    ui->btnEraser->setFont(Icon::font);
+    ui->btnEraser->setText(Icon::icons[Icon::Name::eraser]);
+    QObject::connect(ui->btnEraser,  &QPushButton::clicked, this, &MainWindow::btnMainToolSelected);
+
+    ui->btnNumber->setFont(Icon::font);
+    ui->btnNumber->setText(Icon::icons[Icon::Name::number]);
+    QObject::connect(ui->btnNumber,  &QPushButton::clicked, this, &MainWindow::btnMainToolSelected);
+
+    ui->btnText->setFont(Icon::font);
+    ui->btnText->setText(Icon::icons[Icon::Name::text]);
+    QObject::connect(ui->btnText,  &QPushButton::clicked, this, &MainWindow::btnMainToolSelected);
+
     ui->btnUndo->setFont(Icon::font);
     ui->btnUndo->setText(Icon::icons[Icon::Name::undo]);
     QObject::connect(ui->btnUndo,  &QPushButton::clicked, this, &MainWindow::undo);
@@ -173,7 +185,7 @@ void MainWindow::initToolMain()
 
     ui->btnOk->setFont(Icon::font);
     ui->btnOk->setText(Icon::icons[Icon::Name::ok]);
-    QObject::connect(ui->btnOk,  &QPushButton::clicked, this, &MainWindow::btnMainToolSelected);
+    QObject::connect(ui->btnOk,  &QPushButton::clicked, this, &MainWindow::saveToClipboard);
 
     ui->btnSave->setFont(Icon::font);
     ui->btnSave->setText(Icon::icons[Icon::Name::save]);
@@ -182,18 +194,6 @@ void MainWindow::initToolMain()
     ui->btnCopy->setFont(Icon::font);
     ui->btnCopy->setText(Icon::icons[Icon::Name::copy]);
     QObject::connect(ui->btnCopy,  &QPushButton::clicked, this, &MainWindow::saveToClipboard);
-
-    ui->btnText->setFont(Icon::font);
-    ui->btnText->setText(Icon::icons[Icon::Name::text]);
-    QObject::connect(ui->btnText,  &QPushButton::clicked, this, &MainWindow::saveToClipboard);
-
-    ui->btnEraser->setFont(Icon::font);
-    ui->btnEraser->setText(Icon::icons[Icon::Name::eraser]);
-    QObject::connect(ui->btnEraser,  &QPushButton::clicked, this, &MainWindow::btnMainToolSelected);
-
-    ui->btnNumber->setFont(Icon::font);
-    ui->btnNumber->setText(Icon::icons[Icon::Name::number]);
-    QObject::connect(ui->btnNumber,  &QPushButton::clicked, this, &MainWindow::btnMainToolSelected);
 
     ui->toolMain->hide();
     ui->toolMain->setStyleSheet(style.arg("toolMain"));
