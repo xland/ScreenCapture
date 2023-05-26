@@ -47,7 +47,6 @@ private:
 
     QPointF mousePressPoint;
     bool isMouseDown = false;
-    bool isDrawing = false;
     bool mouseMove(QMouseEvent* mouseEvent);
     bool mousePress(QMouseEvent* mouseEvent);
     bool mouseRelease(QMouseEvent* mouseEvent);

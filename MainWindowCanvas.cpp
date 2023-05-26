@@ -45,10 +45,7 @@ void MainWindow::paintEvent(QPaintEvent* e)
         p.drawImage(0, 0, *layerMosaicImg);
     }
     p.drawImage(0, 0, *layerBgImg);
-    if (isDrawing)
-    {
-        p.drawImage(0, 0, *layerDrawingImg);
-    }
+    p.drawImage(0, 0, *layerDrawingImg);
     if (showDraggerCount > 0)
     {
         QPainterPath draggerPath;
@@ -67,7 +64,6 @@ void MainWindow::paintEvent(QPaintEvent* e)
 
 void MainWindow::endOneDraw()
 {
-    isDrawing = false;
     showDraggerCount = 0;
     if (paths.count() > 0)
     {

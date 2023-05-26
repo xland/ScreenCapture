@@ -7,7 +7,6 @@
 //todo 按右键的时候需要执行一次 endOneDraw
 void MainWindow::jobLoop()
 {
-    isDrawing = false;
     showDraggerCount = 0;
     memcpy(layerBgImg->bits(), ScreenShoter::Get()->desktopImages[0].bits(), layerBgImg->sizeInBytes());
     for (int var = 0; var < paths.count(); ++var)

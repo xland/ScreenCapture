@@ -53,7 +53,6 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
             path.textRect.moveTo(path.textRect.x() + 5, path.textRect.y() + 5);
             path.color = colorSelector->currentColor();
             path.textFont = ui->textInput->font();
-            isDrawing = true;
             paintPath(path, layerDrawingPainter);
             ui->textInput->clear();
             ui->textInput->hide();
@@ -155,7 +154,6 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
             path.isEraser = true;
             path.borderWidth = 24;
             path.moveTo(mousePressPoint);
-            isDrawing = true;  //不然会闪一下
             return true;
         }
     }
@@ -191,7 +189,6 @@ bool MainWindow::mouseMove(QMouseEvent* mouseEvent)
             path.setElementPositionAt(3, mousePressPoint.x(), curPoint.y());
             layerDrawingImg->fill(0);
             paintPath(path, layerDrawingPainter);
-            isDrawing = true;
             repaint();
             return true;
         }
@@ -201,7 +198,6 @@ bool MainWindow::mouseMove(QMouseEvent* mouseEvent)
             auto& path = paths.last();
             layerDrawingImg->fill(0);
             paintPath(path, layerDrawingPainter);
-            isDrawing = true;
             repaint();
             return true;
         }
@@ -240,7 +236,6 @@ bool MainWindow::mouseMove(QMouseEvent* mouseEvent)
             path.setElementPositionAt(5, x4, y4);
             layerDrawingImg->fill(0);
             paintPath(path, layerDrawingPainter);
-            isDrawing = true;
             repaint();
             return true;
         }
@@ -249,7 +244,6 @@ bool MainWindow::mouseMove(QMouseEvent* mouseEvent)
             auto& path = paths.last();
             path.lineTo(curPoint);
             paintPath(path, layerDrawingPainter);
-            isDrawing = true;
             repaint();
             return true;
         }
@@ -258,7 +252,6 @@ bool MainWindow::mouseMove(QMouseEvent* mouseEvent)
             auto& path = paths.last();
             path.lineTo(curPoint);
             paintPath(path, layerBgPainter);
-            isDrawing = false;
             repaint();
             return true;
         }
@@ -267,7 +260,6 @@ bool MainWindow::mouseMove(QMouseEvent* mouseEvent)
             auto& path = paths.last();
             path.lineTo(curPoint);
             paintPath(path, layerDrawingPainter);
-            isDrawing = true;
             repaint();
             return true;
         }
@@ -281,7 +273,6 @@ bool MainWindow::mouseMove(QMouseEvent* mouseEvent)
                 path.textRect.moveTo(path.textRect.topLeft().x() + xSpan, path.textRect.topLeft().y() + ySpan);
                 layerDrawingImg->fill(0);
                 paintPath(path, layerDrawingPainter);
-                isDrawing = true;
                 repaint();
                 mousePressPoint = curPoint;
             }

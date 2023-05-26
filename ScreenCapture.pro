@@ -15,6 +15,7 @@ SOURCES += \
     Icon.cpp \
     MainWindowCanvas.cpp \
     MainWindowDragger.cpp \
+    MainWindowInit.cpp \
     MainWindowMask.cpp \
     MainWindowMouse.cpp \
     MainWindowTool.cpp \
