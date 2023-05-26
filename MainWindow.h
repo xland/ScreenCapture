@@ -40,7 +40,6 @@ private:
     void switchTool(const QString& toolName);
     void showToolMain();
     void resizeInputToContent();
-    void setGlassImg();
     void moveTipBox();
 
 

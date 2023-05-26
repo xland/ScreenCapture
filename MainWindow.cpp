@@ -13,6 +13,7 @@
 #include <QLayout>
 #include <QFont>
 #include <QFontMetrics>
+#include <QClipboard>
 
 
 
@@ -21,7 +22,9 @@ MainWindow::MainWindow(QWidget* parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    this->showMaximized(); //todo
     ui->tipBox->setMouseTracking(false);
+    ui->tipBox->hide();
     this->setFocusPolicy(Qt::StrongFocus);
     this->setFocus();
     colorSelector = new ColorSelector(this);
@@ -39,8 +42,7 @@ MainWindow::MainWindow(QWidget* parent)
     initToolPen();
     initToolEraser();
     initToolText();
-    moveTipBox();
-    this->showMaximized(); //todo
+//    moveTipBox();
 }
 
 MainWindow::~MainWindow()
@@ -56,15 +58,22 @@ MainWindow::~MainWindow()
 void MainWindow::moveTipBox()
 {
     auto position = QCursor::pos();
-    //todo 动态位置
     ui->tipBox->move(position.x() + 10, position.y() + 10);
+    if (this->width() - position.x() < ui->tipBox->width())
+    {
+        ui->tipBox->move(position.x() - ui->tipBox->width() - 10, ui->tipBox->y());
+    }
+    if (this->height() - position.y() < ui->tipBox->height())
+    {
+        ui->tipBox->move(ui->tipBox->x(), position.y() - ui->tipBox->height() - 10);
+    }
     ui->tipPositionLabel->setText("位置: X: " + QString::number(position.x()) + "  Y: " + QString::number(position.y()));
     position = position * scaleFactor;
     auto color = layerBgImg->pixelColor(position);
     auto rgbStr = QString("%1,%2,%3").arg(QString::number(color.red()), QString::number(color.green()), QString::number(color.blue()));
     auto hexStr = color.name(QColor::HexRgb).toUpper();
     ui->tipRgbLabel->setText("RGB: " + rgbStr + "  HEX: " + hexStr);
-    int x{0}, y{0}, width = 181 * scaleFactor, height = 100 * scaleFactor;
+    int x{0}, y{0}, width = ui->tipBox->width() * scaleFactor, height = ui->tipBox->height() * scaleFactor;
     x = position.x() - width / 16;
     y = position.y() - height / 16;
     QRect rect(x, y, width / 8, height / 8);
@@ -92,6 +101,24 @@ void MainWindow::keyPressEvent(QKeyEvent* event)
     if (event->key() == Qt::Key_Escape)
     {
         qApp->exit(0);
+    }
+    else if (event->modifiers() == Qt::AltModifier)
+    {
+        if (event->key() == Qt::Key_X)
+        {
+            auto position = QCursor::pos() * scaleFactor;
+            auto color = layerBgImg->pixelColor(position);
+            auto rgbStr = QString("rgb(%1,%2,%3)")
+                .arg(QString::number(color.red()), QString::number(color.green()), QString::number(color.blue()));
+            QApplication::clipboard()->setText(rgbStr);
+        }
+        else if (event->key() == Qt::Key_C)
+        {
+            auto position = QCursor::pos() * scaleFactor;
+            auto color = layerBgImg->pixelColor(position);
+            auto hexStr = color.name(QColor::HexRgb).toUpper();
+            QApplication::clipboard()->setText(hexStr);
+        }
     }
 }
 
@@ -367,28 +394,6 @@ void MainWindow::btnMainToolSelected()
             break;
         }
     }
-}
-
-void MainWindow::setGlassImg()
-{
-//    auto shoter = ScreenShoter::Get();
-//    auto position = QCursor::pos();
-//    auto mouseX = qRound((qreal)position.x() * shoter->scalFactor);
-//    auto mouseY = qRound((qreal)position.y() * shoter->scalFactor);
-//    if (mouseX >= shoter->desktopImage.width()) mouseX = shoter->desktopImage.width() - 1;
-//    if (mouseY >= shoter->desktopImage.height()) mouseY = shoter->desktopImage.height() - 1;
-//    auto color = shoter->desktopImage.pixelColor(mouseX, mouseY);
-//    Cutter* cutter = Cutter::Get();
-//    cutter->setMouseX(mouseX);
-//    cutter->setMouseY(mouseY);
-//    cutter->setColorHex(color.name(QColor::HexRgb).toUpper());
-//    cutter->setColorRgb("rgb(" + QString::number(color.red()) + "," + QString::number(color.green()) + "," + QString::number(color.blue()) + ")");
-//    int x{0}, y{0}, width{230}, height{160};
-//    x = mouseX - width / 16;
-//    y = mouseY - height / 16;
-//    QRect rect(x, y, width / 8, height / 8);
-//    auto result = shoter->desktopImage.copy(rect).scaled(width, height);
-//    return result;
 }
 
 void MainWindow::showToolMain()
