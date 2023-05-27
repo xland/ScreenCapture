@@ -60,6 +60,11 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
             repaint();
             return true;
         }
+        if(showDraggerCount > 0){
+            showDraggerCount = 0;
+            repaint();
+            return true;
+        }
         qApp->exit();
         return true;
     }
@@ -224,6 +229,7 @@ bool MainWindow::mouseMove(QMouseEvent* mouseEvent)
             auto& path = paths.last();
             path.lineTo(curPoint);
             paintPath(path, layerBgPainter);
+            isDrawing = true;
             repaint();
             return true;
         }
