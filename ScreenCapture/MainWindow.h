@@ -7,6 +7,7 @@
 #include "PathModel.h"
 #include "ColorSelector.h"
 #include "ButtonDot.h"
+#include "TextInputBox.h"
 #include <QDateTime>
 
 
@@ -43,7 +44,6 @@ private:
     void switchTool(const QString& toolName);
     void showToolMain();
 
-    void resizeInputToContent();
     void moveTipBox();
     void saveToFile();
     void saveToClipboard();
@@ -87,13 +87,13 @@ private:
     QString preState;
     QVector<QRectF> dragers;
     void initDragger();
-    void draggerReleased();
     void setDraggerPosition(qreal x1, qreal y1, qreal x2, qreal y2);
     void resizePath(const QPointF& point);
     bool isMouseInDragger(const QPointF& point);
 
     Ui::MainWindow* ui;
     int draggingTextState = 0;
+    TextInputBox* textInputBox;
     ColorSelector* colorSelector;
     ButtonDot* dotRectEllipse;
     ButtonDot* dotPen;

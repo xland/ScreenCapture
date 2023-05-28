@@ -96,19 +96,19 @@ void MainWindow::paintEvent(QPaintEvent* e)
 
 void MainWindow::endOneDraw()
 {
-    if (ui->textInput->isVisible())
+    if (this->textInputBox->isVisible())
     {
         auto& path = createPath();
         path.isText = true;
-        path.text = ui->textInput->toPlainText();
-        path.textRect = ui->textInput->geometry();
+        path.text = this->textInputBox->toPlainText();
+        path.textRect = this->textInputBox->geometry();
         path.textRect.moveTo(path.textRect.x() + 5, path.textRect.y() + 5);
         path.color = colorSelector->currentColor();
-        path.textFont = ui->textInput->font();
+        path.textFont = this->textInputBox->font();
         paintPath(path, layerDrawingPainter);
         isDrawing = true;
-        ui->textInput->clear();
-        ui->textInput->hide();
+        this->textInputBox->clear();
+        this->textInputBox->hide();
     }
     if (paths.count() < 1) return;
     if (!isDrawing) return;

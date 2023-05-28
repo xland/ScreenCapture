@@ -43,20 +43,20 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
     ui->tipBox->hide();
     if (mouseEvent->button() == Qt::RightButton)
     {
-        if (ui->textInput->isVisible())
+        if (textInputBox->isVisible())
         {
             //todo
             auto& path = createPath();
             path.isText = true;
-            path.text = ui->textInput->toPlainText();
-            path.textRect = ui->textInput->geometry();
+            path.text = textInputBox->toPlainText();
+            path.textRect = textInputBox->geometry();
             path.textRect.moveTo(path.textRect.x() + 5, path.textRect.y() + 5);
             path.color = colorSelector->currentColor();
-            path.textFont = ui->textInput->font();
+            path.textFont = textInputBox->font();
             paintPath(path, layerDrawingPainter);
             isDrawing = true;
-            ui->textInput->clear();
-            ui->textInput->hide();
+            textInputBox->clear();
+            textInputBox->hide();
             repaint();
             return true;
         }
@@ -144,10 +144,10 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
                 return true;
             }
             endOneDraw();
-            ui->textInput->move(mousePressPoint.x() - ui->textInput->width() / 2, mousePressPoint.y() - ui->textInput->height() / 2);
-            ui->textInput->show();
-            ui->textInput->setFocus(Qt::OtherFocusReason);
-            return true;
+            textInputBox->move(mousePressPoint.x() - textInputBox->width() / 2, mousePressPoint.y() - textInputBox->height() / 2);
+            textInputBox->show();
+            textInputBox->setFocus(Qt::OtherFocusReason);
+            return true; 
         }
         else if (state == "Eraser")
         {

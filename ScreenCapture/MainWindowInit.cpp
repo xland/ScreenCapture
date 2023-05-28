@@ -15,7 +15,7 @@ void MainWindow::initToolMain()
 
     ui->btnPen->setFont(Icon::font);
     ui->btnPen->setText(Icon::icons[Icon::Name::line]);
-    QObject::connect(ui->btnPen,  &QPushButton::clicked, this, &MainWindow::btnMainToolSelected);
+    connect(ui->btnPen,  &QPushButton::clicked, this, &MainWindow::btnMainToolSelected);
 
     ui->btnMosaic->setFont(Icon::font);
     ui->btnMosaic->setText(Icon::icons[Icon::Name::mosaic]);
@@ -127,9 +127,8 @@ void MainWindow::initToolArrow()
 
 void MainWindow::initToolText()
 {
-    //    QString style = QString("background:transparent;border:1px solid #000;color:rgb(%1,%2,%3);");
-    //    ui->textInput->setStyleSheet(style.arg("255", "0", "0"));
-    //    ui->textInput->setStyleSheet(style.arg(QString::number(color.red()), QString::number(color.green()), QString::number(color.blue())));
+    textInputBox = new TextInputBox(this);
+    connect(textInputBox, &TextInputBox::doubleClicked, this, &MainWindow::mouseDoubleClickEvent);
 
     auto box = qobject_cast<QHBoxLayout*>(ui->toolText->layout());
     dotText = new ButtonDot(this);
@@ -140,62 +139,43 @@ void MainWindow::initToolText()
     QFont font;
     font.setFamily("Microsoft YaHei");
     font.setPointSize(this->dotText->size + 20);
-    this->ui->textInput->setFont(font);
+    this->textInputBox->setFont(font);
 
     connect(dotText,  &ButtonDot::sizeChanged, this, [this]()
     {
-        auto font = this->ui->textInput->font();
-        font.setPointSize(this->dotText->size + 20);
-        this->ui->textInput->setFont(font);
-        this->resizeInputToContent();
+        this->textInputBox->setFontSizeCustom(this->dotText->size);
     });
 
     connect(colorSelector,  &ColorSelector::colorChanged, this, [this]()
     {
-        QString style = QString("background:transparent;border:1px solid #000;color:rgb(%1,%2,%3);");
-        auto color = colorSelector->currentColor();
-        this->ui->textInput->setStyleSheet(style.arg(QString::number(color.red()), QString::number(color.green()), QString::number(color.blue())));
+        this->textInputBox->setColorCustom(this->colorSelector->currentColor());
     });
 
     connect(ui->fontSelectBox, &QComboBox::currentTextChanged, this, [this]()
     {
-        if (this->ui->fontSelectBox->currentText() == "微软雅黑")
-        {
-            auto font = this->ui->textInput->font();
-            font.setFamily("Microsoft YaHei");
-            this->ui->textInput->setFont(font);
-            this->resizeInputToContent();
-        }
-        else
-        {
-            auto font = this->ui->textInput->font();
-            font.setFamily("SimSun");
-            this->ui->textInput->setFont(font);
-            this->resizeInputToContent();
-        }
+        this->textInputBox->setFontFamilyCustom(this->ui->fontSelectBox->currentText());        
     });
 
     ui->btnTextBold->setFont(Icon::font);
     ui->btnTextBold->setText(Icon::icons[Icon::Name::bold]);
     connect(ui->btnTextBold,  &QPushButton::clicked, this, [this]()
     {
-        QFont font = this->ui->textInput->font();
+        QFont font = this->textInputBox->font();
         font.setBold(this->ui->btnTextBold->isChecked());
-        this->ui->textInput->setFont(font);
+        this->textInputBox->setFont(font);
     });
 
     ui->btnTextItalic->setFont(Icon::font);
     ui->btnTextItalic->setText(Icon::icons[Icon::Name::italic]);
     connect(ui->btnTextItalic,  &QPushButton::clicked, this, [this]()
     {
-        QFont font = this->ui->textInput->font();
+        QFont font = this->textInputBox->font();
         font.setItalic(ui->btnTextItalic->isChecked());
-        this->ui->textInput->setFont(font);
+        this->textInputBox->setFont(font);
     });
 
     ui->toolText->hide();
     ui->toolText->setStyleSheet(style.arg("toolText"));
 
-    ui->textInput->hide();
-    connect(ui->textInput, &QTextEdit::textChanged, this, &MainWindow::resizeInputToContent);
+    textInputBox->hide();
 }

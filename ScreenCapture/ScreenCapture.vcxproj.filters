@@ -59,13 +59,13 @@
     <ClCompile Include="MainWindowUndoRedo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PathItem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="PathModel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ScreenShoter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TextInputBox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -79,10 +79,10 @@
     <QtMoc Include="MainWindow.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="PathItem.h">
+    <QtMoc Include="ScreenShoter.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="ScreenShoter.h">
+    <QtMoc Include="TextInputBox.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>
@@ -109,5 +109,9 @@
     <QtRcc Include="rc.qrc">
       <Filter>Resource Files</Filter>
     </QtRcc>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\.gitignore" />
+    <None Include="..\ReadMe.md" />
   </ItemGroup>
 </Project>

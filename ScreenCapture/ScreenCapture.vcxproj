@@ -23,9 +23,9 @@
     <ClCompile Include="MainWindowMouse.cpp" />
     <ClCompile Include="MainWindowTool.cpp" />
     <ClCompile Include="MainWindowUndoRedo.cpp" />
-    <ClCompile Include="PathItem.cpp" />
     <ClCompile Include="PathModel.cpp" />
     <ClCompile Include="ScreenShoter.cpp" />
+    <ClCompile Include="TextInputBox.cpp" />
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="ButtonDot.h" />
@@ -40,8 +40,8 @@
   <ItemGroup>
     <ClInclude Include="Icon.h" />
     <ClInclude Include="PathModel.h" />
+    <QtMoc Include="TextInputBox.h" />
     <QtMoc Include="ScreenShoter.h" />
-    <QtMoc Include="PathItem.h" />
     <QtMoc Include="MainWindow.h" />
   </ItemGroup>
   <ItemGroup>
@@ -49,6 +49,10 @@
   </ItemGroup>
   <ItemGroup>
     <QtRcc Include="rc.qrc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\.gitignore" />
+    <None Include="..\ReadMe.md" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{8896DEBF-4434-4D48-996F-E584B4C60ED8}</ProjectGuid>
