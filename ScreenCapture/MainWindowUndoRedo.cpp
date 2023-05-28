@@ -11,20 +11,20 @@ void MainWindow::jobLoop()
     memcpy(layerBgImg->bits(), ScreenShoter::Get()->desktopImages[0].bits(), layerBgImg->sizeInBytes());
     for (int var = 0; var < paths.count(); ++var)
     {
-        if (!paths[var].needPaint)
+        if (!paths[var]->needPaint)
         {
             break;
         }
-        if (paths[var].isEraser)
+        if (paths[var]->isEraser)
         {
 //            memcpy(layerDrawingImg->bits(), layerBgImg->bits(), layerDrawingImg->sizeInBytes());
 //            memcpy(layerBgImg->bits(), ScreenShoter::Get()->desktopImages[0].bits(), layerBgImg->sizeInBytes());
 //            paintPath(paths[var], layerDrawingPainter);
 //            layerBgPainter->drawImage(0, 0, *layerDrawingImg);
             layerBgPainter->setCompositionMode(QPainter::CompositionMode_SourceOver);
-            layerBgPainter->drawImage(paths[var].patchPosition, paths[var].patchImg);
+            layerBgPainter->drawImage(paths[var]->patchPosition, paths[var]->patchImg);
         }
-        else if (paths[var].isMosaic)
+        else if (paths[var]->isMosaic)
         {
 //            initMosaic();
 //            paintPath(paths[var], layerBgPainter);
@@ -33,7 +33,7 @@ void MainWindow::jobLoop()
 //            memcpy(layerBgImg->bits(), layerDrawingImg->bits(), layerBgImg->sizeInBytes());
 //            layerDrawingImg->fill(0);
             layerBgPainter->setCompositionMode(QPainter::CompositionMode_SourceOver);
-            layerBgPainter->drawImage(paths[var].patchPosition, paths[var].patchImg);
+            layerBgPainter->drawImage(paths[var]->patchPosition, paths[var]->patchImg);
         }
         else
         {
@@ -48,9 +48,9 @@ void MainWindow::undo()
     int var = paths.count() - 1;
     for (; var >= 0; --var)
     {
-        if (paths[var].needPaint)
+        if (paths[var]->needPaint)
         {
-            paths[var].needPaint = false;
+            paths[var]->needPaint = false;
             flag = true;
             break;
         }
@@ -77,9 +77,9 @@ void MainWindow::redo()
     int var = 0;
     for (; var < paths.count(); ++var)
     {
-        if (!paths[var].needPaint)
+        if (!paths[var]->needPaint)
         {
-            paths[var].needPaint = true;
+            paths[var]->needPaint = true;
             flag = true;
             break;
         }

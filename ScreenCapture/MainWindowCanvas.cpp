@@ -98,32 +98,22 @@ void MainWindow::endOneDraw()
 {
     if (this->textInputBox->isVisible())
     {
-        auto& path = createPath();
-        path.isText = true;
-        path.text = this->textInputBox->toPlainText();
-        path.textRect = this->textInputBox->geometry();
-        path.textRect.moveTo(path.textRect.x() + 5, path.textRect.y() + 5);
-        path.color = colorSelector->currentColor();
-        path.textFont = this->textInputBox->font();
-        paintPath(path, layerDrawingPainter);
-        isDrawing = true;
-        this->textInputBox->clear();
-        this->textInputBox->hide();
+        translateTextToPath();
     }
     if (paths.count() < 1) return;
     if (!isDrawing) return;
     auto& path = paths.last();
-    if (path.isEraser)
+    if (path->isEraser)
     {
         layerBgPainter->drawImage(0, 0, *layerDrawingImg);
-        path.initPatch(layerBgImg, scaleFactor);
+        path->initPatch(layerBgImg, scaleFactor);
     }
-    else if (path.isMosaic)
+    else if (path->isMosaic)
     {
         memcpy(layerDrawingImg->bits(), layerMosaicImg->bits(), layerDrawingImg->sizeInBytes());
         layerDrawingPainter->drawImage(0, 0, *layerBgImg);
         memcpy(layerBgImg->bits(), layerDrawingImg->bits(), layerBgImg->sizeInBytes());
-        path.initPatch(layerBgImg, scaleFactor);
+        path->initPatch(layerBgImg, scaleFactor);
     }
     else
     {
@@ -132,24 +122,26 @@ void MainWindow::endOneDraw()
     layerDrawingImg->fill(0);
     showDraggerCount = 0;
     isDrawing = false;
+
+    removeUndoPath();
     repaint();
 }
 
 
 
-void MainWindow::paintPath(PathModel& path, QPainter* painter)
+void MainWindow::paintPath(PathModel* path, QPainter* painter)
 {
-    if (path.needFill)
+    if (path->needFill)
     {
         painter->setPen(Qt::NoPen);
-        painter->setBrush(QBrush(path.color));
+        painter->setBrush(QBrush(path->color));
     }
     else
     {
-        painter->setPen(QPen(QBrush(path.color), path.borderWidth, Qt::SolidLine, Qt::RoundCap));
+        painter->setPen(QPen(QBrush(path->color), path->borderWidth, Qt::SolidLine, Qt::RoundCap));
         painter->setBrush(Qt::NoBrush);
     }
-    if (path.isEraser || path.isMosaic)
+    if (path->isEraser || path->isMosaic)
     {
         painter->setCompositionMode(QPainter::CompositionMode_Clear);
     }
@@ -157,29 +149,29 @@ void MainWindow::paintPath(PathModel& path, QPainter* painter)
     {
         painter->setCompositionMode(QPainter::CompositionMode_SourceOver);
     }
-    if (path.isEllipse)
+    if (path->isEllipse)
     {
-        painter->drawEllipse(path.boundingRect());
+        painter->drawEllipse(path->boundingRect());
     }
-    else if (path.isText)
+    else if (path->isText)
     {
-        painter->setPen(path.color);
-        painter->setFont(path.textFont);
-        painter->drawText(path.textRect, Qt::AlignLeft | Qt::AlignTop, path.text, &path.textRect);
+        painter->setPen(path->color);
+        painter->setFont(path->textFont);
+        painter->drawText(path->textRect, Qt::AlignLeft | Qt::AlignTop, path->text, &path->textRect);
     }
     else
     {
-        painter->drawPath(path);
+        painter->drawPath(*path);
     }
 
 }
 
-PathModel& MainWindow::createPath()
+PathModel* MainWindow::createPath()
 {
-    PathModel path;
-    path.color = colorSelector->currentColor();
+    auto path = new PathModel();
+    path->color = colorSelector->currentColor();
     paths.append(path);
-    return paths.last();
+    return path;
 }
 
 
@@ -199,23 +191,23 @@ void MainWindow::drawArrow(QPointF& curPoint)
     // △ 左下的顶点与底边中点之间中间位置的点
     qreal x1 = centerX - tempA;
     qreal y1 = centerY - tempB;
-    path.setElementPositionAt(1, x1, y1);
+    path->setElementPositionAt(1, x1, y1);
     // △ 左下的顶点
     qreal x2 = x1 - tempA;
     qreal y2 = y1 - tempB;
-    path.setElementPositionAt(2, x2, y2);
+    path->setElementPositionAt(2, x2, y2);
     // △ 上部顶点，也就是箭头终点
-    path.setElementPositionAt(3, curPoint.x(), curPoint.y());
+    path->setElementPositionAt(3, curPoint.x(), curPoint.y());
     // △ 右下顶点
     tempA = width / 2 * std::sin(v);
     tempB = width / 2 * std::cos(v);
     qreal x3 = centerX + tempA;
     qreal y3 = centerY + tempB;
-    path.setElementPositionAt(4, x3, y3);
+    path->setElementPositionAt(4, x3, y3);
     // △ 右下的顶点与底边中点之间中间位置的点
     qreal x4 = centerX + tempA / 2;
     qreal y4 = centerY + tempB / 2;
-    path.setElementPositionAt(5, x4, y4);
+    path->setElementPositionAt(5, x4, y4);
     layerDrawingImg->fill(0);
     paintPath(path, layerDrawingPainter);
     isDrawing = true;

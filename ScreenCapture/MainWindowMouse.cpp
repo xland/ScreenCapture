@@ -43,20 +43,9 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
     ui->tipBox->hide();
     if (mouseEvent->button() == Qt::RightButton)
     {
-        if (textInputBox->isVisible())
+        if (this->textInputBox->isVisible())
         {
-            //todo
-            auto& path = createPath();
-            path.isText = true;
-            path.text = textInputBox->toPlainText();
-            path.textRect = textInputBox->geometry();
-            path.textRect.moveTo(path.textRect.x() + 5, path.textRect.y() + 5);
-            path.color = colorSelector->currentColor();
-            path.textFont = textInputBox->font();
-            paintPath(path, layerDrawingPainter);
-            isDrawing = true;
-            textInputBox->clear();
-            textInputBox->hide();
+            translateTextToPath();
             repaint();
             return true;
         }
@@ -93,48 +82,48 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
                 return true;
             }
             endOneDraw();
-            auto& path = createPath();
-            path.borderWidth = dotRectEllipse->size;
-            path.needFill = ui->btnRectEllipseFill->isChecked();
-            path.isEllipse = ui->btnEllipse->isChecked();
-            path.moveTo(mousePressPoint);
-            path.lineTo(mousePressPoint.x() + 1, mousePressPoint.y());
-            path.lineTo(mousePressPoint.x() + 1, mousePressPoint.y() + 1);
-            path.lineTo(mousePressPoint.x(), mousePressPoint.y() + 1);
-            path.lineTo(mousePressPoint);
+            auto path = createPath();
+            path->borderWidth = dotRectEllipse->size;
+            path->needFill = ui->btnRectEllipseFill->isChecked();
+            path->isEllipse = ui->btnEllipse->isChecked();
+            path->moveTo(mousePressPoint);
+            path->lineTo(mousePressPoint.x() + 1, mousePressPoint.y());
+            path->lineTo(mousePressPoint.x() + 1, mousePressPoint.y() + 1);
+            path->lineTo(mousePressPoint.x(), mousePressPoint.y() + 1);
+            path->lineTo(mousePressPoint);
             return true;
         }
         else if (state == "Arrow")
         {
             endOneDraw();
-            auto& path = createPath();
-            path.needFill = ui->btnArrowFill->isChecked();
-            path.moveTo(mousePressPoint);
-            path.lineTo(QPointF(0, 0));
-            path.lineTo(QPointF(1, 1));
-            path.lineTo(QPointF(2, 2));
-            path.lineTo(QPointF(3, 3));
-            path.lineTo(QPointF(4, 4));
-            path.lineTo(mousePressPoint);
+            auto path = createPath();
+            path->needFill = ui->btnArrowFill->isChecked();
+            path->moveTo(mousePressPoint);
+            path->lineTo(QPointF(0, 0));
+            path->lineTo(QPointF(1, 1));
+            path->lineTo(QPointF(2, 2));
+            path->lineTo(QPointF(3, 3));
+            path->lineTo(QPointF(4, 4));
+            path->lineTo(mousePressPoint);
             return true;
         }
         else if (state == "Pen")
         {
             endOneDraw();
-            auto& path = createPath();
-            path.borderWidth = dotPen->size;
-            path.needFill = false;
-            path.moveTo(mousePressPoint);
+            auto path = createPath();
+            path->borderWidth = dotPen->size;
+            path->needFill = false;
+            path->moveTo(mousePressPoint);
             return true;
         }
         else if (state == "Mosaic")
         {
             endOneDraw();
-            auto& path = createPath();
-            path.borderWidth = dotMosaic->size;
-            path.needFill = false;
-            path.isMosaic = true;
-            path.moveTo(mousePressPoint);
+            auto path = createPath();
+            path->borderWidth = dotMosaic->size;
+            path->needFill = false;
+            path->isMosaic = true;
+            path->moveTo(mousePressPoint);
             return true;
         }
         else if (state == "Text")
@@ -155,12 +144,12 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
             memcpy(layerDrawingImg->bits(), layerBgImg->bits(), layerDrawingImg->sizeInBytes());
             layerBgPainter->drawImage(0, 0, ScreenShoter::Get()->desktopImages[0]);
             isDrawing = true;
-            auto& path = createPath();
-            path.borderWidth = dotEraser->size;
-            path.needFill = false;
-            path.isEraser = true;
-            path.borderWidth = 24;
-            path.moveTo(mousePressPoint);
+            auto path = createPath();
+            path->borderWidth = dotEraser->size;
+            path->needFill = false;
+            path->isEraser = true;
+            path->borderWidth = 24;
+            path->moveTo(mousePressPoint);
             return true;
         }
     }
@@ -190,10 +179,10 @@ bool MainWindow::mouseMove(QMouseEvent* mouseEvent)
         else if (state == "RectEllipse")
         {
             auto& path = paths.last();
-            path.needDelete = false;
-            path.setElementPositionAt(1, curPoint.x(), mousePressPoint.y());
-            path.setElementPositionAt(2, curPoint.x(), curPoint.y());
-            path.setElementPositionAt(3, mousePressPoint.x(), curPoint.y());
+            path->needDelete = false;
+            path->setElementPositionAt(1, curPoint.x(), mousePressPoint.y());
+            path->setElementPositionAt(2, curPoint.x(), curPoint.y());
+            path->setElementPositionAt(3, mousePressPoint.x(), curPoint.y());
             layerDrawingImg->fill(0);
             paintPath(path, layerDrawingPainter);
             isDrawing = true;
@@ -217,8 +206,8 @@ bool MainWindow::mouseMove(QMouseEvent* mouseEvent)
         }
         else if (state == "Pen")
         {
-            auto& path = paths.last();
-            path.lineTo(curPoint);
+            auto path = paths.last();
+            path->lineTo(curPoint);
             paintPath(path, layerDrawingPainter);
             isDrawing = true;
             repaint();
@@ -226,8 +215,8 @@ bool MainWindow::mouseMove(QMouseEvent* mouseEvent)
         }
         else if (state == "Mosaic")
         {
-            auto& path = paths.last();
-            path.lineTo(curPoint);
+            auto path = paths.last();
+            path->lineTo(curPoint);
             paintPath(path, layerBgPainter);
             isDrawing = true;
             repaint();
@@ -235,8 +224,8 @@ bool MainWindow::mouseMove(QMouseEvent* mouseEvent)
         }
         else if (state == "Eraser")
         {
-            auto& path = paths.last();
-            path.lineTo(curPoint);
+            auto path = paths.last();
+            path->lineTo(curPoint);
             paintPath(path, layerDrawingPainter);
             isDrawing = true;
             repaint();
@@ -248,8 +237,8 @@ bool MainWindow::mouseMove(QMouseEvent* mouseEvent)
             {
                 qreal xSpan = curPoint.x() - mousePressPoint.x();
                 qreal ySpan = curPoint.y() - mousePressPoint.y();
-                auto& path = paths.last();
-                path.textRect.moveTo(path.textRect.topLeft().x() + xSpan, path.textRect.topLeft().y() + ySpan);
+                auto path = paths.last();
+                path->textRect.moveTo(path->textRect.topLeft().x() + xSpan, path->textRect.topLeft().y() + ySpan);
                 layerDrawingImg->fill(0);
                 paintPath(path, layerDrawingPainter);
                 isDrawing = true;
@@ -330,8 +319,8 @@ bool MainWindow::mouseMove(QMouseEvent* mouseEvent)
         {
             if (paths.count() > 0)
             {
-                auto& path = paths.last();
-                if (path.isText && path.textRect.contains(curPoint.toPoint()))
+                auto path = paths.last();
+                if (path->isText && path->textRect.contains(curPoint.toPoint()))
                 {
                     setCursor(Qt::SizeAllCursor);
                     draggingTextState = 1;
@@ -361,13 +350,13 @@ bool MainWindow::mouseRelease(QMouseEvent* mouseEvent)
         else if (state == "RectEllipse")
         {
             auto& path = paths.last();
-            if (path.needDelete)
+            if (path->needDelete)
             {
                 paths.removeLast();
                 return true;
             }
-            path.resetPoint5();
-            setDraggerPosition(path.elementAt(0).x, path.elementAt(0).y, path.elementAt(2).x, path.elementAt(2).y);
+            path->resetPoint5();
+            setDraggerPosition(path->elementAt(0).x, path->elementAt(0).y, path->elementAt(2).x, path->elementAt(2).y);
             ui->btnUndo->setStyleSheet("");
             setCursor(Qt::CrossCursor);
             repaint();
@@ -399,8 +388,8 @@ bool MainWindow::mouseRelease(QMouseEvent* mouseEvent)
         else if (state == "lastPathDrag")
         {
             auto& path = paths.last();
-            path.resetPoint5();
-            setDraggerPosition(path.elementAt(0).x, path.elementAt(0).y, path.elementAt(2).x, path.elementAt(2).y);
+            path->resetPoint5();
+            setDraggerPosition(path->elementAt(0).x, path->elementAt(0).y, path->elementAt(2).x, path->elementAt(2).y);
             state = preState;
             return true;
         }

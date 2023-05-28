@@ -66,8 +66,8 @@ private:
     bool isDrawing = false;
     void initLayer();
     void initMosaic();
-    void paintPath(PathModel& path, QPainter* painter);
-    PathModel& createPath();
+    void paintPath(PathModel* path, QPainter* painter);
+    PathModel* createPath();
     void endOneDraw();
     void drawArrow(QPointF& point);
 
@@ -88,8 +88,14 @@ private:
     QVector<QRectF> dragers;
     void initDragger();
     void setDraggerPosition(qreal x1, qreal y1, qreal x2, qreal y2);
-    void resizePath(const QPointF& point);
     bool isMouseInDragger(const QPointF& point);
+
+
+    QVector<PathModel*> paths;
+    void resizePath(const QPointF& point);
+    void removeUndoPath();
+    void translateTextToPath();
+
 
     Ui::MainWindow* ui;
     int draggingTextState = 0;
@@ -106,7 +112,6 @@ private:
 #%1 QPushButton:hover{background:#e5e5e5;}
 #%1 QPushButton:disabled {color:#999;}
 #%1 QPushButton:checked{background:#1677ff;color:#fff;})";
-    QVector<PathModel> paths;
     qreal scaleFactor;
 };
 

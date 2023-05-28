@@ -11,10 +11,11 @@ class PathModel : public QPainterPath
 {
 public:
     explicit PathModel();
+    ~PathModel();
     void resetPoint5();
     void initPatch(QImage* bgImg, qreal scaleFactor);
 
-    bool needFill;
+    bool needFill = false;
     bool needPaint = true;
     bool needDelete = true;
     bool isEraser = false;

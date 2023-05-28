@@ -8,6 +8,11 @@ PathModel::PathModel()
 
 }
 
+PathModel::~PathModel()
+{
+    qDebug() << "release path";
+}
+
 void PathModel::resetPoint5()
 {
     qreal x2 = -999.0, x1 = 999999999.0;
@@ -60,6 +65,5 @@ void PathModel::initPatch(QImage* bgImg, qreal scaleFactor)
         rect.setHeight(rect.height() + borderWidth * 2);
         rect.setSize(rect.size() * scaleFactor);
         patchImg =  bgImg->copy(rect); //todo 定义时的初始化，浪费资源
-        patchImg.save("patchImg.png");
     }
 }

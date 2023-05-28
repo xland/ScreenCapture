@@ -21,6 +21,7 @@
     <ClCompile Include="MainWindowInit.cpp" />
     <ClCompile Include="MainWindowMask.cpp" />
     <ClCompile Include="MainWindowMouse.cpp" />
+    <ClCompile Include="MainWindowPath.cpp" />
     <ClCompile Include="MainWindowTool.cpp" />
     <ClCompile Include="MainWindowUndoRedo.cpp" />
     <ClCompile Include="PathModel.cpp" />
