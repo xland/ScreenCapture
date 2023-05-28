@@ -88,26 +88,33 @@ void MainWindow::moveTipBox()
     auto rgbStr = QString("%1,%2,%3").arg(QString::number(color.red()), QString::number(color.green()), QString::number(color.blue()));
     auto hexStr = color.name(QColor::HexRgb).toUpper();
     ui->tipRgbLabel->setText("RGB: " + rgbStr + "  HEX: " + hexStr);
-    int x{0}, y{0}, width = ui->tipBox->width() * scaleFactor, height = ui->tipBox->height() * scaleFactor;
+    int x{0}, y{0}, width = ui->tipImageLabel->width() * scaleFactor, height = ui->tipImageLabel->height() * scaleFactor;
     x = position.x() - width / 16;
     y = position.y() - height / 16;
     QRect rect(x, y, width / 8, height / 8);
     QImage img = layerBgImg->copy(rect).scaled(width, height);
+    for (int i = 0; i < img.width(); i++)
+    {
+        img.setPixelColor({ i,0 }, Qt::black);
+    }
+    for (int i = 0; i < img.height(); i++)
+    {
+        img.setPixelColor({ 0,i }, Qt::black);
+        img.setPixelColor({ img.width()-2,i }, Qt::black);
+    }
 
-
+    
+    QPainter p(&img);
     int w = img.width() / scaleFactor;
     int h = img.height() / scaleFactor;
     int size = 3;
-    QPainter p(&img);
-    p.setPen(Qt::black);
-    p.drawRect(0, 0, w, h);
     QBrush brush(QColor(128, 128, 255, 128));
     p.fillRect(QRect(0, h / 2 - size, w / 2 - size, size * 2), brush);
     p.fillRect(QRect(w / 2 + size, h / 2 - size, w / 2 - size, size * 2), brush);
     p.fillRect(QRect(w / 2 - size, 0, size * 2, h / 2 - size), brush);
     p.fillRect(QRect(w / 2 - size, h / 2 + size, size * 2, h / 2 - size), brush);
-    ui->tipImageLabel->setScaledContents(true);
     ui->tipImageLabel->setPixmap(QPixmap::fromImage(img));
+    ui->tipImageLabel->setScaledContents(true);
     ui->tipBox->show();
 }
 
