@@ -81,6 +81,7 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
                 state = "lastPathDrag";
                 return true;
             }
+            removeUndoPath();
             endOneDraw();
             auto path = createPath();
             path->borderWidth = dotRectEllipse->size;
@@ -95,6 +96,7 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
         }
         else if (state == "Arrow")
         {
+            removeUndoPath();
             endOneDraw();
             auto path = createPath();
             path->needFill = ui->btnArrowFill->isChecked();
@@ -109,6 +111,7 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
         }
         else if (state == "Pen")
         {
+            removeUndoPath();
             endOneDraw();
             auto path = createPath();
             path->borderWidth = dotPen->size;
@@ -118,6 +121,7 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
         }
         else if (state == "Mosaic")
         {
+            removeUndoPath();
             endOneDraw();
             auto path = createPath();
             path->borderWidth = dotMosaic->size;
@@ -132,6 +136,7 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
             {
                 return true;
             }
+            removeUndoPath();
             endOneDraw();
             textInputBox->move(mousePressPoint.x() - textInputBox->width() / 2, mousePressPoint.y() - textInputBox->height() / 2);
             textInputBox->show();
@@ -140,6 +145,7 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
         }
         else if (state == "Eraser")
         {
+            removeUndoPath();
             endOneDraw();
             memcpy(layerDrawingImg->bits(), layerBgImg->bits(), layerDrawingImg->sizeInBytes());
             layerBgPainter->drawImage(0, 0, ScreenShoter::Get()->desktopImages[0]);

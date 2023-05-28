@@ -100,7 +100,7 @@ void MainWindow::endOneDraw()
     {
         translateTextToPath();
     }
-    if (paths.count() < 1) return;
+    if (paths.count() < 1) return;    
     if (!isDrawing) return;
     auto& path = paths.last();
     if (path->isEraser)
@@ -121,9 +121,7 @@ void MainWindow::endOneDraw()
     }
     layerDrawingImg->fill(0);
     showDraggerCount = 0;
-    isDrawing = false;
-
-    removeUndoPath();
+    isDrawing = false;    
     repaint();
 }
 
