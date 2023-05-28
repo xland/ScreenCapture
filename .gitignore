@@ -1,2 +1,7 @@
 /build-*/**
 /.vs/
+/Debug/
+/Release/
+/ScreenCapture/.vs/
+/ScreenCapture/Debug/
+/ScreenCapture/Release/
