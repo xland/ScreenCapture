@@ -34,6 +34,16 @@ void ScreenShoter::shotScreen()
     //    screenRects.append(std::move(s->geometry()));
     //}
 
+//#if defined(Q_OS_MACOS)
+//    QScreen* currentScreen = QGuiAppCurrentScreen().currentScreen();
+//    QPixmap screenPixmap(
+//        currentScreen->grabWindow(QApplication::desktop()->winId(),
+//            currentScreen->geometry().x(),
+//            currentScreen->geometry().y(),
+//            currentScreen->geometry().width(),
+//            currentScreen->geometry().height()));
+//    screenPixmap.setDevicePixelRatio(currentScreen->devicePixelRatio());
+//    return screenPixmap;
 
     QRect geometry;
     for (QScreen* const screen : QGuiApplication::screens()) {
