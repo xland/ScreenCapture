@@ -12,15 +12,12 @@ void MainWindow::removeUndoPath()
             if (index == -1) {
                 index = i;
             }
-            qDebug() << "remove00000000000" << index;
             delete paths[i];
         }
     }
-    qDebug() << "remove11111111111111111111111" << index;
     if (index != -1) {
         paths.remove(index, paths.count() - index);
         paths.squeeze();
-        qDebug() << "remove";
         ui->btnRedo->setStyleSheet("color:#999;");
     }
 }

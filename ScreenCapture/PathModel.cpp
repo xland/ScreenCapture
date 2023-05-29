@@ -10,7 +10,7 @@ PathModel::PathModel()
 
 PathModel::~PathModel()
 {
-    qDebug() << "release path";
+    //qDebug() << "release path";
 }
 
 void PathModel::resetPoint5()
