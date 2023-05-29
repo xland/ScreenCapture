@@ -9,8 +9,10 @@
 
 void MainWindow::initLayer()
 {
+
+
     scaleFactor = metric(PdmDevicePixelRatioScaled) / devicePixelRatioFScale();
-    auto imgSize = ScreenShoter::Get()->screenRects[0].size() * scaleFactor;
+    auto imgSize = ScreenShoter::Get()->desktopImage.size();
     layerDrawingImg = new QImage(imgSize, QImage::Format_ARGB32);
     layerDrawingImg->setDevicePixelRatio(scaleFactor);
     layerDrawingImg->fill(0);
@@ -23,7 +25,7 @@ void MainWindow::initLayer()
     layerBgPainter = new QPainter(layerBgImg);
     layerBgPainter->setRenderHint(QPainter::Antialiasing, true);
     //layerBgPainter->setRenderHint(QPainter::SmoothPixmapTransform, true);
-    layerBgPainter->drawImage(0, 0, ScreenShoter::Get()->desktopImages[0]);
+    layerBgPainter->drawImage(0, 0, ScreenShoter::Get()->desktopImage);
 
     layerMosaicImg = new QImage(imgSize, QImage::Format_ARGB32);
     layerMosaicImg->setDevicePixelRatio(scaleFactor);

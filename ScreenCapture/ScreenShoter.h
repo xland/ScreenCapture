@@ -12,14 +12,15 @@ public:
     static void Dispose();
     static void Init(QObject* parent);
     static ScreenShoter* Get();
-    QList<QImage> desktopImages;
-    QList<QRect> windowRects;
+    void enumDesktopWindows();
+    QRectF getHighlightWindowRect(const QPointF& point);
+    QImage desktopImage;
+    QList<QRectF> windowRects;
     QList<QRect> screenRects;
 
 private:
     explicit ScreenShoter(QObject* parent = nullptr);
     void shotScreen();
-    void enumDesktopWindows();
 };
 
 #endif // SCREENSHOTER_H

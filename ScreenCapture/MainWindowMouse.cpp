@@ -9,15 +9,17 @@
 
 bool MainWindow::eventFilter(QObject* obj, QEvent* event)
 {
+    QMouseEvent* e = static_cast<QMouseEvent*>(event);
     if (event->type() == QEvent::MouseMove && !isMouseDown && state == "Start")
     {
+        auto rect = ScreenShoter::Get()->getHighlightWindowRect(e->pos());
+        setMask(rect.topLeft(), rect.bottomRight());
         moveTipBox();
     }
     if (obj->objectName() != "centralwidget")
     {
         return QObject::eventFilter(obj, event);
     }
-    QMouseEvent* e = static_cast<QMouseEvent*>(event);
     bool flag = false;
     if (event->type() == QEvent::MouseMove)
     {
@@ -148,7 +150,7 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
             removeUndoPath();
             endOneDraw();
             memcpy(layerDrawingImg->bits(), layerBgImg->bits(), layerDrawingImg->sizeInBytes());
-            layerBgPainter->drawImage(0, 0, ScreenShoter::Get()->desktopImages[0]);
+            layerBgPainter->drawImage(0, 0, ScreenShoter::Get()->desktopImage);
             isDrawing = true;
             auto path = createPath();
             path->borderWidth = dotEraser->size;
@@ -169,12 +171,7 @@ bool MainWindow::mouseMove(QMouseEvent* mouseEvent)
     {
         if (state == "Start")
         {
-            maskPath.setElementPositionAt(0, mousePressPoint.x(), mousePressPoint.y());
-            maskPath.setElementPositionAt(1, curPoint.x(), mousePressPoint.y());
-            maskPath.setElementPositionAt(2, curPoint.x(), curPoint.y());
-            maskPath.setElementPositionAt(3, mousePressPoint.x(), curPoint.y());
-            maskPath.setElementPositionAt(4, mousePressPoint.x(), mousePressPoint.y());
-            repaint();
+            setMask(mousePressPoint, curPoint);
             return true;
         }
         else if (state == "maskReady")

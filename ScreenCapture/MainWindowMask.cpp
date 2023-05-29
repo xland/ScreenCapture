@@ -4,19 +4,28 @@
 
 void MainWindow::initMask()
 {
-    auto screenShoter = ScreenShoter::Get();
+    auto size = ScreenShoter::Get()->desktopImage.size();
     maskPath.moveTo(0 - maskBorderWidth, 0 - maskBorderWidth);
-    maskPath.lineTo(screenShoter->screenRects[0].width() + maskBorderWidth, 0 - maskBorderWidth);
-    maskPath.lineTo(screenShoter->screenRects[0].width() + maskBorderWidth, screenShoter->screenRects[0].height() + maskBorderWidth);
-    maskPath.lineTo(0 - maskBorderWidth, screenShoter->screenRects[0].height() + maskBorderWidth);
+    maskPath.lineTo(size.width() + maskBorderWidth, 0 - maskBorderWidth);
+    maskPath.lineTo(size.width() + maskBorderWidth, size.height() + maskBorderWidth);
+    maskPath.lineTo(0 - maskBorderWidth, size.height() + maskBorderWidth);
     maskPath.lineTo(0 - maskBorderWidth, 0 - maskBorderWidth);
 
     maskPath.moveTo(0 - maskBorderWidth, 0 - maskBorderWidth);
-    maskPath.lineTo(screenShoter->screenRects[0].width() + maskBorderWidth, 0 - maskBorderWidth);
-    maskPath.lineTo(screenShoter->screenRects[0].width() + maskBorderWidth, screenShoter->screenRects[0].height() + maskBorderWidth);
-    maskPath.lineTo(0 - maskBorderWidth, screenShoter->screenRects[0].height() + maskBorderWidth);
+    maskPath.lineTo(size.width() + maskBorderWidth, 0 - maskBorderWidth);
+    maskPath.lineTo(size.width() + maskBorderWidth, size.height() + maskBorderWidth);
+    maskPath.lineTo(0 - maskBorderWidth, size.height() + maskBorderWidth);
     maskPath.lineTo(0 - maskBorderWidth, 0 - maskBorderWidth);
+}
 
+void MainWindow::setMask(const QPointF& leftTop, const QPointF& rightBottom)
+{
+    maskPath.setElementPositionAt(0, leftTop.x(), leftTop.y());
+    maskPath.setElementPositionAt(1, rightBottom.x(), leftTop.y());
+    maskPath.setElementPositionAt(2, rightBottom.x(), rightBottom.y());
+    maskPath.setElementPositionAt(3, leftTop.x(), rightBottom.y());
+    maskPath.setElementPositionAt(4, leftTop.x(), leftTop.y());
+    repaint();
 }
 
 int MainWindow::pointInMaskArea(const QPointF& curPoint)
@@ -65,6 +74,7 @@ int MainWindow::pointInMaskArea(const QPointF& curPoint)
 
 void MainWindow::resizeMask(const QPointF& point)
 {
+    //todo 这个方法好像可以优化掉
     if (resizeMaskIndex == 0)
     {
         maskPath.setElementPositionAt(0, point.x(), point.y());

@@ -10,8 +10,6 @@ void MainWindow::initDragger()
     }
 }
 
-
-
 bool MainWindow::isMouseInDragger(const QPointF& point)
 {
     for (int var = 0; var < showDraggerCount; ++var)

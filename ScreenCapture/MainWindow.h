@@ -32,6 +32,24 @@ protected:
 private slots:
 
 private:
+    void moveTipBox();
+    void saveToFile();
+    void saveToClipboard();
+
+
+    ColorSelector* colorSelector;
+    ButtonDot* dotRectEllipse;
+    ButtonDot* dotPen;
+    ButtonDot* dotMosaic;
+    ButtonDot* dotEraser;
+    ButtonDot* dotText;
+    int draggingTextState = 0;
+    TextInputBox* textInputBox;
+    QString style = R"(#%1{background:#f6f6f6;}
+#%1 QPushButton{color:#414141;font-size:16px;border:none;}
+#%1 QPushButton:hover{background:#e5e5e5;}
+#%1 QPushButton:disabled {color:#999;}
+#%1 QPushButton:checked{background:#1677ff;color:#fff;})";
     void initToolMain();
     void initToolRect();
     void initToolArrow();
@@ -39,14 +57,9 @@ private:
     void initToolMosaic();
     void initToolEraser();
     void initToolText();
-
     void btnMainToolSelected();
     void switchTool(const QString& toolName);
     void showToolMain();
-
-    void moveTipBox();
-    void saveToFile();
-    void saveToClipboard();
 
 
     QPointF mousePressPoint;
@@ -64,6 +77,7 @@ private:
     QVector<QImage> historyImgs;
     QVector<QPoint> historyPoints;
     bool isDrawing = false;
+    qreal scaleFactor;
     void initLayer();
     void initMosaic();
     void paintPath(PathModel* path, QPainter* painter);
@@ -80,6 +94,7 @@ private:
     int resizeMaskIndex = -1;
     void initMask();
     void resizeMask(const QPointF& point);
+    void setMask(const QPointF& leftTop, const QPointF& rightBottom);
     int pointInMaskArea(const QPointF& curPoint);
 
     int showDraggerCount = 0;
@@ -98,21 +113,7 @@ private:
 
 
     Ui::MainWindow* ui;
-    int draggingTextState = 0;
-    TextInputBox* textInputBox;
-    ColorSelector* colorSelector;
-    ButtonDot* dotRectEllipse;
-    ButtonDot* dotPen;
-    ButtonDot* dotMosaic;
-    ButtonDot* dotEraser;
-    ButtonDot* dotText;
     QString state = "Start";
-    QString style = R"(#%1{background:#f6f6f6;}
-#%1 QPushButton{color:#414141;font-size:16px;border:none;}
-#%1 QPushButton:hover{background:#e5e5e5;}
-#%1 QPushButton:disabled {color:#999;}
-#%1 QPushButton:checked{background:#1677ff;color:#fff;})";
-    qreal scaleFactor;
 };
 
 #endif // MAINWINDOW_H

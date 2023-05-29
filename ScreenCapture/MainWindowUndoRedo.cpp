@@ -8,7 +8,7 @@
 void MainWindow::jobLoop()
 {
     endOneDraw();
-    memcpy(layerBgImg->bits(), ScreenShoter::Get()->desktopImages[0].bits(), layerBgImg->sizeInBytes());
+    memcpy(layerBgImg->bits(), ScreenShoter::Get()->desktopImage.bits(), layerBgImg->sizeInBytes());
     for (int var = 0; var < paths.count(); ++var)
     {
         if (!paths[var]->needPaint)
@@ -18,7 +18,7 @@ void MainWindow::jobLoop()
         if (paths[var]->isEraser)
         {
 //            memcpy(layerDrawingImg->bits(), layerBgImg->bits(), layerDrawingImg->sizeInBytes());
-//            memcpy(layerBgImg->bits(), ScreenShoter::Get()->desktopImages[0].bits(), layerBgImg->sizeInBytes());
+//            memcpy(layerBgImg->bits(), ScreenShoter::Get()->desktopImage.bits(), layerBgImg->sizeInBytes());
 //            paintPath(paths[var], layerDrawingPainter);
 //            layerBgPainter->drawImage(0, 0, *layerDrawingImg);
             layerBgPainter->setCompositionMode(QPainter::CompositionMode_SourceOver);
