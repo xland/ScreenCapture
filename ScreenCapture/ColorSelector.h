@@ -23,8 +23,8 @@ protected:
 signals:
     void colorChanged();
 private:
-    QVector<QColor> colors;
-    QVector<QRectF> rects;
+    QList<QColor> colors;
+    QList<QRectF> rects;
     int hoverIndex = -1;
     Ui::ColorSelector* ui;
 };

@@ -74,8 +74,8 @@ private:
     QImage* layerDrawingImg;
     QImage* layerBgImg;
     QImage* layerMosaicImg;
-    QVector<QImage> historyImgs;
-    QVector<QPoint> historyPoints;
+    QList<QImage> historyImgs;
+    QList<QPoint> historyPoints;
     bool isDrawing = false;
     qreal scaleFactor;
     void initLayer();
@@ -100,13 +100,13 @@ private:
     int showDraggerCount = 0;
     int draggerIndex = -1;
     QString preState;
-    QVector<QRectF> dragers;
+    QList<QRectF> dragers;
     void initDragger();
     void setDraggerPosition(qreal x1, qreal y1, qreal x2, qreal y2);
     bool isMouseInDragger(const QPointF& point);
 
 
-    QVector<PathModel*> paths;
+    QList<PathModel*> paths;
     void resizePath(const QPointF& point);
     void removeUndoPath();
     void translateTextToPath();
