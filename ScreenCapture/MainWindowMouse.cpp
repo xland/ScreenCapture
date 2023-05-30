@@ -149,8 +149,10 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
         {
             removeUndoPath();
             endOneDraw();
+            //把bg图层拷贝到drawing图层
             memcpy(layerDrawingImg->bits(), layerBgImg->bits(), layerDrawingImg->sizeInBytes());
-            layerBgPainter->drawImage(0, 0, ScreenShoter::Get()->desktopImage);
+            //把底层图像拷贝到bg图层，橡皮擦是镂空的路径，画在drawing图层上，这样看上去就是把以前画的路径擦掉了
+            memcpy(layerBgImg->bits(), ScreenShoter::Get()->desktopImage.bits(), layerBgImg->sizeInBytes());
             isDrawing = true;
             auto path = createPath();
             path->borderWidth = dotEraser->size;
@@ -377,6 +379,7 @@ bool MainWindow::mouseRelease(QMouseEvent* mouseEvent)
         }
         else if (state == "Eraser")
         {
+            layerBgPainter->setCompositionMode(QPainter::CompositionMode_SourceOver);
             layerBgPainter->drawImage(0, 0, *layerDrawingImg);
             ui->btnUndo->setStyleSheet("");
             repaint();

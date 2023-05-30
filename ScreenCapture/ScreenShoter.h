@@ -16,7 +16,7 @@ public:
     QRectF getHighlightWindowRect(const QPointF& point);
     QImage desktopImage;
     QList<QRectF> windowRects;
-    QList<QRect> screenRects;
+    QRect screenRect;
 
 private:
     explicit ScreenShoter(QObject* parent = nullptr);

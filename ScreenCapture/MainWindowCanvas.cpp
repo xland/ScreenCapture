@@ -107,13 +107,18 @@ void MainWindow::endOneDraw()
     auto& path = paths.last();
     if (path->isEraser)
     {
+        layerBgPainter->setCompositionMode(QPainter::CompositionMode_SourceOver);
         layerBgPainter->drawImage(0, 0, *layerDrawingImg);
         path->initPatch(layerBgImg, scaleFactor);
     }
     else if (path->isMosaic)
     {
+        //把马赛克图层拷贝到Drawing图层上
         memcpy(layerDrawingImg->bits(), layerMosaicImg->bits(), layerDrawingImg->sizeInBytes());
+        //把bg图层画到drawing图层上，由于bg图层包含镂空的马赛克路径，所以此时drawing图层镂空部分将显示马赛克图案
+        layerDrawingPainter->setCompositionMode(QPainter::CompositionMode_SourceOver);
         layerDrawingPainter->drawImage(0, 0, *layerBgImg);
+        //把drawing图层拷贝到bg图层
         memcpy(layerBgImg->bits(), layerDrawingImg->bits(), layerBgImg->sizeInBytes());
         path->initPatch(layerBgImg, scaleFactor);
     }
@@ -141,14 +146,17 @@ void MainWindow::paintPath(PathModel* path, QPainter* painter)
         painter->setPen(QPen(QBrush(path->color), path->borderWidth, Qt::SolidLine, Qt::RoundCap));
         painter->setBrush(Qt::NoBrush);
     }
+
     if (path->isEraser || path->isMosaic)
     {
         painter->setCompositionMode(QPainter::CompositionMode_Clear);
+        //qDebug() << (path->isMosaic ? "isMosaic" : "isEraser");
     }
     else
     {
         painter->setCompositionMode(QPainter::CompositionMode_SourceOver);
     }
+
     if (path->isEllipse)
     {
         painter->drawEllipse(path->boundingRect());

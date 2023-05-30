@@ -36,20 +36,36 @@ void ScreenShoter::shotScreen()
 //            currentScreen->geometry().height()));
 //    screenPixmap.setDevicePixelRatio(currentScreen->devicePixelRatio());
 //    return screenPixmap;
-
-    QRect geometry;
+    int x1=0, y1=0;
+    for (QScreen* const screen : QGuiApplication::screens()) {
+        auto r = screen->geometry();
+        if (r.x() < x1) {
+            x1 = r.x();
+            if (r.x() + r.width() < 0) {
+                x1 -= (r.x() + r.width());
+            }
+        }
+        if (r.y() < y1) {
+            y1 = r.y();
+            if (r.y() + r.height() < 0) {
+                y1 -= (r.y() + r.height());
+            }
+        }
+    }
+    QRect rect;
     for (QScreen* const screen : QGuiApplication::screens()) {
         QRect scrRect = screen->geometry();
         scrRect.moveTo(scrRect.x() / screen->devicePixelRatio(),
             scrRect.y() / screen->devicePixelRatio());
-        geometry = geometry.united(scrRect);
+        rect = rect.united(scrRect);
     }
+    screenRect = screenRect.adjusted(x1,y1,x1+rect.width(), y1+rect.height());
     QPixmap p(QApplication::primaryScreen()->grabWindow(
         QApplication::desktop()->winId(),
-        geometry.x(),
-        geometry.y(),
-        geometry.width(),
-        geometry.height()));
+        rect.x(),
+        rect.y(),
+        rect.width(),
+        rect.height()));
     auto screenNumber = QApplication::desktop()->screenNumber();
     QScreen* screen = QApplication::screens()[screenNumber];
     p.setDevicePixelRatio(screen->devicePixelRatio());
