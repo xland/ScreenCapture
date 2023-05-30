@@ -74,7 +74,7 @@ void MainWindow::mouseDoubleClickEvent(QMouseEvent* event)
 
 void MainWindow::moveTipBox()
 {
-    auto position = QCursor::pos();
+    auto position = mapFromGlobal(QCursor::pos());
     ui->tipBox->move(position.x() + 10, position.y() + 10);
     if (this->width() - position.x() < ui->tipBox->width())
     {
@@ -130,7 +130,7 @@ void MainWindow::keyPressEvent(QKeyEvent* event)
     {
         if (event->key() == Qt::Key_X)
         {
-            auto position = QCursor::pos() * scaleFactor;
+            auto position = mapFromGlobal(QCursor::pos()) * scaleFactor;
             auto color = layerBgImg->pixelColor(position);
             auto rgbStr = QString("rgb(%1,%2,%3)")
                 .arg(QString::number(color.red()), QString::number(color.green()), QString::number(color.blue()));
@@ -138,7 +138,7 @@ void MainWindow::keyPressEvent(QKeyEvent* event)
         }
         else if (event->key() == Qt::Key_C)
         {
-            auto position = QCursor::pos() * scaleFactor;
+            auto position = mapFromGlobal(QCursor::pos()) * scaleFactor;
             auto color = layerBgImg->pixelColor(position);
             auto hexStr = color.name(QColor::HexRgb).toUpper();
             QApplication::clipboard()->setText(hexStr);
