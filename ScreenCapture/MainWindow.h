@@ -106,7 +106,7 @@ private:
     bool isMouseInDragger(const QPointF& point);
 
 
-    QList<PathModel*> paths;
+    QVector<PathModel*> paths;
     void resizePath(const QPointF& point);
     void removeUndoPath();
     void translateTextToPath();

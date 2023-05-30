@@ -25,9 +25,48 @@ void MainWindow::initToolMain()
     ui->btnEraser->setText(Icon::icons[Icon::Name::eraser]);
     QObject::connect(ui->btnEraser,  &QPushButton::clicked, this, &MainWindow::btnMainToolSelected);
 
-    ui->btnNumber->setFont(Icon::font);
-    ui->btnNumber->setText(Icon::icons[Icon::Name::number]);
-    QObject::connect(ui->btnNumber,  &QPushButton::clicked, this, &MainWindow::btnMainToolSelected);
+            /*<item>
+         <widget class="QPushButton" name="btnNumber">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>34</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>34</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <stylestrategy>PreferAntialias</stylestrategy>
+           </font>
+          </property>
+          <property name="cursor">
+           <cursorShape>PointingHandCursor</cursorShape>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="autoExclusive">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>*/
+    //ui->btnNumber->setFont(Icon::font);
+    //ui->btnNumber->setText(Icon::icons[Icon::Name::number]);
+    //QObject::connect(ui->btnNumber,  &QPushButton::clicked, this, &MainWindow::btnMainToolSelected);
 
     ui->btnText->setFont(Icon::font);
     ui->btnText->setText(Icon::icons[Icon::Name::text]);
