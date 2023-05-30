@@ -126,6 +126,18 @@ void MainWindow::keyPressEvent(QKeyEvent* event)
     {
         qApp->exit(0);
     }
+    else if (event->key() == Qt::Key_Left) {
+        QCursor::setPos(QCursor::pos().x() - 1, QCursor::pos().y());
+    }
+    else if (event->key() == Qt::Key_Up) {
+        QCursor::setPos(QCursor::pos().x(), QCursor::pos().y()-1);
+    }
+    else if (event->key() == Qt::Key_Down) {
+        QCursor::setPos(QCursor::pos().x(), QCursor::pos().y()+1);
+    }
+    else if (event->key() == Qt::Key_Right) {
+        QCursor::setPos(QCursor::pos().x()+1, QCursor::pos().y());
+    }
     else if (event->modifiers() == Qt::AltModifier)
     {
         if (event->key() == Qt::Key_X)
