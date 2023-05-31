@@ -13,9 +13,10 @@ public:
     static void Init(QObject* parent);
     static ScreenShoter* Get();
     void enumDesktopWindows();
-    QRectF getHighlightWindowRect(const QPointF& point);
+    QRectF getHighlightWindowRect();
     QImage desktopImage;
     QList<QRectF> windowRects;
+    QList<qreal> windowRectRates;
     QRect screenRect;
 
 private:

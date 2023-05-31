@@ -27,7 +27,11 @@ MainWindow::MainWindow(QWidget* parent)
     ui->setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose);
     this->setWindowFlags(Qt::Window | Qt::FramelessWindowHint);   //todo | Qt::WindowStaysOnTopHint
-    this->setGeometry(ScreenShoter::Get()->screenRect);
+    auto rect = ScreenShoter::Get()->screenRect;
+    this->setGeometry(rect);
+    //qDebug() << this->x() << this->y();
+    //this->move(ScreenShoter::Get()->screenRect.topLeft()/scaleFactor);
+    
     ui->tipBox->setMouseTracking(false);
     ui->tipBox->hide();
     this->setFocusPolicy(Qt::StrongFocus);

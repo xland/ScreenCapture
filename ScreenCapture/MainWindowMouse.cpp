@@ -5,6 +5,7 @@
 #include <QMouseEvent>
 #include <QCoreApplication>
 #include <QTextFrame>
+#include <QScreen>
 #include "ScreenShoter.h"
 
 bool MainWindow::eventFilter(QObject* obj, QEvent* event)
@@ -12,8 +13,17 @@ bool MainWindow::eventFilter(QObject* obj, QEvent* event)
     QMouseEvent* e = static_cast<QMouseEvent*>(event);
     if (event->type() == QEvent::MouseMove && !isMouseDown && state == "Start")
     {
-        auto rect = ScreenShoter::Get()->getHighlightWindowRect(e->pos());
-        setMask(rect.topLeft(), rect.bottomRight());
+        //auto screenShoter = ScreenShoter::Get();
+        //for (size_t i = 0; i < screenShoter->windowRects.count(); i++)
+        //{
+        //    if (screenShoter->windowRects[i].contains(QCursor::pos())) {
+        //        auto rect = screenShoter->windowRects[i].toRect();
+        //        auto p1 = mapFromGlobal(rect.topLeft());
+        //        auto p2 = mapFromGlobal(rect.bottomRight());
+        //        setMask(p1,p2);
+        //        break;
+        //    }
+        //}
         moveTipBox();
     }
     if (obj->objectName() != "centralwidget")
