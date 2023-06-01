@@ -27,6 +27,7 @@ void ScreenShoter::Dispose()
 void ScreenShoter::shotScreen()
 {
     auto screens = QGuiApplication::screens();
+    auto primaryIndex = QApplication::desktop()->screenNumber();
     ////x轴排序
     //for (size_t i = 0; i < screens.count() - 1; i++) {
     //    for (size_t j = 0; j < screens.count() - 1 - i; j++) {
@@ -51,12 +52,22 @@ void ScreenShoter::shotScreen()
     //}
     QList<QPixmap> pixmaps;
     qreal rate = 1.0;
+    qreal physicalDotsPerInch = 0;
+    bool isSmallScreenPrimary = false;
     for (size_t i = 0; i < screens.count(); i++)
-    {
+    {        
         auto p = screens[i]->grabWindow(0);
         pixmaps.append(std::move(p));
-        if (screens[i]->devicePixelRatio() > rate) {
-            rate = screens[i]->devicePixelRatio();
+        auto r = screens[i]->devicePixelRatio();
+        if (physicalDotsPerInch < screens[i]->physicalDotsPerInch()) {
+            if (i != primaryIndex) {
+                isSmallScreenPrimary = true;
+            }
+            else {
+                isSmallScreenPrimary = false;
+            }
+            rate = r;
+            physicalDotsPerInch = screens[i]->physicalDotsPerInch();
         }
     }
     int x1 = 999999, y1 = 999999, x2 = -999999, y2 = -999999;
@@ -64,7 +75,7 @@ void ScreenShoter::shotScreen()
     for (size_t i = 0; i < screens.count(); i++)
     {
         auto rect = screens[i]->geometry();
-        rect.setSize(rect.size() * rate); //注意这里，可能需要rate
+        rect.setSize(rect.size() * screens[i]->devicePixelRatio()); //注意这里，可能需要rate
         if (i != 0) {
             if (rect.x() > rects[i - 1].right()) {
                 rect.moveLeft(rects[i - 1].right());
@@ -99,20 +110,35 @@ void ScreenShoter::shotScreen()
         auto pos = transform.map(rects[i].topLeft());
         p.drawPixmap(pos/rate, pixmaps[i]);
     }
-    auto screenNumber = QApplication::desktop()->screenNumber();
-    qreal mainRate = screens[screenNumber]->devicePixelRatio();
-    if (mainRate == rate) {
-        screenRect.moveTo(x1 / rate, y1 / rate);
-    }
-    else {
-        if (x1 == 0) {
-            auto span = rects[screenNumber].width() / (rate * 2); //(rate * 2)
-            //span = 0;
-            screenRect.moveTo(x1 + span, y1);
+    //desktopImage.save("desktopImage.png");
+    if (isSmallScreenPrimary) { //小屏幕做主屏
+        if (rects.count() > 1) {
+            if (rects[primaryIndex].right() == rects[primaryIndex + 1].left()) {
+                auto span = rects[primaryIndex].width() / (rate * 2);
+                screenRect.moveTo(x1 + span, y1); //640，小屏幕在左边
+            }
+            else if (rects[1].right() == 0) {  //小屏幕在右边
+                screenRect.moveTo(x1, y1);
+            }
+            else if(rects[primaryIndex].bottom() == rects[primaryIndex + 1].top()) { //上
+                auto span = rects[primaryIndex].height() / (rate * 2);
+                screenRect.moveTo(x1 , y1 + span); //640，小屏幕在左边
+            }
+            else if (rects[1].bottom() == 0) {  //小屏幕在右边
+                screenRect.moveTo(x1, y1);
+            }            
+        }
+        else
+        {
+            screenRect.moveTo(x1 / rate, y1 / rate);
         }
     }
+    else {
+        screenRect.moveTo(x1 / rate, y1 / rate);
+    }
+    screenRect.setSize(desktopImage.size() / rate);
 
-    screenRect.setSize(desktopImage.size()/rate);
+    
     qDebug() << "ok";
 }
 void ScreenShoter::enumDesktopWindows()

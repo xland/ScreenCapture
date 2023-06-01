@@ -12,7 +12,7 @@ void MainWindow::initLayer()
 
 
     scaleFactor = metric(PdmDevicePixelRatioScaled) / devicePixelRatioFScale();
-    auto imgSize = ScreenShoter::Get()->desktopImage.size();
+    auto imgSize = ScreenShoter::Get()->screenRect.size()* scaleFactor;
     layerDrawingImg = new QImage(imgSize, QImage::Format_ARGB32);
     layerDrawingImg->setDevicePixelRatio(scaleFactor);
     layerDrawingImg->fill(0);
