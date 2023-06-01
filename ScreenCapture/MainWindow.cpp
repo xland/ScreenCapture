@@ -27,8 +27,7 @@ MainWindow::MainWindow(QWidget* parent)
     ui->setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose);
     this->setWindowFlags(Qt::Window | Qt::FramelessWindowHint);   //todo | Qt::WindowStaysOnTopHint
-    auto rect = ScreenShoter::Get()->screenRect;
-    this->setGeometry(rect);
+    this->setGeometry(ScreenShoter::Get()->screenRect);
     //qDebug() << this->x() << this->y();
     //this->move(ScreenShoter::Get()->screenRect.topLeft()/scaleFactor);
     
@@ -50,6 +49,7 @@ MainWindow::MainWindow(QWidget* parent)
     initToolPen();
     initToolEraser();
     initToolText();
+    repaint();
 }
 
 MainWindow::~MainWindow()

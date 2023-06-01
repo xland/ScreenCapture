@@ -27,28 +27,28 @@ void ScreenShoter::Dispose()
 void ScreenShoter::shotScreen()
 {
     auto screens = QGuiApplication::screens();
-    //x轴排序
-    for (size_t i = 0; i < screens.count() - 1; i++) {
-        for (size_t j = 0; j < screens.count() - 1 - i; j++) {
-            if (screens[j]->geometry().x() > screens[j + 1]->geometry().x()) {
-                auto s = screens[j + 1];
-                screens[j + 1] = screens[j];
-                screens[j] = s;
-            }
-        }
-    }
-    //y轴排序
-    for (size_t i = 0; i < screens.count() - 1; i++) {
-        for (size_t j = 0; j < screens.count() - 1 - i; j++) {
-            if (screens[j]->geometry().x() == screens[j + 1]->geometry().x()) {
-                if (screens[j]->geometry().y() > screens[j + 1]->geometry().y()) {
-                    auto s = screens[j + 1];
-                    screens[j + 1] = screens[j];
-                    screens[j] = s;
-                }
-            }
-        }
-    }
+    ////x轴排序
+    //for (size_t i = 0; i < screens.count() - 1; i++) {
+    //    for (size_t j = 0; j < screens.count() - 1 - i; j++) {
+    //        if (screens[j]->geometry().x() > screens[j + 1]->geometry().x()) {
+    //            auto s = screens[j + 1];
+    //            screens[j + 1] = screens[j];
+    //            screens[j] = s;
+    //        }
+    //    }
+    //}
+    ////y轴排序
+    //for (size_t i = 0; i < screens.count() - 1; i++) {
+    //    for (size_t j = 0; j < screens.count() - 1 - i; j++) {
+    //        if (screens[j]->geometry().x() == screens[j + 1]->geometry().x()) {
+    //            if (screens[j]->geometry().y() > screens[j + 1]->geometry().y()) {
+    //                auto s = screens[j + 1];
+    //                screens[j + 1] = screens[j];
+    //                screens[j] = s;
+    //            }
+    //        }
+    //    }
+    //}
     QList<QPixmap> pixmaps;
     qreal rate = 1.0;
     for (size_t i = 0; i < screens.count(); i++)
@@ -64,7 +64,7 @@ void ScreenShoter::shotScreen()
     for (size_t i = 0; i < screens.count(); i++)
     {
         auto rect = screens[i]->geometry();
-        rect.setSize(rect.size() * rate);
+        rect.setSize(rect.size() * rate); //注意这里，可能需要rate
         if (i != 0) {
             if (rect.x() > rects[i - 1].right()) {
                 rect.moveLeft(rects[i - 1].right());
@@ -99,82 +99,21 @@ void ScreenShoter::shotScreen()
         auto pos = transform.map(rects[i].topLeft());
         p.drawPixmap(pos/rate, pixmaps[i]);
     }
-    screenRect.moveTo(x1 / rate, y1 / rate);
-    desktopImage.save("desktopImage.png");
+    auto screenNumber = QApplication::desktop()->screenNumber();
+    qreal mainRate = screens[screenNumber]->devicePixelRatio();
+    if (mainRate == rate) {
+        screenRect.moveTo(x1 / rate, y1 / rate);
+    }
+    else {
+        if (x1 == 0) {
+            auto span = rects[screenNumber].width() / (rate * 2); //(rate * 2)
+            //span = 0;
+            screenRect.moveTo(x1 + span, y1);
+        }
+    }
+
+    screenRect.setSize(desktopImage.size()/rate);
     qDebug() << "ok";
-
-
-//#if defined(Q_OS_MACOS)
-//    QScreen* currentScreen = QGuiAppCurrentScreen().currentScreen();
-//    QPixmap screenPixmap(
-//        currentScreen->grabWindow(QApplication::desktop()->winId(),
-//            currentScreen->geometry().x(),
-//            currentScreen->geometry().y(),
-//            currentScreen->geometry().width(),
-//            currentScreen->geometry().height()));
-//    screenPixmap.setDevicePixelRatio(currentScreen->devicePixelRatio());
-//    return screenPixmap;
-    //int x1=0, y1=0,x2=0,y2=0;
-    //qreal rate = 1.0;
-    //int index = 0;
-    //for (QScreen* const screen : QGuiApplication::screens()) {
-    //    auto p = screen->grabWindow(0);
-    //    p.setDevicePixelRatio(screen->devicePixelRatio());
-    //    p.save(QString::number(index) + ".png");
-    //    index += 1;
-    //    QRect r = screen->geometry();
-    //    QRect r2 = screen->virtualGeometry();
-    //    qDebug() << r;
-    //    qDebug() << r2;
-    //    if (r.x() < x1) {
-    //        x1 = r.x();
-    //        if (r.x() + r.width() < 0) {
-    //            x1 -= (r.x() + r.width());
-    //        }
-    //    }
-    //    if (r.bottomRight().x() > x2) {
-    //        x2 = r.bottomRight().x();
-    //    }
-    //    if (r.y() < y1) {
-    //        y1 = r.y();
-    //        if (r.y() + r.height() < 0) {
-    //            y1 -= (r.y() + r.height());
-    //        }
-    //    }
-    //    if (r.bottomRight().y() > y2) {
-    //        y2 = r.bottomRight().y();
-    //    }
-    //    if (screen->devicePixelRatio() > rate) {
-    //        rate = screen->devicePixelRatio();
-    //    }
-    //}
-    //screenRect.adjust(x1, y1, x2, y2);
-    //screenRect = QApplication::primaryScreen()->virtualGeometry();
-    //QPixmap p(QApplication::primaryScreen()->grabWindow(
-    //    QApplication::desktop()->winId(),
-    //    screenRect.x()/1.25, screenRect.y()/1.25, screenRect.width()/1.25, screenRect.height()/1.25));
-    //p.setDevicePixelRatio(rate);
-    //desktopImage = p.toImage();
-    //desktopImage.save("desktopImage.png");
-    //qreal rate = 1.0;
-    //for (QScreen* const screen : QGuiApplication::screens()) {
-    //    QRect scrRect = screen->geometry();
-    //    qDebug() << scrRect;
-    //    scrRect.moveTo(scrRect.x() / screen->devicePixelRatio(), scrRect.y() / screen->devicePixelRatio());
-    //    screenRect = screenRect.united(scrRect);
-    //    if (screen->devicePixelRatio() > rate) {
-    //        rate = screen->devicePixelRatio();
-    //    }
-    //}
-    //QPixmap p(QApplication::primaryScreen()->grabWindow(
-    //    QApplication::desktop()->winId(),
-    //    screenRect.x(),
-    //    screenRect.y(),
-    //    screenRect.width(),
-    //    screenRect.height()));
-    //p.setDevicePixelRatio(rate);
-    //desktopImage = p.toImage();
-    //desktopImage.save("desktopImage.png");
 }
 void ScreenShoter::enumDesktopWindows()
 {
@@ -241,7 +180,7 @@ void ScreenShoter::Init(QObject* parent)
     {
         instance = new ScreenShoter(parent);
         instance->shotScreen();
-        instance->enumDesktopWindows();
+        //instance->enumDesktopWindows();
     }
 
 }
