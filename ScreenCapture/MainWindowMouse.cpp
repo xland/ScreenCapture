@@ -13,18 +13,17 @@ bool MainWindow::eventFilter(QObject* obj, QEvent* event)
     QMouseEvent* e = static_cast<QMouseEvent*>(event);
     if (event->type() == QEvent::MouseMove && !isMouseDown && state == "Start")
     {
-        //auto screenShoter = ScreenShoter::Get();
-        //for (size_t i = 0; i < screenShoter->windowRects.count(); i++)
-        //{
-        //    if (screenShoter->windowRects[i].contains(QCursor::pos())) {
-        //        auto rect = screenShoter->windowRects[i].toRect();
-        //        auto p1 = mapFromGlobal(rect.topLeft());
-        //        auto p2 = mapFromGlobal(rect.bottomRight());
-        //        setMask(p1,p2);
-        //        break;
-        //    }
-        //}
         moveTipBox();
+        auto p = e->pos();
+        auto screenShoter = ScreenShoter::Get();
+        for (size_t i = 0; i < screenShoter->windowRects.count(); i++)
+        {            
+            if (screenShoter->windowRects[i].contains(p)) {
+                auto& rect = screenShoter->windowRects[i];
+                setMask(rect.topLeft(), rect.bottomRight());
+                break;
+            }
+        }
     }
     if (obj->objectName() != "centralwidget")
     {

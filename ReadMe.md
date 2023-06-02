@@ -11,3 +11,4 @@
 - drawImage确实比内存拷贝更慢吗？
 - 通过鼠标移动截图区域
 - QVector转Qlist，append 用move
+- 其他的append是不是也可以move   

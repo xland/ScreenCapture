@@ -13,13 +13,18 @@ public:
     static void Init(QObject* parent);
     static ScreenShoter* Get();
     void enumDesktopWindows();
-    QRectF getHighlightWindowRect();
+    void adjustRect(QRect& rect);
+    void adjustRect2(QRect& rect);
     QImage desktopImage;
     QList<QRectF> windowRects;
-    QList<qreal> windowRectRates;
     QRect screenRect;
+    qreal rate = 1.0;
+    QTransform transform;
 
 private:
+    bool isSmallScreenPrimary = false;
+    int primaryIndex = 0;
+    QList<QRect> rects;
     explicit ScreenShoter(QObject* parent = nullptr);
     void shotScreen();
 };

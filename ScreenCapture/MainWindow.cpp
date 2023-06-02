@@ -27,7 +27,7 @@ MainWindow::MainWindow(QWidget* parent)
     ui->setupUi(this);
     hide();
     setAttribute(Qt::WA_DeleteOnClose);
-    this->setWindowFlags(Qt::Window | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);   //todo 
+    this->setWindowFlags(Qt::Window | Qt::FramelessWindowHint );   //todo | Qt::WindowStaysOnTopHint
     this->setGeometry(ScreenShoter::Get()->screenRect);
     //qDebug() << this->x() << this->y();
     //this->move(ScreenShoter::Get()->screenRect.topLeft()/scaleFactor);
