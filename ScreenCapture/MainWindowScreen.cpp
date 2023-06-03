@@ -63,7 +63,7 @@ void MainWindow::shotScreen()
         auto pos = transform.map(screenRects[i].topLeft());
         p.drawPixmap(pos / maxRate, pixmaps[i]);
     }
-    desktopImage->save("desktopImage.png");
+    //desktopImage->save("desktopImage.png");
 }
 
 
@@ -123,12 +123,36 @@ void MainWindow::adjustWindowToScreen()
         resize(screenRect.size());
     }
     else if (topLeft.x() == 0 && topLeft.y() < 0) {
-        //主显示器在下方并与副显示器左对其
-        //主显示器在下方左侧
-        auto x = screenRects[1].left();
-        auto r = screens[1]->devicePixelRatio();
-        move(topLeft.x()+x/(2*r), topLeft.y());
-        resize(screenRect.size());
+        if (0 - screenRects[1].y() == screenRects[1].height()) {
+            //主显示器在下方并与副显示器左对其
+            //主显示器在下方左侧
+            //主显示器在下方右侧
+            auto x = screenRects[1].left();
+            auto r = screens[1]->devicePixelRatio();
+            move(topLeft.x() + x / (2 * r), topLeft.y());
+            resize(screenRect.size());
+        }
+        else if(screenRects[0].bottom() <= screenRects[1].bottom())
+        {            
+            //主显示器在左侧中部
+            //主显示器在左侧并与副显示器底对齐
+            move(topLeft.x(), topLeft.y()/rate);
+            resize(screenRect.size()/rate);
+        }
+        else
+        {
+            //主显示器在左侧下方
+            auto r = screens[1]->devicePixelRatio();
+            auto span = screenRects[1].height() + screenRects[1].y();
+            move(topLeft.x(), topLeft.y()/r);
+            resize(screenRect.size());
+        }
+    }
+    else if (topLeft.x() == 0 && topLeft.y() == 0) {
+        //主显示器在左侧上方
+        //主显示器在左侧并与副显示器顶对齐
+        move(topLeft.x(), topLeft.y());
+        resize(screenRect.size()/rate);
     }
     else if (topLeft.x() > 0 && topLeft.y() < 0) {
         move(topLeft.x() * rate, topLeft.y());

@@ -50,6 +50,7 @@ bool MainWindow::eventFilter(QObject* obj, QEvent* event)
 bool MainWindow::mousePress(QMouseEvent* mouseEvent)
 {
     ui->tipBox->hide();
+    mousePressPoint = mapFromGlobal(QCursor::pos());
     if (mouseEvent->button() == Qt::RightButton)
     {
         if (this->textInputBox->isVisible())
@@ -68,7 +69,6 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
     }
     else if (mouseEvent->button() == Qt::LeftButton)
     {
-        mousePressPoint = mouseEvent->pos();
         isMouseDown = true;
         if (state == "Start")
         {
