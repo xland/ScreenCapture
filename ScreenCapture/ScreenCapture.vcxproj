@@ -22,6 +22,7 @@
     <ClCompile Include="MainWindowMask.cpp" />
     <ClCompile Include="MainWindowMouse.cpp" />
     <ClCompile Include="MainWindowPath.cpp" />
+    <ClCompile Include="MainWindowScreen.cpp" />
     <ClCompile Include="MainWindowTool.cpp" />
     <ClCompile Include="MainWindowUndoRedo.cpp" />
     <ClCompile Include="PathModel.cpp" />
@@ -54,6 +55,9 @@
   <ItemGroup>
     <None Include="..\.gitignore" />
     <None Include="..\ReadMe.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="test.txt" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{8896DEBF-4434-4D48-996F-E584B4C60ED8}</ProjectGuid>

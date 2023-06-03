@@ -1,10 +1,9 @@
 #include "MainWindow.h"
-#include "ScreenShoter.h"
 
 
 void MainWindow::initMask()
 {
-    auto size = ScreenShoter::Get()->desktopImage.size();
+    auto size = desktopImage->size();
     maskPath.moveTo(0 - maskBorderWidth, 0 - maskBorderWidth);
     maskPath.lineTo(size.width() + maskBorderWidth, 0 - maskBorderWidth);
     maskPath.lineTo(size.width() + maskBorderWidth, size.height() + maskBorderWidth);

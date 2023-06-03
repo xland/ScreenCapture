@@ -36,6 +36,18 @@ private:
     void saveToFile();
     void saveToClipboard();
 
+    qreal maxRate;
+    QRect screenRect;
+    QList<QRect> screenRects;
+    QImage* desktopImage = nullptr;
+    QList<QRect> windowRects;
+    void shotScreen();
+    int isPrimaryScreenLeft();
+    int isPrimaryScreenRight();
+    int isPrimaryScreenBottom();
+    int isPrimaryScreenTop();
+    void adjustWindowToScreen();
+
 
     ColorSelector* colorSelector;
     ButtonDot* dotRectEllipse;

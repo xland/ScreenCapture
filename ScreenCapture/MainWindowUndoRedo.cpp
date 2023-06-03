@@ -1,6 +1,5 @@
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
-#include "ScreenShoter.h"
 
 //todo 移动位置和大小后，没法还原
 //todo 上一步之后，画了新东西，要清除内存
@@ -8,7 +7,7 @@
 void MainWindow::jobLoop()
 {
     endOneDraw();
-    memcpy(layerBgImg->bits(), ScreenShoter::Get()->desktopImage.bits(), layerBgImg->sizeInBytes());
+    memcpy(layerBgImg->bits(), desktopImage->bits(), layerBgImg->sizeInBytes());
     for (int var = 0; var < paths.count(); ++var)
     {
         if (!paths[var]->needPaint)
@@ -17,21 +16,11 @@ void MainWindow::jobLoop()
         }
         if (paths[var]->isEraser)
         {
-//            memcpy(layerDrawingImg->bits(), layerBgImg->bits(), layerDrawingImg->sizeInBytes());
-//            memcpy(layerBgImg->bits(), ScreenShoter::Get()->desktopImage.bits(), layerBgImg->sizeInBytes());
-//            paintPath(paths[var], layerDrawingPainter);
-//            layerBgPainter->drawImage(0, 0, *layerDrawingImg);
             layerBgPainter->setCompositionMode(QPainter::CompositionMode_SourceOver);
             layerBgPainter->drawImage(paths[var]->patchPosition, paths[var]->patchImg);
         }
         else if (paths[var]->isMosaic)
         {
-//            initMosaic();
-//            paintPath(paths[var], layerBgPainter);
-//            memcpy(layerDrawingImg->bits(), layerMosaicImg->bits(), layerDrawingImg->sizeInBytes());
-//            layerDrawingPainter->drawImage(0, 0, *layerBgImg);
-//            memcpy(layerBgImg->bits(), layerDrawingImg->bits(), layerBgImg->sizeInBytes());
-//            layerDrawingImg->fill(0);
             layerBgPainter->setCompositionMode(QPainter::CompositionMode_SourceOver);
             layerBgPainter->drawImage(paths[var]->patchPosition, paths[var]->patchImg);
         }

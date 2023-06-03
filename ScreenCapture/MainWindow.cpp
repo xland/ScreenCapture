@@ -17,7 +17,6 @@
 #include <QStandardPaths>
 #include <QDateTime>
 #include <QMessageBox>
-#include "ScreenShoter.h"
 
 
 MainWindow::MainWindow(QWidget* parent)
@@ -25,13 +24,10 @@ MainWindow::MainWindow(QWidget* parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    hide();
+    shotScreen();
     setAttribute(Qt::WA_DeleteOnClose);
-    this->setWindowFlags(Qt::Window | Qt::FramelessWindowHint );   //todo | Qt::WindowStaysOnTopHint
-    this->setGeometry(ScreenShoter::Get()->screenRect);
-    //qDebug() << this->x() << this->y();
-    //this->move(ScreenShoter::Get()->screenRect.topLeft()/scaleFactor);
-    
+    this->setWindowFlags(Qt::Window | Qt::FramelessWindowHint);   //todo | Qt::WindowStaysOnTopHint
+    adjustWindowToScreen();
     ui->tipBox->setMouseTracking(false);
     ui->tipBox->hide();
     this->setFocusPolicy(Qt::StrongFocus);
@@ -50,7 +46,6 @@ MainWindow::MainWindow(QWidget* parent)
     initToolPen();
     initToolEraser();
     initToolText();
-    repaint();
 }
 
 MainWindow::~MainWindow()

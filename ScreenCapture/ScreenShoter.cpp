@@ -28,51 +28,18 @@ void ScreenShoter::shotScreen()
 {
     auto screens = QGuiApplication::screens();
     primaryIndex = QApplication::desktop()->screenNumber();
-    ////x轴排序
-    //for (size_t i = 0; i < screens.count() - 1; i++) {
-    //    for (size_t j = 0; j < screens.count() - 1 - i; j++) {
-    //        if (screens[j]->geometry().x() > screens[j + 1]->geometry().x()) {
-    //            auto s = screens[j + 1];
-    //            screens[j + 1] = screens[j];
-    //            screens[j] = s;
-    //        }
-    //    }
-    //}
-    ////y轴排序
-    //for (size_t i = 0; i < screens.count() - 1; i++) {
-    //    for (size_t j = 0; j < screens.count() - 1 - i; j++) {
-    //        if (screens[j]->geometry().x() == screens[j + 1]->geometry().x()) {
-    //            if (screens[j]->geometry().y() > screens[j + 1]->geometry().y()) {
-    //                auto s = screens[j + 1];
-    //                screens[j + 1] = screens[j];
-    //                screens[j] = s;
-    //            }
-    //        }
-    //    }
-    //}
     QList<QPixmap> pixmaps;
-    qreal tempSize = 0;    
+    qreal tempSize = 0;
+    int x1 = 999999, y1 = 999999, x2 = -999999, y2 = -999999;
     for (size_t i = 0; i < screens.count(); i++)
     {        
         auto p = screens[i]->grabWindow(0);
         pixmaps.append(std::move(p));
         auto r = screens[i]->devicePixelRatio();
-        auto size = screens[i]->physicalSize();
-        auto sizeVal = size.width() * size.height();
-        if (tempSize < sizeVal) {
-            if (i != primaryIndex) {
-                isSmallScreenPrimary = true;
-            }
-            else {
-                isSmallScreenPrimary = false;
-            }
-            rate = r;
-            tempSize = sizeVal;
+        if (rate < r) {
+            rate = r; //找到最大的缩放比例
         }
-    }
-    int x1 = 999999, y1 = 999999, x2 = -999999, y2 = -999999;    
-    for (size_t i = 0; i < screens.count(); i++)
-    {
+
         auto rect = screens[i]->geometry();
         rect.setSize(rect.size() * screens[i]->devicePixelRatio()); //注意这里，可能需要rate
         if (i != 0) {
@@ -109,8 +76,8 @@ void ScreenShoter::shotScreen()
         p.drawPixmap(pos/rate, pixmaps[i]);
     }
     //desktopImage.save("desktopImage.png");
-    adjustRect(screenRect);
-    screenRect.setSize(desktopImage.size() / rate);
+    //adjustRect(screenRect);
+    //screenRect.setSize(desktopImage.size() / rate);
 }
 void ScreenShoter::adjustRect(QRect& rect)
 {

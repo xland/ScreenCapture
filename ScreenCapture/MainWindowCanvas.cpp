@@ -1,6 +1,5 @@
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
-#include "ScreenShoter.h"
 #include <QImage>
 #include <QDateTime>
 #include <QDebug>
@@ -9,10 +8,8 @@
 
 void MainWindow::initLayer()
 {
-
-
     scaleFactor = metric(PdmDevicePixelRatioScaled) / devicePixelRatioFScale();
-    auto imgSize = ScreenShoter::Get()->screenRect.size()* scaleFactor;
+    auto imgSize = screenRect.size()* scaleFactor;
     layerDrawingImg = new QImage(imgSize, QImage::Format_ARGB32);
     layerDrawingImg->setDevicePixelRatio(scaleFactor);
     layerDrawingImg->fill(0);
@@ -25,7 +22,7 @@ void MainWindow::initLayer()
     layerBgPainter = new QPainter(layerBgImg);
     layerBgPainter->setRenderHint(QPainter::Antialiasing, true);
     //layerBgPainter->setRenderHint(QPainter::SmoothPixmapTransform, true);
-    layerBgPainter->drawImage(0, 0, ScreenShoter::Get()->desktopImage);
+    layerBgPainter->drawImage(0, 0, *desktopImage);
 
     layerMosaicImg = new QImage(imgSize, QImage::Format_ARGB32);
     layerMosaicImg->setDevicePixelRatio(scaleFactor);

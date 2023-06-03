@@ -6,7 +6,6 @@
 #include <QCoreApplication>
 #include <QTextFrame>
 #include <QScreen>
-#include "ScreenShoter.h"
 
 bool MainWindow::eventFilter(QObject* obj, QEvent* event)
 {
@@ -15,11 +14,10 @@ bool MainWindow::eventFilter(QObject* obj, QEvent* event)
     {
         moveTipBox();
         auto p = e->pos();
-        auto screenShoter = ScreenShoter::Get();
-        for (size_t i = 0; i < screenShoter->windowRects.count(); i++)
-        {            
-            if (screenShoter->windowRects[i].contains(p)) {
-                auto& rect = screenShoter->windowRects[i];
+        for (size_t i = 0; i < windowRects.count(); i++)
+        {
+            auto& rect = windowRects[i];
+            if (rect.contains(p)) {
                 setMask(rect.topLeft(), rect.bottomRight());
                 break;
             }
@@ -161,7 +159,7 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
             //把bg图层拷贝到drawing图层
             memcpy(layerDrawingImg->bits(), layerBgImg->bits(), layerDrawingImg->sizeInBytes());
             //把底层图像拷贝到bg图层，橡皮擦是镂空的路径，画在drawing图层上，这样看上去就是把以前画的路径擦掉了
-            memcpy(layerBgImg->bits(), ScreenShoter::Get()->desktopImage.bits(), layerBgImg->sizeInBytes());
+            memcpy(layerBgImg->bits(), desktopImage->bits(), layerBgImg->sizeInBytes());
             isDrawing = true;
             auto path = createPath();
             path->borderWidth = dotEraser->size;
