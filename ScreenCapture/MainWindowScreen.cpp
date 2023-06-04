@@ -1,4 +1,4 @@
-#include "MainWindow.h"
+ï»¿#include "MainWindow.h"
 #include <QScreen>
 #include <QGuiApplication>
 #include <Windows.h>
@@ -17,38 +17,21 @@ void MainWindow::shotScreen()
     int x1 = 999999, y1 = 999999, x2 = -999999, y2 = -999999;
     for (size_t i = 0; i < screens.count(); i++)
     {
-
-        auto screen = QGuiApplication::primaryScreen();
-        auto windowId = QApplication::desktop()->winId();
-        auto height = GetSystemMetrics(SM_CYVIRTUALSCREEN);
-        auto width = GetSystemMetrics(SM_CXVIRTUALSCREEN);
-        auto x = GetSystemMetrics(SM_XVIRTUALSCREEN);
-        auto y = GetSystemMetrics(SM_YVIRTUALSCREEN);
-
-        QRect rect1{ x, y, width, height };
-        auto rectPosition = rect1.topLeft();
-        auto img1 = screen->grabWindow(windowId, rectPosition.x(), rectPosition.y(), rect1.width(), rect1.height());
-        img1.save("img1.png");
-
         auto p = screens[i]->grabWindow(0);
         pixmaps.append(std::move(p));
         auto r = screens[i]->devicePixelRatio();
         if (maxRate < r) {
-            maxRate = r; //ÕÒµ½×î´óµÄËõ·Å±ÈÀý
+            maxRate = r; 
         }
         auto rect = screens[i]->geometry();
-        rect.setSize(rect.size() * screens[i]->devicePixelRatio()); //×¢ÒâÕâÀï£¬¿ÉÄÜÐèÒªrate
-        if (i != 0) {  //ÓÐµÄÊ±ºòÖÐ¼ä»áÓÐ¸ö·ì£¬ÕâÀï¾ÍÊÇÒªºÏ²¢Õâ¸ö·ì
+        rect.setSize(rect.size() * screens[i]->devicePixelRatio()); 
+        if (i != 0) {  
             if (rect.x() > screenRects[i - 1].right()) {
                 rect.moveLeft(screenRects[i - 1].right());
             }
             if (rect.y() > screenRects[i - 1].bottom()) {
                 rect.moveTop(screenRects[i - 1].bottom());
             }
-            //if (rect.x()<=21) {
-            //    //µ±Ö÷ÆÁÔÚµ×²¿Óë¸±ÆÁ×ó¶ÔÆëÊ±£¬¸±ÆÁ¿ÉÊÓÇøÓòµÄxÎª21,ÔÝÊ±²»ÖªµÀÎªÊ²Ã´
-            //    rect.moveLeft(0);
-            //}
         }
         if (rect.x() < x1) {
             x1 = rect.x();
@@ -76,166 +59,50 @@ void MainWindow::shotScreen()
         auto pos = transform.map(screenRects[i].topLeft());
         p.drawPixmap(pos / maxRate, pixmaps[i]);
     }
-    desktopImage->save("desktopImage.png");
+    //desktopImage->save("desktopImage.png");
 }
 
 
-int MainWindow::isPrimaryScreenLeft()
-{
-    for (size_t i = 1; i < screenRects.count(); i++)
-    {
-        if (screenRects[i].left() < screenRects[0].left()) {
-            return false;
-        }
-    }
-    return true;
-}
-int MainWindow::isPrimaryScreenRight()
-{
-    for (size_t i = 1; i < screenRects.count(); i++)
-    {
-        if (screenRects[i].right() > screenRects[0].right()) {
-            return false;
-        }
-    }
-    return true;
-}
-int MainWindow::isPrimaryScreenBottom()
-{
-    for (size_t i = 1; i < screenRects.count(); i++)
-    {
-        if (screenRects[i].bottom() > screenRects[0].bottom()) {
-            return false;
-        }
-    }
-    return true;
-}
-int MainWindow::isPrimaryScreenTop()
-{
-    for (size_t i = 1; i < screenRects.count(); i++)
-    {
-        if (screenRects[i].top() < screenRects[0].top()) {
-            return false;
-        }
-    }
-    return true;
-}
 
 void MainWindow::adjustWindowToScreen()
 {
+    auto desktopGeometry = QApplication::desktop()->geometry();
+    //desktopGeometry.moveLeft(desktopGeometry.left() - 100);
+    //desktopGeometry.moveTop(desktopGeometry.top() - 100);
+    //desktopGeometry.moveLeft(desktopGeometry.left() + 100);
+    //desktopGeometry.moveTop(desktopGeometry.top() + 100);
+    setGeometry(desktopGeometry);
+    QWidget::show();
+    setGeometry(desktopGeometry);
+    QWidget::show();
+
     auto screens = QGuiApplication::screens();
-    //QDesktopWidget* desktopWidget = qApp->desktop();
-    //QRect secondScreenGeometry = desktopWidget->screenGeometry(0);
-    //this->setGeometry(secondScreenGeometry);
-    //showFullScreen();
-    screenRect.setSize(screenRect.size() / maxRate);
-    setGeometry(screenRect);
-    if (screenRects[1].left() < screenRects[0].right()) {
-        auto span = screenRects[0].right() - screenRects[1].left();
-        screenRect.moveLeft(296);
-        setGeometry(screenRect);
+    if (screens[0]->devicePixelRatio() > screens[1]->devicePixelRatio() || screenRects[0].size() > screenRects[1].size()) {
+        //å¦‚æžœä¸»å±çš„ç¼©æ”¾æ¯”ä¾‹ï¼Œæ¯”å‰¯å±é«˜
+        paintPosition.setX(0);
+        paintPosition.setY(0);
+        return;
     }
-    return;
-    auto rate = screens[0]->devicePixelRatio();
-    auto topLeft = screenRect.topLeft();
-    if (topLeft.x() < 0 && topLeft.y() < 0) {
-        //Ö÷ÏÔÊ¾Æ÷ÔÚÏÂ·½ÖÐ²¿
-        
-    }
-    else if (topLeft.x() == 0 && topLeft.y() < 0) {
-        if (0 - screenRects[1].y() == screenRects[1].height()) {
-            //Ö÷ÏÔÊ¾Æ÷ÔÚÏÂ·½²¢Óë¸±ÏÔÊ¾Æ÷×ó¶ÔÆë
-            //Ö÷ÏÔÊ¾Æ÷ÔÚÏÂ·½×ó²à
-            //Ö÷ÏÔÊ¾Æ÷ÔÚÏÂ·½ÓÒ²à
-            auto x = screenRects[1].left();
-            auto r = screens[1]->devicePixelRatio();
-            move(topLeft.x() + x / (2 * r), topLeft.y());
-            resize(screenRect.size()/rate);
-        }
-        else if(screenRects[0].bottom() <= screenRects[1].bottom())
-        {            
-            //Ö÷ÏÔÊ¾Æ÷ÔÚ×ó²àÖÐ²¿
-            //Ö÷ÏÔÊ¾Æ÷ÔÚ×ó²à²¢Óë¸±ÏÔÊ¾Æ÷µ×¶ÔÆë
-            move(topLeft.x(), topLeft.y()/rate);
-            resize(screenRect.size()/rate);
+
+
+    if (std::abs(screenRects[0].right() - screenRects[1].left()) < 4) {
+        //ä¸»å±åœ¨å·¦ä¾§
+        auto span = screenRects[0].width() / (maxRate * 2);
+        if (span > 640) span = span / 2;
+        span = 0;
+        auto x = screenRects[0].x() + span;
+        paintPosition.setX(x);
+        if (screenRects[0].top() < screenRects[1].top()) {
+            //ä¸»å±åœ¨å·¦ä¾§ä¸Šæ–¹
+            span = screenRects[1].top() - screenRects[0].top();//594
+            span = span/ (maxRate * 2);
+            paintPosition.setY(screenRects[0].y()+span);
         }
         else
         {
-            //Ö÷ÏÔÊ¾Æ÷ÔÚ×ó²àÏÂ·½
-            auto r = screens[1]->devicePixelRatio();
-            auto span1 = screenRects[0].bottom();
-            auto span2 = screenRects[1].bottom();
-            auto span = span1 - span2;
-            auto x = screenRects[1].top() / (2 * r);
-            resize(screenRect.size() / rate);
-            move(topLeft.x(), topLeft.y());
+            paintPosition.setY(screenRects[0].y());
         }
     }
-    else if (topLeft.x() == 0 && topLeft.y() == 0) {
-        //Ö÷ÏÔÊ¾Æ÷ÔÚ×ó²àÉÏ·½
-        //Ö÷ÏÔÊ¾Æ÷ÔÚ×ó²à²¢Óë¸±ÏÔÊ¾Æ÷¶¥¶ÔÆë
-        move(topLeft.x(), topLeft.y());
-        resize(screenRect.size()/rate);
-    }
-    else if (topLeft.x() > 0 && topLeft.y() < 0) {
-        move(topLeft.x() * rate, topLeft.y());
-        resize(screenRect.size());
-
+    
+    
 }
-    else if(topLeft.x() >= 0 || topLeft.y() >= 0)
-    {
-        move(topLeft.x(), topLeft.y());
-        resize(screenRect.size() / rate);
-    }
-    else if(topLeft.x() < 0)
-    {
-        move(topLeft.x() / rate, topLeft.y());
-        resize(screenRect.size() / rate);
-    }
-    else if (topLeft.y() < 0) {
-        move(topLeft.x(), topLeft.y() / rate);
-        resize(screenRect.size() / rate);
-    }
-}
-
-
-//void MainWindow::adjustWindowToScreen()
-//{    
-//    if (isHighRateScreenPrimary) {
-//        //¸ßËõ·Å±ÈÀýµÄÆÁÄ»ÊÇÖ÷ÆÁ£¬ÕâÑù´¦Àí¾Í¹»ÁË
-//        move(screenRect.topLeft() / maxRate);
-//        resize(screenRect.size() / maxRate);
-//    }
-//    else
-//    {
-//        //¸ßËõ·Å±ÈÀýµÄÆÁÄ»²»ÊÇÖ÷ÆÁ
-//        auto topLeft = screenRect.topLeft();
-//        move(topLeft.x(), topLeft.y());
-//        resize(screenRect.size()*maxRate);
-//        if (isPrimaryScreenTop())
-//        {
-//            //Ö÷ÆÁÔÚÉÏ±ß
-//            auto span = screenRects[0].height() / (maxRate * 2);
-//            move(topLeft.x(), topLeft.y() + span);
-//            resize(screenRect.size());
-//        }
-//        else if (isPrimaryScreenBottom())
-//        {
-//            //Ö÷ÆÁÔÚÏÂ±ß
-//            move(topLeft.x(), topLeft.y());
-//            resize(screenRect.size());
-//        }
-//        else if (isPrimaryScreenLeft()) {
-//            //Ö÷ÆÁÔÚ×ó±ß
-//            auto span = screenRects[0].width() / (maxRate * 2);
-//            move(topLeft.x()+span, topLeft.y());
-//            resize(screenRect.size());
-//        }
-//        else if(isPrimaryScreenRight())
-//        {
-//            //Ö÷ÆÁÔÚÓÒ±ß
-//            move(topLeft.x(), topLeft.y());
-//            resize(screenRect.size());
-//        }        
-//    }
-//}

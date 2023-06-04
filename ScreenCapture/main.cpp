@@ -12,6 +12,5 @@ int main(int argc, char* argv[])
     QApplication a(argc, argv);
     Icon::Init();
     MainWindow w;
-    w.show();
     return a.exec();
 }

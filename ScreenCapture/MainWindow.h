@@ -41,11 +41,8 @@ private:
     QList<QRect> screenRects;
     QImage* desktopImage = nullptr;
     QList<QRect> windowRects;
+    QPoint paintPosition;
     void shotScreen();
-    int isPrimaryScreenLeft();
-    int isPrimaryScreenRight();
-    int isPrimaryScreenBottom();
-    int isPrimaryScreenTop();
     void adjustWindowToScreen();
 
 

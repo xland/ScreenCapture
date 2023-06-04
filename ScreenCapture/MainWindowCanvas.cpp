@@ -9,7 +9,7 @@
 void MainWindow::initLayer()
 {
     scaleFactor = metric(PdmDevicePixelRatioScaled) / devicePixelRatioFScale();
-    auto imgSize = screenRect.size()* scaleFactor;
+    auto imgSize = this->size()*scaleFactor;
     layerDrawingImg = new QImage(imgSize, QImage::Format_ARGB32);
     layerDrawingImg->setDevicePixelRatio(scaleFactor);
     layerDrawingImg->fill(0);
@@ -64,6 +64,7 @@ void MainWindow::initMosaic()
 void MainWindow::paintEvent(QPaintEvent* e)
 {
     Q_UNUSED(e);
+    auto g = this->geometry();
     QPainter p(this);
     p.setRenderHint(QPainter::Antialiasing, true);
 //  p.setRenderHint(QPainter::SmoothPixmapTransform, true);
@@ -71,7 +72,7 @@ void MainWindow::paintEvent(QPaintEvent* e)
     {
         p.drawImage(0, 0, *layerMosaicImg);
     }
-    p.drawImage(0, 0, *layerBgImg);
+    p.drawImage(paintPosition, *layerBgImg);
     if (isDrawing)
     {
         p.drawImage(0, 0, *layerDrawingImg);
