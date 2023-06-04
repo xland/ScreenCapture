@@ -17,6 +17,19 @@ void MainWindow::shotScreen()
     int x1 = 999999, y1 = 999999, x2 = -999999, y2 = -999999;
     for (size_t i = 0; i < screens.count(); i++)
     {
+
+        auto screen = QGuiApplication::primaryScreen();
+        auto windowId = QApplication::desktop()->winId();
+        auto height = GetSystemMetrics(SM_CYVIRTUALSCREEN);
+        auto width = GetSystemMetrics(SM_CXVIRTUALSCREEN);
+        auto x = GetSystemMetrics(SM_XVIRTUALSCREEN);
+        auto y = GetSystemMetrics(SM_YVIRTUALSCREEN);
+
+        QRect rect1{ x, y, width, height };
+        auto rectPosition = rect1.topLeft();
+        auto img1 = screen->grabWindow(windowId, rectPosition.x(), rectPosition.y(), rect1.width(), rect1.height());
+        img1.save("img1.png");
+
         auto p = screens[i]->grabWindow(0);
         pixmaps.append(std::move(p));
         auto r = screens[i]->devicePixelRatio();
@@ -63,7 +76,7 @@ void MainWindow::shotScreen()
         auto pos = transform.map(screenRects[i].topLeft());
         p.drawPixmap(pos / maxRate, pixmaps[i]);
     }
-    //desktopImage->save("desktopImage.png");
+    desktopImage->save("desktopImage.png");
 }
 
 
@@ -111,26 +124,33 @@ int MainWindow::isPrimaryScreenTop()
 void MainWindow::adjustWindowToScreen()
 {
     auto screens = QGuiApplication::screens();
-    QDesktopWidget* desktopWidget = qApp->desktop();
-    QRect secondScreenGeometry = desktopWidget->screenGeometry(0);
-    this->setGeometry(secondScreenGeometry);
-    showFullScreen();
+    //QDesktopWidget* desktopWidget = qApp->desktop();
+    //QRect secondScreenGeometry = desktopWidget->screenGeometry(0);
+    //this->setGeometry(secondScreenGeometry);
+    //showFullScreen();
+    screenRect.setSize(screenRect.size() / maxRate);
+    setGeometry(screenRect);
+    if (screenRects[1].left() < screenRects[0].right()) {
+        auto span = screenRects[0].right() - screenRects[1].left();
+        screenRect.moveLeft(296);
+        setGeometry(screenRect);
+    }
+    return;
     auto rate = screens[0]->devicePixelRatio();
     auto topLeft = screenRect.topLeft();
     if (topLeft.x() < 0 && topLeft.y() < 0) {
         //主显示器在下方中部
-        move(topLeft.x(), topLeft.y());
-        resize(screenRect.size());
+        
     }
     else if (topLeft.x() == 0 && topLeft.y() < 0) {
         if (0 - screenRects[1].y() == screenRects[1].height()) {
-            //主显示器在下方并与副显示器左对其
+            //主显示器在下方并与副显示器左对齐
             //主显示器在下方左侧
             //主显示器在下方右侧
             auto x = screenRects[1].left();
             auto r = screens[1]->devicePixelRatio();
             move(topLeft.x() + x / (2 * r), topLeft.y());
-            resize(screenRect.size());
+            resize(screenRect.size()/rate);
         }
         else if(screenRects[0].bottom() <= screenRects[1].bottom())
         {            
@@ -143,9 +163,12 @@ void MainWindow::adjustWindowToScreen()
         {
             //主显示器在左侧下方
             auto r = screens[1]->devicePixelRatio();
-            auto span = screenRects[1].height() + screenRects[1].y();
-            move(topLeft.x(), topLeft.y()/r);
-            resize(screenRect.size());
+            auto span1 = screenRects[0].bottom();
+            auto span2 = screenRects[1].bottom();
+            auto span = span1 - span2;
+            auto x = screenRects[1].top() / (2 * r);
+            resize(screenRect.size() / rate);
+            move(topLeft.x(), topLeft.y());
         }
     }
     else if (topLeft.x() == 0 && topLeft.y() == 0) {
@@ -157,7 +180,8 @@ void MainWindow::adjustWindowToScreen()
     else if (topLeft.x() > 0 && topLeft.y() < 0) {
         move(topLeft.x() * rate, topLeft.y());
         resize(screenRect.size());
-    }
+
+}
     else if(topLeft.x() >= 0 || topLeft.y() >= 0)
     {
         move(topLeft.x(), topLeft.y());
