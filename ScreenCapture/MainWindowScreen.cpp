@@ -7,6 +7,7 @@
 #include <qdesktopwidget.h>
 #include <qwindow.h>
 #include "qdebug.h"
+#include <qtimer.h>
 
 
 void MainWindow::shotScreen()
@@ -63,46 +64,27 @@ void MainWindow::shotScreen()
 }
 
 
-
 void MainWindow::adjustWindowToScreen()
 {
-    auto desktopGeometry = QApplication::desktop()->geometry();
-    //desktopGeometry.moveLeft(desktopGeometry.left() - 100);
-    //desktopGeometry.moveTop(desktopGeometry.top() - 100);
-    //desktopGeometry.moveLeft(desktopGeometry.left() + 100);
-    //desktopGeometry.moveTop(desktopGeometry.top() + 100);
-    setGeometry(desktopGeometry);
-    QWidget::show();
-    setGeometry(desktopGeometry);
-    QWidget::show();
-
     auto screens = QGuiApplication::screens();
-    if (screens[0]->devicePixelRatio() > screens[1]->devicePixelRatio() || screenRects[0].size() > screenRects[1].size()) {
-        //如果主屏的缩放比例，比副屏高
-        paintPosition.setX(0);
-        paintPosition.setY(0);
-        return;
-    }
-
-
-    if (std::abs(screenRects[0].right() - screenRects[1].left()) < 4) {
-        //主屏在左侧
-        auto span = screenRects[0].width() / (maxRate * 2);
-        if (span > 640) span = span / 2;
-        span = 0;
-        auto x = screenRects[0].x() + span;
-        paintPosition.setX(x);
-        if (screenRects[0].top() < screenRects[1].top()) {
-            //主屏在左侧上方
-            span = screenRects[1].top() - screenRects[0].top();//594
-            span = span/ (maxRate * 2);
-            paintPosition.setY(screenRects[0].y()+span);
-        }
-        else
-        {
-            paintPosition.setY(screenRects[0].y());
-        }
-    }
     
-    
+    if (screens.count()>1 && screens[0]->devicePixelRatio() > screens[1]->devicePixelRatio()) {
+        //主屏缩放比例大于副屏缩放比例
+        //必须让它在抖动中show两次，不然有问题
+        auto desktopGeometry = QApplication::desktop()->geometry();
+        desktopGeometry.moveLeft(desktopGeometry.left() - 100);
+        desktopGeometry.moveTop(desktopGeometry.top() - 100);
+        setGeometry(desktopGeometry);
+        QWidget::show();
+        desktopGeometry.moveLeft(desktopGeometry.left() + 100);
+        desktopGeometry.moveTop(desktopGeometry.top() + 100);
+        this->setGeometry(desktopGeometry);
+        QWidget::show();
+    }
+    else
+    {
+        setGeometry(screenRect);
+        QWidget::show();
+        
+    } 
 }

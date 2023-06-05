@@ -57,6 +57,7 @@ MainWindow::~MainWindow()
     delete layerDrawingImg;
     delete layerBgImg;
     delete layerMosaicImg;
+    delete desktopImage;
 
     delete ui;
 }

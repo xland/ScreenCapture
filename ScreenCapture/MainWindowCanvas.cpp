@@ -72,7 +72,7 @@ void MainWindow::paintEvent(QPaintEvent* e)
     {
         p.drawImage(0, 0, *layerMosaicImg);
     }
-    p.drawImage(paintPosition, *layerBgImg);
+    p.drawImage(0,0, *layerBgImg);
     if (isDrawing)
     {
         p.drawImage(0, 0, *layerDrawingImg);

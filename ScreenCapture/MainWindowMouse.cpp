@@ -158,8 +158,8 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
             endOneDraw();
             //把bg图层拷贝到drawing图层
             memcpy(layerDrawingImg->bits(), layerBgImg->bits(), layerDrawingImg->sizeInBytes());
-            //把底层图像拷贝到bg图层，橡皮擦是镂空的路径，画在drawing图层上，这样看上去就是把以前画的路径擦掉了
-            memcpy(layerBgImg->bits(), desktopImage->bits(), layerBgImg->sizeInBytes());
+            //把桌面图像拷贝到bg图层，橡皮擦是镂空的路径，画在drawing图层上，这样看上去就是把以前画的路径擦掉了
+            layerBgPainter->drawImage(0, 0, *desktopImage);
             isDrawing = true;
             auto path = createPath();
             path->borderWidth = dotEraser->size;
