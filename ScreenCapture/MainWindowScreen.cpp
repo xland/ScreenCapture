@@ -60,7 +60,7 @@ void MainWindow::shotScreen()
         auto pos = transform.map(screenRects[i].topLeft());
         p.drawPixmap(pos / maxRate, pixmaps[i]);
     }
-    //desktopImage->save("desktopImage.png");
+    desktopImage->save("desktopImage.png");
 }
 
 
@@ -87,4 +87,42 @@ void MainWindow::adjustWindowToScreen()
         QWidget::show();
         
     } 
+}
+
+void MainWindow::initWindowRects()
+{
+    EnumWindows([](HWND hwnd, LPARAM lparam)
+        {
+            if (!IsWindowVisible(hwnd)) return TRUE;
+            if (IsIconic(hwnd)) return TRUE;
+            if (GetWindowTextLength(hwnd) < 1) return TRUE;
+            auto self = (MainWindow*)lparam;
+            RECT rect;
+            GetWindowRect(hwnd, &rect);
+            QRect item;
+            item.adjust(rect.left / self->maxRate, rect.top / self->maxRate, rect.right / self->maxRate, rect.bottom / self->maxRate);
+            if (item.width() <= 6 || item.height() <= 6) {
+                return TRUE;
+            }
+            self->windowRects.append(std::move(item));
+            /*QPoint leftTop = self->transform.map(item.topLeft() / rate);
+            item.moveTo(leftTop);
+            item.setSize(item.size() / rate);
+            instance->adjustRect2(item);*/
+            //std::string title;
+            //title.reserve(GetWindowTextLength(hwnd) + 1);
+            //GetWindowTextA(hwnd, const_cast<CHAR*>(title.c_str()), title.capacity());            
+            //OutputDebugStringA(title.c_str());
+            //OutputDebugStringA("\r\n");            
+            //QString a = QString::fromLatin1(title.data());
+            //if (a.startsWith("asd.txt")) {
+            //    QPainter p(self->desktopImage);
+            //    p.setPen(QPen(QBrush(Qt::red), 3, Qt::SolidLine, Qt::RoundCap));
+            //    p.setBrush(Qt::NoBrush);
+            //    p.drawRect(item);
+            //    //instance->desktopImage.save("desktopImage.png");
+            //}
+
+            return TRUE;
+        }, (LPARAM)this);
 }

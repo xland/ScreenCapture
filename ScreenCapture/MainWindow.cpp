@@ -25,6 +25,7 @@ MainWindow::MainWindow(QWidget* parent)
 {
     ui->setupUi(this);
     shotScreen();
+    initWindowRects();
     setAttribute(Qt::WA_DeleteOnClose);
     this->setWindowFlags(Qt::Window | Qt::FramelessWindowHint);   //todo | Qt::WindowStaysOnTopHint
     adjustWindowToScreen();

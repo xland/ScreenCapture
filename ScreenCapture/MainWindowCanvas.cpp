@@ -9,7 +9,7 @@
 void MainWindow::initLayer()
 {
     scaleFactor = metric(PdmDevicePixelRatioScaled) / devicePixelRatioFScale();
-    auto imgSize = this->size()*scaleFactor;
+    auto imgSize = this->size();
     layerDrawingImg = new QImage(imgSize, QImage::Format_ARGB32);
     layerDrawingImg->setDevicePixelRatio(scaleFactor);
     layerDrawingImg->fill(0);
@@ -36,10 +36,14 @@ void MainWindow::initLayer()
 
 void MainWindow::initMosaic()
 {
+
+    //todo 实际上在鼠标移动过程中，在layerbg上画鼠标附近区域的马赛克即可。鼠标释放时，合并一下图层即可
     int mosaicRectSize = 6;
-    for (int var1 = 0; var1 < layerBgImg->width(); var1 += mosaicRectSize)
+    int w = layerBgImg->width() - mosaicRectSize;
+    int h = layerBgImg->height() - mosaicRectSize;
+    for (int var1 = 0; var1 < w; var1 += mosaicRectSize)
     {
-        for (int var2 = 0; var2 < layerBgImg->height(); var2 += mosaicRectSize)
+        for (int var2 = 0; var2 < h; var2 += mosaicRectSize)
         {
             auto color0 = layerBgImg->pixelColor(var1 + 1, var2 + 1);
             auto color1 = layerBgImg->pixelColor(var1 + mosaicRectSize - 1, var2 + 1);
@@ -50,21 +54,21 @@ void MainWindow::initMosaic()
             auto g = color0.green() + color1.green() + color2.green() + color3.green() + color4.green();
             auto b = color0.blue() + color1.blue() + color2.blue() + color3.blue() + color4.blue();
             QColor c(r / 5, g / 5, b / 5);
-            for (int var3 = 0; var3 < mosaicRectSize; ++var3)
+            for (int var3 = var1; var3 < var1+mosaicRectSize; ++var3)
             {
-                for (int var4 = 0; var4 < mosaicRectSize; ++var4)
+                for (int var4 = var2; var4 < var2+mosaicRectSize; ++var4)
                 {
-                    layerMosaicImg->setPixelColor(var1 + var3, var2 + var4, c);
+                    layerMosaicImg->setPixelColor(var3, var4, c);
                 }
             }
         }
     }
+    //layerMosaicImg->save("layerMosaicImg.png");
 }
 
 void MainWindow::paintEvent(QPaintEvent* e)
 {
     Q_UNUSED(e);
-    auto g = this->geometry();
     QPainter p(this);
     p.setRenderHint(QPainter::Antialiasing, true);
 //  p.setRenderHint(QPainter::SmoothPixmapTransform, true);

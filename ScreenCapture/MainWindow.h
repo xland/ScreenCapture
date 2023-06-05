@@ -44,6 +44,7 @@ private:
     QPoint paintPosition;
     void shotScreen();
     void adjustWindowToScreen();
+    void initWindowRects();
 
 
     ColorSelector* colorSelector;

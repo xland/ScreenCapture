@@ -13,11 +13,14 @@ bool MainWindow::eventFilter(QObject* obj, QEvent* event)
     if (event->type() == QEvent::MouseMove && !isMouseDown && state == "Start")
     {
         moveTipBox();
+        //setMask({ 100,100 }, {200,200});
         auto p = e->pos();
         for (size_t i = 0; i < windowRects.count(); i++)
         {
             auto& rect = windowRects[i];
             if (rect.contains(p)) {
+                qDebug() << p;
+                qDebug() << rect;
                 setMask(rect.topLeft(), rect.bottomRight());
                 break;
             }
@@ -159,6 +162,8 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
             //把bg图层拷贝到drawing图层
             memcpy(layerDrawingImg->bits(), layerBgImg->bits(), layerDrawingImg->sizeInBytes());
             //把桌面图像拷贝到bg图层，橡皮擦是镂空的路径，画在drawing图层上，这样看上去就是把以前画的路径擦掉了
+            //memcpy(layerBgImg->bits(), desktopImage->bits(), layerBgImg->sizeInBytes());
+            layerBgPainter->setCompositionMode(QPainter::CompositionMode_SourceOver);
             layerBgPainter->drawImage(0, 0, *desktopImage);
             isDrawing = true;
             auto path = createPath();
