@@ -63,30 +63,78 @@ void MainWindow::shotScreen()
     desktopImage->save("desktopImage.png");
 }
 
+void MainWindow::showWindowByRect(QRect desktopGeometry)
+{
+    //必须让它在抖动中show两次，不然有问题
+    desktopGeometry.moveLeft(desktopGeometry.left() - 100);
+    desktopGeometry.moveTop(desktopGeometry.top() - 100);
+    setGeometry(desktopGeometry);
+    QWidget::show();
+    desktopGeometry.moveLeft(desktopGeometry.left() + 100);
+    desktopGeometry.moveTop(desktopGeometry.top() + 100);
+    setGeometry(desktopGeometry);
+    QWidget::show();
+    //QTimer::singleShot(1000, this, [this]() {
+    //    auto desktopGeometry = QApplication::desktop()->geometry();
+    //    });
+
+}
 
 void MainWindow::adjustWindowToScreen()
 {
     auto screens = QGuiApplication::screens();
-    
-    if (screens.count()>1 && screens[0]->devicePixelRatio() > screens[1]->devicePixelRatio()) {
-        //主屏缩放比例大于副屏缩放比例
-        //必须让它在抖动中show两次，不然有问题
-        auto desktopGeometry = QApplication::desktop()->geometry();
-        desktopGeometry.moveLeft(desktopGeometry.left() - 100);
-        desktopGeometry.moveTop(desktopGeometry.top() - 100);
-        setGeometry(desktopGeometry);
-        QWidget::show();
-        desktopGeometry.moveLeft(desktopGeometry.left() + 100);
-        desktopGeometry.moveTop(desktopGeometry.top() + 100);
-        this->setGeometry(desktopGeometry);
-        QWidget::show();
+    auto count = screenRects.count();
+    if (screens.count() > 1) {
+        if (screenRects[1].left() > 0) {
+            //副屏在主屏的右方
+            if (std::abs(screenRects[0].right() - screenRects[1].left()) < 2) {
+                //副屏在主屏的正右方
+                auto size = screenRects[1].size();
+                auto left = screenRects[1].left() / screens[1]->devicePixelRatio();
+                //1920->125%->4->384*5;
+                //1920->150%->3->640*3
+                //1920->175%->2->823*2
+                screenRect.moveLeft(823); //1920->125%->4->384;
+                showWindowByRect(screenRect);
+                //showWindowByRect(QApplication::desktop()->geometry());
+            }
+            else
+            {
+                auto span = (screenRects[1].right() - screenRects[0].right()) / maxRate;
+                screenRect.moveLeft(200);
+                showWindowByRect(screenRect);
+            }
+            
+        }
+        else
+        {
+            showWindowByRect(screenRect);
+        }        
     }
     else
     {
-        setGeometry(screenRect);
-        QWidget::show();
-        
-    } 
+        showWindowByRect(screenRect);
+    }
+    return;
+
+    auto d1 = screens[0]->physicalDotsPerInch();
+    auto d2 = screens[1]->physicalDotsPerInch();
+    if (d1 < d2) {
+        showWindowByRect(screenRect);
+    }
+    else
+    {
+        if (screens[0]->devicePixelRatio() > screens[1]->devicePixelRatio()) {
+            showWindowByRect(QApplication::desktop()->geometry());
+        }
+        else
+        {
+            showWindowByRect(screenRect);
+            //auto rect = QApplication::desktop()->geometry();
+            //rect.setSize(rect.size() * 1.5);
+            //showWindowByRect(rect);
+        }
+    }
 }
 
 void MainWindow::initWindowRects()

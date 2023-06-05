@@ -13,18 +13,17 @@ bool MainWindow::eventFilter(QObject* obj, QEvent* event)
     if (event->type() == QEvent::MouseMove && !isMouseDown && state == "Start")
     {
         moveTipBox();
-        //setMask({ 100,100 }, {200,200});
-        auto p = e->pos();
-        for (size_t i = 0; i < windowRects.count(); i++)
-        {
-            auto& rect = windowRects[i];
-            if (rect.contains(p)) {
-                qDebug() << p;
-                qDebug() << rect;
-                setMask(rect.topLeft(), rect.bottomRight());
-                break;
-            }
-        }
+        //auto p = e->pos();
+        //for (size_t i = 0; i < windowRects.count(); i++)
+        //{
+        //    auto& rect = windowRects[i];
+        //    if (rect.contains(p)) {
+        //        qDebug() << p;
+        //        qDebug() << rect;
+        //        setMask(rect.topLeft(), rect.bottomRight());
+        //        break;
+        //    }
+        //}
     }
     if (obj->objectName() != "centralwidget")
     {
