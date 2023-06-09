@@ -1,7 +1,7 @@
-/build-*/**
+/x64/
 /.vs/
-/Debug/
-/Release/
-/ScreenCapture/.vs/
-/ScreenCapture/Debug/
-/ScreenCapture/Release/
+**/x64/
+**/.vs/
+**/*.log
+**/Debug/
+**/Release/
