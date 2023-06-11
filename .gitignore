@@ -5,3 +5,6 @@
 /ScreenCapture/.vs/
 /ScreenCapture/Debug/
 /ScreenCapture/Release/
+**/.vs/**
+**/x64/**
+*.log
