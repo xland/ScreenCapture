@@ -36,7 +36,7 @@ void TextInputBox::mouseDoubleClickEvent(QMouseEvent* e)
 
 void TextInputBox::setFontFamilyCustom(const QString& name)
 {
-	if (name == "Î¢ÈíÑÅºÚ")
+	if (name == "å¾®è½¯é›…é»‘")
 	{
 		auto font = this->font();
 		font.setFamily("Microsoft YaHei");

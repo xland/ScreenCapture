@@ -29,22 +29,23 @@ protected:
     void paintEvent(QPaintEvent*) override;
     void keyPressEvent(QKeyEvent* event) override;
     void mouseDoubleClickEvent(QMouseEvent* event) override;
+signals:
+    void shotScreenReady();
 private slots:
 
 private:
+    void initWindow();
     void moveTipBox();
     void saveToFile();
     void saveToClipboard();
 
     qreal maxRate;
     QRect screenRect;
-    QList<QRect> screenRects;
     QImage* desktopImage = nullptr;
     QList<QRect> windowRects;
-    QPoint paintPosition;
+    qreal scaleFactor;
     void shotScreen();
     void adjustWindowToScreen();
-    void showWindowByRect(QRect desktopGeometry);
     void initWindowRects();
 
 
@@ -88,7 +89,6 @@ private:
     QList<QImage> historyImgs;
     QList<QPoint> historyPoints;
     bool isDrawing = false;
-    qreal scaleFactor;
     void initLayer();
     void initMosaic();
     void paintPath(PathModel* path, QPainter* painter);

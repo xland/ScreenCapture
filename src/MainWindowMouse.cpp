@@ -158,9 +158,9 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
         {
             removeUndoPath();
             endOneDraw();
-            //°ÑbgÍ¼²ã¿½±´µ½drawingÍ¼²ã
+            //ï¿½ï¿½bgÍ¼ï¿½ã¿½ï¿½ï¿½ï¿½ï¿½drawingÍ¼ï¿½ï¿½
             memcpy(layerDrawingImg->bits(), layerBgImg->bits(), layerDrawingImg->sizeInBytes());
-            //°Ñ×ÀÃæÍ¼Ïñ¿½±´µ½bgÍ¼²ã£¬ÏðÆ¤²ÁÊÇïÎ¿ÕµÄÂ·¾¶£¬»­ÔÚdrawingÍ¼²ãÉÏ£¬ÕâÑù¿´ÉÏÈ¥¾ÍÊÇ°ÑÒÔÇ°»­µÄÂ·¾¶²ÁµôÁË
+            //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ñ¿½±ï¿½ï¿½ï¿½bgÍ¼ï¿½ã£¬ï¿½ï¿½Æ¤ï¿½ï¿½ï¿½ï¿½ï¿½Î¿Õµï¿½Â·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½drawingÍ¼ï¿½ï¿½ï¿½Ï£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¥ï¿½ï¿½ï¿½Ç°ï¿½ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½Â·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             //memcpy(layerBgImg->bits(), desktopImage->bits(), layerBgImg->sizeInBytes());
             layerBgPainter->setCompositionMode(QPainter::CompositionMode_SourceOver);
             layerBgPainter->drawImage(0, 0, *desktopImage);
@@ -179,7 +179,7 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
 
 bool MainWindow::mouseMove(QMouseEvent* mouseEvent)
 {
-    QPointF curPoint = mouseEvent->pos();
+    QPointF curPoint = mapFromGlobal(QCursor::pos());
     if (isMouseDown)
     {
         if (state == "Start")
