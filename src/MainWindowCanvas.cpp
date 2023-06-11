@@ -67,12 +67,7 @@ void MainWindow::initMosaic()
 void MainWindow::paintEvent(QPaintEvent* e)
 {
     Q_UNUSED(e);
-    if(this->screenRect.size() != this->size()){
-        this->resize(this->screenRect.size());
-        return;
-    }
-    // qDebug()<<this->screenRect.size();
-    // qDebug()<<this->size();
+    // qDebug()<<scaleFactor<<this->screenRect.size()<<this->size()<<this->size()*scaleFactor;
     QPainter p(this);
     p.setRenderHint(QPainter::Antialiasing, true);
 //  p.setRenderHint(QPainter::SmoothPixmapTransform, true);

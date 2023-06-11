@@ -44,7 +44,6 @@ void MainWindow::shotScreen()
 
 void MainWindow::adjustWindowToScreen()
 {
-    this->setGeometry(this->screenRect);
     QTimer::singleShot(0, this, [this](){
         HWND hwnd = (HWND)this->winId();
         SetWindowPos(hwnd,HWND_TOP,
@@ -58,7 +57,7 @@ void MainWindow::adjustWindowToScreen()
                      this->screenRect.y(),
                      this->screenRect.width(),
                      this->screenRect.height(),
-                     SWP_SHOWWINDOW);
+                     SWP_SHOWWINDOW);                     
             int dpi = GetDpiForWindow(hwnd);
             switch (dpi) {
                 case 96:
@@ -79,11 +78,27 @@ void MainWindow::adjustWindowToScreen()
                 default:
                     this->scaleFactor = 1.0;
                     break;
-            }
+            }           
             this->desktopImage->setDevicePixelRatio(this->scaleFactor);
-            
             emit shotScreenReady();            
-    });
+    }); 
+    
+    bool flag = true;
+    auto screens = QGuiApplication::screens();
+    if(screens.count()>0){
+        if(screens[0]->devicePixelRatio() == 1.5 && 
+            screens[1]->devicePixelRatio() >= 1.75 && 
+            screens[1]->devicePixelRatio() <= 2.0){
+            flag = false;
+        }else if(screens[0]->devicePixelRatio() == 1.25 && 
+            screens[1]->devicePixelRatio() >= 1.50 && 
+            screens[1]->devicePixelRatio() <= 2.0){
+                flag = false;
+        }
+    }
+    if(flag){
+        this->setFixedSize(this->screenRect.size());
+    }
     show();
 }
 

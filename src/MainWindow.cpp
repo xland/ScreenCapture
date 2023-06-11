@@ -49,6 +49,9 @@ MainWindow::~MainWindow()
 
 void MainWindow::initWindow()
 {
+    // if(this->screenRect.size() != this->size()){
+    //     this->resize(this->screenRect.size());
+    // }
     initLayer();
     setFocus();
     ui->tipBox->setMouseTracking(false);
