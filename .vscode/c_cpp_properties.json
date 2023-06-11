@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "name": "qt",
+            "includePath": [
+                "d:/NoQt/5.15.2/msvc2019/include/**",
+                "${workspaceRoot}/**"
+            ],
+            "cStandard": "c11",
+            "cppStandard": "c++17"
+        }
+    ],
+    "version": 4
+}

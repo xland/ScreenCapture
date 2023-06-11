@@ -3,7 +3,7 @@
 
 void MainWindow::initMask()
 {
-    auto size = desktopImage->size();
+    auto size = screenRect.size();
     maskPath.moveTo(0 - maskBorderWidth, 0 - maskBorderWidth);
     maskPath.lineTo(size.width() + maskBorderWidth, 0 - maskBorderWidth);
     maskPath.lineTo(size.width() + maskBorderWidth, size.height() + maskBorderWidth);
@@ -73,7 +73,7 @@ int MainWindow::pointInMaskArea(const QPointF& curPoint)
 
 void MainWindow::resizeMask(const QPointF& point)
 {
-    //todo Õâ¸ö·½·¨ºÃÏñ¿ÉÒÔÓÅ»¯µô
+    //todo ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å»ï¿½ï¿½ï¿½
     if (resizeMaskIndex == 0)
     {
         maskPath.setElementPositionAt(0, point.x(), point.y());

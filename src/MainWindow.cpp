@@ -24,29 +24,13 @@ MainWindow::MainWindow(QWidget* parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    shotScreen();
-    initWindowRects();
     setAttribute(Qt::WA_DeleteOnClose);
-    this->setWindowFlags(Qt::Window | Qt::FramelessWindowHint);   //todo | Qt::WindowStaysOnTopHint
+    setWindowFlags(Qt::Window | Qt::FramelessWindowHint);   //todo | Qt::WindowStaysOnTopHint
+    setFocusPolicy(Qt::StrongFocus);
+    initWindowRects();
+    shotScreen();
     adjustWindowToScreen();
-    ui->tipBox->setMouseTracking(false);
-    ui->tipBox->hide();
-    this->setFocusPolicy(Qt::StrongFocus);
-    this->setFocus();
-    colorSelector = new ColorSelector(this);    
-    this->setCursor(Qt::CrossCursor);
-    this->setMouseTracking(true);
-    qApp->installEventFilter(this);
-    initMask();
-    initDragger();
-    initLayer();
-    initToolMain();
-    initToolRect();
-    initToolArrow();
-    initToolMosaic();
-    initToolPen();
-    initToolEraser();
-    initToolText();
+    connect(this,&MainWindow::shotScreenReady,this,&MainWindow::initWindow);
 }
 
 MainWindow::~MainWindow()
@@ -61,6 +45,27 @@ MainWindow::~MainWindow()
     delete desktopImage;
 
     delete ui;
+}
+
+void MainWindow::initWindow()
+{
+    initLayer();
+    setFocus();
+    ui->tipBox->setMouseTracking(false);
+    ui->tipBox->hide();
+    colorSelector = new ColorSelector(this);    
+    setCursor(Qt::CrossCursor);
+    setMouseTracking(true);
+    qApp->installEventFilter(this);
+    initMask();
+    initDragger();
+    initToolMain();
+    initToolRect();
+    initToolArrow();
+    initToolMosaic();
+    initToolPen();
+    initToolEraser();
+    initToolText();
 }
 
 void MainWindow::mouseDoubleClickEvent(QMouseEvent* event)
