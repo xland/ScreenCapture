@@ -11,19 +11,9 @@ bool MainWindow::eventFilter(QObject* obj, QEvent* event)
 {
     QMouseEvent* e = static_cast<QMouseEvent*>(event);
     if (event->type() == QEvent::MouseMove && !isMouseDown && state == "Start")
-    {
+    {        
         moveTipBox();
-        //auto p = e->pos();
-        //for (size_t i = 0; i < windowRects.count(); i++)
-        //{
-        //    auto& rect = windowRects[i];
-        //    if (rect.contains(p)) {
-        //        qDebug() << p;
-        //        qDebug() << rect;
-        //        setMask(rect.topLeft(), rect.bottomRight());
-        //        break;
-        //    }
-        //}
+        highlightWindow();
     }
     if (obj->objectName() != "centralwidget")
     {
@@ -52,7 +42,7 @@ bool MainWindow::eventFilter(QObject* obj, QEvent* event)
 bool MainWindow::mousePress(QMouseEvent* mouseEvent)
 {
     ui->tipBox->hide();
-    mousePressPoint = mapFromGlobal(QCursor::pos());
+    mousePressPoint = getNativeMousePos();
     if (mouseEvent->button() == Qt::RightButton)
     {
         if (this->textInputBox->isVisible())
@@ -179,7 +169,7 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
 
 bool MainWindow::mouseMove(QMouseEvent* mouseEvent)
 {
-    QPointF curPoint = mapFromGlobal(QCursor::pos());
+    QPointF curPoint = getNativeMousePos();
     if (isMouseDown)
     {
         if (state == "Start")

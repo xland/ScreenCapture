@@ -2,12 +2,14 @@
 #include <QScreen>
 #include <QGuiApplication>
 #include <Windows.h>
+#include <dwmapi.h>
 #include <qtransform.h>
 #include <qapplication.h>
 #include <qdesktopwidget.h>
 #include <qwindow.h>
 #include "qdebug.h"
 #include <qtimer.h>
+#include <QPainter>
 
 
 void MainWindow::shotScreen()
@@ -44,8 +46,7 @@ void MainWindow::shotScreen()
 
 void MainWindow::adjustWindowToScreen()
 {
-    QTimer::singleShot(0, this, [this](){
-        HWND hwnd = (HWND)this->winId();
+    QTimer::singleShot(0, this, [this](){        
         SetWindowPos(hwnd,HWND_TOP,
                      this->screenRect.x(),
                      this->screenRect.y(),
@@ -81,24 +82,25 @@ void MainWindow::adjustWindowToScreen()
             }           
             this->desktopImage->setDevicePixelRatio(this->scaleFactor);
             emit shotScreenReady();            
-    }); 
-    
+    });    
+    hwnd = (HWND)this->winId(); 
     bool flag = true;
     auto screens = QGuiApplication::screens();
-    if(screens.count()>0){
-        if(screens[0]->devicePixelRatio() == 1.5 && 
-            screens[1]->devicePixelRatio() >= 1.75 && 
-            screens[1]->devicePixelRatio() <= 2.0){
+    if(screens.count()>1){
+        qreal rate0 = screens[0]->devicePixelRatio();
+        qreal rate1 = screens[1]->devicePixelRatio();
+        if(rate0 == 1.25 &&  rate1 >= 1.50 &&  rate1 <= 2.0){
             flag = false;
-        }else if(screens[0]->devicePixelRatio() == 1.25 && 
-            screens[1]->devicePixelRatio() >= 1.50 && 
-            screens[1]->devicePixelRatio() <= 2.0){
-                flag = false;
+        }else if(rate0 == 1.5 && rate1 >= 1.75 &&  rate1 <= 2.0){
+            flag = false;
+        }else if(rate0 == 1.75 &&  rate1 >= 1.50 &&  rate1 <= 2.0){
+            flag = false;
         }
     }
     if(flag){
         this->setFixedSize(this->screenRect.size());
     }
+    //todo two both 1.75/1.5/1.25
     show();
 }
 
@@ -109,33 +111,29 @@ void MainWindow::initWindowRects()
             if (!IsWindowVisible(hwnd)) return TRUE;
             if (IsIconic(hwnd)) return TRUE;
             if (GetWindowTextLength(hwnd) < 1) return TRUE;
+            int flag = 1;
+            DwmGetWindowAttribute(hwnd,DWMWA_CLOAKED,&flag,NULL);
+            if(flag == 0){
+                return TRUE;
+            }
             auto self = (MainWindow*)lparam;
             RECT rect;
             GetWindowRect(hwnd, &rect);
             QRect item;
-            item.adjust(rect.left / self->maxRate, rect.top / self->maxRate, rect.right / self->maxRate, rect.bottom / self->maxRate);
+            item.adjust(rect.left,rect.top,rect.right,rect.bottom);            
             if (item.width() <= 6 || item.height() <= 6) {
                 return TRUE;
             }
-            self->windowRects.append(std::move(item));
-            /*QPoint leftTop = self->transform.map(item.topLeft() / rate);
-            item.moveTo(leftTop);
-            item.setSize(item.size() / rate);
-            instance->adjustRect2(item);*/
-            //std::string title;
-            //title.reserve(GetWindowTextLength(hwnd) + 1);
-            //GetWindowTextA(hwnd, const_cast<CHAR*>(title.c_str()), title.capacity());            
-            //OutputDebugStringA(title.c_str());
-            //OutputDebugStringA("\r\n");            
-            //QString a = QString::fromLatin1(title.data());
-            //if (a.startsWith("asd.txt")) {
-            //    QPainter p(self->desktopImage);
-            //    p.setPen(QPen(QBrush(Qt::red), 3, Qt::SolidLine, Qt::RoundCap));
-            //    p.setBrush(Qt::NoBrush);
-            //    p.drawRect(item);
-            //    //instance->desktopImage.save("desktopImage.png");
-            //}
-
-            return TRUE;
+            self->windowRects.append(std::move(item));    
+            return TRUE;      
         }, (LPARAM)this);
+}
+
+QPoint MainWindow::getNativeMousePos()
+{
+    POINT pos;
+    GetCursorPos(&pos);
+    ScreenToClient(hwnd, &pos);
+    QPoint position(pos.x/scaleFactor,pos.y/scaleFactor);
+    return position;
 }

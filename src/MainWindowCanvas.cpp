@@ -36,7 +36,7 @@ void MainWindow::initMosaic()
 {
 
     //todo 实际上在鼠标移动过程中，在layerbg上画鼠标附近区域的马赛克即可。鼠标释放时，合并一下图层即可
-    int mosaicRectSize = 6;
+    int mosaicRectSize = 12;
     int w = layerBgImg->width() - mosaicRectSize;
     int h = layerBgImg->height() - mosaicRectSize;
     for (int var1 = 0; var1 < w; var1 += mosaicRectSize)

@@ -1,6 +1,7 @@
 
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
+#include <Windows.h>
 #include <QPen>
 #include <QPixmap>
 #include <QPainter>
@@ -17,6 +18,7 @@
 #include <QStandardPaths>
 #include <QDateTime>
 #include <QMessageBox>
+#include <QScreen>
 
 
 MainWindow::MainWindow(QWidget* parent)
@@ -25,7 +27,7 @@ MainWindow::MainWindow(QWidget* parent)
 {
     ui->setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose);
-    setWindowFlags(Qt::Window | Qt::FramelessWindowHint);   //todo | Qt::WindowStaysOnTopHint
+    setWindowFlags(Qt::Window | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);   //todo | Qt::WindowStaysOnTopHint
     setFocusPolicy(Qt::StrongFocus);
     initWindowRects();
     shotScreen();
@@ -49,9 +51,6 @@ MainWindow::~MainWindow()
 
 void MainWindow::initWindow()
 {
-    // if(this->screenRect.size() != this->size()){
-    //     this->resize(this->screenRect.size());
-    // }
     initLayer();
     setFocus();
     ui->tipBox->setMouseTracking(false);
@@ -82,8 +81,8 @@ void MainWindow::mouseDoubleClickEvent(QMouseEvent* event)
 
 void MainWindow::moveTipBox()
 {
-    auto position = mapFromGlobal(QCursor::pos());
-    ui->tipBox->move(position.x() + 10, position.y() + 10);
+    QPoint position = getNativeMousePos();
+    ui->tipBox->move(position.x()+10, position.y()+10);
     if (this->width() - position.x() < ui->tipBox->width())
     {
         ui->tipBox->move(position.x() - ui->tipBox->width() - 10, ui->tipBox->y());
@@ -111,9 +110,7 @@ void MainWindow::moveTipBox()
     {
         img.setPixelColor({ 0,i }, Qt::black);
         img.setPixelColor({ img.width()-2,i }, Qt::black);
-    }
-
-    
+    }    
     QPainter p(&img);
     int w = img.width() / scaleFactor;
     int h = img.height() / scaleFactor;
@@ -128,6 +125,24 @@ void MainWindow::moveTipBox()
     ui->tipBox->show();
 }
 
+void MainWindow::highlightWindow()
+{
+    POINT pos;
+    GetCursorPos(&pos);
+    for (size_t i = 0; i < windowRects.count(); i++)
+    {
+        auto& rect = windowRects[i];
+        if(rect.contains(pos.x,pos.y)){
+            POINT p1 {rect.topLeft().x(),rect.topLeft().y()};
+            ScreenToClient(hwnd, &p1);
+            POINT p2 {rect.bottomRight().x(),rect.bottomRight().y()};
+            ScreenToClient(hwnd, &p2);
+            setMask(QPoint(p1.x,p1.y)/scaleFactor, QPoint{p2.x,p2.y}/scaleFactor);
+            break;
+        }
+    }
+}
+
 void MainWindow::keyPressEvent(QKeyEvent* event)
 {
     if (event->key() == Qt::Key_Escape)
@@ -135,22 +150,30 @@ void MainWindow::keyPressEvent(QKeyEvent* event)
         qApp->exit(0);
     }
     else if (event->key() == Qt::Key_Left) {
-        QCursor::setPos(QCursor::pos().x() - 1, QCursor::pos().y());
+        POINT pos;
+        GetCursorPos(&pos);
+        SetCursorPos(pos.x - 1,pos.y);
     }
     else if (event->key() == Qt::Key_Up) {
-        QCursor::setPos(QCursor::pos().x(), QCursor::pos().y()-1);
+        POINT pos;
+        GetCursorPos(&pos);
+        SetCursorPos(pos.x,pos.y-1);
     }
     else if (event->key() == Qt::Key_Down) {
-        QCursor::setPos(QCursor::pos().x(), QCursor::pos().y()+1);
+        POINT pos;
+        GetCursorPos(&pos);
+        SetCursorPos(pos.x,pos.y+1);
     }
     else if (event->key() == Qt::Key_Right) {
-        QCursor::setPos(QCursor::pos().x()+1, QCursor::pos().y());
+        POINT pos;
+        GetCursorPos(&pos);
+        SetCursorPos(pos.x + 1,pos.y);
     }
     else if (event->modifiers() == Qt::AltModifier)
     {
         if (event->key() == Qt::Key_X)
         {
-            auto position = mapFromGlobal(QCursor::pos()) * scaleFactor;
+            auto position = getNativeMousePos();
             auto color = layerBgImg->pixelColor(position);
             auto rgbStr = QString("rgb(%1,%2,%3)")
                 .arg(QString::number(color.red()), QString::number(color.green()), QString::number(color.blue()));
@@ -158,7 +181,7 @@ void MainWindow::keyPressEvent(QKeyEvent* event)
         }
         else if (event->key() == Qt::Key_C)
         {
-            auto position = mapFromGlobal(QCursor::pos()) * scaleFactor;
+            auto position = getNativeMousePos();
             auto color = layerBgImg->pixelColor(position);
             auto hexStr = color.name(QColor::HexRgb).toUpper();
             QApplication::clipboard()->setText(hexStr);

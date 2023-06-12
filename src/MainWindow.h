@@ -36,6 +36,7 @@ private slots:
 private:
     void initWindow();
     void moveTipBox();
+    void highlightWindow();
     void saveToFile();
     void saveToClipboard();
 
@@ -44,9 +45,12 @@ private:
     QImage* desktopImage = nullptr;
     QList<QRect> windowRects;
     qreal scaleFactor;
+    int screenSpanX[2]{-1,0};
+    int screenSpanY[2]{-1,0};
     void shotScreen();
     void adjustWindowToScreen();
     void initWindowRects();
+    QPoint getNativeMousePos();
 
 
     ColorSelector* colorSelector;
@@ -125,6 +129,7 @@ private:
 
     Ui::MainWindow* ui;
     QString state = "Start";
+    HWND hwnd;
 };
 
 #endif // MAINWINDOW_H
