@@ -14,6 +14,7 @@
 
 void MainWindow::shotScreen()
 {
+    qDebug()<<"shotScreen start";
     screenRect = QRect(GetSystemMetrics(SM_XVIRTUALSCREEN),
                        GetSystemMetrics(SM_YVIRTUALSCREEN),
                        GetSystemMetrics(SM_CXVIRTUALSCREEN),
@@ -23,29 +24,34 @@ void MainWindow::shotScreen()
     HBITMAP hBitmap = CreateCompatibleBitmap(hScreen, screenRect.width(), screenRect.height());
     BOOL result = DeleteObject(SelectObject(hDC, hBitmap));
     if (!result) {
+        qDebug()<<"shotScreen SelectObject error";
     }
     result = BitBlt(hDC, 0, 0, screenRect.width(), screenRect.height(), hScreen, screenRect.x(), screenRect.y(), SRCCOPY);
     if (!result) {
-
+        qDebug()<<"shotScreen BitBlt error";
     }
     desktopImage = new QImage(screenRect.size(),QImage::Format_ARGB32_Premultiplied);
     unsigned int dataSize = ((screenRect.width() * 32 + 31) / 32) * 4 * screenRect.height();
     BITMAPINFO Info = { sizeof(BITMAPINFOHEADER), static_cast<long>(screenRect.width()), static_cast<long>(0-screenRect.height()), 1, 32, BI_RGB, dataSize, 0, 0, 0, 0 };
     int r = GetDIBits(hDC, hBitmap, 0, screenRect.height(), desktopImage->bits(), &Info, DIB_RGB_COLORS);
     if (r == 0) {
-        
+        qDebug()<<"shotScreen GetDIBits error";
     }
     result = DeleteDC(hDC);
     if (!result) {
+        qDebug()<<"shotScreen DeleteDC error";
     }
     ReleaseDC(NULL, hScreen);
     result = DeleteObject(hBitmap);
     if (!result) {
+        qDebug()<<"shotScreen DeleteObject error";
     }
+    qDebug()<<"shotScreen end";
 }
 
 void MainWindow::adjustWindowToScreen()
 {
+    qDebug()<<"adjustWindowToScreen start";
     QTimer::singleShot(0, this, [this](){        
         SetWindowPos(hwnd,HWND_TOP,
                      this->screenRect.x(),
@@ -100,22 +106,19 @@ void MainWindow::adjustWindowToScreen()
     if(flag){
         this->setFixedSize(this->screenRect.size());
     }
-    //todo two both 1.75/1.5/1.25
     show();
+    qDebug()<<"adjustWindowToScreen end";
 }
 
 void MainWindow::initWindowRects()
 {
+    qDebug()<<"initWindowRects";
     EnumWindows([](HWND hwnd, LPARAM lparam)
         {
+            if (!hwnd) return TRUE;
             if (!IsWindowVisible(hwnd)) return TRUE;
             if (IsIconic(hwnd)) return TRUE;
             if (GetWindowTextLength(hwnd) < 1) return TRUE;
-            int flag = 1;
-            DwmGetWindowAttribute(hwnd,DWMWA_CLOAKED,&flag,NULL);
-            if(flag == 0){
-                return TRUE;
-            }
             auto self = (MainWindow*)lparam;
             RECT rect;
             GetWindowRect(hwnd, &rect);
@@ -127,6 +130,7 @@ void MainWindow::initWindowRects()
             self->windowRects.append(std::move(item));    
             return TRUE;      
         }, (LPARAM)this);
+    qDebug()<<"initWindowRects end";
 }
 
 QPoint MainWindow::getNativeMousePos()
@@ -135,5 +139,6 @@ QPoint MainWindow::getNativeMousePos()
     GetCursorPos(&pos);
     ScreenToClient(hwnd, &pos);
     QPoint position(pos.x/scaleFactor,pos.y/scaleFactor);
+    
     return position;
 }

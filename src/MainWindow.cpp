@@ -19,6 +19,9 @@
 #include <QDateTime>
 #include <QMessageBox>
 #include <QScreen>
+#include <QMimeData>
+#include <QBuffer>
+#include <QTimer>
 
 
 MainWindow::MainWindow(QWidget* parent)
@@ -27,7 +30,8 @@ MainWindow::MainWindow(QWidget* parent)
 {
     ui->setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose);
-    setWindowFlags(Qt::Window | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);   //todo | Qt::WindowStaysOnTopHint
+    setAttribute(Qt::WA_QuitOnClose,true);
+    setWindowFlags(Qt::Window | Qt::FramelessWindowHint|Qt::SubWindow);   //| Qt::WindowStaysOnTopHint
     setFocusPolicy(Qt::StrongFocus);
     initWindowRects();
     shotScreen();
@@ -74,7 +78,6 @@ void MainWindow::mouseDoubleClickEvent(QMouseEvent* event)
 {
     if (state != "Start")
     {
-        endOneDraw();
         saveToClipboard();
     }
 }
@@ -201,10 +204,11 @@ void MainWindow::saveToFile()
     }
     endOneDraw();
     QRect rect;
-    rect.adjust(maskPath.elementAt(0).x * scaleFactor - maskBorderWidth,
-        maskPath.elementAt(0).y * scaleFactor - maskBorderWidth,
-        maskPath.elementAt(2).x * scaleFactor - maskBorderWidth,
-        maskPath.elementAt(2).y * scaleFactor - maskBorderWidth);
+    int x1 = maskPath.elementAt(0).x * scaleFactor - maskBorderWidth;
+    int y1 = maskPath.elementAt(0).y * scaleFactor - maskBorderWidth;
+    int x2 = maskPath.elementAt(2).x * scaleFactor - maskBorderWidth;
+    int y2 = maskPath.elementAt(2).y * scaleFactor - maskBorderWidth;
+    rect.adjust(x1,y1,x2,y2);
     layerBgImg->copy(rect).save(filePath);
     qApp->exit(0);
 }
@@ -213,12 +217,39 @@ void MainWindow::saveToClipboard()
 {
     endOneDraw();
     QRect rect;
-    rect.adjust(maskPath.elementAt(0).x * scaleFactor - maskBorderWidth,
-        maskPath.elementAt(0).y * scaleFactor - maskBorderWidth,
-        maskPath.elementAt(2).x * scaleFactor - maskBorderWidth,
-        maskPath.elementAt(2).y * scaleFactor - maskBorderWidth);
-    auto img = layerBgImg->copy(rect);
-    QApplication::clipboard()->setImage(img);
-    qApp->exit(0);
+    int x1 = maskPath.elementAt(0).x * scaleFactor - maskBorderWidth;
+    int y1 = maskPath.elementAt(0).y * scaleFactor - maskBorderWidth;
+    int x2 = maskPath.elementAt(2).x * scaleFactor - maskBorderWidth;
+    int y2 = maskPath.elementAt(2).y * scaleFactor - maskBorderWidth;
+    rect.adjust(x1,y1,x2,y2);
+    auto tempImg = layerBgImg->copy(rect);
+    if(tempImg.isNull()){
+        QMessageBox::information(this,"info","image is null:"+QString::number(x1)+"_"+QString::number(y1)+"_"+QString::number(x2)+"_"+QString::number(y2),QMessageBox::StandardButton::Ok);
+    }
+    auto clipboard = QApplication::clipboard();
+    qDebug()<<"save to clipboard"<<tempImg.size();
+    clipboard->setImage(tempImg);
+    auto testImg = clipboard->image();
+
+    //todo 这里是为了兼容老丁的电脑，实际上应该可以不用要，需要再找老丁测试
+    if(testImg.isNull()){
+        // QMessageBox::information(this,"info","testImg is null:"+QString::number(x1)+"_"+QString::number(y1)+"_"+QString::number(x2)+"_"+QString::number(y2),QMessageBox::StandardButton::Ok);
+        QMimeData *data = new QMimeData;
+        data->setImageData(tempImg);
+        clipboard->setMimeData(data);
+
+        auto testImg2 = clipboard->image();
+        if(testImg2.isNull()){
+            // QMessageBox::information(this,"info","testImg2 is null:"+QString::number(x1)+"_"+QString::number(y1)+"_"+QString::number(x2)+"_"+QString::number(y2),QMessageBox::StandardButton::Ok);
+            clipboard->setPixmap(QPixmap::fromImage(tempImg));
+        }
+    }
+
+    
+    qDebug()<<"saved to clipboard"<<tempImg.size();
+    
+    QTimer::singleShot(60, this, [this](){
+        qApp->exit(0);
+    });    
 }
 
