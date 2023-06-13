@@ -2,16 +2,19 @@
 #include <QScreen>
 #include <QGuiApplication>
 #include <Windows.h>
+#include <dwmapi.h>
 #include <qtransform.h>
 #include <qapplication.h>
 #include <qdesktopwidget.h>
 #include <qwindow.h>
 #include "qdebug.h"
 #include <qtimer.h>
+#include <QPainter>
 
 
 void MainWindow::shotScreen()
 {
+    qDebug()<<"shotScreen start";
     screenRect = QRect(GetSystemMetrics(SM_XVIRTUALSCREEN),
                        GetSystemMetrics(SM_YVIRTUALSCREEN),
                        GetSystemMetrics(SM_CXVIRTUALSCREEN),
@@ -21,31 +24,35 @@ void MainWindow::shotScreen()
     HBITMAP hBitmap = CreateCompatibleBitmap(hScreen, screenRect.width(), screenRect.height());
     BOOL result = DeleteObject(SelectObject(hDC, hBitmap));
     if (!result) {
+        qDebug()<<"shotScreen SelectObject error";
     }
     result = BitBlt(hDC, 0, 0, screenRect.width(), screenRect.height(), hScreen, screenRect.x(), screenRect.y(), SRCCOPY);
     if (!result) {
-
+        qDebug()<<"shotScreen BitBlt error";
     }
     desktopImage = new QImage(screenRect.size(),QImage::Format_ARGB32_Premultiplied);
     unsigned int dataSize = ((screenRect.width() * 32 + 31) / 32) * 4 * screenRect.height();
     BITMAPINFO Info = { sizeof(BITMAPINFOHEADER), static_cast<long>(screenRect.width()), static_cast<long>(0-screenRect.height()), 1, 32, BI_RGB, dataSize, 0, 0, 0, 0 };
     int r = GetDIBits(hDC, hBitmap, 0, screenRect.height(), desktopImage->bits(), &Info, DIB_RGB_COLORS);
     if (r == 0) {
-        
+        qDebug()<<"shotScreen GetDIBits error";
     }
     result = DeleteDC(hDC);
     if (!result) {
+        qDebug()<<"shotScreen DeleteDC error";
     }
     ReleaseDC(NULL, hScreen);
     result = DeleteObject(hBitmap);
     if (!result) {
+        qDebug()<<"shotScreen DeleteObject error";
     }
+    qDebug()<<"shotScreen end";
 }
 
 void MainWindow::adjustWindowToScreen()
 {
-    QTimer::singleShot(0, this, [this](){
-        HWND hwnd = (HWND)this->winId();
+    qDebug()<<"adjustWindowToScreen start";
+    QTimer::singleShot(0, this, [this](){        
         SetWindowPos(hwnd,HWND_TOP,
                      this->screenRect.x(),
                      this->screenRect.y(),
@@ -81,31 +88,34 @@ void MainWindow::adjustWindowToScreen()
             }           
             this->desktopImage->setDevicePixelRatio(this->scaleFactor);
             emit shotScreenReady();            
-    }); 
-    
+    });    
+    hwnd = (HWND)this->winId(); 
     bool flag = true;
     auto screens = QGuiApplication::screens();
-    if(screens.count()>0){
-        if(screens[0]->devicePixelRatio() == 1.5 && 
-            screens[1]->devicePixelRatio() >= 1.75 && 
-            screens[1]->devicePixelRatio() <= 2.0){
+    if(screens.count()>1){
+        qreal rate0 = screens[0]->devicePixelRatio();
+        qreal rate1 = screens[1]->devicePixelRatio();
+        if(rate0 == 1.25 &&  rate1 >= 1.50 &&  rate1 <= 2.0){
             flag = false;
-        }else if(screens[0]->devicePixelRatio() == 1.25 && 
-            screens[1]->devicePixelRatio() >= 1.50 && 
-            screens[1]->devicePixelRatio() <= 2.0){
-                flag = false;
+        }else if(rate0 == 1.5 && rate1 >= 1.75 &&  rate1 <= 2.0){
+            flag = false;
+        }else if(rate0 == 1.75 &&  rate1 >= 1.50 &&  rate1 <= 2.0){
+            flag = false;
         }
     }
     if(flag){
         this->setFixedSize(this->screenRect.size());
     }
     show();
+    qDebug()<<"adjustWindowToScreen end";
 }
 
 void MainWindow::initWindowRects()
 {
+    qDebug()<<"initWindowRects";
     EnumWindows([](HWND hwnd, LPARAM lparam)
         {
+            if (!hwnd) return TRUE;
             if (!IsWindowVisible(hwnd)) return TRUE;
             if (IsIconic(hwnd)) return TRUE;
             if (GetWindowTextLength(hwnd) < 1) return TRUE;
@@ -113,29 +123,22 @@ void MainWindow::initWindowRects()
             RECT rect;
             GetWindowRect(hwnd, &rect);
             QRect item;
-            item.adjust(rect.left / self->maxRate, rect.top / self->maxRate, rect.right / self->maxRate, rect.bottom / self->maxRate);
+            item.adjust(rect.left,rect.top,rect.right,rect.bottom);            
             if (item.width() <= 6 || item.height() <= 6) {
                 return TRUE;
             }
-            self->windowRects.append(std::move(item));
-            /*QPoint leftTop = self->transform.map(item.topLeft() / rate);
-            item.moveTo(leftTop);
-            item.setSize(item.size() / rate);
-            instance->adjustRect2(item);*/
-            //std::string title;
-            //title.reserve(GetWindowTextLength(hwnd) + 1);
-            //GetWindowTextA(hwnd, const_cast<CHAR*>(title.c_str()), title.capacity());            
-            //OutputDebugStringA(title.c_str());
-            //OutputDebugStringA("\r\n");            
-            //QString a = QString::fromLatin1(title.data());
-            //if (a.startsWith("asd.txt")) {
-            //    QPainter p(self->desktopImage);
-            //    p.setPen(QPen(QBrush(Qt::red), 3, Qt::SolidLine, Qt::RoundCap));
-            //    p.setBrush(Qt::NoBrush);
-            //    p.drawRect(item);
-            //    //instance->desktopImage.save("desktopImage.png");
-            //}
-
-            return TRUE;
+            self->windowRects.append(std::move(item));    
+            return TRUE;      
         }, (LPARAM)this);
+    qDebug()<<"initWindowRects end";
+}
+
+QPoint MainWindow::getNativeMousePos()
+{
+    POINT pos;
+    GetCursorPos(&pos);
+    ScreenToClient(hwnd, &pos);
+    QPoint position(pos.x/scaleFactor,pos.y/scaleFactor);
+    
+    return position;
 }

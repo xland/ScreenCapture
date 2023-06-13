@@ -21,7 +21,8 @@ LIBS += -lKernel32\
     -lUser32 \
     -lGdi32 \
     -luser32 \
-    -lShcore
+    -lShcore \
+    -lDwmapi
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
