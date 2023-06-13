@@ -105,22 +105,23 @@
       <PreprocessorDefinitions>WIN32;_WINDOWS;WIN32_LEAN_AND_MEAN;NOMINMAX;_UNICODE;UNICODE;_ITERATOR_DEBUG_LEVEL=0;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>Default</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>D:\sdk\libyue_v0.13.12_win\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\sdk\yue\third_party\abseil-cpp;D:\sdk\yue\out\$(configuration)\gen;D:\sdk\yue\building\tools\gn;D:\sdk\yue;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <UseFullPaths>false</UseFullPaths>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>Yue.lib;setupapi.lib;powrprof.lib;ws2_32.lib;dbghelp.lib;shlwapi.lib;version.lib;winmm.lib;wbemuuid.lib;psapi.lib;dwmapi.lib;propsys.lib;comctl32.lib;gdi32.lib;gdiplus.lib;urlmon.lib;userenv.lib;uxtheme.lib;delayimp.lib;runtimeobject.lib;ntdll.lib;shcore.lib;kernel32.lib;user32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>D:\sdk\libyue_v0.13.12_win\build\$(configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>lua53.dll.lib;yue.lib;gui.lib;setupapi.lib;powrprof.lib;ws2_32.lib;dbghelp.lib;shlwapi.lib;version.lib;winmm.lib;wbemuuid.lib;psapi.lib;dwmapi.lib;propsys.lib;comctl32.lib;gdi32.lib;gdiplus.lib;urlmon.lib;userenv.lib;uxtheme.lib;delayimp.lib;runtimeobject.lib;ntdll.lib;shcore.lib;kernel32.lib;user32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>D:\sdk\yue\out\$(configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <DelayLoadDLLs>setupapi.dll;powrprof.dll;dwmapi.dll</DelayLoadDLLs>
     </Link>
     <Manifest>
       <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
-      <AdditionalManifestFiles>D:\sdk\libyue_v0.13.12_win\sample_app\exe.manifest;</AdditionalManifestFiles>
+      <AdditionalManifestFiles>D:\sdk\yue\sample_app\exe.manifest;</AdditionalManifestFiles>
     </Manifest>
     <ProjectReference>
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
@@ -135,15 +136,16 @@
       <PreprocessorDefinitions>WIN32;_WINDOWS;WIN32_LEAN_AND_MEAN;NOMINMAX;_UNICODE;UNICODE;_ITERATOR_DEBUG_LEVEL=0;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>D:\sdk\libyue_v0.13.12_win\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\sdk\yue\third_party\abseil-cpp;D:\sdk\yue\out\$(configuration)\gen;D:\sdk\yue\building\tools\gn;D:\sdk\yue;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>Yue.lib;setupapi.lib;powrprof.lib;ws2_32.lib;dbghelp.lib;shlwapi.lib;version.lib;winmm.lib;wbemuuid.lib;psapi.lib;dwmapi.lib;propsys.lib;comctl32.lib;gdi32.lib;gdiplus.lib;urlmon.lib;userenv.lib;uxtheme.lib;delayimp.lib;runtimeobject.lib;ntdll.lib;shcore.lib;kernel32.lib;user32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>D:\sdk\libyue_v0.13.12_win\build\$(configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>lua53.dll.lib;yue.lib;gui.lib;setupapi.lib;powrprof.lib;ws2_32.lib;dbghelp.lib;shlwapi.lib;version.lib;winmm.lib;wbemuuid.lib;psapi.lib;dwmapi.lib;propsys.lib;comctl32.lib;gdi32.lib;gdiplus.lib;urlmon.lib;userenv.lib;uxtheme.lib;delayimp.lib;runtimeobject.lib;ntdll.lib;shcore.lib;kernel32.lib;user32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>D:\sdk\yue\out\$(configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <Manifest>
       <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
