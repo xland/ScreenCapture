@@ -1,6 +1,6 @@
 @echo off
 
-set QT_DIR=c:\Qt\5.15.2\msvc2019
+set QT_DIR=d:\NoQt\5.15.2\msvc2019
 set SRC_DIR=%cd%
 set BUILD_DIR=%cd%\build
 
