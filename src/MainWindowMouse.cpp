@@ -97,6 +97,12 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
         }
         else if (state == "Arrow")
         {
+            if (isMouseInDragger(mousePressPoint))
+            {
+                preState = state;
+                state = "lastPathDrag";
+                return true;
+            }
             removeUndoPath();
             endOneDraw();
             auto path = createPath();
@@ -148,10 +154,7 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
         {
             removeUndoPath();
             endOneDraw();
-            //��bgͼ�㿽����drawingͼ��
             memcpy(layerDrawingImg->bits(), layerBgImg->bits(), layerDrawingImg->sizeInBytes());
-            //������ͼ�񿽱���bgͼ�㣬��Ƥ�����οյ�·��������drawingͼ���ϣ���������ȥ���ǰ���ǰ����·��������
-            //memcpy(layerBgImg->bits(), desktopImage->bits(), layerBgImg->sizeInBytes());
             layerBgPainter->setCompositionMode(QPainter::CompositionMode_SourceOver);
             layerBgPainter->drawImage(0, 0, *desktopImage);
             isDrawing = true;
@@ -197,7 +200,11 @@ bool MainWindow::mouseMove(QMouseEvent* mouseEvent)
         }
         else if (state == "lastPathDrag")
         {
-            resizePath(curPoint);
+            if(preState == "RectEllipse"){
+                editRectEllipse(curPoint);
+            }else if(preState == "Arrow"){
+                editArrow(curPoint);
+            }            
             auto& path = paths.last();
             layerDrawingImg->fill(0);
             paintPath(path, layerDrawingPainter);
@@ -207,7 +214,7 @@ bool MainWindow::mouseMove(QMouseEvent* mouseEvent)
         }
         else if (state == "Arrow")
         {
-            drawArrow(curPoint);
+            drawArrow(mousePressPoint,curPoint);
             return true;
         }
         else if (state == "Pen")
@@ -286,40 +293,48 @@ bool MainWindow::mouseMove(QMouseEvent* mouseEvent)
         }
         else if (state == "RectEllipse")
         {
-            if (paths.count() > 0)
+            if (paths.count() < 1 || showDraggerCount <1) return false;
+            if (isMouseInDragger(curPoint))
             {
-                if (isMouseInDragger(curPoint))
+                switch (draggerIndex)
                 {
-                    switch (draggerIndex)
-                    {
-                        case 0:
-                        case 4:
-                            setCursor(Qt::SizeFDiagCursor);
-                            break;
-                        case 1:
-                        case 5:
-                            setCursor(Qt::SizeVerCursor);
-                            break;
-                        case 2:
-                        case 6:
-                            setCursor(Qt::SizeBDiagCursor);
-                            break;
-                        case 3:
-                        case 7:
-                            setCursor(Qt::SizeHorCursor);
-                            break;
-                        case 8:
-                            setCursor(Qt::SizeAllCursor);
-                            break;
-                    }
-                    return true;
+                    case 0:
+                    case 4:
+                        setCursor(Qt::SizeFDiagCursor);
+                        break;
+                    case 1:
+                    case 5:
+                        setCursor(Qt::SizeVerCursor);
+                        break;
+                    case 2:
+                    case 6:
+                        setCursor(Qt::SizeBDiagCursor);
+                        break;
+                    case 3:
+                    case 7:
+                        setCursor(Qt::SizeHorCursor);
+                        break;
+                    case 8:
+                        setCursor(Qt::SizeAllCursor);
+                        break;
                 }
-                else
-                {
-                    setCursor(Qt::CrossCursor);
-                    return true;
-                }
+                return true;
             }
+            else
+            {
+                setCursor(Qt::CrossCursor);
+                return true;
+            }
+        }
+        else if(state == "Arrow"){
+            if (paths.count() < 1 || showDraggerCount <1) return false;
+            if (isMouseInDragger(curPoint))
+            {
+                setCursor(Qt::SizeAllCursor);
+            }else{
+                setCursor(Qt::CrossCursor);
+            }
+            return true;
         }
         else if (state == "Text")
         {
@@ -362,14 +377,20 @@ bool MainWindow::mouseRelease(QMouseEvent* mouseEvent)
                 return true;
             }
             path->resetPoint5();
-            setDraggerPosition(path->elementAt(0).x, path->elementAt(0).y, path->elementAt(2).x, path->elementAt(2).y);
+            setRectEllipseDraggerPosition(path->elementAt(0).x, path->elementAt(0).y, path->elementAt(2).x, path->elementAt(2).y);
             ui->btnUndo->setStyleSheet("");
-            setCursor(Qt::CrossCursor);
-            repaint();
+            setCursor(Qt::CrossCursor);            
             return true;
         }
         else if (state == "Arrow")
         {
+            auto& path = paths.last();
+            if (path->needDelete)
+            {
+                paths.removeLast();
+                return true;
+            }
+            setArrowDraggerPosition(path->elementAt(0).x, path->elementAt(0).y, path->elementAt(3).x, path->elementAt(3).y);
             ui->btnUndo->setStyleSheet("");
             return true;
         }
@@ -395,8 +416,12 @@ bool MainWindow::mouseRelease(QMouseEvent* mouseEvent)
         else if (state == "lastPathDrag")
         {
             auto& path = paths.last();
-            path->resetPoint5();
-            setDraggerPosition(path->elementAt(0).x, path->elementAt(0).y, path->elementAt(2).x, path->elementAt(2).y);
+            if(preState == "RectEllipse"){
+                path->resetPoint5();
+                setRectEllipseDraggerPosition(path->elementAt(0).x, path->elementAt(0).y, path->elementAt(2).x, path->elementAt(2).y);
+            }else if(preState == "Arrow"){
+                setArrowDraggerPosition(path->elementAt(0).x, path->elementAt(0).y, path->elementAt(3).x, path->elementAt(3).y);
+            }
             state = preState;
             return true;
         }

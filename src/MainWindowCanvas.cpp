@@ -184,17 +184,18 @@ PathModel* MainWindow::createPath()
 }
 
 
-void MainWindow::drawArrow(QPointF& curPoint)
+void MainWindow::drawArrow(const QPointF& startPoint,const QPointF& endPoint)
 {
     qreal height = 26.0, width = 22.0;
     auto& path = paths.last();
+    path->needDelete = false;
     //箭头起点和箭头终点组成的线段，这个线段与水平坐标的夹角
-    QLineF tarLine(mousePressPoint, curPoint);
+    QLineF tarLine(startPoint, endPoint);
     //角度变弧度，以适应std::cos，std::sin
     qreal v = tarLine.angle() * 3.14159265 / 180;
     // △底边的中点
-    qreal centerX = curPoint.x() - height * std::cos(v);
-    qreal centerY = curPoint.y() + height * std::sin(v);
+    qreal centerX = endPoint.x() - height * std::cos(v);
+    qreal centerY = endPoint.y() + height * std::sin(v);
     qreal tempA = width / 4 * std::sin(v);
     qreal tempB = width / 4 * std::cos(v);
     // △ 左下的顶点与底边中点之间中间位置的点
@@ -206,7 +207,7 @@ void MainWindow::drawArrow(QPointF& curPoint)
     qreal y2 = y1 - tempB;
     path->setElementPositionAt(2, x2, y2);
     // △ 上部顶点，也就是箭头终点
-    path->setElementPositionAt(3, curPoint.x(), curPoint.y());
+    path->setElementPositionAt(3, endPoint.x(), endPoint.y());
     // △ 右下顶点
     tempA = width / 2 * std::sin(v);
     tempB = width / 2 * std::cos(v);
@@ -217,6 +218,8 @@ void MainWindow::drawArrow(QPointF& curPoint)
     qreal x4 = centerX + tempA / 2;
     qreal y4 = centerY + tempB / 2;
     path->setElementPositionAt(5, x4, y4);
+    path->setElementPositionAt(0, startPoint.x(), startPoint.y());
+    path->setElementPositionAt(6, startPoint.x(), startPoint.y());
     layerDrawingImg->fill(0);
     paintPath(path, layerDrawingPainter);
     isDrawing = true;

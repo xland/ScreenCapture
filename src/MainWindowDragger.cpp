@@ -32,7 +32,7 @@ bool MainWindow::isMouseInDragger(const QPointF& point)
     return false;
 }
 
-void MainWindow::setDraggerPosition(qreal x1, qreal y1, qreal x2, qreal y2)
+void MainWindow::setRectEllipseDraggerPosition(qreal x1, qreal y1, qreal x2, qreal y2)
 {
     x1 -= 4;
     y1 -= 4;
@@ -47,4 +47,16 @@ void MainWindow::setDraggerPosition(qreal x1, qreal y1, qreal x2, qreal y2)
     dragers[6].moveTo(x1, y2);
     dragers[7].moveTo(x1, y1 + (y2 - y1) / 2);
     showDraggerCount = 8;
+    repaint();
+}
+void MainWindow::setArrowDraggerPosition(qreal x1, qreal y1, qreal x2, qreal y2)
+{
+    x1 -= 4;
+    y1 -= 4;
+    x2 -= 4;
+    y2 -= 4;
+    dragers[0].moveTo(x1, y1);
+    dragers[1].moveTo(x2, y2);
+    showDraggerCount = 2;
+    repaint();
 }

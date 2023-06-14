@@ -98,7 +98,7 @@ private:
     void paintPath(PathModel* path, QPainter* painter);
     PathModel* createPath();
     void endOneDraw();
-    void drawArrow(QPointF& point);
+    void drawArrow(const QPointF& startPoint,const QPointF& endPoint);
 
     void undo();
     void redo();
@@ -117,12 +117,14 @@ private:
     QString preState;
     QList<QRectF> dragers;
     void initDragger();
-    void setDraggerPosition(qreal x1, qreal y1, qreal x2, qreal y2);
+    void setRectEllipseDraggerPosition(qreal x1, qreal y1, qreal x2, qreal y2);
+    void setArrowDraggerPosition(qreal x1, qreal y1, qreal x2, qreal y2);
     bool isMouseInDragger(const QPointF& point);
 
 
     QVector<PathModel*> paths;
-    void resizePath(const QPointF& point);
+    void editRectEllipse(const QPointF& point);
+    void editArrow(const QPointF& point);
     void removeUndoPath();
     void translateTextToPath();
 

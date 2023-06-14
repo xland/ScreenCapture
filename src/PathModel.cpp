@@ -42,13 +42,6 @@ void PathModel::resetPoint5()
     setElementPositionAt(2, x2, y2);
     setElementPositionAt(3, x1, y2);
     setElementPositionAt(4, x1, y1);
-
-//    auto rect = boundingRect();
-//    setElementPositionAt(0, rect.topLeft().x(), rect.topLeft().y());
-//    setElementPositionAt(1, rect.topRight().x(), rect.topRight().y());
-//    setElementPositionAt(2, rect.bottomRight().x(), rect.bottomRight().y());
-//    setElementPositionAt(3, rect.bottomLeft().x(), rect.bottomLeft().y());
-//    setElementPositionAt(4, rect.topLeft().x(), rect.topLeft().y());
 }
 
 void PathModel::initPatch(QImage* bgImg, qreal scaleFactor)

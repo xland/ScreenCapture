@@ -43,7 +43,7 @@ void MainWindow::translateTextToPath()
     this->textInputBox->hide();
 }
 
-void MainWindow::resizePath(const QPointF& point)
+void MainWindow::editRectEllipse(const QPointF& point)
 {
     auto& path = paths.last();
     if (draggerIndex == 0)
@@ -113,5 +113,33 @@ void MainWindow::resizePath(const QPointF& point)
             mousePressPoint = point;
         }
     }
-    setDraggerPosition(path->elementAt(0).x, path->elementAt(0).y, path->elementAt(2).x, path->elementAt(2).y);
+    setRectEllipseDraggerPosition(path->elementAt(0).x, path->elementAt(0).y, path->elementAt(2).x, path->elementAt(2).y);
+}
+
+void MainWindow::editArrow(const QPointF& point)
+{
+    auto& path = paths.last();
+    if (draggerIndex == 0)
+    {
+        drawArrow(point,QPointF(path->elementAt(3).x, path->elementAt(3).y));
+    }
+    else if (draggerIndex == 1)
+    {
+        drawArrow(QPointF(path->elementAt(0).x, path->elementAt(0).y),point);
+    }
+    else if(draggerIndex == 8){
+        if (point == mousePressPoint)
+        {
+            return;
+        }
+        else
+        {
+            qreal xSpan = point.x() - mousePressPoint.x();
+            qreal ySpan = point.y() - mousePressPoint.y();
+            drawArrow(QPointF(path->elementAt(0).x+xSpan, path->elementAt(0).y+ySpan),
+            QPointF(path->elementAt(3).x+xSpan, path->elementAt(3).y+ySpan));
+            mousePressPoint = point;
+        }
+    }
+    setArrowDraggerPosition(path->elementAt(0).x, path->elementAt(0).y, path->elementAt(3).x, path->elementAt(3).y);
 }
