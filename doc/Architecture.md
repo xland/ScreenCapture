@@ -83,10 +83,6 @@ graph TB
 1. 取五个颜色值的平均值，创建一个新颜色
 1. 用新颜色填充小方格
 
-# 文字
-
-
-
 # undo 与 redo
 
 1. 点击`上一步`，把历史记录中最后一个`参与绘制`属性不为false的元素设置为false
@@ -94,11 +90,15 @@ graph TB
 1. 在背景图层重绘所有`参与绘制`为true的元素
     - 如果绘制元素是`橡皮擦`或`马赛克`，则只需要把元素中的`patchImg`绘制出来即可，不用再完成图层合并等工作
 
+# 开发环境
 
-# 跨屏截图
+1. 安装 Qt 5.15.2
+2. 安装 VSCode
+3. 为 VSCode 安装 Qt Configure插件
+4. 打开源码目录，并在VSCode中打开即可调试
 
 # 集成说明
 
-大部分截图及绘制逻辑均在`MainWindow`窗口内实现，少量逻辑被抽象成了独立的类，比如：色彩选择器：`ColorSelector`、字体图标工具类：`Icon`、元素类：`PathModel`和线条控制器：`ButtonDot`等、文本输入类：`TextInputBox`。
+大部分截图及绘制逻辑均在`MainWindow`窗口内实现，少量逻辑被抽象成了独立的类，比如：色彩选择器：`ColorSelector`、字体图标工具类：`Icon`、元素类：`PathModel`、线条控制器：`ButtonDot`等、文本输入类：`TextInputBox`。
 
 集成时，这些类拷贝到目标项目中，在用户开始截图时，创建一个`MainWindow`窗口对象（不用Show，`MainWindow`类会在完成初始化工作后，自己Show出来）即可。
