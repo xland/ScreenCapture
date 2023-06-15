@@ -19,7 +19,11 @@ void MainWindow::switchTool(const QString& toolName)
             colorSelector->hide();
             state = name.remove("tool");
             tool->move(ui->toolMain->x(), ui->toolMain->y() + ui->toolMain->height() + 4);
-            setCursor(Qt::CrossCursor);
+            if(state == "Text"){
+                setCursor(Qt::IBeamCursor);
+            }else{
+                setCursor(Qt::CrossCursor);
+            }            
             if (state == "Mosaic")
             {
                 initMosaic();
@@ -28,6 +32,7 @@ void MainWindow::switchTool(const QString& toolName)
             {
                 if (state != "Eraser")
                 {
+                    
                     colorSelector->move(tool->geometry().topRight());
                     colorSelector->show();
                 }

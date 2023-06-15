@@ -59,7 +59,6 @@ private:
     ButtonDot* dotMosaic;
     ButtonDot* dotEraser;
     ButtonDot* dotText;
-    int draggingTextState = 0;
     TextInputBox* textInputBox;
     QString style = R"(#%1{background:#f6f6f6;}
 #%1 QPushButton{color:#414141;font-size:16px;border:none;}
@@ -125,6 +124,7 @@ private:
     QVector<PathModel*> paths;
     void editRectEllipse(const QPointF& point);
     void editArrow(const QPointF& point);
+    void editText(const QPointF& point);
     void removeUndoPath();
     void translateTextToPath();
 

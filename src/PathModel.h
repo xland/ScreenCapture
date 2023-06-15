@@ -22,6 +22,7 @@ public:
     bool isMosaic = false;
     bool isEllipse = false;
     bool isText = false;
+    bool isTextInDrawingLayer = true;
 
 
     qreal borderWidth = 2.0;

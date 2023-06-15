@@ -143,3 +143,12 @@ void MainWindow::editArrow(const QPointF& point)
     }
     setArrowDraggerPosition(path->elementAt(0).x, path->elementAt(0).y, path->elementAt(3).x, path->elementAt(3).y);
 }
+
+void MainWindow::editText(const QPointF& point)
+{
+    auto& path = paths.last();
+    qreal xSpan = point.x() - mousePressPoint.x();
+    qreal ySpan = point.y() - mousePressPoint.y();
+    path->textRect.moveTo(path->textRect.x() + xSpan, path->textRect.y() + ySpan);
+    mousePressPoint = point;
+}

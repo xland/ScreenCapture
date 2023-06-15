@@ -67,16 +67,4 @@ void TextInputBox::resizeInputToContent()
 	this->document()->adjustSize();
 	auto size = this->document()->size().toSize();
 	this->resize(size.width() + 6, size.height() + 6);
-
-	//    auto font = this->ui->textInput->font();
-//    font.setPointSize(this->dotText->size + 20);
-//    this->ui->textInput->setFont(font);
-//    QFontMetrics metrics(font);
-//    QString str = this->ui->textInput->toPlainText();
-//    if (str.isEmpty())
-//    {
-//        str = "A";
-//    }
-//    auto size = metrics.boundingRect(str).size();
-//    this->ui->textInput->resize(size.width() + 18, size.height() + 6);
 }

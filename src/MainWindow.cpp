@@ -31,7 +31,7 @@ MainWindow::MainWindow(QWidget* parent)
     ui->setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose);
     setAttribute(Qt::WA_QuitOnClose,true);
-    setWindowFlags(Qt::Window | Qt::FramelessWindowHint|Qt::SubWindow);   //| Qt::WindowStaysOnTopHint
+    setWindowFlags(Qt::Window | Qt::FramelessWindowHint);   // |Qt::SubWindow
     setFocusPolicy(Qt::StrongFocus);
     initWindowRects();
     shotScreen();

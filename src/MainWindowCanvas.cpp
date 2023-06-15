@@ -123,6 +123,10 @@ void MainWindow::endOneDraw()
         memcpy(layerBgImg->bits(), layerDrawingImg->bits(), layerBgImg->sizeInBytes());
         path->initPatch(layerBgImg, scaleFactor);
     }
+    else if(path->isText){
+        path->isTextInDrawingLayer = false;
+        paintPath(path, layerBgPainter);
+    }
     else
     {
         paintPath(path, layerBgPainter);
@@ -166,7 +170,7 @@ void MainWindow::paintPath(PathModel* path, QPainter* painter)
     {
         painter->setPen(path->color);
         painter->setFont(path->textFont);
-        painter->drawText(path->textRect, Qt::AlignLeft | Qt::AlignTop, path->text, &path->textRect);
+        painter->drawText(path->textRect, Qt::AlignLeft | Qt::AlignTop, path->text, &path->textRect);        
     }
     else
     {

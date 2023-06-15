@@ -139,9 +139,14 @@ bool MainWindow::mousePress(QMouseEvent* mouseEvent)
         }
         else if (state == "Text")
         {
-            if (draggingTextState == 1)
-            {
-                return true;
+            if (paths.count() >0){
+                auto& path = paths.last();
+                if (path->isText && path->isTextInDrawingLayer && path->textRect.contains(mousePressPoint.toPoint()))
+                {
+                    preState = state;
+                    state = "lastPathDrag";
+                    return true;
+                }
             }
             removeUndoPath();
             endOneDraw();
@@ -200,11 +205,18 @@ bool MainWindow::mouseMove(QMouseEvent* mouseEvent)
         }
         else if (state == "lastPathDrag")
         {
-            if(preState == "RectEllipse"){
+            if(preState == "RectEllipse")
+            {
                 editRectEllipse(curPoint);
-            }else if(preState == "Arrow"){
+            }
+            else if(preState == "Arrow")
+            {
                 editArrow(curPoint);
-            }            
+            }  
+            else if(preState == "Text")
+            {
+                editText(curPoint);
+            }           
             auto& path = paths.last();
             layerDrawingImg->fill(0);
             paintPath(path, layerDrawingPainter);
@@ -219,7 +231,7 @@ bool MainWindow::mouseMove(QMouseEvent* mouseEvent)
         }
         else if (state == "Pen")
         {
-            auto path = paths.last();
+            auto& path = paths.last();
             path->lineTo(curPoint);
             paintPath(path, layerDrawingPainter);
             isDrawing = true;
@@ -228,7 +240,7 @@ bool MainWindow::mouseMove(QMouseEvent* mouseEvent)
         }
         else if (state == "Mosaic")
         {
-            auto path = paths.last();
+            auto& path = paths.last();
             path->lineTo(curPoint);
             paintPath(path, layerBgPainter);
             isDrawing = true;
@@ -237,27 +249,12 @@ bool MainWindow::mouseMove(QMouseEvent* mouseEvent)
         }
         else if (state == "Eraser")
         {
-            auto path = paths.last();
+            auto& path = paths.last();
             path->lineTo(curPoint);
             paintPath(path, layerDrawingPainter);
             isDrawing = true;
             repaint();
             return true;
-        }
-        else if (state == "Text")
-        {
-            if (draggingTextState == 1)
-            {
-                qreal xSpan = curPoint.x() - mousePressPoint.x();
-                qreal ySpan = curPoint.y() - mousePressPoint.y();
-                auto path = paths.last();
-                path->textRect.moveTo(path->textRect.topLeft().x() + xSpan, path->textRect.topLeft().y() + ySpan);
-                layerDrawingImg->fill(0);
-                paintPath(path, layerDrawingPainter);
-                isDrawing = true;
-                repaint();
-                mousePressPoint = curPoint;
-            }
         }
     }
     else
@@ -338,17 +335,14 @@ bool MainWindow::mouseMove(QMouseEvent* mouseEvent)
         }
         else if (state == "Text")
         {
-            if (paths.count() > 0)
+            if (paths.count() < 1) return false;
+            auto& path = paths.last();
+            qDebug()<<path->isTextInDrawingLayer;
+            if (path->isText && path->isTextInDrawingLayer && path->textRect.contains(curPoint.toPoint()))
             {
-                auto path = paths.last();
-                if (path->isText && path->textRect.contains(curPoint.toPoint()))
-                {
-                    setCursor(Qt::SizeAllCursor);
-                    draggingTextState = 1;
-                    return true;
-                }
+                setCursor(Qt::SizeAllCursor);
+                return true;
             }
-            draggingTextState = 0;
             setCursor(Qt::IBeamCursor);
             return true;
         }
