@@ -21,7 +21,7 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{d72502b0-f75d-46eb-985d-8d4acceda4f2}</ProjectGuid>
+    <ProjectGuid>{ed6734ca-86ef-4d5f-9ebf-7e84bb186781}</ProjectGuid>
     <RootNamespace>ScreenCapture</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
@@ -76,11 +76,16 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>D:\sdk\libyue_v0.13.13_win\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <Manifest>
+      <AdditionalManifestFiles>D:\sdk\libyue_v0.13.13_win\sample_app\exe.manifest; %(AdditionalManifestFiles)</AdditionalManifestFiles>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -90,42 +95,38 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>D:\sdk\libyue_v0.13.13_win\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <Manifest>
+      <AdditionalManifestFiles>D:\sdk\libyue_v0.13.13_win\sample_app\exe.manifest; %(AdditionalManifestFiles)</AdditionalManifestFiles>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_WINDOWS;WIN32_LEAN_AND_MEAN;NOMINMAX;_UNICODE;UNICODE;_ITERATOR_DEBUG_LEVEL=0;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>Default</ConformanceMode>
+      <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>D:\sdk\yue\third_party\abseil-cpp;D:\sdk\yue\out\$(configuration)\gen;D:\sdk\yue\building\tools\gn;D:\sdk\yue;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
-      <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <UseFullPaths>false</UseFullPaths>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <AdditionalIncludeDirectories>D:\sdk\libyue_v0.13.13_win\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>lua53.dll.lib;yue.lib;gui.lib;setupapi.lib;powrprof.lib;ws2_32.lib;dbghelp.lib;shlwapi.lib;version.lib;winmm.lib;wbemuuid.lib;psapi.lib;dwmapi.lib;propsys.lib;comctl32.lib;gdi32.lib;gdiplus.lib;urlmon.lib;userenv.lib;uxtheme.lib;delayimp.lib;runtimeobject.lib;ntdll.lib;shcore.lib;kernel32.lib;user32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>D:\sdk\yue\out\$(configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Yue.lib;setupapi.lib;powrprof.lib;ws2_32.lib;dbghelp.lib;shlwapi.lib;version.lib;winmm.lib;wbemuuid.lib;psapi.lib;dwmapi.lib;propsys.lib;comctl32.lib;gdi32.lib;gdiplus.lib;urlmon.lib;userenv.lib;uxtheme.lib;delayimp.lib;runtimeobject.lib;ntdll.lib;shcore.lib;kernel32.lib;user32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <DelayLoadDLLs>setupapi.dll;powrprof.dll;dwmapi.dll</DelayLoadDLLs>
+      <AdditionalLibraryDirectories>D:\sdk\libyue_v0.13.13_win\build\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <Manifest>
-      <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
-      <AdditionalManifestFiles>D:\sdk\yue\sample_app\exe.manifest;</AdditionalManifestFiles>
+      <AdditionalManifestFiles>D:\sdk\libyue_v0.13.13_win\sample_app\exe.manifest; %(AdditionalManifestFiles)</AdditionalManifestFiles>
     </Manifest>
-    <ProjectReference>
-      <LinkLibraryDependencies>false</LinkLibraryDependencies>
-    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -133,27 +134,30 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;WIN32_LEAN_AND_MEAN;NOMINMAX;_UNICODE;UNICODE;_ITERATOR_DEBUG_LEVEL=0;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;WIN32_LEAN_AND_MEAN;NOMINMAX;_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>D:\sdk\yue\third_party\abseil-cpp;D:\sdk\yue\out\$(configuration)\gen;D:\sdk\yue\building\tools\gn;D:\sdk\yue;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <AdditionalIncludeDirectories>D:\sdk\libyue_v0.13.13_win\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>lua53.dll.lib;yue.lib;gui.lib;setupapi.lib;powrprof.lib;ws2_32.lib;dbghelp.lib;shlwapi.lib;version.lib;winmm.lib;wbemuuid.lib;psapi.lib;dwmapi.lib;propsys.lib;comctl32.lib;gdi32.lib;gdiplus.lib;urlmon.lib;userenv.lib;uxtheme.lib;delayimp.lib;runtimeobject.lib;ntdll.lib;shcore.lib;kernel32.lib;user32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>D:\sdk\yue\out\$(configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Yue.lib;setupapi.lib;powrprof.lib;ws2_32.lib;dbghelp.lib;shlwapi.lib;version.lib;winmm.lib;wbemuuid.lib;psapi.lib;dwmapi.lib;propsys.lib;comctl32.lib;gdi32.lib;gdiplus.lib;urlmon.lib;userenv.lib;uxtheme.lib;delayimp.lib;runtimeobject.lib;ntdll.lib;shcore.lib;kernel32.lib;user32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <DelayLoadDLLs>setupapi.dll;powrprof.dll;dwmapi.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
+      <AdditionalLibraryDirectories>D:\sdk\libyue_v0.13.13_win\build\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <Manifest>
-      <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
-      <AdditionalManifestFiles>D:\sdk\libyue_v0.13.12_win\sample_app\exe.manifest;</AdditionalManifestFiles>
+      <AdditionalManifestFiles>D:\sdk\libyue_v0.13.13_win\sample_app\exe.manifest; %(AdditionalManifestFiles)</AdditionalManifestFiles>
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MainWin.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="MainWin.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
