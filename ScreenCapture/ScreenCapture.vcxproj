@@ -112,20 +112,23 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;WIN32_LEAN_AND_MEAN;NOMINMAX;_UNICODE;UNICODE;_ITERATOR_DEBUG_LEVEL=0;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>SK_DIRECT3D;WIN32;_WINDOWS;WIN32_LEAN_AND_MEAN;NOMINMAX;_UNICODE;UNICODE;_DEBUG;_SILENCE_ALL_CXX20_DEPRECATION_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>D:\sdk\libyue_v0.13.13_win\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\sdk\skia115;D:\sdk\skia115\third_party\externals\angle2\include</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>Yue.lib;setupapi.lib;powrprof.lib;ws2_32.lib;dbghelp.lib;shlwapi.lib;version.lib;winmm.lib;wbemuuid.lib;psapi.lib;dwmapi.lib;propsys.lib;comctl32.lib;gdi32.lib;gdiplus.lib;urlmon.lib;userenv.lib;uxtheme.lib;delayimp.lib;runtimeobject.lib;ntdll.lib;shcore.lib;kernel32.lib;user32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <DelayLoadDLLs>setupapi.dll;powrprof.dll;dwmapi.dll</DelayLoadDLLs>
-      <AdditionalLibraryDirectories>D:\sdk\libyue_v0.13.13_win\build\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>zlib.lib;wuffs.lib;svg.lib;skshaper.lib;sksg.lib;skresources.lib;skottie.lib;skia.lib;skcms.lib;pathkit.lib;libwebp_sse41.lib;libwebp.lib;libpng.lib;libjpeg.lib;harfbuzz.lib;expat.lib;compression_utils_portable.lib;OpenGL32.Lib;DXGI.lib;d3d12.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <DelayLoadDLLs>
+      </DelayLoadDLLs>
+      <AdditionalLibraryDirectories>D:\sdk\skia115\out\$(configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <Manifest>
       <AdditionalManifestFiles>D:\sdk\libyue_v0.13.13_win\sample_app\exe.manifest; %(AdditionalManifestFiles)</AdditionalManifestFiles>
+      <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
     </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -134,30 +137,44 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;WIN32_LEAN_AND_MEAN;NOMINMAX;_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;WIN32_LEAN_AND_MEAN;NOMINMAX;_UNICODE;UNICODE;_SILENCE_ALL_CXX20_DEPRECATION_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>D:\sdk\libyue_v0.13.13_win\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\sdk\skia115;D:\sdk\skia115\third_party\externals\angle2\include</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>Yue.lib;setupapi.lib;powrprof.lib;ws2_32.lib;dbghelp.lib;shlwapi.lib;version.lib;winmm.lib;wbemuuid.lib;psapi.lib;dwmapi.lib;propsys.lib;comctl32.lib;gdi32.lib;gdiplus.lib;urlmon.lib;userenv.lib;uxtheme.lib;delayimp.lib;runtimeobject.lib;ntdll.lib;shcore.lib;kernel32.lib;user32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <DelayLoadDLLs>setupapi.dll;powrprof.dll;dwmapi.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
-      <AdditionalLibraryDirectories>D:\sdk\libyue_v0.13.13_win\build\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>zlib.lib;wuffs.lib;svg.lib;skshaper.lib;sksg.lib;skresources.lib;skottie.lib;skia.lib;skcms.lib;pathkit.lib;libwebp_sse41.lib;libwebp.lib;libpng.lib;libjpeg.lib;harfbuzz.lib;expat.lib;compression_utils_portable.lib;OpenGL32.Lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <DelayLoadDLLs>
+      </DelayLoadDLLs>
+      <AdditionalLibraryDirectories>D:\sdk\skia115\out\$(configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <Manifest>
       <AdditionalManifestFiles>D:\sdk\libyue_v0.13.13_win\sample_app\exe.manifest; %(AdditionalManifestFiles)</AdditionalManifestFiles>
+      <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="HelloWorld.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="MainWin.cpp" />
+    <ClCompile Include="sk_app\CommandSet.cpp" />
+    <ClCompile Include="sk_app\Window.cpp" />
+    <ClCompile Include="sk_app\WindowContext.cpp" />
+    <ClCompile Include="sk_app\win\D3D12WindowContext_win.cpp" />
+    <ClCompile Include="sk_app\win\Window_win.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="MainWin.h" />
+    <ClInclude Include="HelloWorld.h" />
+    <ClInclude Include="sk_app\CommandSet.h" />
+    <ClInclude Include="sk_app\DisplayParams.h" />
+    <ClInclude Include="sk_app\Window.h" />
+    <ClInclude Include="sk_app\WindowContext.h" />
+    <ClInclude Include="sk_app\win\WindowContextFactory_win.h" />
+    <ClInclude Include="sk_app\win\Window_win.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

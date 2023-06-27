@@ -1,52 +1,30 @@
-// This file is published under public domain.
+#include <Windows.h>
+#include "HelloWorld.h"
 
-#include "base/command_line.h"
-#include "nativeui/nativeui.h"
-#include "MainWin.h"
-
-//nu::Image* shotScreen() {
-//    HDC hScreen = GetDC(NULL);
-//    HDC hDC = CreateCompatibleDC(hScreen);
-//    HBITMAP hBitmap = CreateCompatibleBitmap(hScreen, rect.width(), rect.height());
-//    BOOL result = DeleteObject(SelectObject(hDC, hBitmap));
-//    if (!result) {
-//        //spdlog::get("logger")->info("DeleteObject error");
-//    }
-//    result = BitBlt(hDC, 0, 0, rect.width(), rect.height(), hScreen, rect.x(), rect.y(), SRCCOPY);
-//    if (!result) {
-//        //spdlog::get("logger")->info("BitBlt error");
-//    }
-//    unsigned int dataSize = ((rect.width() * 32 + 31) / 32) * 4 * rect.height();
-//    std::vector<std::uint8_t> pixels;
-//    pixels.resize(dataSize);
-//    BITMAPINFO Info = { sizeof(BITMAPINFOHEADER), static_cast<long>(rect.width()), static_cast<long>(0 - rect.height()), 1, 32, BI_RGB, dataSize, 0, 0, 0, 0 };
-//    int r = GetDIBits(hDC, hBitmap, 0, rect.height(), &pixels[0], &Info, DIB_RGB_COLORS);
-//    if (r == 0) {
-//        //spdlog::get("logger")->info("GetDIBits error");
-//    }
-//    auto buffer = nu::Buffer::Wrap(pixels.data(), dataSize);
-//    auto scaleFactor = window->GetScaleFactor();
-//    auto img = new nu::Image(buffer, scaleFactor);
-//    return img;
-//}
-
-
-
-
-#if defined(OS_WIN)
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPTSTR lpCmdLine, _In_ int nCmdShow){
-    base::CommandLine::Init(0, nullptr);
-#else
-int main(int argc, const char* argv[]) {
-    base::CommandLine::Init(argc, argv);
-#endif
+    auto app = new HelloWorld(hInstance);
+    MSG msg = { };
+    bool idled = false;
 
-    // Intialize GUI toolkit.
-    nu::Lifetime lifetime;
-    // Initialize the global instance of nativeui.
-    nu::State state;
-    scoped_refptr<nu::Window> window(new MainWin());   
-    // Enter message loop.
-    nu::MessageLoop::Run();
-    return 0;
+    while (WM_QUIT != msg.message) {
+        if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
+            TranslateMessage(&msg);
+
+            if (WM_PAINT == msg.message) {
+                // Ensure that call onIdle at least once per WM_PAINT, or mouse events can
+                // overwhelm the message processing loop, and prevent animation from running.
+                if (!idled) {
+                    app->onIdle();
+                }
+                idled = false;
+            }
+            DispatchMessage(&msg);
+        }
+        else {
+            app->onIdle();
+            idled = true;
+        }
+    }
+    delete app;
+    return (int)msg.wParam;
 }
