@@ -39,20 +39,12 @@ void MainWindow::shotVirtualScreen()
     BOOL bRet = BitBlt(hDC, 0, 0, w, h, hScreen, x, y, SRCCOPY);
     unsigned int dataSize = ((w * 32 + 31) / 32) * 4 * h;
     BITMAPINFO Info = { sizeof(BITMAPINFOHEADER), static_cast<long>(w), static_cast<long>(0 - h), 1, 32, BI_RGB, dataSize, 0, 0, 0, 0 };     
-    std::vector<std::uint8_t> pixels;
+    
     pixels.resize(dataSize);
     int r = GetDIBits(hDC, hBitmap, 0, h, &pixels[0], &Info, DIB_RGB_COLORS);
     bgImg = new Fl_Bitmap(pixels.data(),dataSize, w, h);
     //bgImg = new Fl_RGB_Image(pixels.data(), w, h,4);
     bgImg->alloc_array = 1;
-    fl_read_image(bgImg);
-    std::ofstream fs("123456.bmp");
-    for (size_t i = 0; i < dataSize; i++)
-    {
-        fs << pixels[i];
-    }
-    
-    fs.close();
 
     DeleteDC(hDC);
     ReleaseDC(NULL, hScreen);
@@ -61,5 +53,5 @@ void MainWindow::shotVirtualScreen()
 
 void MainWindow::draw()
 {
-
+    fl_draw_image(pixels.data(), 0, 0, w, h, 4);
 }

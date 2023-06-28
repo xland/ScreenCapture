@@ -22,6 +22,7 @@ private:
 	Fl_Bitmap* bgImg;
 	HINSTANCE hinstance;
 	HWND hwnd;
+	std::vector<std::uint8_t> pixels;
 	int x, y, w, h;	
 };
 namespace {
