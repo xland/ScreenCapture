@@ -112,16 +112,16 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>SK_DIRECT3D;WIN32;_WINDOWS;WIN32_LEAN_AND_MEAN;NOMINMAX;_UNICODE;UNICODE;_DEBUG;_SILENCE_ALL_CXX20_DEPRECATION_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>SK_DIRECT3D;WIN32;_WINDOWS;WIN32_LEAN_AND_MEAN;NOMINMAX;_UNICODE;UNICODE;_DEBUG;_SILENCE_ALL_CXX20_DEPRECATION_WARNINGS;_CRT_SECURE_NO_WARNINGS;_WINSOCK_DEPRECATED_NO_WARNINGS;SFML_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>D:\sdk\skia115;D:\sdk\skia115\third_party\externals\angle2\include</AdditionalIncludeDirectories>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <AdditionalIncludeDirectories>D:\sdk\SFML\include</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>zlib.lib;wuffs.lib;svg.lib;skshaper.lib;sksg.lib;skresources.lib;skottie.lib;skia.lib;skcms.lib;pathkit.lib;libwebp_sse41.lib;libwebp.lib;libpng.lib;libjpeg.lib;harfbuzz.lib;expat.lib;compression_utils_portable.lib;OpenGL32.Lib;DXGI.lib;d3d12.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>D:\sdk\SFML\build\lib\Debug\sfml-graphics-s-d.lib;D:\sdk\SFML\build\lib\Debug\sfml-window-s-d.lib;D:\sdk\SFML\build\lib\Debug\sfml-system-s-d.lib;opengl32.lib;winmm.lib;gdi32.lib;D:\sdk\SFML\extlibs\libs-msvc-universal\x64\freetype.lib;kernel32.lib;user32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <DelayLoadDLLs>
       </DelayLoadDLLs>
       <AdditionalLibraryDirectories>D:\sdk\skia115\out\$(configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -137,18 +137,18 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;WIN32_LEAN_AND_MEAN;NOMINMAX;_UNICODE;UNICODE;_SILENCE_ALL_CXX20_DEPRECATION_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;WIN32_LEAN_AND_MEAN;NOMINMAX;_UNICODE;UNICODE;_SILENCE_ALL_CXX20_DEPRECATION_WARNINGS;_CRT_SECURE_NO_WARNINGS;_WINSOCK_DEPRECATED_NO_WARNINGS;SFML_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>D:\sdk\skia115;D:\sdk\skia115\third_party\externals\angle2\include</AdditionalIncludeDirectories>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <AdditionalIncludeDirectories>D:\sdk\SFML\include</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>zlib.lib;wuffs.lib;svg.lib;skshaper.lib;sksg.lib;skresources.lib;skottie.lib;skia.lib;skcms.lib;pathkit.lib;libwebp_sse41.lib;libwebp.lib;libpng.lib;libjpeg.lib;harfbuzz.lib;expat.lib;compression_utils_portable.lib;OpenGL32.Lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>D:\sdk\SFML\build\lib\Release\sfml-graphics-s.lib;D:\sdk\SFML\build\lib\Release\sfml-window-s.lib;D:\sdk\SFML\build\lib\\Release\sfml-system-s.lib;opengl32.lib;winmm.lib;gdi32.lib;D:\sdk\SFML\extlibs\libs-msvc-universal\x64\freetype.lib;kernel32.lib;user32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <DelayLoadDLLs>
       </DelayLoadDLLs>
       <AdditionalLibraryDirectories>D:\sdk\skia115\out\$(configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -159,22 +159,11 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="HelloWorld.cpp" />
+    <ClCompile Include="Canvas.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="sk_app\CommandSet.cpp" />
-    <ClCompile Include="sk_app\Window.cpp" />
-    <ClCompile Include="sk_app\WindowContext.cpp" />
-    <ClCompile Include="sk_app\win\D3D12WindowContext_win.cpp" />
-    <ClCompile Include="sk_app\win\Window_win.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="HelloWorld.h" />
-    <ClInclude Include="sk_app\CommandSet.h" />
-    <ClInclude Include="sk_app\DisplayParams.h" />
-    <ClInclude Include="sk_app\Window.h" />
-    <ClInclude Include="sk_app\WindowContext.h" />
-    <ClInclude Include="sk_app\win\WindowContextFactory_win.h" />
-    <ClInclude Include="sk_app\win\Window_win.h" />
+    <ClInclude Include="Canvas.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

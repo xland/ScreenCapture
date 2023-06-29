@@ -18,45 +18,12 @@
     <ClCompile Include="main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="sk_app\CommandSet.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="sk_app\Window.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="sk_app\WindowContext.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="sk_app\win\Window_win.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="HelloWorld.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="sk_app\win\D3D12WindowContext_win.cpp">
+    <ClCompile Include="Canvas.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="sk_app\CommandSet.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="sk_app\DisplayParams.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="sk_app\Window.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="sk_app\WindowContext.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="sk_app\win\Window_win.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="sk_app\win\WindowContextFactory_win.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="HelloWorld.h">
+    <ClInclude Include="Canvas.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

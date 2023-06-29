@@ -1,30 +1,33 @@
+#include "Canvas.h"
 #include <Windows.h>
-#include "HelloWorld.h"
+#include <thread>
+#include <memory>
+#include <SFML/Graphics.hpp>
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPTSTR lpCmdLine, _In_ int nCmdShow){
-    auto app = new HelloWorld(hInstance);
-    MSG msg = { };
-    bool idled = false;
-
-    while (WM_QUIT != msg.message) {
-        if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
-            TranslateMessage(&msg);
-
-            if (WM_PAINT == msg.message) {
-                // Ensure that call onIdle at least once per WM_PAINT, or mouse events can
-                // overwhelm the message processing loop, and prevent animation from running.
-                if (!idled) {
-                    app->onIdle();
-                }
-                idled = false;
+    auto canvas = new Canvas();
+    canvas->ShotScreen();
+    sf::ContextSettings settings;
+    settings.antialiasingLevel = 8;
+    sf::RenderWindow window(sf::VideoMode::getFullscreenModes()[0], "ScreenCapture", sf::Style::Fullscreen,settings);
+    //window.setFramerateLimit(60);
+    //window.setVerticalSyncEnabled(true);
+    auto flag = window.setActive(false);
+    std::thread t(&Canvas::Init,canvas, &window);
+    t.join();
+    while (window.isOpen())
+    {
+        sf::Event event;
+        while (window.waitEvent(event))
+        {
+            if (event.type == sf::Event::Closed) {
+                window.close();
             }
-            DispatchMessage(&msg);
-        }
-        else {
-            app->onIdle();
-            idled = true;
+            else {
+                canvas->ProcessEvent(event);
+            }
         }
     }
-    delete app;
-    return (int)msg.wParam;
+    delete canvas;
+    return 0;
 }
