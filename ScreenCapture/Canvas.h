@@ -10,6 +10,7 @@ public:
 	~Canvas();
 	void ShotScreen();
 	void Init(sf::RenderWindow* window);
+	void SetWindowGemory();
 	void Paint();
 	void ProcessEvent(const sf::Event& event);
 private:

@@ -15,6 +15,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
     auto flag = window.setActive(false);
     std::thread t(&Canvas::Init,canvas, &window);
     t.join();
+    canvas->SetWindowGemory();
     while (window.isOpen())
     {
         sf::Event event;
