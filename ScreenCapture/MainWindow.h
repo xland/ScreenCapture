@@ -15,15 +15,15 @@ public:
 	MainWindow(HINSTANCE hinstance, int x, int y, int w, int h);
 	~MainWindow();
 protected:
-	void draw() override;
+	//void draw() override;
 private:
 	void shotVirtualScreen();
 	void initWindowGeomtry();
 	Fl_Bitmap* bgImg;
 	HINSTANCE hinstance;
 	HWND hwnd;
-	std::vector<std::uint8_t> pixels;
 	int x, y, w, h;	
+	std::uint8_t* pixels;
 };
 namespace {
 	std::shared_ptr<MainWindow> mainWindow;

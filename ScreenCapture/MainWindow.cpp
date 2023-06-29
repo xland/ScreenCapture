@@ -1,9 +1,9 @@
 #include "MainWindow.h"
 #include <windowsx.h>
-#include <windowsx.h>
 #include <dwmapi.h>
 #include <stdexcept>
 #include <fstream>
+#include <FL/FL_Box.H>
 
 namespace {
 
@@ -39,19 +39,27 @@ void MainWindow::shotVirtualScreen()
     BOOL bRet = BitBlt(hDC, 0, 0, w, h, hScreen, x, y, SRCCOPY);
     unsigned int dataSize = ((w * 32 + 31) / 32) * 4 * h;
     BITMAPINFO Info = { sizeof(BITMAPINFOHEADER), static_cast<long>(w), static_cast<long>(0 - h), 1, 32, BI_RGB, dataSize, 0, 0, 0, 0 };     
-    
-    pixels.resize(dataSize);
+    pixels = new std::uint8_t[dataSize];
     int r = GetDIBits(hDC, hBitmap, 0, h, &pixels[0], &Info, DIB_RGB_COLORS);
-    bgImg = new Fl_Bitmap(pixels.data(),dataSize, w, h);
-    //bgImg = new Fl_RGB_Image(pixels.data(), w, h,4);
-    bgImg->alloc_array = 1;
-
+    for (int x = 0; x < dataSize; x += 4)
+    {
+        auto r = pixels[x + 2];
+        auto b = pixels[x];
+        pixels[x] = r;
+        pixels[x + 2] = b;
+    }
     DeleteDC(hDC);
     ReleaseDC(NULL, hScreen);
     DeleteObject(hBitmap);  
+
+    Fl_Box* mypicturebox = new Fl_Box(0, 0, w, h);
+    Fl_RGB_Image myImage(pixels, w, h);
+    mypicturebox->image(myImage);
+    mypicturebox->redraw();
+    this->add(mypicturebox);
 }
 
-void MainWindow::draw()
-{
-    fl_draw_image(pixels.data(), 0, 0, w, h, 4);
-}
+//void MainWindow::draw()
+//{
+//    fl_draw_pixmap(pixels, 0, 0);
+//}
