@@ -45,6 +45,11 @@ void Canvas::Init(sf::RenderWindow* window)
     auto flag = window->setActive(true);
     Paint();
 }
+void Canvas::SetWindowGemory()
+{
+    HWND hwnd = window->getSystemHandle();
+    SetWindowPos(hwnd, HWND_TOP, x, y, w, h, SWP_FRAMECHANGED);
+}
 void Canvas::ProcessEvent(const sf::Event& event)
 {
     if (event.type == sf::Event::MouseButtonPressed) {
