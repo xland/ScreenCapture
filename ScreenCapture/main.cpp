@@ -10,8 +10,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
     sf::ContextSettings settings;
     settings.antialiasingLevel = 8;
     sf::RenderWindow window(sf::VideoMode::getFullscreenModes()[0], "ScreenCapture", sf::Style::Fullscreen,settings);
-    //window.setFramerateLimit(60);
-    //window.setVerticalSyncEnabled(true);
+    window.setFramerateLimit(20);
+    window.setVerticalSyncEnabled(true);
     auto flag = window.setActive(false);
     std::thread t(&Canvas::Init,canvas, &window);
     t.join();

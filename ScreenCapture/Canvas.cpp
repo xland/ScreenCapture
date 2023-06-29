@@ -54,17 +54,14 @@ void Canvas::ProcessEvent(const sf::Event& event)
         }
         else
         {
-            mouseDownPos.x = event.mouseButton.x;
-            mouseDownPos.y = event.mouseButton.y;
+            mouseDownPos = sf::Mouse::getPosition();
             isMouseDown = true;
         }
     }
     else if (event.type == sf::Event::MouseMoved) 
     {
         if (!isMouseDown) return;
-        sf::Vector2i pos;
-        pos.x = event.mouseButton.x;
-        pos.y = event.mouseButton.y;
+        sf::Vector2i pos = sf::Mouse::getPosition();
         if (pos.x < mouseDownPos.x) {
             masks[0].width = pos.x;
             masks[1].left = pos.x;
