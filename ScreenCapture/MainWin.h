@@ -1,5 +1,6 @@
 #pragma once
 #include <windows.h>
+#include <windowsx.h>
 
 #include <stdlib.h>
 #include <malloc.h>
@@ -18,23 +19,35 @@ public:
 	~MainWin();
 	void Paint();
 private:
+	template<class Interface>
+	inline void SafeRelease(Interface** ppInterfaceToRelease);
+	HWND hwnd;
+	HINSTANCE hinstance;
+
 	void shotScreen();
 	void initScaleFactor();
 	void createWindow();
-	void createDeviceRes();
-	template<class Interface>
-	inline void SafeRelease(Interface** ppInterfaceToRelease);
-
 	static LRESULT CALLBACK WndProc(HWND hWnd,UINT message,WPARAM wParam,LPARAM lParam);
-
-
 	int x, y, w, h;
 	float scaleFactor;
+
+	void createDeviceRes();
 	char* bgPixels;
 	ID2D1Factory* direct2dFactory;
-	ID2D1HwndRenderTarget* renderTarget;
+	ID2D1HwndRenderTarget* render;
+	ID2D1Bitmap* bgImg;
 	ID2D1SolidColorBrush* brush;
-	HWND hwnd;
-	HINSTANCE hinstance;
+	ID2D1SolidColorBrush* maskBrush;
+
+
+	void leftBtnDown(const POINT& pos);
+	void rightBtnDown(const POINT& pos);
+	void mouseMove(const POINT& pos);
+	void leftBtnUp(const POINT& pos);
+	POINT mouseDownPos;
+	bool isLeftBtnDown;
+
+	D2D1_RECT_F masks[8];
+	D2D1_RECT_F cutRect;
 };
 
