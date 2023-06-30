@@ -2,6 +2,7 @@
 #include <memory>
 
 
+
 MainWin::MainWin(HINSTANCE hinstance):hinstance{hinstance},
     direct2dFactory{nullptr},hwnd{nullptr}
 {
@@ -28,10 +29,22 @@ void MainWin::Paint()
     render->DrawLine(D2D1::Point2F(0.0f, 0.0f),D2D1::Point2F(w, h),brush,3.5f);
     D2D1_ELLIPSE ellipse = D2D1::Ellipse(D2D1::Point2F(1100.f, 1100.f), 200.f, 350.f);
     render->DrawEllipse(ellipse, brush, 10.f);
-    for (size_t i = 0; i < 8; i++)
+
+    ID2D1Effect* cropEffect;
+    render->CreateEffect(CLSID_D2D1Crop, &cropEffect);
+
+    cropEffect->SetInput(0, bitmap);
+    cropEffect->SetValue(D2D1_CROP_PROP_RECT, D2D1::RectF(0.0f, 0.0f, 256.0f, 192.0f));
+
+    m_d2dContext->BeginDraw();
+    m_d2dContext->DrawImage(cropEffect.Get());
+    m_d2dContext->EndDraw();
+
+
+/*    for (size_t i = 0; i < 8; i++)
     {
         render->FillRectangle(masks[i], maskBrush);
-    }   
+    }*/   
 
     HRESULT hr = render->EndDraw();
     if (hr == D2DERR_RECREATE_TARGET)
