@@ -7,7 +7,7 @@ MainWin::MainWin(HINSTANCE hinstance):hinstance{hinstance},
     direct2dFactory{nullptr},hwnd{nullptr}
 {
     shotScreen();
-    D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &direct2dFactory);
+    D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &direct2dFactory);    
     createWindow();
 }
 MainWin::~MainWin()
@@ -23,22 +23,22 @@ void MainWin::Paint()
 {
     createDeviceRes();
     render->BeginDraw();
+    ID2D1Layer* pLayer = NULL;
+    render->CreateLayer(NULL, &pLayer);
     render->SetTransform(D2D1::Matrix3x2F::Identity());
-    render->DrawBitmap(bgImg,D2D1::RectF(x,y,w/scaleFactor,h/scaleFactor));
+    render->DrawBitmap(bgImg,D2D1::RectF(0,0,w/scaleFactor,h/scaleFactor));
     //renderTarget->Clear(D2D1::ColorF(D2D1::ColorF::White));
     render->DrawLine(D2D1::Point2F(0.0f, 0.0f),D2D1::Point2F(w, h),brush,3.5f);
     D2D1_ELLIPSE ellipse = D2D1::Ellipse(D2D1::Point2F(1100.f, 1100.f), 200.f, 350.f);
     render->DrawEllipse(ellipse, brush, 10.f);
+    
 
-    ID2D1Effect* cropEffect;
-    render->CreateEffect(CLSID_D2D1Crop, &cropEffect);
-
-    cropEffect->SetInput(0, bitmap);
-    cropEffect->SetValue(D2D1_CROP_PROP_RECT, D2D1::RectF(0.0f, 0.0f, 256.0f, 192.0f));
-
-    m_d2dContext->BeginDraw();
-    m_d2dContext->DrawImage(cropEffect.Get());
-    m_d2dContext->EndDraw();
+    render->PushAxisAlignedClip(
+        D2D1::RectF(20, 20, 100, 100),
+        D2D1_ANTIALIAS_MODE_PER_PRIMITIVE
+    );
+    render->FillRectangle(D2D1::RectF(0, 0, 200, 133), maskBrush);
+    render->PopAxisAlignedClip();
 
 
 /*    for (size_t i = 0; i < 8; i++)
