@@ -102,8 +102,6 @@ LRESULT CALLBACK MainWin::WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM
             }
             case WM_PAINT:
             {
-                mainWin->paint();
-                ValidateRect(hwnd, NULL);
                 return 0;
             }
             case WM_RBUTTONDOWN:
@@ -138,6 +136,10 @@ LRESULT CALLBACK MainWin::WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM
                 mainWin->leftBtnUp(point);
                 return 0;
             }
+            case WM_ERASEBKGND: 
+            {
+                return 1;
+            }                
             case WM_DESTROY:
             {
                 PostQuitMessage(0);

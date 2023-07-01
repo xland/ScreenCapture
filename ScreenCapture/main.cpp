@@ -1,21 +1,14 @@
 #include "MainWin.h"
 #include <Windows.h>
 
-int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPTSTR lpCmdLine, _In_ int nCmdShow){
-    HeapSetInformation(NULL, HeapEnableTerminationOnCorruption, NULL, 0);
-    if (!SUCCEEDED(CoInitialize(NULL))) 
+int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPTSTR lpCmdLine, _In_ int nCmdShow)
+{
+    MainWin mainWin(hInstance);
+    MSG msg;
+    while (GetMessage(&msg, NULL, 0, 0))
     {
-        return -1;
+        TranslateMessage(&msg);
+        DispatchMessage(&msg);
     }
-    {
-        MainWin mainWin(hInstance);
-        MSG msg;
-        while (GetMessage(&msg, NULL, 0, 0))
-        {
-            TranslateMessage(&msg);
-            DispatchMessage(&msg);
-        }
-    }
-    CoUninitialize();
     return 0;
 }

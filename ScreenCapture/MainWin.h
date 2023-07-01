@@ -9,12 +9,16 @@
 #include <wchar.h>
 #include <math.h>
 
+#include <d3d11.h>
 #include <d2d1.h>
 #include <d2d1helper.h>
 #include <d2d1effects.h>
 #include <d2d1_1.h>
 #include <dwrite.h>
 #include <wincodec.h>
+#include <dxgi1_2.h>
+using namespace Microsoft::WRL;
+
 class MainWin
 {
 public:
@@ -41,18 +45,22 @@ private:
 	HINSTANCE hinstance;
 
 	void paint();
+	void paintBg();
 	void paintMask();
 	void initCanvas();
 	void createDeviceRes();
-	void paintError(const HRESULT& result);
-	ID2D1Layer* maskLayer;
+	ComPtr<ID2D1DeviceContext> context;
+	ComPtr<IDXGISwapChain1> dxgiSwapChain;
+	ComPtr<ID2D1Bitmap> bgImg;
+
+
+	//ID2D1Layer* maskLayer;
 	char* bgPixels;
-	ID2D1Factory* factory;
-	ID2D1HwndRenderTarget* render;
-	ID2D1Bitmap* bgImg;
-	ID2D1SolidColorBrush* brush;
-	ID2D1SolidColorBrush* maskBrush;
-	D2D1_RECT_F cutRect;
+	//ID2D1Factory* factory;
+	//ID2D1HwndRenderTarget* render;	
+	//ID2D1SolidColorBrush* brush;
+	//ID2D1SolidColorBrush* maskBrush;
+	//D2D1_RECT_F cutRect;
 
 
 	void leftBtnDown(const POINT& pos);
