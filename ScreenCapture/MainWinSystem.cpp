@@ -102,6 +102,7 @@ LRESULT CALLBACK MainWin::WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM
             }
             case WM_PAINT:
             {
+                ValidateRect(hwnd, NULL);
                 return 0;
             }
             case WM_RBUTTONDOWN:
