@@ -19,27 +19,28 @@ class MainWin
 public:
 	MainWin(HINSTANCE hinstance);
 	~MainWin();
-	void Paint();
 private:
-	template<class Interface>
-	inline void SafeRelease(Interface** ppInterfaceToRelease);
-	HWND hwnd;
-	HINSTANCE hinstance;
-
 	void shotScreen();
 	void initScaleFactor();
 	void createWindow();
+	void showWindow();
 	static LRESULT CALLBACK WndProc(HWND hWnd,UINT message,WPARAM wParam,LPARAM lParam);
-	int x, y, w, h;
-	float scaleFactor;
+	float x, y, w, h,scaleFactor;
+	HWND hwnd;
+	HINSTANCE hinstance;
 
+	void paint();
+	void paintMask();
+	void initCanvas();
 	void createDeviceRes();
+	ID2D1Layer* maskLayer;
 	char* bgPixels;
 	ID2D1Factory* direct2dFactory;
 	ID2D1HwndRenderTarget* render;
 	ID2D1Bitmap* bgImg;
 	ID2D1SolidColorBrush* brush;
 	ID2D1SolidColorBrush* maskBrush;
+	D2D1_RECT_F cutRect;
 
 
 	void leftBtnDown(const POINT& pos);
@@ -48,8 +49,5 @@ private:
 	void leftBtnUp(const POINT& pos);
 	POINT mouseDownPos;
 	bool isLeftBtnDown;
-
-	D2D1_RECT_F masks[8];
-	D2D1_RECT_F cutRect;
 };
 

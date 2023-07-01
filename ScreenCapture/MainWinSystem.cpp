@@ -33,8 +33,11 @@ void MainWin::createWindow()
     wcex.hCursor = LoadCursor(NULL, IDI_APPLICATION);
     wcex.lpszClassName = L"ScreenCapture";
     RegisterClassEx(&wcex);
-    hwnd = CreateWindow(wcex.lpszClassName, wcex.lpszClassName, WS_POPUP, x, y, w, h, NULL, NULL, hinstance, this);
-    initScaleFactor();
+    hwnd = CreateWindow(wcex.lpszClassName, wcex.lpszClassName, WS_POPUP, x, y, w, h, NULL, NULL, hinstance, this);    
+}
+
+void MainWin::showWindow()
+{
     ShowWindow(hwnd, SW_SHOWNORMAL);
     UpdateWindow(hwnd);
 }
@@ -99,7 +102,7 @@ LRESULT CALLBACK MainWin::WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM
             }
             case WM_PAINT:
             {
-                mainWin->Paint();
+                mainWin->paint();
                 ValidateRect(hwnd, NULL);
                 return 0;
             }
