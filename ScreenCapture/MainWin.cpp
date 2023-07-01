@@ -4,7 +4,7 @@
 
 
 MainWin::MainWin(HINSTANCE hinstance):hinstance{hinstance},
-    direct2dFactory{nullptr},hwnd{nullptr}
+factory{nullptr},hwnd{nullptr}
 {
     shotScreen();  
     createWindow();
@@ -14,10 +14,12 @@ MainWin::MainWin(HINSTANCE hinstance):hinstance{hinstance},
 }
 MainWin::~MainWin()
 {
+    delete[] bgPixels;
     brush->Release();
     maskBrush->Release();
     bgImg->Release();
+    maskLayer->Release();
     render->Release();
-    direct2dFactory->Release();
+    factory->Release();
     
 }

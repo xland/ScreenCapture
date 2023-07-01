@@ -1,6 +1,7 @@
 #pragma once
 #include <windows.h>
 #include <windowsx.h>
+#include <wrl/client.h>
 
 #include <stdlib.h>
 #include <malloc.h>
@@ -20,6 +21,16 @@ public:
 	MainWin(HINSTANCE hinstance);
 	~MainWin();
 private:
+	template <class T> void release(T** ppT)
+	{
+		if (*ppT)
+		{
+			(*ppT)->Release();
+			*ppT = NULL;
+		}
+	}
+
+
 	void shotScreen();
 	void initScaleFactor();
 	void createWindow();
@@ -33,9 +44,10 @@ private:
 	void paintMask();
 	void initCanvas();
 	void createDeviceRes();
+	void paintError(const HRESULT& result);
 	ID2D1Layer* maskLayer;
 	char* bgPixels;
-	ID2D1Factory* direct2dFactory;
+	ID2D1Factory* factory;
 	ID2D1HwndRenderTarget* render;
 	ID2D1Bitmap* bgImg;
 	ID2D1SolidColorBrush* brush;
@@ -49,5 +61,7 @@ private:
 	void leftBtnUp(const POINT& pos);
 	POINT mouseDownPos;
 	bool isLeftBtnDown;
+
+
 };
 

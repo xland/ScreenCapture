@@ -2,7 +2,7 @@
 
 void MainWin::initCanvas()
 {
-	D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &direct2dFactory);
+	D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &factory);
 }
 
 void MainWin::paint()
@@ -15,33 +15,28 @@ void MainWin::paint()
     D2D1_ELLIPSE ellipse = D2D1::Ellipse(D2D1::Point2F(500.f, 500.f), 200.f, 350.f);
     render->DrawEllipse(ellipse, brush, 10.f);
     paintMask();
-
     auto result = render->EndDraw();
-    if (D2DERR_RECREATE_TARGET == result)
-    {
-        render->Release();
-        brush->Release();
-        maskBrush->Release();
-        render = nullptr;
-    }
+    paintError(result);
 }
 
 void MainWin::createDeviceRes()
 {
     if (render) return;
+    
     D2D1_SIZE_U size = D2D1::SizeU(w, h);
-    direct2dFactory->CreateHwndRenderTarget(D2D1::RenderTargetProperties(), D2D1::HwndRenderTargetProperties(hwnd, size), &render);
+    factory->CreateHwndRenderTarget(D2D1::RenderTargetProperties(), D2D1::HwndRenderTargetProperties(hwnd, size), &render);
     render->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Red), &brush);
     render->CreateSolidColorBrush(D2D1::ColorF(0, 0, 0, 0.68), &maskBrush); 
     render->CreateLayer(NULL, &maskLayer);
+
+    
 
     D2D1_BITMAP_PROPERTIES bmpPorp;
     bmpPorp.dpiX = 0.0f;
     bmpPorp.dpiY = 0.0f;
     bmpPorp.pixelFormat.format = DXGI_FORMAT_B8G8R8A8_UNORM;
     bmpPorp.pixelFormat.alphaMode = D2D1_ALPHA_MODE_IGNORE;
-    render->CreateBitmap(size, bgPixels, 4 * w, bmpPorp, &bgImg);
-    delete[] bgPixels;
+    render->CreateBitmap(size, bgPixels, 4 * w, bmpPorp, &bgImg);   
 
     w = w / scaleFactor;
     h = h / scaleFactor;
@@ -58,4 +53,17 @@ void MainWin::paintMask()
     render->Clear(D2D1::ColorF(0, 0, 0, 0));
     render->PopAxisAlignedClip();
     render->PopLayer();
+}
+void MainWin::paintError(const HRESULT& result)
+{
+    if (D2DERR_RECREATE_TARGET == result)
+    {
+        initScaleFactor();
+        brush->Release();
+        maskBrush->Release();
+        maskLayer->Release();
+        bgImg->Release();
+        render->Release();
+        render = nullptr;
+    }
 }
