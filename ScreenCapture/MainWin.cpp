@@ -10,7 +10,6 @@ MainWin::MainWin(HINSTANCE hinstance):hinstance{hinstance}
     initScaleFactor();
     showWindow();
     initCanvas();
-    createDeviceRes();
     paint();
 }
 MainWin::~MainWin()

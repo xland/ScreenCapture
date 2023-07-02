@@ -48,10 +48,9 @@ private:
 	void paintBg();
 	void paintMask();
 	void initCanvas();
-	void createDeviceRes();
 	ComPtr<ID2D1DeviceContext> context;
 	ComPtr<IDXGISwapChain1> dxgiSwapChain;
-	ComPtr<ID2D1Bitmap> bgImg;
+	D2D1_RECT_F cutRect;
 
 
 	//ID2D1Layer* maskLayer;
@@ -67,6 +66,7 @@ private:
 	void rightBtnDown(const POINT& pos);
 	void mouseMove(const POINT& pos);
 	void leftBtnUp(const POINT& pos);
+	inline POINT getMousePoint(const LPARAM& lParam);
 	POINT mouseDownPos;
 	bool isLeftBtnDown;
 

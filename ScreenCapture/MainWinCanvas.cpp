@@ -8,9 +8,9 @@ void MainWin::initCanvas()
     {
         //创建可用于创建 Direct2D 资源的工厂对象。
         D2D1_FACTORY_OPTIONS fo = {};
-    #ifdef _DEBUG
-        fo.debugLevel = D2D1_DEBUG_LEVEL_INFORMATION;
-    #endif
+        #ifdef _DEBUG
+            fo.debugLevel = D2D1_DEBUG_LEVEL_INFORMATION;
+        #endif
         HRESULT hr = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, fo, d2dFactory.GetAddressOf());
         if (!SUCCEEDED(hr)) return;
     }
@@ -35,9 +35,9 @@ void MainWin::initCanvas()
     {
         //创建表示显示适配器的设备。
         UINT flags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
-    #ifdef _DEBUG
-        flags |= D3D11_CREATE_DEVICE_DEBUG;
-    #endif
+        #ifdef _DEBUG
+            flags |= D3D11_CREATE_DEVICE_DEBUG;
+        #endif
         D3D_FEATURE_LEVEL featureLevels[] =
         {
             D3D_FEATURE_LEVEL_11_1,
@@ -109,23 +109,25 @@ void MainWin::initCanvas()
         auto props = D2D1::BitmapProperties1(D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW, D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_IGNORE));
         HRESULT hr = context->CreateBitmapFromDxgiSurface(dxgiSurface.Get(), props, d2dBitmap.GetAddressOf());
         if (!SUCCEEDED(hr)) return;
-    }    
-
-    D2D1_BITMAP_PROPERTIES bmpPorp;
-    bmpPorp.dpiX = 0.0f;
-    bmpPorp.dpiY = 0.0f;
-    bmpPorp.pixelFormat.format = DXGI_FORMAT_B8G8R8A8_UNORM;
-    bmpPorp.pixelFormat.alphaMode = D2D1_ALPHA_MODE_IGNORE;
-    D2D1_SIZE_U size = D2D1::SizeU(w, h);
-    context->CreateBitmap(size, bgPixels, 4 * w, bmpPorp, bgImg.GetAddressOf());
-    delete[] bgPixels;
-
+    } 
     context->SetTarget(d2dBitmap.Get());
     
 }
 
 void MainWin::paintBg()
 {
+    static ComPtr<ID2D1Bitmap> bgImg;
+    if (!bgImg.Get())
+    {
+        D2D1_BITMAP_PROPERTIES bmpPorp;
+        bmpPorp.dpiX = 0.0f;
+        bmpPorp.dpiY = 0.0f;
+        bmpPorp.pixelFormat.format = DXGI_FORMAT_B8G8R8A8_UNORM;
+        bmpPorp.pixelFormat.alphaMode = D2D1_ALPHA_MODE_IGNORE;
+        D2D1_SIZE_U size = D2D1::SizeU(w, h);
+        context->CreateBitmap(size, bgPixels, 4 * w, bmpPorp, bgImg.GetAddressOf());
+        delete[] bgPixels;
+    }
     context->DrawBitmap(bgImg.Get(), D2D1::RectF(0, 0, w, h));
     //D2D1_RECT_F rect = D2D1::RectF(100.0, 100.0, 400.0, 600.0);
     //ID2D1SolidColorBrush* maskBrush;
@@ -138,26 +140,34 @@ void MainWin::paint()
     context->BeginDraw();
     context->SetTransform(D2D1::Matrix3x2F::Identity());
     paintBg();
+    paintMask();
     context->EndDraw();
     context->Flush();
     DXGI_PRESENT_PARAMETERS parameters = { 0 };
     dxgiSwapChain->Present1(1, 0, &parameters);
 }
 
-void MainWin::createDeviceRes()
-{   
-    
-}
-
 void MainWin::paintMask()
 {
-    //auto param = D2D1::LayerParameters(D2D1::InfiniteRect(),NULL,
-    //    D2D1_ANTIALIAS_MODE_PER_PRIMITIVE,D2D1::IdentityMatrix(),
-    //    1.0,NULL,D2D1_LAYER_OPTIONS_NONE);
-    //render->PushLayer(param,maskLayer);
-    //render->FillRectangle(D2D1::RectF(0, 0, w, h), maskBrush);
-    //render->PushAxisAlignedClip(cutRect, D2D1_ANTIALIAS_MODE_ALIASED);
-    //render->Clear(D2D1::ColorF(0, 0, 0, 0));
-    //render->PopAxisAlignedClip();
-    //render->PopLayer();
+    static ComPtr<ID2D1Layer> layer;
+    if (!layer.Get()) {
+        context->CreateLayer(NULL, &layer);
+    }
+    static ComPtr<ID2D1SolidColorBrush> bgBrush;
+    if (!bgBrush.Get()) {
+        context->CreateSolidColorBrush(D2D1::ColorF(0, 0, 0, 0.68f), &bgBrush);
+    }
+    static ComPtr<ID2D1SolidColorBrush> borderBrush;
+    if (!borderBrush.Get()) {
+        context->CreateSolidColorBrush(D2D1::ColorF(0x9ACD32, 1.0f), &borderBrush);
+    }
+    auto param = D2D1::LayerParameters(D2D1::InfiniteRect(),NULL,D2D1_ANTIALIAS_MODE_PER_PRIMITIVE,
+        D2D1::IdentityMatrix(),1.0,NULL,D2D1_LAYER_OPTIONS_NONE);
+    context->PushLayer(param, layer.Get());
+    context->FillRectangle(D2D1::RectF(0, 0, w, h), bgBrush.Get());
+    context->DrawRectangle(cutRect, borderBrush.Get(),8.0f);
+    context->PushAxisAlignedClip(cutRect, D2D1_ANTIALIAS_MODE_ALIASED);
+    context->Clear(D2D1::ColorF(0, 0, 0, 0));
+    context->PopAxisAlignedClip();
+    context->PopLayer();
 }

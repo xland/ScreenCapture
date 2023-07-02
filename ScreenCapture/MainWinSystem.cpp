@@ -107,33 +107,25 @@ LRESULT CALLBACK MainWin::WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM
             }
             case WM_RBUTTONDOWN:
             {
-                POINT point;
-                point.x = GET_X_LPARAM(lParam) / mainWin->scaleFactor;
-                point.y = GET_Y_LPARAM(lParam) / mainWin->scaleFactor;
+                POINT point = mainWin->getMousePoint(lParam);
                 mainWin->rightBtnDown(point);
                 return 0;
             }
             case WM_MOUSEMOVE:
             {
-                POINT point;
-                point.x = GET_X_LPARAM(lParam) / mainWin->scaleFactor;
-                point.y = GET_Y_LPARAM(lParam) / mainWin->scaleFactor;
+                POINT point = mainWin->getMousePoint(lParam);
                 mainWin->mouseMove(point);
                 return 0;
             }
             case WM_LBUTTONDOWN:
             {
-                POINT point;
-                point.x = GET_X_LPARAM(lParam) / mainWin->scaleFactor;
-                point.y = GET_Y_LPARAM(lParam) / mainWin->scaleFactor;
+                POINT point = mainWin->getMousePoint(lParam);
                 mainWin->leftBtnDown(point);
                 return 0;
             }
             case WM_LBUTTONUP:
             {
-                POINT point;
-                point.x = GET_X_LPARAM(lParam) / mainWin->scaleFactor;
-                point.y = GET_Y_LPARAM(lParam) / mainWin->scaleFactor;
+                POINT point = mainWin->getMousePoint(lParam);
                 mainWin->leftBtnUp(point);
                 return 0;
             }
@@ -152,4 +144,11 @@ LRESULT CALLBACK MainWin::WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM
         }
     }
     return 0;
+}
+POINT MainWin::getMousePoint(const LPARAM& lParam)
+{
+    POINT point;
+    point.x = GET_X_LPARAM(lParam);
+    point.y = GET_Y_LPARAM(lParam);
+    return point;
 }
