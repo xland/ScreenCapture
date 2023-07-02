@@ -92,6 +92,10 @@ void MainWin::initCanvas()
         props.SampleDesc.Count = 1;
         props.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
         props.BufferCount = 2;
+        props.SwapEffect = DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL;
+        props.AlphaMode = DXGI_ALPHA_MODE_IGNORE;
+
+
         HRESULT hr = dxgiFactory->CreateSwapChainForHwnd(d3d11Device.Get(), hwnd, &props, nullptr, nullptr, dxgiSwapChain.GetAddressOf());
         if (!SUCCEEDED(hr)) return;
     }
@@ -103,14 +107,14 @@ void MainWin::initCanvas()
         if (!SUCCEEDED(hr))return;
         dxgiSurface = surface;
     } 
-    ComPtr<ID2D1Bitmap1> d2dBitmap;
+    
     {
         //从DXGI表面创建位图，可以将其设置为target surface或指定其他颜色上下文信息。
         auto props = D2D1::BitmapProperties1(D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW, D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_IGNORE));
         HRESULT hr = context->CreateBitmapFromDxgiSurface(dxgiSurface.Get(), props, d2dBitmap.GetAddressOf());
         if (!SUCCEEDED(hr)) return;
-    } 
-    context->SetTarget(d2dBitmap.Get());
+    }   
+
     
 }
 
@@ -119,27 +123,72 @@ void MainWin::paintBg()
     static ComPtr<ID2D1Bitmap> bgImg;
     if (!bgImg.Get())
     {
-        D2D1_BITMAP_PROPERTIES bmpPorp;
-        bmpPorp.dpiX = 0.0f;
-        bmpPorp.dpiY = 0.0f;
-        bmpPorp.pixelFormat.format = DXGI_FORMAT_B8G8R8A8_UNORM;
-        bmpPorp.pixelFormat.alphaMode = D2D1_ALPHA_MODE_IGNORE;
-        D2D1_SIZE_U size = D2D1::SizeU(w, h);
-        context->CreateBitmap(size, bgPixels, 4 * w, bmpPorp, bgImg.GetAddressOf());
+        D2D1_BITMAP_PROPERTIES imgConfig;
+        imgConfig.dpiX = 0.0f;
+        imgConfig.dpiY = 0.0f;
+        imgConfig.pixelFormat.format = DXGI_FORMAT_B8G8R8A8_UNORM;
+        imgConfig.pixelFormat.alphaMode = D2D1_ALPHA_MODE_IGNORE;
+        context->CreateBitmap(D2D1::SizeU(w, h), bgPixels, 4 * w, imgConfig, bgImg.GetAddressOf());       
         delete[] bgPixels;
-    }
+    }    
     context->DrawBitmap(bgImg.Get(), D2D1::RectF(0, 0, w, h));
-    //D2D1_RECT_F rect = D2D1::RectF(100.0, 100.0, 400.0, 600.0);
-    //ID2D1SolidColorBrush* maskBrush;
-    //context->CreateSolidColorBrush(D2D1::ColorF(1, 1, 1, 1), &maskBrush);
-    //context->FillRectangle(&rect, maskBrush);
+    //static ComPtr<ID2D1Layer> layer;
+    //if (!layer.Get()) {
+    //    context->CreateLayer(NULL, &layer);
+    //}
+    //static ComPtr<ID2D1SolidColorBrush> defaultBrush;
+    //if (!defaultBrush.Get()) {
+    //    context->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Red), &defaultBrush);
+    //}
+    //static ComPtr<ID2D1SolidColorBrush> clearBrush;
+    //if (!clearBrush.Get()) {
+    //    context->CreateSolidColorBrush(D2D1::ColorF(0, 0, 0, 1), &clearBrush);
+    //}
+    //auto param = D2D1::LayerParameters(D2D1::InfiniteRect(), NULL, D2D1_ANTIALIAS_MODE_PER_PRIMITIVE,
+    //    D2D1::IdentityMatrix(), 1.0, clearBrush.Get(), D2D1_LAYER_OPTIONS_NONE);
+    //context->PushLayer(param, layer.Get());
+    //context->DrawLine(D2D1::Point2F(0.0f, 0.0f), D2D1::Point2F(w, h), defaultBrush.Get(), 16.5f);
+    //context->DrawLine(D2D1::Point2F(0.0f, h), D2D1::Point2F(w, 0), defaultBrush.Get(),16.5f);
+    //context->PopLayer();
+}
+
+void MainWin::paintCanvas()
+{
+    if (!canvasImg.Get())
+    {
+        unsigned int dataSize = w * h * 4;
+        char* pixels = new char[dataSize];
+        memset(pixels, 0, dataSize);
+        auto props = D2D1::BitmapProperties1(D2D1_BITMAP_OPTIONS_TARGET, D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED));
+        context->CreateBitmap(D2D1::SizeU(w, h), pixels, 4 * w, props, &canvasImg);
+        delete[] pixels;
+    }
+    context->SetTarget(canvasImg.Get());
+    static ComPtr<ID2D1SolidColorBrush> defaultBrush;
+    if (!defaultBrush.Get()) {
+        context->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Red), &defaultBrush);
+    }
+    context->FillRectangle(D2D1::RectF(80.0f, 80.0f, 1280.0f, 1280.0f ), defaultBrush.Get());
+
+    //defaultBrush->SetColor(D2D1::ColorF(0.0f, 0.0f, 0.0f, 0.0f));
+    //context->DrawLine(D2D1::Point2F(0.0f, h), D2D1::Point2F(w, 0), defaultBrush.Get(),16.5f);
+
+    context->SetTarget(d2dBitmap.Get());
+    context->DrawBitmap(canvasImg.Get(), D2D1::RectF(0, 0, w, h));
 }
 
 void MainWin::paint()
 {
+    context->SetTarget(d2dBitmap.Get());
     context->BeginDraw();
     context->SetTransform(D2D1::Matrix3x2F::Identity());
     paintBg();
+    if (state != State::Eraser) {
+        paintCanvas();
+    }
+    else {
+        paintEraser();
+    } 
     paintMask();
     context->EndDraw();
     context->Flush();
@@ -170,4 +219,15 @@ void MainWin::paintMask()
     context->Clear(D2D1::ColorF(0, 0, 0, 0));
     context->PopAxisAlignedClip();
     context->PopLayer();
+}
+
+void MainWin::paintEraser()
+{
+    static ComPtr<ID2D1Effect> compositeEffect;
+    if (!compositeEffect.Get()) {
+        context->CreateEffect(CLSID_D2D1Composite, &compositeEffect);
+    }    
+    compositeEffect->SetInput(0, canvasImg.Get());
+    //compositeEffect->SetInput(1, bitmapTwo);
+    context->DrawImage(compositeEffect.Get(), D2D1_INTERPOLATION_MODE_NEAREST_NEIGHBOR,D2D1_COMPOSITE_MODE_SOURCE_OUT);
 }

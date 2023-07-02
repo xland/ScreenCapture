@@ -1,22 +1,25 @@
 #pragma once
+#include "State.h"
 #include <windows.h>
 #include <windowsx.h>
 #include <wrl/client.h>
 
+#include <algorithm>
 #include <stdlib.h>
 #include <malloc.h>
 #include <memory.h>
 #include <wchar.h>
 #include <math.h>
+#include <iostream>
 
+#include <d2d1_1.h>
 #include <d3d11.h>
-#include <d2d1.h>
 #include <d2d1helper.h>
 #include <d2d1effects.h>
-#include <d2d1_1.h>
 #include <dwrite.h>
 #include <wincodec.h>
 #include <dxgi1_2.h>
+#include <d2d1effects.h>
 using namespace Microsoft::WRL;
 
 class MainWin
@@ -25,14 +28,6 @@ public:
 	MainWin(HINSTANCE hinstance);
 	~MainWin();
 private:
-	template <class T> void release(T** ppT)
-	{
-		if (*ppT)
-		{
-			(*ppT)->Release();
-			*ppT = NULL;
-		}
-	}
 
 
 	void shotScreen();
@@ -46,20 +41,17 @@ private:
 
 	void paint();
 	void paintBg();
+	void paintCanvas();
+	void paintEraser();
 	void paintMask();
 	void initCanvas();
+	State state = State::Start;
 	ComPtr<ID2D1DeviceContext> context;
 	ComPtr<IDXGISwapChain1> dxgiSwapChain;
-	D2D1_RECT_F cutRect;
-
-
-	//ID2D1Layer* maskLayer;
+	D2D1_RECT_F cutRect{-80.0f,-80.0f,-80.0f,-80.0f};
+	ComPtr<ID2D1Bitmap1> d2dBitmap;
+	ComPtr<ID2D1Bitmap1> canvasImg;
 	char* bgPixels;
-	//ID2D1Factory* factory;
-	//ID2D1HwndRenderTarget* render;	
-	//ID2D1SolidColorBrush* brush;
-	//ID2D1SolidColorBrush* maskBrush;
-	//D2D1_RECT_F cutRect;
 
 
 	void leftBtnDown(const POINT& pos);
