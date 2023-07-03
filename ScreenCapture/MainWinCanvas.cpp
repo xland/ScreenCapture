@@ -21,8 +21,7 @@ void MainWin::initCanvas()
         HRESULT hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_ISOLATED, 
             __uuidof(IDWriteFactory), reinterpret_cast<IUnknown**>(dwrite.GetAddressOf()));
         if (!SUCCEEDED(hr)) return;
-    }
-    ComPtr<ID2D1Factory1> d2dfactory1;
+    }    
     {
         //可以通过在 ID2D1GdiInteropRenderTarget 的呈现器目标上调用 QueryInterface，
         //在 Direct2D 呈现目标上使用 GDI 进行呈现，该呈现目标上具有可用于检索 GDI 设备上下文的 GetDC 和 ReleaseDC 方法。
@@ -30,7 +29,7 @@ void MainWin::initCanvas()
         //这对于主要使用 Direct2D 呈现但具有扩展性模型或需要 GDI 呈现功能的其他旧内容的应用程序非常有用。
         HRESULT hr =d2dFactory->QueryInterface(d2dfactory1.GetAddressOf());
         if (!SUCCEEDED(hr)) return;
-    }
+    }    
     ComPtr<ID3D11Device> d3d11Device;
     {
         //创建表示显示适配器的设备。
@@ -70,19 +69,19 @@ void MainWin::initCanvas()
     {
         //表示用于呈现给目标的一组状态和命令缓冲区。
         //设备上下文可以呈现为目标位图或命令列表。
-        HRESULT hr = d2d1Device->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE, context.GetAddressOf());
+        HRESULT hr = d2d1Device->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE, &context);
         if (!SUCCEEDED(hr)) return;
     }
     ComPtr<IDXGIAdapter> dxgiAdapter;
     {
         //表示显示子系统， (包括一个或多个 GPU、DAC 和视频内存) 。
-        HRESULT hr = dxgiDevice->GetAdapter(dxgiAdapter.GetAddressOf());
+        HRESULT hr = dxgiDevice->GetAdapter(&dxgiAdapter);
         if (!SUCCEEDED(hr)) return;
     }
     ComPtr<IDXGIFactory2> dxgiFactory;
     {
         //包括创建具有比IDXGISwapChain更多功能的新版本交换链和监控立体3D功能的方法。
-        HRESULT hr = dxgiAdapter->GetParent(__uuidof(IDXGIFactory2), (void**)dxgiFactory.GetAddressOf());
+        HRESULT hr = dxgiAdapter->GetParent(__uuidof(IDXGIFactory2), (void**)&dxgiFactory);
         if (!SUCCEEDED(hr)) return;
     }    
     {
@@ -96,7 +95,7 @@ void MainWin::initCanvas()
         props.AlphaMode = DXGI_ALPHA_MODE_IGNORE;
 
 
-        HRESULT hr = dxgiFactory->CreateSwapChainForHwnd(d3d11Device.Get(), hwnd, &props, nullptr, nullptr, dxgiSwapChain.GetAddressOf());
+        HRESULT hr = dxgiFactory->CreateSwapChainForHwnd(d3d11Device.Get(), hwnd, &props, nullptr, nullptr, &dxgiSwapChain);
         if (!SUCCEEDED(hr)) return;
     }
     ComPtr<IDXGISurface> dxgiSurface;
@@ -111,7 +110,7 @@ void MainWin::initCanvas()
     {
         //从DXGI表面创建位图，可以将其设置为target surface或指定其他颜色上下文信息。
         auto props = D2D1::BitmapProperties1(D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW, D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_IGNORE));
-        HRESULT hr = context->CreateBitmapFromDxgiSurface(dxgiSurface.Get(), props, d2dBitmap.GetAddressOf());
+        HRESULT hr = context->CreateBitmapFromDxgiSurface(dxgiSurface.Get(), props, &d2dBitmap);
         if (!SUCCEEDED(hr)) return;
     }   
 
@@ -132,6 +131,8 @@ void MainWin::paintBg()
         delete[] bgPixels;
     }    
     context->DrawBitmap(bgImg.Get(), D2D1::RectF(0, 0, w, h));
+    
+
     //static ComPtr<ID2D1Layer> layer;
     //if (!layer.Get()) {
     //    context->CreateLayer(NULL, &layer);
@@ -163,16 +164,14 @@ void MainWin::paintCanvas()
         context->CreateBitmap(D2D1::SizeU(w, h), pixels, 4 * w, props, &canvasImg);
         delete[] pixels;
     }
-    context->SetTarget(canvasImg.Get());
     static ComPtr<ID2D1SolidColorBrush> defaultBrush;
     if (!defaultBrush.Get()) {
         context->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Red), &defaultBrush);
     }
+    context->SetTarget(canvasImg.Get());
     context->FillRectangle(D2D1::RectF(80.0f, 80.0f, 1280.0f, 1280.0f ), defaultBrush.Get());
-
     //defaultBrush->SetColor(D2D1::ColorF(0.0f, 0.0f, 0.0f, 0.0f));
     //context->DrawLine(D2D1::Point2F(0.0f, h), D2D1::Point2F(w, 0), defaultBrush.Get(),16.5f);
-
     context->SetTarget(d2dBitmap.Get());
     context->DrawBitmap(canvasImg.Get(), D2D1::RectF(0, 0, w, h));
 }
@@ -210,8 +209,8 @@ void MainWin::paintMask()
     if (!borderBrush.Get()) {
         context->CreateSolidColorBrush(D2D1::ColorF(0x9ACD32, 1.0f), &borderBrush);
     }
-    auto param = D2D1::LayerParameters(D2D1::InfiniteRect(),NULL,D2D1_ANTIALIAS_MODE_PER_PRIMITIVE,
-        D2D1::IdentityMatrix(),1.0,NULL,D2D1_LAYER_OPTIONS_NONE);
+    auto param = D2D1::LayerParameters1(D2D1::InfiniteRect(),NULL,D2D1_ANTIALIAS_MODE_PER_PRIMITIVE,
+        D2D1::IdentityMatrix(),1,NULL, D2D1_LAYER_OPTIONS1_NONE);
     context->PushLayer(param, layer.Get());
     context->FillRectangle(D2D1::RectF(0, 0, w, h), bgBrush.Get());
     context->DrawRectangle(cutRect, borderBrush.Get(),8.0f);
@@ -223,11 +222,22 @@ void MainWin::paintMask()
 
 void MainWin::paintEraser()
 {
+    //D2D1_BITMAP_BRUSH_PROPERTIES1 propertiesXClampYClamp = D2D1::BitmapBrushProperties1(D2D1_EXTEND_MODE_CLAMP,
+    //                D2D1_EXTEND_MODE_CLAMP,D2D1_INTERPOLATION_MODE_NEAREST_NEIGHBOR);
+    //ComPtr<ID2D1BitmapBrush1> bitmapBrush;
+    //context->CreateBitmapBrush(canvasImg.Get(), propertiesXClampYClamp, &bitmapBrush);
+    //context->SetAntialiasMode(D2D1_ANTIALIAS_MODE_ALIASED);
+    //context->FillOpacityMask(eraserImg.Get(),bitmapBrush.Get(),
+    //    D2D1_OPACITY_MASK_CONTENT_GRAPHICS);
+    //context->SetAntialiasMode(D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
+        
     static ComPtr<ID2D1Effect> compositeEffect;
     if (!compositeEffect.Get()) {
         context->CreateEffect(CLSID_D2D1Composite, &compositeEffect);
-    }    
-    compositeEffect->SetInput(0, canvasImg.Get());
-    //compositeEffect->SetInput(1, bitmapTwo);
-    context->DrawImage(compositeEffect.Get(), D2D1_INTERPOLATION_MODE_NEAREST_NEIGHBOR,D2D1_COMPOSITE_MODE_SOURCE_OUT);
+    }
+    compositeEffect->SetInput(0, eraserImg.Get());
+    context->SetTarget(canvasImg.Get());
+    context->DrawImage(compositeEffect.Get(), D2D1_INTERPOLATION_MODE_LINEAR,D2D1_COMPOSITE_MODE_SOURCE_OUT);
+    context->SetTarget(d2dBitmap.Get());
+    context->DrawBitmap(canvasImg.Get(), D2D1::RectF(0, 0, w, h));
 }

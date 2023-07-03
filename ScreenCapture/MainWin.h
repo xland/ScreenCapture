@@ -11,6 +11,7 @@
 #include <wchar.h>
 #include <math.h>
 #include <iostream>
+#include <vector>
 
 #include <d2d1_1.h>
 #include <d3d11.h>
@@ -46,11 +47,14 @@ private:
 	void paintMask();
 	void initCanvas();
 	State state = State::Start;
+	ComPtr<ID2D1Factory1> d2dfactory1;
 	ComPtr<ID2D1DeviceContext> context;
 	ComPtr<IDXGISwapChain1> dxgiSwapChain;
 	D2D1_RECT_F cutRect{-80.0f,-80.0f,-80.0f,-80.0f};
 	ComPtr<ID2D1Bitmap1> d2dBitmap;
 	ComPtr<ID2D1Bitmap1> canvasImg;
+	ComPtr<ID2D1Bitmap1> eraserImg;
+	
 	char* bgPixels;
 
 
