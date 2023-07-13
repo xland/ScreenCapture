@@ -13,8 +13,8 @@ void MainWin::shotScreen()
     BOOL bRet = BitBlt(hDC, 0, 0, w, h, hScreen, x, y, SRCCOPY);
     unsigned int dataSize = w * h * 4;
     bgPixels = new char[dataSize];
-    BITMAPINFO Info = { sizeof(BITMAPINFOHEADER), w, 0 - h, 1, 32, BI_RGB, dataSize, 0, 0, 0, 0 };    
-    int r = GetDIBits(hDC, hBitmap, 0, h, (LPVOID)bgPixels, &Info, DIB_RGB_COLORS);
+    BITMAPINFO info = { sizeof(BITMAPINFOHEADER), w, 0 - h, 1, 32, BI_RGB, dataSize, 0, 0, 0, 0 };    
+    int r = GetDIBits(hDC, hBitmap, 0, h, (LPVOID)bgPixels, &info, DIB_RGB_COLORS);
     DeleteDC(hDC);
     ReleaseDC(NULL, hScreen);
     DeleteObject(hBitmap);
