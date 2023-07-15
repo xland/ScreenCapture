@@ -12,7 +12,10 @@
 #include <iostream>
 #include <vector>
 
-using namespace Microsoft::WRL;
+//struct GraphicsBuffer {
+//	HBITMAP hbm;
+//	uint32_t* data;
+//};
 
 class MainWin
 {
@@ -26,10 +29,11 @@ private:
 	void showWindow();
 	static LRESULT CALLBACK WndProc(HWND hWnd,UINT message,WPARAM wParam,LPARAM lParam);
 	float x, y, w, h,scaleFactor;
+	HBITMAP bgHbitmap;
 	HWND hwnd;
 	HINSTANCE hinstance;
 	State state = State::Start;
-	RECT cutRect{-80.0f,-80.0f,-80.0f,-80.0f};	
+	RECT cutRect{-80,-80,-80,-80};	
 	char* bgPixels;
 	void leftBtnDown(const POINT& pos);
 	void rightBtnDown(const POINT& pos);

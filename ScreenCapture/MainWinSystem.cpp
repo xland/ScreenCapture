@@ -1,5 +1,8 @@
 #include "MainWin.h"
 
+
+
+
 void MainWin::shotScreen()
 {
     x = GetSystemMetrics(SM_XVIRTUALSCREEN);
@@ -7,17 +10,34 @@ void MainWin::shotScreen()
     w = GetSystemMetrics(SM_CXVIRTUALSCREEN);
     h = GetSystemMetrics(SM_CYVIRTUALSCREEN);
     HDC hScreen = GetDC(NULL);
-    HDC hDC = CreateCompatibleDC(hScreen);
-    HBITMAP hBitmap = CreateCompatibleBitmap(hScreen, w, h);
-    DeleteObject(SelectObject(hDC, hBitmap));
-    BOOL bRet = BitBlt(hDC, 0, 0, w, h, hScreen, x, y, SRCCOPY);
-    unsigned int dataSize = w * h * 4;
-    bgPixels = new char[dataSize];
-    BITMAPINFO info = { sizeof(BITMAPINFOHEADER), w, 0 - h, 1, 32, BI_RGB, dataSize, 0, 0, 0, 0 };    
-    int r = GetDIBits(hDC, hBitmap, 0, h, (LPVOID)bgPixels, &info, DIB_RGB_COLORS);
-    DeleteDC(hDC);
+    BITMAPINFO bmi = {};
+    bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+    bmi.bmiHeader.biWidth = w;
+    bmi.bmiHeader.biHeight = -h; // top-down
+    bmi.bmiHeader.biPlanes = 1;
+    bmi.bmiHeader.biBitCount = 32;
+    bmi.bmiHeader.biCompression = BI_RGB;
+    bgHbitmap = CreateDIBSection(hScreen, &bmi, DIB_RGB_COLORS, reinterpret_cast<void**>(&bgPixels), NULL, NULL);
     ReleaseDC(NULL, hScreen);
-    DeleteObject(hBitmap);
+
+
+    //x = GetSystemMetrics(SM_XVIRTUALSCREEN);
+    //y = GetSystemMetrics(SM_YVIRTUALSCREEN);
+    //w = GetSystemMetrics(SM_CXVIRTUALSCREEN);
+    //h = GetSystemMetrics(SM_CYVIRTUALSCREEN);
+    //HDC hScreen = GetDC(NULL);
+    //HDC hDC = CreateCompatibleDC(hScreen);
+    //HBITMAP hBitmap = CreateCompatibleBitmap(hScreen, w, h);
+    //DeleteObject(SelectObject(hDC, hBitmap));
+    //BOOL bRet = BitBlt(hDC, 0, 0, w, h, hScreen, x, y, SRCCOPY);
+    //unsigned int dataSize = w * h * 4;
+    //bgPixels = new char[dataSize];
+    //BITMAPINFO info = { sizeof(BITMAPINFOHEADER), w, 0 - h, 1, 32, BI_RGB, dataSize, 0, 0, 0, 0 };    
+    //bgHbitmap = CreateDIBSection(hScreen, &info, DIB_RGB_COLORS, reinterpret_cast<void**>(&bgPixels), NULL, NULL);
+    //int r = GetDIBits(hDC, hBitmap, 0, h, (LPVOID)bgPixels, &info, DIB_RGB_COLORS);
+    //DeleteDC(hDC);
+    //ReleaseDC(NULL, hScreen);
+    //DeleteObject(hBitmap);
 }
 
 void MainWin::createWindow()
@@ -91,7 +111,8 @@ LRESULT CALLBACK MainWin::WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM
     else
     {
         MainWin* mainWin = reinterpret_cast<MainWin*>(static_cast<LONG_PTR>(GetWindowLongPtr(hwnd, GWLP_USERDATA)));
-        if (!mainWin) {
+        if (!mainWin) 
+        {
             return DefWindowProc(hwnd, message, wParam, lParam);
         }
         switch (message)
@@ -102,7 +123,14 @@ LRESULT CALLBACK MainWin::WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM
             }
             case WM_PAINT:
             {
-                ValidateRect(hwnd, NULL);
+                //ValidateRect(hwnd, NULL);
+                PAINTSTRUCT ps;
+                HDC hdc = BeginPaint(hwnd, &ps);
+                HDC hdc_bmp = CreateCompatibleDC(hdc);
+                DeleteObject(SelectObject(hdc_bmp, mainWin->bgHbitmap));
+                BitBlt(hdc, 0, 0, mainWin->w, mainWin->h, hdc_bmp, 0, 0, SRCCOPY);
+                DeleteDC(hdc_bmp);
+                EndPaint(hwnd, &ps);
                 return 0;
             }
             case WM_RBUTTONDOWN:

@@ -39,7 +39,6 @@ void MainWin::mouseMove(const POINT& pos)
         
         mouseDownPos = pos;
     }
-    paint();
     InvalidateRect(hwnd, nullptr, false);
 }
 void MainWin::leftBtnUp(const POINT& pos)
