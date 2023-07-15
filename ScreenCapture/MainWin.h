@@ -12,10 +12,8 @@
 #include <iostream>
 #include <vector>
 
-//struct GraphicsBuffer {
-//	HBITMAP hbm;
-//	uint32_t* data;
-//};
+#include <d2d1.h>
+#include <blend2d.h>
 
 class MainWin
 {
@@ -29,14 +27,11 @@ private:
 	void initScaleFactor();
 	void createWindow();
 	void showWindow();
-	static LRESULT CALLBACK WndProc(HWND hWnd,UINT message,WPARAM wParam,LPARAM lParam);
 	float x, y, w, h,scaleFactor;
-	HBITMAP bgHbitmap;
 	HWND hwnd;
 	HINSTANCE hinstance;
 	State state = State::Start;
 	RECT cutRect{-80,-80,-80,-80};	
-	char* bgPixels;
 	void leftBtnDown(const POINT& pos);
 	void rightBtnDown(const POINT& pos);
 	void mouseMove(const POINT& pos);
@@ -44,7 +39,15 @@ private:
 	inline POINT getMousePoint(const LPARAM& lParam);
 	POINT mouseDownPos;
 	bool isLeftBtnDown;
+	BLImage* bgImage;
 
 
+
+	void d2DCreateFactory();
+	void d2DCreateRes();
+	void d2DDraw();
+	ID2D1Factory* factory;
+	ID2D1HwndRenderTarget* render;
+	ID2D1Bitmap* d2DImage;
 };
 

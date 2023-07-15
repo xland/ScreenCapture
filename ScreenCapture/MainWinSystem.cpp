@@ -24,13 +24,23 @@ void MainWin::shotScreen()
     DeleteObject(SelectObject(hDC, hBitmap));
     BOOL bRet = BitBlt(hDC, 0, 0, w, h, hScreen, x, y, SRCCOPY);
     unsigned int dataSize = w * h * 4;
-    bgPixels = new char[dataSize];
+    auto bgPixels = new char[dataSize];
     BITMAPINFO info = { sizeof(BITMAPINFOHEADER), w, 0 - h, 1, 32, BI_RGB, dataSize, 0, 0, 0, 0 };    
-    bgHbitmap = CreateDIBSection(hScreen, &info, DIB_RGB_COLORS, reinterpret_cast<void**>(&bgPixels), NULL, NULL);
-    int r = GetDIBits(hDC, hBitmap, 0, h, (LPVOID)bgPixels, &info, DIB_RGB_COLORS);
+    GetDIBits(hDC, hBitmap, 0, h, (LPVOID)bgPixels, &info, DIB_RGB_COLORS);
     DeleteDC(hDC);
     ReleaseDC(NULL, hScreen);
     DeleteObject(hBitmap);
+    for (int x = 0; x < dataSize; x += 4)
+    {
+        auto r = bgPixels[x + 2];
+        auto b = bgPixels[x];
+        bgPixels[x] = r;
+        bgPixels[x + 2] = b;
+    }
+    bgImage = new BLImage();
+    bgImage->createFromData(w, h, BL_FORMAT_PRGB32, bgPixels, w * 4, [](void* impl, void* externalData, void* userData) {
+        delete[] externalData;
+    });
 }
 
 void MainWin::createWindow()
@@ -41,8 +51,8 @@ void MainWin::createWindow()
     wcx.lpfnWndProc = &MainWin::RouteWindowMessage;
     wcx.cbWndExtra = sizeof(MainWin*);
     wcx.hInstance = hinstance;
-    wcx.hIcon = LoadIcon(hinstance, IDI_APPLICATION);
-    wcx.hCursor = LoadCursor(hinstance, IDC_ARROW);
+    wcx.hIcon = LoadIcon(NULL, IDI_APPLICATION);
+    wcx.hCursor = LoadCursor(NULL, IDC_ARROW);
     wcx.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
     wcx.lpszClassName = L"ScreenCapture";
     if (!RegisterClassEx(&wcx))
@@ -57,6 +67,7 @@ void MainWin::showWindow()
 {
     ShowWindow(hwnd, SW_SHOW);
     UpdateWindow(hwnd);
+    SetCursor(LoadCursor(NULL, IDC_ARROW));
 }
 
 void MainWin::initScaleFactor()
@@ -106,16 +117,11 @@ LRESULT CALLBACK MainWin::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
         }
         case WM_PAINT:
         {
-            //ValidateRect(hwnd, NULL);
-            PAINTSTRUCT ps;
-            HDC hdc = BeginPaint(hwnd, &ps);
-            HDC hdc_bmp = CreateCompatibleDC(hdc);
-            DeleteObject(SelectObject(hdc_bmp, bgHbitmap));
-            BitBlt(hdc, 0, 0, w, h, hdc_bmp, 0, 0, SRCCOPY);
-            DeleteDC(hdc_bmp);
-            EndPaint(hwnd, &ps);
+            d2DDraw();
+            ValidateRect(hwnd, NULL);
             return 0;
         }
+
         case WM_RBUTTONDOWN:
         {
             POINT point = getMousePoint(lParam);
@@ -150,7 +156,7 @@ LRESULT CALLBACK MainWin::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
             return 1;
         }
     }
-    return DefWindowProcW(hWnd, msg, wParam, lParam);
+    return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
 

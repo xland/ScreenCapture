@@ -1,34 +1,29 @@
 #include "MainWin.h"
 #include <memory>
-#include <blend2d.h>
 
 
 MainWin::MainWin(HINSTANCE hinstance):hinstance{hinstance}
 {
     shotScreen();  
-
-    BLImage img(w, h, BL_FORMAT_PRGB32);
-    BLContext ctx(img);
+    BLContext ctx(*bgImage);
     BLPath path;
     path.moveTo(0, 0);
     path.lineTo(w, h);
-    ctx.setStrokeStyle(BLRgba32(0xFFFFFFFF));
+    path.moveTo(w, 0);
+    path.lineTo(0, h);
+    ctx.setStrokeStyle(BLRgba32(0xFF6622FF));
+    ctx.setStrokeWidth(12.6);
     ctx.strokePath(path);
     ctx.end();
-    BLImageData data;
-    img.getData(&data);
-    unsigned int dataSize = w * h * 4;
-    char* tempData = (char*)(data.pixelData);
-    for (int x = 0; x < dataSize; x += 4)
-    {
-        bgPixels[x + 2] = tempData[x]; //red
-        bgPixels[x + 1] = tempData[x+1]; //green
-        bgPixels[x] = tempData[x + 2]; //blue
-    }
     createWindow();
     initScaleFactor();
+    d2DCreateFactory();
     showWindow();
 }
 MainWin::~MainWin()
-{    
+{
+    delete bgImage;
+    d2DImage->Release();
+    render->Release();
+    factory->Release();
 }
