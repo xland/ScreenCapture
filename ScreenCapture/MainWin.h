@@ -22,6 +22,8 @@ class MainWin
 public:
 	MainWin(HINSTANCE hinstance);
 	~MainWin();
+	static LRESULT CALLBACK RouteWindowMessage(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+	LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 private:
 	void shotScreen();
 	void initScaleFactor();
