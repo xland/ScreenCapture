@@ -162,7 +162,6 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainWin.cpp" />
     <ClCompile Include="MainWinCanvas.cpp" />
-    <ClCompile Include="MainWinD2D.cpp" />
     <ClCompile Include="MainWinMouse.cpp" />
     <ClCompile Include="MainWinSystem.cpp" />
   </ItemGroup>

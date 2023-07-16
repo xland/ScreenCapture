@@ -28,12 +28,12 @@ void MainWin::shotScreen()
     BITMAPINFO info = { sizeof(BITMAPINFOHEADER), w, 0 - h, 1, 32, BI_RGB, dataSize, 0, 0, 0, 0 };    
     GetDIBits(hDC, hBitmap, 0, h, (LPVOID)bgPixels, &info, DIB_RGB_COLORS);
     DeleteDC(hDC);
-    ReleaseDC(NULL, hScreen);
     DeleteObject(hBitmap);
-    bgImage = new BLImage();
-    bgImage->createFromData(w, h, BL_FORMAT_PRGB32, bgPixels, w * 4, [](void* impl, void* externalData, void* userData) {
-        delete[] externalData;
-    });
+
+    auto boardPixels = new char[dataSize];
+    bgHbitmap = CreateDIBSection(hScreen, &info, DIB_RGB_COLORS, reinterpret_cast<void**>(&boardPixels), NULL, NULL);    
+    ReleaseDC(NULL, hScreen);
+    initCanvas(bgPixels,boardPixels);
 }
 
 void MainWin::createWindow()
@@ -110,7 +110,14 @@ LRESULT CALLBACK MainWin::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
         }
         case WM_PAINT:
         {
-            d2DDraw();
+            paintBoard();
+            PAINTSTRUCT ps;
+            HDC hdc = BeginPaint(hwnd, &ps);
+            HDC hdcBmp = CreateCompatibleDC(hdc);
+            DeleteObject(SelectObject(hdcBmp, bgHbitmap));
+            BitBlt(hdc, 0, 0, w, h, hdcBmp, 0, 0, SRCCOPY);
+            DeleteDC(hdcBmp);
+            EndPaint(hwnd, &ps);
             ValidateRect(hwnd, NULL);
             return 0;
         }

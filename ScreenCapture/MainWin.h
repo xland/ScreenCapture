@@ -40,15 +40,18 @@ private:
 	POINT mouseDownPos;
 	bool isLeftBtnDown;
 	
-
-
-
-	void d2DCreateFactory();
-	void d2DCreateRes();
-	void d2DDraw();
-	BLImage* bgImage;
-	ID2D1Factory* factory;
-	ID2D1HwndRenderTarget* render;
-	ID2D1Bitmap* d2DImage;
+	
+	void initCanvas(char* bgPixels,char* boardPixels);
+	void paintBoard();
+	void setMask(const POINT& pos);
+	void drawPen(const POINT& pos);
+	void drawEraser(const POINT& pos);
+	BLImage* canvasImage;
+	BLImage* bgImage; 
+	BLImage* boardImage;
+	BLContext* paintCtx;
+	BLBox maskBoxes[8];
+	BLBox cutBox;
+	HBITMAP bgHbitmap;
 };
 

@@ -30,9 +30,6 @@
     <ClCompile Include="MainWinSystem.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="MainWinD2D.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainWin.h">

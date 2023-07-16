@@ -7,6 +7,7 @@ void MainWin::leftBtnDown(const POINT& pos)
 }
 void MainWin::rightBtnDown(const POINT& pos)
 {
+    //canvasImage->writeToFile("123.png");
     CloseWindow(hwnd);
 	PostQuitMessage(0);
 }
@@ -14,30 +15,13 @@ void MainWin::mouseMove(const POINT& pos)
 {
     if (!isLeftBtnDown) return;
     if (state == State::Start) {
-        if (pos.x < mouseDownPos.x)
-        {
-            cutRect.left = pos.x;
-            cutRect.right = mouseDownPos.x;
-        }
-        else
-        {
-            cutRect.right = pos.x;
-            cutRect.left = mouseDownPos.x;
-        }
-        if (pos.y < mouseDownPos.y)
-        {
-            cutRect.top = pos.y;
-            cutRect.bottom = mouseDownPos.y;
-        }
-        else
-        {
-            cutRect.top = mouseDownPos.y;
-            cutRect.bottom = pos.y;
-        }
+        setMask(pos);
     }
-    else if (state == State::Eraser) {
-        
-        mouseDownPos = pos;
+    else if (state == State::Pen) {
+        drawPen(pos);
+    }
+    else if (state == State::Eraser) {        
+        drawEraser(pos);
     }
     InvalidateRect(hwnd, nullptr, false);
 }
