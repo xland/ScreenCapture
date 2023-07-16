@@ -162,8 +162,10 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainWin.cpp" />
     <ClCompile Include="MainWinCanvas.cpp" />
+    <ClCompile Include="MainWinMask.cpp" />
     <ClCompile Include="MainWinMouse.cpp" />
     <ClCompile Include="MainWinSystem.cpp" />
+    <ClCompile Include="MainWinTool.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainWin.h" />

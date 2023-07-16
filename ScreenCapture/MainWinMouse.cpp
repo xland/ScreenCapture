@@ -15,7 +15,7 @@ void MainWin::mouseMove(const POINT& pos)
 {
     if (!isLeftBtnDown) return;
     if (state == State::Start) {
-        drawMask(pos);
+        setMasks(pos);
     }
     else if (state == State::Pen) {
         drawPen(pos);
@@ -27,9 +27,11 @@ void MainWin::mouseMove(const POINT& pos)
 }
 void MainWin::leftBtnUp(const POINT& pos)
 {
+    if (!isLeftBtnDown) return;
     isLeftBtnDown = false;
     if (state == State::Start) {
-        state = State::Eraser;
+        state = State::MaskReady;
+        InvalidateRect(hwnd, nullptr, false);
     }
     else if (state == State::Eraser) {
         

@@ -43,7 +43,6 @@ private:
 	
 	void initCanvas(char* bgPixels,char* boardPixels);
 	void paintBoard();
-	void drawMask(const POINT& pos);
 	void drawPen(const POINT& pos);
 	void drawEraser(const POINT& pos);
 	BLImage* canvasImage;
@@ -53,5 +52,12 @@ private:
 	BLBox maskBoxes[8];
 	BLBox cutBox;
 	HBITMAP bgHbitmap;
+
+
+
+	void setMasks(const POINT& pos);
+
+	BLRect getToolRect();
+	void drawTool();
 };
 
