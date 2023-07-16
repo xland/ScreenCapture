@@ -15,7 +15,7 @@ void MainWin::mouseMove(const POINT& pos)
 {
     if (!isLeftBtnDown) return;
     if (state == State::Start) {
-        setMask(pos);
+        drawMask(pos);
     }
     else if (state == State::Pen) {
         drawPen(pos);

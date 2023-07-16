@@ -74,7 +74,7 @@ void MainWin::drawEraser(const POINT& pos)
     mouseDownPos = pos;
 }
 
-void MainWin::setMask(const POINT& pos)
+void MainWin::drawMask(const POINT& pos)
 {
     if (pos.x < mouseDownPos.x)
     {

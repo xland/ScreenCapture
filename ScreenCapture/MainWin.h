@@ -43,7 +43,7 @@ private:
 	
 	void initCanvas(char* bgPixels,char* boardPixels);
 	void paintBoard();
-	void setMask(const POINT& pos);
+	void drawMask(const POINT& pos);
 	void drawPen(const POINT& pos);
 	void drawEraser(const POINT& pos);
 	BLImage* canvasImage;
