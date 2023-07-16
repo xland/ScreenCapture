@@ -30,13 +30,6 @@ void MainWin::shotScreen()
     DeleteDC(hDC);
     ReleaseDC(NULL, hScreen);
     DeleteObject(hBitmap);
-    for (int x = 0; x < dataSize; x += 4)
-    {
-        auto r = bgPixels[x + 2];
-        auto b = bgPixels[x];
-        bgPixels[x] = r;
-        bgPixels[x + 2] = b;
-    }
     bgImage = new BLImage();
     bgImage->createFromData(w, h, BL_FORMAT_PRGB32, bgPixels, w * 4, [](void* impl, void* externalData, void* userData) {
         delete[] externalData;

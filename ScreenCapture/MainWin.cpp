@@ -11,7 +11,7 @@ MainWin::MainWin(HINSTANCE hinstance):hinstance{hinstance}
     path.lineTo(w, h);
     path.moveTo(w, 0);
     path.lineTo(0, h);
-    ctx.setStrokeStyle(BLRgba32(0xFF6622FF));
+    ctx.setStrokeStyle(BLRgba32(0, 0, 255));
     ctx.setStrokeWidth(12.6);
     ctx.strokePath(path);
     ctx.end();

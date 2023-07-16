@@ -39,13 +39,14 @@ private:
 	inline POINT getMousePoint(const LPARAM& lParam);
 	POINT mouseDownPos;
 	bool isLeftBtnDown;
-	BLImage* bgImage;
+	
 
 
 
 	void d2DCreateFactory();
 	void d2DCreateRes();
 	void d2DDraw();
+	BLImage* bgImage;
 	ID2D1Factory* factory;
 	ID2D1HwndRenderTarget* render;
 	ID2D1Bitmap* d2DImage;
