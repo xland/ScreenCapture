@@ -22,7 +22,7 @@ BLRect MainWin::getToolRect()
 	}
 	else
 	{
-		result.y = cutBox.y1 - span;
+		result.y = cutBox.y1 - span - result.h;
 	}
 	return result;
 }
