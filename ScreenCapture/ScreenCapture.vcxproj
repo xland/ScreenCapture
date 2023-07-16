@@ -171,6 +171,9 @@
     <ClInclude Include="MainWin.h" />
     <ClInclude Include="State.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="ToDo.md" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
