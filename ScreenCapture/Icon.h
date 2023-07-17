@@ -5,23 +5,25 @@ class Icon
 public:
     enum class Name
     {
-        none,
-        rectEllipse,
+        rect = 0,
+        ellipse,
         arrow,
+        pen,
         line,
         mosaic,
         text,
-        undo,
-        redo,
-        save,
-        copy,
-        ok,
         number,
         eraser,
+
+        undo,
+        redo,
+
+        save,
+        copy,
+        close,
+
         dot,
-        rect,
         rectFill,
-        ellipse,
         ellipseFill,
         arrowFill,
         arrowEmpty,
@@ -29,7 +31,6 @@ public:
         italic,
 
     };
-    static void Init();
-    static std::map<Icon::Name, const char*> icons;
+    static const char* Get(Icon::Name icon);
 };
 

@@ -4,6 +4,12 @@ void MainWin::leftBtnDown(const POINT& pos)
 {
     isLeftBtnDown = true;
     mouseDownPos = pos;
+    if (state != State::Start) {
+        if (mouseEnterToolIndex != -1 && mouseEnterToolIndex < 9) {
+            selectedToolIndex = mouseEnterToolIndex;
+            InvalidateRect(hwnd, nullptr, false);
+        }
+    }
 }
 void MainWin::rightBtnDown(const POINT& pos)
 {
@@ -13,17 +19,26 @@ void MainWin::rightBtnDown(const POINT& pos)
 }
 void MainWin::mouseMove(const POINT& pos)
 {
-    if (!isLeftBtnDown) return;
-    if (state == State::Start) {
-        setMasks(pos);
+    if (isLeftBtnDown)
+    {
+        if (state == State::Start) {
+            setMasks(pos);
+        }
+        else if (state == State::Pen) {
+            drawPen(pos);
+        }
+        else if (state == State::Eraser) {
+            drawEraser(pos);
+        }
+        InvalidateRect(hwnd, nullptr, false);
     }
-    else if (state == State::Pen) {
-        drawPen(pos);
+    else
+    {
+        if (state != State::Start) {
+            checkMouseEnterToolBox(pos);
+        }
     }
-    else if (state == State::Eraser) {        
-        drawEraser(pos);
-    }
-    InvalidateRect(hwnd, nullptr, false);
+
 }
 void MainWin::leftBtnUp(const POINT& pos)
 {

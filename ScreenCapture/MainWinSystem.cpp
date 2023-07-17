@@ -188,9 +188,8 @@ void MainWin::initFontIcon()
     }
     LPVOID resData = LockResource(res);
     BLFontData fontData;
-    BLResult result = fontData.createFromData(resData, resSize, [](void* impl, void* externalData, void* userData) {
-        delete[] externalData;
-        });
+    BLResult result = fontData.createFromData(resData, resSize);
+    //BOOL flag = VirtualFree(resData, resSize, MEM_RELEASE);
     if (result != BL_SUCCESS) {
         MessageBox(NULL, L"生成字体图标失败", L"系统提示", NULL);
         return;

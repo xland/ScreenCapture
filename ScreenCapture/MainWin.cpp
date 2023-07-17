@@ -13,8 +13,6 @@ MainWin::~MainWin()
 {
     delete bgImage;
     delete canvasImage;
+    delete fontIcon;
     DeleteObject(bgHbitmap);
-    //d2DImage->Release();
-    //render->Release();
-    //factory->Release();
 }

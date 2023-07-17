@@ -11,8 +11,7 @@
 #include <math.h>
 #include <iostream>
 #include <vector>
-
-#include <d2d1.h>
+#include "Icon.h"
 #include <blend2d.h>
 
 class MainWin
@@ -59,9 +58,18 @@ private:
 
 
 
-	BLRect getToolRect();
+	void setToolBox();
 	void drawTool();
+	void drawSubTool();
 	void initFontIcon();
+	void checkMouseEnterToolBox(const POINT& pos);
+	void drawSplitter(BLPoint& point);
+	void drawBtn(BLPoint& point, Icon::Name name);
 	BLFont* fontIcon;
+	BLBox toolBox;
+	int mouseEnterToolIndex = -1;
+	int selectedToolIndex = -1;
+	bool canRedo = false;
+	bool canUndo = false;
 };
 

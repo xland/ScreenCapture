@@ -1,32 +1,83 @@
 #include "MainWin.h"
-#include "Icon.h"
+
+static int btnCount = 14;
+static int span = 12;//工具条距离截图区域的高度
+static int toolBtnSpanWidth = 6;
+static int toolBtnSpanCount = 2;
+static int toolBtnWidth = 60;
+static int toolBoxWidth = btnCount * toolBtnWidth + toolBtnSpanWidth * toolBtnSpanCount;
+static int toolBoxHeight = 56;
+static int iconLeftSpan = 16;
 
 
 
-BLRect MainWin::getToolRect()
+void MainWin::setToolBox()
 {
-	int btnCount = 14;
-	int span = 8;//工具条距离截图区域的高度
-	int toolBtnWidth = 58;
-	int toolBtnSpanWidth = 6;
-	int toolBtnSpanCount = 2;
-	BLRect result;
-	result.w = btnCount * toolBtnWidth + toolBtnSpanWidth * toolBtnSpanCount;
-	result.h = 56;
-	result.x = cutBox.x1 - result.w;
-	if (h - cutBox.y1 > span * 2 + result.h) //两个高度，为屏幕底边也留一点间隙 
+	toolBox.x0 = cutBox.x1 - toolBoxWidth;
+	if (h - cutBox.y1 > span * 3 + toolBoxHeight*2) //两个高度，为屏幕底边也留一点间隙 
 	{
-		result.y = cutBox.y1 + span;
+		toolBox.y0 = cutBox.y1 + span;
 	}
-	else if(cutBox.y0 > span * 2 + result.h)
+	else if(cutBox.y0 > span * 3 + toolBoxHeight*2)
 	{
-		result.y = cutBox.y0 - span - result.h;
+		if (selectedToolIndex == -1) 
+		{
+			toolBox.y0 = cutBox.y0 - span - toolBoxHeight;			
+		}
+		else
+		{
+			toolBox.y0 = cutBox.y0 - span * 2 - toolBoxHeight * 2;
+		}		
 	}
 	else
 	{
-		result.y = cutBox.y1 - span - result.h;
+		if (selectedToolIndex == -1) 
+		{
+			toolBox.y0 = cutBox.y1 - span - toolBoxHeight;
+		}
+		else
+		{
+			toolBox.y0 = cutBox.y1 - span * 2 - toolBoxHeight * 2;
+		}
 	}
-	return result;
+	toolBox.y1 = toolBox.y0 + toolBoxHeight;
+	toolBox.x1 = toolBox.x0 + toolBoxWidth;
+}
+
+void MainWin::checkMouseEnterToolBox(const POINT& pos)
+{
+	int tempIndex;
+	if (toolBox.contains(pos.x, pos.y)) {
+		tempIndex = floor((pos.x - toolBox.x0) / toolBtnWidth);
+	}
+	else
+	{
+		tempIndex = -1;
+	}
+	if (tempIndex != mouseEnterToolIndex) {
+		mouseEnterToolIndex = tempIndex;
+		InvalidateRect(hwnd, nullptr, false);
+	}
+}
+
+void MainWin::drawSplitter(BLPoint& point)
+{
+	paintCtx->setStrokeStyle(BLRgba32(180, 180, 180, 255));
+	paintCtx->setStrokeWidth(0.6f);
+	auto x = point.x - iconLeftSpan + toolBtnSpanWidth / 2;
+	paintCtx->strokeLine(x, point.y - 23, x, point.y + 2);
+	point.x += toolBtnSpanWidth;
+}
+
+void MainWin::drawBtn(BLPoint& point,Icon::Name name)
+{
+	if ((int)name == mouseEnterToolIndex) {
+		paintCtx->setFillStyle(BLRgba32(220, 220, 220, 255));
+		paintCtx->fillBox(BLBox(point.x - iconLeftSpan, toolBox.y0, point.x - iconLeftSpan + toolBtnWidth, toolBox.y0 + toolBoxHeight));		
+	}
+	paintCtx->setFillStyle(BLRgba32(30, 30, 30, 255));
+	paintCtx->fillUtf8Text(point, *fontIcon, Icon::Get(name));
+	point.x += toolBtnWidth;
 }
 
 void MainWin::drawTool()
@@ -35,37 +86,47 @@ void MainWin::drawTool()
 	if (!fontIcon) {
 		initFontIcon();
 	}
-	auto rect = getToolRect();
+	setToolBox();
 	paintCtx->setFillStyle(BLRgba32(240, 240, 240, 255));
-	paintCtx->fillRect(rect);
-	paintCtx->setFillStyle(BLRgba32(0, 0, 0, 255));
-	//const char* c = reinterpret_cast<const char*>(u8"\ue7c2");
-	//auto c = Icon::icons[Icon::Name::rectEllipse];
-	const char* icons[] = {
-		reinterpret_cast<const char*>(u8"\ue790"),
-		reinterpret_cast<const char*>(u8"\ue791"),
-		reinterpret_cast<const char*>(u8"\ueb0c"),
-		reinterpret_cast<const char*>(u8"\ue601"),
-		reinterpret_cast<const char*>(u8"\ue69b"),
-		reinterpret_cast<const char*>(u8"\ue82e"),
-		reinterpret_cast<const char*>(u8"\ue6ec"),
-		reinterpret_cast<const char*>(u8"\ue776"),
-		reinterpret_cast<const char*>(u8"\ue6b8"),
-
-
-		reinterpret_cast<const char*>(u8"\ued85"),
-		reinterpret_cast<const char*>(u8"\ued8a"),
-
-		reinterpret_cast<const char*>(u8"\ue62f"),
-		reinterpret_cast<const char*>(u8"\ue87f"),
-		reinterpret_cast<const char*>(u8"\ue6e7"),
-	};
+	paintCtx->fillBox(toolBox);	
 	BLPoint point;
-	point.y = rect.y + 38;
-	point.x = rect.x + 20;
-	for (size_t i = 0; i < std::size(icons); i++)
+	point.x = toolBox.x0 + iconLeftSpan;
+	point.y = toolBox.y0 + 38;
+	for (size_t i = 0; i < 9; i++)
 	{
-		paintCtx->fillUtf8Text(point, *fontIcon, icons[i]); 
-		point.x += 58;
-	}	
+		if (selectedToolIndex == i) {
+			paintCtx->setFillStyle(BLRgba32(22, 119, 255, 255));
+			paintCtx->fillBox(BLBox(point.x - iconLeftSpan, toolBox.y0, point.x - iconLeftSpan + toolBtnWidth, toolBox.y0 + toolBoxHeight));
+			paintCtx->setFillStyle(BLRgba32(255, 255, 255, 255));
+		}
+		else if (mouseEnterToolIndex == i) {
+			paintCtx->setFillStyle(BLRgba32(220, 220, 220, 255));
+			paintCtx->fillBox(BLBox(point.x - iconLeftSpan, toolBox.y0, point.x - iconLeftSpan + toolBtnWidth, toolBox.y0 + toolBoxHeight));
+			paintCtx->setFillStyle(BLRgba32(30, 30, 30, 255));
+		}
+		else
+		{
+			paintCtx->setFillStyle(BLRgba32(30, 30, 30, 255));
+		}
+		paintCtx->fillUtf8Text(point, *fontIcon, Icon::Get((Icon::Name)i));
+		point.x += toolBtnWidth;
+	}
+	drawSplitter(point);
+	drawBtn(point, Icon::Name::undo);
+	drawBtn(point, Icon::Name::redo);
+	drawSplitter(point);
+	drawBtn(point, Icon::Name::save);
+	drawBtn(point, Icon::Name::copy);
+	drawBtn(point, Icon::Name::close);		
+	if (selectedToolIndex != -1) {
+		drawSubTool();
+	}
+}
+
+void MainWin::drawSubTool()
+{
+	paintCtx->setFillStyle(BLRgba32(240, 240, 240, 255));
+	auto x = toolBox.x0 + selectedToolIndex*toolBtnWidth + toolBtnWidth / 2;
+	auto y = toolBox.y1 + span / 2;
+	paintCtx->fillTriangle(x,y,x+6,y+span/2,x-6,y+span/2);
 }
