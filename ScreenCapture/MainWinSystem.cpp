@@ -104,6 +104,12 @@ void MainWin::initScaleFactor()
     }
 }
 
+void MainWin::setCursor(LPCTSTR cursor)
+{
+    auto hCursor = LoadCursor(NULL, cursor);
+    SetCursor(hCursor);
+}
+
 LRESULT CALLBACK MainWin::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     switch (msg)
@@ -111,6 +117,9 @@ LRESULT CALLBACK MainWin::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
         case WM_NCCALCSIZE:
         {
             return 0;
+        }
+        case WM_SETCURSOR: {
+            return 1;
         }
         case WM_PAINT:
         {

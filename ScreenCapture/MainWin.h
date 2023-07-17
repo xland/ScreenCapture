@@ -26,6 +26,7 @@ private:
 	void initScaleFactor();
 	void createWindow();
 	void showWindow();
+	void setCursor(LPCTSTR cursor);
 	float x, y, w, h,scaleFactor;
 	HWND hwnd;
 	HINSTANCE hinstance;
@@ -48,13 +49,15 @@ private:
 	BLImage* bgImage; 
 	BLImage* boardImage;
 	BLContext* paintCtx;
-	BLBox maskBoxes[8];
-	BLBox cutBox;
 	HBITMAP bgHbitmap;
 
 
-
-	void setMasks(const POINT& pos);
+	void checkMouseEnterMaskBox(const POINT& pos);
+	void setMasks(const POINT& pos, const POINT& anotherPos);
+	void setCutBox(const POINT& pos);
+	BLBox maskBoxes[8];
+	BLBox cutBox;
+	int mouseInMaskBoxIndex = -1;
 
 
 

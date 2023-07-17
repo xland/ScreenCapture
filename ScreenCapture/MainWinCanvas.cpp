@@ -63,6 +63,7 @@ void MainWin::drawPen(const POINT& pos)
     paintCtx->strokeLine(mouseDownPos.x, mouseDownPos.y, pos.x, pos.y);
     paintCtx->end();
     mouseDownPos = pos;
+    InvalidateRect(hwnd, nullptr, false);
 }
 
 void MainWin::drawEraser(const POINT& pos)
@@ -75,5 +76,6 @@ void MainWin::drawEraser(const POINT& pos)
     paintCtx->strokeLine(mouseDownPos.x, mouseDownPos.y, pos.x, pos.y);
     paintCtx->end();
     mouseDownPos = pos;
+    InvalidateRect(hwnd, nullptr, false);
 }
 

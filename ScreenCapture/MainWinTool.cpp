@@ -56,7 +56,9 @@ void MainWin::checkMouseEnterToolBox(const POINT& pos)
 	}
 	if (tempIndex != mouseEnterToolIndex) {
 		mouseEnterToolIndex = tempIndex;
+		setCursor(IDC_HAND);
 		InvalidateRect(hwnd, nullptr, false);
+		mouseInMaskBoxIndex = -1;
 	}
 }
 
