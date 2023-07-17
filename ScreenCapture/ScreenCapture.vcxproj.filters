@@ -44,8 +44,19 @@
     <ClInclude Include="State.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="ToDo.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="ScreenCapture.rc">
+      <Filter>资源文件</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="Res\iconfont.ttf" />
   </ItemGroup>
 </Project>

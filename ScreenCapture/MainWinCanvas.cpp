@@ -47,7 +47,7 @@ void MainWin::paintBoard()
     paintCtx->setFillStyle(BLRgba32(0, 0, 0, 180));
     paintCtx->fillBoxArray(maskBoxes, 8);
     paintCtx->setStrokeStyle(BLRgba32(22, 119, 255, 255));
-    paintCtx->setStrokeWidth(6.0f);
+    paintCtx->setStrokeWidth(3.8f);
     paintCtx->strokeBox(cutBox);
     drawTool();
     paintCtx->end();

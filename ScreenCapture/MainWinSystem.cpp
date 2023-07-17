@@ -1,5 +1,5 @@
 #include "MainWin.h"
-
+#include "dwmapi.h"
 
 LRESULT CALLBACK MainWin::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     if (msg == WM_NCCREATE)
@@ -38,6 +38,7 @@ void MainWin::shotScreen()
 
 void MainWin::createWindow()
 {
+
     WNDCLASSEX wcx{};
     wcx.cbSize = sizeof(wcx);
     wcx.style = CS_HREDRAW | CS_VREDRAW;
@@ -54,6 +55,8 @@ void MainWin::createWindow()
         return;
     }
     hwnd = CreateWindowEx(0, wcx.lpszClassName, wcx.lpszClassName, WS_OVERLAPPEDWINDOW, x, y, w, h, NULL, NULL, hinstance, static_cast<LPVOID>(this));
+    BOOL attrib = TRUE;
+    DwmSetWindowAttribute(hwnd, DWMWA_TRANSITIONS_FORCEDISABLED, &attrib, sizeof(attrib));
 }
 
 void MainWin::showWindow()
