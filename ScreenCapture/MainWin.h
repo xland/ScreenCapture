@@ -57,7 +57,11 @@ private:
 
 	void setMasks(const POINT& pos);
 
+
+
 	BLRect getToolRect();
 	void drawTool();
+	void initFontIcon();
+	BLFont* fontIcon;
 };
 

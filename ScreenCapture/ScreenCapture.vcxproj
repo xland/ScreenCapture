@@ -159,6 +159,7 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Icon.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainWin.cpp" />
     <ClCompile Include="MainWinCanvas.cpp" />
@@ -168,6 +169,7 @@
     <ClCompile Include="MainWinTool.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Icon.h" />
     <ClInclude Include="MainWin.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="State.h" />

@@ -1,4 +1,6 @@
 #include "MainWin.h"
+#include "Icon.h"
+
 
 
 BLRect MainWin::getToolRect()
@@ -30,7 +32,40 @@ BLRect MainWin::getToolRect()
 void MainWin::drawTool()
 {
 	if (state == State::Start) return;
+	if (!fontIcon) {
+		initFontIcon();
+	}
 	auto rect = getToolRect();
 	paintCtx->setFillStyle(BLRgba32(240, 240, 240, 255));
 	paintCtx->fillRect(rect);
+	paintCtx->setFillStyle(BLRgba32(0, 0, 0, 255));
+	//const char* c = reinterpret_cast<const char*>(u8"\ue7c2");
+	//auto c = Icon::icons[Icon::Name::rectEllipse];
+	const char* icons[] = {
+		reinterpret_cast<const char*>(u8"\ue790"),
+		reinterpret_cast<const char*>(u8"\ue791"),
+		reinterpret_cast<const char*>(u8"\ueb0c"),
+		reinterpret_cast<const char*>(u8"\ue601"),
+		reinterpret_cast<const char*>(u8"\ue69b"),
+		reinterpret_cast<const char*>(u8"\ue82e"),
+		reinterpret_cast<const char*>(u8"\ue6ec"),
+		reinterpret_cast<const char*>(u8"\ue776"),
+		reinterpret_cast<const char*>(u8"\ue6b8"),
+
+
+		reinterpret_cast<const char*>(u8"\ued85"),
+		reinterpret_cast<const char*>(u8"\ued8a"),
+
+		reinterpret_cast<const char*>(u8"\ue62f"),
+		reinterpret_cast<const char*>(u8"\ue87f"),
+		reinterpret_cast<const char*>(u8"\ue6e7"),
+	};
+	BLPoint point;
+	point.y = rect.y + 38;
+	point.x = rect.x + 20;
+	for (size_t i = 0; i < std::size(icons); i++)
+	{
+		paintCtx->fillUtf8Text(point, *fontIcon, icons[i]); 
+		point.x += 58;
+	}	
 }

@@ -1,5 +1,6 @@
 #include "MainWin.h"
 #include "dwmapi.h"
+#include "resource.h"
 
 LRESULT CALLBACK MainWin::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     if (msg == WM_NCCREATE)
@@ -51,7 +52,7 @@ void MainWin::createWindow()
     wcx.lpszClassName = L"ScreenCapture";
     if (!RegisterClassEx(&wcx))
     {
-        MessageBox(NULL, L"RegisterClassEx failed!", L"系统提示", NULL);
+        MessageBox(NULL, L"注册窗口类失败", L"系统提示", NULL);
         return;
     }
     hwnd = CreateWindowEx(0, wcx.lpszClassName, wcx.lpszClassName, WS_OVERLAPPEDWINDOW, x, y, w, h, NULL, NULL, hinstance, static_cast<LPVOID>(this));
@@ -169,4 +170,37 @@ POINT MainWin::getMousePoint(const LPARAM& lParam)
     point.x = GET_X_LPARAM(lParam);
     point.y = GET_Y_LPARAM(lParam);
     return point;
+}
+
+void MainWin::initFontIcon()
+{
+    HMODULE instance = GetModuleHandle(NULL);
+    HRSRC resID = FindResource(instance, MAKEINTRESOURCE(IDR_ICON_FONT), L"ICON_FONT");
+    if (resID == 0) {
+        MessageBox(NULL, L"查找字体图标资源失败", L"系统提示", NULL);
+        return;
+    }
+    size_t resSize = SizeofResource(instance, resID);
+    HGLOBAL res = LoadResource(instance, resID);
+    if (res == 0) {
+        MessageBox(NULL, L"加载字体图标资源失败", L"系统提示", NULL);
+        return;
+    }
+    LPVOID resData = LockResource(res);
+    BLFontData fontData;
+    BLResult result = fontData.createFromData(resData, resSize, [](void* impl, void* externalData, void* userData) {
+        delete[] externalData;
+        });
+    if (result != BL_SUCCESS) {
+        MessageBox(NULL, L"生成字体图标失败", L"系统提示", NULL);
+        return;
+    }
+    BLFontFace face;
+    face.createFromData(fontData, 0);
+    fontIcon = new BLFont();
+    result = fontIcon->createFromFace(face,28.0f);
+    if (result != BL_SUCCESS) {
+        MessageBox(NULL, L"创建字体图标失败", L"系统提示", NULL);
+        return;
+    }
 }
