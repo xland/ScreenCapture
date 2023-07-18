@@ -26,7 +26,7 @@ void MainWin::shotScreen()
     BOOL bRet = BitBlt(hDC, 0, 0, w, h, hScreen, x, y, SRCCOPY);
     unsigned int dataSize = w * h * 4;
     auto bgPixels = new char[dataSize];
-    BITMAPINFO info = { sizeof(BITMAPINFOHEADER), w, 0 - h, 1, 32, BI_RGB, dataSize, 0, 0, 0, 0 };    
+    BITMAPINFO info = { sizeof(BITMAPINFOHEADER), (long)w, 0 - (long)h, 1, 32, BI_RGB, dataSize, 0, 0, 0, 0 };
     GetDIBits(hDC, hBitmap, 0, h, (LPVOID)bgPixels, &info, DIB_RGB_COLORS);
     DeleteDC(hDC);
     DeleteObject(hBitmap);
@@ -128,7 +128,7 @@ LRESULT CALLBACK MainWin::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
             HDC hdc = BeginPaint(hwnd, &ps);
             HDC hdcBmp = CreateCompatibleDC(hdc);
             DeleteObject(SelectObject(hdcBmp, bgHbitmap));
-            BitBlt(hdc, 0, 0, w, h, hdcBmp, 0, 0, SRCCOPY);
+            BitBlt(hdc, 0, 0, (int)w, (int)h, hdcBmp, 0, 0, SRCCOPY);
             DeleteDC(hdcBmp);
             EndPaint(hwnd, &ps);
             ValidateRect(hwnd, NULL);

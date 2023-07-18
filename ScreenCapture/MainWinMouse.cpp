@@ -11,7 +11,11 @@ void MainWin::leftBtnDown(const POINT& pos)
             return;
         }
         if (state == State::MaskReady) {
-            setCutBox(pos);
+            dragStartCutBoxStartPos = BLPoint(cutBox.x0, cutBox.y0);
+            dragStartCutBoxEndPos = BLPoint(cutBox.x1, cutBox.y1);
+            if (mouseInMaskBoxIndex < 8) {
+                setCutBox(pos);
+            }            
             return;
         }
     }
@@ -30,12 +34,15 @@ void MainWin::mouseMove(const POINT& pos)
         {
             case State::Start:
             {
-                setMasks(pos,mouseDownPos);
+                BLPoint startPos(pos.x, pos.y);
+                BLPoint endPos(mouseDownPos.x, mouseDownPos.y);
+                setCutBox(startPos,endPos);
                 break;
             }
             case State::MaskReady:
             {
-                //setCutBox(pos);
+                setCutBox(pos);
+                //setMasks(pos, mouseDownPos);
                 break;
             }
             case State::RectEllipse:

@@ -30,8 +30,9 @@ private:
 	float x, y, w, h,scaleFactor;
 	HWND hwnd;
 	HINSTANCE hinstance;
-	State state = State::Start;
-	RECT cutRect{-80,-80,-80,-80};	
+
+
+	
 	void leftBtnDown(const POINT& pos);
 	void rightBtnDown(const POINT& pos);
 	void mouseMove(const POINT& pos);
@@ -39,6 +40,7 @@ private:
 	inline POINT getMousePoint(const LPARAM& lParam);
 	POINT mouseDownPos;
 	bool isLeftBtnDown;
+	State state = State::Start;
 	
 	
 	void initCanvas(char* bgPixels,char* boardPixels);
@@ -53,10 +55,12 @@ private:
 
 
 	void checkMouseEnterMaskBox(const POINT& pos);
-	void setMasks(const POINT& pos, const POINT& anotherPos);
 	void setCutBox(const POINT& pos);
+	void setCutBox(BLPoint& startPos, BLPoint& endPos);
 	BLBox maskBoxes[8];
 	BLBox cutBox;
+	BLPoint dragStartCutBoxStartPos;
+	BLPoint dragStartCutBoxEndPos;
 	int mouseInMaskBoxIndex = -1;
 
 
