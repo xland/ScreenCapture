@@ -2,14 +2,16 @@
 
 enum class State
 {
-	Start,
-	MaskReady,
-	RectEllipse,
-	Arrow,
-	Pen,
-	Mosaic,
-	Text,
-	Eraser,
-	Number,
-	LastPathDrag
+	start = 0,
+	maskReady,
+    rect,
+    ellipse,
+    arrow,
+    pen,
+    line,
+    mosaic,
+    text,
+    number,
+    eraser,
+	lastPathDrag
 };

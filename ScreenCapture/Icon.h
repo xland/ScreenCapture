@@ -8,11 +8,11 @@ public:
         rect = 0,
         ellipse,
         arrow,
-        pen,
-        line,
-        mosaic,
-        text,
         number,
+        line,
+        pen,
+        text,
+        mosaic,
         eraser,
 
         undo,
@@ -21,16 +21,22 @@ public:
         save,
         copy,
         close,
-
-        dot,
+        
         rectFill,
         ellipseFill,
         arrowFill,
-        arrowEmpty,
+        numberFill,
+        transparent,
+
+        dot,
+
+        colorUnChecked,
+        colorChecked,
+
         bold,
         italic,
 
     };
-    static const char* Get(Icon::Name icon);
+    static const char* GetIcon(Icon::Name icon);
 };
 

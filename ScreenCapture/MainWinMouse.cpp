@@ -4,13 +4,18 @@ void MainWin::leftBtnDown(const POINT& pos)
 {
     isLeftBtnDown = true;
     mouseDownPos = pos;
-    if (state != State::Start) {
-        if (mouseEnterToolIndex != -1 && mouseEnterToolIndex < 9) {
-            selectedToolIndex = mouseEnterToolIndex;
+    if (state != State::start) {
+        if (mouseEnterMainToolIndex != -1 && mouseEnterMainToolIndex < 9) {
+            selectedToolIndex = mouseEnterMainToolIndex;
             InvalidateRect(hwnd, nullptr, false);
+            state = (State)(selectedToolIndex+2);
             return;
         }
-        if (state == State::MaskReady) {
+        if (mouseEnterSubToolIndex != -1) {
+            subToolBtnClick();
+            return;
+        }
+        if (state == State::maskReady) {
             dragStartCutBoxStartPos = BLPoint(cutBox.x0, cutBox.y0);
             dragStartCutBoxEndPos = BLPoint(cutBox.x1, cutBox.y1);
             if (mouseInMaskBoxIndex < 8) {
@@ -28,56 +33,59 @@ void MainWin::rightBtnDown(const POINT& pos)
 }
 void MainWin::mouseMove(const POINT& pos)
 {
-    if (isLeftBtnDown)
-    {
+    if (state != State::start) {
+        checkMouseEnterToolBox(pos);
+        if (mouseEnterMainToolIndex != -1 || mouseEnterSubToolIndex != -1) return;
+    }    
+    if (isLeftBtnDown) {
         switch (state)
         {
-            case State::Start:
+            case State::start:
             {
                 BLPoint startPos(pos.x, pos.y);
                 BLPoint endPos(mouseDownPos.x, mouseDownPos.y);
-                setCutBox(startPos,endPos);
+                setCutBox(startPos, endPos);
                 break;
             }
-            case State::MaskReady:
+            case State::maskReady:
             {
                 setCutBox(pos);
-                //setMasks(pos, mouseDownPos);
                 break;
             }
-            case State::RectEllipse:
+            case State::rect:
+                drawRect(pos);
                 break;
-            case State::Arrow:
+            case State::arrow:
                 break;
-            case State::Pen:
+            case State::pen:
             {
                 drawPen(pos);
                 break;
             }
-            case State::Mosaic:
+            case State::mosaic:
                 break;
-            case State::Text:
+            case State::text:
                 break;
-            case State::Eraser:
+            case State::eraser:
             {
                 drawEraser(pos);
                 break;
             }
-            case State::Number:
+            case State::number:
                 break;
-            case State::LastPathDrag:
+            case State::lastPathDrag:
                 break;
             default:
                 break;
         }
     }
-    else
-    {
-        if (state != State::Start) {
-            checkMouseEnterToolBox(pos);
-            if (mouseEnterToolIndex == -1) {
-                checkMouseEnterMaskBox(pos);
-            }            
+    else if (state != State::start) {
+        if (state == State::maskReady) {
+            checkMouseEnterMaskBox(pos);
+        }
+        else
+        {
+            setCursor(IDC_CROSS);
         }
     }
 
@@ -86,11 +94,11 @@ void MainWin::leftBtnUp(const POINT& pos)
 {
     if (!isLeftBtnDown) return;
     isLeftBtnDown = false;
-    if (state == State::Start) {
-        state = State::MaskReady;
+    if (state == State::start) {
+        state = State::maskReady;
         InvalidateRect(hwnd, nullptr, false);
     }
-    else if (state == State::Eraser) {
+    else if (state == State::eraser) {
         
     }
 }

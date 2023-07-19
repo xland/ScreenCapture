@@ -14,7 +14,11 @@ void MainWin::initCanvas(char* bgPixels, char* boardPixels)
         });
 
     canvasImage = new BLImage(w, h, BL_FORMAT_PRGB32); 
+    prepareImage = new BLImage(w, h, BL_FORMAT_PRGB32);
     paintCtx = new BLContext();
+    paintCtx->begin(*prepareImage);
+    paintCtx->clearAll();
+    paintCtx->end();
     paintCtx->begin(*canvasImage);
     paintCtx->clearAll();
     BLPath path;
@@ -42,6 +46,7 @@ void MainWin::paintBoard()
     paintCtx->begin(*boardImage);
     paintCtx->blitImage(BLRect(0, 0, w, h), *bgImage);
     paintCtx->blitImage(BLRect(0, 0, w, h), *canvasImage);
+    paintCtx->blitImage(BLRect(0, 0, w, h), *prepareImage);
 
     paintCtx->setCompOp(BL_COMP_OP_SRC_OVER);
     paintCtx->setFillStyle(BLRgba32(0, 0, 0, 180));
@@ -49,8 +54,31 @@ void MainWin::paintBoard()
     paintCtx->setStrokeStyle(BLRgba32(22, 119, 255, 255));
     paintCtx->setStrokeWidth(3.8f);
     paintCtx->strokeBox(cutBox);
-    drawTool();
+    drawToolMain();
     paintCtx->end();
+}
+
+void  MainWin::drawRect(const POINT& pos)
+{
+    BLBox box;
+    setBoxByPos(box,
+        BLPoint(mouseDownPos.x, mouseDownPos.y),
+        BLPoint(pos.x, pos.y));
+    paintCtx->begin(*prepareImage);
+    paintCtx->clearAll();
+    if (isFill) 
+    {
+        paintCtx->setFillStyle(BLRgba32(123, 33, 0));
+        paintCtx->fillBox(box);
+    }
+    else
+    {
+        paintCtx->setStrokeStyle(BLRgba32(123, 33, 0));
+        paintCtx->setStrokeWidth(1.6);
+        paintCtx->strokeBox(box);
+    }   
+    paintCtx->end();
+    InvalidateRect(hwnd, nullptr, false);
 }
 
 void MainWin::drawPen(const POINT& pos)

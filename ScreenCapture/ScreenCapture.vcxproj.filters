@@ -30,13 +30,22 @@
     <ClCompile Include="MainWinSystem.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="MainWinTool.cpp">
+    <ClCompile Include="MainWinToolMain.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="MainWinMask.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Icon.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MainWinToolSub.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MainWinTool.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MainWinUtil.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

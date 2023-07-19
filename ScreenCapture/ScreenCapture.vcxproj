@@ -165,8 +165,11 @@
     <ClCompile Include="MainWinCanvas.cpp" />
     <ClCompile Include="MainWinMask.cpp" />
     <ClCompile Include="MainWinMouse.cpp" />
-    <ClCompile Include="MainWinSystem.cpp" />
     <ClCompile Include="MainWinTool.cpp" />
+    <ClCompile Include="MainWinToolSub.cpp" />
+    <ClCompile Include="MainWinSystem.cpp" />
+    <ClCompile Include="MainWinToolMain.cpp" />
+    <ClCompile Include="MainWinUtil.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Icon.h" />
