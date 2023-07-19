@@ -68,13 +68,13 @@ void  MainWin::drawRect(const POINT& pos)
     paintCtx->clearAll();
     if (isFill) 
     {
-        paintCtx->setFillStyle(BLRgba32(123, 33, 0));
+        paintCtx->setFillStyle(colors[colorBtnIndex]);
         paintCtx->fillBox(box);
     }
     else
     {
-        paintCtx->setStrokeStyle(BLRgba32(123, 33, 0));
-        paintCtx->setStrokeWidth(1.6);
+        paintCtx->setStrokeStyle(colors[colorBtnIndex]);
+        paintCtx->setStrokeWidth(strokeWidths[strokeBtnIndex]);
         paintCtx->strokeBox(box);
     }   
     paintCtx->end();

@@ -56,9 +56,19 @@ private:
 	BLImage* bgImage; 
 	BLImage* boardImage;
 	BLImage* prepareImage;
-
 	BLContext* paintCtx;
 	HBITMAP bgHbitmap;
+	BLRgba32 colors[8] {
+		BLRgba32(207, 19, 34, 255),
+		BLRgba32(212, 136, 6, 255),
+		BLRgba32(56, 158, 13, 255),
+		BLRgba32(19, 194, 194, 255),
+		BLRgba32(9, 88, 217, 255),
+		BLRgba32(114, 46, 209, 255),
+		BLRgba32(235, 47, 150, 255),
+		BLRgba32(0, 0, 0, 255),
+	};
+	double strokeWidths[3]{ 2.0, 6.0, 16.0 };
 
 
 	void checkMouseEnterMaskBox(const POINT& pos);
@@ -100,17 +110,14 @@ private:
 
 
 	void drawSubTool();
-	void drawSubToolBackground(const int& btnCount);
-	void drawSubToolRect();
-	void drawSubToolEllipse();
+	void drawSubToolBackground(const int& btnCount);	
+	void drawSubToolNormal(const Icon::Name& icon);
 	void drawSubToolPen();
-	void drawSubToolArrow();
 	void drawSubToolLine();
 	void drawSubToolNumber();
 	void drawColorBtns(BLPoint& point, const int& index);
 	void drawStrokeWidthBtns(BLPoint& point, const int& index);
 	void subToolBtnClick();
-
 	void clickSubToolNormal();
 	void clickSubToolPen();
 	BLBox toolBoxSub;

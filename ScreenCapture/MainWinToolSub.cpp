@@ -21,17 +21,17 @@ void MainWin::drawSubTool()
 	{
 		case 0:
 		{
-			drawSubToolRect();
+			drawSubToolNormal(Icon::Name::rectFill);
 			break;
 		}
 		case 1:
 		{
-			drawSubToolEllipse();
+			drawSubToolNormal(Icon::Name::ellipseFill);
 			break;
 		}
 		case 2:
 		{
-			drawSubToolArrow();
+			drawSubToolNormal(Icon::Name::arrowFill);
 			break;
 		}
 		case 3:
@@ -51,67 +51,30 @@ void MainWin::drawSubTool()
 		}
 	}
 }
-void MainWin::drawSubToolRect()
+void MainWin::drawSubToolNormal(const Icon::Name& icon)
 {
 	drawSubToolBackground(isFill?9:12);
 	BLPoint point;
 	point.x = toolBoxSub.x0 + iconLeftMargin;
 	point.y = toolBoxSub.y0 + 38;
-	drawBtn(point, Icon::Name::rectFill, isFill, mouseEnterSubToolIndex == 0);	
+	drawBtn(point, icon, isFill, mouseEnterSubToolIndex == 0);	
 	if (!isFill) {
 		point.x += toolBtnWidth;
 		drawStrokeWidthBtns(point, 1);
 	}
 	drawColorBtns(point,4);
 }
-void MainWin::drawSubToolEllipse()
-{
-	drawSubToolBackground(isFill ? 9 : 12);
-	BLPoint point;
-	point.x = toolBoxSub.x0 + iconLeftMargin;
-	point.y = toolBoxSub.y0 + 38;
-	drawBtn(point, Icon::Name::ellipseFill, isFill, mouseEnterSubToolIndex == 0);	
-	if (!isFill) {
-		point.x += toolBtnWidth;
-		drawStrokeWidthBtns(point, 1);
-	}	
-	drawColorBtns(point,4);
-}
-void MainWin::drawSubToolArrow()
-{
-	drawSubToolBackground(isFill ? 9 : 12);
-	BLPoint point;
-	point.x = toolBoxSub.x0 + iconLeftMargin;
-	point.y = toolBoxSub.y0 + 38;
-	drawBtn(point, Icon::Name::arrowFill, isFill, mouseEnterSubToolIndex == 0);	
-	if (!isFill) {
-		point.x += toolBtnWidth;
-		drawStrokeWidthBtns(point, 1);
-	}
-	drawColorBtns(point,4);
-}
+
 void MainWin::drawSubToolNumber()
 {
-	drawSubToolBackground(isFill ? 9 : 12);
+	drawSubToolBackground(12);
 	BLPoint point;
 	point.x = toolBoxSub.x0 + iconLeftMargin;
 	point.y = toolBoxSub.y0 + 38;
 	drawBtn(point, Icon::Name::numberFill, isFill, mouseEnterSubToolIndex == 0);
-	if (!isFill) {
-		point.x += toolBtnWidth;
-		drawStrokeWidthBtns(point, 1);
-	}
+	point.x += toolBtnWidth;
+	drawStrokeWidthBtns(point, 1);
 	drawColorBtns(point, 4);
-}
-
-void MainWin::drawSubToolPen()
-{
-	drawSubToolBackground(11);
-	BLPoint point;
-	point.x = toolBoxSub.x0 + iconLeftMargin;
-	point.y = toolBoxSub.y0 + 38;
-	drawStrokeWidthBtns(point,0);
-	drawColorBtns(point,3);
 }
 
 void MainWin::drawSubToolLine()
@@ -126,20 +89,22 @@ void MainWin::drawSubToolLine()
 	drawColorBtns(point, 4);
 }
 
+void MainWin::drawSubToolPen()
+{
+	drawSubToolBackground(11);
+	BLPoint point;
+	point.x = toolBoxSub.x0 + iconLeftMargin;
+	point.y = toolBoxSub.y0 + 38;
+	drawStrokeWidthBtns(point,0);
+	drawColorBtns(point,3);
+}
+
+
+
 
 void MainWin::drawColorBtns(BLPoint& point,const int& index)
 {
-	BLRgba32 colors[8] = {
-		BLRgba32(207, 19, 34, 255),
-		BLRgba32(212, 136, 6, 255),
-		BLRgba32(56, 158, 13, 255),
-		BLRgba32(19, 194, 194, 255),
-		BLRgba32(9, 88, 217, 255),
-		BLRgba32(114, 46, 209, 255),
-		BLRgba32(235, 47, 150, 255),
-		BLRgba32(0, 0, 0, 255),
-	};
-	for (size_t i = 0; i < 8; i++)
+	for (size_t i = 0; i < std::size(colors); i++)
 	{
 		point.x += toolBtnWidth;
 		paintCtx->setFillStyle(colors[i]);
@@ -182,7 +147,7 @@ void MainWin::subToolBtnClick()
 void MainWin::clickSubToolNormal()
 {
 	auto index = mouseEnterSubToolIndex;
-	if (index != 0 && isFill) index += 3;
+	if (selectedToolIndex < 3 && index != 0 && isFill) index += 3;
 	switch (index)
 	{
 		case 0:
