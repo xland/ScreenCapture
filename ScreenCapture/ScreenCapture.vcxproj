@@ -159,6 +159,8 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Shape\Line.cpp" />
+    <ClCompile Include="Shape\Pen.cpp" />
     <ClCompile Include="Shape\History.cpp" />
     <ClCompile Include="Shape\Number.cpp" />
     <ClCompile Include="Shape\Ellipse.cpp" />
@@ -180,6 +182,8 @@
     <ClCompile Include="Util.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Shape\Line.h" />
+    <ClInclude Include="Shape\Pen.h" />
     <ClInclude Include="Shape\History.h" />
     <ClInclude Include="Shape\Number.h" />
     <ClInclude Include="Shape\Ellipse.h" />

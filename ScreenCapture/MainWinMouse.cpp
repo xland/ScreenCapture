@@ -60,21 +60,47 @@ void MainWin::leftBtnDown(const POINT& pos)
             break;
         }
         case State::pen:
+        {
+            auto shape = new Shape::Pen();
+            shape->color = colors[colorBtnIndex];
+            shape->strokeWidth = strokeWidths[strokeBtnIndex];
+            History::Push(shape);
             break;
+        }
         case State::line:
+        {
+            auto shape = new Shape::Line();
+            shape->color = colors[colorBtnIndex];
+            shape->strokeWidth = strokeWidths[strokeBtnIndex];
+            History::Push(shape);
             break;
-        case State::mosaic:
-            break;
-        case State::text:
-            break;
+        }
         case State::number:
+        {
+            auto shape = new Shape::Number();
+            shape->color = colors[colorBtnIndex];
+            History::Push(shape);
             break;
+        }
+        case State::mosaic:
+        {
+            break;
+        }
+        case State::text:
+        {
+            auto shape = new Shape::Text();
+            shape->color = colors[colorBtnIndex];
+            History::Push(shape);
+            break;
+        }
         case State::eraser:
+        {
             break;
+        }
         case State::lastPathDrag:
+        {
             break;
-        default:
-            break;
+        }
         }
         preState = state;
         isDrawing = true;

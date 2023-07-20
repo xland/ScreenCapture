@@ -17,7 +17,11 @@
 #include "Shape/Box.h"
 #include "Shape/Ellipse.h"
 #include "Shape/Arrow.h"
-#include "Shape/History.h"
+#include "Shape/Number.h"
+#include "Shape/Line.h"
+#include "Shape/Pen.h"
+#include "Shape/Image.h"
+#include "Shape/Text.h"
 
 class MainWin
 {
