@@ -12,6 +12,8 @@
 #include <vector>
 #include "Icon.h"
 #include <blend2d.h>
+#include "Util.h"
+#include "Shape/History.h"
 
 class MainWin
 {
@@ -22,7 +24,6 @@ public:
 	LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 
 private:
-	void setBoxByPos(BLBox& box, const BLPoint& startPos, const BLPoint& endPos);
 
 
 

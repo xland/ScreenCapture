@@ -76,7 +76,7 @@ void MainWin::paintBoard()
 void  MainWin::drawRect(const POINT& pos)
 {
     BLBox box;
-    setBoxByPos(box,
+    SetBoxByPos(box,
         BLPoint(mouseDownPos.x, mouseDownPos.y),
         BLPoint(pos.x, pos.y));
     paintCtx->begin(*prepareImage);

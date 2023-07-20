@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   t="1689678030327"
+   class="icon"
+   viewBox="0 0 1024 1024"
+   version="1.1"
+   p-id="7364"
+   width="200"
+   height="200"
+   id="svg267"
+   sodipodi:docname="椭圆.svg"
+   inkscape:version="1.2.2 (732a01da63, 2022-12-09)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs271" />
+  <sodipodi:namedview
+     id="namedview269"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     showgrid="false"
+     inkscape:zoom="5.135"
+     inkscape:cx="50.340798"
+     inkscape:cy="99.902629"
+     inkscape:window-width="3840"
+     inkscape:window-height="2068"
+     inkscape:window-x="-12"
+     inkscape:window-y="-12"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg267" />
+  <path
+     id="rect446-1-41"
+     style="stroke-width:5.61567"
+     transform="rotate(45)"
+     d="m 815.48682,-401.52679 h 72.78675 v 720.888 h -72.78675 z m -127.42206,3.89877 h 72.78676 v 796.66595 h -72.78676 z m -126.7453,60.35589 h 72.78676 v 729.8617 h -72.78676 z m 378.06421,-34.26425 h 72.78673 V 227.70801 H 939.38367 Z M 438.0994,-230.52812 h 72.78675 V 368.71626 H 438.0994 Z m 548.78262,493.3328 C 802.75398,446.93272 535.00627,479.06244 390.01058,334.06676 245.0149,189.07108 277.14463,-78.676635 461.27267,-262.80468 c 184.12804,-184.12804 451.87575,-216.25776 596.87143,-71.26208 144.9957,144.99568 112.866,412.743395 -71.26208,596.87144 z M 512.76261,-211.31473 C 356.6451,-55.19722 324.92729,166.00358 441.50053,282.57682 558.07376,399.15005 779.68648,367.02032 935.39208,211.31473 1091.0977,55.60914 1123.2274,-166.00358 1006.6542,-282.57682 890.08092,-399.15005 668.88012,-367.43224 512.76261,-211.31473 Z" />
+</svg>

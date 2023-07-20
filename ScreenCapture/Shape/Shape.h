@@ -1,12 +1,13 @@
 #pragma once
 #include <vector>
+#include "blend2d.h"
 namespace Shape {
 	class Shape
 	{
 	public:
 		Shape();
 		~Shape();
-		std::vector<Shape> getHistory();
+		virtual void Draw(BLContext* context) {};
 	};
 }
 

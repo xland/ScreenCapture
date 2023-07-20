@@ -1,6 +1,6 @@
-#include "MainWin.h"
+#include "Util.h"
 
-void MainWin::setBoxByPos(BLBox& box,const BLPoint& startPos,const BLPoint& endPos)
+void SetBoxByPos(BLBox& box, const BLPoint& startPos, const BLPoint& endPos)
 {
     if (startPos.x < endPos.x) {
         box.x0 = startPos.x;

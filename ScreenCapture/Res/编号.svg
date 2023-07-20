@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   t="1689746318260"
+   class="icon"
+   viewBox="0 0 1024 1024"
+   version="1.1"
+   p-id="2601"
+   width="200"
+   height="200"
+   id="svg16"
+   sodipodi:docname="S批量编号.svg"
+   inkscape:version="1.2.2 (732a01da63, 2022-12-09)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs20" />
+  <sodipodi:namedview
+     id="namedview18"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     showgrid="false"
+     inkscape:zoom="1.28375"
+     inkscape:cx="-118.01363"
+     inkscape:cy="727.55599"
+     inkscape:window-width="3840"
+     inkscape:window-height="2068"
+     inkscape:window-x="-12"
+     inkscape:window-y="-12"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg16" />
+  <path
+     d="M512 976.76333549c-256.33485534 0-464.76333549-208.42848014-464.76333549-464.76333549s208.42848014-464.76333549 464.76333549-464.76333549 464.76333549 208.42848014 464.76333549 464.76333549-208.42848014 464.76333549-464.76333549 464.76333549z m0-858.02462038c-217.00872635 0-393.26128489 176.25255685-393.26128489 393.26128489s176.25255685 393.26128489 393.26128489 393.26128489 393.26128489-176.25255685 393.26128489-393.26128489-176.25255685-393.26128489-393.26128489-393.26128489z"
+     fill="#333333"
+     p-id="2602"
+     id="path12"
+     style="fill:#000000" />
+  <path
+     d="M372.21348948 669.66202399h99.74536211v-294.23094217h-84.37242153v-57.20164248c46.47633305-8.93775591 78.65225632-20.73559444 107.9680986-38.96861762h68.64196964v390.40120227h87.2325025v74.71964458h-279.57302269v-74.71964458z"
+     fill="#333333"
+     p-id="2603"
+     id="path14"
+     style="fill:#000000" />
+  <rect
+     style="fill:#000000;stroke-width:6.14368"
+     id="rect178"
+     width="808.93408"
+     height="60.518753"
+     x="-413.49091"
+     y="606.24609"
+     transform="rotate(-45)" />
+  <rect
+     style="fill:#000000;stroke-width:5.86127"
+     id="rect178-2-7-5-8-4"
+     width="786.05072"
+     height="56.686352"
+     x="-389.30481"
+     y="782.98529"
+     inkscape:transform-center-x="45.573478"
+     inkscape:transform-center-y="-120.1041"
+     transform="rotate(-45)" />
+  <rect
+     style="fill:#000000;stroke-width:5.32036"
+     id="rect178-2-7-5-8-4-1"
+     width="713.50983"
+     height="51.45504"
+     x="-356.75494"
+     y="966.36603"
+     inkscape:transform-center-x="41.367739"
+     inkscape:transform-center-y="-109.02024"
+     transform="rotate(-45)" />
+  <rect
+     style="fill:#000000;stroke-width:5.20506"
+     id="rect178-2-7-5-8-4-7"
+     width="698.0462"
+     height="50.33987"
+     x="-353.06152"
+     y="423.91202"
+     inkscape:transform-center-x="40.471181"
+     inkscape:transform-center-y="-106.65754"
+     transform="rotate(-45)" />
+</svg>

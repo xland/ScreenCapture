@@ -159,6 +159,10 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Shape\History.cpp" />
+    <ClCompile Include="Shape\Number.cpp" />
+    <ClCompile Include="Shape\Ellipse.cpp" />
+    <ClCompile Include="Shape\Box.cpp" />
     <ClCompile Include="Icon.cpp" />
     <ClCompile Include="Shape\Image.cpp" />
     <ClCompile Include="main.cpp" />
@@ -170,12 +174,16 @@
     <ClCompile Include="MainWinToolSub.cpp" />
     <ClCompile Include="MainWinSystem.cpp" />
     <ClCompile Include="MainWinToolMain.cpp" />
-    <ClCompile Include="MainWinUtil.cpp" />
     <ClCompile Include="Shape\Path.cpp" />
     <ClCompile Include="Shape\Shape.cpp" />
     <ClCompile Include="Shape\Text.cpp" />
+    <ClCompile Include="Util.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Shape\History.h" />
+    <ClInclude Include="Shape\Number.h" />
+    <ClInclude Include="Shape\Ellipse.h" />
+    <ClInclude Include="Shape\Box.h" />
     <ClInclude Include="Icon.h" />
     <ClInclude Include="Shape\Image.h" />
     <ClInclude Include="MainWin.h" />
@@ -184,6 +192,7 @@
     <ClInclude Include="Shape\Shape.h" />
     <ClInclude Include="State.h" />
     <ClInclude Include="Shape\Text.h" />
+    <ClInclude Include="Util.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ToDo.md" />

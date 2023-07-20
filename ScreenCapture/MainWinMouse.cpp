@@ -5,6 +5,7 @@ void MainWin::leftBtnDown(const POINT& pos)
     isLeftBtnDown = true;
     mouseDownPos = pos;
     if (state != State::start) {
+        endDrawing();
         if (mouseEnterMainToolIndex != -1 && mouseEnterMainToolIndex < 9) {
             selectedToolIndex = mouseEnterMainToolIndex;
             InvalidateRect(hwnd, nullptr, false);
@@ -20,7 +21,7 @@ void MainWin::leftBtnDown(const POINT& pos)
             dragStartCutBoxEndPos = BLPoint(cutBox.x1, cutBox.y1);
             if (mouseInMaskBoxIndex < 8) {
                 setCutBox(pos);
-            }            
+            }
             return;
         }
         preState = state;
