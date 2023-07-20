@@ -99,9 +99,6 @@ void MainWin::drawSubToolPen()
 	drawColorBtns(point,3);
 }
 
-
-
-
 void MainWin::drawColorBtns(BLPoint& point,const int& index)
 {
 	for (size_t i = 0; i < std::size(colors); i++)
@@ -112,6 +109,8 @@ void MainWin::drawColorBtns(BLPoint& point,const int& index)
 		drawBtn(point, name, i==colorBtnIndex, mouseEnterSubToolIndex == index+i,true);
 	}
 }
+
+
 void MainWin::drawStrokeWidthBtns(BLPoint& point,const int& index)
 {
 	drawBtn(point, Icon::Name::dot, strokeBtnIndex == 0, mouseEnterSubToolIndex == index);

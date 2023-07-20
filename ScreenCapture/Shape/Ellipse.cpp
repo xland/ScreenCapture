@@ -4,6 +4,7 @@
 namespace Shape {
     void Ellipse::Draw(BLContext* paintCtx, const double& x1, const double& y1, const double& x2, const double& y2)
     {
+        //todo °´×¡Shift»­ÕýÔ²
         BLBox box;
         SetBoxByPos(box, x1, y1, x2, y2);
         ellipse.rx = (x2 - x1) / 2;
