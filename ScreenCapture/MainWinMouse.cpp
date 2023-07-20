@@ -28,6 +28,11 @@ void MainWin::leftBtnDown(const POINT& pos)
 void MainWin::rightBtnDown(const POINT& pos)
 {
     //canvasImage->writeToFile("123.png");
+
+    paintCtx->begin(*canvasImage);
+    paintCtx->blitImage(BLRect(0, 0, w, h), *prepareImage);
+    paintCtx->end();
+
     CloseWindow(hwnd);
 	PostQuitMessage(0);
 }
@@ -94,11 +99,42 @@ void MainWin::leftBtnUp(const POINT& pos)
 {
     if (!isLeftBtnDown) return;
     isLeftBtnDown = false;
-    if (state == State::start) {
+    switch (state)
+    {
+    case State::start:
+    {
         state = State::maskReady;
         InvalidateRect(hwnd, nullptr, false);
+        break;
     }
-    else if (state == State::eraser) {
-        
+    case State::maskReady:
+    {
+        break;
+    }
+    case State::rect:
+    {
+        state = State::maskReady;
+        break;
+    }
+    case State::ellipse:
+        break;
+    case State::arrow:
+        break;
+    case State::pen:
+        break;
+    case State::line:
+        break;
+    case State::mosaic:
+        break;
+    case State::text:
+        break;
+    case State::number:
+        break;
+    case State::eraser:
+        break;
+    case State::lastPathDrag:
+        break;
+    default:
+        break;
     }
 }

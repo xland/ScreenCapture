@@ -159,6 +159,13 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="PathPath.cpp" />
+    <ClCompile Include="Path\PathLine.cpp" />
+    <ClCompile Include="Path\PathPen.cpp" />
+    <ClCompile Include="Path\PathArrow.cpp" />
+    <ClCompile Include="Path\PathEllipse.cpp" />
+    <ClCompile Include="Path\PathBox.cpp" />
+    <ClCompile Include="Path\PathBase.cpp" />
     <ClCompile Include="Icon.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainWin.cpp" />
@@ -172,6 +179,13 @@
     <ClCompile Include="MainWinUtil.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="PathPath.h" />
+    <ClInclude Include="Path\PathLine.h" />
+    <ClInclude Include="Path\PathPen.h" />
+    <ClInclude Include="Path\PathArrow.h" />
+    <ClInclude Include="Path\PathEllipse.h" />
+    <ClInclude Include="Path\PathBox.h" />
+    <ClInclude Include="Path\PathBase.h" />
     <ClInclude Include="Icon.h" />
     <ClInclude Include="MainWin.h" />
     <ClInclude Include="resource.h" />

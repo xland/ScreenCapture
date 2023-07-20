@@ -79,6 +79,9 @@ void  MainWin::drawRect(const POINT& pos)
     }   
     paintCtx->end();
     InvalidateRect(hwnd, nullptr, false);
+
+
+    paintCtx->fillEllipse()
 }
 
 void MainWin::drawPen(const POINT& pos)

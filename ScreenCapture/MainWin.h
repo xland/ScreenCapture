@@ -20,6 +20,7 @@ public:
 	~MainWin();
 	static LRESULT CALLBACK RouteWindowMessage(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 	LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
+
 private:
 	void setBoxByPos(BLBox& box, const BLPoint& startPos, const BLPoint& endPos);
 
@@ -125,6 +126,9 @@ private:
 	bool isFill = false;
 	int strokeBtnIndex = 1;
 	int colorBtnIndex = 0;
+
+
+	void showDragger();
 
 };
 
