@@ -45,7 +45,7 @@
     <ClCompile Include="MainWinTool.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Shape\Path.cpp">
+    <ClCompile Include="Shape\Arrow.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Shape\Shape.cpp">
@@ -86,7 +86,7 @@
     <ClInclude Include="Icon.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Shape\Path.h">
+    <ClInclude Include="Shape\Arrow.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Shape\Shape.h">

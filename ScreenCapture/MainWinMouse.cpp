@@ -42,9 +42,23 @@ void MainWin::leftBtnDown(const POINT& pos)
             break;
         }
         case State::ellipse:
+        {
+            auto ellipse = new Shape::Ellipse();
+            ellipse->color = colors[colorBtnIndex];
+            ellipse->isFill = isFill;
+            ellipse->strokeWidth = strokeWidths[strokeBtnIndex];
+            History::Push(ellipse);
             break;
+        }
         case State::arrow:
+        {
+            auto arrow = new Shape::Arrow();
+            arrow->color = colors[colorBtnIndex];
+            arrow->isFill = isFill;
+            arrow->strokeWidth = strokeWidths[strokeBtnIndex];
+            History::Push(arrow);
             break;
+        }
         case State::pen:
             break;
         case State::line:
@@ -91,10 +105,20 @@ void MainWin::mouseMove(const POINT& pos)
                 break;
             }
             case State::rect:
+            {
                 drawRect(pos);
                 break;
-            case State::arrow:
+            }
+            case State::ellipse:
+            {
+                drawEllipse(pos);
                 break;
+            }
+            case State::arrow:
+            {
+                drawArrow(pos);
+                break;
+            }
             case State::pen:
             {
                 drawPen(pos);
@@ -152,9 +176,15 @@ void MainWin::leftBtnUp(const POINT& pos)
             break;
         }
         case State::ellipse:
+        {
+            state = State::lastPathDrag;
             break;
+        }
         case State::arrow:
+        {
+            state = State::lastPathDrag;
             break;
+        }
         case State::pen:
             break;
         case State::line:

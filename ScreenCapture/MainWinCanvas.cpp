@@ -76,10 +76,32 @@ void MainWin::paintBoard()
 void  MainWin::drawRect(const POINT& pos)
 {
     auto history = History::Get();
-    auto box = (Shape::Box*)history->at(history->size() - 1);
+    auto shape = (Shape::Box*)history->at(history->size() - 1);
     paintCtx->begin(*prepareImage);
     paintCtx->clearAll();
-    box->Draw(paintCtx, pos.x, pos.y, mouseDownPos.x, mouseDownPos.y);
+    shape->Draw(paintCtx, pos.x, pos.y, mouseDownPos.x, mouseDownPos.y);
+    paintCtx->end();
+    InvalidateRect(hwnd, nullptr, false);
+}
+
+void MainWin::drawEllipse(const POINT& pos)
+{
+    auto history = History::Get();
+    auto shape = (Shape::Ellipse*)history->at(history->size() - 1);
+    paintCtx->begin(*prepareImage);
+    paintCtx->clearAll();
+    shape->Draw(paintCtx, pos.x, pos.y, mouseDownPos.x, mouseDownPos.y);
+    paintCtx->end();
+    InvalidateRect(hwnd, nullptr, false);
+}
+
+void MainWin::drawArrow(const POINT& pos)
+{
+    auto history = History::Get();
+    auto shape = (Shape::Arrow*)history->at(history->size() - 1);
+    paintCtx->begin(*prepareImage);
+    paintCtx->clearAll();
+    shape->Draw(paintCtx, pos.x, pos.y, mouseDownPos.x, mouseDownPos.y);
     paintCtx->end();
     InvalidateRect(hwnd, nullptr, false);
 }

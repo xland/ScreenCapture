@@ -2,7 +2,7 @@
 #include "../Util.h"
 
 namespace Shape {
-	void Box::Draw(BLContext* paintCtx, double x1, double y1, double x2, double y2)
+	void Box::Draw(BLContext* paintCtx, const double& x1, const double& y1, const double& x2, const double& y2)
 	{
         SetBoxByPos(box,x1, y1,x2, y2);
         if (isFill)

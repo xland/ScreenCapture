@@ -174,7 +174,7 @@
     <ClCompile Include="MainWinToolSub.cpp" />
     <ClCompile Include="MainWinSystem.cpp" />
     <ClCompile Include="MainWinToolMain.cpp" />
-    <ClCompile Include="Shape\Path.cpp" />
+    <ClCompile Include="Shape\Arrow.cpp" />
     <ClCompile Include="Shape\Shape.cpp" />
     <ClCompile Include="Shape\Text.cpp" />
     <ClCompile Include="Util.cpp" />
@@ -187,7 +187,7 @@
     <ClInclude Include="Icon.h" />
     <ClInclude Include="Shape\Image.h" />
     <ClInclude Include="MainWin.h" />
-    <ClInclude Include="Shape\Path.h" />
+    <ClInclude Include="Shape\Arrow.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Shape\Shape.h" />
     <ClInclude Include="State.h" />

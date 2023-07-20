@@ -15,6 +15,8 @@
 #include "Util.h"
 #include "Shape/History.h"
 #include "Shape/Box.h"
+#include "Shape/Ellipse.h"
+#include "Shape/Arrow.h"
 #include "Shape/History.h"
 
 class MainWin
@@ -53,6 +55,8 @@ private:
 	void initCanvas(char* bgPixels,char* boardPixels);
 	void paintBoard();
 	void drawRect(const POINT& pos);
+	void drawEllipse(const POINT& pos);
+	void drawArrow(const POINT& pos);
 	void drawPen(const POINT& pos);
 	void drawEraser(const POINT& pos);
 	bool endDrawing();
