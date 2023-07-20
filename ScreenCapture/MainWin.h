@@ -45,7 +45,6 @@ private:
 	inline POINT getMousePoint(const LPARAM& lParam);
 	POINT mouseDownPos;
 	bool isLeftBtnDown;
-	State state = State::start;
 	
 	
 	void initCanvas(char* bgPixels,char* boardPixels);
@@ -53,6 +52,7 @@ private:
 	void drawRect(const POINT& pos);
 	void drawPen(const POINT& pos);
 	void drawEraser(const POINT& pos);
+	bool endDrawing();
 	BLImage* canvasImage;
 	BLImage* bgImage; 
 	BLImage* boardImage;
@@ -70,6 +70,9 @@ private:
 		BLRgba32(0, 0, 0, 255),
 	};
 	double strokeWidths[3]{ 2.0, 6.0, 16.0 };
+	bool isDrawing = false;
+	State state = State::start;
+	State preState;
 
 
 	void checkMouseEnterMaskBox(const POINT& pos);

@@ -41,12 +41,27 @@ void MainWin::initCanvas(char* bgPixels, char* boardPixels)
     paintCtx->end();
 }
 
+
+bool MainWin::endDrawing()
+{
+    if (!isDrawing) return false;
+    paintCtx->begin(*canvasImage);
+    paintCtx->blitImage(BLRect(0, 0, w, h), *prepareImage);
+    paintCtx->end();
+    isDrawing = false;
+    state = preState;
+    return true;
+}
+
 void MainWin::paintBoard() 
 {
     paintCtx->begin(*boardImage);
     paintCtx->blitImage(BLRect(0, 0, w, h), *bgImage);
     paintCtx->blitImage(BLRect(0, 0, w, h), *canvasImage);
-    paintCtx->blitImage(BLRect(0, 0, w, h), *prepareImage);
+    if (isDrawing) {
+        paintCtx->blitImage(BLRect(0, 0, w, h), *prepareImage);
+    }
+    
 
     paintCtx->setCompOp(BL_COMP_OP_SRC_OVER);
     paintCtx->setFillStyle(BLRgba32(0, 0, 0, 180));
@@ -79,9 +94,6 @@ void  MainWin::drawRect(const POINT& pos)
     }   
     paintCtx->end();
     InvalidateRect(hwnd, nullptr, false);
-
-
-    paintCtx->fillEllipse()
 }
 
 void MainWin::drawPen(const POINT& pos)

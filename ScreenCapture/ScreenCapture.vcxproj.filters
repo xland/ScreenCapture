@@ -48,25 +48,16 @@
     <ClCompile Include="MainWinUtil.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Path\PathBase.cpp">
+    <ClCompile Include="Shape\Path.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Path\PathBox.cpp">
+    <ClCompile Include="Shape\Shape.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Path\PathEllipse.cpp">
+    <ClCompile Include="Shape\Text.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Path\PathArrow.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="Path\PathPen.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="Path\PathLine.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="PathPath.cpp">
+    <ClCompile Include="Shape\Image.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -83,25 +74,16 @@
     <ClInclude Include="Icon.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Path\PathBase.h">
+    <ClInclude Include="Shape\Path.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Path\PathBox.h">
+    <ClInclude Include="Shape\Shape.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Path\PathEllipse.h">
+    <ClInclude Include="Shape\Text.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Path\PathArrow.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Path\PathPen.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Path\PathLine.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="PathPath.h">
+    <ClInclude Include="Shape\Image.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

@@ -23,25 +23,19 @@ void MainWin::leftBtnDown(const POINT& pos)
             }            
             return;
         }
+        preState = state;
+        isDrawing = true;
     }
 }
 void MainWin::rightBtnDown(const POINT& pos)
 {
     //canvasImage->writeToFile("123.png");
-
-    paintCtx->begin(*canvasImage);
-    paintCtx->blitImage(BLRect(0, 0, w, h), *prepareImage);
-    paintCtx->end();
-
+    if (endDrawing()) return;
     CloseWindow(hwnd);
 	PostQuitMessage(0);
 }
 void MainWin::mouseMove(const POINT& pos)
-{
-    if (state != State::start) {
-        checkMouseEnterToolBox(pos);
-        if (mouseEnterMainToolIndex != -1 || mouseEnterSubToolIndex != -1) return;
-    }    
+{   
     if (isLeftBtnDown) {
         switch (state)
         {
@@ -84,8 +78,9 @@ void MainWin::mouseMove(const POINT& pos)
                 break;
         }
     }
-    else if (state != State::start) {
-        if (state == State::maskReady) {
+    else {
+        if (checkMouseEnterToolBox(pos)) return;
+        if (state == State::maskReady) {            
             checkMouseEnterMaskBox(pos);
         }
         else
@@ -99,42 +94,41 @@ void MainWin::leftBtnUp(const POINT& pos)
 {
     if (!isLeftBtnDown) return;
     isLeftBtnDown = false;
+    if (mouseEnterMainToolIndex != -1 || mouseEnterSubToolIndex != -1) return;
     switch (state)
     {
-    case State::start:
-    {
-        state = State::maskReady;
-        InvalidateRect(hwnd, nullptr, false);
-        break;
-    }
-    case State::maskReady:
-    {
-        break;
-    }
-    case State::rect:
-    {
-        state = State::maskReady;
-        break;
-    }
-    case State::ellipse:
-        break;
-    case State::arrow:
-        break;
-    case State::pen:
-        break;
-    case State::line:
-        break;
-    case State::mosaic:
-        break;
-    case State::text:
-        break;
-    case State::number:
-        break;
-    case State::eraser:
-        break;
-    case State::lastPathDrag:
-        break;
-    default:
-        break;
+        case State::start:
+        {
+            state = State::maskReady;
+            InvalidateRect(hwnd, nullptr, false);
+            break;
+        }
+        case State::maskReady:
+        {
+            break;
+        }
+        case State::rect:
+        {
+            state = State::lastPathDrag;
+            break;
+        }
+        case State::ellipse:
+            break;
+        case State::arrow:
+            break;
+        case State::pen:
+            break;
+        case State::line:
+            break;
+        case State::mosaic:
+            break;
+        case State::text:
+            break;
+        case State::number:
+            break;
+        case State::eraser:
+            break;
+        case State::lastPathDrag:
+            break;
     }
 }
