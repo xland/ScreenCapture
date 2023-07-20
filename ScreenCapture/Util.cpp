@@ -1,23 +1,23 @@
 #include "Util.h"
 
-void SetBoxByPos(BLBox& box, const BLPoint& startPos, const BLPoint& endPos)
+void SetBoxByPos(BLBox& box, const double& x1, const double& y1, const double& x2, const double& y2)
 {
-    if (startPos.x < endPos.x) {
-        box.x0 = startPos.x;
-        box.x1 = endPos.x;
+    if (x1 < x2) {
+        box.x0 = x1;
+        box.x1 = x2;
     }
     else
     {
-        box.x0 = endPos.x;
-        box.x1 = startPos.x;
+        box.x0 = x2;
+        box.x1 = x1;
     }
-    if (startPos.y < endPos.y) {
-        box.y0 = startPos.y;
-        box.y1 = endPos.y;
+    if (y1 < y2) {
+        box.y0 = y1;
+        box.y1 = y2;
     }
     else
     {
-        box.y0 = endPos.y;
-        box.y1 = startPos.y;
+        box.y0 = y2;
+        box.y1 = y1;
     }
 }

@@ -50,6 +50,7 @@ bool MainWin::endDrawing()
     paintCtx->end();
     isDrawing = false;
     state = preState;
+    History::SaveLast();
     return true;
 }
 
@@ -60,8 +61,7 @@ void MainWin::paintBoard()
     paintCtx->blitImage(BLRect(0, 0, w, h), *canvasImage);
     if (isDrawing) {
         paintCtx->blitImage(BLRect(0, 0, w, h), *prepareImage);
-    }
-    
+    }  
 
     paintCtx->setCompOp(BL_COMP_OP_SRC_OVER);
     paintCtx->setFillStyle(BLRgba32(0, 0, 0, 180));
@@ -75,23 +75,11 @@ void MainWin::paintBoard()
 
 void  MainWin::drawRect(const POINT& pos)
 {
-    BLBox box;
-    SetBoxByPos(box,
-        BLPoint(mouseDownPos.x, mouseDownPos.y),
-        BLPoint(pos.x, pos.y));
+    auto history = History::Get();
+    auto box = (Shape::Box*)history->at(history->size() - 1);
     paintCtx->begin(*prepareImage);
     paintCtx->clearAll();
-    if (isFill) 
-    {
-        paintCtx->setFillStyle(colors[colorBtnIndex]);
-        paintCtx->fillBox(box);
-    }
-    else
-    {
-        paintCtx->setStrokeStyle(colors[colorBtnIndex]);
-        paintCtx->setStrokeWidth(strokeWidths[strokeBtnIndex]);
-        paintCtx->strokeBox(box);
-    }   
+    box->Draw(paintCtx, pos.x, pos.y, mouseDownPos.x, mouseDownPos.y);
     paintCtx->end();
     InvalidateRect(hwnd, nullptr, false);
 }

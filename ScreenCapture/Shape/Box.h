@@ -10,7 +10,7 @@ namespace Shape {
 			bool isTansparent = false;//todo
 			BLRgba32 color;
 			double strokeWidth;
-			void Draw(BLContext* context) override;
+			void Draw(BLContext* context, double x1, double y1, double x2, double y2) override;
 		private:
 	};
 }

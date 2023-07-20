@@ -7,7 +7,7 @@ namespace Shape {
 	public:
 		Path(const BLRect& rect,const BLRgba32& color,const bool& isFill);
 		~Path();
-		void Draw(BLContext* context) override {};
+		void Draw(BLContext* context, double x1, double y1, double x2, double y2) override {};
 		BLPath path;
 		bool isFill = false;
 		bool isEraser = false;

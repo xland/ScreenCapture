@@ -14,6 +14,8 @@
 #include <blend2d.h>
 #include "Util.h"
 #include "Shape/History.h"
+#include "Shape/Box.h"
+#include "Shape/History.h"
 
 class MainWin
 {

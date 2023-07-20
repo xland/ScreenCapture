@@ -45,7 +45,7 @@ void MainWin::checkMouseEnterMaskBox(const POINT& pos) {
 
 void MainWin::setCutBox(BLPoint& startPos, BLPoint& endPos)
 {
-    SetBoxByPos(cutBox, startPos, endPos);
+    SetBoxByPos(cutBox, startPos.x,startPos.y, endPos.x,endPos.y);
     maskBoxes[0].x0 = 0;
     maskBoxes[0].x1 = cutBox.x0;
     maskBoxes[1].x0 = cutBox.x0;

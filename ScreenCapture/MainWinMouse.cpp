@@ -17,12 +17,50 @@ void MainWin::leftBtnDown(const POINT& pos)
             return;
         }
         if (state == State::maskReady) {
+
+        }
+        switch (state)
+        {
+        case State::start:
+            break;
+        case State::maskReady:
+        {
             dragStartCutBoxStartPos = BLPoint(cutBox.x0, cutBox.y0);
             dragStartCutBoxEndPos = BLPoint(cutBox.x1, cutBox.y1);
             if (mouseInMaskBoxIndex < 8) {
                 setCutBox(pos);
             }
             return;
+        }
+        case State::rect:
+        {
+            auto box = new Shape::Box();
+            box->color = colors[colorBtnIndex];
+            box->isFill = isFill;
+            box->strokeWidth = strokeWidths[strokeBtnIndex];
+            History::Push(box);
+            break;
+        }
+        case State::ellipse:
+            break;
+        case State::arrow:
+            break;
+        case State::pen:
+            break;
+        case State::line:
+            break;
+        case State::mosaic:
+            break;
+        case State::text:
+            break;
+        case State::number:
+            break;
+        case State::eraser:
+            break;
+        case State::lastPathDrag:
+            break;
+        default:
+            break;
         }
         preState = state;
         isDrawing = true;
