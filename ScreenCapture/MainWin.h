@@ -22,6 +22,7 @@
 #include "Shape/Pen.h"
 #include "Shape/Image.h"
 #include "Shape/Text.h"
+#include "Font.h"
 
 class MainWin
 {
@@ -44,6 +45,7 @@ private:
 	float x, y, w, h,scaleFactor;
 	HWND hwnd;
 	HINSTANCE hinstance;
+	Font* font;
 
 
 	

@@ -45,6 +45,25 @@ namespace Shape {
             paintCtx->setStrokeWidth(strokeWidth);
             paintCtx->strokeCircle(circle);
         }
-        
+
+        BLFontFace face;
+        BLResult err = face.createFromFile("C:\\\Windows\\\Fonts\\simhei.ttf"); //ºÚÌå
+
+        // We must handle a possible error returned by the loader.
+        if (err) {
+            printf("Failed to load a font face (err=%u)\n", err);
+            return;
+        }
+
+        BLFont font;
+        font.createFromFace(face, r);
+        if (isFill) {
+            paintCtx->setFillStyle(BLRgba32(0xFFFFFFFF));
+        }
+        else
+        {
+            paintCtx->setFillStyle(color);
+        }        
+        paintCtx->fillUtf8Text(BLPoint(x2-r/4, y2+r/3), font, "8");        
 	}
 }

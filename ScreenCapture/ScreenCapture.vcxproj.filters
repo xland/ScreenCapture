@@ -78,6 +78,9 @@
     <ClCompile Include="Shape\Line.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Font.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainWin.h">
@@ -123,6 +126,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Shape\Line.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Font.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

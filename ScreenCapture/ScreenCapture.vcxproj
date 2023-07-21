@@ -159,6 +159,7 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Font.cpp" />
     <ClCompile Include="Shape\Line.cpp" />
     <ClCompile Include="Shape\Pen.cpp" />
     <ClCompile Include="Shape\History.cpp" />
@@ -182,6 +183,7 @@
     <ClCompile Include="Util.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Font.h" />
     <ClInclude Include="Shape\Line.h" />
     <ClInclude Include="Shape\Pen.h" />
     <ClInclude Include="Shape\History.h" />
