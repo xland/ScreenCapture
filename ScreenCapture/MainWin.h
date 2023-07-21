@@ -63,6 +63,7 @@ private:
 	void drawArrow(const POINT& pos);
 	void drawPen(const POINT& pos);
 	void drawEraser(const POINT& pos);
+	void drawNumber(const POINT& pos);
 	bool endDrawing();
 	BLImage* canvasImage;
 	BLImage* bgImage; 

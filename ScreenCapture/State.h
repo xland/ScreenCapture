@@ -7,11 +7,11 @@ enum class State
     rect,
     ellipse,
     arrow,
-    pen,
+    number,
     line,
     mosaic,
+    pen,
     text,
-    number,
     eraser,
 	lastPathDrag
 };

@@ -106,6 +106,17 @@ void MainWin::drawArrow(const POINT& pos)
     InvalidateRect(hwnd, nullptr, false);
 }
 
+void MainWin::drawNumber(const POINT& pos)
+{
+    auto history = History::Get();
+    auto shape = (Shape::Number*)history->at(history->size() - 1);
+    paintCtx->begin(*prepareImage);
+    paintCtx->clearAll();
+    shape->Draw(paintCtx, pos.x, pos.y, mouseDownPos.x, mouseDownPos.y);
+    paintCtx->end();
+    InvalidateRect(hwnd, nullptr, false);
+}
+
 void MainWin::drawPen(const POINT& pos)
 {
     paintCtx->begin(*canvasImage);

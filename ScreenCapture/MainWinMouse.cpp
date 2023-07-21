@@ -79,6 +79,8 @@ void MainWin::leftBtnDown(const POINT& pos)
         {
             auto shape = new Shape::Number();
             shape->color = colors[colorBtnIndex];
+            shape->strokeWidth = strokeWidths[strokeBtnIndex];
+            shape->isFill = isFill;
             History::Push(shape);
             break;
         }
@@ -160,7 +162,10 @@ void MainWin::mouseMove(const POINT& pos)
                 break;
             }
             case State::number:
+            {
+                drawNumber(pos);
                 break;
+            }
             case State::lastPathDrag:
                 break;
             default:
