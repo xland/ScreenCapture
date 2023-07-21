@@ -5,6 +5,7 @@ class Font
 public:
 	Font();
 	~Font();
+	static Font* Get();
 	BLFont* fontIcon;
 	BLFont* fontText;
 private:

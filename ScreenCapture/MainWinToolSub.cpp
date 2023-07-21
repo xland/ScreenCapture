@@ -115,12 +115,13 @@ void MainWin::drawStrokeWidthBtns(BLPoint& point,const int& index)
 {
 	drawBtn(point, Icon::Name::dot, strokeBtnIndex == 0, mouseEnterSubToolIndex == index);
 	point.x += toolBtnWidth;
-	fontIcon->setSize(56.0f);
+	auto font = Font::Get()->fontIcon;
+	font->setSize(56.0f);
 	drawBtn(point, Icon::Name::dot, strokeBtnIndex == 1, mouseEnterSubToolIndex == index+1);
 	point.x += toolBtnWidth;
-	fontIcon->setSize(86.0f);
+	font->setSize(86.0f);
 	drawBtn(point, Icon::Name::dot, strokeBtnIndex == 2, mouseEnterSubToolIndex == index+2);
-	fontIcon->setSize(28.0f);
+	font->setSize(28.0f);
 }
 
 void MainWin::subToolBtnClick()

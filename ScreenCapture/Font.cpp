@@ -1,6 +1,9 @@
 #include "Font.h"
 #include <Windows.h>
 #include "resource.h"
+
+static Font* font;
+
 Font::Font()
 {
     initFontIcon();
@@ -10,6 +13,14 @@ Font::~Font()
 {
     delete fontText;
     delete fontIcon;
+}
+
+Font* Font::Get()
+{
+    if (!font) {
+        font = new Font();
+    }
+    return font;
 }
 
 void Font::initFontText()

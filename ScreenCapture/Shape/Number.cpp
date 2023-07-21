@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string>
 #include <Windows.h> 
+#include "../Font.h"
 namespace Shape {
     static double PI = 3.1415926;
 	void Number::Draw(BLContext* paintCtx, const double& x1, const double& y1, const double& x2, const double& y2)
@@ -38,32 +39,17 @@ namespace Shape {
         {
             paintCtx->setFillStyle(color);
             paintCtx->fillCircle(circle);
+            paintCtx->setFillStyle(BLRgba32(0xFFFFFFFF));
         }
         else
         {
             paintCtx->setStrokeStyle(color);
             paintCtx->setStrokeWidth(strokeWidth);
             paintCtx->strokeCircle(circle);
-        }
-
-        BLFontFace face;
-        BLResult err = face.createFromFile("C:\\\Windows\\\Fonts\\simhei.ttf"); //ºÚÌå
-
-        // We must handle a possible error returned by the loader.
-        if (err) {
-            printf("Failed to load a font face (err=%u)\n", err);
-            return;
-        }
-
-        BLFont font;
-        font.createFromFace(face, r);
-        if (isFill) {
-            paintCtx->setFillStyle(BLRgba32(0xFFFFFFFF));
-        }
-        else
-        {
             paintCtx->setFillStyle(color);
-        }        
-        paintCtx->fillUtf8Text(BLPoint(x2-r/4, y2+r/3), font, "8");        
+        }       
+        auto font = Font::Get()->fontText;
+        font->setSize(r);
+        paintCtx->fillUtf8Text(BLPoint(x2-r/4, y2+r/3), *font, "8");
 	}
 }

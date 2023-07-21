@@ -45,7 +45,6 @@ private:
 	float x, y, w, h,scaleFactor;
 	HWND hwnd;
 	HINSTANCE hinstance;
-	Font* font;
 
 
 	
@@ -118,8 +117,6 @@ private:
 
 	void setToolBoxMain();
 	void drawToolMain();
-	void initFontIcon();
-	BLFont* fontIcon;
 	BLBox toolBoxMain;
 	int mouseEnterMainToolIndex = -1;
 	int selectedToolIndex = -1;

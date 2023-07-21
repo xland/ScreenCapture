@@ -36,9 +36,6 @@ void MainWin::setToolBoxMain()
 void MainWin::drawToolMain()
 {
 	if (state == State::start) return;
-	if (!fontIcon) {
-		initFontIcon();
-	}
 	setToolBoxMain();
 	paintCtx->setFillStyle(BLRgba32(255, 255, 255, 255));
 	paintCtx->fillBox(toolBoxMain);	

@@ -30,16 +30,20 @@ void MainWin::drawBtn(const BLPoint& point, Icon::Name name,bool checked,bool ho
 			paintCtx->setFillStyle(BLRgba32(30, 30, 30, 255));
 		}
 	}	
-	auto fontSize = fontIcon->size();
+	auto fontSize = Font::Get()->fontIcon->size();
 	if (fontSize == 56.0f) {
-		paintCtx->fillUtf8Text(BLPoint(point.x- fontSize / 2+14,point.y+11), *fontIcon, Icon::GetIcon(name));
+		paintCtx->fillUtf8Text(BLPoint(point.x- fontSize / 2+14,point.y+11), 
+			*Font::Get()->fontIcon, 
+			Icon::GetIcon(name));
 	}
 	else if (fontSize == 86.0f) {
-		paintCtx->fillUtf8Text(BLPoint(point.x - fontSize / 2 + 14, point.y +22), *fontIcon, Icon::GetIcon(name));
+		paintCtx->fillUtf8Text(BLPoint(point.x - fontSize / 2 + 14, point.y +22),
+			*Font::Get()->fontIcon,
+			Icon::GetIcon(name));
 	}
 	else
 	{
-		paintCtx->fillUtf8Text(point, *fontIcon, Icon::GetIcon(name));
+		paintCtx->fillUtf8Text(point, *Font::Get()->fontIcon, Icon::GetIcon(name));
 	}
 	
 }
