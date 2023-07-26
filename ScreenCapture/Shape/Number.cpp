@@ -5,6 +5,13 @@
 #include "../Font.h"
 namespace Shape {
     static double PI = 3.1415926;
+    static unsigned int num = 10;
+    Number::Number()
+    {
+        num += 1;
+        if (num > 99) num = 99;
+        number = num;
+    }
 	void Number::Draw(BLContext* paintCtx, const double& x1, const double& y1, const double& x2, const double& y2)
 	{
         
@@ -50,6 +57,15 @@ namespace Shape {
         }       
         auto font = Font::Get()->fontText;
         font->setSize(r);
-        paintCtx->fillUtf8Text(BLPoint(x2-r/4, y2+r/3), *font, "8");
+        BLPoint p(0, y2 + r / 3);
+        if (number < 10) {
+            p.x = x2 - r / 4;
+            p.y = y2 + r / 3;
+        }
+        else
+        {
+            p.x = x2 - r / 2;
+        }
+        paintCtx->fillUtf8Text(p, *font, std::to_string(number).c_str());
 	}
 }
