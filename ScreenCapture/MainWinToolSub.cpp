@@ -60,12 +60,12 @@ void MainWin::drawSubTool()
 		}
 		case 6: //Text
 		{
-			drawSubToolPen();
+			drawSubToolText();
 			break;
 		}
 		case 7: //Mosaic
 		{
-			drawSubToolPen();
+			drawSubToolMosaic();
 			break;
 		}
 		case 8: //Eraser
@@ -109,6 +109,25 @@ void MainWin::drawSubToolPen()
 	point.y = toolBoxSub.y0 + 38;
 	drawStrokeWidthBtns(point,0);
 	drawColorBtns(point,3);
+}
+
+void MainWin::drawSubToolText()
+{
+	drawSubToolBackground(8);
+	BLPoint point;
+	point.x = toolBoxSub.x0 + iconLeftMargin - toolBtnWidth;
+	point.y = toolBoxSub.y0 + 38;
+	drawColorBtns(point, 0);
+}
+
+
+void MainWin::drawSubToolMosaic()
+{
+	drawSubToolBackground(3,true);
+	BLPoint point;
+	point.x = toolBoxSub.x0 + iconLeftMargin;
+	point.y = toolBoxSub.y0 + 38;
+	drawStrokeWidthBtns(point, 0);
 }
 
 void MainWin::drawSubToolEraser()
@@ -169,6 +188,16 @@ void MainWin::subToolBtnClick()
 		case 5://Line
 		{
 			clickSubToolNormal();
+			break;
+		}
+		case 6://Text
+		{
+			clickSubToolNormal();
+			break;
+		}
+		case 7://Mosaic
+		{
+			clickSubToolPen();
 			break;
 		}
 		case 8://Eraser

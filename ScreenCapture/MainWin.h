@@ -128,6 +128,8 @@ private:
 	void drawSubToolNormal(const Icon::Name& icon);
 	void drawSubToolPen();
 	void drawSubToolEraser();
+	void drawSubToolText();
+	void drawSubToolMosaic();
 	void drawSubToolNumberOrLine(const Icon::Name& icon);
 	void drawColorBtns(BLPoint& point, const int& index);
 	void drawStrokeWidthBtns(BLPoint& point, const int& index);
