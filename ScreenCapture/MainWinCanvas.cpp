@@ -95,6 +95,17 @@ void MainWin::drawPen(const POINT& pos)
     InvalidateRect(hwnd, nullptr, false);
 }
 
+void MainWin::drawLine(const POINT& pos)
+{
+    auto history = History::Get();
+    auto shape = history->at(history->size() - 1);
+    paintCtx->begin(*prepareImage);
+    paintCtx->clearAll();
+    shape->Draw(paintCtx, pos.x, pos.y, mouseDownPos.x, mouseDownPos.y);
+    paintCtx->end();
+    InvalidateRect(hwnd, nullptr, false);
+}
+
 void MainWin::drawEraser(const POINT& pos)
 {
     paintCtx->begin(*canvasImage);

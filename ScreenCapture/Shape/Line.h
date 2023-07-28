@@ -9,6 +9,7 @@ namespace Shape {
         BLRgba32 color;
         BLPoint point1;
         BLPoint point2;
+        bool isFill = false;
     };
 }
 

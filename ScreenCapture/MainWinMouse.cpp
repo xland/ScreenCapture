@@ -63,7 +63,7 @@ void MainWin::leftBtnDown(const POINT& pos)
             {
                 auto shape = new Shape::Pen();
                 shape->color = colors[colorBtnIndex];
-                shape->strokeWidth = strokeWidths[strokeBtnIndex];
+                shape->strokeWidth = strokeWidths[strokeBtnIndex];                
                 History::Push(shape);
                 break;
             }
@@ -71,7 +71,8 @@ void MainWin::leftBtnDown(const POINT& pos)
             {
                 auto shape = new Shape::Line();
                 shape->color = colors[colorBtnIndex];
-                shape->strokeWidth = strokeWidths[strokeBtnIndex];
+                shape->strokeWidth = strokeWidths[strokeBtnIndex] + 26;
+                shape->isFill = isFill;
                 History::Push(shape);
                 break;
             }
@@ -143,6 +144,11 @@ void MainWin::mouseMove(const POINT& pos)
             case State::pen:
             {
                 drawPen(pos);
+                break;
+            }
+            case State::line:
+            {
+                drawLine(pos);
                 break;
             }
             case State::mosaic:
