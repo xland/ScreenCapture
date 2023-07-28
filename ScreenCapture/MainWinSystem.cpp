@@ -39,7 +39,6 @@ void MainWin::shotScreen()
 
 void MainWin::createWindow()
 {
-
     WNDCLASSEX wcx{};
     wcx.cbSize = sizeof(wcx);
     wcx.style = CS_HREDRAW | CS_VREDRAW;
@@ -134,7 +133,6 @@ LRESULT CALLBACK MainWin::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
             ValidateRect(hwnd, NULL);
             return 0;
         }
-
         case WM_RBUTTONDOWN:
         {
             POINT point = getMousePoint(lParam);

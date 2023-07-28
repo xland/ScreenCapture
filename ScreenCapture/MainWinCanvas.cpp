@@ -73,43 +73,10 @@ void MainWin::paintBoard()
     paintCtx->end();
 }
 
-void  MainWin::drawRect(const POINT& pos)
+void  MainWin::drawShape(const POINT& pos)
 {
     auto history = History::Get();
-    auto shape = (Shape::Box*)history->at(history->size() - 1);
-    paintCtx->begin(*prepareImage);
-    paintCtx->clearAll();
-    shape->Draw(paintCtx, pos.x, pos.y, mouseDownPos.x, mouseDownPos.y);
-    paintCtx->end();
-    InvalidateRect(hwnd, nullptr, false);
-}
-
-void MainWin::drawEllipse(const POINT& pos)
-{
-    auto history = History::Get();
-    auto shape = (Shape::Ellipse*)history->at(history->size() - 1);
-    paintCtx->begin(*prepareImage);
-    paintCtx->clearAll();
-    shape->Draw(paintCtx, pos.x, pos.y, mouseDownPos.x, mouseDownPos.y);
-    paintCtx->end();
-    InvalidateRect(hwnd, nullptr, false);
-}
-
-void MainWin::drawArrow(const POINT& pos)
-{
-    auto history = History::Get();
-    auto shape = (Shape::Arrow*)history->at(history->size() - 1);
-    paintCtx->begin(*prepareImage);
-    paintCtx->clearAll();
-    shape->Draw(paintCtx, pos.x, pos.y, mouseDownPos.x, mouseDownPos.y);
-    paintCtx->end();
-    InvalidateRect(hwnd, nullptr, false);
-}
-
-void MainWin::drawNumber(const POINT& pos)
-{
-    auto history = History::Get();
-    auto shape = (Shape::Number*)history->at(history->size() - 1);
+    auto shape = history->at(history->size() - 1);
     paintCtx->begin(*prepareImage);
     paintCtx->clearAll();
     shape->Draw(paintCtx, pos.x, pos.y, mouseDownPos.x, mouseDownPos.y);

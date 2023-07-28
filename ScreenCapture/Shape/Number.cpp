@@ -5,7 +5,7 @@
 #include "../Font.h"
 namespace Shape {
     static double PI = 3.1415926;
-    static unsigned int num = 10;
+    static unsigned int num = 0;
     Number::Number()
     {
         num += 1;

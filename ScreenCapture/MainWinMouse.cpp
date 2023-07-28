@@ -133,18 +133,11 @@ void MainWin::mouseMove(const POINT& pos)
                 break;
             }
             case State::rect:
-            {
-                drawRect(pos);
-                break;
-            }
             case State::ellipse:
-            {
-                drawEllipse(pos);
-                break;
-            }
             case State::arrow:
+            case State::number:
             {
-                drawArrow(pos);
+                drawShape(pos);
                 break;
             }
             case State::pen:
@@ -159,11 +152,6 @@ void MainWin::mouseMove(const POINT& pos)
             case State::eraser:
             {
                 drawEraser(pos);
-                break;
-            }
-            case State::number:
-            {
-                drawNumber(pos);
                 break;
             }
             case State::lastPathDrag:
