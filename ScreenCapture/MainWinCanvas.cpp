@@ -86,12 +86,10 @@ void  MainWin::drawShape(const POINT& pos)
 
 void MainWin::drawPen(const POINT& pos)
 {
+    auto history = History::Get();
+    auto shape = history->at(history->size() - 1);
     paintCtx->begin(*canvasImage);
-    paintCtx->setCompOp(BL_COMP_OP_SRC_OVER);
-    paintCtx->setStrokeStyle(BLRgba32(123, 33, 0));
-    paintCtx->setStrokeWidth(16.6);
-    paintCtx->setStrokeCaps(BL_STROKE_CAP_ROUND);
-    paintCtx->strokeLine(mouseDownPos.x, mouseDownPos.y, pos.x, pos.y);
+    shape->Draw(paintCtx, pos.x, pos.y, mouseDownPos.x, mouseDownPos.y);
     paintCtx->end();
     mouseDownPos = pos;
     InvalidateRect(hwnd, nullptr, false);

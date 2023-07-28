@@ -41,12 +41,12 @@ void MainWin::drawSubTool()
 		}
 		case 4:
 		{
-			drawSubToolLine();		
+			drawSubToolPen();	
 			break;
 		}
 		case 5:
 		{
-			drawSubToolPen();
+			drawSubToolLine();			
 			break;
 		}
 	}
@@ -131,15 +131,19 @@ void MainWin::subToolBtnClick()
 		case 0:
 		case 1:
 		case 2:
-		case 3:
-		case 4:
+		case 3:		
 		{
 			clickSubToolNormal();
 			break;
 		}
-		case 5:
+		case 4:
 		{
 			clickSubToolPen();
+			break;
+		}
+		case 5:
+		{
+			clickSubToolNormal();
 			break;
 		}
 	}

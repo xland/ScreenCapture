@@ -21,88 +21,88 @@ void MainWin::leftBtnDown(const POINT& pos)
         }
         switch (state)
         {
-        case State::start:
-            break;
-        case State::maskReady:
-        {
-            dragStartCutBoxStartPos = BLPoint(cutBox.x0, cutBox.y0);
-            dragStartCutBoxEndPos = BLPoint(cutBox.x1, cutBox.y1);
-            if (mouseInMaskBoxIndex < 8) {
-                setCutBox(pos);
+            case State::start:
+                break;
+            case State::maskReady:
+            {
+                dragStartCutBoxStartPos = BLPoint(cutBox.x0, cutBox.y0);
+                dragStartCutBoxEndPos = BLPoint(cutBox.x1, cutBox.y1);
+                if (mouseInMaskBoxIndex < 8) {
+                    setCutBox(pos);
+                }
+                return;
             }
-            return;
-        }
-        case State::rect:
-        {
-            auto box = new Shape::Box();
-            box->color = colors[colorBtnIndex];
-            box->isFill = isFill;
-            box->strokeWidth = strokeWidths[strokeBtnIndex];
-            History::Push(box);
-            break;
-        }
-        case State::ellipse:
-        {
-            auto ellipse = new Shape::Ellipse();
-            ellipse->color = colors[colorBtnIndex];
-            ellipse->isFill = isFill;
-            ellipse->strokeWidth = strokeWidths[strokeBtnIndex];
-            History::Push(ellipse);
-            break;
-        }
-        case State::arrow:
-        {
-            auto arrow = new Shape::Arrow();
-            arrow->color = colors[colorBtnIndex];
-            arrow->isFill = isFill;
-            arrow->strokeWidth = strokeWidths[strokeBtnIndex];
-            History::Push(arrow);
-            break;
-        }
-        case State::pen:
-        {
-            auto shape = new Shape::Pen();
-            shape->color = colors[colorBtnIndex];
-            shape->strokeWidth = strokeWidths[strokeBtnIndex];
-            History::Push(shape);
-            break;
-        }
-        case State::line:
-        {
-            auto shape = new Shape::Line();
-            shape->color = colors[colorBtnIndex];
-            shape->strokeWidth = strokeWidths[strokeBtnIndex];
-            History::Push(shape);
-            break;
-        }
-        case State::number:
-        {
-            auto shape = new Shape::Number();
-            shape->color = colors[colorBtnIndex];
-            shape->strokeWidth = strokeWidths[strokeBtnIndex];
-            shape->isFill = isFill;
-            History::Push(shape);
-            break;
-        }
-        case State::mosaic:
-        {
-            break;
-        }
-        case State::text:
-        {
-            auto shape = new Shape::Text();
-            shape->color = colors[colorBtnIndex];
-            History::Push(shape);
-            break;
-        }
-        case State::eraser:
-        {
-            break;
-        }
-        case State::lastPathDrag:
-        {
-            break;
-        }
+            case State::rect:
+            {
+                auto box = new Shape::Box();
+                box->color = colors[colorBtnIndex];
+                box->isFill = isFill;
+                box->strokeWidth = strokeWidths[strokeBtnIndex];
+                History::Push(box);
+                break;
+            }
+            case State::ellipse:
+            {
+                auto ellipse = new Shape::Ellipse();
+                ellipse->color = colors[colorBtnIndex];
+                ellipse->isFill = isFill;
+                ellipse->strokeWidth = strokeWidths[strokeBtnIndex];
+                History::Push(ellipse);
+                break;
+            }
+            case State::arrow:
+            {
+                auto arrow = new Shape::Arrow();
+                arrow->color = colors[colorBtnIndex];
+                arrow->isFill = isFill;
+                arrow->strokeWidth = strokeWidths[strokeBtnIndex];
+                History::Push(arrow);
+                break;
+            }
+            case State::pen:
+            {
+                auto shape = new Shape::Pen();
+                shape->color = colors[colorBtnIndex];
+                shape->strokeWidth = strokeWidths[strokeBtnIndex];
+                History::Push(shape);
+                break;
+            }
+            case State::line:
+            {
+                auto shape = new Shape::Line();
+                shape->color = colors[colorBtnIndex];
+                shape->strokeWidth = strokeWidths[strokeBtnIndex];
+                History::Push(shape);
+                break;
+            }
+            case State::number:
+            {
+                auto shape = new Shape::Number();
+                shape->color = colors[colorBtnIndex];
+                shape->strokeWidth = strokeWidths[strokeBtnIndex];
+                shape->isFill = isFill;
+                History::Push(shape);
+                break;
+            }
+            case State::mosaic:
+            {
+                break;
+            }
+            case State::text:
+            {
+                auto shape = new Shape::Text();
+                shape->color = colors[colorBtnIndex];
+                History::Push(shape);
+                break;
+            }
+            case State::eraser:
+            {
+                break;
+            }
+            case State::lastPathDrag:
+            {
+                break;
+            }
         }
         preState = state;
         isDrawing = true;
@@ -205,7 +205,10 @@ void MainWin::leftBtnUp(const POINT& pos)
             break;
         }
         case State::pen:
+        {
+            state = State::lastPathDrag;
             break;
+        }
         case State::line:
             break;
         case State::mosaic:

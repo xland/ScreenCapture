@@ -8,9 +8,9 @@ enum class State
     ellipse,
     arrow,
     number,
+    pen,
     line,
     mosaic,
-    pen,
     text,
     eraser,
 	lastPathDrag
