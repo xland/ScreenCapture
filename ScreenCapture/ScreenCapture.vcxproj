@@ -159,6 +159,7 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Shape\Eraser.cpp" />
     <ClCompile Include="Font.cpp" />
     <ClCompile Include="Shape\Line.cpp" />
     <ClCompile Include="Shape\Pen.cpp" />
@@ -183,6 +184,7 @@
     <ClCompile Include="Util.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Shape\Eraser.h" />
     <ClInclude Include="Font.h" />
     <ClInclude Include="Shape\Line.h" />
     <ClInclude Include="Shape\Pen.h" />

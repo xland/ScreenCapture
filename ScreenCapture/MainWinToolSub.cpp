@@ -1,17 +1,26 @@
 #include "MainWin.h"
 
 
-void MainWin::drawSubToolBackground(const int& btnCount)
+void MainWin::drawSubToolBackground(const int& btnCount, const bool isCenter)
 {
 	paintCtx->setFillStyle(BLRgba32(255, 255, 255, 255));
-	auto x = toolBoxMain.x0 + (double)selectedToolIndex * toolBtnWidth + toolBtnWidth / 2;
+	auto x = toolBoxMain.x0 + (double)selectedToolIndex * toolBtnWidth + toolBtnWidth / 2 ;
 	auto y = toolBoxMain.y1 + toolBoxSpan / 2;
 	paintCtx->fillTriangle(x, y, x + 6, y + toolBoxSpan / 2, x - 6, y + toolBoxSpan / 2);
 
-	toolBoxSub.x0 = toolBoxMain.x0;
-	toolBoxSub.y0 = toolBoxMain.y1 + toolBoxSpan;
-	toolBoxSub.x1 = toolBoxSub.x0 + btnCount*toolBtnWidth;
-	toolBoxSub.y1 = toolBoxSub.y0 + toolBoxHeight;
+	if (isCenter) {
+		toolBoxSub.x0 = x- btnCount * toolBtnWidth/2;
+		toolBoxSub.y0 = toolBoxMain.y1 + toolBoxSpan;
+		toolBoxSub.x1 = x + btnCount * toolBtnWidth / 2;
+		toolBoxSub.y1 = toolBoxSub.y0 + toolBoxHeight;
+	}
+	else
+	{
+		toolBoxSub.x0 = toolBoxMain.x0;
+		toolBoxSub.y0 = toolBoxMain.y1 + toolBoxSpan;
+		toolBoxSub.x1 = toolBoxSub.x0 + btnCount * toolBtnWidth;
+		toolBoxSub.y1 = toolBoxSub.y0 + toolBoxHeight;
+	}
 	paintCtx->fillBox(toolBoxSub);
 }
 
@@ -34,19 +43,34 @@ void MainWin::drawSubTool()
 			drawSubToolNormal(Icon::Name::arrowFill);
 			break;
 		}
-		case 3:
+		case 3://Number		
 		{
-			drawSubToolNumber();			
+			drawSubToolNumberOrLine(Icon::Name::numberFill);
 			break;
 		}
 		case 4:
 		{
-			drawSubToolPen();	
+			drawSubToolPen();
 			break;
 		}
-		case 5:
+		case 5://Line
 		{
-			drawSubToolLine();			
+			drawSubToolNumberOrLine(Icon::Name::transparent);
+			break;			
+		}
+		case 6: //Text
+		{
+			drawSubToolPen();
+			break;
+		}
+		case 7: //Mosaic
+		{
+			drawSubToolPen();
+			break;
+		}
+		case 8: //Eraser
+		{
+			drawSubToolEraser();
 			break;
 		}
 	}
@@ -65,25 +89,13 @@ void MainWin::drawSubToolNormal(const Icon::Name& icon)
 	drawColorBtns(point,4);
 }
 
-void MainWin::drawSubToolNumber()
+void MainWin::drawSubToolNumberOrLine(const Icon::Name& icon)
 {
 	drawSubToolBackground(12);
 	BLPoint point;
 	point.x = toolBoxSub.x0 + iconLeftMargin;
 	point.y = toolBoxSub.y0 + 38;
-	drawBtn(point, Icon::Name::numberFill, isFill, mouseEnterSubToolIndex == 0);
-	point.x += toolBtnWidth;
-	drawStrokeWidthBtns(point, 1);
-	drawColorBtns(point, 4);
-}
-
-void MainWin::drawSubToolLine()
-{
-	drawSubToolBackground(12);
-	BLPoint point;
-	point.x = toolBoxSub.x0 + iconLeftMargin;
-	point.y = toolBoxSub.y0 + 38;
-	drawBtn(point, Icon::Name::transparent, !isFill, mouseEnterSubToolIndex == 0);
+	drawBtn(point, icon, isFill, mouseEnterSubToolIndex == 0);
 	point.x += toolBtnWidth;
 	drawStrokeWidthBtns(point, 1);
 	drawColorBtns(point, 4);
@@ -97,6 +109,19 @@ void MainWin::drawSubToolPen()
 	point.y = toolBoxSub.y0 + 38;
 	drawStrokeWidthBtns(point,0);
 	drawColorBtns(point,3);
+}
+
+void MainWin::drawSubToolEraser()
+{
+	drawSubToolBackground(isFill?1:4,true);
+	BLPoint point;
+	point.x = toolBoxSub.x0 + iconLeftMargin;
+	point.y = toolBoxSub.y0 + 38;
+	drawBtn(point, Icon::Name::rectFill, isFill, mouseEnterSubToolIndex == 0);	
+	if (!isFill) {
+		point.x += toolBtnWidth;
+		drawStrokeWidthBtns(point, 1);
+	}
 }
 
 void MainWin::drawColorBtns(BLPoint& point,const int& index)
@@ -128,10 +153,10 @@ void MainWin::subToolBtnClick()
 {
 	switch (selectedToolIndex)
 	{
-		case 0:
-		case 1:
-		case 2:
-		case 3:		
+		case 0://¾ØÐÎ
+		case 1://ÍÖÔ²
+		case 2://¼ýÍ·
+		case 3://±êºÅ
 		{
 			clickSubToolNormal();
 			break;
@@ -141,7 +166,12 @@ void MainWin::subToolBtnClick()
 			clickSubToolPen();
 			break;
 		}
-		case 5:
+		case 5://Line
+		{
+			clickSubToolNormal();
+			break;
+		}
+		case 8://Eraser
 		{
 			clickSubToolNormal();
 			break;

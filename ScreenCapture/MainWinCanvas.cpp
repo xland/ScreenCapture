@@ -44,9 +44,14 @@ void MainWin::initCanvas(char* bgPixels, char* boardPixels)
 
 bool MainWin::endDrawing()
 {
-    if (!isDrawing) return false;
+    if (!isDrawing) {
+        return false;
+    }
     paintCtx->begin(*canvasImage);
     paintCtx->blitImage(BLRect(0, 0, w, h), *prepareImage);
+    paintCtx->end();
+    paintCtx->begin(*prepareImage);
+    paintCtx->clearAll();
     paintCtx->end();
     isDrawing = false;
     state = preState;
@@ -88,7 +93,7 @@ void MainWin::drawPen(const POINT& pos)
 {
     auto history = History::Get();
     auto shape = history->at(history->size() - 1);
-    paintCtx->begin(*canvasImage);
+    paintCtx->begin(*prepareImage);
     shape->Draw(paintCtx, pos.x, pos.y, mouseDownPos.x, mouseDownPos.y);
     paintCtx->end();
     mouseDownPos = pos;
@@ -98,6 +103,9 @@ void MainWin::drawPen(const POINT& pos)
 void MainWin::drawLine(const POINT& pos)
 {
     auto history = History::Get();
+    if (history->size() < 1) {
+        return;
+    }
     auto shape = history->at(history->size() - 1);
     paintCtx->begin(*prepareImage);
     paintCtx->clearAll();
@@ -108,12 +116,10 @@ void MainWin::drawLine(const POINT& pos)
 
 void MainWin::drawEraser(const POINT& pos)
 {
+    auto history = History::Get();
+    auto shape = history->at(history->size() - 1);
     paintCtx->begin(*canvasImage);
-    paintCtx->setCompOp(BL_COMP_OP_CLEAR);
-    paintCtx->setStrokeStyle(BLRgba32(123, 33, 0));
-    paintCtx->setStrokeWidth(16.6);
-    paintCtx->setStrokeCaps(BL_STROKE_CAP_ROUND);
-    paintCtx->strokeLine(mouseDownPos.x, mouseDownPos.y, pos.x, pos.y);
+    shape->Draw(paintCtx, pos.x, pos.y, mouseDownPos.x, mouseDownPos.y);
     paintCtx->end();
     mouseDownPos = pos;
     InvalidateRect(hwnd, nullptr, false);

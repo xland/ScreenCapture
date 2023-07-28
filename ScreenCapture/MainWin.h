@@ -22,6 +22,7 @@
 #include "Shape/Pen.h"
 #include "Shape/Image.h"
 #include "Shape/Text.h"
+#include "Shape/Eraser.h"
 #include "Font.h"
 
 class MainWin
@@ -123,11 +124,11 @@ private:
 
 
 	void drawSubTool();
-	void drawSubToolBackground(const int& btnCount);	
+	void drawSubToolBackground(const int& btnCount,const bool isCenter=false);	
 	void drawSubToolNormal(const Icon::Name& icon);
 	void drawSubToolPen();
-	void drawSubToolLine();
-	void drawSubToolNumber();
+	void drawSubToolEraser();
+	void drawSubToolNumberOrLine(const Icon::Name& icon);
 	void drawColorBtns(BLPoint& point, const int& index);
 	void drawStrokeWidthBtns(BLPoint& point, const int& index);
 	void subToolBtnClick();

@@ -81,6 +81,9 @@
     <ClCompile Include="Font.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Shape\Eraser.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainWin.h">
@@ -129,6 +132,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Font.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Shape\Eraser.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

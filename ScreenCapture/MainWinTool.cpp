@@ -77,7 +77,7 @@ bool MainWin::checkMouseEnterToolBox(const POINT& pos)
 	if(result) return result;
 
 	if (toolBoxSub.contains(pos.x, pos.y)) {
-		tempIndex = floor((pos.x - toolBoxMain.x0) / toolBtnWidth);
+		tempIndex = floor((pos.x - toolBoxSub.x0) / toolBtnWidth);
 		result = true;
 	}
 	else

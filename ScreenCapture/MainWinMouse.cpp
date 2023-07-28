@@ -39,6 +39,8 @@ void MainWin::leftBtnDown(const POINT& pos)
                 box->isFill = isFill;
                 box->strokeWidth = strokeWidths[strokeBtnIndex];
                 History::Push(box);
+                preState = state;
+                isDrawing = true;
                 break;
             }
             case State::ellipse:
@@ -48,6 +50,8 @@ void MainWin::leftBtnDown(const POINT& pos)
                 ellipse->isFill = isFill;
                 ellipse->strokeWidth = strokeWidths[strokeBtnIndex];
                 History::Push(ellipse);
+                preState = state;
+                isDrawing = true;
                 break;
             }
             case State::arrow:
@@ -57,6 +61,8 @@ void MainWin::leftBtnDown(const POINT& pos)
                 arrow->isFill = isFill;
                 arrow->strokeWidth = strokeWidths[strokeBtnIndex];
                 History::Push(arrow);
+                preState = state;
+                isDrawing = true;
                 break;
             }
             case State::pen:
@@ -65,6 +71,8 @@ void MainWin::leftBtnDown(const POINT& pos)
                 shape->color = colors[colorBtnIndex];
                 shape->strokeWidth = strokeWidths[strokeBtnIndex];                
                 History::Push(shape);
+                preState = state;
+                isDrawing = true;
                 break;
             }
             case State::line:
@@ -74,6 +82,8 @@ void MainWin::leftBtnDown(const POINT& pos)
                 shape->strokeWidth = strokeWidths[strokeBtnIndex] + 26;
                 shape->isFill = isFill;
                 History::Push(shape);
+                preState = state;
+                isDrawing = true;
                 break;
             }
             case State::number:
@@ -83,10 +93,23 @@ void MainWin::leftBtnDown(const POINT& pos)
                 shape->strokeWidth = strokeWidths[strokeBtnIndex];
                 shape->isFill = isFill;
                 History::Push(shape);
+                preState = state;
+                isDrawing = true;
+                break;
+            }
+            case State::eraser:
+            {
+                auto shape = new Shape::Eraser();
+                shape->strokeWidth = strokeWidths[strokeBtnIndex]+28;
+                History::Push(shape);
+                preState = state;
+                isDrawing = true;
                 break;
             }
             case State::mosaic:
             {
+                preState = state;
+                isDrawing = true;
                 break;
             }
             case State::text:
@@ -94,10 +117,8 @@ void MainWin::leftBtnDown(const POINT& pos)
                 auto shape = new Shape::Text();
                 shape->color = colors[colorBtnIndex];
                 History::Push(shape);
-                break;
-            }
-            case State::eraser:
-            {
+                preState = state;
+                isDrawing = true;
                 break;
             }
             case State::lastPathDrag:
@@ -105,8 +126,6 @@ void MainWin::leftBtnDown(const POINT& pos)
                 break;
             }
         }
-        preState = state;
-        isDrawing = true;
     }
 }
 void MainWin::rightBtnDown(const POINT& pos)
@@ -151,15 +170,15 @@ void MainWin::mouseMove(const POINT& pos)
                 drawLine(pos);
                 break;
             }
-            case State::mosaic:
-                break;
-            case State::text:
-                break;
             case State::eraser:
             {
                 drawEraser(pos);
                 break;
             }
+            case State::mosaic:
+                break;
+            case State::text:
+                break;
             case State::lastPathDrag:
                 break;
             default:
