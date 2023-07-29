@@ -174,6 +174,11 @@ LRESULT CALLBACK MainWin::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
         {
             break;
         }
+        case WM_IME_CHAR:
+        {
+            const wchar_t c = (wchar_t)wParam;
+            return 1;
+        }
         case WM_CHAR:
         {
             static wchar_t first_u16_code_unit = 0;
@@ -199,8 +204,7 @@ LRESULT CALLBACK MainWin::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
                 // Only send through printable characters.
                 if (((char32_t)c >= 32 || c == '\r') && c != 127) {
 
-                }
-                    
+                }                    
             }
             break;
         }

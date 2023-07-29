@@ -21,23 +21,13 @@ void MainWin::initCanvas(char* bgPixels, char* boardPixels)
     paintCtx->end();
     paintCtx->begin(*canvasImage);
     paintCtx->clearAll();
-    BLPath path;
-    path.moveTo(0, 0);
-    path.lineTo(w, h);
-    path.moveTo(w, 0);
-    path.lineTo(0, h);
-    paintCtx->setStrokeStyle(BLRgba32(0, 0, 255));
-    paintCtx->setStrokeWidth(12.6);
-    paintCtx->strokePath(path);
 
+    auto font = Font::Get()->fontText;
+    font->setSize(32);
+    paintCtx->setFillStyle(BLRgba32(30,30,30));
+    auto utf8 = ConvertToUTF8(std::wstring{L"²âÊÔ²âÊÔ²âÊÔ"});
+    paintCtx->fillUtf8Text(BLPoint(100,100), *font, utf8.c_str());
 
-    paintCtx->setCompOp(BL_COMP_OP_CLEAR);
-    BLPath path1;
-    path1.moveTo(660, 0);
-    path1.lineTo(660, h);
-    paintCtx->setStrokeStyle(BLRgba32(0, 0, 0));
-    paintCtx->setStrokeWidth(16.6);
-    paintCtx->strokePath(path1);
     paintCtx->end();
 }
 
