@@ -37,6 +37,9 @@ bool MainWin::endDrawing()
     if (!isDrawing) {
         return false;
     }
+    if (state == State::text) {
+        KillTimer(hwnd, 999);
+    }
     paintCtx->begin(*canvasImage);
     paintCtx->blitImage(BLRect(0, 0, w, h), *prepareImage);
     paintCtx->end();
@@ -72,6 +75,8 @@ void  MainWin::drawShape(const POINT& pos)
     auto history = History::Get();
     if (history->size() < 1) return;
     auto shape = history->at(history->size() - 1);
+
+
     paintCtx->begin(*prepareImage);
     paintCtx->clearAll();
     shape->Draw(paintCtx, pos.x, pos.y, mouseDownPos.x, mouseDownPos.y);
@@ -80,6 +85,18 @@ void  MainWin::drawShape(const POINT& pos)
 }
 
 void MainWin::drawPen(const POINT& pos)
+{
+    auto history = History::Get();
+    if (history->size() < 1) return;
+    auto shape = history->at(history->size() - 1);
+    paintCtx->begin(*prepareImage);
+    shape->Draw(paintCtx, pos.x, pos.y, mouseDownPos.x, mouseDownPos.y);
+    paintCtx->end();
+    mouseDownPos = pos;
+    InvalidateRect(hwnd, nullptr, false);
+}
+
+void MainWin::drawText(const POINT& pos)
 {
     auto history = History::Get();
     if (history->size() < 1) return;

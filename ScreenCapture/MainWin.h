@@ -60,6 +60,7 @@ private:
 	void paintBoard();
 	void drawShape(const POINT& pos);
 	void drawPen(const POINT& pos);
+	void drawText(const POINT& pos);
 	void drawEraser(const POINT& pos);
 	bool endDrawing();
 	BLImage* canvasImage;

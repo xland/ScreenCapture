@@ -120,6 +120,10 @@ LRESULT CALLBACK MainWin::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
         case WM_SETCURSOR: {
             return 1;
         }
+        case WM_TIMER: {
+            drawShape(mouseDownPos);
+            return 1;
+        }
         case WM_PAINT:
         {
             paintBoard();
@@ -169,11 +173,21 @@ LRESULT CALLBACK MainWin::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
         case WM_CHAR:
         {
             static std::wstring str;
+            if (wParam == 8) {
+                //backspace
+            }
+            else if (wParam == 13) {
+                //enter
+            }
+            else if (wParam == 22) {
+
+            }
             const wchar_t c = (wchar_t)wParam;
             str += std::wstring{c};
             if (c == '\r') {
+                //enter
             }
-            break;
+            return 1;
         }
         case WM_IME_STARTCOMPOSITION:
         {

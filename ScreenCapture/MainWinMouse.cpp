@@ -124,16 +124,11 @@ void MainWin::leftBtnDown(const POINT& pos)
                 auto shape = new Shape::Text();
                 shape->color = colors[colorBtnIndex];
                 History::Push(shape);
-                preState = state;
-                isDrawing = true;
-
-                paintCtx->begin(*prepareImage);
-                paintCtx->setStrokeStyle(BLRgba32(30,30,30));
-                paintCtx->setStrokeWidth(2);
-                paintCtx->strokeBox(pos.x - 18, pos.y - 38, pos.x + 18, pos.y + 38);
-                paintCtx->end();
-                InvalidateRect(hwnd, nullptr, false);
+                drawShape(pos);
                 activeKeyboard(pos.x, pos.y);
+                SetTimer(hwnd, 999, 660, (TIMERPROC)NULL);
+                preState = state;
+                isDrawing = true;                
                 break;
             }
             case State::lastPathDrag:
