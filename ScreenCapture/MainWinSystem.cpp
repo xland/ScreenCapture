@@ -166,45 +166,12 @@ LRESULT CALLBACK MainWin::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
             PostQuitMessage(0);
             return 1;
         }
-        case WM_KEYDOWN:
-        {
-            break;
-        }
-        case WM_KEYUP:
-        {
-            break;
-        }
-        case WM_IME_CHAR:
-        {
-            const wchar_t c = (wchar_t)wParam;
-            return 1;
-        }
         case WM_CHAR:
         {
-            static wchar_t first_u16_code_unit = 0;
+            static std::wstring str;
             const wchar_t c = (wchar_t)wParam;
-            // Windows sends two-wide characters as two messages.
-            if (c >= 0xD800 && c < 0xDC00)
-            {
-                // First 16-bit code unit of a two-wide character.
-                first_u16_code_unit = c;
-            }
-            else
-            {
-                if (c >= 0xDC00 && c < 0xE000 && first_u16_code_unit != 0)
-                {
-                    // Second 16-bit code unit of a two-wide character.
-                    auto utf8 = ConvertToUTF8(std::wstring{first_u16_code_unit, c});
-                }
-                else if (c == '\r')
-                {
-                    // Windows sends new-lines as carriage returns, convert to endlines.
-                }
-                first_u16_code_unit = 0;
-                // Only send through printable characters.
-                if (((char32_t)c >= 32 || c == '\r') && c != 127) {
-
-                }                    
+            str += std::wstring{c};
+            if (c == '\r') {
             }
             break;
         }
