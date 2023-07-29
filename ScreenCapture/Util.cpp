@@ -21,3 +21,11 @@ void SetBoxByPos(BLBox& box, const double& x1, const double& y1, const double& x
         box.y1 = y1;
     }
 }
+
+std::string ConvertToUTF8(const std::wstring& wstr)
+{
+    const int count = WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), (int)wstr.length(), NULL, 0, NULL, NULL);
+    std::string str(count, 0);
+    WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), -1, &str[0], count, NULL, NULL);
+    return str;
+}

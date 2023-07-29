@@ -35,15 +35,12 @@ public:
 	LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 
 private:
-
-
-
-
 	void shotScreen();
 	void initScaleFactor();
 	void createWindow();
 	void showWindow();
 	void setCursor(LPCTSTR cursor);
+	void activeKeyboard(LONG x, LONG y);
 	float x, y, w, h,scaleFactor;
 	HWND hwnd;
 	HINSTANCE hinstance;
