@@ -126,6 +126,14 @@ void MainWin::leftBtnDown(const POINT& pos)
                 History::Push(shape);
                 preState = state;
                 isDrawing = true;
+
+                paintCtx->begin(*prepareImage);
+                paintCtx->setStrokeStyle(BLRgba32(30,30,30));
+                paintCtx->setStrokeWidth(2);
+                paintCtx->strokeBox(pos.x - 18, pos.y - 38, pos.x + 18, pos.y + 38);
+                paintCtx->end();
+                InvalidateRect(hwnd, nullptr, false);
+                activeKeyboard(pos.x, pos.y);
                 break;
             }
             case State::lastPathDrag:

@@ -149,7 +149,6 @@ LRESULT CALLBACK MainWin::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
         {
             POINT point = getMousePoint(lParam);
             leftBtnDown(point);
-            activeKeyboard(point.x,point.y);
             return 0;
         }
         case WM_LBUTTONUP:
