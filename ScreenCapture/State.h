@@ -10,8 +10,8 @@ enum class State
     number,
     pen,
     line,
-    mosaic,
     text,
+    mosaic,
     eraser,
 	lastPathDrag
 };

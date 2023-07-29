@@ -81,6 +81,7 @@ void MainWin::paintBoard()
 void  MainWin::drawShape(const POINT& pos)
 {
     auto history = History::Get();
+    if (history->size() < 1) return;
     auto shape = history->at(history->size() - 1);
     paintCtx->begin(*prepareImage);
     paintCtx->clearAll();
@@ -92,6 +93,7 @@ void  MainWin::drawShape(const POINT& pos)
 void MainWin::drawPen(const POINT& pos)
 {
     auto history = History::Get();
+    if (history->size() < 1) return;
     auto shape = history->at(history->size() - 1);
     paintCtx->begin(*prepareImage);
     shape->Draw(paintCtx, pos.x, pos.y, mouseDownPos.x, mouseDownPos.y);
@@ -103,9 +105,7 @@ void MainWin::drawPen(const POINT& pos)
 void MainWin::drawLine(const POINT& pos)
 {
     auto history = History::Get();
-    if (history->size() < 1) {
-        return;
-    }
+    if (history->size() < 1) return;
     auto shape = history->at(history->size() - 1);
     paintCtx->begin(*prepareImage);
     paintCtx->clearAll();
@@ -117,6 +117,7 @@ void MainWin::drawLine(const POINT& pos)
 void MainWin::drawEraser(const POINT& pos)
 {
     auto history = History::Get();
+    if (history->size() < 1) return;
     auto shape = history->at(history->size() - 1);
     paintCtx->begin(*canvasImage);
     shape->Draw(paintCtx, pos.x, pos.y, mouseDownPos.x, mouseDownPos.y);

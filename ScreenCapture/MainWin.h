@@ -130,12 +130,13 @@ private:
 	void drawSubToolEraser();
 	void drawSubToolText();
 	void drawSubToolMosaic();
-	void drawSubToolNumberOrLine(const Icon::Name& icon);
+	void drawSubToolLine();
 	void drawColorBtns(BLPoint& point, const int& index);
 	void drawStrokeWidthBtns(BLPoint& point, const int& index);
 	void subToolBtnClick();
 	void clickSubToolNormal();
 	void clickSubToolPen();
+	void clickSubToolText();
 	BLBox toolBoxSub;
 	int mouseEnterSubToolIndex = -1;
 	bool isFill = false;

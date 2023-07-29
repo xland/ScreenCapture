@@ -7,7 +7,6 @@ void MainWin::drawSubToolBackground(const int& btnCount, const bool isCenter)
 	auto x = toolBoxMain.x0 + (double)selectedToolIndex * toolBtnWidth + toolBtnWidth / 2 ;
 	auto y = toolBoxMain.y1 + toolBoxSpan / 2;
 	paintCtx->fillTriangle(x, y, x + 6, y + toolBoxSpan / 2, x - 6, y + toolBoxSpan / 2);
-
 	if (isCenter) {
 		toolBoxSub.x0 = x- btnCount * toolBtnWidth/2;
 		toolBoxSub.y0 = toolBoxMain.y1 + toolBoxSpan;
@@ -45,7 +44,7 @@ void MainWin::drawSubTool()
 		}
 		case 3://Number		
 		{
-			drawSubToolNumberOrLine(Icon::Name::numberFill);
+			drawSubToolNormal(Icon::Name::numberFill);
 			break;
 		}
 		case 4:
@@ -55,7 +54,7 @@ void MainWin::drawSubTool()
 		}
 		case 5://Line
 		{
-			drawSubToolNumberOrLine(Icon::Name::transparent);
+			drawSubToolLine();
 			break;			
 		}
 		case 6: //Text
@@ -85,17 +84,22 @@ void MainWin::drawSubToolNormal(const Icon::Name& icon)
 	if (!isFill) {
 		point.x += toolBtnWidth;
 		drawStrokeWidthBtns(point, 1);
+		drawColorBtns(point, 4);
 	}
-	drawColorBtns(point,4);
+	else
+	{
+		drawColorBtns(point, 1);
+	}
+	
 }
 
-void MainWin::drawSubToolNumberOrLine(const Icon::Name& icon)
+void MainWin::drawSubToolLine()
 {
 	drawSubToolBackground(12);
 	BLPoint point;
 	point.x = toolBoxSub.x0 + iconLeftMargin;
 	point.y = toolBoxSub.y0 + 38;
-	drawBtn(point, icon, isFill, mouseEnterSubToolIndex == 0);
+	drawBtn(point, Icon::Name::transparent, !isFill, mouseEnterSubToolIndex == 0);
 	point.x += toolBtnWidth;
 	drawStrokeWidthBtns(point, 1);
 	drawColorBtns(point, 4);
@@ -119,7 +123,6 @@ void MainWin::drawSubToolText()
 	point.y = toolBoxSub.y0 + 38;
 	drawColorBtns(point, 0);
 }
-
 
 void MainWin::drawSubToolMosaic()
 {
@@ -153,7 +156,6 @@ void MainWin::drawColorBtns(BLPoint& point,const int& index)
 		drawBtn(point, name, i==colorBtnIndex, mouseEnterSubToolIndex == index+i,true);
 	}
 }
-
 
 void MainWin::drawStrokeWidthBtns(BLPoint& point,const int& index)
 {
@@ -192,7 +194,7 @@ void MainWin::subToolBtnClick()
 		}
 		case 6://Text
 		{
-			clickSubToolNormal();
+			clickSubToolText();
 			break;
 		}
 		case 7://Mosaic
@@ -210,7 +212,7 @@ void MainWin::subToolBtnClick()
 void MainWin::clickSubToolNormal()
 {
 	auto index = mouseEnterSubToolIndex;
-	if (selectedToolIndex < 3 && index != 0 && isFill) index += 3;
+	if (selectedToolIndex < 4 && index != 0 && isFill) index += 3;
 	switch (index)
 	{
 		case 0:
@@ -264,5 +266,11 @@ void MainWin::clickSubToolPen()
 		break;
 	}
 	}
+	InvalidateRect(hwnd, nullptr, false);
+}
+
+void MainWin::clickSubToolText()
+{
+	colorBtnIndex = mouseEnterSubToolIndex;
 	InvalidateRect(hwnd, nullptr, false);
 }

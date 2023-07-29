@@ -192,7 +192,13 @@ void MainWin::mouseMove(const POINT& pos)
         }
         else
         {
-            setCursor(IDC_CROSS);
+            if (state == State::text) {
+                setCursor(IDC_IBEAM);
+            }
+            else
+            {
+                setCursor(IDC_CROSS);
+            }            
         }
     }
 
