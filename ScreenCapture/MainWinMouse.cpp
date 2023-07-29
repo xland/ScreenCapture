@@ -108,6 +108,13 @@ void MainWin::leftBtnDown(const POINT& pos)
             }
             case State::mosaic:
             {
+                auto shape = new Shape::Mosaic();
+                bgImage->getData(shape->bgImgData);
+                canvasImage->getData(shape->canvasImgData);
+                shape->screenH = h;
+                shape->screenW = w;
+                shape->strokeWidth = strokeWidths[strokeBtnIndex] + 28;
+                History::Push(shape);
                 preState = state;
                 isDrawing = true;
                 break;
@@ -156,6 +163,8 @@ void MainWin::mouseMove(const POINT& pos)
             case State::ellipse:
             case State::arrow:
             case State::number:
+            case State::line:
+            case State::mosaic:
             {
                 drawShape(pos);
                 break;
@@ -165,18 +174,11 @@ void MainWin::mouseMove(const POINT& pos)
                 drawPen(pos);
                 break;
             }
-            case State::line:
-            {
-                drawLine(pos);
-                break;
-            }
             case State::eraser:
             {
                 drawEraser(pos);
                 break;
             }
-            case State::mosaic:
-                break;
             case State::text:
                 break;
             case State::lastPathDrag:

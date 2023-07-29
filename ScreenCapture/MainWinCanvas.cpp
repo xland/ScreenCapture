@@ -67,7 +67,6 @@ void MainWin::paintBoard()
     if (isDrawing) {
         paintCtx->blitImage(BLRect(0, 0, w, h), *prepareImage);
     }  
-
     paintCtx->setCompOp(BL_COMP_OP_SRC_OVER);
     paintCtx->setFillStyle(BLRgba32(0, 0, 0, 180));
     paintCtx->fillBoxArray(maskBoxes, 8);
@@ -99,18 +98,6 @@ void MainWin::drawPen(const POINT& pos)
     shape->Draw(paintCtx, pos.x, pos.y, mouseDownPos.x, mouseDownPos.y);
     paintCtx->end();
     mouseDownPos = pos;
-    InvalidateRect(hwnd, nullptr, false);
-}
-
-void MainWin::drawLine(const POINT& pos)
-{
-    auto history = History::Get();
-    if (history->size() < 1) return;
-    auto shape = history->at(history->size() - 1);
-    paintCtx->begin(*prepareImage);
-    paintCtx->clearAll();
-    shape->Draw(paintCtx, pos.x, pos.y, mouseDownPos.x, mouseDownPos.y);
-    paintCtx->end();
     InvalidateRect(hwnd, nullptr, false);
 }
 

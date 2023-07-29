@@ -23,6 +23,7 @@
 #include "Shape/Image.h"
 #include "Shape/Text.h"
 #include "Shape/Eraser.h"
+#include "Shape/Mosaic.h"
 #include "Font.h"
 
 class MainWin
@@ -62,7 +63,6 @@ private:
 	void paintBoard();
 	void drawShape(const POINT& pos);
 	void drawPen(const POINT& pos);
-	void drawLine(const POINT& pos);
 	void drawEraser(const POINT& pos);
 	bool endDrawing();
 	BLImage* canvasImage;
