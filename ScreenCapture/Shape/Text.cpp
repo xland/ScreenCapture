@@ -1,27 +1,45 @@
 #include "Text.h"
-
+#include "../Font.h"
+#include "../Util.h"
 
 namespace Shape {
     void Text::Draw(BLContext* paintCtx, const double& x1, const double& y1, const double& x2, const double& y2)
     {       
-        paintCtx->setStrokeStyle(color);
-        paintCtx->setStrokeWidth(3);
-        if (startX == -1) {
-            startX = x1 - 18;
-            startY = y1 - 38;
+        static double margin = 18.0f;
+        if (box.x0 == -1) {
+            box.x0 = x1 - margin;
+            box.y0 = y1 - fontSize / 2 - margin;
         }
-        if (text.empty()) {
-            endX = x1 + 18;
-            endY = y1 + 38;
-        }
-        else
-        {
+        auto font = Font::Get()->fontText;
+        font->setSize(fontSize);   
+        auto utf8 = ConvertToUTF8(text);
+        if (!isEnding) {
+            BLFontMetrics fm = font->metrics();
+            BLTextMetrics tm;
+            BLGlyphBuffer gb;            
+            gb.setUtf8Text(utf8.c_str()); //utf8.c_str()
+            font->shape(gb);
+            font->getTextMetrics(gb, tm);
+            box.x1 = box.x0 + tm.boundingBox.x1 - tm.boundingBox.x0 + margin * 3;
+            box.y1 = y1 + fontSize / 2 + margin;
 
-        }
-        paintCtx->strokeBox(startX, startY, endX, endY);
-        if (showInputCursor) {
-            paintCtx->strokeLine(startX + 18, startY + 18, startX + 18, endY - 18);
-        }
-        showInputCursor = !showInputCursor;
+            paintCtx->setStrokeStyle(color);
+            paintCtx->setStrokeWidth(2.0f);
+            paintCtx->strokeBox(box);
+
+            auto subText = text.substr(0, cursorIndex);
+            utf8 = ConvertToUTF8(text);
+            gb.setUtf8Text(utf8.c_str()); //utf8.c_str()
+            font->shape(gb);
+            font->getTextMetrics(gb, tm);
+
+            if (showInputCursor) {
+                auto x = box.x0 + margin + 8 + tm.boundingBox.x1 - tm.boundingBox.x0;
+                paintCtx->strokeLine(x, box.y0 + margin + 8, x, box.y1 - margin);
+            }
+            showInputCursor = !showInputCursor;
+        }        
+        paintCtx->setFillStyle(color);
+        paintCtx->fillUtf8Text(BLPoint(box.x0+margin, box.y0+fontSize), *font, utf8.c_str());
     }
 }

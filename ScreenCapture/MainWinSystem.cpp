@@ -172,21 +172,18 @@ LRESULT CALLBACK MainWin::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
         }
         case WM_CHAR:
         {
-            static std::wstring str;
+            if (state != State::text) return 0;
+            auto history = History::Get();
+            if (history->size() < 1) return 0;
             if (wParam == 8) {
                 //backspace
             }
             else if (wParam == 13) {
                 //enter
             }
-            else if (wParam == 22) {
-
-            }
-            const wchar_t c = (wchar_t)wParam;
-            str += std::wstring{c};
-            if (c == '\r') {
-                //enter
-            }
+            auto shape = (Shape::Text*)history->at(history->size() - 1);
+            shape->text += std::wstring{(wchar_t)wParam};
+            drawShape(mouseDownPos);
             return 1;
         }
         case WM_IME_STARTCOMPOSITION:

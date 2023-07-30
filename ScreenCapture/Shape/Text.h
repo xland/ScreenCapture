@@ -10,12 +10,12 @@ namespace Shape {
 		double rotateDeg = 0.0;
 		bool isFill = false;
 		BLRgba32 color;
-		double startX = -1;
-		double startY = -1;
-		double endX = -1;
-		double endY = -1;
-		std::string text;
+		BLBox box{ -1.0f, -1.0f, -1.0f, -1.0f };
+		std::wstring text;
+		double fontSize = 158.0f;
 		bool showInputCursor = true;
+		int cursorIndex = 0;
+		bool isEnding = false;
 	};
 }
 
