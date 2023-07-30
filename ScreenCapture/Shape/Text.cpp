@@ -27,8 +27,9 @@ namespace Shape {
             paintCtx->setStrokeWidth(2.0f);
             paintCtx->strokeBox(box);
 
+            auto count = text.size() - cursorIndex;
             auto subText = text.substr(0, cursorIndex);
-            utf8 = ConvertToUTF8(text);
+            utf8 = ConvertToUTF8(subText);
             gb.setUtf8Text(utf8.c_str()); //utf8.c_str()
             font->shape(gb);
             font->getTextMetrics(gb, tm);

@@ -121,6 +121,17 @@ void MainWin::leftBtnDown(const POINT& pos)
             }
             case State::text:
             {
+                auto history = History::Get();
+                if (history->size() > 0) {
+                    auto shape = history->at(history->size() - 1);
+                    auto textObj = dynamic_cast<Shape::Text*>(shape);
+                    if (textObj != nullptr) {
+                        auto a = 1;
+                        return;
+                    }
+                    //shape->box.contains(pos.x, pos.y);
+                }            
+
                 auto shape = new Shape::Text();
                 shape->color = colors[colorBtnIndex];
                 History::Push(shape);
