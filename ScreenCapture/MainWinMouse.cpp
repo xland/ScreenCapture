@@ -5,6 +5,19 @@ void MainWin::leftBtnDown(const POINT& pos)
     isLeftBtnDown = true;
     mouseDownPos = pos;
     if (state != State::start) {
+        auto history = History::Get();
+        if (history->size() > 0) {
+            auto shape = history->at(history->size() - 1);
+            auto textObj = dynamic_cast<Shape::Text*>(shape);
+            if (textObj != nullptr) {
+                if (textObj->box.contains(mouseDownPos.x, mouseDownPos.y)) {
+                    textObj->SetIndex(mouseDownPos.x);
+                    drawShape(mouseDownPos);
+                    activeKeyboard(mouseDownPos.x, mouseDownPos.y);
+                    return;
+                }
+            }
+        }
         endDrawing();
         if (mouseEnterMainToolIndex != -1 && mouseEnterMainToolIndex < 9) {
             selectedToolIndex = mouseEnterMainToolIndex;
@@ -121,17 +134,6 @@ void MainWin::leftBtnDown(const POINT& pos)
             }
             case State::text:
             {
-                auto history = History::Get();
-                if (history->size() > 0) {
-                    auto shape = history->at(history->size() - 1);
-                    auto textObj = dynamic_cast<Shape::Text*>(shape);
-                    if (textObj != nullptr) {
-                        auto a = 1;
-                        return;
-                    }
-                    //shape->box.contains(pos.x, pos.y);
-                }            
-
                 auto shape = new Shape::Text();
                 shape->color = colors[colorBtnIndex];
                 History::Push(shape);

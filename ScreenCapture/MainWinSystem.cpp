@@ -182,7 +182,7 @@ LRESULT CALLBACK MainWin::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
                 //enter
             }
             auto shape = (Shape::Text*)history->at(history->size() - 1);
-            shape->text += std::wstring{(wchar_t)wParam};
+            shape->InsertWord(std::wstring{(wchar_t)wParam});            
             drawShape(mouseDownPos);
             return 1;
         }
