@@ -15,6 +15,14 @@ namespace Shape {
     }
 	void Mosaic::Draw(BLContext* paintCtx, const double& x1, const double& y1, const double& x2, const double& y2)
 	{
+        //204, 213, 240
+        //232, 234, 237
+        unsigned char* data = (unsigned char*)(bgImgData->pixelData);
+        auto r1 = data[0];//b
+        auto g1 = data[1];//g
+        auto b1 = data[2]; //r
+        auto a1 = data[3];//a
+
         SetBoxByPos(box,x1, y1,x2, y2);
         for (size_t y = box.y0; y < box.y1; y += strokeWidth)
         {
