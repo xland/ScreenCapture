@@ -13,8 +13,11 @@ namespace Shape {
         delete bgImgData;
         delete canvasImgData;
     }
-	void Mosaic::Draw(BLContext* paintCtx, const double& x1, const double& y1, const double& x2, const double& y2)
+	void Mosaic::Draw(const double& x1, const double& y1, const double& x2, const double& y2)
 	{
+        auto context = Painter::Get()->paintCtx;
+        context->begin(*Painter::Get()->prepareImage);
+        context->clearAll();
         BLPointI points[5];
         unsigned int b{ 0 }, g{ 0 }, r{ 0 }, a{ 0 };
         unsigned char* data = (unsigned char*)(bgImgData->pixelData);
@@ -84,10 +87,11 @@ namespace Shape {
                     a += data[index + 3];
                 }
                 //5 point colors average
-                paintCtx->setFillStyle(BLRgba32(r/5, g/5, b/5, a/5));
-                paintCtx->fillBox(x, y, x + strokeWidth, y + strokeWidth);
+                context->setFillStyle(BLRgba32(r/5, g/5, b/5, a/5));
+                context->fillBox(x, y, x + strokeWidth, y + strokeWidth);
                 b = g = r = a = 0;
             }
         }
+        context->end();
 	}
 }

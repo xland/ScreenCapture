@@ -12,8 +12,11 @@ namespace Shape {
         if (num > 99) num = 99;
         number = num;
     }
-	void Number::Draw(BLContext* paintCtx, const double& x1, const double& y1, const double& x2, const double& y2)
+	void Number::Draw(const double& x1, const double& y1, const double& x2, const double& y2)
 	{
+        auto context = Painter::Get()->paintCtx;
+        context->begin(*Painter::Get()->prepareImage);
+        context->clearAll();
         
         auto x = x1 - x2;
         auto y = y2 - y1;
@@ -39,21 +42,21 @@ namespace Shape {
         path.moveTo(X0, Y0);
         path.lineTo(X1, Y1);
         path.lineTo(X2, Y2);
-        paintCtx->setFillStyle(color);
-        paintCtx->fillPath(path);
+        context->setFillStyle(color);
+        context->fillPath(path);
         BLCircle circle(x2,y2,r);
         if (isFill)
         {
-            paintCtx->setFillStyle(color);
-            paintCtx->fillCircle(circle);
-            paintCtx->setFillStyle(BLRgba32(0xFFFFFFFF));
+            context->setFillStyle(color);
+            context->fillCircle(circle);
+            context->setFillStyle(BLRgba32(0xFFFFFFFF));
         }
         else
         {
-            paintCtx->setStrokeStyle(color);
-            paintCtx->setStrokeWidth(strokeWidth);
-            paintCtx->strokeCircle(circle);
-            paintCtx->setFillStyle(color);
+            context->setStrokeStyle(color);
+            context->setStrokeWidth(strokeWidth);
+            context->strokeCircle(circle);
+            context->setFillStyle(color);
         }       
         auto font = Font::Get()->fontText;
         font->setSize(r);
@@ -66,6 +69,7 @@ namespace Shape {
         {
             p.x = x2 - r / 2;
         }
-        paintCtx->fillUtf8Text(p, *font, std::to_string(number).c_str());
+        context->fillUtf8Text(p, *font, std::to_string(number).c_str());
+        context->end();
 	}
 }

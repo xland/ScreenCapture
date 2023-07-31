@@ -15,8 +15,11 @@ namespace Shape {
     {
 
     }
-	void Arrow::Draw(BLContext* context, const double& x1, const double& y1, const double& x2, const double& y2)
+	void Arrow::Draw(const double& x1, const double& y1, const double& x2, const double& y2)
 	{
+        auto context = Painter::Get()->paintCtx;
+        context->begin(*Painter::Get()->prepareImage);
+        context->clearAll();
         context->setStrokeCaps(BL_STROKE_CAP_ROUND);
         path.clear();
         path.moveTo(x2, y2);
@@ -65,5 +68,6 @@ namespace Shape {
             context->setStrokeWidth(strokeWidth-1);
             context->strokePath(path);
         }
+        context->end();
 	}
 }

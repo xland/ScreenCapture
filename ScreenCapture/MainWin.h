@@ -44,7 +44,6 @@ private:
 	HWND hwnd;
 	HINSTANCE hinstance;
 	Painter* painter;
-
 	
 	void leftBtnDown(const POINT& pos);
 	void rightBtnDown(const POINT& pos);

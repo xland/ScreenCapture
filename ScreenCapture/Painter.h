@@ -4,10 +4,14 @@
 class Painter
 {
 public:
-	Painter();
+	Painter(const Painter&) = delete;
+	Painter& operator= (const Painter&) = delete;
 	~Painter();
+	static void Init();
+	static Painter* Get();
+	static void Dispose();
 	void PaintOnWindow(HWND hwnd);
-	float x, y, w, h, scaleFactor;
+	float x, y, w, h;
 	bool isDrawing = false;
 	BLImage* canvasImage;
 	BLImage* bgImage;
@@ -16,8 +20,7 @@ public:
 	BLContext* paintCtx;
 	HBITMAP bgHbitmap;
 private:
+	Painter();
 	void shotScreen();
-	void initCanvas(char* bgPixels, char* boardPixels);
-	void paintBoard();
 };
 

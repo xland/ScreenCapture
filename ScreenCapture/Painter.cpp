@@ -1,5 +1,19 @@
 #include "Painter.h"
 
+static Painter* p;
+
+void Painter::Init()
+{
+    p = new Painter();
+}
+Painter* Painter::Get()
+{
+    return p;
+}
+void Painter::Dispose()
+{
+    delete p;
+}
 Painter::Painter()
 {
     shotScreen();
@@ -9,8 +23,8 @@ Painter::~Painter()
     delete paintCtx;
     delete bgImage;
     delete canvasImage;
-    delete boardImage;
     delete prepareImage;
+    //delete boardImage;
     DeleteObject(bgHbitmap);
 }
 
@@ -26,19 +40,19 @@ void Painter::shotScreen()
     DeleteObject(SelectObject(hDC, hBitmap));
     BOOL bRet = BitBlt(hDC, 0, 0, w, h, hScreen, x, y, SRCCOPY);
     unsigned int dataSize = w * h * 4;
-    auto bgPixels = new char[dataSize];
+    auto bgPixels = new unsigned char[dataSize];
     BITMAPINFO info = { sizeof(BITMAPINFOHEADER), (long)w, 0 - (long)h, 1, 32, BI_RGB, dataSize, 0, 0, 0, 0 };
     GetDIBits(hDC, hBitmap, 0, h, (LPVOID)bgPixels, &info, DIB_RGB_COLORS);
     DeleteDC(hDC);
     DeleteObject(hBitmap);
-    auto boardPixels = new char[dataSize];
+
+    auto boardPixels = new unsigned char[dataSize];
     bgHbitmap = CreateDIBSection(hScreen, &info, DIB_RGB_COLORS, reinterpret_cast<void**>(&boardPixels), NULL, NULL);
     ReleaseDC(NULL, hScreen);
-    initCanvas(bgPixels, boardPixels);
-}
+    
 
-void Painter::initCanvas(char* bgPixels, char* boardPixels)
-{
+    canvasImage = new BLImage(w, h, BL_FORMAT_PRGB32);
+    prepareImage = new BLImage(w, h, BL_FORMAT_PRGB32);
     bgImage = new BLImage();
     bgImage->createFromData(w, h, BL_FORMAT_PRGB32, bgPixels, w * 4, [](void* impl, void* externalData, void* userData) {
         delete[] externalData;
@@ -47,8 +61,6 @@ void Painter::initCanvas(char* bgPixels, char* boardPixels)
     boardImage->createFromData(w, h, BL_FORMAT_PRGB32, boardPixels, w * 4, [](void* impl, void* externalData, void* userData) {
         delete[] externalData;
     });
-    canvasImage = new BLImage(w, h, BL_FORMAT_PRGB32);
-    prepareImage = new BLImage(w, h, BL_FORMAT_PRGB32);
     paintCtx = new BLContext();
     paintCtx->begin(*prepareImage);
     paintCtx->clearAll();

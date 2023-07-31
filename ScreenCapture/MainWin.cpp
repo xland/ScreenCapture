@@ -4,12 +4,14 @@
 
 MainWin::MainWin(HINSTANCE hinstance):hinstance{hinstance}
 {
-    painter = new Painter();
+    Painter::Init();
+    painter = Painter::Get();
     createWindow();
     initScaleFactor();
     showWindow();
 }
 MainWin::~MainWin()
 {
-    delete Font::Get();
+    Font::Dispose();
+    Painter::Dispose();
 }

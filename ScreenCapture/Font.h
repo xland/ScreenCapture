@@ -3,12 +3,13 @@
 class Font
 {
 public:
-	Font();
 	~Font();
+	static void Dispose();
 	static Font* Get();
 	BLFont* fontIcon;
 	BLFont* fontText;
 private:
+	Font();
 	void initFontIcon();
 	void initFontText();
 };

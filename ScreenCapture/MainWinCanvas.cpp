@@ -49,10 +49,7 @@ void  MainWin::drawShape(const POINT& pos)
     auto history = History::Get();
     if (history->size() < 1) return;
     auto shape = history->at(history->size() - 1);
-    painter->paintCtx->begin(*painter->prepareImage);
-    painter->paintCtx->clearAll();
-    shape->Draw(painter->paintCtx, pos.x, pos.y, mouseDownPos.x, mouseDownPos.y);
-    painter->paintCtx->end();
+    shape->Draw(pos.x, pos.y, mouseDownPos.x, mouseDownPos.y);
     InvalidateRect(hwnd, nullptr, false);
 }
 
@@ -60,10 +57,8 @@ void MainWin::drawPen(const POINT& pos)
 {
     auto history = History::Get();
     if (history->size() < 1) return;
-    auto shape = history->at(history->size() - 1);
-    painter->paintCtx->begin(*painter->prepareImage);
-    shape->Draw(painter->paintCtx, pos.x, pos.y, mouseDownPos.x, mouseDownPos.y);
-    painter->paintCtx->end();
+    auto shape = history->at(history->size() - 1);    
+    shape->Draw(pos.x, pos.y, mouseDownPos.x, mouseDownPos.y);
     mouseDownPos = pos;
     InvalidateRect(hwnd, nullptr, false);
 }
@@ -73,9 +68,7 @@ void MainWin::drawText(const POINT& pos)
     auto history = History::Get();
     if (history->size() < 1) return;
     auto shape = history->at(history->size() - 1);
-    painter->paintCtx->begin(*painter->prepareImage);
-    shape->Draw(painter->paintCtx, pos.x, pos.y, mouseDownPos.x, mouseDownPos.y);
-    painter->paintCtx->end();
+    shape->Draw(pos.x, pos.y, mouseDownPos.x, mouseDownPos.y);
     mouseDownPos = pos;
     InvalidateRect(hwnd, nullptr, false);
 }
@@ -85,9 +78,7 @@ void MainWin::drawEraser(const POINT& pos)
     auto history = History::Get();
     if (history->size() < 1) return;
     auto shape = history->at(history->size() - 1);
-    painter->paintCtx->begin(*painter->canvasImage);
-    shape->Draw(painter->paintCtx, pos.x, pos.y, mouseDownPos.x, mouseDownPos.y);
-    painter->paintCtx->end();
+    shape->Draw(pos.x, pos.y, mouseDownPos.x, mouseDownPos.y);
     mouseDownPos = pos;
     InvalidateRect(hwnd, nullptr, false);
 }

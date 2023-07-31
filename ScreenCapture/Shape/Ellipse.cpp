@@ -2,8 +2,11 @@
 #include "../Util.h"
 
 namespace Shape {
-    void Ellipse::Draw(BLContext* paintCtx, const double& x1, const double& y1, const double& x2, const double& y2)
+    void Ellipse::Draw(const double& x1, const double& y1, const double& x2, const double& y2)
     {
+        auto context = Painter::Get()->paintCtx;
+        context->begin(*Painter::Get()->prepareImage);
+        context->clearAll();
         //todo °´×¡Shift»­ÕıÔ²
         BLBox box;
         SetBoxByPos(box, x1, y1, x2, y2);
@@ -13,14 +16,15 @@ namespace Shape {
         ellipse.cy = y1 + ellipse.ry;
         if (isFill)
         {
-            paintCtx->setFillStyle(color);
-            paintCtx->fillEllipse(ellipse);
+            context->setFillStyle(color);
+            context->fillEllipse(ellipse);
         }
         else
         {
-            paintCtx->setStrokeStyle(color);
-            paintCtx->setStrokeWidth(strokeWidth);
-            paintCtx->strokeEllipse(ellipse);
+            context->setStrokeStyle(color);
+            context->setStrokeWidth(strokeWidth);
+            context->strokeEllipse(ellipse);
         }
+        context->end();
     }
 }

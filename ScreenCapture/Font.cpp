@@ -14,7 +14,10 @@ Font::~Font()
     delete fontText;
     delete fontIcon;
 }
-
+void Font::Dispose()
+{
+    delete font;
+}
 Font* Font::Get()
 {
     if (!font) {

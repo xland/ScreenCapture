@@ -157,8 +157,8 @@ LRESULT CALLBACK MainWin::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
             else
             {
                 shape->InsertWord(std::wstring{(wchar_t)wParam});
-            }                      
-            drawShape(mouseDownPos);
+            } 
+            InvalidateRect(hwnd, nullptr, false);
             return 1;
         }
         case WM_IME_STARTCOMPOSITION:
