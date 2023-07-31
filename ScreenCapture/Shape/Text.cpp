@@ -43,6 +43,12 @@ namespace Shape {
         cursorIndex = tempIndex;
         showInputCursor = true;
     }
+    void Text::DeleteWord()
+    {
+        if (cursorIndex < 1) return;
+        text = text.substr(0, cursorIndex-1) + text.substr(cursorIndex);
+        cursorIndex -= 1;
+    }
     void Text::InsertWord(const std::wstring& word)
     {
         text = text.substr(0, cursorIndex) + word + text.substr(cursorIndex);

@@ -10,6 +10,7 @@ namespace Shape {
 		void Draw(BLContext* context, const double& x1, const double& y1, const double& x2, const double& y2);
 		void SetIndex(const double& x);
 		HWND hwnd;
+		void DeleteWord();
 		void InsertWord(const std::wstring& word);
 		void activeKeyboard(LONG x, LONG y);
 		double rotateDeg = 0.0;
@@ -17,7 +18,7 @@ namespace Shape {
 		BLRgba32 color;
 		BLBox box{ -1.0f, -1.0f, -1.0f, -1.0f };
 		std::wstring text;
-		double fontSize = 168.0f;
+		double fontSize = 68.0f;
 		bool showInputCursor = true;
 		int cursorIndex = 0;
 		bool isEnding = false;

@@ -175,14 +175,18 @@ LRESULT CALLBACK MainWin::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
             if (state != State::text) return 0;
             auto history = History::Get();
             if (history->size() < 1) return 0;
-            if (wParam == 8) {
-                //backspace
-            }
-            else if (wParam == 13) {
-                //enter
+            if (wParam == 13) {
+                endDrawing();
+                return 1;
             }
             auto shape = (Shape::Text*)history->at(history->size() - 1);
-            shape->InsertWord(std::wstring{(wchar_t)wParam});            
+            if (wParam == 8) {
+                shape->DeleteWord();
+            }
+            else
+            {
+                shape->InsertWord(std::wstring{(wchar_t)wParam});
+            }                      
             drawShape(mouseDownPos);
             return 1;
         }
