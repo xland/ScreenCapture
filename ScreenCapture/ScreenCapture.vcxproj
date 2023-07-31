@@ -159,6 +159,7 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Painter.cpp" />
     <ClCompile Include="Shape\Mosaic.cpp" />
     <ClCompile Include="Shape\Eraser.cpp" />
     <ClCompile Include="Font.cpp" />
@@ -185,6 +186,7 @@
     <ClCompile Include="Util.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Painter.h" />
     <ClInclude Include="Shape\Mosaic.h" />
     <ClInclude Include="Shape\Eraser.h" />
     <ClInclude Include="Font.h" />

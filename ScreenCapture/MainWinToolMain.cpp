@@ -3,7 +3,7 @@
 void MainWin::setToolBoxMain()
 {
 	toolBoxMain.x0 = cutBox.x1 - toolBoxWidth;
-	if (int(h - cutBox.y1) > toolBoxSpan * 3 + toolBoxHeight*2) //两个高度，为屏幕底边也留一点间隙 
+	if (int(painter->h - cutBox.y1) > toolBoxSpan * 3 + toolBoxHeight*2) //两个高度，为屏幕底边也留一点间隙 
 	{
 		toolBoxMain.y0 = cutBox.y1 + toolBoxSpan;
 	}
@@ -37,8 +37,8 @@ void MainWin::drawToolMain()
 {
 	if (state == State::start) return;
 	setToolBoxMain();
-	paintCtx->setFillStyle(BLRgba32(255, 255, 255, 255));
-	paintCtx->fillBox(toolBoxMain);	
+	painter->paintCtx->setFillStyle(BLRgba32(255, 255, 255, 255));
+	painter->paintCtx->fillBox(toolBoxMain);
 	BLPoint point;
 	point.x = toolBoxMain.x0 + iconLeftMargin;
 	point.y = toolBoxMain.y0 + iconTopMargin;

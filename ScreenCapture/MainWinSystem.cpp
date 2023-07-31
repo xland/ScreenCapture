@@ -13,29 +13,7 @@ LRESULT CALLBACK MainWin::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wParam,
     return obj->WindowProc(hWnd, msg, wParam, lParam);
 }
 
-void MainWin::shotScreen()
-{
-    x = GetSystemMetrics(SM_XVIRTUALSCREEN);
-    y = GetSystemMetrics(SM_YVIRTUALSCREEN);
-    w = GetSystemMetrics(SM_CXVIRTUALSCREEN);
-    h = GetSystemMetrics(SM_CYVIRTUALSCREEN);
-    HDC hScreen = GetDC(NULL);
-    HDC hDC = CreateCompatibleDC(hScreen);
-    HBITMAP hBitmap = CreateCompatibleBitmap(hScreen, w, h);
-    DeleteObject(SelectObject(hDC, hBitmap));
-    BOOL bRet = BitBlt(hDC, 0, 0, w, h, hScreen, x, y, SRCCOPY);
-    unsigned int dataSize = w * h * 4;
-    auto bgPixels = new char[dataSize];
-    BITMAPINFO info = { sizeof(BITMAPINFOHEADER), (long)w, 0 - (long)h, 1, 32, BI_RGB, dataSize, 0, 0, 0, 0 };
-    GetDIBits(hDC, hBitmap, 0, h, (LPVOID)bgPixels, &info, DIB_RGB_COLORS);
-    DeleteDC(hDC);
-    DeleteObject(hBitmap);
 
-    auto boardPixels = new char[dataSize];
-    bgHbitmap = CreateDIBSection(hScreen, &info, DIB_RGB_COLORS, reinterpret_cast<void**>(&boardPixels), NULL, NULL);    
-    ReleaseDC(NULL, hScreen);
-    initCanvas(bgPixels,boardPixels);
-}
 
 void MainWin::createWindow()
 {
@@ -54,7 +32,7 @@ void MainWin::createWindow()
         MessageBox(NULL, L"注册窗口类失败", L"系统提示", NULL);
         return;
     }
-    hwnd = CreateWindowEx(0, wcx.lpszClassName, wcx.lpszClassName, WS_OVERLAPPEDWINDOW, x, y, w, h, NULL, NULL, hinstance, static_cast<LPVOID>(this));
+    hwnd = CreateWindowEx(0, wcx.lpszClassName, wcx.lpszClassName, WS_OVERLAPPEDWINDOW, painter->x, painter->y, painter->w, painter->h, NULL, NULL, hinstance, static_cast<LPVOID>(this));
     BOOL attrib = TRUE;
     DwmSetWindowAttribute(hwnd, DWMWA_TRANSITIONS_FORCEDISABLED, &attrib, sizeof(attrib));
 }
@@ -127,14 +105,7 @@ LRESULT CALLBACK MainWin::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
         case WM_PAINT:
         {
             paintBoard();
-            PAINTSTRUCT ps;
-            HDC hdc = BeginPaint(hwnd, &ps);
-            HDC hdcBmp = CreateCompatibleDC(hdc);
-            DeleteObject(SelectObject(hdcBmp, bgHbitmap));
-            BitBlt(hdc, 0, 0, (int)w, (int)h, hdcBmp, 0, 0, SRCCOPY);
-            DeleteDC(hdcBmp);
-            EndPaint(hwnd, &ps);
-            ValidateRect(hwnd, NULL);
+            painter->PaintOnWindow(hwnd);
             return 0;
         }
         case WM_RBUTTONDOWN:

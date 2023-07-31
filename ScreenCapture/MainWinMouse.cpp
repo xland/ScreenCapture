@@ -128,10 +128,10 @@ void MainWin::leftBtnDown(const POINT& pos)
             case State::mosaic:
             {
                 auto shape = new Shape::Mosaic();
-                bgImage->getData(shape->bgImgData);
-                canvasImage->getData(shape->canvasImgData);
-                shape->screenH = h;
-                shape->screenW = w;
+                painter->bgImage->getData(shape->bgImgData);
+                painter->canvasImage->getData(shape->canvasImgData);
+                shape->screenH = painter->h;
+                shape->screenW = painter->w;
                 shape->strokeWidth = strokeWidths[strokeBtnIndex]+8;
                 History::Push(shape);
                 preState = state;
@@ -247,6 +247,14 @@ void MainWin::leftBtnUp(const POINT& pos)
         case State::rect:
         {
             state = State::lastPathDrag;
+            auto history = History::Get();
+            auto shape = (Shape::Box*)history->at(history->size() - 1);
+            painter->paintCtx->begin(*painter->prepareImage);
+            painter->paintCtx->setStrokeStyle(BLRgba32(0,0,0));
+            painter->paintCtx->setStrokeWidth(2);
+            painter->paintCtx->strokeBoxArray(shape->boxes, 4);
+            painter->paintCtx->end();
+            InvalidateRect(hwnd, nullptr, false);
             break;
         }
         case State::ellipse:

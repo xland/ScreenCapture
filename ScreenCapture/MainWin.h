@@ -25,6 +25,7 @@
 #include "Shape/Eraser.h"
 #include "Shape/Mosaic.h"
 #include "Font.h"
+#include "Painter.h"
 
 class MainWin
 {
@@ -35,15 +36,14 @@ public:
 	LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 
 private:
-	void shotScreen();
 	void initScaleFactor();
 	void createWindow();
 	void showWindow();
 	void setCursor(LPCTSTR cursor);
-	float x, y, w, h,scaleFactor;
+	float scaleFactor;
 	HWND hwnd;
 	HINSTANCE hinstance;
-
+	Painter* painter;
 
 	
 	void leftBtnDown(const POINT& pos);
@@ -53,21 +53,13 @@ private:
 	inline POINT getMousePoint(const LPARAM& lParam);
 	POINT mouseDownPos;
 	bool isLeftBtnDown;
-	
-	
-	void initCanvas(char* bgPixels,char* boardPixels);
+
 	void paintBoard();
 	void drawShape(const POINT& pos);
 	void drawPen(const POINT& pos);
 	void drawText(const POINT& pos);
 	void drawEraser(const POINT& pos);
 	bool endDrawing();
-	BLImage* canvasImage;
-	BLImage* bgImage; 
-	BLImage* boardImage;
-	BLImage* prepareImage;
-	BLContext* paintCtx;
-	HBITMAP bgHbitmap;
 	BLRgba32 colors[8] {
 		BLRgba32(207, 19, 34, 255),
 		BLRgba32(212, 136, 6, 255),
@@ -139,9 +131,6 @@ private:
 	bool isFill = false;
 	int strokeBtnIndex = 1;
 	int colorBtnIndex = 0;
-
-
-	void showDragger();
 
 };
 

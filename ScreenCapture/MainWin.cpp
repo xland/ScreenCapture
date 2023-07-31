@@ -4,15 +4,12 @@
 
 MainWin::MainWin(HINSTANCE hinstance):hinstance{hinstance}
 {
-    shotScreen();  
+    painter = new Painter();
     createWindow();
     initScaleFactor();
     showWindow();
 }
 MainWin::~MainWin()
 {
-    delete bgImage;
-    delete canvasImage;
     delete Font::Get();
-    DeleteObject(bgHbitmap);
 }

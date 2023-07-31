@@ -19,9 +19,9 @@ namespace Shape {
         unsigned int b{ 0 }, g{ 0 }, r{ 0 }, a{ 0 };
         unsigned char* data = (unsigned char*)(bgImgData->pixelData);
         SetBoxByPos(box,x1, y1,x2, y2);
-        for (size_t y = box.y0; y < box.y1; y += strokeWidth)
+        for (int y = box.y0; y < box.y1; y += strokeWidth)
         {
-            for (size_t x = box.x0; x < box.x1; x+=strokeWidth)
+            for (int x = box.x0; x < box.x1; x+=strokeWidth)
             {
                 //left top point
                 points[0].x = x;

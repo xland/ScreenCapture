@@ -3,10 +3,10 @@
 
 void MainWin::drawSubToolBackground(const int& btnCount, const bool isCenter)
 {
-	paintCtx->setFillStyle(BLRgba32(255, 255, 255, 255));
+	painter->paintCtx->setFillStyle(BLRgba32(255, 255, 255, 255));
 	auto x = toolBoxMain.x0 + (double)selectedToolIndex * toolBtnWidth + toolBtnWidth / 2 ;
 	auto y = toolBoxMain.y1 + toolBoxSpan / 2;
-	paintCtx->fillTriangle(x, y, x + 6, y + toolBoxSpan / 2, x - 6, y + toolBoxSpan / 2);
+	painter->paintCtx->fillTriangle(x, y, x + 6, y + toolBoxSpan / 2, x - 6, y + toolBoxSpan / 2);
 	if (isCenter) {
 		toolBoxSub.x0 = x- btnCount * toolBtnWidth/2;
 		toolBoxSub.y0 = toolBoxMain.y1 + toolBoxSpan;
@@ -20,7 +20,7 @@ void MainWin::drawSubToolBackground(const int& btnCount, const bool isCenter)
 		toolBoxSub.x1 = toolBoxSub.x0 + btnCount * toolBtnWidth;
 		toolBoxSub.y1 = toolBoxSub.y0 + toolBoxHeight;
 	}
-	paintCtx->fillBox(toolBoxSub);
+	painter->paintCtx->fillBox(toolBoxSub);
 }
 
 void MainWin::drawSubTool()
@@ -151,7 +151,7 @@ void MainWin::drawColorBtns(BLPoint& point,const int& index)
 	for (size_t i = 0; i < std::size(colors); i++)
 	{
 		point.x += toolBtnWidth;
-		paintCtx->setFillStyle(colors[i]);
+		painter->paintCtx->setFillStyle(colors[i]);
 		Icon::Name name = i == colorBtnIndex ? Icon::Name::colorChecked : Icon::Name::colorUnChecked;
 		drawBtn(point, name, i==colorBtnIndex, mouseEnterSubToolIndex == index+i,true);
 	}

@@ -89,7 +89,7 @@ namespace Shape {
 
             if (showInputCursor) {
                 auto x = box.x0 + margin+8 + tm.boundingBox.x1 - tm.boundingBox.x0;
-                paintCtx->strokeLine(x, box.y0 + margin + 8, x, box.y1 - margin);
+                paintCtx->strokeLine(x, box.y0 + margin, x, box.y1 - margin);
                 activeKeyboard(x, box.y1 - margin);
             }
             showInputCursor = !showInputCursor;
