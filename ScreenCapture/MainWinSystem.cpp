@@ -217,21 +217,3 @@ POINT MainWin::getMousePoint(const LPARAM& lParam)
     point.y = GET_Y_LPARAM(lParam);
     return point;
 }
-
-void MainWin::activeKeyboard(LONG x,LONG y)
-{
-    if (HIMC himc = ImmGetContext(hwnd))
-    {
-        COMPOSITIONFORM comp = {};
-        comp.ptCurrentPos.x = x;
-        comp.ptCurrentPos.y = y;
-        comp.dwStyle = CFS_FORCE_POSITION;
-        ImmSetCompositionWindow(himc, &comp);
-        CANDIDATEFORM cand = {};
-        cand.dwStyle = CFS_CANDIDATEPOS;
-        cand.ptCurrentPos.x = x;
-        cand.ptCurrentPos.y = y;
-        ImmSetCandidateWindow(himc, &cand);
-        ImmReleaseContext(hwnd, himc);
-    }
-}

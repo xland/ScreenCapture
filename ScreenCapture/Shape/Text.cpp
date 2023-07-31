@@ -3,6 +3,23 @@
 #include "../Util.h"
 
 namespace Shape {
+    void Text::activeKeyboard(LONG x, LONG y)
+    {
+        if (HIMC himc = ImmGetContext(hwnd))
+        {
+            COMPOSITIONFORM comp = {};
+            comp.ptCurrentPos.x = x;
+            comp.ptCurrentPos.y = y;
+            comp.dwStyle = CFS_FORCE_POSITION;
+            ImmSetCompositionWindow(himc, &comp);
+            CANDIDATEFORM cand = {};
+            cand.dwStyle = CFS_CANDIDATEPOS;
+            cand.ptCurrentPos.x = x;
+            cand.ptCurrentPos.y = y;
+            ImmSetCandidateWindow(himc, &cand);
+            ImmReleaseContext(hwnd, himc);
+        }
+    }
     void Text::SetIndex(const double& x)
     {
         int tempIndex = 0;
@@ -42,7 +59,7 @@ namespace Shape {
         font->setSize(fontSize);   
         auto utf8 = ConvertToUTF8(text);
         paintCtx->setFillStyle(color);
-        paintCtx->fillUtf8Text(BLPoint(box.x0 + margin, box.y0 + fontSize), *font, utf8.c_str());
+        paintCtx->fillUtf8Text(BLPoint(box.x0 + margin, box.y0 + font->metrics().ascent+margin), *font, utf8.c_str());
 
         if (!isEnding) {
             BLFontMetrics fm = font->metrics();
@@ -67,6 +84,7 @@ namespace Shape {
             if (showInputCursor) {
                 auto x = box.x0 + margin+8 + tm.boundingBox.x1 - tm.boundingBox.x0;
                 paintCtx->strokeLine(x, box.y0 + margin + 8, x, box.y1 - margin);
+                activeKeyboard(x, box.y1 - margin);
             }
             showInputCursor = !showInputCursor;
         }         

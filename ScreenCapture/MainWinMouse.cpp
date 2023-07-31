@@ -14,7 +14,6 @@ void MainWin::leftBtnDown(const POINT& pos)
                 if (textObj->box.contains(mouseDownPos.x, mouseDownPos.y)) {
                     textObj->SetIndex(mouseDownPos.x);
                     drawShape(mouseDownPos);
-                    activeKeyboard(mouseDownPos.x, mouseDownPos.y);
                     return;
                 }
             }
@@ -143,12 +142,12 @@ void MainWin::leftBtnDown(const POINT& pos)
             {
                 auto shape = new Shape::Text();
                 shape->color = colors[colorBtnIndex];
+                shape->hwnd = hwnd;
                 History::Push(shape);
                 drawShape(pos);
-                activeKeyboard(pos.x, pos.y);
                 SetTimer(hwnd, 999, 660, (TIMERPROC)NULL);
                 preState = state;
-                isDrawing = true;                
+                isDrawing = true;
                 break;
             }
             case State::lastPathDrag:
