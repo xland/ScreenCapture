@@ -24,6 +24,12 @@ void MainWin::leftBtnDown(const POINT& pos)
             selectedToolIndex = mouseEnterMainToolIndex;
             InvalidateRect(hwnd, nullptr, false);
             state = (State)(selectedToolIndex+2);
+            if (state == State::rect||state == State::ellipse||state == State::line) {
+                isFill = false;
+            }
+            else if (state == State::arrow || state == State::number) {
+                isFill = true;
+            }
             return;
         }
         if (mouseEnterSubToolIndex != -1) {
