@@ -7,6 +7,7 @@ void MainWin::leftBtnDown(const POINT& pos)
     if (state != State::start) {
         auto history = History::Get();
         if (history->size() > 0) {
+            //点击书写文本的区域，书写光标定位
             auto shape = history->at(history->size() - 1);
             auto textObj = dynamic_cast<Shape::Text*>(shape);
             if (textObj != nullptr) {
@@ -126,7 +127,7 @@ void MainWin::leftBtnDown(const POINT& pos)
                 canvasImage->getData(shape->canvasImgData);
                 shape->screenH = h;
                 shape->screenW = w;
-                shape->strokeWidth = strokeWidths[strokeBtnIndex] + 28;
+                shape->strokeWidth = strokeWidths[strokeBtnIndex]+8;
                 History::Push(shape);
                 preState = state;
                 isDrawing = true;
