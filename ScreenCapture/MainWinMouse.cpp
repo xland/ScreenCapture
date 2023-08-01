@@ -108,9 +108,8 @@ void MainWin::leftBtnDown(const POINT& pos)
             {
                 auto shape = new Shape::Eraser();
                 shape->strokeWidth = strokeWidths[strokeBtnIndex]+28;
+                shape->isTemp = false;
                 History::Push(shape);
-                preState = state;
-                painter->isDrawing = true;
                 break;
             }
             case State::mosaic:
@@ -247,14 +246,13 @@ void MainWin::leftBtnUp(const POINT& pos)
             break;
         }
         case State::pen:
+        case State::eraser:
         {
             break;
         }
         case State::mosaic:
             break;
         case State::text:
-            break;
-        case State::eraser:
             break;
     }
 }

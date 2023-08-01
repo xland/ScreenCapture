@@ -10,7 +10,6 @@ void MainWin::paintBoard()
     if (painter->isDrawing) {
         painter->paintCtx->blitImage(BLRect(0, 0, painter->w, painter->h), *painter->prepareImage);
     }  
-    painter->paintCtx->setCompOp(BL_COMP_OP_SRC_OVER);
     painter->paintCtx->setFillStyle(BLRgba32(0, 0, 0, 180));
     painter->paintCtx->fillBoxArray(maskBoxes, 8);
     painter->paintCtx->setStrokeStyle(BLRgba32(22, 119, 255, 255));
