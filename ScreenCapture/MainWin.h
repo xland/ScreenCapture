@@ -40,12 +40,13 @@ public:
 	HWND hwnd;
 	POINT MouseDownPos;
 	bool IsShiftDown = false;
+	State state = State::start;
+	State preState;
 
 private:
 	void initScaleFactor();
 	void createWindow();
 	void showWindow();
-	void setCursor(LPCTSTR cursor);
 	double scaleFactor;
 	HINSTANCE hinstance;
 	Painter* painter;
@@ -58,7 +59,6 @@ private:
 	bool isLeftBtnDown;
 
 	void paintBoard();
-	bool endDrawing();
 	BLRgba32 colors[8] {
 		BLRgba32(207, 19, 34, 255),
 		BLRgba32(212, 136, 6, 255),
@@ -70,9 +70,6 @@ private:
 		BLRgba32(0, 0, 0, 255),
 	};
 	double strokeWidths[3]{ 2.0, 6.0, 16.0 };
-	bool isDrawing = false;
-	State state = State::start;
-	State preState;
 
 
 	void checkMouseEnterMaskBox(const POINT& pos);

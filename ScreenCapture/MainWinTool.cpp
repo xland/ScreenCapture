@@ -70,7 +70,7 @@ bool MainWin::checkMouseEnterToolBox(const POINT& pos)
 	}
 	if (tempIndex != mouseEnterMainToolIndex) {
 		mouseEnterMainToolIndex = tempIndex;
-		setCursor(IDC_HAND);
+		ChangeCursor(IDC_HAND);
 		InvalidateRect(hwnd, nullptr, false);
 		mouseInMaskBoxIndex = -1;
 	}
@@ -86,7 +86,7 @@ bool MainWin::checkMouseEnterToolBox(const POINT& pos)
 	}
 	if (tempIndex != mouseEnterSubToolIndex) {
 		mouseEnterSubToolIndex = tempIndex;
-		setCursor(IDC_HAND);
+		ChangeCursor(IDC_HAND);
 		InvalidateRect(hwnd, nullptr, false);
 		mouseInMaskBoxIndex = -1;
 	}

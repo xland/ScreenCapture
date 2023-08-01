@@ -67,3 +67,9 @@ std::string ConvertToUTF8(const std::wstring& wstr)
     WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), -1, &str[0], count, NULL, NULL);
     return str;
 }
+
+void ChangeCursor(LPCTSTR cursor)
+{
+    auto hCursor = LoadCursor(NULL, cursor);
+    SetCursor(hCursor);
+}

@@ -41,7 +41,7 @@ void MainWin::showWindow()
 {
     ShowWindow(hwnd, SW_SHOW);
     UpdateWindow(hwnd);
-    SetCursor(LoadCursor(NULL, IDC_ARROW));
+    ChangeCursor(IDC_ARROW);
 }
 
 void MainWin::initScaleFactor()
@@ -79,12 +79,6 @@ void MainWin::initScaleFactor()
         scaleFactor = 1.0;
         break;
     }
-}
-
-void MainWin::setCursor(LPCTSTR cursor)
-{
-    auto hCursor = LoadCursor(NULL, cursor);
-    SetCursor(hCursor);
 }
 
 LRESULT CALLBACK MainWin::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -146,14 +140,14 @@ LRESULT CALLBACK MainWin::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
             switch (wParam)
             {
                 case VK_ESCAPE: {
-                    return 1;
+                    return 0;
                 }
                 case VK_SHIFT: {
                     IsShiftDown = true;
-                    return 1;
-                }
-                             
+                    return 0;
+                }                             
             }
+            return 0;
         }
         case WM_KEYUP: 
         {
@@ -161,9 +155,10 @@ LRESULT CALLBACK MainWin::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
             {
                 case VK_SHIFT: {
                     IsShiftDown = false;
-                    return 1;
+                    return 0;
                 }
             }
+            return 0;
         }
         case WM_CHAR:
         {
@@ -171,7 +166,7 @@ LRESULT CALLBACK MainWin::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
             auto history = History::Get();
             if (history->size() < 1) return 0;
             if (wParam == 13) {
-                endDrawing();
+                History::LastShapeDrawEnd();
                 return 1;
             }
             auto shape = (Shape::Text*)history->at(history->size() - 1);

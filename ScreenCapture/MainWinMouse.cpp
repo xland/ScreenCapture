@@ -5,20 +5,9 @@ void MainWin::leftBtnDown(const POINT& pos)
     isLeftBtnDown = true;
     MouseDownPos = pos;
     if (state != State::start) {
-        auto history = History::Get();
-        if (history->size() > 0) {
-            //点击书写文本的区域，书写光标定位
-            auto shape = history->at(history->size() - 1);
-            auto textObj = dynamic_cast<Shape::Text*>(shape);
-            if (textObj != nullptr) {
-                if (textObj->box.contains(MouseDownPos.x, MouseDownPos.y)) {
-                    textObj->SetIndex(MouseDownPos.x);
-                    textObj->Draw(MouseDownPos.x, MouseDownPos.y, -1, -1);
-                    return;
-                }
-            }
+        if (!History::LastShapeDrawEnd()) {
+            return;
         }
-        endDrawing();
         if (mouseEnterMainToolIndex != -1 && mouseEnterMainToolIndex < 9) {
             selectedToolIndex = mouseEnterMainToolIndex;
             InvalidateRect(hwnd, nullptr, false);
@@ -59,7 +48,7 @@ void MainWin::leftBtnDown(const POINT& pos)
                 box->strokeWidth = strokeWidths[strokeBtnIndex];
                 History::Push(box);
                 preState = state;
-                isDrawing = true;
+                painter->isDrawing = true;
                 break;
             }
             case State::ellipse:
@@ -70,7 +59,7 @@ void MainWin::leftBtnDown(const POINT& pos)
                 ellipse->strokeWidth = strokeWidths[strokeBtnIndex];
                 History::Push(ellipse);
                 preState = state;
-                isDrawing = true;
+                painter->isDrawing = true;
                 break;
             }
             case State::arrow:
@@ -81,7 +70,7 @@ void MainWin::leftBtnDown(const POINT& pos)
                 arrow->strokeWidth = strokeWidths[strokeBtnIndex];
                 History::Push(arrow);
                 preState = state;
-                isDrawing = true;
+                painter->isDrawing = true;
                 break;
             }
             case State::pen:
@@ -91,7 +80,7 @@ void MainWin::leftBtnDown(const POINT& pos)
                 shape->strokeWidth = strokeWidths[strokeBtnIndex];                
                 History::Push(shape);
                 preState = state;
-                isDrawing = true;
+                painter->isDrawing = true;
                 break;
             }
             case State::line:
@@ -102,7 +91,7 @@ void MainWin::leftBtnDown(const POINT& pos)
                 shape->isFill = isFill;
                 History::Push(shape);
                 preState = state;
-                isDrawing = true;
+                painter->isDrawing = true;
                 break;
             }
             case State::number:
@@ -113,7 +102,7 @@ void MainWin::leftBtnDown(const POINT& pos)
                 shape->isFill = isFill;
                 History::Push(shape);
                 preState = state;
-                isDrawing = true;
+                painter->isDrawing = true;
                 break;
             }
             case State::eraser:
@@ -122,7 +111,7 @@ void MainWin::leftBtnDown(const POINT& pos)
                 shape->strokeWidth = strokeWidths[strokeBtnIndex]+28;
                 History::Push(shape);
                 preState = state;
-                isDrawing = true;
+                painter->isDrawing = true;
                 break;
             }
             case State::mosaic:
@@ -135,7 +124,7 @@ void MainWin::leftBtnDown(const POINT& pos)
                 shape->strokeWidth = strokeWidths[strokeBtnIndex]+8;
                 History::Push(shape);
                 preState = state;
-                isDrawing = true;
+                painter->isDrawing = true;
                 break;
             }
             case State::text:
@@ -147,7 +136,7 @@ void MainWin::leftBtnDown(const POINT& pos)
                 shape->Draw(pos.x, pos.y, -1, -1);
                 SetTimer(hwnd, 999, 660, (TIMERPROC)NULL);
                 preState = state;
-                isDrawing = true;
+                painter->isDrawing = true;
                 break;
             }
             case State::lastPathDrag:
@@ -160,7 +149,12 @@ void MainWin::leftBtnDown(const POINT& pos)
 void MainWin::rightBtnDown(const POINT& pos)
 {
     //canvasImage->writeToFile("123.png");
-    if (endDrawing()) return;
+    MouseDownPos = pos;
+    if (painter->isDrawing)
+    {
+        History::LastShapeDrawEnd();
+        return;
+    }
     CloseWindow(hwnd);
 	PostQuitMessage(0);
 }
@@ -196,7 +190,10 @@ void MainWin::mouseMove(const POINT& pos)
             case State::text:
                 break;
             case State::lastPathDrag:
+            {
+                History::LastShapeDragDragger(pos);
                 break;
+            }
             default:
                 break;
         }
@@ -208,12 +205,15 @@ void MainWin::mouseMove(const POINT& pos)
         }
         else
         {
-            if (state == State::text) {
-                setCursor(IDC_IBEAM);
+            if (state == State::lastPathDrag) {
+                History::LastShapeMouseInDragger(pos);
+            }
+            else if (state == State::text) {
+                ChangeCursor(IDC_IBEAM);
             }
             else
             {
-                setCursor(IDC_CROSS);
+                ChangeCursor(IDC_CROSS);
             }            
         }
     }
@@ -237,20 +237,10 @@ void MainWin::leftBtnUp(const POINT& pos)
             break;
         }
         case State::rect:
-        {
-            /*state = State::lastPathDrag;
-            auto history = History::Get();
-            auto shape = (Shape::Box*)history->at(history->size() - 1);
-            painter->paintCtx->begin(*painter->prepareImage);
-            painter->paintCtx->setStrokeStyle(BLRgba32(0,0,0));
-            painter->paintCtx->setStrokeWidth(2);
-            painter->paintCtx->strokeBoxArray(shape->boxes, 4);
-            painter->paintCtx->end();
-            InvalidateRect(hwnd, nullptr, false);*/
-            break;
-        }
         case State::ellipse:
+        case State::lastPathDrag:
         {
+            History::LastShapeShowDragger();
             state = State::lastPathDrag;
             break;
         }
@@ -273,8 +263,6 @@ void MainWin::leftBtnUp(const POINT& pos)
         case State::number:
             break;
         case State::eraser:
-            break;
-        case State::lastPathDrag:
             break;
     }
 }

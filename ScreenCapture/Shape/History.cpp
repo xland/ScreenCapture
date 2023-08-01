@@ -15,17 +15,34 @@ void History::Push(Shape::Shape* shape)
 	}
 	history->push_back(shape);	
 }
-void History::SaveLast()
+bool History::LastShapeDrawEnd()
 {
-	auto size = history->size();
-	if (size > 0)
-	{
-		history->at(size - 1)->isTemp = false;
-	}
+	if (history->size() < 1) return true;
+	auto shape = history->at(history->size() - 1);
+	return shape->EndDraw();
 }
 void History::LastShapeDraw(const POINT& pos1, const POINT& pos2)
 {
 	if (history->size() < 1) return;
 	auto shape = history->at(history->size() - 1);
 	shape->Draw(pos1.x, pos1.y, pos2.x, pos2.y);
+}
+
+void History::LastShapeShowDragger()
+{
+	if (history->size() < 1) return;
+	auto shape = history->at(history->size() - 1);
+	shape->ShowDragger();
+}
+void History::LastShapeMouseInDragger(const POINT& pos)
+{
+	if (history->size() < 1) return;
+	auto shape = history->at(history->size() - 1);
+	shape->MouseInDragger(pos.x,pos.y);
+}
+void History::LastShapeDragDragger(const POINT& pos)
+{
+	if (history->size() < 1) return;
+	auto shape = history->at(history->size() - 1);
+	shape->DragDragger(pos.x, pos.y);
 }

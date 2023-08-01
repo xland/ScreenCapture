@@ -40,7 +40,7 @@ void MainWin::checkMouseEnterMaskBox(const POINT& pos) {
             break;
         }
     }
-    setCursor(cursor);
+    ChangeCursor(cursor);
 }
 
 void MainWin::setCutBox(BLPoint& startPos, BLPoint& endPos)

@@ -104,4 +104,35 @@ namespace Shape {
         auto win = MainWin::Get();
         InvalidateRect(win->hwnd, nullptr, false);
     }
+    bool Text::EndDraw()
+    {
+        auto painter = Painter::Get();
+        if (!painter->isDrawing) {
+            return true;
+        }
+        auto win = MainWin::Get();
+        if (box.contains(win->MouseDownPos.x, win->MouseDownPos.y)) {
+            SetIndex(win->MouseDownPos.x);
+            Draw(win->MouseDownPos.x, win->MouseDownPos.y, -1, -1);
+            return false;
+        }
+        KillTimer(hwnd, 999);
+        auto context = painter->paintCtx;
+        context->begin(*painter->canvasImage);
+        auto font = Font::Get()->fontText;
+        font->setSize(fontSize);
+        auto utf8 = ConvertToUTF8(text);
+        context->setFillStyle(color);
+        context->fillUtf8Text(BLPoint(box.x0 + margin, box.y0 + font->metrics().ascent + margin), *font, utf8.c_str());
+        context->end();
+
+        context->begin(*painter->prepareImage);
+        context->clearAll();
+        context->end();
+        isTemp = false;
+        painter->isDrawing = false;
+        win->state = win->preState;
+        InvalidateRect(win->hwnd, nullptr, false);
+        return true;
+    }
 }
