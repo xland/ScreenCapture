@@ -240,6 +240,7 @@ void MainWin::leftBtnUp(const POINT& pos)
         case State::ellipse:
         case State::arrow:
         case State::lastPathDrag:
+        case State::line:
         {
             History::LastShapeShowDragger();
             state = State::lastPathDrag;
@@ -250,8 +251,6 @@ void MainWin::leftBtnUp(const POINT& pos)
             state = State::lastPathDrag;
             break;
         }
-        case State::line:
-            break;
         case State::mosaic:
             break;
         case State::text:
