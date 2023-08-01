@@ -241,6 +241,7 @@ void MainWin::leftBtnUp(const POINT& pos)
         case State::arrow:
         case State::lastPathDrag:
         case State::line:
+        case State::number:
         {
             History::LastShapeShowDragger();
             state = State::lastPathDrag;
@@ -254,8 +255,6 @@ void MainWin::leftBtnUp(const POINT& pos)
         case State::mosaic:
             break;
         case State::text:
-            break;
-        case State::number:
             break;
         case State::eraser:
             break;
