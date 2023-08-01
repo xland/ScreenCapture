@@ -94,7 +94,7 @@ namespace Shape {
             font->getTextMetrics(gb, tm);
 
             if (showInputCursor) {
-                auto x = box.x0 + margin+8 + tm.boundingBox.x1 - tm.boundingBox.x0;
+                auto x = box.x0 + margin+6 + tm.boundingBox.x1 - tm.boundingBox.x0;
                 context->strokeLine(x, box.y0 + margin, x, box.y1 - margin);
                 activeKeyboard(x, box.y1 - margin);
             }
