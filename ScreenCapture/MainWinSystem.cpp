@@ -99,7 +99,7 @@ LRESULT CALLBACK MainWin::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
             return 1;
         }
         case WM_TIMER: {
-            drawShape(mouseDownPos);
+            History::LastShapeDraw(mouseDownPos,mouseDownPos);
             return 1;
         }
         case WM_PAINT:

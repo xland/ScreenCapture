@@ -23,3 +23,9 @@ void History::SaveLast()
 		history->at(size - 1)->isTemp = false;
 	}
 }
+void History::LastShapeDraw(const POINT& pos1, const POINT& pos2)
+{
+	if (history->size() < 1) return;
+	auto shape = history->at(history->size() - 1);
+	shape->Draw(pos1.x, pos1.y, pos2.x, pos2.y);
+}

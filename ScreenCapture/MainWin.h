@@ -57,7 +57,6 @@ private:
 	bool isLeftBtnDown;
 
 	void paintBoard();
-	void drawShape(const POINT& pos);
 	bool endDrawing();
 	BLRgba32 colors[8] {
 		BLRgba32(207, 19, 34, 255),

@@ -13,7 +13,7 @@ void MainWin::leftBtnDown(const POINT& pos)
             if (textObj != nullptr) {
                 if (textObj->box.contains(mouseDownPos.x, mouseDownPos.y)) {
                     textObj->SetIndex(mouseDownPos.x);
-                    drawShape(mouseDownPos);
+                    textObj->Draw(mouseDownPos.x, mouseDownPos.y, -1, -1);
                     return;
                 }
             }
@@ -144,7 +144,7 @@ void MainWin::leftBtnDown(const POINT& pos)
                 shape->color = colors[colorBtnIndex];
                 shape->hwnd = hwnd;
                 History::Push(shape);
-                drawShape(pos);
+                shape->Draw(pos.x, pos.y, -1, -1);
                 SetTimer(hwnd, 999, 660, (TIMERPROC)NULL);
                 preState = state;
                 isDrawing = true;
@@ -190,7 +190,7 @@ void MainWin::mouseMove(const POINT& pos)
             case State::pen:
             case State::eraser:
             {
-                drawShape(pos);
+                History::LastShapeDraw(pos,mouseDownPos);
                 break;
             }
             case State::text:

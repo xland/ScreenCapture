@@ -12,7 +12,7 @@ bool MainWin::endDrawing()
         if (history->size() < 1) return 0;
         auto shape = (Shape::Text*)history->at(history->size() - 1);
         shape->isEnding = true;
-        drawShape(mouseDownPos);
+        shape->Draw(mouseDownPos.x, mouseDownPos.y,-1,-1);
     }
     painter->paintCtx->begin(*painter->canvasImage);
     painter->paintCtx->blitImage(BLRect(0, 0, painter->w, painter->h), *painter->prepareImage);
@@ -42,13 +42,5 @@ void MainWin::paintBoard()
     painter->paintCtx->strokeBox(cutBox);
     drawToolMain();
     painter->paintCtx->end();
-}
-
-void  MainWin::drawShape(const POINT& pos)
-{
-    auto history = History::Get();
-    if (history->size() < 1) return;
-    auto shape = history->at(history->size() - 1);
-    shape->Draw(pos.x, pos.y, mouseDownPos.x, mouseDownPos.y);    
 }
 
