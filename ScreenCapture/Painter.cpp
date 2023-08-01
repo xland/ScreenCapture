@@ -24,7 +24,7 @@ Painter::~Painter()
     delete bgImage;
     delete canvasImage;
     delete prepareImage;
-    //delete boardImage;
+    //delete boardImage; //todo
     DeleteObject(bgHbitmap);
 }
 
@@ -59,7 +59,7 @@ void Painter::shotScreen()
     });
     boardImage = new BLImage();
     boardImage->createFromData(w, h, BL_FORMAT_PRGB32, boardPixels, w * 4, [](void* impl, void* externalData, void* userData) {
-        delete[] externalData;
+        delete[] externalData; //todo
     });
     paintCtx = new BLContext();
     paintCtx->begin(*prepareImage);

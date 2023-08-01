@@ -3,6 +3,7 @@
 #include <string>
 #include <Windows.h> 
 #include "../Font.h"
+#include "../MainWin.h"
 namespace Shape {
     static double PI = 3.1415926;
     static unsigned int num = 0;
@@ -71,5 +72,6 @@ namespace Shape {
         }
         context->fillUtf8Text(p, *font, std::to_string(number).c_str());
         context->end();
+        InvalidateRect(MainWin::Get()->hwnd, nullptr, false);
 	}
 }

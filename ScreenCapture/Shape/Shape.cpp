@@ -1,4 +1,5 @@
 #include "Shape.h"
+#include "../MainWin.h"
 namespace Shape{
 
 	static std::vector<Shape> history;

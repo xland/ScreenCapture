@@ -34,14 +34,18 @@ public:
 	~MainWin();
 	static LRESULT CALLBACK RouteWindowMessage(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 	LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
+	static void Init(HINSTANCE hinstance);
+	static MainWin* Get();
+	static void Dispose();
+	HWND hwnd;
+	POINT mouseDownPos;
 
 private:
 	void initScaleFactor();
 	void createWindow();
 	void showWindow();
 	void setCursor(LPCTSTR cursor);
-	float scaleFactor;
-	HWND hwnd;
+	double scaleFactor;
 	HINSTANCE hinstance;
 	Painter* painter;
 	
@@ -50,14 +54,10 @@ private:
 	void mouseMove(const POINT& pos);
 	void leftBtnUp(const POINT& pos);
 	inline POINT getMousePoint(const LPARAM& lParam);
-	POINT mouseDownPos;
 	bool isLeftBtnDown;
 
 	void paintBoard();
 	void drawShape(const POINT& pos);
-	void drawPen(const POINT& pos);
-	void drawText(const POINT& pos);
-	void drawEraser(const POINT& pos);
 	bool endDrawing();
 	BLRgba32 colors[8] {
 		BLRgba32(207, 19, 34, 255),

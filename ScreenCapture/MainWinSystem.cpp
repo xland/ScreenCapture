@@ -158,7 +158,6 @@ LRESULT CALLBACK MainWin::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
             {
                 shape->InsertWord(std::wstring{(wchar_t)wParam});
             } 
-            InvalidateRect(hwnd, nullptr, false);
             return 1;
         }
         case WM_IME_STARTCOMPOSITION:

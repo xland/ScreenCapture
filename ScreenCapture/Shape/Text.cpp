@@ -1,6 +1,7 @@
 #include "Text.h"
 #include "../Font.h"
 #include "../Util.h"
+#include "../MainWin.h"
 
 namespace Shape {
     void Text::activeKeyboard(LONG x, LONG y)
@@ -100,5 +101,7 @@ namespace Shape {
             showInputCursor = !showInputCursor;
         }     
         context->end();
+        auto win = MainWin::Get();
+        InvalidateRect(win->hwnd, nullptr, false);
     }
 }

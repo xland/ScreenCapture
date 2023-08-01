@@ -1,4 +1,5 @@
 #include "Eraser.h"
+#include "../MainWin.h"
 namespace Shape {
 	void Eraser::Draw(const double& x1, const double& y1, const double& x2, const double& y2)
 	{
@@ -10,5 +11,9 @@ namespace Shape {
 		context->setStrokeCaps(BL_STROKE_CAP_ROUND);
 		context->strokeLine(x2, y2, x1, y1);
 		context->end();
+		auto win = MainWin::Get();
+		win->mouseDownPos.x = (LONG)x1;
+		win->mouseDownPos.y = (LONG)y1;
+		InvalidateRect(win->hwnd, nullptr, false);
 	}
 }

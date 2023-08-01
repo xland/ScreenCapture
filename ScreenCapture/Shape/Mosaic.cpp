@@ -1,5 +1,6 @@
 #include "Mosaic.h"
 #include "../Util.h"
+#include "../MainWin.h"
 
 namespace Shape {
 
@@ -93,5 +94,6 @@ namespace Shape {
             }
         }
         context->end();
+        InvalidateRect(MainWin::Get()->hwnd, nullptr, false);
 	}
 }

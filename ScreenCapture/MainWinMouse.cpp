@@ -187,18 +187,10 @@ void MainWin::mouseMove(const POINT& pos)
             case State::number:
             case State::line:
             case State::mosaic:
-            {
-                drawShape(pos);
-                break;
-            }
             case State::pen:
-            {
-                drawPen(pos);
-                break;
-            }
             case State::eraser:
             {
-                drawEraser(pos);
+                drawShape(pos);
                 break;
             }
             case State::text:
@@ -246,7 +238,7 @@ void MainWin::leftBtnUp(const POINT& pos)
         }
         case State::rect:
         {
-            state = State::lastPathDrag;
+            /*state = State::lastPathDrag;
             auto history = History::Get();
             auto shape = (Shape::Box*)history->at(history->size() - 1);
             painter->paintCtx->begin(*painter->prepareImage);
@@ -254,7 +246,7 @@ void MainWin::leftBtnUp(const POINT& pos)
             painter->paintCtx->setStrokeWidth(2);
             painter->paintCtx->strokeBoxArray(shape->boxes, 4);
             painter->paintCtx->end();
-            InvalidateRect(hwnd, nullptr, false);
+            InvalidateRect(hwnd, nullptr, false);*/
             break;
         }
         case State::ellipse:

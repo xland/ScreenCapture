@@ -1,6 +1,6 @@
 #include "Ellipse.h"
 #include "../Util.h"
-
+#include "../MainWin.h"
 namespace Shape {
     void Ellipse::Draw(const double& x1, const double& y1, const double& x2, const double& y2)
     {
@@ -26,5 +26,6 @@ namespace Shape {
             context->strokeEllipse(ellipse);
         }
         context->end();
+        InvalidateRect(MainWin::Get()->hwnd, nullptr, false);
     }
 }
