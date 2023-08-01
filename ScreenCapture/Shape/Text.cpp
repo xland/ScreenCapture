@@ -80,8 +80,7 @@ namespace Shape {
             gb.setUtf8Text(utf8.c_str()); //utf8.c_str()
             font->shape(gb);
             font->getTextMetrics(gb, tm);
-            box.x1 = box.x0 + tm.boundingBox.x1 - tm.boundingBox.x0 + margin * 3;
-            
+            box.x1 = box.x0 + tm.boundingBox.x1 - tm.boundingBox.x0 + margin * 3;          
 
             context->setStrokeStyle(color);
             context->setStrokeWidth(2.0f);

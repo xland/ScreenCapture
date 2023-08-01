@@ -77,10 +77,9 @@ void MainWin::leftBtnDown(const POINT& pos)
             {
                 auto shape = new Shape::Pen();
                 shape->color = colors[colorBtnIndex];
-                shape->strokeWidth = strokeWidths[strokeBtnIndex];                
+                shape->strokeWidth = strokeWidths[strokeBtnIndex];
+                shape->isTemp = false;
                 History::Push(shape);
-                preState = state;
-                painter->isDrawing = true;
                 break;
             }
             case State::line:
@@ -249,7 +248,6 @@ void MainWin::leftBtnUp(const POINT& pos)
         }
         case State::pen:
         {
-            state = State::lastPathDrag;
             break;
         }
         case State::mosaic:

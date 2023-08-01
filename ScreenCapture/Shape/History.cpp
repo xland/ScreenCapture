@@ -19,7 +19,14 @@ bool History::LastShapeDrawEnd()
 {
 	if (history->size() < 1) return true;
 	auto shape = history->at(history->size() - 1);
-	return shape->EndDraw();
+	if (shape->isTemp) {
+		return shape->EndDraw();
+	}
+	else
+	{
+		return true;
+	}
+	
 }
 void History::LastShapeDraw(const POINT& pos1, const POINT& pos2)
 {
