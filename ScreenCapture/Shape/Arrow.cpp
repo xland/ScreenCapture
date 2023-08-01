@@ -6,11 +6,6 @@ namespace Shape {
 
     Arrow::Arrow()
     {
-        //path.moveTo(-1.0f, -1.0f);
-        //for (size_t i = 0; i < 6; i++)
-        //{
-        //    path.lineTo(-1.0f, -1.0f);
-        //}
     }
     Arrow::~Arrow()
     {
@@ -72,4 +67,89 @@ namespace Shape {
         context->end();
         InvalidateRect(MainWin::Get()->hwnd, nullptr, false);
 	}
+    bool Arrow::EndDraw()
+    {
+        auto painter = Painter::Get();
+        if (!painter->isDrawing) {
+            return true;
+        }
+        if (draggerIndex != -1) {
+            return false;
+        }
+        auto context = painter->paintCtx;
+        context->begin(*painter->canvasImage);        
+        if (isFill)
+        {
+            context->setFillStyle(color);
+            context->fillPath(path);
+        }
+        else
+        {
+            context->setStrokeStyle(color);
+            context->setStrokeWidth(strokeWidth - 1);
+            context->strokePath(path);
+        }
+        context->end();
+        context->begin(*painter->prepareImage);
+        context->clearAll();
+        context->end();
+        isTemp = false;
+        painter->isDrawing = false;
+        auto win = MainWin::Get();
+        win->state = win->preState;
+        InvalidateRect(win->hwnd, nullptr, false);
+        return true;
+    }
+    void Arrow::ShowDragger()
+    {
+        const BLPoint* points = path.vertexData();
+        draggers[0].x0 = points[0].x - draggerSize;
+        draggers[0].y0 = points[0].y - draggerSize;
+        draggers[0].x1 = points[0].x + draggerSize;
+        draggers[0].y1 = points[0].y + draggerSize;
+
+        draggers[1].x0 = points[3].x - draggerSize;
+        draggers[1].y0 = points[3].y - draggerSize;
+        draggers[1].x1 = points[3].x + draggerSize;
+        draggers[1].y1 = points[3].y + draggerSize;
+
+        auto context = Painter::Get()->paintCtx;
+        context->begin(*Painter::Get()->prepareImage);
+        context->setStrokeStyle(BLRgba32(0, 0, 0));
+        context->setStrokeWidth(2);
+        context->strokeBoxArray(draggers, 2);
+        context->end();
+        InvalidateRect(MainWin::Get()->hwnd, nullptr, false);
+    }
+    void Arrow::MouseInDragger(const double& x, const double& y)
+    {
+        if (draggers[0].contains(x, y)) {
+            const BLPoint* points = path.vertexData();
+            tempDraggerX = points[3].x;
+            tempDraggerY = points[3].y;
+            draggerIndex = 0;
+            ChangeCursor(IDC_SIZEALL);
+        }
+        else if (draggers[1].contains(x, y)) {
+            const BLPoint* points = path.vertexData();
+            tempDraggerX = points[0].x;
+            tempDraggerY = points[0].y;
+            draggerIndex = 1;
+            ChangeCursor(IDC_SIZEALL);
+        }
+        else
+        {
+            draggerIndex = -1;
+            ChangeCursor(IDC_CROSS);
+        }        
+    }
+    void Arrow::DragDragger(const double& x, const double& y)
+    {
+        if (draggerIndex == 0) {
+            Draw(tempDraggerX, tempDraggerY, x, y);
+        }
+        else if (draggerIndex == 1) {
+            Draw(x, y, tempDraggerX, tempDraggerY);
+        }
+    }
 }

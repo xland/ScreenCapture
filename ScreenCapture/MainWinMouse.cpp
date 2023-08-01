@@ -238,14 +238,10 @@ void MainWin::leftBtnUp(const POINT& pos)
         }
         case State::rect:
         case State::ellipse:
+        case State::arrow:
         case State::lastPathDrag:
         {
             History::LastShapeShowDragger();
-            state = State::lastPathDrag;
-            break;
-        }
-        case State::arrow:
-        {
             state = State::lastPathDrag;
             break;
         }

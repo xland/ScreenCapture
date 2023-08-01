@@ -68,8 +68,7 @@ namespace Shape {
     }
 
     void Box::ShowDragger()
-    {
-        static int draggerSize = 6;
+    {        
         draggers[0].x0 = box.x0 - draggerSize;
         draggers[0].y0 = box.y0 - draggerSize;
         draggers[0].x1 = box.x0 + draggerSize;

@@ -14,6 +14,8 @@ namespace Shape {
 		virtual void MouseInDragger(const double& x, const double& y) {};
 		virtual void DragDragger(const double& x, const double& y) {};
 		bool isTemp = true;
+	protected:
+		int draggerSize = 6;
 	};
 }
 
