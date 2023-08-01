@@ -3,7 +3,7 @@
 void MainWin::leftBtnDown(const POINT& pos)
 {
     isLeftBtnDown = true;
-    mouseDownPos = pos;
+    MouseDownPos = pos;
     if (state != State::start) {
         auto history = History::Get();
         if (history->size() > 0) {
@@ -11,9 +11,9 @@ void MainWin::leftBtnDown(const POINT& pos)
             auto shape = history->at(history->size() - 1);
             auto textObj = dynamic_cast<Shape::Text*>(shape);
             if (textObj != nullptr) {
-                if (textObj->box.contains(mouseDownPos.x, mouseDownPos.y)) {
-                    textObj->SetIndex(mouseDownPos.x);
-                    textObj->Draw(mouseDownPos.x, mouseDownPos.y, -1, -1);
+                if (textObj->box.contains(MouseDownPos.x, MouseDownPos.y)) {
+                    textObj->SetIndex(MouseDownPos.x);
+                    textObj->Draw(MouseDownPos.x, MouseDownPos.y, -1, -1);
                     return;
                 }
             }
@@ -172,7 +172,7 @@ void MainWin::mouseMove(const POINT& pos)
             case State::start:
             {
                 BLPoint startPos(pos.x, pos.y);
-                BLPoint endPos(mouseDownPos.x, mouseDownPos.y);
+                BLPoint endPos(MouseDownPos.x, MouseDownPos.y);
                 setCutBox(startPos, endPos);
                 break;
             }
@@ -190,7 +190,7 @@ void MainWin::mouseMove(const POINT& pos)
             case State::pen:
             case State::eraser:
             {
-                History::LastShapeDraw(pos,mouseDownPos);
+                History::LastShapeDraw(pos,MouseDownPos);
                 break;
             }
             case State::text:

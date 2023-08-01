@@ -99,7 +99,7 @@ LRESULT CALLBACK MainWin::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
             return 1;
         }
         case WM_TIMER: {
-            History::LastShapeDraw(mouseDownPos,mouseDownPos);
+            History::LastShapeDraw(MouseDownPos,MouseDownPos);
             return 1;
         }
         case WM_PAINT:
@@ -140,6 +140,30 @@ LRESULT CALLBACK MainWin::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
         {
             PostQuitMessage(0);
             return 1;
+        }
+        case WM_KEYDOWN:
+        {
+            switch (wParam)
+            {
+                case VK_ESCAPE: {
+                    return 1;
+                }
+                case VK_SHIFT: {
+                    IsShiftDown = true;
+                    return 1;
+                }
+                             
+            }
+        }
+        case WM_KEYUP: 
+        {
+            switch (wParam)
+            {
+                case VK_SHIFT: {
+                    IsShiftDown = false;
+                    return 1;
+                }
+            }
         }
         case WM_CHAR:
         {

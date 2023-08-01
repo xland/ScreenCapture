@@ -1,5 +1,6 @@
 #include "Arrow.h"
 #include <math.h>
+#include "../MainWin.h"
 
 namespace Shape {
 
@@ -69,5 +70,6 @@ namespace Shape {
             context->strokePath(path);
         }
         context->end();
+        InvalidateRect(MainWin::Get()->hwnd, nullptr, false);
 	}
 }

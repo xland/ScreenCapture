@@ -124,13 +124,13 @@ void MainWin::setCutBox(const POINT& pos)
             break;
         }
         case 8: {
-            auto xSpan = pos.x - mouseDownPos.x;
-            auto ySpan = pos.y - mouseDownPos.y;
+            auto xSpan = pos.x - MouseDownPos.x;
+            auto ySpan = pos.y - MouseDownPos.y;
             dragStartCutBoxStartPos.x += xSpan;
             dragStartCutBoxStartPos.y += ySpan;
             dragStartCutBoxEndPos.x += xSpan;
             dragStartCutBoxEndPos.y += ySpan;
-            mouseDownPos = pos;
+            MouseDownPos = pos;
         }
     }
     setCutBox(dragStartCutBoxStartPos, dragStartCutBoxEndPos);

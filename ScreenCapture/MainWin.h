@@ -38,7 +38,8 @@ public:
 	static MainWin* Get();
 	static void Dispose();
 	HWND hwnd;
-	POINT mouseDownPos;
+	POINT MouseDownPos;
+	bool IsShiftDown = false;
 
 private:
 	void initScaleFactor();

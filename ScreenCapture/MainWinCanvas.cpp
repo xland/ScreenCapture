@@ -12,7 +12,7 @@ bool MainWin::endDrawing()
         if (history->size() < 1) return 0;
         auto shape = (Shape::Text*)history->at(history->size() - 1);
         shape->isEnding = true;
-        shape->Draw(mouseDownPos.x, mouseDownPos.y,-1,-1);
+        shape->Draw(MouseDownPos.x, MouseDownPos.y,-1,-1);
     }
     painter->paintCtx->begin(*painter->canvasImage);
     painter->paintCtx->blitImage(BLRect(0, 0, painter->w, painter->h), *painter->prepareImage);

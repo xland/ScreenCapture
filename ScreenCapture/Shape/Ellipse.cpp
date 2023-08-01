@@ -7,13 +7,18 @@ namespace Shape {
         auto context = Painter::Get()->paintCtx;
         context->begin(*Painter::Get()->prepareImage);
         context->clearAll();
-        //todo °´×¡Shift»­ÕýÔ²
-        BLBox box;
-        SetBoxByPos(box, x1, y1, x2, y2);
-        ellipse.rx = (x2 - x1) / 2;
-        ellipse.ry = (y2 - y1) / 2;
-        ellipse.cx = x1 + ellipse.rx;
-        ellipse.cy = y1 + ellipse.ry;
+        auto win = MainWin::Get();
+        if (win->IsShiftDown) {
+            SetBoxByPosSquare(box, x1, y1, x2, y2);
+        }
+        else
+        {
+            SetBoxByPos(box, x1, y1, x2, y2);
+        }
+        ellipse.rx = (box.x1 - box.x0) / 2;
+        ellipse.ry = (box.y1 - box.y0) / 2;
+        ellipse.cx = box.x0 + ellipse.rx;
+        ellipse.cy = box.y0 + ellipse.ry;
         if (isFill)
         {
             context->setFillStyle(color);

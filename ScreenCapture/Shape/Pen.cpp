@@ -12,8 +12,8 @@ namespace Shape {
 		context->strokeLine(x2, y2, x1, y1);
 		context->end();
 		auto win = MainWin::Get();
-		win->mouseDownPos.x = (LONG)x1;
-		win->mouseDownPos.y = (LONG)y1;
+		win->MouseDownPos.x = (LONG)x1;
+		win->MouseDownPos.y = (LONG)y1;
 		InvalidateRect(win->hwnd, nullptr, false);
 	}
 }
