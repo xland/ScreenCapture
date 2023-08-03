@@ -7,22 +7,22 @@ namespace Shape {
 	class Text : public Shape
 	{
 	public:
+		Text();
+		~Text();
 		void Draw(const double& x1, const double& y1, const double& x2, const double& y2) override;
+		void ShowDragger() override;
 		bool EndDraw() override;
 		void SetIndex(const double& x);
-		void ShowDragger() override;
 		void MouseInDragger(const double& x, const double& y) override;
 		void DragDragger(const double& x, const double& y) override;
-		HWND hwnd;
 		void DeleteWord();
 		void InsertWord(const std::wstring& word);
 		void activeKeyboard(LONG x, LONG y);
 		double rotateDeg = 0.0;
 		bool isFill = false;
 		BLRgba32 color;
-		BLBox box{ -1.0f, -1.0f, -1.0f, -1.0f };
 		std::wstring text;
-		double fontSize = 68.0f;
+		double fontSize;
 		bool showInputCursor = true;
 		int cursorIndex = 0;
 		bool isEnding = false;
@@ -31,6 +31,8 @@ namespace Shape {
 	private:
 		double tempDraggerX, tempDraggerY;
 		int draggerIndex = -1;
+		BLBox box{ -1.0f, -1.0f, -1.0f, -1.0f };
+		bool isDraggingDragger = false;
 	};
 }
 

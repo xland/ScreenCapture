@@ -183,6 +183,7 @@
     <ClCompile Include="Shape\Arrow.cpp" />
     <ClCompile Include="Shape\Shape.cpp" />
     <ClCompile Include="Shape\Text.cpp" />
+    <ClCompile Include="Tool\Tool.cpp" />
     <ClCompile Include="Util.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -204,6 +205,7 @@
     <ClInclude Include="Shape\Shape.h" />
     <ClInclude Include="State.h" />
     <ClInclude Include="Shape\Text.h" />
+    <ClInclude Include="Tool\Tool.h" />
     <ClInclude Include="Util.h" />
   </ItemGroup>
   <ItemGroup>

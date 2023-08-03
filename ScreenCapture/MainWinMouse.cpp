@@ -5,7 +5,9 @@ void MainWin::leftBtnDown(const POINT& pos)
     isLeftBtnDown = true;
     MouseDownPos = pos;
     if (state != State::start) {
-        if (!History::LastShapeDrawEnd()) {
+        if (!History::LastShapeDrawEnd()) { 
+            //draggerIndex ==-1时返回false
+            //text shape也会在这里改变光标位置
             return;
         }
         if (mouseEnterMainToolIndex != -1 && mouseEnterMainToolIndex < 9) {
@@ -23,9 +25,6 @@ void MainWin::leftBtnDown(const POINT& pos)
         if (mouseEnterSubToolIndex != -1) {
             subToolBtnClick();
             return;
-        }
-        if (state == State::maskReady) {
-
         }
         switch (state)
         {
@@ -129,7 +128,6 @@ void MainWin::leftBtnDown(const POINT& pos)
             {
                 auto shape = new Shape::Text();
                 shape->color = colors[colorBtnIndex];
-                shape->hwnd = hwnd;
                 History::Push(shape);
                 shape->Draw(pos.x, pos.y, -1, -1);
                 SetTimer(hwnd, 999, 660, (TIMERPROC)NULL);
@@ -186,7 +184,6 @@ void MainWin::mouseMove(const POINT& pos)
                 break;
             }
             case State::text:
-                break;
             case State::lastPathDrag:
             {
                 History::LastShapeDragDragger(pos);
@@ -208,6 +205,7 @@ void MainWin::mouseMove(const POINT& pos)
             }
             else if (state == State::text) {
                 ChangeCursor(IDC_IBEAM);
+                History::LastShapeMouseInDragger(pos);
             }
             else
             {
@@ -245,14 +243,17 @@ void MainWin::leftBtnUp(const POINT& pos)
             state = State::lastPathDrag;
             break;
         }
+        case State::text:
+        {
+            History::LastShapeShowDragger();
+            break;
+        }
         case State::pen:
         case State::eraser:
         {
             break;
         }
         case State::mosaic:
-            break;
-        case State::text:
             break;
     }
 }
