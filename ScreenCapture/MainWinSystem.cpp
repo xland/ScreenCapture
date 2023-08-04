@@ -1,6 +1,10 @@
 #include "MainWin.h"
 #include "dwmapi.h"
 #include "resource.h"
+#include <Commctrl.h>
+#include <Shobjidl.h> 
+#include <atlbase.h>
+#include <cassert> 
 
 LRESULT CALLBACK MainWin::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     if (msg == WM_NCCREATE)
@@ -98,7 +102,14 @@ LRESULT CALLBACK MainWin::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
         }
         case WM_PAINT:
         {
-            paintBoard();
+            auto paintCtx = painter->PaintBoard();
+            paintCtx->setFillStyle(BLRgba32(0, 0, 0, 180));
+            paintCtx->fillBoxArray(maskBoxes, 8);
+            paintCtx->setStrokeStyle(BLRgba32(22, 119, 255, 255));
+            paintCtx->setStrokeWidth(3.8f);
+            paintCtx->strokeBox(cutBox);
+            drawToolMain();
+            paintCtx->end();
             painter->PaintOnWindow(hwnd);
             return 0;
         }
@@ -209,4 +220,41 @@ POINT MainWin::getMousePoint(const LPARAM& lParam)
     point.x = GET_X_LPARAM(lParam);
     point.y = GET_Y_LPARAM(lParam);
     return point;
+}
+
+
+void MainWin::saveFile()
+{
+    ATL::CComPtr<IFileSaveDialog> saveDialog;
+    auto result = saveDialog.CoCreateInstance(CLSID_FileSaveDialog);
+    saveDialog->SetDefaultExtension(L"png");
+    saveDialog->SetFileName(L"1243");
+    saveDialog->SetTitle(L"±£´æÎÄ¼þ");
+    //saveDialog->SetFilter(L"Image\0*.png\0");
+    if (FAILED(result)) return;
+    result = saveDialog->SetOptions(FOS_FORCEFILESYSTEM | FOS_PATHMUSTEXIST | FOS_OVERWRITEPROMPT);
+    if (FAILED(result)) return;
+    result = saveDialog->Show(hwnd);
+    if (FAILED(result)) return;
+    CComPtr<IShellItem> item;
+    result = saveDialog->GetResult(&item);
+    if (FAILED(result)) return;
+    LPWSTR filePath;
+    item->GetDisplayName(SIGDN_FILESYSPATH, &filePath);
+    auto w = cutBox.x1 - cutBox.x0;
+    auto h = cutBox.y1 - cutBox.y0;
+    BLImage imgSave(w, h, BL_FORMAT_PRGB32);
+    painter->paintCtx->begin(imgSave);
+    painter->paintCtx->blitImage(BLPoint(0,0), *painter->bgImage, BLRectI(cutBox.x0, cutBox.y0, w, h));
+    painter->paintCtx->blitImage(BLPoint(0,0), *painter->canvasImage, BLRectI(cutBox.x0, cutBox.y0, w, h));
+    painter->paintCtx->end();
+    auto filePathUtf8 = ConvertToUTF8(filePath);
+    imgSave.writeToFile(filePathUtf8.c_str());
+    CoTaskMemFree(filePath);
+    CloseWindow(hwnd);
+    PostQuitMessage(0);    
+}
+void MainWin::saveClipboard()
+{
+
 }

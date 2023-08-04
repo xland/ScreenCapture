@@ -1,4 +1,5 @@
 #include "Painter.h"
+#include <Windows.h>
 
 static Painter* p;
 
@@ -68,6 +69,17 @@ void Painter::shotScreen()
     paintCtx->begin(*canvasImage);
     paintCtx->clearAll();
     paintCtx->end();
+}
+
+BLContext* Painter::PaintBoard()
+{
+    paintCtx->begin(*boardImage);
+    paintCtx->blitImage(BLRect(0, 0, w, h), *bgImage);
+    paintCtx->blitImage(BLRect(0, 0, w, h), *canvasImage);
+    if (isDrawing) {
+        paintCtx->blitImage(BLRect(0, 0, w, h), *prepareImage);
+    }
+    return paintCtx;
 }
 
 void Painter::PaintOnWindow(HWND hwnd)

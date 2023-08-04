@@ -35,7 +35,8 @@ void MainWin::leftBtnDown(const POINT& pos)
         }
         else if (mouseEnterMainToolIndex == 11) //save
         {
-
+            saveFile();
+            return;
         }
         else if (mouseEnterMainToolIndex == 12) //clipboard
         {

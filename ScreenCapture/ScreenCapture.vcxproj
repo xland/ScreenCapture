@@ -173,7 +173,6 @@
     <ClCompile Include="Shape\Image.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainWin.cpp" />
-    <ClCompile Include="MainWinCanvas.cpp" />
     <ClCompile Include="MainWinMask.cpp" />
     <ClCompile Include="MainWinMouse.cpp" />
     <ClCompile Include="MainWinTool.cpp" />

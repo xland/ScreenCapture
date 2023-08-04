@@ -21,9 +21,6 @@
     <ClCompile Include="MainWin.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="MainWinCanvas.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="MainWinMouse.cpp">
       <Filter>源文件</Filter>
     </ClCompile>

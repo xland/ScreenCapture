@@ -47,6 +47,8 @@ private:
 	void initScaleFactor();
 	void createWindow();
 	void showWindow();
+	void saveFile();
+	void saveClipboard();
 	double scaleFactor;
 	HINSTANCE hinstance;
 	Painter* painter;
@@ -58,7 +60,7 @@ private:
 	inline POINT getMousePoint(const LPARAM& lParam);
 	bool isLeftBtnDown;
 
-	void paintBoard();
+	
 	BLRgba32 colors[8] {
 		BLRgba32(207, 19, 34, 255),
 		BLRgba32(212, 136, 6, 255),
