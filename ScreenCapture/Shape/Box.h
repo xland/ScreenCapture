@@ -10,13 +10,13 @@ namespace Shape {
 			void DragDragger(const double& x, const double& y) override;
 			bool EndDraw() override;
 			BLBox box;
-			BLBox draggers[4];
 			bool isFill = false;
 			double rotateDeg = 0.0;
 			bool isTansparent = false;//todo
 			BLRgba32 color;
 			double strokeWidth;
 		private:
+			BLBox draggers[4];
 			double tempDraggerX, tempDraggerY;
 			int draggerIndex = -1;
 	};
