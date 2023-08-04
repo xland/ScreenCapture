@@ -40,7 +40,8 @@ void MainWin::leftBtnDown(const POINT& pos)
         }
         else if (mouseEnterMainToolIndex == 12) //clipboard
         {
-
+            saveClipboard();
+            return;
         }
         else if (mouseEnterMainToolIndex == 13) //close
         {

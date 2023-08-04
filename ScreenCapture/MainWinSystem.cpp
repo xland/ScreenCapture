@@ -256,5 +256,24 @@ void MainWin::saveFile()
 }
 void MainWin::saveClipboard()
 {
+    int w = cutBox.x1 - cutBox.x0;
+    int h = cutBox.y1 - cutBox.y0;
+    auto dataSize = w * 4 * h;
+    auto boardPixels = new unsigned char[dataSize];
+    BITMAPINFO info = { sizeof(BITMAPINFOHEADER), (long)w, 0 - (long)h, 1, 32, BI_RGB, dataSize, 0, 0, 0, 0 };
+    HBITMAP bitmap = CreateDIBSection(NULL, &info, DIB_RGB_COLORS, reinterpret_cast<void**>(&boardPixels), NULL, NULL);
+    BLImage imgSave;
+    imgSave.createFromData(w, h, BL_FORMAT_PRGB32, boardPixels, w * 4);
+    painter->paintCtx->begin(imgSave);
+    painter->paintCtx->blitImage(BLPoint(0, 0), *painter->bgImage, BLRectI(cutBox.x0, cutBox.y0, w, h));
+    painter->paintCtx->blitImage(BLPoint(0, 0), *painter->canvasImage, BLRectI(cutBox.x0, cutBox.y0, w, h));
+    painter->paintCtx->end();
+    OpenClipboard(hwnd);
+    EmptyClipboard();
+    SetClipboardData(CF_BITMAP, bitmap);
+    CloseClipboard();
+    DeleteObject(bitmap);
+    CloseWindow(hwnd);
+    PostQuitMessage(0);
 
 }
