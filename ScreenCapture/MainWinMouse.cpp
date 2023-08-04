@@ -14,12 +14,37 @@ void MainWin::leftBtnDown(const POINT& pos)
             selectedToolIndex = mouseEnterMainToolIndex;
             InvalidateRect(hwnd, nullptr, false);
             state = (State)(selectedToolIndex+2);
+            //设置几个图形默认是否需要填充
             if (state == State::rect||state == State::ellipse||state == State::line) {
                 isFill = false;
             }
             else if (state == State::arrow || state == State::number) {
                 isFill = true;
             }
+            return;
+        }
+        else if(mouseEnterMainToolIndex == 9) //undo
+        {
+            History::Undo();
+            return;
+        }
+        else if (mouseEnterMainToolIndex == 10) //redo
+        {
+            History::Redo();
+            return;
+        }
+        else if (mouseEnterMainToolIndex == 11) //save
+        {
+
+        }
+        else if (mouseEnterMainToolIndex == 12) //clipboard
+        {
+
+        }
+        else if (mouseEnterMainToolIndex == 13) //close
+        {
+            CloseWindow(hwnd);
+            PostQuitMessage(0);
             return;
         }
         if (mouseEnterSubToolIndex != -1) {
@@ -77,7 +102,6 @@ void MainWin::leftBtnDown(const POINT& pos)
                 auto shape = new Shape::Pen();
                 shape->color = colors[colorBtnIndex];
                 shape->strokeWidth = strokeWidths[strokeBtnIndex];
-                shape->isTemp = false;
                 History::Push(shape);
                 break;
             }
@@ -107,7 +131,6 @@ void MainWin::leftBtnDown(const POINT& pos)
             {
                 auto shape = new Shape::Eraser();
                 shape->strokeWidth = strokeWidths[strokeBtnIndex]+28;
-                shape->isTemp = false;
                 History::Push(shape);
                 break;
             }

@@ -13,6 +13,8 @@ public:
 	static void LastShapeShowDragger();
 	static void LastShapeMouseInDragger(const POINT& pos);
 	static void LastShapeDragDragger(const POINT& pos);
+	static void Undo();
+	static void Redo();
 private:
 
 };

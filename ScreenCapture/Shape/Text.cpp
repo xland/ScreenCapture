@@ -64,6 +64,7 @@ namespace Shape {
     }
     void Text::InsertWord(const std::wstring& word)
     {
+        isTemp = false;
         text = text.substr(0, cursorIndex) + word + text.substr(cursorIndex);
         cursorIndex += 1;
         Draw(-1, -1, -1, -1);
@@ -167,7 +168,6 @@ namespace Shape {
         context->begin(*painter->prepareImage);
         context->clearAll();
         context->end();
-        isTemp = false;
         painter->isDrawing = false;
         win->state = win->preState;
         InvalidateRect(win->hwnd, nullptr, false);

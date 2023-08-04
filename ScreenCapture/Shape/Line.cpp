@@ -3,6 +3,7 @@
 namespace Shape {
 	void Line::Draw(const double& x1, const double& y1, const double& x2, const double& y2)
 	{
+        isTemp = false;
         this->x1 = x1;
         this->y1 = y1;
         this->x2 = x2;
@@ -48,7 +49,6 @@ namespace Shape {
         context->begin(*painter->prepareImage);
         context->clearAll();
         context->end();
-        isTemp = false;
         painter->isDrawing = false;
         auto win = MainWin::Get();
         win->state = win->preState;
