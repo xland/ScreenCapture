@@ -135,6 +135,7 @@ namespace Shape {
     void Number::ShowDragger()
     {
         const BLPoint* points = path.vertexData();
+        if (!points) return;
         draggers[0].x0 = points[0].x - draggerSize;
         draggers[0].y0 = points[0].y - draggerSize;
         draggers[0].x1 = points[0].x + draggerSize;

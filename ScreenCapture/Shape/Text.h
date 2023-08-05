@@ -25,7 +25,7 @@ namespace Shape {
 		double fontSize;
 		bool showInputCursor = true;
 		int cursorIndex = 0;
-		bool isEnding = false;
+		bool onlyDrawText = false;
 		double margin = 18.0f;
 		BLBox draggers[4];
 	private:

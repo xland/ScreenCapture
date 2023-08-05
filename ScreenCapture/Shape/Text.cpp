@@ -74,6 +74,12 @@ namespace Shape {
         auto context = Painter::Get()->paintCtx;
         context->begin(*Painter::Get()->prepareImage);
         context->clearAll();
+        if (onlyDrawText&&isTemp) {
+            context->end();
+            auto win = MainWin::Get();
+            InvalidateRect(win->hwnd, nullptr, false);
+            return;
+        }
         if (box.x0 == -1) {
             box.x0 = x1 - margin;
             box.y0 = y1 - fontSize / 2 - margin;
@@ -87,7 +93,7 @@ namespace Shape {
             utf8 = ConvertToUTF8(text);
             context->fillUtf8Text(BLPoint(box.x0 + margin, box.y0 + font->metrics().ascent+margin), *font, utf8.c_str());
         }
-        if (!isEnding) {
+        if (!onlyDrawText) {
             BLFontMetrics fm = font->metrics();
             BLTextMetrics tm;
             BLGlyphBuffer gb;            
@@ -112,7 +118,7 @@ namespace Shape {
                 showInputCursor = !showInputCursor;
             }
         }   
-        if (draggerIndex != -1 && !isDraggingDragger) {
+        if (!onlyDrawText && draggerIndex != -1 && !isDraggingDragger) {
             draggers[0].x0 = box.x0 - draggerSize;
             draggers[0].y0 = box.y0 - draggerSize;
             draggers[0].x1 = box.x0 + draggerSize;

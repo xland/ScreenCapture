@@ -5,6 +5,7 @@
 #include <Shobjidl.h> 
 #include <atlbase.h>
 #include <Gdiplus.h> 
+#include <format>
 
 LRESULT CALLBACK MainWin::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     if (msg == WM_NCCREATE)
@@ -97,7 +98,12 @@ LRESULT CALLBACK MainWin::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
             return 1;
         }
         case WM_TIMER: {
-            History::LastShapeDraw(MouseDownPos,MouseDownPos);
+            if (wParam == 999) {
+                History::LastShapeDraw(MouseDownPos, MouseDownPos);
+            }
+            else if (wParam == 998) {
+                saveClipboard();
+            }
             return 1;
         }
         case WM_PAINT:
@@ -111,6 +117,11 @@ LRESULT CALLBACK MainWin::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
             drawToolMain();
             paintCtx->end();
             painter->PaintOnWindow(hwnd);
+            return 0;
+        }
+        case WM_LBUTTONDBLCLK:
+        {
+            saveClipboard();
             return 0;
         }
         case WM_RBUTTONDOWN:
@@ -127,6 +138,26 @@ LRESULT CALLBACK MainWin::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
         }
         case WM_LBUTTONDOWN:
         {
+            if (state >= State::maskReady) {
+                static auto t1 = std::chrono::system_clock::now();
+                auto t2 = std::chrono::system_clock::now();
+                auto count = floor<std::chrono::milliseconds>(t2 - t1).count();
+                if (count > 0 && count < 300) {
+                    if (state == State::text) {
+                        if (History::Get()->size() < 1) return 0;
+                        auto shape = (Shape::Text*)History::Get()->at(History::Get()->size() - 1);
+                        shape->onlyDrawText = true;
+                        shape->Draw(0, 0, 0, 0);
+                        SetTimer(hwnd, 998, 60, (TIMERPROC)NULL);
+                    }
+                    else
+                    {
+                        saveClipboard();
+                    }                    
+                    return 0;
+                }
+                t1 = t2;
+            }
             POINT point = getMousePoint(lParam);
             leftBtnDown(point);
             return 0;
@@ -225,10 +256,19 @@ POINT MainWin::getMousePoint(const LPARAM& lParam)
 
 void MainWin::saveFile()
 {
+    SYSTEMTIME localTime;
+    GetLocalTime(&localTime);
+    std::wstring name = std::to_wstring(localTime.wYear)+ 
+        std::to_wstring(localTime.wMonth) + 
+        std::to_wstring(localTime.wDay) + 
+        std::to_wstring(localTime.wHour) + 
+        std::to_wstring(localTime.wMinute) + 
+        std::to_wstring(localTime.wSecond) + 
+        std::to_wstring(localTime.wMilliseconds);
     ATL::CComPtr<IFileSaveDialog> saveDialog;
     auto result = saveDialog.CoCreateInstance(CLSID_FileSaveDialog);
     saveDialog->SetDefaultExtension(L"png");
-    saveDialog->SetFileName(L"1243");
+    saveDialog->SetFileName(name.c_str());
     saveDialog->SetTitle(L"±£´æÎÄ¼þ");
     //saveDialog->SetFilter(L"Image\0*.png\0");
     if (FAILED(result)) return;
