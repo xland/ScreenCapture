@@ -220,7 +220,21 @@ void MainWin::mouseMove(const POINT& pos)
         }
     }
     else {
-        if (checkMouseEnterToolBox(pos)) return;
+        if(state == State::start){
+            for (size_t i = 0; i < windowBoxes.size(); i++)
+            {
+                if (windowBoxes[i].contains(pos.x, pos.y)) {
+                    BLPoint startPos(windowBoxes[i].x0, windowBoxes[i].y0);
+                    BLPoint endPos(windowBoxes[i].x1, windowBoxes[i].y1);
+                    setCutBox(startPos, endPos);
+                    break;
+                }
+            }
+        }
+        if (checkMouseEnterToolBox(pos)) 
+        { 
+            return; 
+        }
         if (state == State::maskReady) {            
             checkMouseEnterMaskBox(pos);
         }

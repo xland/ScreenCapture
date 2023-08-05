@@ -7,6 +7,7 @@ MainWin::MainWin(HINSTANCE hinstance):hinstance{hinstance}
 {
     Painter::Init();
     painter = Painter::Get();
+    initWindowBoxes();
     createWindow();
     initScaleFactor();
     showWindow();

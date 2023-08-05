@@ -30,7 +30,6 @@
 class MainWin
 {
 public:
-	MainWin(HINSTANCE hinstance);
 	~MainWin();
 	static LRESULT CALLBACK RouteWindowMessage(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 	LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
@@ -44,14 +43,17 @@ public:
 	State preState;
 
 private:
+	MainWin(HINSTANCE hinstance);
 	void initScaleFactor();
 	void createWindow();
 	void showWindow();
 	void saveFile();
 	void saveClipboard();
+	void initWindowBoxes();
 	double scaleFactor;
 	HINSTANCE hinstance;
 	Painter* painter;
+	std::vector<BLBox> windowBoxes;
 	
 	void leftBtnDown(const POINT& pos);
 	void rightBtnDown(const POINT& pos);

@@ -316,3 +316,29 @@ void MainWin::saveClipboard()
     CloseWindow(hwnd);
     PostQuitMessage(0);
 }
+
+void MainWin::initWindowBoxes()
+{
+    EnumWindows([](HWND hwnd, LPARAM lparam)
+        {
+            if (!hwnd) return TRUE;
+            if (!IsWindowVisible(hwnd)) return TRUE;
+            if (IsIconic(hwnd)) return TRUE;
+            if (GetWindowTextLength(hwnd) < 1) return TRUE;
+            auto self = (MainWin*)lparam;
+            RECT rect;
+            GetWindowRect(hwnd, &rect);
+            if (rect.right - rect.left <= 6 || rect.bottom - rect.top <= 6) {
+                return TRUE;
+            }
+            //auto debug = std::to_string(rect.left) + "," + std::to_string(rect.top) + "," + std::to_string(rect.right) + ","+ std::to_string(rect.bottom);
+            //OutputDebugStringA(debug.c_str());
+            //OutputDebugStringA("\r\n");
+            BLBox item(rect.left - self->painter->x,
+                rect.top - self->painter->y,
+                rect.right - self->painter->x,
+                rect.bottom - self->painter->y);
+            self->windowBoxes.push_back(std::move(item));
+            return TRUE;
+        }, (LPARAM)this);
+}
