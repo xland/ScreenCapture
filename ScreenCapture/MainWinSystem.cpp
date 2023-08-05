@@ -4,7 +4,7 @@
 #include <Commctrl.h>
 #include <Shobjidl.h> 
 #include <atlbase.h>
-#include <cassert> 
+#include <Gdiplus.h> 
 
 LRESULT CALLBACK MainWin::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     if (msg == WM_NCCREATE)
@@ -106,7 +106,7 @@ LRESULT CALLBACK MainWin::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
             paintCtx->setFillStyle(BLRgba32(0, 0, 0, 180));
             paintCtx->fillBoxArray(maskBoxes, 8);
             paintCtx->setStrokeStyle(BLRgba32(22, 119, 255, 255));
-            paintCtx->setStrokeWidth(3.8f);
+            paintCtx->setStrokeWidth(cutBoxBorderWidth);
             paintCtx->strokeBox(cutBox);
             drawToolMain();
             paintCtx->end();
@@ -256,24 +256,23 @@ void MainWin::saveFile()
 }
 void MainWin::saveClipboard()
 {
-    int w = cutBox.x1 - cutBox.x0;
-    int h = cutBox.y1 - cutBox.y0;
-    auto dataSize = w * 4 * h;
-    auto boardPixels = new unsigned char[dataSize];
-    BITMAPINFO info = { sizeof(BITMAPINFOHEADER), (long)w, 0 - (long)h, 1, 32, BI_RGB, dataSize, 0, 0, 0, 0 };
-    HBITMAP bitmap = CreateDIBSection(NULL, &info, DIB_RGB_COLORS, reinterpret_cast<void**>(&boardPixels), NULL, NULL);
-    BLImage imgSave;
-    imgSave.createFromData(w, h, BL_FORMAT_PRGB32, boardPixels, w * 4);
-    painter->paintCtx->begin(imgSave);
-    painter->paintCtx->blitImage(BLPoint(0, 0), *painter->bgImage, BLRectI(cutBox.x0, cutBox.y0, w, h));
-    painter->paintCtx->blitImage(BLPoint(0, 0), *painter->canvasImage, BLRectI(cutBox.x0, cutBox.y0, w, h));
-    painter->paintCtx->end();
+    size_t x = painter->x + cutBox.x0 + cutBoxBorderWidth / 2;
+    size_t y = painter->y + cutBox.y0 + cutBoxBorderWidth / 2;
+    size_t w = cutBox.x1 - cutBox.x0- cutBoxBorderWidth;
+    size_t h = cutBox.y1 - cutBox.y0- cutBoxBorderWidth;
+    HDC ScreenDC = ::GetDC(NULL);
+    HDC hMemDC = CreateCompatibleDC(ScreenDC);
+    HBITMAP hBitmap = CreateCompatibleBitmap(ScreenDC, w, h);
+    HBITMAP hOldBitmap = (HBITMAP)SelectObject(hMemDC, hBitmap);
+    StretchBlt(hMemDC, 0, 0, w, h, ScreenDC, x, y, w, h, SRCCOPY);
+    hBitmap = (HBITMAP)SelectObject(hMemDC, hOldBitmap);
+    DeleteDC(hMemDC);
+    DeleteObject(hOldBitmap);
     OpenClipboard(hwnd);
     EmptyClipboard();
-    SetClipboardData(CF_BITMAP, bitmap);
+    SetClipboardData(CF_BITMAP, hBitmap);
     CloseClipboard();
-    DeleteObject(bitmap);
+    ReleaseDC(NULL,ScreenDC);
     CloseWindow(hwnd);
     PostQuitMessage(0);
-
 }

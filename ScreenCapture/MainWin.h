@@ -79,6 +79,7 @@ private:
 	void setCutBox(BLPoint& startPos, BLPoint& endPos);
 	BLBox maskBoxes[8];
 	BLBox cutBox;
+	size_t cutBoxBorderWidth = 4;
 	BLPoint dragStartCutBoxStartPos;
 	BLPoint dragStartCutBoxEndPos;
 	int mouseInMaskBoxIndex = -1;
