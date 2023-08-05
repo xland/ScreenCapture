@@ -12,6 +12,8 @@ public:
 	static void Dispose();
 	void PaintOnWindow(HWND hwnd);
 	BLContext* PaintBoard();
+	void DrawPixelInfo();
+	LONG pixelX, pixelY;
 	float x, y, w, h;
 	bool isDrawing = false;
 	BLImage* canvasImage;

@@ -79,7 +79,6 @@ void MainWin::setCutBox(BLPoint& startPos, BLPoint& endPos)
     maskBoxes[6].y1 = painter->h;
     maskBoxes[7].y0 = cutBox.y0;
     maskBoxes[7].y1 = cutBox.y1;
-    InvalidateRect(hwnd, nullptr, false);
 }
 
 

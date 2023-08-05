@@ -64,6 +64,7 @@ void MainWin::leftBtnDown(const POINT& pos)
                 dragStartCutBoxEndPos = BLPoint(cutBox.x1, cutBox.y1);
                 if (mouseInMaskBoxIndex < 8) {
                     setCutBox(pos);
+                    InvalidateRect(hwnd, nullptr, false);
                 }
                 return;
             }
@@ -190,11 +191,13 @@ void MainWin::mouseMove(const POINT& pos)
                 BLPoint startPos(pos.x, pos.y);
                 BLPoint endPos(MouseDownPos.x, MouseDownPos.y);
                 setCutBox(startPos, endPos);
+                InvalidateRect(hwnd, nullptr, false);
                 break;
             }
             case State::maskReady:
             {
                 setCutBox(pos);
+                InvalidateRect(hwnd, nullptr, false);
                 break;
             }
             case State::rect:
@@ -230,6 +233,9 @@ void MainWin::mouseMove(const POINT& pos)
                     break;
                 }
             }
+            painter->pixelX = pos.x;
+            painter->pixelY = pos.y;
+            InvalidateRect(hwnd, nullptr, false);
         }
         if (checkMouseEnterToolBox(pos)) 
         { 

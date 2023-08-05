@@ -62,6 +62,7 @@ private:
 	inline POINT getMousePoint(const LPARAM& lParam);
 	bool isLeftBtnDown;
 
+
 	
 	BLRgba32 colors[8] {
 		BLRgba32(207, 19, 34, 255),

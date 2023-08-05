@@ -115,6 +115,7 @@ LRESULT CALLBACK MainWin::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
             paintCtx->setStrokeWidth(cutBoxBorderWidth);
             paintCtx->strokeBox(cutBox);
             drawToolMain();
+            painter->DrawPixelInfo();
             paintCtx->end();
             painter->PaintOnWindow(hwnd);
             return 0;

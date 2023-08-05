@@ -1,5 +1,7 @@
 #include "Painter.h"
 #include <Windows.h>
+#include "Font.h"
+#include "Util.h"
 
 static Painter* p;
 
@@ -92,4 +94,47 @@ void Painter::PaintOnWindow(HWND hwnd)
     DeleteDC(hdcBmp);
     EndPaint(hwnd, &ps);
     ValidateRect(hwnd, NULL);
+}
+
+void Painter::DrawPixelInfo()
+{
+    BLRectI rectSrc;
+    rectSrc.x = pixelX - 10;
+    rectSrc.y = pixelY - 5;
+    rectSrc.w = 20;
+    rectSrc.h = 10;
+
+    BLRectI rectDst;
+    rectDst.x = pixelX + 10;
+    rectDst.y = pixelY + 10;
+    rectDst.w = 200;
+    rectDst.h = 100;
+
+    paintCtx->blitImage(rectDst, *bgImage, rectSrc);
+    paintCtx->setStrokeStyle(BLRgba32(0,0,0));
+    paintCtx->setStrokeWidth(1);
+    paintCtx->strokeRect(BLRectI(rectDst.x,rectDst.y,rectDst.w,rectDst.h*2));
+
+    static int crossSize = 10;
+    paintCtx->setStrokeStyle(BLRgba32(60, 80,160, 110));
+    paintCtx->setStrokeWidth(crossSize);
+    paintCtx->strokeLine(rectDst.x, rectDst.y+ rectDst.h/2, rectDst.x+ rectDst.w/2-crossSize/2, rectDst.y + rectDst.h / 2);
+    paintCtx->strokeLine(rectDst.x + rectDst.w / 2 + crossSize / 2, rectDst.y + rectDst.h / 2, rectDst.x + rectDst.w, rectDst.y + rectDst.h / 2);
+    paintCtx->strokeLine(rectDst.x+ rectDst.w/2, rectDst.y, rectDst.x + rectDst.w/2, rectDst.y + rectDst.h / 2 - crossSize / 2);
+    paintCtx->strokeLine(rectDst.x + rectDst.w / 2, rectDst.y + rectDst.h / 2 + crossSize / 2, rectDst.x + rectDst.w / 2, rectDst.y + rectDst.h);
+
+    paintCtx->setFillStyle(BLRgba32(0, 0, 0,180));
+    paintCtx->fillRect(BLRectI(rectDst.x, rectDst.y+ rectDst.h, rectDst.w, rectDst.h));
+
+    auto font = Font::Get()->fontText;
+    font->setSize(16);
+    paintCtx->setFillStyle(BLRgba32(255, 255, 255));
+    auto textX = rectDst.x + 10;
+    auto textY = rectDst.y + rectDst.h + 14 + font->metrics().ascent;
+    auto utf8 = ConvertToUTF8(L"Î»ÖÃ£º");
+    paintCtx->fillUtf8Text(BLPoint(textX, textY), *font, utf8.data());
+    utf8 = ConvertToUTF8(L"RGB£º");
+    paintCtx->fillUtf8Text(BLPoint(textX+1, textY+28), *font, utf8.data());
+    utf8 = ConvertToUTF8(L"¸´ÖÆ£º");
+    paintCtx->fillUtf8Text(BLPoint(textX, textY+56), *font, utf8.data());
 }
