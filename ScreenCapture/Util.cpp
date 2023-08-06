@@ -81,3 +81,21 @@ void ChangeCursor(LPCTSTR cursor)
     auto hCursor = LoadCursor(NULL, cursor);
     SetCursor(hCursor);
 }
+
+void SetClipboardText(HWND hwnd,const std::wstring& text) {
+    if (::OpenClipboard(hwnd)) {
+        BOOL b = ::EmptyClipboard();
+        size_t len = text.length()+1;
+        HANDLE copy_handle = ::GlobalAlloc(GMEM_MOVEABLE | GMEM_DDESHARE, len * sizeof(TCHAR));    
+        byte* copy_data = reinterpret_cast<byte*>(::GlobalLock(copy_handle));
+        if (copy_data) {
+            memcpy(copy_data, text.data(), len * sizeof(TCHAR));
+        }
+        ::GlobalUnlock(copy_handle);
+        HANDLE h = ::SetClipboardData(CF_UNICODETEXT, copy_handle);
+        if (!h) {
+            ::GlobalFree(copy_handle);
+        }
+        ::CloseClipboard();
+    }
+}

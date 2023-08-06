@@ -190,7 +190,25 @@ LRESULT CALLBACK MainWin::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
                 case VK_SHIFT: {
                     IsShiftDown = true;
                     return 0;
-                }                             
+                }
+                case VK_CONTROL: {
+                    IsCtrlDown = true;
+                    return 0;
+                }
+                case 82: { //R
+                    if (IsCtrlDown) {
+                        SetClipboardText(hwnd, painter->GetPixelColorRgb());
+                        return 1;
+                    }
+                    return 0;
+                }
+                case 72: { //H
+                    if (IsCtrlDown) {
+                        SetClipboardText(hwnd, painter->GetPixelColorHex());
+                        return 1;
+                    }
+                    return 0;
+                }
             }
             return 0;
         }
@@ -200,6 +218,10 @@ LRESULT CALLBACK MainWin::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
             {
                 case VK_SHIFT: {
                     IsShiftDown = false;
+                    return 0;
+                }
+                case VK_CONTROL: {
+                    IsCtrlDown = false;
                     return 0;
                 }
             }

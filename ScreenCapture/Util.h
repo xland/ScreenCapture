@@ -7,4 +7,4 @@ void SetBoxByPosSquare(BLBox& box, const double& x1, const double& y1, const dou
 std::string ConvertToUTF8(const std::wstring& wstr);
 std::string ConvertToUTF8(const LPWSTR& wstr);
 void ChangeCursor(LPCTSTR cursor);
-
+void SetClipboardText(HWND hwnd, const std::wstring& text);

@@ -39,6 +39,7 @@ public:
 	HWND hwnd;
 	POINT MouseDownPos;
 	bool IsShiftDown = false;
+	bool IsCtrlDown = false;
 	State state = State::start;
 	State preState;
 

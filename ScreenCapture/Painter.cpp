@@ -2,7 +2,6 @@
 #include <Windows.h>
 #include "Font.h"
 #include "Util.h"
-#include <string>
 #include <sstream>
 #include <iostream>
 #include <iomanip>
@@ -172,22 +171,32 @@ void Painter::DrawPixelInfo()
     auto textX = rectDst.x + 8;
     auto textY = rectDst.y + rectDst.h + 14 + font->metrics().ascent;
     auto utf8 = ConvertToUTF8(L"Î»ÖÃ:X:"+std::to_wstring(pixelX)+L" Y:"+ std::to_wstring(pixelY));
-    paintCtx->fillUtf8Text(BLPoint(textX, textY), *font, utf8.data());
-    size_t pixelIndex = pixelY* w * 4 + pixelX * 4;
-    int rgb = ( (bgPixels[pixelIndex + 2] << 16) | (bgPixels[pixelIndex + 1] << 8) | bgPixels[pixelIndex]);
-    utf8 = ConvertToUTF8(L"RGB(Ctrl+R):" +
-        std::to_wstring(bgPixels[pixelIndex + 2]) + L"," +
-        std::to_wstring(bgPixels[pixelIndex + 1]) + L"," +
-        std::to_wstring(bgPixels[pixelIndex])
-    );
+    paintCtx->fillUtf8Text(BLPoint(textX, textY), *font, utf8.data()); 
+    utf8 = ConvertToUTF8(L"RGB(Ctrl+R):" + GetPixelColorRgb());
     paintCtx->fillUtf8Text(BLPoint(textX+1, textY+28), *font, utf8.data());
+    utf8 = ConvertToUTF8(L"HEX(Ctrl+H):" + GetPixelColorHex());
+    paintCtx->fillUtf8Text(BLPoint(textX, textY + 56), *font, utf8.data());
+}
+
+
+std::wstring Painter::GetPixelColorRgb()
+{
+    size_t pixelIndex = pixelY * w * 4 + pixelX * 4;
+    auto result = std::to_wstring(bgPixels[pixelIndex + 2]) + L"," +
+        std::to_wstring(bgPixels[pixelIndex + 1]) + L"," +
+        std::to_wstring(bgPixels[pixelIndex]);
+    return result;
+}
+std::wstring Painter::GetPixelColorHex()
+{
+    size_t pixelIndex = pixelY * w * 4 + pixelX * 4;
     std::wstringstream ss;
+    int rgb = ((bgPixels[pixelIndex + 2] << 16) | (bgPixels[pixelIndex + 1] << 8) | bgPixels[pixelIndex]);
     ss << std::hex << rgb;
     std::wstring hexColorStr = ss.str();
     int str_length = hexColorStr.length();
     for (int i = 0; i < 6 - str_length; i++) {
         hexColorStr = L"0" + hexColorStr;
     }
-    utf8 = ConvertToUTF8(L"HEX(Ctrl+H):#" + hexColorStr);
-    paintCtx->fillUtf8Text(BLPoint(textX, textY + 56), *font, utf8.data());
+    return L"#" + hexColorStr;
 }
