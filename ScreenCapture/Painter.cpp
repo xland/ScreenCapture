@@ -1,10 +1,11 @@
-#include "Painter.h"
+ï»¿#include "Painter.h"
 #include <Windows.h>
 #include "Font.h"
 #include "Util.h"
 #include <sstream>
 #include <iostream>
 #include <iomanip>
+#include <format>
 
 static Painter* p;
 
@@ -109,7 +110,7 @@ void Painter::DrawPixelInfo()
     rectDst.w = 200;
     rectDst.h = 100;
     if (rectDst.x + rectDst.w > w) {
-        rectDst.x -= (rectDst.w+10);
+        rectDst.x -= (rectDst.w+20);
     }
     if (rectDst.y + rectDst.w > h) {
         rectDst.y -= (rectDst.w +10);
@@ -148,8 +149,6 @@ void Painter::DrawPixelInfo()
         srcX = pixelX - 10;
         srcY += 1;
     }
-
-    //paintCtx->blitImage(rectDst, *pixelImage);
     paintCtx->setStrokeStyle(BLRgba32(0,0,0));
     paintCtx->setStrokeWidth(1);
     paintCtx->strokeRect(BLRectI(rectDst.x,rectDst.y,rectDst.w,rectDst.h*2));
@@ -166,15 +165,23 @@ void Painter::DrawPixelInfo()
     paintCtx->fillRect(BLRectI(rectDst.x, rectDst.y+ rectDst.h, rectDst.w, rectDst.h));
 
     auto font = Font::Get()->fontText;
-    font->setSize(16);
+    font->setSize(16.6);
     paintCtx->setFillStyle(BLRgba32(255, 255, 255));
     auto textX = rectDst.x + 8;
     auto textY = rectDst.y + rectDst.h + 14 + font->metrics().ascent;
-    auto utf8 = ConvertToUTF8(L"Î»ÖÃ:X:"+std::to_wstring(pixelX)+L" Y:"+ std::to_wstring(pixelY));
+    std::string utf8 = std::format("Position:X:{} Y:{}", pixelX, pixelY);
     paintCtx->fillUtf8Text(BLPoint(textX, textY), *font, utf8.data()); 
-    utf8 = ConvertToUTF8(L"RGB(Ctrl+R):" + GetPixelColorRgb());
-    paintCtx->fillUtf8Text(BLPoint(textX+1, textY+28), *font, utf8.data());
-    utf8 = ConvertToUTF8(L"HEX(Ctrl+H):" + GetPixelColorHex());
+    size_t pixelIndex = pixelY * w * 4 + pixelX * 4;
+    utf8 = std::format("RGB(Ctr+R):{},{},{}", bgPixels[pixelIndex + 2], bgPixels[pixelIndex + 1], bgPixels[pixelIndex]);
+    paintCtx->fillUtf8Text(BLPoint(textX, textY+28), *font, utf8.data());
+    std::stringstream ss;
+    ss << std::hex << (bgPixels[pixelIndex + 2] << 16 | bgPixels[pixelIndex + 1] << 8 | bgPixels[pixelIndex]);
+    std::string hex = ss.str();
+    int str_length = hex.length();
+    for (int i = 0; i < 6 - str_length; i++) {
+        hex = "0" + hex;
+    }
+    utf8 = std::format("HEX(Ctr+H):#{}", hex);
     paintCtx->fillUtf8Text(BLPoint(textX, textY + 56), *font, utf8.data());
 }
 

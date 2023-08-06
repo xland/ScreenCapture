@@ -46,8 +46,7 @@ void MainWin::leftBtnDown(const POINT& pos)
         }
         else if (mouseEnterMainToolIndex == 13) //close
         {
-            CloseWindow(hwnd);
-            PostQuitMessage(0);
+            quitApp();
             return;
         }
         if (mouseEnterSubToolIndex != -1) {
@@ -178,11 +177,12 @@ void MainWin::rightBtnDown(const POINT& pos)
         History::LastShapeDrawEnd();
         return;
     }
-    CloseWindow(hwnd);
-	PostQuitMessage(0);
+    quitApp();
 }
 void MainWin::mouseMove(const POINT& pos)
-{   
+{ 
+    painter->pixelX = pos.x;
+    painter->pixelY = pos.y;
     if (isLeftBtnDown) {
         switch (state)
         {
@@ -233,8 +233,6 @@ void MainWin::mouseMove(const POINT& pos)
                     break;
                 }
             }
-            painter->pixelX = pos.x;
-            painter->pixelY = pos.y;
             InvalidateRect(hwnd, nullptr, false);
         }
         if (checkMouseEnterToolBox(pos)) 

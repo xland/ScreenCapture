@@ -51,6 +51,7 @@ private:
 	void saveFile();
 	void saveClipboard();
 	void initWindowBoxes();
+	void quitApp();
 	double scaleFactor;
 	HINSTANCE hinstance;
 	Painter* painter;

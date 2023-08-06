@@ -185,6 +185,7 @@ LRESULT CALLBACK MainWin::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
             switch (wParam)
             {
                 case VK_ESCAPE: {
+                    quitApp();
                     return 0;
                 }
                 case VK_SHIFT: {
@@ -198,6 +199,7 @@ LRESULT CALLBACK MainWin::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
                 case 82: { //R
                     if (IsCtrlDown) {
                         SetClipboardText(hwnd, painter->GetPixelColorRgb());
+                        quitApp();
                         return 1;
                     }
                     return 0;
@@ -205,6 +207,7 @@ LRESULT CALLBACK MainWin::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
                 case 72: { //H
                     if (IsCtrlDown) {
                         SetClipboardText(hwnd, painter->GetPixelColorHex());
+                        quitApp();
                         return 1;
                     }
                     return 0;
@@ -316,8 +319,7 @@ void MainWin::saveFile()
     auto filePathUtf8 = ConvertToUTF8(filePath);
     imgSave.writeToFile(filePathUtf8.c_str());
     CoTaskMemFree(filePath);
-    CloseWindow(hwnd);
-    PostQuitMessage(0);    
+    quitApp();
 }
 void MainWin::saveClipboard()
 {
@@ -338,8 +340,7 @@ void MainWin::saveClipboard()
     SetClipboardData(CF_BITMAP, hBitmap);
     CloseClipboard();
     ReleaseDC(NULL,ScreenDC);
-    CloseWindow(hwnd);
-    PostQuitMessage(0);
+    quitApp();
 }
 
 void MainWin::initWindowBoxes()
@@ -366,4 +367,9 @@ void MainWin::initWindowBoxes()
             self->windowBoxes.push_back(std::move(item));
             return TRUE;
         }, (LPARAM)this);
+}
+void MainWin::quitApp()
+{
+    CloseWindow(hwnd);
+    PostQuitMessage(0);
 }
