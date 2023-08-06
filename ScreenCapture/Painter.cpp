@@ -113,7 +113,7 @@ void Painter::DrawPixelInfo()
         rectDst.x -= (rectDst.w+20);
     }
     if (rectDst.y + rectDst.w > h) {
-        rectDst.y -= (rectDst.w +10);
+        rectDst.y -= (rectDst.w +20);
     }
 
     auto srcX = pixelX - 10;
