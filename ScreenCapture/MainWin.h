@@ -49,6 +49,7 @@ public:
 
 private:
 	MainWin(HINSTANCE hinstance);
+	//system
 	void initScaleFactor();
 	void createWindow();
 	void showWindow();
@@ -60,16 +61,14 @@ private:
 	HINSTANCE hinstance;
 	Painter* painter;
 	std::vector<BLBox> windowBoxes;
-	
+
+	//mouse
 	void leftBtnDown(const POINT& pos);
 	void rightBtnDown(const POINT& pos);
 	void mouseMove(const POINT& pos);
 	void leftBtnUp(const POINT& pos);
 	void leftBtnDownStartDraw();
-	inline POINT getMousePoint(const LPARAM& lParam);
-
-
-	
+	inline POINT getMousePoint(const LPARAM& lParam);	
 	BLRgba32 colors[8] {
 		BLRgba32(207, 19, 34, 255),
 		BLRgba32(212, 136, 6, 255),
@@ -82,7 +81,7 @@ private:
 	};
 	double strokeWidths[3]{ 2.0, 6.0, 16.0 };
 
-
+	//mask
 	void checkMouseEnterMaskBox(const POINT& pos);
 	void setCutBox(const POINT& pos);
 	void setCutBox(BLPoint& startPos, BLPoint& endPos);
@@ -95,7 +94,7 @@ private:
 
 
 
-
+	//tool
 	void drawSplitter(const BLPoint& point);
 	void drawBtnBackground(const BLPoint& point, const BLRgba32& color);
 	void drawBtn(const BLPoint& point, const Icon::Name& name,const bool& isChecked, const bool& hover,const bool& customColor = false);
@@ -110,7 +109,7 @@ private:
 	int iconLeftMargin = 16;
 	int iconTopMargin = 38;
 
-
+	//toolmain
 	void setToolBoxMain();
 	void drawToolMain();
 	BLBox toolBoxMain;
@@ -119,7 +118,7 @@ private:
 	bool canRedo = false;
 	bool canUndo = false;
 
-
+	//toolsub
 	void drawSubTool();
 	void drawSubToolBackground(const int& btnCount,const bool isCenter=false);	
 	void drawSubToolNormal(const Icon::Name& icon);

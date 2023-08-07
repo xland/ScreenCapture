@@ -55,7 +55,7 @@ void MainWin::leftBtnDownStartDraw()
         }
         case State::pen:
         {
-            Debug("start pen");
+            //Debug("start pen");
             auto shape = new Shape::Pen();
             shape->color = colors[colorBtnIndex];
             shape->strokeWidth = strokeWidths[strokeBtnIndex];
@@ -142,13 +142,13 @@ void MainWin::leftBtnDown(const POINT& pos)
             History::Redo();
             return;
         }
-        else if (mouseEnterMainToolIndex == 11) //save
+        else if (mouseEnterMainToolIndex == 11) //save file
         {
             History::LastShapeDrawEnd();
             saveFile();
             return;
         }
-        else if (mouseEnterMainToolIndex == 12) //clipboard
+        else if (mouseEnterMainToolIndex == 12) //save clipboard
         {
             History::LastShapeDrawEnd();
             SetTimer(hwnd, 998, 60, (TIMERPROC)NULL);
