@@ -115,52 +115,55 @@ void Painter::DrawPixelInfo()
     if (rectDst.y + rectDst.w > h) {
         rectDst.y -= (rectDst.w +20);
     }
-
-    auto srcX = pixelX - 10;
-    auto srcY = pixelY - 5;
-    auto dstX = rectDst.x;
-    auto dstY = rectDst.y;    
-    static size_t dataSize = w * 4 * h;
-    for (size_t y = 0; y < 10; y++)
     {
-        for (size_t x = 0; x < 20; x++) {
-            static BLRgba32 color;
-            if (srcX <0 || srcY <0 || srcX >= w || srcY >= h) {
-                color.setB(0);
-                color.setG(0);
-                color.setR(0);
-                color.setA(255);
+        auto srcX = pixelX - 10;
+        auto srcY = pixelY - 5;
+        auto dstX = rectDst.x;
+        auto dstY = rectDst.y;    
+        static size_t dataSize = w * 4 * h;
+        for (size_t y = 0; y < 10; y++)
+        {
+            for (size_t x = 0; x < 20; x++) {
+                static BLRgba32 color;
+                if (srcX <0 || srcY <0 || srcX >= w || srcY >= h) {
+                    color.setB(0);
+                    color.setG(0);
+                    color.setR(0);
+                    color.setA(255);
+                }
+                else
+                {
+                    size_t indexSrc = srcY * w * 4 + srcX * 4;
+                    color.setB(bgPixels[indexSrc]);
+                    color.setG(bgPixels[indexSrc + 1]);
+                    color.setR(bgPixels[indexSrc + 2]);
+                    color.setA(255);
+                }
+                paintCtx->setFillStyle(color);
+                paintCtx->fillRect(dstX, dstY, 10, 10);
+                dstX += 10;
+                srcX += 1;
             }
-            else
-            {
-                size_t indexSrc = srcY * w * 4 + srcX * 4;
-                color.setB(bgPixels[indexSrc]);
-                color.setG(bgPixels[indexSrc + 1]);
-                color.setR(bgPixels[indexSrc + 2]);
-                color.setA(255);
-            }
-            paintCtx->setFillStyle(color);
-            paintCtx->fillRect(dstX, dstY, 10, 10);
-            dstX += 10;
-            srcX += 1;
+            dstX = rectDst.x;
+            dstY += 10;
+            srcX = pixelX - 10;
+            srcY += 1;
         }
-        dstX = rectDst.x;
-        dstY += 10;
-        srcX = pixelX - 10;
-        srcY += 1;
     }
     paintCtx->setStrokeStyle(BLRgba32(0,0,0));
     paintCtx->setStrokeWidth(1);
-    paintCtx->strokeRect(BLRectI(rectDst.x,rectDst.y,rectDst.w,rectDst.h*2));
-
-    static int crossSize = 10;
-    paintCtx->setStrokeStyle(BLRgba32(60, 80,160, 110));
-    paintCtx->setStrokeWidth(crossSize);
-    paintCtx->strokeLine(rectDst.x, rectDst.y+ rectDst.h/2, rectDst.x+ rectDst.w/2-crossSize/2, rectDst.y + rectDst.h / 2);
-    paintCtx->strokeLine(rectDst.x + rectDst.w / 2 + crossSize / 2, rectDst.y + rectDst.h / 2, rectDst.x + rectDst.w, rectDst.y + rectDst.h / 2);
-    paintCtx->strokeLine(rectDst.x+ rectDst.w/2, rectDst.y, rectDst.x + rectDst.w/2, rectDst.y + rectDst.h / 2 - crossSize / 2);
-    paintCtx->strokeLine(rectDst.x + rectDst.w / 2, rectDst.y + rectDst.h / 2 + crossSize / 2, rectDst.x + rectDst.w / 2, rectDst.y + rectDst.h);
-
+    paintCtx->strokeRect(BLRectI(rectDst.x,rectDst.y,rectDst.w,rectDst.h*2));    
+    {
+        int halfCrossW = 5;
+        int halfW = rectDst.w / 2;
+        int halfH = rectDst.h / 2;
+        paintCtx->setStrokeStyle(BLRgba32(22, 119,255, 110));
+        paintCtx->setStrokeWidth(halfCrossW*2);
+        paintCtx->strokeLine(rectDst.x, rectDst.y+ halfH, rectDst.x+ halfW - halfCrossW, rectDst.y + halfH);
+        paintCtx->strokeLine(rectDst.x + halfW + halfCrossW, rectDst.y + halfH, rectDst.x + rectDst.w, rectDst.y + halfH);
+        paintCtx->strokeLine(rectDst.x+ halfW, rectDst.y, rectDst.x + halfW, rectDst.y + halfH - halfCrossW);
+        paintCtx->strokeLine(rectDst.x + halfW, rectDst.y + halfH + halfCrossW, rectDst.x + halfW, rectDst.y + rectDst.h);
+    }
     paintCtx->setFillStyle(BLRgba32(0, 0, 0,200));
     paintCtx->fillRect(BLRectI(rectDst.x, rectDst.y+ rectDst.h, rectDst.w, rectDst.h));
 

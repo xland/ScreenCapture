@@ -3,6 +3,7 @@
 
 static MainWin* mainWin;
 
+
 MainWin::MainWin(HINSTANCE hinstance):hinstance{hinstance}
 {
     Painter::Init();
@@ -17,7 +18,6 @@ MainWin::~MainWin()
     Font::Dispose();
     Painter::Dispose();
 }
-
 void MainWin::Init(HINSTANCE hinstance)
 {
     mainWin = new MainWin(hinstance);

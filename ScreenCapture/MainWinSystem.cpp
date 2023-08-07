@@ -7,6 +7,18 @@
 #include <Gdiplus.h> 
 #include <format>
 
+/// <summary>
+/// 0 undefined
+/// 1 quit by press close btn;
+/// 2 quit by press right mouse btn;
+/// 3 quit by press esc keyboard
+/// 4 quit when copy rgb color
+/// 5 quit when copy hex color
+/// 6 quit when save to file
+/// 7 quit when save to clipboard
+/// </summary>
+static int mainWinQuitCode = 0;
+
 LRESULT CALLBACK MainWin::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     if (msg == WM_NCCREATE)
     {
@@ -185,7 +197,7 @@ LRESULT CALLBACK MainWin::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
             switch (wParam)
             {
                 case VK_ESCAPE: {
-                    quitApp();
+                    quitApp(3);
                     return 0;
                 }
                 case VK_SHIFT: {
@@ -199,7 +211,7 @@ LRESULT CALLBACK MainWin::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
                 case 82: { //R
                     if (IsCtrlDown) {
                         SetClipboardText(hwnd, painter->GetPixelColorRgb());
-                        quitApp();
+                        quitApp(4);
                         return 1;
                     }
                     return 0;
@@ -207,7 +219,7 @@ LRESULT CALLBACK MainWin::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
                 case 72: { //H
                     if (IsCtrlDown) {
                         SetClipboardText(hwnd, painter->GetPixelColorHex());
-                        quitApp();
+                        quitApp(5);
                         return 1;
                     }
                     return 0;
@@ -319,7 +331,7 @@ void MainWin::saveFile()
     auto filePathUtf8 = ConvertToUTF8(filePath);
     imgSave.writeToFile(filePathUtf8.c_str());
     CoTaskMemFree(filePath);
-    quitApp();
+    quitApp(6);
 }
 void MainWin::saveClipboard()
 {
@@ -340,7 +352,7 @@ void MainWin::saveClipboard()
     SetClipboardData(CF_BITMAP, hBitmap);
     CloseClipboard();
     ReleaseDC(NULL,ScreenDC);
-    quitApp();
+    quitApp(7);
 }
 
 void MainWin::initWindowBoxes()
@@ -368,8 +380,13 @@ void MainWin::initWindowBoxes()
             return TRUE;
         }, (LPARAM)this);
 }
-void MainWin::quitApp()
+void MainWin::quitApp(const int& exitCode)
 {
+    mainWinQuitCode = exitCode;
     CloseWindow(hwnd);
     PostQuitMessage(0);
+}
+int MainWin::GetQuitCode()
+{
+    return mainWinQuitCode;
 }

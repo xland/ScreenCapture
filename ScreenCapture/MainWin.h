@@ -27,6 +27,8 @@
 #include "Font.h"
 #include "Painter.h"
 
+
+
 class MainWin
 {
 public:
@@ -36,6 +38,7 @@ public:
 	static void Init(HINSTANCE hinstance);
 	static MainWin* Get();
 	static void Dispose();
+	static int GetQuitCode();
 	HWND hwnd;
 	POINT MouseDownPos;
 	bool IsShiftDown = false;
@@ -51,7 +54,7 @@ private:
 	void saveFile();
 	void saveClipboard();
 	void initWindowBoxes();
-	void quitApp();
+	void quitApp(const int& exitCode);
 	double scaleFactor;
 	HINSTANCE hinstance;
 	Painter* painter;

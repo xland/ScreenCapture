@@ -46,7 +46,7 @@ void MainWin::leftBtnDown(const POINT& pos)
         }
         else if (mouseEnterMainToolIndex == 13) //close
         {
-            quitApp();
+            quitApp(1);
             return;
         }
         if (mouseEnterSubToolIndex != -1) {
@@ -177,7 +177,7 @@ void MainWin::rightBtnDown(const POINT& pos)
         History::LastShapeDrawEnd();
         return;
     }
-    quitApp();
+    quitApp(2);
 }
 void MainWin::mouseMove(const POINT& pos)
 { 
