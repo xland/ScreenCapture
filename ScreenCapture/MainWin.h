@@ -64,6 +64,7 @@ private:
 	void rightBtnDown(const POINT& pos);
 	void mouseMove(const POINT& pos);
 	void leftBtnUp(const POINT& pos);
+	void leftBtnDownStartDraw();
 	inline POINT getMousePoint(const LPARAM& lParam);
 	bool isLeftBtnDown;
 

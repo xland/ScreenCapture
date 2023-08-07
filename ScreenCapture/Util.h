@@ -8,3 +8,4 @@ std::string ConvertToUTF8(const std::wstring& wstr);
 std::string ConvertToUTF8(const LPWSTR& wstr);
 void ChangeCursor(LPCTSTR cursor);
 void SetClipboardText(HWND hwnd, const std::wstring& text);
+void Debug(const std::string& info);

@@ -20,29 +20,15 @@ void History::Push(Shape::Shape* shape)
 			return false;
 		});
 	history->erase(end, history->end());
-/*	int index = -1;
-	int endIndex = history->size() - 1;
-	for (int i = 0; i < history->size(); i++)
-	{
-		auto& shape = history->at(i);
-		if (shape->isTemp || !shape->needDraw) {
-			index = i;
-			break;
-		}
-	}
-	if (index != -1) {
-		for (int i = index; i <= endIndex; i++)
-		{
-			delete history->at(i);
-		}
-		history->erase(history->begin() + index,history->begin()+endIndex);
-	}*/	
 	history->push_back(shape);	
 }
 bool History::LastShapeDrawEnd()
 {
 	if (history->size() < 1) return true;
 	auto shape = history->at(history->size() - 1);
+	if (!shape->needDraw) {
+		return true;
+	}
 	return shape->EndDraw();
 	
 }
@@ -61,6 +47,7 @@ void History::LastShapeShowDragger()
 }
 void History::LastShapeMouseInDragger(const POINT& pos)
 {
+	if (!Painter::Get()->isDrawing) return;
 	if (history->size() < 1) return;
 	auto shape = history->at(history->size() - 1);
 	shape->MouseInDragger(pos.x,pos.y);

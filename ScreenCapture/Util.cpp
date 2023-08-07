@@ -99,3 +99,9 @@ void SetClipboardText(HWND hwnd,const std::wstring& text) {
         ::CloseClipboard();
     }
 }
+void Debug(const std::string& info)
+{
+    OutputDebugStringA("\r\n");
+    OutputDebugStringA(info.c_str());
+    OutputDebugStringA("\r\n");
+}

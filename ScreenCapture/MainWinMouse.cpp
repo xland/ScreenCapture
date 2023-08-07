@@ -1,30 +1,134 @@
-#include "MainWin.h"
+Ôªø#include "MainWin.h"
 #include <chrono>
+
+
+void MainWin::leftBtnDownStartDraw()
+{
+    switch (state)
+    {
+        case State::start:
+        {
+            break;
+        }
+        case State::maskReady:
+        {
+            dragStartCutBoxStartPos = BLPoint(cutBox.x0, cutBox.y0);
+            dragStartCutBoxEndPos = BLPoint(cutBox.x1, cutBox.y1);
+            if (mouseInMaskBoxIndex < 8) {
+                setCutBox(MouseDownPos);
+                InvalidateRect(hwnd, nullptr, false);
+            }
+            return;
+        }
+        case State::rect:
+        {
+            auto box = new Shape::Box();
+            box->color = colors[colorBtnIndex];
+            box->isFill = isFill;
+            box->strokeWidth = strokeWidths[strokeBtnIndex];
+            History::Push(box);
+            preState = state;
+            painter->isDrawing = true;
+            break;
+        }
+        case State::ellipse:
+        {
+            auto ellipse = new Shape::Ellipse();
+            ellipse->color = colors[colorBtnIndex];
+            ellipse->isFill = isFill;
+            ellipse->strokeWidth = strokeWidths[strokeBtnIndex];
+            History::Push(ellipse);
+            preState = state;
+            painter->isDrawing = true;
+            break;
+        }
+        case State::arrow:
+        {
+            auto arrow = new Shape::Arrow();
+            arrow->color = colors[colorBtnIndex];
+            arrow->isFill = isFill;
+            arrow->strokeWidth = strokeWidths[strokeBtnIndex];
+            History::Push(arrow);
+            preState = state;
+            painter->isDrawing = true;
+            break;
+        }
+        case State::pen:
+        {
+            auto shape = new Shape::Pen();
+            shape->color = colors[colorBtnIndex];
+            shape->strokeWidth = strokeWidths[strokeBtnIndex];
+            History::Push(shape);
+            painter->isDrawing = true;
+            break;
+        }
+        case State::line:
+        {
+            auto shape = new Shape::Line();
+            shape->color = colors[colorBtnIndex];
+            shape->strokeWidth = strokeWidths[strokeBtnIndex] + 26;
+            shape->isFill = isFill;
+            History::Push(shape);
+            preState = state;
+            painter->isDrawing = true;
+            break;
+        }
+        case State::number:
+        {
+            auto shape = new Shape::Number();
+            shape->color = colors[colorBtnIndex];
+            shape->strokeWidth = strokeWidths[strokeBtnIndex];
+            shape->isFill = isFill;
+            History::Push(shape);
+            preState = state;
+            painter->isDrawing = true;
+            break;
+        }
+        case State::eraser:
+        {
+            auto shape = new Shape::Eraser();
+            shape->strokeWidth = strokeWidths[strokeBtnIndex] + 28;
+            History::Push(shape);
+            break;
+        }
+        case State::mosaic:
+        {
+            auto shape = new Shape::Mosaic();
+            painter->bgImage->getData(shape->bgImgData);
+            painter->canvasImage->getData(shape->canvasImgData);
+            shape->screenH = painter->h;
+            shape->screenW = painter->w;
+            shape->strokeWidth = strokeWidths[strokeBtnIndex] + 8;
+            History::Push(shape);
+            preState = state;
+            painter->isDrawing = true;
+            break;
+        }
+        case State::text:
+        {
+            auto shape = new Shape::Text();
+            shape->color = colors[colorBtnIndex];
+            History::Push(shape);
+            shape->Draw(MouseDownPos.x, MouseDownPos.y, -1, -1);
+            SetTimer(hwnd, 999, 660, (TIMERPROC)NULL);
+            preState = state;
+            painter->isDrawing = true;
+            break;
+        }
+        case State::lastPathDrag:
+        {
+            break;
+        }
+    }
+}
+
 
 void MainWin::leftBtnDown(const POINT& pos)
 {
     isLeftBtnDown = true;
     MouseDownPos = pos;
     if (state != State::start) {
-        if (!History::LastShapeDrawEnd()) { 
-            //draggerIndex ==-1 ±∑µªÿfalse
-            //text shape“≤ª·‘⁄’‚¿Ô∏ƒ±‰π‚±ÍŒª÷√
-            return;
-        }
-        if (mouseEnterMainToolIndex != -1 && mouseEnterMainToolIndex < 9) {
-            selectedToolIndex = mouseEnterMainToolIndex;
-            InvalidateRect(hwnd, nullptr, false);
-            state = (State)(selectedToolIndex+2);
-            //…Ë÷√º∏∏ˆÕº–Œƒ¨»œ «∑Ò–Ë“™ÃÓ≥‰
-            if (state == State::rect||state == State::ellipse||state == State::line) {
-                isFill = false;
-            }
-            else if (state == State::arrow || state == State::number) {
-                isFill = true;
-            }
-            return;
-        }
-        else if(mouseEnterMainToolIndex == 9) //undo
+        if (mouseEnterMainToolIndex == 9) //undo
         {
             History::Undo();
             return;
@@ -36,11 +140,13 @@ void MainWin::leftBtnDown(const POINT& pos)
         }
         else if (mouseEnterMainToolIndex == 11) //save
         {
+            History::LastShapeDrawEnd();
             saveFile();
             return;
         }
         else if (mouseEnterMainToolIndex == 12) //clipboard
         {
+            History::LastShapeDrawEnd();
             saveClipboard();
             return;
         }
@@ -49,123 +155,36 @@ void MainWin::leftBtnDown(const POINT& pos)
             quitApp(1);
             return;
         }
+        if (!History::LastShapeDrawEnd()) { 
+            //draggerIndex == -1Êó∂ËøîÂõûfalse
+            //text shape‰πü‰ºöÂú®ËøôÈáåÊîπÂèòÂÖâÊ†á‰ΩçÁΩÆ
+            return;
+        }
+        if (mouseEnterMainToolIndex != -1 && mouseEnterMainToolIndex < 9) {            
+            selectedToolIndex = mouseEnterMainToolIndex;
+            state = (State)(selectedToolIndex+2); 
+            //Debug("111 state:" + std::to_string((int)state));
+            //ËÆæÁΩÆÂá†‰∏™ÂõæÂΩ¢ÈªòËÆ§ÊòØÂê¶ÈúÄË¶ÅÂ°´ÂÖÖ
+            if (state == State::rect||state == State::ellipse||state == State::line) {
+                isFill = false;
+            }
+            else if (state == State::arrow || state == State::number) {
+                isFill = true;
+            }
+            else if (state == State::text) {
+                ChangeCursor(IDC_IBEAM);
+            }
+            InvalidateRect(hwnd, nullptr, false);
+            return;
+        }
+        //Debug("222 state:" + std::to_string((int)state));
         if (mouseEnterSubToolIndex != -1) {
             subToolBtnClick();
             return;
         }
-        switch (state)
-        {
-            case State::start:
-                break;
-            case State::maskReady:
-            {
-                dragStartCutBoxStartPos = BLPoint(cutBox.x0, cutBox.y0);
-                dragStartCutBoxEndPos = BLPoint(cutBox.x1, cutBox.y1);
-                if (mouseInMaskBoxIndex < 8) {
-                    setCutBox(pos);
-                    InvalidateRect(hwnd, nullptr, false);
-                }
-                return;
-            }
-            case State::rect:
-            {
-                auto box = new Shape::Box();
-                box->color = colors[colorBtnIndex];
-                box->isFill = isFill;
-                box->strokeWidth = strokeWidths[strokeBtnIndex];
-                History::Push(box);
-                preState = state;
-                painter->isDrawing = true;
-                break;
-            }
-            case State::ellipse:
-            {
-                auto ellipse = new Shape::Ellipse();
-                ellipse->color = colors[colorBtnIndex];
-                ellipse->isFill = isFill;
-                ellipse->strokeWidth = strokeWidths[strokeBtnIndex];
-                History::Push(ellipse);
-                preState = state;
-                painter->isDrawing = true;
-                break;
-            }
-            case State::arrow:
-            {
-                auto arrow = new Shape::Arrow();
-                arrow->color = colors[colorBtnIndex];
-                arrow->isFill = isFill;
-                arrow->strokeWidth = strokeWidths[strokeBtnIndex];
-                History::Push(arrow);
-                preState = state;
-                painter->isDrawing = true;
-                break;
-            }
-            case State::pen:
-            {
-                auto shape = new Shape::Pen();
-                shape->color = colors[colorBtnIndex];
-                shape->strokeWidth = strokeWidths[strokeBtnIndex];
-                History::Push(shape);
-                break;
-            }
-            case State::line:
-            {
-                auto shape = new Shape::Line();
-                shape->color = colors[colorBtnIndex];
-                shape->strokeWidth = strokeWidths[strokeBtnIndex] + 26;
-                shape->isFill = isFill;
-                History::Push(shape);
-                preState = state;
-                painter->isDrawing = true;
-                break;
-            }
-            case State::number:
-            {
-                auto shape = new Shape::Number();
-                shape->color = colors[colorBtnIndex];
-                shape->strokeWidth = strokeWidths[strokeBtnIndex];
-                shape->isFill = isFill;
-                History::Push(shape);
-                preState = state;
-                painter->isDrawing = true;
-                break;
-            }
-            case State::eraser:
-            {
-                auto shape = new Shape::Eraser();
-                shape->strokeWidth = strokeWidths[strokeBtnIndex]+28;
-                History::Push(shape);
-                break;
-            }
-            case State::mosaic:
-            {
-                auto shape = new Shape::Mosaic();
-                painter->bgImage->getData(shape->bgImgData);
-                painter->canvasImage->getData(shape->canvasImgData);
-                shape->screenH = painter->h;
-                shape->screenW = painter->w;
-                shape->strokeWidth = strokeWidths[strokeBtnIndex]+8;
-                History::Push(shape);
-                preState = state;
-                painter->isDrawing = true;
-                break;
-            }
-            case State::text:
-            {
-                auto shape = new Shape::Text();
-                shape->color = colors[colorBtnIndex];
-                History::Push(shape);
-                shape->Draw(pos.x, pos.y, -1, -1);
-                SetTimer(hwnd, 999, 660, (TIMERPROC)NULL);
-                preState = state;
-                painter->isDrawing = true;
-                break;
-            }
-            case State::lastPathDrag:
-            {
-                break;
-            }
-        }
+        //Debug("333 state:" + std::to_string((int)state));
+        leftBtnDownStartDraw();
+        //Debug("444 state:" + std::to_string((int)state));
     }
 }
 void MainWin::rightBtnDown(const POINT& pos)
@@ -209,6 +228,7 @@ void MainWin::mouseMove(const POINT& pos)
             case State::pen:
             case State::eraser:
             {
+                //Debug("state:" + std::to_string((int)state));
                 History::LastShapeDraw(pos,MouseDownPos);
                 break;
             }
@@ -224,6 +244,8 @@ void MainWin::mouseMove(const POINT& pos)
     }
     else {
         if(state == State::start){
+            Debug("IDC_CROSS");
+            ChangeCursor(IDC_CROSS);
             for (size_t i = 0; i < windowBoxes.size(); i++)
             {
                 if (windowBoxes[i].contains(pos.x, pos.y)) {
@@ -234,12 +256,10 @@ void MainWin::mouseMove(const POINT& pos)
                 }
             }
             InvalidateRect(hwnd, nullptr, false);
+            return;
         }
-        if (checkMouseEnterToolBox(pos)) 
-        { 
-            return; 
-        }
-        if (state == State::maskReady) {            
+        if (state == State::maskReady) {   
+            Debug("State::maskReady");
             checkMouseEnterMaskBox(pos);
         }
         else
@@ -254,14 +274,14 @@ void MainWin::mouseMove(const POINT& pos)
             else
             {
                 ChangeCursor(IDC_CROSS);
-            }            
+            }
         }
+        checkMouseEnterToolBox(pos);
     }
 
 }
 void MainWin::leftBtnUp(const POINT& pos)
 {
-    if (!isLeftBtnDown) return;
     isLeftBtnDown = false;
     if (mouseEnterMainToolIndex != -1 || mouseEnterSubToolIndex != -1) return;
     switch (state)
@@ -288,12 +308,12 @@ void MainWin::leftBtnUp(const POINT& pos)
             state = State::lastPathDrag;
             break;
         }
+        case State::pen: 
         case State::text:
         {
             History::LastShapeShowDragger();
             break;
         }
-        case State::pen:
         case State::eraser:
         {
             break;

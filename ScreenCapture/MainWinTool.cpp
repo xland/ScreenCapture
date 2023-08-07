@@ -63,14 +63,14 @@ bool MainWin::checkMouseEnterToolBox(const POINT& pos)
 	if (toolBoxMain.contains(pos.x, pos.y)) {
 		tempIndex = floor((pos.x - toolBoxMain.x0) / toolBtnWidth);
 		result = true;
+		ChangeCursor(IDC_HAND);
 	}
 	else
 	{
 		tempIndex = -1;
 	}
 	if (tempIndex != mouseEnterMainToolIndex) {
-		mouseEnterMainToolIndex = tempIndex;
-		ChangeCursor(IDC_HAND);
+		mouseEnterMainToolIndex = tempIndex;		
 		InvalidateRect(hwnd, nullptr, false);
 		mouseInMaskBoxIndex = -1;
 	}
@@ -78,6 +78,7 @@ bool MainWin::checkMouseEnterToolBox(const POINT& pos)
 
 	if (toolBoxSub.contains(pos.x, pos.y)) {
 		tempIndex = floor((pos.x - toolBoxSub.x0) / toolBtnWidth);
+		ChangeCursor(IDC_HAND);
 		result = true;
 	}
 	else
@@ -86,7 +87,6 @@ bool MainWin::checkMouseEnterToolBox(const POINT& pos)
 	}
 	if (tempIndex != mouseEnterSubToolIndex) {
 		mouseEnterSubToolIndex = tempIndex;
-		ChangeCursor(IDC_HAND);
 		InvalidateRect(hwnd, nullptr, false);
 		mouseInMaskBoxIndex = -1;
 	}

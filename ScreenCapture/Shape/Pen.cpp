@@ -4,7 +4,7 @@ namespace Shape {
 	void Pen::Draw(const double& x1, const double& y1, const double& x2, const double& y2)
 	{
 		auto context = Painter::Get()->paintCtx;
-		context->begin(*Painter::Get()->canvasImage);
+		context->begin(*Painter::Get()->prepareImage);
 		context->setStrokeStyle(color);
 		context->setStrokeWidth(strokeWidth);
 		context->setStrokeCaps(BL_STROKE_CAP_ROUND);
@@ -34,7 +34,8 @@ namespace Shape {
 		}		
 		context->end();
         auto win = MainWin::Get();
-        win->state = win->preState;
+		painter->isDrawing = false;
+		//Debug("aaa state:" + std::to_string((int)win->state));
         InvalidateRect(win->hwnd, nullptr, false);
         return true;
     }

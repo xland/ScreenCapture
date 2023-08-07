@@ -193,36 +193,36 @@ namespace Shape {
                 LPCTSTR cursor = IDC_SIZENESW;
                 switch (i)
                 {
-                case 0: {
-                    tempDraggerX = box.x1;
-                    tempDraggerY = box.y1;
-                    draggerIndex = i;
-                    cursor = IDC_SIZENWSE;
-                    break;
-                }
-                case 1:
-                {
-                    tempDraggerX = box.x0;
-                    tempDraggerY = box.y1;
-                    draggerIndex = i;
-                    cursor = IDC_SIZENESW;
-                    break;
-                }
-                case 2:
-                {
-                    tempDraggerX = box.x0;
-                    tempDraggerY = box.y0;
-                    draggerIndex = i;
-                    cursor = IDC_SIZENWSE;
-                    break;
-                }
-                case 3: {
-                    tempDraggerX = box.x1;
-                    tempDraggerY = box.y0;
-                    draggerIndex = i;
-                    cursor = IDC_SIZENESW;
-                    break;
-                }
+                    case 0: {
+                        tempDraggerX = box.x1;
+                        tempDraggerY = box.y1;
+                        draggerIndex = i;
+                        cursor = IDC_SIZENWSE;
+                        break;
+                    }
+                    case 1:
+                    {
+                        tempDraggerX = box.x0;
+                        tempDraggerY = box.y1;
+                        draggerIndex = i;
+                        cursor = IDC_SIZENESW;
+                        break;
+                    }
+                    case 2:
+                    {
+                        tempDraggerX = box.x0;
+                        tempDraggerY = box.y0;
+                        draggerIndex = i;
+                        cursor = IDC_SIZENWSE;
+                        break;
+                    }
+                    case 3: {
+                        tempDraggerX = box.x1;
+                        tempDraggerY = box.y0;
+                        draggerIndex = i;
+                        cursor = IDC_SIZENESW;
+                        break;
+                    }
                 }
                 ChangeCursor(cursor);
                 return;
@@ -230,11 +230,13 @@ namespace Shape {
         }
         if (box.contains(x, y)) {
             //ChangeCursor(IDC_SIZEALL);
-
             draggerIndex = 4;
-            return;
         }
-        draggerIndex = -1;
+        else
+        {            
+            draggerIndex = -1;
+        }
+        
     }
     void Text::DragDragger(const double& x, const double& y)
     {
