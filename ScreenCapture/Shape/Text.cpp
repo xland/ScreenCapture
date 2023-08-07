@@ -250,11 +250,12 @@ namespace Shape {
         switch (draggerIndex)
         {
             case 0: {
-
                 isDraggingDragger = true;
                 box.x0 = x;
                 box.y0 = y;
-                fontSize = (box.y1 - box.y0) - margin * 2;
+                auto fs = (box.y1 - box.y0) - margin * 2;
+                if (fs < 16) return;
+                fontSize = fs;
                 _fontSize = fontSize;
                 Draw(x, y, tempDraggerX, tempDraggerY);
                 break;
@@ -263,7 +264,9 @@ namespace Shape {
                 isDraggingDragger = true;
                 box.x1 = x;
                 box.y0 = y;
-                fontSize = (box.y1 - box.y0) - margin * 2;
+                auto fs = (box.y1 - box.y0) - margin * 2;
+                if (fs < 16) return;
+                fontSize = fs;
                 _fontSize = fontSize;
                 Draw(tempDraggerX, y, x, tempDraggerY);
                 break;
@@ -272,7 +275,9 @@ namespace Shape {
                 isDraggingDragger = true;
                 box.x1 = x;
                 box.y1 = y;
-                fontSize = (box.y1 - box.y0) - margin * 2;
+                auto fs = (box.y1 - box.y0) - margin * 2;
+                if (fs < 16) return;
+                fontSize = fs;
                 _fontSize = fontSize;
                 Draw(tempDraggerX, tempDraggerY, x, y);
                 break;
@@ -281,7 +286,9 @@ namespace Shape {
                 isDraggingDragger = true;
                 box.x0 = x;
                 box.y1 = y;
-                fontSize = (box.y1 - box.y0) - margin * 2;
+                auto fs = (box.y1 - box.y0) - margin * 2;
+                if (fs < 16) return;
+                fontSize = fs;
                 _fontSize = fontSize;
                 Draw(x, tempDraggerY, tempDraggerX, y);
                 break;

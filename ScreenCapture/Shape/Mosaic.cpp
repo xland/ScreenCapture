@@ -31,21 +31,23 @@ namespace Shape {
                 points[1].y = y;
                 if (x + strokeWidth > box.x1) {
                     points[1].x = box.x1;
+                    points[4].x = box.x1;
                 }
                 else
                 {
                     points[1].x = x + strokeWidth;
+                    points[4].x = x + (int)strokeWidth;
                 }
                 //center point
                 if (x + (int)strokeWidth / 2 > box.x1) {
-                    points[2].x = x + (int)((box.x1 - x) / 2);
+                    points[2].x = x + (int)((box.x1 - x));  //(int)((box.x1 - x) / 2)
                 }
                 else
                 {
                     points[2].x = x + (int)strokeWidth / 2;
                 }
                 if (y + (int)strokeWidth / 2 > box.y1) {
-                    points[2].y = y + (int)((box.y1 - y) / 2);
+                    points[2].y = y + (int)((box.y1 - y)); //(int)((box.y1 - y) / 2)
                 }
                 else
                 {
@@ -55,24 +57,11 @@ namespace Shape {
                 points[3].x = x;
                 if (y + (int)strokeWidth > box.y1) {
                     points[3].y = box.y1;
-                }
-                else
-                {
-                    points[3].y = y + (int)strokeWidth;
-                }
-                //right down point
-                if (x + (int)strokeWidth > box.x1) {
-                    points[4].x = box.x1;
-                }
-                else
-                {
-                    points[4].x = x + (int)strokeWidth;
-                }
-                if (y + (int)strokeWidth > box.y1) {
                     points[4].y = box.y1;
                 }
                 else
                 {
+                    points[3].y = y + (int)strokeWidth;
                     points[4].y = y + (int)strokeWidth;
                 }
 
@@ -130,13 +119,16 @@ namespace Shape {
         if (draggerIndex != -1) {
             return false;
         }
+
         auto context = painter->paintCtx;
         context->begin(*painter->canvasImage);
         drawMosaic(context);
         context->end();
+
         context->begin(*painter->prepareImage);
         context->clearAll();
         context->end();
+
         painter->isDrawing = false;
         auto win = MainWin::Get();
         win->state = win->preState;

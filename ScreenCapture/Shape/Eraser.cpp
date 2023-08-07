@@ -3,6 +3,7 @@
 namespace Shape {
 	void Eraser::Draw(const double& x1, const double& y1, const double& x2, const double& y2)
 	{
+		isTemp = false;
 		auto context = Painter::Get()->paintCtx;
 		context->begin(*Painter::Get()->canvasImage);
 		context->setCompOp(BL_COMP_OP_CLEAR);
@@ -36,7 +37,7 @@ namespace Shape {
 		}
 		context->end();
 		auto win = MainWin::Get();
-		win->state = win->preState;
+		painter->isDrawing = false;
 		InvalidateRect(win->hwnd, nullptr, false);
 		return true;
 	}

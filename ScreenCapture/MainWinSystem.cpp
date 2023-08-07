@@ -157,7 +157,7 @@ LRESULT CALLBACK MainWin::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
                 static auto t1 = std::chrono::system_clock::now();
                 auto t2 = std::chrono::system_clock::now();
                 auto count = floor<std::chrono::milliseconds>(t2 - t1).count();
-                if (count > 0 && count < 300) {
+                if (count > 0 && count < 300 && mouseEnterMainToolIndex == -1 && mouseEnterSubToolIndex == -1) {
                     if (state == State::text) {
                         if (History::Get()->size() < 1) return 0;
                         auto shape = (Shape::Text*)History::Get()->at(History::Get()->size() - 1);

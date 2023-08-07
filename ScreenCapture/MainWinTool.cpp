@@ -13,7 +13,7 @@ void MainWin::drawBtnBackground(const BLPoint& point, const BLRgba32& color)
 	painter->paintCtx->setFillStyle(val);
 }
 
-void MainWin::drawBtn(const BLPoint& point, Icon::Name name,bool checked,bool hover,bool customColor)
+void MainWin::drawBtn(const BLPoint& point, const Icon::Name& name,const bool& checked,const bool& hover,const bool& customColor)
 {
 	if (checked) {
 		drawBtnBackground(point, BLRgba32(230, 244, 255, 255));

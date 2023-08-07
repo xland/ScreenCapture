@@ -98,7 +98,7 @@ private:
 
 	void drawSplitter(const BLPoint& point);
 	void drawBtnBackground(const BLPoint& point, const BLRgba32& color);
-	void drawBtn(const BLPoint& point, Icon::Name name,bool isChecked,bool hover,bool customColor = false);
+	void drawBtn(const BLPoint& point, const Icon::Name& name,const bool& isChecked, const bool& hover,const bool& customColor = false);
 	bool checkMouseEnterToolBox(const POINT& pos);
 	int mainToolBtnCount = 14;
 	int toolBoxSpan = 12;//工具条距离截图区域的高度

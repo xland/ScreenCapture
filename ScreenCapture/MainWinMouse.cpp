@@ -99,7 +99,7 @@ void MainWin::leftBtnDownStartDraw()
             painter->canvasImage->getData(shape->canvasImgData);
             shape->screenH = painter->h;
             shape->screenW = painter->w;
-            shape->strokeWidth = strokeWidths[strokeBtnIndex] + 8;
+            shape->strokeWidth = strokeWidths[strokeBtnIndex] + 6;
             History::Push(shape);
             preState = state;
             painter->isDrawing = true;
@@ -131,6 +131,9 @@ void MainWin::leftBtnDown(const POINT& pos)
     if (state != State::start) {
         if (mouseEnterMainToolIndex == 9) //undo
         {
+            if (painter->isDrawing) {
+                History::LastShapeDrawEnd();
+            }
             History::Undo();
             return;
         }
@@ -194,7 +197,7 @@ void MainWin::rightBtnDown(const POINT& pos)
     MouseDownPos = pos;
     if (painter->isDrawing)
     {
-        Debug("end draw");
+        //Debug("end draw");
         History::LastShapeDrawEnd();
         return;
     }
@@ -310,14 +313,11 @@ void MainWin::leftBtnUp(const POINT& pos)
             state = State::lastPathDrag;
             break;
         }
+        case State::eraser:
         case State::pen: 
         case State::text:
         {
             History::LastShapeShowDragger();
-            break;
-        }
-        case State::eraser:
-        {
             break;
         }
     }
