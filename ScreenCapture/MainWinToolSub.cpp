@@ -135,15 +135,22 @@ void MainWin::drawSubToolMosaic()
 
 void MainWin::drawSubToolEraser()
 {
-	drawSubToolBackground(isFill?1:4,true);
+	//×¢ÊÍµôµÄÄÚÈÝ°üº¬¾ØÐÎÏðÆ¤²Á
+	//drawSubToolBackground(isFill?1:4,true);
+	//BLPoint point;
+	//point.x = toolBoxSub.x0 + iconLeftMargin;
+	//point.y = toolBoxSub.y0 + 38;
+	//drawBtn(point, Icon::Name::rectFill, isFill, mouseEnterSubToolIndex == 0);	
+	//if (!isFill) {
+	//	point.x += toolBtnWidth;
+	//	drawStrokeWidthBtns(point, 1);
+	//}
+
+	drawSubToolBackground(3, true);
 	BLPoint point;
 	point.x = toolBoxSub.x0 + iconLeftMargin;
 	point.y = toolBoxSub.y0 + 38;
-	drawBtn(point, Icon::Name::rectFill, isFill, mouseEnterSubToolIndex == 0);	
-	if (!isFill) {
-		point.x += toolBtnWidth;
-		drawStrokeWidthBtns(point, 1);
-	}
+	drawStrokeWidthBtns(point, 0);
 }
 
 void MainWin::drawColorBtns(BLPoint& point,const int& index)

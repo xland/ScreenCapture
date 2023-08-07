@@ -88,7 +88,7 @@ void MainWin::leftBtnDownStartDraw()
         case State::eraser:
         {
             auto shape = new Shape::Eraser();
-            shape->strokeWidth = strokeWidths[strokeBtnIndex] + 28;
+            shape->strokeWidth = strokeWidths[strokeBtnIndex] + 36;
             History::Push(shape);
             break;
         }
