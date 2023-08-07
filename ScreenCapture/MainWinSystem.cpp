@@ -127,7 +127,7 @@ LRESULT CALLBACK MainWin::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
             paintCtx->setStrokeWidth(cutBoxBorderWidth);
             paintCtx->strokeBox(cutBox);
             drawToolMain();
-            if (!isLeftBtnDown && state == State::start) {
+            if (!IsLeftBtnDown && state == State::start) {
                 painter->DrawPixelInfo();
             }
             paintCtx->end();
@@ -162,13 +162,9 @@ LRESULT CALLBACK MainWin::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
                         if (History::Get()->size() < 1) return 0;
                         auto shape = (Shape::Text*)History::Get()->at(History::Get()->size() - 1);
                         shape->onlyDrawText = true;
-                        shape->Draw(0, 0, 0, 0);
-                        SetTimer(hwnd, 998, 60, (TIMERPROC)NULL);
+                        shape->Draw(0, 0, 0, 0);                        
                     }
-                    else
-                    {
-                        saveClipboard();
-                    }                    
+                    SetTimer(hwnd, 998, 60, (TIMERPROC)NULL);
                     return 0;
                 }
                 t1 = t2;
@@ -196,6 +192,35 @@ LRESULT CALLBACK MainWin::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
         {
             switch (wParam)
             {
+                case VK_DELETE: {
+                    if (state != State::text) return 0;
+                    if (History::Get()->size() < 1) return 0;                    
+                    auto shape = (Shape::Text*)History::Get()->at(History::Get()->size() - 1);
+                    shape->DeleteWord(false);
+                    return 0;
+                }
+                case VK_LEFT: {
+                    if (state != State::text) return 0;
+                    if (History::Get()->size() < 1) return 0;
+                    auto shape = (Shape::Text*)History::Get()->at(History::Get()->size() - 1);
+                    if (shape->cursorIndex > 0) {
+                        shape->cursorIndex -= 1;
+                        shape->showInputCursor = true;
+                        InvalidateRect(hwnd, nullptr, false);
+                    }
+                    return 0;
+                }
+                case VK_RIGHT: {
+                    if (state != State::text) return 0;
+                    if (History::Get()->size() < 1) return 0;
+                    auto shape = (Shape::Text*)History::Get()->at(History::Get()->size() - 1);
+                    if (shape->cursorIndex < shape->text.size()) {
+                        shape->cursorIndex += 1;
+                        shape->showInputCursor = true;
+                        InvalidateRect(hwnd, nullptr, false);
+                    }
+                    return 0;
+                }
                 case VK_ESCAPE: {
                     quitApp(3);
                     return 0;

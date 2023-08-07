@@ -55,11 +55,18 @@ namespace Shape {
         cursorIndex = tempIndex;
         showInputCursor = true;
     }
-    void Text::DeleteWord()
+    void Text::DeleteWord(const bool backspace)
     {
-        if (cursorIndex < 1) return;
-        text = text.substr(0, cursorIndex-1) + text.substr(cursorIndex);
-        cursorIndex -= 1;
+        if (backspace) {
+            if (cursorIndex < 1) return;
+            text = text.substr(0, cursorIndex - 1) + text.substr(cursorIndex);
+            cursorIndex -= 1;
+        }
+        else
+        {
+            if (cursorIndex >= text.size()) return;
+            text = text.substr(0, cursorIndex) + text.substr(cursorIndex+1);
+        }   
         Draw(-1, -1, -1, -1);
     }
     void Text::InsertWord(const std::wstring& word)
@@ -153,12 +160,12 @@ namespace Shape {
             return true;
         }
         auto win = MainWin::Get();
-        if (box.contains(win->MouseDownPos.x, win->MouseDownPos.y)) {
+        if (win->IsLeftBtnDown && box.contains(win->MouseDownPos.x, win->MouseDownPos.y)) {
             SetIndex(win->MouseDownPos.x);
             Draw(win->MouseDownPos.x, win->MouseDownPos.y, -1, -1);
             return false;
         }
-        if (draggerIndex != -1) {
+        if (win->IsLeftBtnDown && draggerIndex != -1) {
             return false;
         }
         KillTimer(win->hwnd, 999);

@@ -15,7 +15,7 @@ namespace Shape {
 		void SetIndex(const double& x);
 		void MouseInDragger(const double& x, const double& y) override;
 		void DragDragger(const double& x, const double& y) override;
-		void DeleteWord();
+		void DeleteWord(const bool backspace = true);
 		void InsertWord(const std::wstring& word);
 		void activeKeyboard(LONG x, LONG y);
 		double rotateDeg = 0.0;

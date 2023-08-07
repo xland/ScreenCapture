@@ -18,7 +18,8 @@ namespace Shape {
     {
         BLPointI points[5];
         unsigned int b{ 0 }, g{ 0 }, r{ 0 }, a{ 0 };
-        unsigned char* data = (unsigned char*)(bgImgData->pixelData);
+        unsigned char* bgData = (unsigned char*)(bgImgData->pixelData);
+        unsigned char* canvasData = (unsigned char*)(canvasImgData->pixelData);
         for (int y = box.y0; y < box.y1; y += strokeWidth)
         {
             for (int x = box.x0; x < box.x1; x += strokeWidth)
@@ -78,13 +79,28 @@ namespace Shape {
                 for (size_t i = 0; i < 5; i++)
                 {
                     auto index = points[i].y * (int)screenW * 4 + points[i].x * 4;
-                    b += data[index];
-                    g += data[index + 1];
-                    r += data[index + 2];
-                    a += data[index + 3];
+                    if (canvasData[index + 3] == 0) {
+                        b += bgData[index];
+                        g += bgData[index + 1];
+                        r += bgData[index + 2];
+                    }
+                    else if(canvasData[index + 3] == 255)
+                    {
+                        b += canvasData[index];
+                        g += canvasData[index + 1];
+                        r += canvasData[index + 2];
+                    }
+                    else
+                    {
+                        double a = (double)canvasData[index + 3] / 255.0f;
+                        b += std::round((double)canvasData[index+0] * a + (double)bgData[index+0] * (1 - a)); 
+                        g += std::round((double)canvasData[index+1] * a + (double)bgData[index+1] * (1 - a)); 
+                        r += std::round((double)canvasData[index+2] * a + (double)bgData[index+2] * (1 - a)); 
+                    }
+                    //a += bgData[index + 3];
                 }
                 //5 point colors average
-                context->setFillStyle(BLRgba32(r / 5, g / 5, b / 5, a / 5));
+                context->setFillStyle(BLRgba32(r / 5, g / 5, b / 5, 255));
                 context->fillBox(x, y, points[4].x, points[4].y);
                 b = g = r = a = 0;
             }

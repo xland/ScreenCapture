@@ -3,8 +3,9 @@
 namespace Shape {
 	void Pen::Draw(const double& x1, const double& y1, const double& x2, const double& y2)
 	{
+		isTemp = false;
 		auto context = Painter::Get()->paintCtx;
-		context->begin(*Painter::Get()->prepareImage);
+		context->begin(*Painter::Get()->canvasImage); //直接画，不然上一步干不掉它
 		context->setStrokeStyle(color);
 		context->setStrokeWidth(strokeWidth);
 		context->setStrokeCaps(BL_STROKE_CAP_ROUND);

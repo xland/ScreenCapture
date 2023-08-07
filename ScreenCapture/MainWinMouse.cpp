@@ -55,6 +55,7 @@ void MainWin::leftBtnDownStartDraw()
         }
         case State::pen:
         {
+            Debug("start pen");
             auto shape = new Shape::Pen();
             shape->color = colors[colorBtnIndex];
             shape->strokeWidth = strokeWidths[strokeBtnIndex];
@@ -125,7 +126,7 @@ void MainWin::leftBtnDownStartDraw()
 
 void MainWin::leftBtnDown(const POINT& pos)
 {
-    isLeftBtnDown = true;
+    IsLeftBtnDown = true;
     MouseDownPos = pos;
     if (state != State::start) {
         if (mouseEnterMainToolIndex == 9) //undo
@@ -147,7 +148,7 @@ void MainWin::leftBtnDown(const POINT& pos)
         else if (mouseEnterMainToolIndex == 12) //clipboard
         {
             History::LastShapeDrawEnd();
-            saveClipboard();
+            SetTimer(hwnd, 998, 60, (TIMERPROC)NULL);
             return;
         }
         else if (mouseEnterMainToolIndex == 13) //close
@@ -193,6 +194,7 @@ void MainWin::rightBtnDown(const POINT& pos)
     MouseDownPos = pos;
     if (painter->isDrawing)
     {
+        Debug("end draw");
         History::LastShapeDrawEnd();
         return;
     }
@@ -202,7 +204,7 @@ void MainWin::mouseMove(const POINT& pos)
 { 
     painter->pixelX = pos.x;
     painter->pixelY = pos.y;
-    if (isLeftBtnDown) {
+    if (IsLeftBtnDown) {
         switch (state)
         {
             case State::start:
@@ -244,7 +246,7 @@ void MainWin::mouseMove(const POINT& pos)
     }
     else {
         if(state == State::start){
-            Debug("IDC_CROSS");
+            //Debug("IDC_CROSS");
             ChangeCursor(IDC_CROSS);
             for (size_t i = 0; i < windowBoxes.size(); i++)
             {
@@ -259,7 +261,7 @@ void MainWin::mouseMove(const POINT& pos)
             return;
         }
         if (state == State::maskReady) {   
-            Debug("State::maskReady");
+            //Debug("State::maskReady");
             checkMouseEnterMaskBox(pos);
         }
         else
@@ -282,7 +284,7 @@ void MainWin::mouseMove(const POINT& pos)
 }
 void MainWin::leftBtnUp(const POINT& pos)
 {
-    isLeftBtnDown = false;
+    IsLeftBtnDown = false;
     if (mouseEnterMainToolIndex != -1 || mouseEnterSubToolIndex != -1) return;
     switch (state)
     {

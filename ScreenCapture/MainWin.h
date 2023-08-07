@@ -43,6 +43,7 @@ public:
 	POINT MouseDownPos;
 	bool IsShiftDown = false;
 	bool IsCtrlDown = false;
+	bool IsLeftBtnDown = false;
 	State state = State::start;
 	State preState;
 
@@ -66,7 +67,6 @@ private:
 	void leftBtnUp(const POINT& pos);
 	void leftBtnDownStartDraw();
 	inline POINT getMousePoint(const LPARAM& lParam);
-	bool isLeftBtnDown;
 
 
 	
