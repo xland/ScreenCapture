@@ -15,7 +15,7 @@
 
 # Download
 
-[Release(only 1.63M)](https://github.com/xland/ScreenCapture/releases/)
+[Release](https://github.com/xland/ScreenCapture/releases/) (1.63M)
 
 # Integration
 
