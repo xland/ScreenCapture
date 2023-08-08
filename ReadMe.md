@@ -8,7 +8,7 @@
 - Draw circle,ellipse,square,rectangle,arrow,number(ordered) by diffrent colors (fill or not fill).
 - Draw opacity line,free curve,mosaic,eraser.
 - Undo Redo support.
-- Save to file,Save to clipboard.
+- Save to file or clipboard.
 - Camera aperture,Copy pixel color(RGB,HEX).
 - Very fast,Low memory cust,Low CPU useage.
 - Only one small executable file (with out any dll).
