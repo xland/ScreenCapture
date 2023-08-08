@@ -23,7 +23,7 @@
 
 ```js
 let spawn = require("child_process").spawn;
-let child = spawn("../x64/Debug/ScreenCapture.exe")
+let child = spawn("./path/to/ScreenCapture.exe")
 child.on("close", (code) => {
     /// when code is:
     /// 0 undefined
