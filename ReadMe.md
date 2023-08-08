@@ -4,6 +4,7 @@
 # Features
 
 - Multi-screen capture, Cross screen shot.
+- Window area highlight.
 - Draw circle,ellipse,square,rectangle,arrow,number(ordered) by diffrent colors (fill or not fill).
 - Draw opacity line,free curve,mosaic,eraser.
 - Undo Redo support.
