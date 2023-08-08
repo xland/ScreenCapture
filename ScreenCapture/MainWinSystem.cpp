@@ -1,4 +1,4 @@
-#include "MainWin.h"
+Ôªø#include "MainWin.h"
 #include "dwmapi.h"
 #include "resource.h"
 #include <Commctrl.h>
@@ -46,7 +46,7 @@ void MainWin::createWindow()
     wcx.lpszClassName = L"ScreenCapture";
     if (!RegisterClassEx(&wcx))
     {
-        MessageBox(NULL, L"◊¢≤·¥∞ø⁄¿‡ ß∞‹", L"œµÕ≥Ã· æ", NULL);
+        MessageBox(NULL, L"Ê≥®ÂÜåÁ™óÂè£Á±ªÂ§±Ë¥•", L"Á≥ªÁªüÊèêÁ§∫", NULL);
         return;
     }
     hwnd = CreateWindowEx(0, wcx.lpszClassName, wcx.lpszClassName, WS_OVERLAPPEDWINDOW, painter->x, painter->y, painter->w, painter->h, NULL, NULL, hinstance, static_cast<LPVOID>(this));
@@ -334,12 +334,16 @@ void MainWin::saveFile()
     auto result = saveDialog.CoCreateInstance(CLSID_FileSaveDialog);
     saveDialog->SetDefaultExtension(L"png");
     saveDialog->SetFileName(name.c_str());
-    saveDialog->SetTitle(L"±£¥ÊŒƒº˛");
+    saveDialog->SetTitle(L"‰øùÂ≠òÊñá‰ª∂");
     //saveDialog->SetFilter(L"Image\0*.png\0");
     if (FAILED(result)) return;
     result = saveDialog->SetOptions(FOS_FORCEFILESYSTEM | FOS_PATHMUSTEXIST | FOS_OVERWRITEPROMPT);
     if (FAILED(result)) return;
     result = saveDialog->Show(hwnd);
+    if (result == HRESULT_FROM_WIN32(ERROR_CANCELLED)) {
+        //Áî®Êà∑ÂèñÊ∂à
+        return;
+    }
     if (FAILED(result)) return;
     CComPtr<IShellItem> item;
     result = saveDialog->GetResult(&item);

@@ -144,12 +144,14 @@ void MainWin::leftBtnDown(const POINT& pos)
         }
         else if (mouseEnterMainToolIndex == 11) //save file
         {
+            IsLeftBtnDown = false;
             History::LastShapeDrawEnd();
             saveFile();
             return;
         }
         else if (mouseEnterMainToolIndex == 12) //save clipboard
         {
+            IsLeftBtnDown = false;
             History::LastShapeDrawEnd();
             SetTimer(hwnd, 998, 60, (TIMERPROC)NULL);
             return;
