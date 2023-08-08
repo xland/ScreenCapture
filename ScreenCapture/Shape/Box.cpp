@@ -117,7 +117,7 @@ namespace Shape {
                     case 0: {
                         tempDraggerX = box.x1;
                         tempDraggerY = box.y1;
-                        draggerIndex = i;
+                        draggerIndex = (int)i;
                         cursor = IDC_SIZENWSE;
                         break;
                     }
@@ -125,7 +125,7 @@ namespace Shape {
                     {
                         tempDraggerX = box.x0;
                         tempDraggerY = box.y1;
-                        draggerIndex = i;
+                        draggerIndex = (int)i;
                         cursor = IDC_SIZENESW;
                         break;
                     }
@@ -133,14 +133,14 @@ namespace Shape {
                     {
                         tempDraggerX = box.x0;
                         tempDraggerY = box.y0;
-                        draggerIndex = i;
+                        draggerIndex = (int)i;
                         cursor = IDC_SIZENWSE;
                         break;
                     }
                     case 3: {
                         tempDraggerX = box.x1;
                         tempDraggerY = box.y0;
-                        draggerIndex = i;
+                        draggerIndex = (int)i;
                         cursor = IDC_SIZENESW;
                         break;
                     }
@@ -186,8 +186,8 @@ namespace Shape {
                 box.x1 += xSpan;
                 box.y1 += ySpan;
                 Draw(box.x0, box.y0, box.x1,box.y1);
-                win->MouseDownPos.x = x;
-                win->MouseDownPos.y = y;
+                win->MouseDownPos.x = (LONG)x;
+                win->MouseDownPos.y = (LONG)y;
                 break;
             }
         }

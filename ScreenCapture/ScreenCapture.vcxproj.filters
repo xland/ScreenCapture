@@ -51,9 +51,6 @@
     <ClCompile Include="Shape\Text.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Shape\Image.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="Shape\Box.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -87,9 +84,6 @@
     <ClCompile Include="Painter.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Tool\Tool.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainWin.h">
@@ -111,9 +105,6 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Shape\Text.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Shape\Image.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Shape\Box.h">
@@ -147,9 +138,6 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Painter.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Tool\Tool.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

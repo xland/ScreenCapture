@@ -194,7 +194,7 @@ namespace Shape {
     }
     void Text::MouseInDragger(const double& x, const double& y)
     {
-        for (size_t i = 0; i < 4; i++)
+        for (int i = 0; i < 4; i++)
         {
             if (draggers[i].contains(x, y)) {
                 LPCTSTR cursor = IDC_SIZENESW;

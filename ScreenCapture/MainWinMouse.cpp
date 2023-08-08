@@ -169,7 +169,6 @@ void MainWin::leftBtnDown(const POINT& pos)
         if (mouseEnterMainToolIndex != -1 && mouseEnterMainToolIndex < 9) {            
             selectedToolIndex = mouseEnterMainToolIndex;
             state = (State)(selectedToolIndex+2); 
-            //Debug("111 state:" + std::to_string((int)state));
             //设置几个图形默认是否需要填充
             if (state == State::rect||state == State::ellipse||state == State::line) {
                 isFill = false;
@@ -183,23 +182,18 @@ void MainWin::leftBtnDown(const POINT& pos)
             InvalidateRect(hwnd, nullptr, false);
             return;
         }
-        //Debug("222 state:" + std::to_string((int)state));
         if (mouseEnterSubToolIndex != -1) {
             subToolBtnClick();
             return;
         }
-        //Debug("333 state:" + std::to_string((int)state));
         leftBtnDownStartDraw();
-        //Debug("444 state:" + std::to_string((int)state));
     }
 }
 void MainWin::rightBtnDown(const POINT& pos)
 {
-    //canvasImage->writeToFile("123.png");
     MouseDownPos = pos;
     if (painter->isDrawing)
     {
-        //Debug("end draw");
         History::LastShapeDrawEnd();
         return;
     }
@@ -235,7 +229,6 @@ void MainWin::mouseMove(const POINT& pos)
             case State::pen:
             case State::eraser:
             {
-                //Debug("state:" + std::to_string((int)state));
                 History::LastShapeDraw(pos,MouseDownPos);
                 break;
             }
@@ -251,7 +244,6 @@ void MainWin::mouseMove(const POINT& pos)
     }
     else {
         if(state == State::start){
-            //Debug("IDC_CROSS");
             ChangeCursor(IDC_CROSS);
             for (size_t i = 0; i < windowBoxes.size(); i++)
             {
@@ -265,8 +257,10 @@ void MainWin::mouseMove(const POINT& pos)
             InvalidateRect(hwnd, nullptr, false);
             return;
         }
-        if (state == State::maskReady) {   
-            //Debug("State::maskReady");
+        if (checkMouseEnterToolBox(pos)) {
+            return;
+        }
+        if (state == State::maskReady) {
             checkMouseEnterMaskBox(pos);
         }
         else
@@ -283,7 +277,8 @@ void MainWin::mouseMove(const POINT& pos)
                 ChangeCursor(IDC_CROSS);
             }
         }
-        checkMouseEnterToolBox(pos);
+
+        
     }
 
 }

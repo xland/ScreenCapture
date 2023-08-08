@@ -1,5 +1,5 @@
 #pragma once
-#include "State.h"
+#include <blend2d.h>
 #include <windows.h>
 #include <windowsx.h>
 #include <algorithm>
@@ -10,9 +10,13 @@
 #include <math.h>
 #include <iostream>
 #include <vector>
+
+#include "State.h"
 #include "Icon.h"
-#include <blend2d.h>
 #include "Util.h"
+#include "Font.h"
+#include "Painter.h"
+
 #include "Shape/History.h"
 #include "Shape/Box.h"
 #include "Shape/Ellipse.h"
@@ -20,12 +24,10 @@
 #include "Shape/Number.h"
 #include "Shape/Line.h"
 #include "Shape/Pen.h"
-#include "Shape/Image.h"
 #include "Shape/Text.h"
 #include "Shape/Eraser.h"
 #include "Shape/Mosaic.h"
-#include "Font.h"
-#include "Painter.h"
+
 
 
 
@@ -87,7 +89,7 @@ private:
 	void setCutBox(BLPoint& startPos, BLPoint& endPos);
 	BLBox maskBoxes[8];
 	BLBox cutBox;
-	size_t cutBoxBorderWidth = 4;
+	int cutBoxBorderWidth = 4;
 	BLPoint dragStartCutBoxStartPos;
 	BLPoint dragStartCutBoxEndPos;
 	int mouseInMaskBoxIndex = -1;

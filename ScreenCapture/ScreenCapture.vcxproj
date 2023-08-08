@@ -110,7 +110,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>BL_STATIC;WIN32;_WINDOWS;_UNICODE;UNICODE;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
@@ -170,7 +170,6 @@
     <ClCompile Include="Shape\Ellipse.cpp" />
     <ClCompile Include="Shape\Box.cpp" />
     <ClCompile Include="Icon.cpp" />
-    <ClCompile Include="Shape\Image.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainWin.cpp" />
     <ClCompile Include="MainWinMask.cpp" />
@@ -182,7 +181,6 @@
     <ClCompile Include="Shape\Arrow.cpp" />
     <ClCompile Include="Shape\Shape.cpp" />
     <ClCompile Include="Shape\Text.cpp" />
-    <ClCompile Include="Tool\Tool.cpp" />
     <ClCompile Include="Util.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -197,14 +195,12 @@
     <ClInclude Include="Shape\Ellipse.h" />
     <ClInclude Include="Shape\Box.h" />
     <ClInclude Include="Icon.h" />
-    <ClInclude Include="Shape\Image.h" />
     <ClInclude Include="MainWin.h" />
     <ClInclude Include="Shape\Arrow.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Shape\Shape.h" />
     <ClInclude Include="State.h" />
     <ClInclude Include="Shape\Text.h" />
-    <ClInclude Include="Tool\Tool.h" />
     <ClInclude Include="Util.h" />
   </ItemGroup>
   <ItemGroup>

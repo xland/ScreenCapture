@@ -1,4 +1,4 @@
-#include "Font.h"
+ï»¿#include "Font.h"
 #include <Windows.h>
 #include "resource.h"
 
@@ -29,7 +29,7 @@ Font* Font::Get()
 void Font::initFontText()
 {
     BLFontFace face;
-    BLResult err = face.createFromFile("C:\\\Windows\\\Fonts\\simhei.ttf"); //ºÚÌå
+    BLResult err = face.createFromFile("C:\\Windows\\Fonts\\simhei.ttf"); //é»‘ä½“
     if (err) {
         printf("Failed to load a font face (err=%u)\n", err);
         return;
@@ -43,13 +43,13 @@ void Font::initFontIcon()
     HMODULE instance = GetModuleHandle(NULL);
     HRSRC resID = FindResource(instance, MAKEINTRESOURCE(IDR_ICON_FONT), L"ICON_FONT");
     if (resID == 0) {
-        MessageBox(NULL, L"²éÕÒ×ÖÌåÍ¼±ê×ÊÔ´Ê§°Ü", L"ÏµÍ³ÌáÊ¾", NULL);
+        MessageBox(NULL, L"æŸ¥æ‰¾å­—ä½“å›¾æ ‡èµ„æºå¤±è´¥", L"ç³»ç»Ÿæç¤º", NULL);
         return;
     }
     size_t resSize = SizeofResource(instance, resID);
     HGLOBAL res = LoadResource(instance, resID);
     if (res == 0) {
-        MessageBox(NULL, L"¼ÓÔØ×ÖÌåÍ¼±ê×ÊÔ´Ê§°Ü", L"ÏµÍ³ÌáÊ¾", NULL);
+        MessageBox(NULL, L"åŠ è½½å­—ä½“å›¾æ ‡èµ„æºå¤±è´¥", L"ç³»ç»Ÿæç¤º", NULL);
         return;
     }
     LPVOID resData = LockResource(res);
@@ -57,7 +57,7 @@ void Font::initFontIcon()
     BLResult result = fontData.createFromData(resData, resSize);
     //BOOL flag = VirtualFree(resData, resSize, MEM_RELEASE);
     if (result != BL_SUCCESS) {
-        MessageBox(NULL, L"Éú³É×ÖÌåÍ¼±êÊ§°Ü", L"ÏµÍ³ÌáÊ¾", NULL);
+        MessageBox(NULL, L"ç”Ÿæˆå­—ä½“å›¾æ ‡å¤±è´¥", L"ç³»ç»Ÿæç¤º", NULL);
         return;
     }
     BLFontFace face;
@@ -65,7 +65,7 @@ void Font::initFontIcon()
     fontIcon = new BLFont();
     result = fontIcon->createFromFace(face, 28.0f);
     if (result != BL_SUCCESS) {
-        MessageBox(NULL, L"´´½¨×ÖÌåÍ¼±êÊ§°Ü", L"ÏµÍ³ÌáÊ¾", NULL);
+        MessageBox(NULL, L"åˆ›å»ºå­—ä½“å›¾æ ‡å¤±è´¥", L"ç³»ç»Ÿæç¤º", NULL);
         return;
     }
 }

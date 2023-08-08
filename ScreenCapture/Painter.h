@@ -17,7 +17,7 @@ public:
 	BLContext* PaintBoard();
 	void DrawPixelInfo();
 	LONG pixelX{ -999999 } , pixelY{ -999999 };
-	float x, y, w, h;
+	int x, y, w, h;
 	bool isDrawing = false;
 	unsigned char* bgPixels;  //todo 马赛克那边可以少个变量
 	BLImage* canvasImage;
