@@ -19,7 +19,7 @@
 
 # Integration
 
-(With Node.JS(Electron))
+(With Node.JS Or Electron)
 
 ```js
 let spawn = require("child_process").spawn;
