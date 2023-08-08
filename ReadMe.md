@@ -9,7 +9,7 @@
 - Undo Redo support.
 - Save to file,Save to clipboard.
 - Camera aperture,Copy pixel color(RGB,HEX).
-- Very fast,low memory cust,low cpu useage.
+- Fast,Low memory cust,Low CPU useage.
 - Only one small executable file (with out any dll).
 - Can be easily integrated into any program.
 
