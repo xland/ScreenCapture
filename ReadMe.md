@@ -1,7 +1,7 @@
 ![](./Doc/banner.png)
 
 
-# ScreenCapture
+# Features
 
 - Multi-screen capture, Cross screen shot.
 - Draw circle,ellipse,square,rectangle,arrow,number(ordered) by diffrent colors (fill or not fill).
@@ -10,8 +10,8 @@
 - Save to file,Save to clipboard.
 - Camera aperture,Copy pixel color(RGB,HEX).
 - Very fast,low memory cust,low cpu useage.
-- Only one small executable file (with out any dll)
-- Can be easily integrated into any program
+- Only one small executable file (with out any dll).
+- Can be easily integrated into any program.
 
 # Download
 
@@ -40,9 +40,9 @@ child.on("close", (code) => {
 
 # Licenses
 
-This project is open source under the [MIT license](./licence)
+This project is open source under the [MIT license](./licence).
 
-[Blend2D](https://blend2d.com/) drawing engine is used in this project
+[Blend2D](https://blend2d.com/) drawing engine is used in this project.
 
-Please also comply with Blend2d's [Zlib open source license](https://github.com/blend2d/blend2d/blob/master/LICENSE.md) when using this project
+Please also comply with Blend2d's [Zlib open source license](https://github.com/blend2d/blend2d/blob/master/LICENSE.md) when using this project.
 
