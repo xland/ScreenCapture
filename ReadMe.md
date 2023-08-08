@@ -1,4 +1,4 @@
-![](./doc/banner.png)
+![](./Doc/banner.png)
 
 
 # ScreenCapture
@@ -38,9 +38,9 @@ child.on("close", (code) => {
 });
 ```
 
-# Licenses and Copyrights
+# Licenses
 
-This project is open source under the [MIT license]()
+This project is open source under the [MIT license](./licence)
 
 [Blend2D](https://blend2d.com/) drawing engine is used in this project
 
