@@ -80,7 +80,7 @@ void MainWin::drawSubToolNormal(const Icon::Name& icon)
 	BLPoint point;
 	point.x = toolBoxSub.x0 + iconLeftMargin;
 	point.y = toolBoxSub.y0 + 38;
-	drawBtn(point, icon, isFill, mouseEnterSubToolIndex == 0);	
+	drawBtnCheckable(point, icon, isFill, mouseEnterSubToolIndex == 0);	
 	if (!isFill) {
 		point.x += toolBtnWidth;
 		drawStrokeWidthBtns(point, 1);
@@ -99,7 +99,7 @@ void MainWin::drawSubToolLine()
 	BLPoint point;
 	point.x = toolBoxSub.x0 + iconLeftMargin;
 	point.y = toolBoxSub.y0 + 38;
-	drawBtn(point, Icon::Name::transparent, !isFill, mouseEnterSubToolIndex == 0);
+	drawBtnCheckable(point, Icon::Name::transparent, !isFill, mouseEnterSubToolIndex == 0);
 	point.x += toolBtnWidth;
 	drawStrokeWidthBtns(point, 1);
 	drawColorBtns(point, 4);
@@ -140,7 +140,7 @@ void MainWin::drawSubToolEraser()
 	//BLPoint point;
 	//point.x = toolBoxSub.x0 + iconLeftMargin;
 	//point.y = toolBoxSub.y0 + 38;
-	//drawBtn(point, Icon::Name::rectFill, isFill, mouseEnterSubToolIndex == 0);	
+	//drawBtnCheckable(point, Icon::Name::rectFill, isFill, mouseEnterSubToolIndex == 0);	
 	//if (!isFill) {
 	//	point.x += toolBtnWidth;
 	//	drawStrokeWidthBtns(point, 1);
@@ -160,20 +160,20 @@ void MainWin::drawColorBtns(BLPoint& point,const int& index)
 		point.x += toolBtnWidth;
 		painter->paintCtx->setFillStyle(colors[i]);
 		Icon::Name name = i == colorBtnIndex ? Icon::Name::colorChecked : Icon::Name::colorUnChecked;
-		drawBtn(point, name, i==colorBtnIndex, mouseEnterSubToolIndex == index+i,true);
+		drawBtnColors(point, name, i==colorBtnIndex, mouseEnterSubToolIndex == index+i);
 	}
 }
 
 void MainWin::drawStrokeWidthBtns(BLPoint& point,const int& index)
 {
-	drawBtn(point, Icon::Name::dot, strokeBtnIndex == 0, mouseEnterSubToolIndex == index);
+	drawBtnStrokeWidth(point, strokeBtnIndex == 0, mouseEnterSubToolIndex == index);
 	point.x += toolBtnWidth;
 	auto font = Font::Get()->fontIcon;
 	font->setSize(56.0f);
-	drawBtn(point, Icon::Name::dot, strokeBtnIndex == 1, mouseEnterSubToolIndex == index+1);
+	drawBtnStrokeWidth(point, strokeBtnIndex == 1, mouseEnterSubToolIndex == index+1);
 	point.x += toolBtnWidth;
 	font->setSize(86.0f);
-	drawBtn(point, Icon::Name::dot, strokeBtnIndex == 2, mouseEnterSubToolIndex == index+2);
+	drawBtnStrokeWidth(point, strokeBtnIndex == 2, mouseEnterSubToolIndex == index+2);
 	font->setSize(28.0f);
 }
 
@@ -211,7 +211,7 @@ void MainWin::subToolBtnClick()
 		}
 		case 8://Eraser
 		{
-			clickSubToolNormal();
+			clickSubToolPen();
 			break;
 		}
 	}
@@ -231,7 +231,7 @@ void MainWin::clickSubToolNormal()
 		case 2:
 		case 3:
 		{
-			strokeBtnIndex = index -1;
+			strokeBtnIndex = index - 1;
 			break;
 		}
 		case 4:

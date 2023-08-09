@@ -99,7 +99,11 @@ private:
 	//tool
 	void drawSplitter(const BLPoint& point);
 	void drawBtnBackground(const BLPoint& point, const BLRgba32& color);
-	void drawBtn(const BLPoint& point, const Icon::Name& name,const bool& isChecked, const bool& hover,const bool& customColor = false);
+	void drawBtn(const BLPoint& point, const Icon::Name& name,const bool& hover);
+	void drawBtnCheckable(const BLPoint& point, const Icon::Name& name, const bool& checked, const bool& hover);
+	void drawBtnColors(const BLPoint& point, const Icon::Name& name, const bool& checked, const bool& hover);
+	void drawBtnStrokeWidth(const BLPoint& point, const bool& checked, const bool& hover);
+	void drawBtnUndoRedo(const BLPoint& point, const Icon::Name& name, const bool& hover, const bool& enable);
 	bool checkMouseEnterToolBox(const POINT& pos);
 	int mainToolBtnCount = 14;
 	int toolBoxSpan = 12;//工具条距离截图区域的高度

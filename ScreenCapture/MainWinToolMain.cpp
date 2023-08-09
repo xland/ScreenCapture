@@ -62,22 +62,23 @@ void MainWin::drawToolMain()
 	point.y = toolBoxMain.y0 + iconTopMargin;
 	for (size_t i = 0; i < 9; i++)
 	{
-		drawBtn(point, (Icon::Name)i, selectedToolIndex == i, mouseEnterMainToolIndex == i);
+		drawBtnCheckable(point, (Icon::Name)i, selectedToolIndex == i, mouseEnterMainToolIndex == i);
 		point.x += toolBtnWidth;
 	}
 	drawSplitter(point);
 	point.x += toolBtnSpanWidth;
-	drawBtn(point, Icon::Name::undo, false,(int)Icon::Name::undo == mouseEnterMainToolIndex);
+	auto enables = History::UndoRedoEnable();
+	drawBtnUndoRedo(point, Icon::Name::undo,(int)Icon::Name::undo == mouseEnterMainToolIndex, enables.first);
 	point.x += toolBtnWidth;
-	drawBtn(point, Icon::Name::redo, false, (int)Icon::Name::redo == mouseEnterMainToolIndex);
+	drawBtnUndoRedo(point, Icon::Name::redo, (int)Icon::Name::redo == mouseEnterMainToolIndex,enables.second);
 	point.x += toolBtnWidth;
 	drawSplitter(point);
 	point.x += toolBtnSpanWidth;
-	drawBtn(point, Icon::Name::save, false, (int)Icon::Name::save == mouseEnterMainToolIndex);
+	drawBtn(point, Icon::Name::save, (int)Icon::Name::save == mouseEnterMainToolIndex);
 	point.x += toolBtnWidth;
-	drawBtn(point, Icon::Name::copy, false, (int)Icon::Name::copy == mouseEnterMainToolIndex);
+	drawBtn(point, Icon::Name::copy, (int)Icon::Name::copy == mouseEnterMainToolIndex);
 	point.x += toolBtnWidth;
-	drawBtn(point, Icon::Name::close, false, (int)Icon::Name::close == mouseEnterMainToolIndex);
+	drawBtn(point, Icon::Name::close, (int)Icon::Name::close == mouseEnterMainToolIndex);
 	point.x += toolBtnWidth;
 	if (selectedToolIndex != -1) {
 		drawSubTool();

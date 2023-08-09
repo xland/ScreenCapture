@@ -107,3 +107,21 @@ void  History::Redo()
 		}		
 	}
 }
+
+std::pair<bool, bool> History::UndoRedoEnable() {
+	std::pair<bool, bool> result{false,false};
+	if (history->size() < 1) {
+		return result;
+	}
+	if (history->at(0)->needDraw) {
+		result.first = true;
+	}	
+	for (int index = history->size() - 1; index >= 0; index--)
+	{
+		if (!history->at(index)->needDraw) {
+			result.second = true;
+			break;
+		}
+	}
+	return result;
+}

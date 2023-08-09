@@ -15,6 +15,8 @@ public:
 	static void LastShapeDragDragger(const POINT& pos);
 	static void Undo();
 	static void Redo();
+	static std::pair<bool,bool> UndoRedoEnable();
+	static bool RedoEnable();
 private:
 
 };
