@@ -1,4 +1,4 @@
-#include "Mosaic.h"
+ï»¿#include "Mosaic.h"
 #include "../Util.h"
 #include "../MainWin.h"
 
@@ -14,84 +14,91 @@ namespace Shape {
         delete bgImgData;
         delete canvasImgData;
     }
-    void Mosaic::drawMosaic(BLContext* context)
+    void Mosaic::setSamplingPoints(BLPointI* points,const int& x,const int& y)
     {
-        BLPointI points[5];
-        unsigned int b{ 0 }, g{ 0 }, r{ 0 }, a{ 0 };
+        //left top point
+        points[0].x = x;
+        points[0].y = y;
+        //right top point
+        points[1].y = y;
+        points[1].x = x + strokeWidth;
+        //center point
+        points[2].x = x + strokeWidth / 2;
+        points[2].y = y + strokeWidth / 2;
+        //left down point
+        points[3].x = x;
+        points[3].y = y + strokeWidth;
+        //right down point
+        points[4].x = x + strokeWidth;
+        points[4].y = y + strokeWidth;
+    }
+    void Mosaic::setSqureColor(BLPointI* points, unsigned char* bgData, unsigned char* canvasData)
+    {
+        unsigned int b{ 0 }, g{ 0 }, r{ 0 };
+        auto totalSize = screenW * 4 * screenH;
+        for (size_t i = 0; i < 5; i++)
+        {
+            auto index = points[i].y * (int)screenW * 4 + points[i].x * 4;
+            if (index > totalSize) {
+                break;
+            }
+            if (canvasData[index + 3] == 0) {
+                b += bgData[index];
+                g += bgData[index + 1];
+                r += bgData[index + 2];
+            }
+            else if (canvasData[index + 3] == 255)
+            {
+                b += canvasData[index];
+                g += canvasData[index + 1];
+                r += canvasData[index + 2];
+            }
+            else
+            {
+                double a = (double)canvasData[index + 3] / 255.0f;
+                b += (unsigned int)std::round((double)canvasData[index + 0] * a + (double)bgData[index + 0] * (1 - a));
+                g += (unsigned int)std::round((double)canvasData[index + 1] * a + (double)bgData[index + 1] * (1 - a));
+                r += (unsigned int)std::round((double)canvasData[index + 2] * a + (double)bgData[index + 2] * (1 - a));
+            }
+        }
+        //5 point colors average
+        Painter::Get()->paintCtx->setFillStyle(BLRgba32(r / 5, g / 5, b / 5, 255));
+    }
+    void Mosaic::drawMosaic()
+    {
+        BLPointI points[5];        
         unsigned char* bgData = (unsigned char*)(bgImgData->pixelData);
         unsigned char* canvasData = (unsigned char*)(canvasImgData->pixelData);
-        for (int y = (int)box.y0; y < box.y1; y += (int)strokeWidth)
-        {
-            for (int x = (int)box.x0; x < box.x1; x += (int)strokeWidth)
-            {
-                //left top point
-                points[0].x = x;
-                points[0].y = y;
-                //right top point
-                points[1].y = y;
-                if (x + (int)strokeWidth > box.x1) {
-                    points[1].x = (int)box.x1;
-                    points[4].x = (int)box.x1;
-                }
-                else
-                {
-                    points[1].x = x + (int)strokeWidth;
-                    points[4].x = x + (int)strokeWidth;
-                }
-                //center point
-                if (x + (int)strokeWidth / 2 > box.x1) {
-                    points[2].x = x + (int)((box.x1 - x));  //(int)((box.x1 - x) / 2)
-                }
-                else
-                {
-                    points[2].x = x + (int)strokeWidth / 2;
-                }
-                if (y + (int)strokeWidth / 2 > box.y1) {
-                    points[2].y = y + (int)((box.y1 - y)); //(int)((box.y1 - y) / 2)
-                }
-                else
-                {
-                    points[2].y = y + (int)strokeWidth / 2;
-                }
-                //left down point
-                points[3].x = x;
-                if (y + (int)strokeWidth > box.y1) {
-                    points[3].y = box.y1;
-                    points[4].y = box.y1;
-                }
-                else
-                {
-                    points[3].y = y + (int)strokeWidth;
-                    points[4].y = y + (int)strokeWidth;
-                }
+        int y0 = ((int)box.y0 / strokeWidth) * strokeWidth;
+        int x0 = ((int)box.x0 / strokeWidth) * strokeWidth;
+        int y1 = ((int)box.y1 / strokeWidth) * strokeWidth;
+        int x1 = ((int)box.x1 / strokeWidth) * strokeWidth;
 
-                for (size_t i = 0; i < 5; i++)
-                {
-                    auto index = points[i].y * (int)screenW * 4 + points[i].x * 4;
-                    if (canvasData[index + 3] == 0) {
-                        b += bgData[index];
-                        g += bgData[index + 1];
-                        r += bgData[index + 2];
-                    }
-                    else if(canvasData[index + 3] == 255)
-                    {
-                        b += canvasData[index];
-                        g += canvasData[index + 1];
-                        r += canvasData[index + 2];
-                    }
-                    else
-                    {
-                        double a = (double)canvasData[index + 3] / 255.0f;
-                        b += (unsigned int)std::round((double)canvasData[index+0] * a + (double)bgData[index+0] * (1 - a)); 
-                        g += (unsigned int)std::round((double)canvasData[index+1] * a + (double)bgData[index+1] * (1 - a)); 
-                        r += (unsigned int)std::round((double)canvasData[index+2] * a + (double)bgData[index+2] * (1 - a)); 
-                    }
-                    //a += bgData[index + 3];
+        for (int y = y0; y < y1; y += strokeWidth)
+        {
+            for (int x = x0; x < x1; x += strokeWidth)
+            {
+                setSamplingPoints(points, x, y);
+                setSqureColor(points, bgData, canvasData);
+                auto startX = x == x0 ? box.x0 : x;
+                auto startY = y == y0 ? box.y0 : y;
+                auto endX = points[4].x;
+                auto endY = points[4].y;
+                Painter::Get()->paintCtx->fillBox(startX, startY, endX, endY);
+                if (box.x1 - endX < strokeWidth) {
+                    setSamplingPoints(points, points[1].x, points[1].y);
+                    setSqureColor(points, bgData, canvasData);
+                    startX = points[0].x < box.x0 ? box.x0 : points[0].x;
+                    startY = points[0].y < box.y0 ? box.y0 : points[0].y;
+                    Painter::Get()->paintCtx->fillBox(startX, startY, box.x1,box.y1);
                 }
-                //5 point colors average
-                context->setFillStyle(BLRgba32(r / 5, g / 5, b / 5, 255));
-                context->fillBox(x, y, points[4].x, points[4].y);
-                b = g = r = a = 0;
+                if (box.y1 - endY < strokeWidth) {
+                    setSamplingPoints(points, points[3].x, points[3].y);
+                    setSqureColor(points, bgData, canvasData);
+                    startX = points[0].x < box.x0 ? box.x0 : points[0].x;
+                    startY = points[0].y < box.y0 ? box.y0 : points[0].y;
+                    Painter::Get()->paintCtx->fillBox(startX, startY, box.x1, box.y1);
+                }
             }
         }
     }
@@ -101,8 +108,8 @@ namespace Shape {
         auto context = Painter::Get()->paintCtx;
         context->begin(*Painter::Get()->prepareImage);
         context->clearAll();        
-        SetBoxByPos(box,x1, y1,x2, y2);//todo ÒÔ²»Í¬µÄÆðÊ¼×ø±ê»­Õâ¸ö¾ØÐÎµÄÊ±ºò£¬ÂíÈü¿Ë³öÏÖµÄÐ§¹û²»Ò»Ñù
-        drawMosaic(context);
+        SetBoxByPos(box,x1, y1,x2, y2);
+        drawMosaic();
         context->setStrokeStyle(BLRgba32(0,0,0));
         context->setStrokeWidth(1);
         context->strokeBox(box);
@@ -122,7 +129,7 @@ namespace Shape {
 
         auto context = painter->paintCtx;
         context->begin(*painter->canvasImage);
-        drawMosaic(context);
+        drawMosaic();
         context->end();
 
         context->begin(*painter->prepareImage);
@@ -239,15 +246,18 @@ namespace Shape {
         }
         case 4: {
             auto win = MainWin::Get();
-            auto xSpan = x - win->MouseDownPos.x;
-            auto ySpan = y - win->MouseDownPos.y;
-            box.x0 += xSpan;
-            box.y0 += ySpan;
-            box.x1 += xSpan;
-            box.y1 += ySpan;
-            Draw(box.x0, box.y0, box.x1, box.y1);
+            auto x0 = x - win->MouseDownPos.x + box.x0;
+            auto y0 = y - win->MouseDownPos.y + box.y0;
+            auto x1 = x - win->MouseDownPos.x + box.x1;
+            auto y1 = y - win->MouseDownPos.y + box.y1;
             win->MouseDownPos.x = x;
             win->MouseDownPos.y = y;
+            if (x0<0 || y0<0 || x1>Painter::Get()->w || y1>Painter::Get()->h) return;
+            box.x0 = x0;
+            box.y0 = y0;
+            box.x1 = x1;
+            box.y1 = y1;            
+            Draw(box.x0, box.y0, box.x1, box.y1);            
             break;
         }
         }

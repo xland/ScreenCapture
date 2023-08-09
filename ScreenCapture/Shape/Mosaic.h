@@ -20,9 +20,11 @@ namespace Shape {
 			double rotateDeg = 0.0;
 			bool isTansparent = false;//todo
 			BLRgba32 color;
-			double strokeWidth;
+			int strokeWidth;
 		private:
-			void drawMosaic(BLContext* context);
+			void setSamplingPoints(BLPointI* points,const int& x, const int& y);
+			void setSqureColor(BLPointI* points, unsigned char* bgData, unsigned char* canvasData);
+			void drawMosaic();
 			BLBox draggers[4];
 			double tempDraggerX, tempDraggerY;
 			int draggerIndex = -1;
