@@ -180,8 +180,8 @@ void Painter::DrawPixelInfo()
     std::stringstream ss;
     ss << std::hex << (bgPixels[pixelIndex + 2] << 16 | bgPixels[pixelIndex + 1] << 8 | bgPixels[pixelIndex]);
     std::string hex = ss.str();
-    int str_length = hex.length();
-    for (int i = 0; i < 6 - str_length; i++) {
+    size_t str_length = hex.length();
+    for (size_t i = 0; i < 6 - str_length; i++) {
         hex = "0" + hex;
     }
     utf8 = std::format("HEX(Ctr+H):#{}", hex);

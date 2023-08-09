@@ -20,22 +20,22 @@ namespace Shape {
         unsigned int b{ 0 }, g{ 0 }, r{ 0 }, a{ 0 };
         unsigned char* bgData = (unsigned char*)(bgImgData->pixelData);
         unsigned char* canvasData = (unsigned char*)(canvasImgData->pixelData);
-        for (int y = box.y0; y < box.y1; y += strokeWidth)
+        for (int y = (int)box.y0; y < box.y1; y += (int)strokeWidth)
         {
-            for (int x = box.x0; x < box.x1; x += strokeWidth)
+            for (int x = (int)box.x0; x < box.x1; x += (int)strokeWidth)
             {
                 //left top point
                 points[0].x = x;
                 points[0].y = y;
                 //right top point
                 points[1].y = y;
-                if (x + strokeWidth > box.x1) {
-                    points[1].x = box.x1;
-                    points[4].x = box.x1;
+                if (x + (int)strokeWidth > box.x1) {
+                    points[1].x = (int)box.x1;
+                    points[4].x = (int)box.x1;
                 }
                 else
                 {
-                    points[1].x = x + strokeWidth;
+                    points[1].x = x + (int)strokeWidth;
                     points[4].x = x + (int)strokeWidth;
                 }
                 //center point
@@ -82,9 +82,9 @@ namespace Shape {
                     else
                     {
                         double a = (double)canvasData[index + 3] / 255.0f;
-                        b += std::round((double)canvasData[index+0] * a + (double)bgData[index+0] * (1 - a)); 
-                        g += std::round((double)canvasData[index+1] * a + (double)bgData[index+1] * (1 - a)); 
-                        r += std::round((double)canvasData[index+2] * a + (double)bgData[index+2] * (1 - a)); 
+                        b += (unsigned int)std::round((double)canvasData[index+0] * a + (double)bgData[index+0] * (1 - a)); 
+                        g += (unsigned int)std::round((double)canvasData[index+1] * a + (double)bgData[index+1] * (1 - a)); 
+                        r += (unsigned int)std::round((double)canvasData[index+2] * a + (double)bgData[index+2] * (1 - a)); 
                     }
                     //a += bgData[index + 3];
                 }
@@ -177,7 +177,7 @@ namespace Shape {
                 case 0: {
                     tempDraggerX = box.x1;
                     tempDraggerY = box.y1;
-                    draggerIndex = i;
+                    draggerIndex = (int)i;
                     cursor = IDC_SIZENWSE;
                     break;
                 }
@@ -185,7 +185,7 @@ namespace Shape {
                 {
                     tempDraggerX = box.x0;
                     tempDraggerY = box.y1;
-                    draggerIndex = i;
+                    draggerIndex = (int)i;
                     cursor = IDC_SIZENESW;
                     break;
                 }
@@ -193,14 +193,14 @@ namespace Shape {
                 {
                     tempDraggerX = box.x0;
                     tempDraggerY = box.y0;
-                    draggerIndex = i;
+                    draggerIndex = (int)i;
                     cursor = IDC_SIZENWSE;
                     break;
                 }
                 case 3: {
                     tempDraggerX = box.x1;
                     tempDraggerY = box.y0;
-                    draggerIndex = i;
+                    draggerIndex = (int)i;
                     cursor = IDC_SIZENESW;
                     break;
                 }

@@ -4,12 +4,13 @@
 # Features
 
 - Multi-screen capture, Cross screen shot.
+- Window area highlight.
 - Draw circle,ellipse,square,rectangle,arrow,number(ordered) by diffrent colors (fill or not fill).
 - Draw opacity line,free curve,mosaic,eraser.
 - Undo Redo support.
-- Save to file,Save to clipboard.
+- Save to file or clipboard.
 - Camera aperture,Copy pixel color(RGB,HEX).
-- Fast,Low memory cust,Low CPU useage.
+- Very fast,Low memory cust,Low CPU useage.
 - Only one small executable file (with out any dll).
 - Can be easily integrated into any program.
 
@@ -42,7 +43,7 @@ child.on("close", (code) => {
 
 This project is under the [MIT license](./licence).
 
-[Blend2D](https://blend2d.com/) drawing engine is used in this project.
+[Blend2D](https://blend2d.com/) is used in this project.
 
 Please also comply with Blend2d's [Zlib open source license](https://github.com/blend2d/blend2d/blob/master/LICENSE.md).
 

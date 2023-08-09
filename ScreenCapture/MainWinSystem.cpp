@@ -354,8 +354,8 @@ void MainWin::saveFile()
     auto h = cutBox.y1 - cutBox.y0;
     BLImage imgSave(w, h, BL_FORMAT_PRGB32);
     painter->paintCtx->begin(imgSave);
-    painter->paintCtx->blitImage(BLPoint(0,0), *painter->bgImage, BLRectI(cutBox.x0, cutBox.y0, w, h));
-    painter->paintCtx->blitImage(BLPoint(0,0), *painter->canvasImage, BLRectI(cutBox.x0, cutBox.y0, w, h));
+    painter->paintCtx->blitImage(BLPoint(0,0), *painter->bgImage, BLRectI((int)cutBox.x0, (int)cutBox.y0, (int)w, (int)h));
+    painter->paintCtx->blitImage(BLPoint(0,0), *painter->canvasImage, BLRectI((int)cutBox.x0, (int)cutBox.y0, (int)w, (int)h));
     painter->paintCtx->end();
     auto filePathUtf8 = ConvertToUTF8(filePath);
     imgSave.writeToFile(filePathUtf8.c_str());
@@ -364,10 +364,10 @@ void MainWin::saveFile()
 }
 void MainWin::saveClipboard()
 {
-    size_t x = painter->x + cutBox.x0 + cutBoxBorderWidth / 2;
-    size_t y = painter->y + cutBox.y0 + cutBoxBorderWidth / 2;
-    size_t w = cutBox.x1 - cutBox.x0- cutBoxBorderWidth;
-    size_t h = cutBox.y1 - cutBox.y0- cutBoxBorderWidth;
+    int x = painter->x + (int)cutBox.x0 + cutBoxBorderWidth / 2;
+    int y = painter->y + (int)cutBox.y0 + cutBoxBorderWidth / 2;
+    int w = (int)cutBox.x1 - (int)cutBox.x0- cutBoxBorderWidth;
+    int h = (int)cutBox.y1 - (int)cutBox.y0- cutBoxBorderWidth;
     HDC ScreenDC = ::GetDC(NULL);
     HDC hMemDC = CreateCompatibleDC(ScreenDC);
     HBITMAP hBitmap = CreateCompatibleBitmap(ScreenDC, w, h);
