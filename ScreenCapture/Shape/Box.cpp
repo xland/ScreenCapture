@@ -15,7 +15,6 @@ namespace Shape {
     }
 	void Box::Draw(const double& x1, const double& y1, const double& x2, const double& y2)
 	{
-        isTemp = false;
         auto context = Painter::Get()->paintCtx;
         context->begin(*Painter::Get()->prepareImage);
         context->clearAll();

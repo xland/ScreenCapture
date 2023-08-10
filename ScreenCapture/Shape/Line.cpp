@@ -12,11 +12,7 @@ namespace Shape {
     }
 	void Line::Draw(const double& x1, const double& y1, const double& x2, const double& y2)
 	{
-        isTemp = false;
-        this->x1 = x1;
-        this->y1 = y1;
-        this->x2 = x2;
-        this->y2 = y2;
+
 		auto context = Painter::Get()->paintCtx;
 		context->begin(*Painter::Get()->prepareImage);
 		context->clearAll();
@@ -29,7 +25,17 @@ namespace Shape {
 		}		
 		context->setStrokeWidth(strokeWidth);
 		context->setStrokeCaps(BL_STROKE_CAP_ROUND);
-		context->strokeLine(x2, y2, x1, y1);
+        if (x1 == -1) {
+            context->strokeLine(this->x2, this->y2, this->x1, this->y1);
+        }
+        else
+        {
+            this->x1 = x1;
+            this->y1 = y1;
+            this->x2 = x2;
+            this->y2 = y2;
+            context->strokeLine(x2, y2, x1, y1);
+        }		
 		context->end();
 		InvalidateRect(MainWin::Get()->hwnd, nullptr, false);
 	}

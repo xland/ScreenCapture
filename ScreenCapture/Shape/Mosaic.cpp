@@ -105,11 +105,12 @@ namespace Shape {
     }
 	void Mosaic::Draw(const double& x1, const double& y1, const double& x2, const double& y2)
 	{
-        isTemp = false;
         auto context = Painter::Get()->paintCtx;
         context->begin(*Painter::Get()->prepareImage);
-        context->clearAll();        
-        SetBoxByPos(box,x1, y1,x2, y2);
+        context->clearAll();       
+        if (x1 != -1) {
+            SetBoxByPos(box, x1, y1, x2, y2);
+        }        
         drawMosaic();
         context->setStrokeStyle(BLRgba32(0,0,0));
         context->setStrokeWidth(1);

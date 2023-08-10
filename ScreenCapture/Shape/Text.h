@@ -22,7 +22,6 @@ namespace Shape {
 		bool isFill = false;
 		BLRgba32 color;
 		double fontSize;
-		bool onlyDrawText = false;
 	private:
 		double tempDraggerX, tempDraggerY;
 		int draggerIndex = -1;

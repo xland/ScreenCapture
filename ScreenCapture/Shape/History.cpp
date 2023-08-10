@@ -3,11 +3,16 @@
 #include "../MainWin.h"
 
 static std::vector<Shape::Shape*> history;
-static unsigned int lastDrawShapeIndex = -1;
+static int lastDrawShapeIndex = -1;
 
 std::vector<Shape::Shape*> History::Get()
 {
 	return history;
+}
+Shape::Shape* History::GetLastDrawShape()
+{
+	if (lastDrawShapeIndex < 0) return nullptr;
+	return history[lastDrawShapeIndex];
 }
 void History::Push(Shape::Shape* shape)
 {
@@ -21,92 +26,117 @@ void History::Push(Shape::Shape* shape)
 			return false;
 		});
 	history.erase(end, history.end());
-	history.push_back(shape);	
+	history.push_back(shape);
 }
 bool History::LastShapeDrawEnd()
 {
-	if (history.size() < 1) return true;
-	auto shape = history.at(history.size() - 1);
-	if (!shape->needDraw) {
-		return true;
-	}
-	return shape->EndDraw();
-	
+	if (lastDrawShapeIndex < 0) return true;
+	return history[lastDrawShapeIndex]->EndDraw();
 }
 void History::LastShapeDraw(const POINT& pos1, const POINT& pos2)
 {
 	if (history.size() < 1) return;
-	auto shape = history.at(history.size() - 1);
+	auto shape = history[history.size() - 1];
 	shape->Draw(pos1.x, pos1.y, pos2.x, pos2.y);
 }
 
 void History::LastShapeShowDragger()
 {
-	if (history.size() < 1) return;
-	auto shape = history.at(history.size() - 1);
-	shape->ShowDragger();
+	auto win = MainWin::Get();
+	if (win->state != State::lastPathDrag) {
+		lastDrawShapeIndex += 1;
+		history[lastDrawShapeIndex]->isTemp = false;
+	}	
+	history[lastDrawShapeIndex]->ShowDragger();
 }
 void History::LastShapeMouseInDragger(const POINT& pos)
 {
 	if (!Painter::Get()->isDrawing) return;
-	if (history.size() < 1) return;
-	auto shape = history.at(history.size() - 1);
-	shape->MouseInDragger(pos.x,pos.y);
+	if (lastDrawShapeIndex < 0) return;
+	if (history[lastDrawShapeIndex]->state == State::text) {
+		ChangeCursor(IDC_IBEAM);
+	}
+	history[lastDrawShapeIndex]->MouseInDragger(pos.x, pos.y);
 }
 void History::LastShapeDragDragger(const POINT& pos)
 {
-	if (history.size() < 1) return;
-	auto shape = history.at(history.size() - 1);
-	shape->DragDragger(pos.x, pos.y);
+	if (lastDrawShapeIndex < 0) return;
+	history[lastDrawShapeIndex]->DragDragger(pos.x, pos.y);
 }
 void  History::Undo()
 {
 	if (history.size() < 1) return;
+	bool hasNeedDrawShape = false;
 	int index = history.size() - 1;
 	for (; index >=0 ; index--)
 	{
-		if (!history.at(index)->needDraw) {
-			continue;
-		}
-		else
-		{
-			history.at(index)->needDraw = false;
+		if (history[index]->needDraw) {
+			history[index]->needDraw = false;
+			hasNeedDrawShape = true;
 			break;
 		}
 	}
+	if (!hasNeedDrawShape) return;
 	auto painter = Painter::Get();
 	auto context = painter->paintCtx;
 	context->begin(*painter->canvasImage);
 	context->clearAll();
 	context->end();
-	for (size_t i = 0; i < history.size(); i++)
-	{
-		if (history.at(i)->needDraw) {
-			painter->isDrawing = true;
-			history.at(i)->EndDraw();
-		}
-		else
-		{
-			break;
-		}		
+	lastDrawShapeIndex = index - 1;
+	if (lastDrawShapeIndex < 0) {
+		painter->isDrawing = false;
+		InvalidateRect(MainWin::Get()->hwnd, nullptr, false);
+		return;
 	}
+	for (size_t i = 0; i < lastDrawShapeIndex; i++)
+	{
+		painter->isDrawing = true;
+		history[i]->EndDraw();
+	}
+	painter->isDrawing = true;
+	history[lastDrawShapeIndex]->Draw(-1, -1, -1, -1);
 	auto win = MainWin::Get();
-	InvalidateRect(win->hwnd, nullptr, false);
+	if (history[lastDrawShapeIndex]->state == State::text) {
+		SetTimer(win->hwnd, 999, 660, (TIMERPROC)NULL);
+	}
+	else
+	{
+		history[lastDrawShapeIndex]->ShowDragger();
+	}	
+	win->preState = history[lastDrawShapeIndex]->state;
+	win->state = State::lastPathDrag;
+	win->selectedToolIndex = (int)win->preState - 2;
+	InvalidateRect(win->hwnd, nullptr, false);	
 }
 
 void  History::Redo()
 {
-	if (history.size() < 1) return;
-	auto painter = Painter::Get();	
-	for (size_t i = 0; i < history.size(); i++)
+	if (history.size() < 1 || 
+		lastDrawShapeIndex + 1 >= history.size() || 
+		history[lastDrawShapeIndex + 1]->needDraw) 
 	{
-		if (!history.at(i)->needDraw) {
-			painter->isDrawing = true;
-			history.at(i)->EndDraw();
-			history.at(i)->needDraw = true;
-			break;
-		}		
+		return;
 	}
+	auto painter = Painter::Get();	
+	if (painter->isDrawing) {
+		history[lastDrawShapeIndex]->EndDraw();
+	}
+	lastDrawShapeIndex += 1;
+	painter->isDrawing = true;
+	history[lastDrawShapeIndex]->needDraw = true;
+	history[lastDrawShapeIndex]->Draw(-1, -1, -1, -1);
+	auto win = MainWin::Get();
+	if (history[lastDrawShapeIndex]->state == State::text) {
+		SetTimer(win->hwnd, 999, 660, (TIMERPROC)NULL);
+	}
+	else
+	{
+		history[lastDrawShapeIndex]->ShowDragger();
+	}	
+	win->preState = history[lastDrawShapeIndex]->state;
+	win->state = State::lastPathDrag;
+	win->selectedToolIndex = (int)win->preState - 2;
+	InvalidateRect(win->hwnd, nullptr, false);
 }
 
 std::pair<bool, bool> History::UndoRedoEnable() {
@@ -114,15 +144,11 @@ std::pair<bool, bool> History::UndoRedoEnable() {
 	if (history.size() < 1) {
 		return result;
 	}
-	if (history.at(0)->needDraw) {
+	if (history[0]->needDraw) {
 		result.first = true;
-	}	
-	for (int index = history.size() - 1; index >= 0; index--)
-	{
-		if (!history.at(index)->needDraw) {
-			result.second = true;
-			break;
-		}
+	}
+	if (lastDrawShapeIndex + 1 < history.size()) {
+		result.second = true;
 	}
 	return result;
 }

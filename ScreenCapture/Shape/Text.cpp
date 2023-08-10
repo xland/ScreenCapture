@@ -81,27 +81,30 @@ namespace Shape {
         {
             if (cursorIndex >= text.size()) return;
             text = text.substr(0, cursorIndex) + text.substr(cursorIndex+1);
-        }   
+        }
+        if (text.empty()) {
+            isTemp = true;
+        }
         Draw(-1, -1, -1, -1);
     }
     void Text::InsertWord(const std::wstring& word)
     {
-        isTemp = false;
         text = text.substr(0, cursorIndex) + word + text.substr(cursorIndex);
         cursorIndex += 1;
+        isTemp = false;
+        needDraw = true;
         Draw(-1, -1, -1, -1);
     }
     void Text::Draw(const double& x1, const double& y1, const double& x2, const double& y2)
     {
+        if (!needDraw)
+        {
+            KillTimer(MainWin::Get()->hwnd, 999);
+            return;
+        }
         auto context = Painter::Get()->paintCtx;
         context->begin(*Painter::Get()->prepareImage);
         context->clearAll();
-        if (onlyDrawText&&isTemp) {
-            context->end();
-            auto win = MainWin::Get();
-            InvalidateRect(win->hwnd, nullptr, false);
-            return;
-        }
         if (box.x0 == -1) {
             box.x0 = x1 - margin;
             box.y0 = y1 - fontSize / 2 - margin;
@@ -115,32 +118,30 @@ namespace Shape {
             utf8 = ConvertToUTF8(text);
             context->fillUtf8Text(BLPoint(box.x0 + margin, box.y0 + font->metrics().ascent+margin), *font, utf8.c_str());
         }
-        if (!onlyDrawText) {
-            BLFontMetrics fm = font->metrics();
-            BLTextMetrics tm;
-            BLGlyphBuffer gb;            
+        BLFontMetrics fm = font->metrics();
+        BLTextMetrics tm;
+        BLGlyphBuffer gb;
+        gb.setUtf8Text(utf8.c_str()); //utf8.c_str()
+        font->shape(gb);
+        font->getTextMetrics(gb, tm);
+        box.x1 = box.x0 + tm.boundingBox.x1 - tm.boundingBox.x0 + margin * 3;
+        if (!isDraggingDragger) {
+            context->setStrokeStyle(color);
+            context->setStrokeWidth(2.0f);
+            context->strokeBox(box);
+            auto subText = text.substr(0, cursorIndex);
+            utf8 = ConvertToUTF8(subText);
             gb.setUtf8Text(utf8.c_str()); //utf8.c_str()
             font->shape(gb);
             font->getTextMetrics(gb, tm);
-            box.x1 = box.x0 + tm.boundingBox.x1 - tm.boundingBox.x0 + margin * 3;          
-            if (!isDraggingDragger) {
-                context->setStrokeStyle(color);
-                context->setStrokeWidth(2.0f);
-                context->strokeBox(box);
-                auto subText = text.substr(0, cursorIndex);
-                utf8 = ConvertToUTF8(subText);
-                gb.setUtf8Text(utf8.c_str()); //utf8.c_str()
-                font->shape(gb);
-                font->getTextMetrics(gb, tm);
-                if (showInputCursor) {
-                    auto x = box.x0 + margin + 6 + tm.boundingBox.x1 - tm.boundingBox.x0;
-                    context->strokeLine(x, box.y0 + margin, x, box.y1 - margin);
-                    activeKeyboard(x, box.y1 - margin);
-                }
-                showInputCursor = !showInputCursor;
+            if (showInputCursor) {
+                auto x = box.x0 + margin + 6 + tm.boundingBox.x1 - tm.boundingBox.x0;
+                context->strokeLine(x, box.y0 + margin, x, box.y1 - margin);
+                activeKeyboard(x, box.y1 - margin);
             }
-        }   
-        if (!onlyDrawText && draggerIndex != -1 && !isDraggingDragger) {
+            showInputCursor = !showInputCursor;
+        }
+        if (draggerIndex != -1 && !isDraggingDragger) {
             draggers[0].x0 = box.x0 - draggerSize;
             draggers[0].y0 = box.y0 - draggerSize;
             draggers[0].x1 = box.x0 + draggerSize;
@@ -251,7 +252,6 @@ namespace Shape {
             }
         }
         if (box.contains(x, y)) {
-            //ChangeCursor(IDC_SIZEALL);
             draggerIndex = 4;
         }
         else

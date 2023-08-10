@@ -48,6 +48,7 @@ public:
 	bool IsLeftBtnDown = false;
 	State state = State::start;
 	State preState;
+	int selectedToolIndex = -1;
 
 private:
 	MainWin(HINSTANCE hinstance);
@@ -120,7 +121,6 @@ private:
 	void drawToolMain();
 	BLBox toolBoxMain;
 	int mouseEnterMainToolIndex = -1;
-	int selectedToolIndex = -1;
 
 	//toolsub
 	void drawSubTool();

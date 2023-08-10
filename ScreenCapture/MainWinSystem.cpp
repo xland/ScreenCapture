@@ -111,7 +111,10 @@ LRESULT CALLBACK MainWin::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
         }
         case WM_TIMER: {
             if (wParam == 999) {
-                History::LastShapeDraw(MouseDownPos, MouseDownPos);
+                auto shape = dynamic_cast<Shape::Text*>(History::GetLastDrawShape());
+                if (shape) {
+                    shape->Draw(-1, -1, -1, -1);
+                }
             }
             else if (wParam == 998) {
                 saveClipboard();
@@ -158,14 +161,19 @@ LRESULT CALLBACK MainWin::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
                 auto t2 = std::chrono::system_clock::now();
                 auto count = floor<std::chrono::milliseconds>(t2 - t1).count();
                 if (count > 0 && count < 300 && mouseEnterMainToolIndex == -1 && mouseEnterSubToolIndex == -1) {
-                    if (state == State::text) {
-                        if (History::Get().size() < 1) return 0;
-                        auto shape = (Shape::Text*)History::Get().at(History::Get().size() - 1);
-                        shape->onlyDrawText = true;
-                        shape->Draw(0, 0, 0, 0);                        
+                    if (!painter->isDrawing) {
+                        saveClipboard();
+                        return 0;
                     }
-                    SetTimer(hwnd, 998, 60, (TIMERPROC)NULL);
-                    return 0;
+                    else
+                    {
+                        auto shape = dynamic_cast<Shape::Text*>(History::GetLastDrawShape());
+                        if (shape) {
+                            shape->EndDraw();
+                        }
+                        SetTimer(hwnd, 998, 60, (TIMERPROC)NULL);
+                        return 0;
+                    }                    
                 }
                 t1 = t2;
             }
@@ -193,25 +201,22 @@ LRESULT CALLBACK MainWin::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
             switch (wParam)
             {
                 case VK_DELETE: {
-                    if (state != State::text) return 0;
-                    if (History::Get().size() < 1) return 0;                    
-                    auto shape = (Shape::Text*)History::Get().at(History::Get().size() - 1);
+                    auto shape = dynamic_cast<Shape::Text*>(History::GetLastDrawShape());
+                    if (!shape) return 0;                    
                     shape->DeleteWord(false);
                     return 0;
                 }
                 case VK_LEFT: {
-                    if (state != State::text) return 0;
-                    if (History::Get().size() < 1) return 0;
-                    auto shape = (Shape::Text*)History::Get().at(History::Get().size() - 1);
+                    auto shape = dynamic_cast<Shape::Text*>(History::GetLastDrawShape());
+                    if (!shape) return 0;
                     if (shape->moveCursorIndex(true)) {
                         InvalidateRect(hwnd, nullptr, false);
                     }                    
                     return 0;
                 }
                 case VK_RIGHT: {
-                    if (state != State::text) return 0;
-                    if (History::Get().size() < 1) return 0;
-                    auto shape = (Shape::Text*)History::Get().at(History::Get().size() - 1);
+                    auto shape = dynamic_cast<Shape::Text*>(History::GetLastDrawShape());
+                    if (!shape) return 0;
                     if (shape->moveCursorIndex(false)) {
                         InvalidateRect(hwnd, nullptr, false);
                     }
@@ -265,14 +270,12 @@ LRESULT CALLBACK MainWin::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
         }
         case WM_CHAR:
         {
-            if (state != State::text) return 0;
-            auto history = History::Get();
-            if (history.size() < 1) return 0;
-            if (wParam == 13) {
+            if (wParam == 13) { //enter
                 History::LastShapeDrawEnd();
                 return 1;
             }
-            auto shape = (Shape::Text*)history.at(history.size() - 1);
+            auto shape = dynamic_cast<Shape::Text*>(History::GetLastDrawShape());
+            if (!shape) return 0;
             if (wParam == 8) {
                 shape->DeleteWord();
             }

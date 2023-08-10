@@ -131,9 +131,6 @@ void MainWin::leftBtnDown(const POINT& pos)
     if (state != State::start) {
         if (mouseEnterMainToolIndex == 9) //undo
         {
-            if (painter->isDrawing) {
-                History::LastShapeDrawEnd();
-            }
             History::Undo();
             return;
         }
@@ -270,7 +267,6 @@ void MainWin::mouseMove(const POINT& pos)
             }
             else if (state == State::text) {
                 ChangeCursor(IDC_IBEAM);
-                History::LastShapeMouseInDragger(pos);
             }
             else
             {
@@ -305,6 +301,7 @@ void MainWin::leftBtnUp(const POINT& pos)
         case State::line:
         case State::number:
         case State::mosaic:
+        case State::text:
         {
             History::LastShapeShowDragger();
             state = State::lastPathDrag;
@@ -312,7 +309,6 @@ void MainWin::leftBtnUp(const POINT& pos)
         }
         case State::eraser:
         case State::pen: 
-        case State::text:
         {
             History::LastShapeShowDragger();
             break;
