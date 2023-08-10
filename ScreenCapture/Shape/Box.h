@@ -13,8 +13,6 @@ namespace Shape {
 			bool EndDraw() override;
 			BLBox box;
 			bool isFill = false;
-			double rotateDeg = 0.0;
-			bool isTansparent = false;//todo
 			BLRgba32 color;
 			double strokeWidth;
 		private:

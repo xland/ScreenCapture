@@ -2,6 +2,7 @@
 #include <vector>
 #include "blend2d.h"
 #include "../Painter.h"
+#include "../State.h"
 namespace Shape {
 	class Shape
 	{
@@ -18,6 +19,7 @@ namespace Shape {
 		virtual void DragDragger([[maybe_unused]] const double& x, [[maybe_unused]] const double& y) {};
 		bool isTemp = true;
 		bool needDraw = true;
+		State state;
 	protected:
 		int draggerSize = 6;
 	};

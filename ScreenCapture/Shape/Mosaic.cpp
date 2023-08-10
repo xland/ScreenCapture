@@ -6,6 +6,7 @@ namespace Shape {
 
     Mosaic::Mosaic()
     {
+        state = State::mosaic;
         bgImgData = new BLImageData();
         canvasImgData = new BLImageData();
     }

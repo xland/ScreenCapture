@@ -1,12 +1,13 @@
 #include "Box.h"
 #include "../Util.h"
 #include "../MainWin.h"
+#include "../State.h"
 
 namespace Shape {
 
     Box::Box()
     {
-
+        state = State::box;
     }
     Box::~Box()
     {

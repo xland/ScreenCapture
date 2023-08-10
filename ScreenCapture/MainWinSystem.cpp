@@ -203,20 +203,16 @@ LRESULT CALLBACK MainWin::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
                     if (state != State::text) return 0;
                     if (History::Get()->size() < 1) return 0;
                     auto shape = (Shape::Text*)History::Get()->at(History::Get()->size() - 1);
-                    if (shape->cursorIndex > 0) {
-                        shape->cursorIndex -= 1;
-                        shape->showInputCursor = true;
+                    if (shape->moveCursorIndex(true)) {
                         InvalidateRect(hwnd, nullptr, false);
-                    }
+                    }                    
                     return 0;
                 }
                 case VK_RIGHT: {
                     if (state != State::text) return 0;
                     if (History::Get()->size() < 1) return 0;
                     auto shape = (Shape::Text*)History::Get()->at(History::Get()->size() - 1);
-                    if (shape->cursorIndex < shape->text.size()) {
-                        shape->cursorIndex += 1;
-                        shape->showInputCursor = true;
+                    if (shape->moveCursorIndex(false)) {
                         InvalidateRect(hwnd, nullptr, false);
                     }
                     return 0;

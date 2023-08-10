@@ -20,7 +20,7 @@ void MainWin::leftBtnDownStartDraw()
             }
             return;
         }
-        case State::rect:
+        case State::box:
         {
             auto box = new Shape::Box();
             box->color = colors[colorBtnIndex];
@@ -170,7 +170,7 @@ void MainWin::leftBtnDown(const POINT& pos)
             selectedToolIndex = mouseEnterMainToolIndex;
             state = (State)(selectedToolIndex+2); 
             //设置几个图形默认是否需要填充
-            if (state == State::rect||state == State::ellipse||state == State::line) {
+            if (state == State::box||state == State::ellipse||state == State::line) {
                 isFill = false;
             }
             else if (state == State::arrow || state == State::number) {
@@ -220,7 +220,7 @@ void MainWin::mouseMove(const POINT& pos)
                 InvalidateRect(hwnd, nullptr, false);
                 break;
             }
-            case State::rect:
+            case State::box:
             case State::ellipse:
             case State::arrow:
             case State::number:
@@ -298,7 +298,7 @@ void MainWin::leftBtnUp(const POINT& pos)
         {
             break;
         }
-        case State::rect:
+        case State::box:
         case State::ellipse:
         case State::arrow:
         case State::lastPathDrag:

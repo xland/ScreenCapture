@@ -2,6 +2,15 @@
 #include "../Util.h"
 #include "../MainWin.h"
 namespace Shape {
+
+    Ellipse::Ellipse()
+    {
+        state = State::ellipse;
+    }
+    Ellipse::~Ellipse()
+    {
+
+    }
     void Ellipse::Draw(const double& x1, const double& y1, const double& x2, const double& y2)
     {
         isTemp = false;

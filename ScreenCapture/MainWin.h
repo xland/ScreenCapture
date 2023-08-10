@@ -121,8 +121,6 @@ private:
 	BLBox toolBoxMain;
 	int mouseEnterMainToolIndex = -1;
 	int selectedToolIndex = -1;
-	bool canRedo = false;
-	bool canUndo = false;
 
 	//toolsub
 	void drawSubTool();

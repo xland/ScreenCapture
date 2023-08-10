@@ -1,6 +1,15 @@
 #include "Pen.h"
 #include "../MainWin.h"
 namespace Shape {
+
+	Pen::Pen()
+	{
+		state = State::pen;
+	}
+	Pen::~Pen()
+	{
+
+	}
 	void Pen::Draw(const double& x1, const double& y1, const double& x2, const double& y2)
 	{
 		isTemp = false;
@@ -36,7 +45,6 @@ namespace Shape {
 		context->end();
         auto win = MainWin::Get();
 		painter->isDrawing = false;
-		//Debug("aaa state:" + std::to_string((int)win->state));
         InvalidateRect(win->hwnd, nullptr, false);
         return true;
     }

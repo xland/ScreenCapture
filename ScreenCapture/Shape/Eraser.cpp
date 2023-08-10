@@ -1,6 +1,15 @@
 #include "Eraser.h"
 #include "../MainWin.h"
 namespace Shape {
+
+	Eraser::Eraser()
+	{
+		state = State::eraser;
+	}
+	Eraser::~Eraser()
+	{
+
+	}
 	void Eraser::Draw(const double& x1, const double& y1, const double& x2, const double& y2)
 	{
 		isTemp = false;

@@ -5,7 +5,7 @@ class Icon
 public:
     enum class Name
     {
-        rect = 0,
+        box = 0,
         ellipse,
         arrow,
         number,

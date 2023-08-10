@@ -18,8 +18,8 @@ namespace Shape {
 		bool isTansparent = false;
 		double strokeWidth;
 		BLRgba32 color; 
-		BLBox draggers[2];
 	private:
+		BLBox draggers[2];
 		double tempDraggerX, tempDraggerY;
 		int draggerIndex = -1;
 	};

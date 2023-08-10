@@ -16,10 +16,6 @@ namespace Shape {
 			BLImageData* canvasImgData;
 			float screenW, screenH;
 			BLBox box;
-			bool isFill = false;
-			double rotateDeg = 0.0;
-			bool isTansparent = false;//todo
-			BLRgba32 color;
 			int strokeWidth;
 		private:
 			void setSamplingPoints(BLPointI* points,const int& x, const int& y);

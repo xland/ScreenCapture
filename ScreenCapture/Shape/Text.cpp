@@ -8,7 +8,7 @@ static double _fontSize = 68.0f;
 namespace Shape {
     Text::Text():fontSize{_fontSize}
     {
-
+        state = State::text;
     }
     Text::~Text()
     {
@@ -55,6 +55,21 @@ namespace Shape {
         cursorIndex = tempIndex;
         showInputCursor = true;
     }
+    bool Text::moveCursorIndex(const bool& toLeft)
+    {
+        if (toLeft && cursorIndex > 0) {
+            cursorIndex -= 1;
+            showInputCursor = true;
+            return true;
+        }
+        if (!toLeft && cursorIndex < text.size()) {
+            cursorIndex += 1;
+            showInputCursor = true;
+            return true;
+        }
+        return false;
+    }
+
     void Text::DeleteWord(const bool backspace)
     {
         if (backspace) {

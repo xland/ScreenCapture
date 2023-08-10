@@ -1,6 +1,15 @@
 #include "Line.h"
 #include "../MainWin.h"
 namespace Shape {
+
+    Line::Line()
+    {
+        state = State::line;
+    }
+    Line::~Line()
+    {
+
+    }
 	void Line::Draw(const double& x1, const double& y1, const double& x2, const double& y2)
 	{
         isTemp = false;

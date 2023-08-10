@@ -6,6 +6,7 @@ namespace Shape {
 
     Arrow::Arrow()
     {
+        state = State::arrow;
     }
     Arrow::~Arrow()
     {

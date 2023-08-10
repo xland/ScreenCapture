@@ -18,21 +18,21 @@ namespace Shape {
 		void DeleteWord(const bool backspace = true);
 		void InsertWord(const std::wstring& word);
 		void activeKeyboard(LONG x, LONG y);
-		double rotateDeg = 0.0;
+		bool moveCursorIndex(const bool& toLeft);
 		bool isFill = false;
 		BLRgba32 color;
-		std::wstring text;
 		double fontSize;
-		bool showInputCursor = true;
-		int cursorIndex = 0;
 		bool onlyDrawText = false;
-		double margin = 18.0f;
-		BLBox draggers[4];
 	private:
 		double tempDraggerX, tempDraggerY;
 		int draggerIndex = -1;
 		BLBox box{ -1.0f, -1.0f, -1.0f, -1.0f };
 		bool isDraggingDragger = false;
+		double margin = 18.0f;
+		BLBox draggers[4];
+		bool showInputCursor = true;
+		int cursorIndex = 0;
+		std::wstring text;
 	};
 }
 

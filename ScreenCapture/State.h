@@ -4,7 +4,7 @@ enum class State
 {
 	start = 0,
 	maskReady,
-    rect,
+    box,
     ellipse,
     arrow,
     number,
