@@ -1,11 +1,11 @@
-#include "Number.h"
+ï»¿#include "Number.h"
+#include <numbers>
 #include <iostream>
 #include <string>
 #include <Windows.h> 
 #include "../Font.h"
 #include "../MainWin.h"
 namespace Shape {
-    static double PI = 3.1415926;
     static unsigned int num = 0;
     Number::Number()
     {
@@ -25,23 +25,23 @@ namespace Shape {
         context->clearAll();
         path.clear();
         BLPoint arrowPoint, centerPoint;
-        arrowPoint.x = x1; //¼ıÍ·¶¥µã
+        arrowPoint.x = x1; //ç®­å¤´é¡¶ç‚¹
         arrowPoint.y = y1;
-        centerPoint.x = x2; //Ô²ĞÄ
+        centerPoint.x = x2; //åœ†å¿ƒ
         centerPoint.y = y2;
         auto x = x1 - x2;
         auto y = y2 - y1;
-        auto r = std::sqrt(x * x + y * y);//Ô²ĞÄµ½¼ıÍ·¶¥µãµÄ³¤¶È
-        auto height = r / 2.6; //¼ıÍ·¸ß¶È
-        r = r - height;//°ë¾¶
-        auto radint = std::atan2(y, x); //·´ÕıÇĞ
-        auto angle = radint * 180 / PI; //½Ç¶È
-        auto angleSpan = 16.f; //°ë½Ç
-        auto angle1 = (angle + angleSpan) * PI / 180;//»¡¶È
-        auto angle2 = (angle - angleSpan) * PI / 180;//»¡¶È
-        auto X1 = centerPoint.x + r * cos(angle1);//¼ıÍ·ÓëÔ²µÄ½»½Óµã1
+        auto r = std::sqrt(x * x + y * y);//åœ†å¿ƒåˆ°ç®­å¤´é¡¶ç‚¹çš„é•¿åº¦
+        auto height = r / 2.6; //ç®­å¤´é«˜åº¦
+        r = r - height;//åŠå¾„
+        auto radint = std::atan2(y, x); //åæ­£åˆ‡
+        auto angle = radint * 180 / std::numbers::pi; //è§’åº¦
+        auto angleSpan = 16.f; //åŠè§’
+        auto angle1 = (angle + angleSpan) * std::numbers::pi / 180;//å¼§åº¦
+        auto angle2 = (angle - angleSpan) * std::numbers::pi / 180;//å¼§åº¦
+        auto X1 = centerPoint.x + r * cos(angle1);//ç®­å¤´ä¸åœ†çš„äº¤æ¥ç‚¹1
         auto Y1 = centerPoint.y - r * sin(angle1);
-        auto X2 = centerPoint.x + r * cos(angle2);//¼ıÍ·ÓëÔ²µÄ½»½Óµã2
+        auto X2 = centerPoint.x + r * cos(angle2);//ç®­å¤´ä¸åœ†çš„äº¤æ¥ç‚¹2
         auto Y2 = centerPoint.y - r * sin(angle2);
         //auto debug = std::to_string(angle) + "," 
         //    + std::to_string(X1) + "," + std::to_string(Y1) + ","

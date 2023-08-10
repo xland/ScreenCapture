@@ -3,6 +3,7 @@
 #include "../MainWin.h"
 
 static std::vector<Shape::Shape*> history;
+static unsigned int lastDrawShapeIndex = -1;
 
 std::vector<Shape::Shape*> History::Get()
 {
