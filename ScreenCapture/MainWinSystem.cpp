@@ -159,8 +159,8 @@ LRESULT CALLBACK MainWin::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
                 auto count = floor<std::chrono::milliseconds>(t2 - t1).count();
                 if (count > 0 && count < 300 && mouseEnterMainToolIndex == -1 && mouseEnterSubToolIndex == -1) {
                     if (state == State::text) {
-                        if (History::Get()->size() < 1) return 0;
-                        auto shape = (Shape::Text*)History::Get()->at(History::Get()->size() - 1);
+                        if (History::Get().size() < 1) return 0;
+                        auto shape = (Shape::Text*)History::Get().at(History::Get().size() - 1);
                         shape->onlyDrawText = true;
                         shape->Draw(0, 0, 0, 0);                        
                     }
@@ -194,15 +194,15 @@ LRESULT CALLBACK MainWin::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
             {
                 case VK_DELETE: {
                     if (state != State::text) return 0;
-                    if (History::Get()->size() < 1) return 0;                    
-                    auto shape = (Shape::Text*)History::Get()->at(History::Get()->size() - 1);
+                    if (History::Get().size() < 1) return 0;                    
+                    auto shape = (Shape::Text*)History::Get().at(History::Get().size() - 1);
                     shape->DeleteWord(false);
                     return 0;
                 }
                 case VK_LEFT: {
                     if (state != State::text) return 0;
-                    if (History::Get()->size() < 1) return 0;
-                    auto shape = (Shape::Text*)History::Get()->at(History::Get()->size() - 1);
+                    if (History::Get().size() < 1) return 0;
+                    auto shape = (Shape::Text*)History::Get().at(History::Get().size() - 1);
                     if (shape->moveCursorIndex(true)) {
                         InvalidateRect(hwnd, nullptr, false);
                     }                    
@@ -210,8 +210,8 @@ LRESULT CALLBACK MainWin::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
                 }
                 case VK_RIGHT: {
                     if (state != State::text) return 0;
-                    if (History::Get()->size() < 1) return 0;
-                    auto shape = (Shape::Text*)History::Get()->at(History::Get()->size() - 1);
+                    if (History::Get().size() < 1) return 0;
+                    auto shape = (Shape::Text*)History::Get().at(History::Get().size() - 1);
                     if (shape->moveCursorIndex(false)) {
                         InvalidateRect(hwnd, nullptr, false);
                     }
@@ -267,12 +267,12 @@ LRESULT CALLBACK MainWin::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
         {
             if (state != State::text) return 0;
             auto history = History::Get();
-            if (history->size() < 1) return 0;
+            if (history.size() < 1) return 0;
             if (wParam == 13) {
                 History::LastShapeDrawEnd();
                 return 1;
             }
-            auto shape = (Shape::Text*)history->at(history->size() - 1);
+            auto shape = (Shape::Text*)history.at(history.size() - 1);
             if (wParam == 8) {
                 shape->DeleteWord();
             }

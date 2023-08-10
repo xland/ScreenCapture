@@ -16,8 +16,7 @@
 - ----------------------------------
 - 工具条应该重构为类，这样钉住的窗口也可以使用工具条对象了
 - Mosaic的这两个对象，确实有用吗？BLImageData* bgImgData
-
-- shape对象里得存当前shape得状态
+- --------------------------------------
 - 找到最后一个needDraw得元素记录下标
 - 把最后一个needDraw得元素画到prepareImg上
 - 让最后一个needDraw的元素ShowDragger

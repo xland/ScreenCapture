@@ -6,7 +6,7 @@ class History
 {
 public:
 	History() = delete;
-	static std::vector<Shape::Shape*>* Get();
+	static std::vector<Shape::Shape*> Get();
 	static void Push(Shape::Shape* shape);
 	static bool LastShapeDrawEnd();
 	static void LastShapeDraw(const POINT& pos1, const POINT& pos2);
