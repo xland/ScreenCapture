@@ -39,6 +39,10 @@ child.on("close", (code) => {
 });
 ```
 
+# Support OS
+
+- Windows 10 1607 or Later
+
 # Licenses
 
 This project is under the [MIT license](./licence).
