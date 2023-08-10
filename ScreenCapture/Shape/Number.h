@@ -6,6 +6,7 @@ namespace Shape {
     public:
         Number();
         ~Number();
+        void SetNumber();
         void Draw(const double& x1, const double& y1, const double& x2, const double& y2) override;
         bool EndDraw() override;
         void ShowDragger() override;
@@ -14,8 +15,8 @@ namespace Shape {
         BLRgba32 color;
         double strokeWidth;
         bool isFill = false;
-    private:
         unsigned int number;
+    private:
         BLBox draggers[2];
         double degree;
         double tempDraggerX, tempDraggerY;

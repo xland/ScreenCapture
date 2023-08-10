@@ -81,6 +81,7 @@ void MainWin::leftBtnDownStartDraw()
             shape->strokeWidth = strokeWidths[strokeBtnIndex];
             shape->isFill = isFill;
             History::Push(shape);
+            shape->SetNumber();
             preState = state;
             painter->isDrawing = true;
             break;

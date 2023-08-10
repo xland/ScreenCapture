@@ -6,23 +6,26 @@
 #include "../Font.h"
 #include "../MainWin.h"
 namespace Shape {
-    static unsigned int num = 0;
+    static int num = 1;
     Number::Number()
     {
         state = State::number;
-        num += 1;
-        if (num > 99) num = 99;
-        number = num;
     }
     Number::~Number() {
-
+        if (num > number) {
+            num = number;
+        }
+    }
+    void Number::SetNumber()
+    {
+        number = num;
+        num += 1;
     }
 	void Number::Draw(const double& x1, const double& y1, const double& x2, const double& y2)
 	{
         auto context = Painter::Get()->paintCtx;
         context->begin(*Painter::Get()->prepareImage);
-        context->clearAll();
-        
+        context->clearAll();        
 
         if(x1 != -1){
             path.clear();
