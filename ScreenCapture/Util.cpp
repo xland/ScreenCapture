@@ -22,42 +22,50 @@ void SetBoxByPos(BLBox& box, const double& x1, const double& y1, const double& x
     }
 }
 
-void SetBoxByPosSquare(BLBox& box, const double& x1, const double& y1, const double& x2, const double& y2)
+void SetBoxByPosSquare(BLBox& box, const double& x1, const double& y1, const double& x2, const double& y2, const int& draggerIndex)
 {
+
+    auto h = std::abs(y1 - y2);
+    auto w = std::abs(x1 - x2);
+    SetBoxByPos(box, x1, y1, x2, y2);
     if (x1 < x2) {
-        box.x0 = x1;
-        box.x1 = x2;
-    }
-    else
-    {
-        box.x0 = x2;
-        box.x1 = x1;
-    }
-    if (y1 < y2) {
-        box.y0 = y1;
-        box.y1 = y2;
-    }
-    else
-    {
-        box.y0 = y2;
-        box.y1 = y1;
-    }
-    auto h = box.y1 - box.y0;
-    auto w = box.x1 - box.x0;
-    if (w == h) {
-        return;
-    }
-    else
-    {
-        if (x1 < x2) {
+        if (draggerIndex == 1 || draggerIndex == 2) {
+            box.x1 = box.x0 + h;
+        }
+        else
+        {
             box.x0 = box.x1 - h;
+        }
+    }
+    else
+    {
+        if (draggerIndex == 1 || draggerIndex == 2) {
+            box.x0 = box.x1 - h;            
         }
         else
         {
             box.x1 = box.x0 + h;
         }
     }
-
+    if (y1 < y2) {
+        if (draggerIndex == 1 || draggerIndex == 2) {
+            box.y1 = box.y0 + h;
+        }
+        else
+        {
+            box.y0 = box.y1 - h;
+        }
+    }
+    else
+    {
+        if (draggerIndex == 1 || draggerIndex == 2) {
+            box.y0 = box.y1 - h;
+        }
+        else
+        {
+            box.y1 = box.y0 + h;
+        }
+    }
 }
 
 std::string ConvertToUTF8(const std::wstring& wstr)

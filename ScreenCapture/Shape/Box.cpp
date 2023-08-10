@@ -20,7 +20,7 @@ namespace Shape {
         auto win = MainWin::Get();
         if (x1 != -1) {
             if (win->IsShiftDown) {
-                SetBoxByPosSquare(box, x1, y1, x2, y2);
+                SetBoxByPosSquare(box, x1, y1, x2, y2,draggerIndex);
             }
             else
             {
@@ -117,7 +117,7 @@ namespace Shape {
                     case 0: {
                         tempDraggerX = box.x1;
                         tempDraggerY = box.y1;
-                        draggerIndex = (int)i;
+                        draggerIndex = 0;
                         cursor = IDC_SIZENWSE;
                         break;
                     }
@@ -125,7 +125,7 @@ namespace Shape {
                     {
                         tempDraggerX = box.x0;
                         tempDraggerY = box.y1;
-                        draggerIndex = (int)i;
+                        draggerIndex = 1;
                         cursor = IDC_SIZENESW;
                         break;
                     }
@@ -133,14 +133,14 @@ namespace Shape {
                     {
                         tempDraggerX = box.x0;
                         tempDraggerY = box.y0;
-                        draggerIndex = (int)i;
+                        draggerIndex = 2;
                         cursor = IDC_SIZENWSE;
                         break;
                     }
                     case 3: {
                         tempDraggerX = box.x1;
                         tempDraggerY = box.y0;
-                        draggerIndex = (int)i;
+                        draggerIndex = 3;
                         cursor = IDC_SIZENESW;
                         break;
                     }

@@ -10,7 +10,7 @@ namespace Shape {
         context->clearAll();
         auto win = MainWin::Get();
         if (win->IsShiftDown) {
-            SetBoxByPosSquare(box, x1, y1, x2, y2);
+            SetBoxByPosSquare(box, x1, y1, x2, y2,draggerIndex);
         }
         else
         {
