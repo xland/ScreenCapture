@@ -67,11 +67,20 @@ void MainWin::drawToolMain()
 	}
 	drawSplitter(point);
 	point.x += toolBtnSpanWidth;
-	auto enables = History::UndoRedoEnable();
-	drawBtnUndoRedo(point, Icon::Name::undo,(int)Icon::Name::undo == mouseEnterMainToolIndex, enables.first);
-	point.x += toolBtnWidth;
-	drawBtnUndoRedo(point, Icon::Name::redo, (int)Icon::Name::redo == mouseEnterMainToolIndex,enables.second);
-	point.x += toolBtnWidth;
+	if (IsLeftBtnDown) {
+		drawBtnUndoRedo(point, Icon::Name::undo, (int)Icon::Name::undo == mouseEnterMainToolIndex, false);
+		point.x += toolBtnWidth;
+		drawBtnUndoRedo(point, Icon::Name::redo, (int)Icon::Name::redo == mouseEnterMainToolIndex, false);
+		point.x += toolBtnWidth;
+	}
+	else
+	{
+		auto enables = History::UndoRedoEnable();
+		drawBtnUndoRedo(point, Icon::Name::undo, (int)Icon::Name::undo == mouseEnterMainToolIndex, enables.first);
+		point.x += toolBtnWidth;
+		drawBtnUndoRedo(point, Icon::Name::redo, (int)Icon::Name::redo == mouseEnterMainToolIndex, enables.second);
+		point.x += toolBtnWidth;
+	}
 	drawSplitter(point);
 	point.x += toolBtnSpanWidth;
 	drawBtn(point, Icon::Name::save, (int)Icon::Name::save == mouseEnterMainToolIndex);

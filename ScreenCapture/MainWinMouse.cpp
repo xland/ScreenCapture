@@ -282,7 +282,10 @@ void MainWin::mouseMove(const POINT& pos)
 void MainWin::leftBtnUp(const POINT& pos)
 {
     IsLeftBtnDown = false;
-    if (mouseEnterMainToolIndex != -1 || mouseEnterSubToolIndex != -1) return;
+    if (mouseEnterMainToolIndex != -1 || mouseEnterSubToolIndex != -1) {
+        InvalidateRect(hwnd, nullptr, false); //undo redo 的按钮状态
+        return;
+    }
     switch (state)
     {
         case State::start:
@@ -312,6 +315,7 @@ void MainWin::leftBtnUp(const POINT& pos)
         case State::pen: 
         {
             History::LastShapeShowDragger();
+            InvalidateRect(hwnd, nullptr, false);
             break;
         }
     }

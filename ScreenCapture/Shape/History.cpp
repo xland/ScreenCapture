@@ -56,6 +56,9 @@ void History::LastShapeMouseInDragger(const POINT& pos)
 	if (history[lastDrawShapeIndex]->state == State::text) {
 		ChangeCursor(IDC_IBEAM);
 	}
+	else if (history[lastDrawShapeIndex]->state == State::eraser || history[lastDrawShapeIndex]->state == State::pen) {
+		ChangeCursor(IDC_CROSS);
+	}
 	history[lastDrawShapeIndex]->MouseInDragger(pos.x, pos.y);
 }
 void History::LastShapeDragDragger(const POINT& pos)

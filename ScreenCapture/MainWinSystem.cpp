@@ -397,9 +397,6 @@ void MainWin::initWindowBoxes()
             if (rect.right - rect.left <= 6 || rect.bottom - rect.top <= 6) {
                 return TRUE;
             }
-            //auto debug = std::to_string(rect.left) + "," + std::to_string(rect.top) + "," + std::to_string(rect.right) + ","+ std::to_string(rect.bottom);
-            //OutputDebugStringA(debug.c_str());
-            //OutputDebugStringA("\r\n");
             BLBox item(rect.left - self->painter->x,
                 rect.top - self->painter->y,
                 rect.right - self->painter->x,
