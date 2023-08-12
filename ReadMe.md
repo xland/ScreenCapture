@@ -43,6 +43,24 @@ child.on("close", (code) => {
 
 - Windows 10 1607 or Later
 
+# HotKey
+
+- Download [AutoHotKey](https://www.autohotkey.com/) and install it.
+- Create a `.ahk` script file in `Startup` folder and set the file's content:
+```
+/*
+    C:\Users\[UserName]\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\ScreenCapture.ahk
+    ^  :  Ctrl
+    !  :  Alt
+    +  :  Shift
+    #  :  Win
+    The hotkey is Ctrl+Alt+A 
+*/
+^!A::Run "D:\path\to\ScreenCapture.exe"
+```
+- Double Click the `.ahk` file,then you can start the `ScreenCapture.exe` by press `Ctrl+Alt+A`.
+- The `.ahk` script will be executed when the system startup.
+
 # Licenses
 
 This project is under the [MIT license](./licence).
