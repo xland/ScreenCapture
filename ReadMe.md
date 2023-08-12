@@ -7,7 +7,7 @@
 - Window area highlight.
 - Draw circle,ellipse,square,rectangle,arrow,number(ordered) by diffrent colors (fill or not fill).
 - Draw opacity line,free curve,mosaic,eraser.
-- Undo Redo support.
+- Undo Redo support (Shapes in history can be edited).
 - Save to file or clipboard.
 - Camera aperture,Copy pixel color(RGB,HEX).
 - Very fast,Low memory cust,Low CPU useage.
