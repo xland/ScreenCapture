@@ -116,7 +116,7 @@ void MainWin::drawSubToolPen()
 
 void MainWin::drawSubToolText()
 {
-	drawSubToolBackground(8);
+	drawSubToolBackground(8,true);
 	BLPoint point;
 	point.x = toolBoxSub.x0 + iconLeftMargin - toolBtnWidth;
 	point.y = toolBoxSub.y0 + 38;

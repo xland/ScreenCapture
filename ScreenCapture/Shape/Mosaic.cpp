@@ -134,10 +134,10 @@ namespace Shape {
         if (draggerIndex != -1) {
             return false;
         }
-        if (painter->mosaicImage == nullptr) {
-            InitMosaicImg();
-        }
-        if (isFill) {            
+        if (isFill) {
+            if (painter->mosaicImage == nullptr) {
+                InitMosaicImg();
+            }
             int w = box.x1 - box.x0;
             int h = box.y1 - box.y0;
             context->begin(*painter->canvasImage);
@@ -146,6 +146,11 @@ namespace Shape {
         }
         else
         {
+            if (painter->mosaicImage == nullptr) {
+                InitMosaicImg();
+                Draw(-1, -1, -1, -1);//这里有一个小小的循环调用
+                return true; 
+            }
             painter->IsMosaicUsePen = false;
             box.x0 = 999999999;
             box.y0 = 999999999;
@@ -179,7 +184,7 @@ namespace Shape {
             context->begin(*painter->canvasImage);
             context->blitImage(BLPoint(box.x0, box.y0), *painter->mosaicImage, BLRectI((int)box.x0, (int)box.y0, (int)w, (int)h));
             context->blitImage(BLPoint(box.x0, box.y0), *painter->prepareImage, BLRectI((int)box.x0, (int)box.y0, (int)w, (int)h));
-            context->end();            
+            context->end();
         }
         delete painter->mosaicImage;
         painter->IsMosaicUsePen = false;
