@@ -311,24 +311,25 @@ void MainWin::leftBtnUp(const POINT& pos)
         case State::line:
         case State::number:
         case State::text:
+        case State::mosaic:
         {
             History::LastShapeShowDragger();
             state = State::lastPathDrag;
             break;
         }
-        case State::mosaic:
-        {
-            History::LastShapeShowDragger();
-            auto shape = (Shape::Mosaic*)History::GetLastDrawShape();
-            if (shape->isFill) {
-                state = State::lastPathDrag;
-            }
-            else
-            {
-                shape->EndDraw();
-            }            
-            break;
-        }
+        //case State::mosaic:
+        //{
+        //    History::LastShapeShowDragger();
+        //    auto shape = (Shape::Mosaic*)History::GetLastDrawShape();
+        //    if (shape->isFill) {
+        //        state = State::lastPathDrag;
+        //    }
+        //    else
+        //    {
+        //        shape->EndDraw();
+        //    }            
+        //    break;
+        //}
         case State::eraser:
         case State::pen: 
         {

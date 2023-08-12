@@ -22,7 +22,6 @@ namespace Shape {
 			double tempDraggerX, tempDraggerY;
 			int draggerIndex = -1;
 			std::vector<BLPoint> points;
-			BLImage* mosaicPatchImg = nullptr;
 	};
 }
 

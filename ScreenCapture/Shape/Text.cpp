@@ -102,6 +102,7 @@ namespace Shape {
             KillTimer(MainWin::Get()->hwnd, 999);
             return;
         }
+        auto win = MainWin::Get();
         auto context = Painter::Get()->paintCtx;
         context->begin(*Painter::Get()->prepareImage);
         context->clearAll();
@@ -109,6 +110,7 @@ namespace Shape {
             box.x0 = x1 - margin;
             box.y0 = y1 - fontSize / 2 - margin;
             box.y1 = y1 + fontSize / 2 + margin;
+            SetTimer(win->hwnd, 999, 660, (TIMERPROC)NULL);
         }
         auto font = Font::Get()->fontText;
         font->setSize(fontSize);   
@@ -166,7 +168,6 @@ namespace Shape {
             context->strokeBoxArray(draggers, 4);
         }
         context->end();
-        auto win = MainWin::Get();
         InvalidateRect(win->hwnd, nullptr, false);
     }
     bool Text::EndDraw()

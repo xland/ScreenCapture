@@ -10,7 +10,6 @@ namespace Shape {
     }
     Mosaic::~Mosaic()
     {
-        delete mosaicPatchImg;
     }
     void Mosaic::setSamplingPoints(BLPointI* points,const int& x,const int& y)
     {
@@ -75,15 +74,11 @@ namespace Shape {
 	void Mosaic::Draw(const double& x1, const double& y1, const double& x2, const double& y2)
 	{
         auto painter = Painter::Get();
+        if (painter->mosaicImage == nullptr) {
+            InitMosaicImg();
+        }
         auto context = painter->paintCtx;
         auto win = MainWin::Get();
-        if (x1 == -1) {
-            painter->isDrawing = false;
-            context->begin(*Painter::Get()->canvasImage);
-            context->blitImage(BLPoint(box.x0, box.y0), *mosaicPatchImg);
-            context->end();
-            return;
-        }
         context->begin(*Painter::Get()->prepareImage);
         isFill = win->isFill;
         painter->IsMosaicUsePen = !isFill;
@@ -140,8 +135,7 @@ namespace Shape {
         if (isFill) {            
             int w = box.x1 - box.x0;
             int h = box.y1 - box.y0;
-            mosaicPatchImg = new BLImage(w, h, BL_FORMAT_PRGB32);
-            context->begin(*mosaicPatchImg);
+            context->begin(*painter->canvasImage);
             context->blitImage(BLPoint(0,0), *painter->mosaicImage, BLRectI((int)box.x0, (int)box.y0, (int)w, (int)h));
             context->end();
         }
@@ -177,16 +171,13 @@ namespace Shape {
             if (box.y1 > painter->h) box.y1 = painter->h;
             int w = box.x1 - box.x0;
             int h = box.y1 - box.y0;
-            mosaicPatchImg = new BLImage(w, h, BL_FORMAT_PRGB32);
-            context->begin(*mosaicPatchImg);
+            context->begin(*painter->canvasImage);
             context->blitImage(BLPoint(0, 0), *painter->mosaicImage, BLRectI((int)box.x0, (int)box.y0, (int)w, (int)h));
             context->blitImage(BLPoint(0, 0), *painter->prepareImage, BLRectI((int)box.x0, (int)box.y0, (int)w, (int)h));
             context->end();            
-        }    
-        context->begin(*painter->canvasImage);
-        context->blitImage(BLPoint(box.x0, box.y0), *mosaicPatchImg);
-        context->end();
+        }
         delete painter->mosaicImage;
+        painter->mosaicImage = nullptr;
         painter->isDrawing = false;
         auto win = MainWin::Get();
         win->state = win->preState;
