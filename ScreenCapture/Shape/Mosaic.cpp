@@ -92,6 +92,7 @@ namespace Shape {
             context->setStrokeStyle(BLRgba32(0, 0, 0));
             context->setStrokeWidth(1);
             context->strokeBox(box);
+            context->end();
         }
         else
         {
@@ -105,6 +106,8 @@ namespace Shape {
                     if (i + 1 >= points.size())break;
                     context->strokeLine(points[i].x, points[i].y, points[i + 1].x, points[i + 1].y);
                 }
+                context->end();
+                EndDraw();
             }
             else
             {
@@ -115,9 +118,9 @@ namespace Shape {
                 points.push_back(BLPoint(x1, y1));                
                 win->MouseDownPos.x = (LONG)x1;
                 win->MouseDownPos.y = (LONG)y1;
+                context->end();
             }
         }
-        context->end();
         InvalidateRect(win->hwnd, nullptr, false);
 	}
 

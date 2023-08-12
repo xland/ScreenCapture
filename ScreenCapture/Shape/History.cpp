@@ -15,6 +15,21 @@ Shape::Shape* History::GetLastDrawShape()
 	if (lastDrawShapeIndex < 0) return nullptr;
 	return history[lastDrawShapeIndex];
 }
+
+bool History::LastShapeHasDragger()
+{
+	auto& shape = history[lastDrawShapeIndex];
+	if (shape->state == State::eraser || shape->state == State::pen)
+	{  //这两个根本就没有MouseInDragger方法
+		return false;
+	}
+	if (shape->state == State::mosaic && !((Shape::Mosaic*)shape)->isFill)
+	{  //用画线的方式画马赛克
+		return false;
+	}
+	return true;
+}
+
 void History::Push(Shape::Shape* shape)
 {
 	auto end = std::remove_if(history.begin(),
@@ -54,13 +69,7 @@ void History::LastShapeMouseInDragger(const POINT& pos)
 {
 	if (lastDrawShapeIndex < 0) return;
 	auto& shape = history[lastDrawShapeIndex];
-	if (shape->state == State::eraser || shape->state == State::pen)
-	{  //这两个根本就没有MouseInDragger方法
-		ChangeCursor(IDC_CROSS);
-		return;
-	}
-	if (shape->state == State::mosaic && !((Shape::Mosaic*)shape)->isFill)
-	{  //用画线的方式画马赛克
+	if (!LastShapeHasDragger()) {
 		ChangeCursor(IDC_CROSS);
 		return;
 	}
@@ -98,19 +107,19 @@ void  History::Undo()
 	}
 	//容器中一个需要绘制的元素也没有
 	if (!hasNeedDrawShape) return;
+	//重新在canvasImage上画所有需要绘制的元素
+	auto context = painter->paintCtx;
+	context->begin(*painter->canvasImage);
+	context->clearAll();
+	context->end();
 	//最后一个需要绘制的元素的下标，-1为没有需要绘制的元素
-	lastDrawShapeIndex = index - 1;	
+	lastDrawShapeIndex = index - 1;
 	if (lastDrawShapeIndex < 0) {
 		//现在没有需要绘制的元素，不必渲染prepareImage
 		painter->isDrawing = false;
 		InvalidateRect(MainWin::Get()->hwnd, nullptr, false);
 		return;
 	}
-	//重新在canvasImage上画所有需要绘制的元素
-	auto context = painter->paintCtx;
-	context->begin(*painter->canvasImage);
-	context->clearAll();
-	context->end();
 	for (size_t i = 0; i < lastDrawShapeIndex; i++)
 	{
 		painter->isDrawing = true;
@@ -118,13 +127,16 @@ void  History::Undo()
 	}
 	//把最后一个需要绘制的元素画到prepareImage上，方便用户修改
 	painter->isDrawing = true;
-	history[lastDrawShapeIndex]->Draw(-1, -1, -1, -1);
+	history[lastDrawShapeIndex]->Draw(-1, -1, -1, -1); 
 	auto win = MainWin::Get();
-	//todo 感觉pen eraser mosaic(with out fill)就不需要这几部了
+	win->selectedToolIndex = (int)history[lastDrawShapeIndex]->state - 2;
+	if (!LastShapeHasDragger()) {
+		InvalidateRect(win->hwnd, nullptr, false);
+		return;
+	}
 	history[lastDrawShapeIndex]->ShowDragger();
 	win->preState = history[lastDrawShapeIndex]->state;
 	win->state = State::lastPathDrag;
-	win->selectedToolIndex = (int)win->preState - 2;
 	InvalidateRect(win->hwnd, nullptr, false);	
 }
 
@@ -148,12 +160,15 @@ void  History::Redo()
 	painter->isDrawing = true;
 	shape->needDraw = true;
 	shape->Draw(-1, -1, -1, -1);
-	//todo 感觉pen eraser mosaic(with out fill)就不需要这几部了
-	shape->ShowDragger();
 	auto win = MainWin::Get();
+	win->selectedToolIndex = (int)shape->state - 2;
+	if (!LastShapeHasDragger()) {
+		InvalidateRect(win->hwnd, nullptr, false);
+		return;
+	}
+	shape->ShowDragger();
 	win->preState = shape->state;
 	win->state = State::lastPathDrag;
-	win->selectedToolIndex = (int)win->preState - 2;
 	InvalidateRect(win->hwnd, nullptr, false);
 }
 

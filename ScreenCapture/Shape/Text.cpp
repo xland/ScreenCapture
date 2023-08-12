@@ -103,6 +103,9 @@ namespace Shape {
             return;
         }
         auto win = MainWin::Get();
+        if (x1 == -1) {
+            SetTimer(win->hwnd, 999, 660, (TIMERPROC)NULL);
+        }
         auto context = Painter::Get()->paintCtx;
         context->begin(*Painter::Get()->prepareImage);
         context->clearAll();
@@ -110,7 +113,6 @@ namespace Shape {
             box.x0 = x1 - margin;
             box.y0 = y1 - fontSize / 2 - margin;
             box.y1 = y1 + fontSize / 2 + margin;
-            SetTimer(win->hwnd, 999, 660, (TIMERPROC)NULL);
         }
         auto font = Font::Get()->fontText;
         font->setSize(fontSize);   

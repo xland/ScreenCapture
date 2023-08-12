@@ -41,6 +41,7 @@ namespace Shape {
     bool Pen::EndDraw()
     {
         auto painter = Painter::Get();
+		painter->isDrawing = false;
         auto context = painter->paintCtx;
         context->begin(*painter->canvasImage);
 		context->setStrokeStyle(color);
@@ -53,7 +54,6 @@ namespace Shape {
 		}		
 		context->end();
         auto win = MainWin::Get();
-		painter->isDrawing = false;
         InvalidateRect(win->hwnd, nullptr, false);
         return true;
     }
