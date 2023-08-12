@@ -117,7 +117,7 @@ namespace Shape {
                 win->MouseDownPos.y = (LONG)y1;
             }
         }
-        context->end();        
+        context->end();
         InvalidateRect(win->hwnd, nullptr, false);
 	}
 
@@ -130,6 +130,9 @@ namespace Shape {
         }
         if (draggerIndex != -1) {
             return false;
+        }
+        if (painter->mosaicImage == nullptr) {
+            InitMosaicImg();
         }
         if (isFill) {            
             int w = box.x1 - box.x0;
@@ -176,8 +179,12 @@ namespace Shape {
             context->end();            
         }
         delete painter->mosaicImage;
+        painter->IsMosaicUsePen = false;
         painter->mosaicImage = nullptr;
         painter->isDrawing = false;
+        context->begin(*painter->prepareImage);
+        context->clearAll();
+        context->end();
         auto win = MainWin::Get();
         win->state = win->preState;
         InvalidateRect(win->hwnd, nullptr, false);
