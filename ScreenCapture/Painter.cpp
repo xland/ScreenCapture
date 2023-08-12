@@ -78,9 +78,18 @@ void Painter::shotScreen()
 
 BLContext* Painter::PaintBoard()
 {
+    //BLContextCreateInfo createInfo{};
+    //createInfo.threadCount = 3;
+    //paintCtx->begin(*boardImage,createInfo);
     paintCtx->begin(*boardImage);
     paintCtx->blitImage(BLRect(0, 0, w, h), *bgImage);
-    paintCtx->blitImage(BLRect(0, 0, w, h), *canvasImage);
+    if (IsMosaicUsePen) {
+        paintCtx->blitImage(BLRect(0, 0, w, h), *mosaicImage);
+    }
+    else
+    {
+        paintCtx->blitImage(BLRect(0, 0, w, h), *canvasImage);
+    }    
     if (isDrawing) {
         paintCtx->blitImage(BLRect(0, 0, w, h), *prepareImage);
     }

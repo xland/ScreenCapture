@@ -46,20 +46,28 @@ void History::LastShapeShowDragger()
 	if (win->state != State::lastPathDrag) {
 		lastDrawShapeIndex += 1;
 		history[lastDrawShapeIndex]->isTemp = false;
-	}	
+	}
 	history[lastDrawShapeIndex]->ShowDragger();
 }
 void History::LastShapeMouseInDragger(const POINT& pos)
 {
-	if (!Painter::Get()->isDrawing) return;
 	if (lastDrawShapeIndex < 0) return;
-	if (history[lastDrawShapeIndex]->state == State::text) {
+	auto& shape = history[lastDrawShapeIndex];
+	if (shape->state == State::eraser || shape->state == State::pen)
+	{  //这两个根本就没有MouseInDragger方法
+		ChangeCursor(IDC_CROSS);
+		return;
+	}
+	if (shape->state == State::mosaic || !((Shape::Mosaic*)shape)->isFill)
+	{  //用画线的方式画马赛克
+		ChangeCursor(IDC_CROSS);
+		return;
+	}
+	if (!Painter::Get()->isDrawing) return;	
+	if (shape->state == State::text) {
 		ChangeCursor(IDC_IBEAM);
 	}
-	else if (history[lastDrawShapeIndex]->state == State::eraser || history[lastDrawShapeIndex]->state == State::pen) {
-		ChangeCursor(IDC_CROSS);
-	}
-	history[lastDrawShapeIndex]->MouseInDragger(pos.x, pos.y);
+	shape->MouseInDragger(pos.x, pos.y);
 }
 void History::LastShapeDragDragger(const POINT& pos)
 {
@@ -88,6 +96,10 @@ void  History::Undo()
 	lastDrawShapeIndex = index - 1;
 	if (lastDrawShapeIndex < 0) {
 		painter->isDrawing = false;
+		if (painter->IsMosaicUsePen) {
+			painter->IsMosaicUsePen = false;
+			delete painter->mosaicImage;
+		}
 		InvalidateRect(MainWin::Get()->hwnd, nullptr, false);
 		return;
 	}
@@ -120,25 +132,31 @@ void  History::Redo()
 	{
 		return;
 	}
-	auto painter = Painter::Get();	
-	if (painter->isDrawing) {
-		history[lastDrawShapeIndex]->EndDraw();
-	}
 	lastDrawShapeIndex += 1;
+	auto& shape = history[lastDrawShapeIndex];
+	auto painter = Painter::Get();
+	if (painter->isDrawing) {
+		shape->EndDraw();
+	}
 	painter->isDrawing = true;
-	history[lastDrawShapeIndex]->needDraw = true;
-	history[lastDrawShapeIndex]->Draw(-1, -1, -1, -1);
+	shape->needDraw = true;
+	shape->Draw(-1, -1, -1, -1);
 	auto win = MainWin::Get();
-	if (history[lastDrawShapeIndex]->state == State::text) {
+	if (shape->state == State::text) {
 		SetTimer(win->hwnd, 999, 660, (TIMERPROC)NULL);
 	}
 	else
 	{
-		history[lastDrawShapeIndex]->ShowDragger();
+		shape->ShowDragger();
 	}	
-	win->preState = history[lastDrawShapeIndex]->state;
+	win->preState = shape->state;
 	win->state = State::lastPathDrag;
 	win->selectedToolIndex = (int)win->preState - 2;
+	if (shape->state == State::mosaic) {
+		auto mosaic = (Shape::Mosaic*)shape;
+		mosaic->InitMosaicImg();
+		painter->isDrawing = true;
+	}
 	InvalidateRect(win->hwnd, nullptr, false);
 }
 

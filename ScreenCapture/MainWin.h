@@ -49,6 +49,7 @@ public:
 	State state = State::start;
 	State preState;
 	int selectedToolIndex = -1;
+	bool isFill = false;
 
 private:
 	MainWin(HINSTANCE hinstance);
@@ -136,10 +137,10 @@ private:
 	void subToolBtnClick();
 	void clickSubToolNormal();
 	void clickSubToolPen();
+	void clickSubToolMosaic();
 	void clickSubToolText();
 	BLBox toolBoxSub;
 	int mouseEnterSubToolIndex = -1;
-	bool isFill = false;
 	int strokeBtnIndex = 1;
 	int colorBtnIndex = 0;
 

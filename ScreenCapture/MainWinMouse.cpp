@@ -96,11 +96,9 @@ void MainWin::leftBtnDownStartDraw()
         case State::mosaic:
         {
             auto shape = new Shape::Mosaic();
-            painter->bgImage->getData(shape->bgImgData);
-            painter->canvasImage->getData(shape->canvasImgData);
-            shape->screenH = painter->h;
-            shape->screenW = painter->w;
             shape->strokeWidth = strokeWidths[strokeBtnIndex] + 6;
+            shape->isFill = true;
+            shape->InitMosaicImg();
             History::Push(shape);
             preState = state;
             painter->isDrawing = true;
@@ -168,13 +166,21 @@ void MainWin::leftBtnDown(const POINT& pos)
             selectedToolIndex = mouseEnterMainToolIndex;
             state = (State)(selectedToolIndex+2); 
             //设置几个图形默认是否需要填充
-            if (state == State::box||state == State::ellipse||state == State::line) {
+            if (state == State::box||
+                state == State::ellipse||
+                state == State::line) 
+            {
                 isFill = false;
             }
-            else if (state == State::arrow || state == State::number) {
+            else if (state == State::arrow || 
+                state == State::number ||
+                state == State::mosaic
+                ) 
+            {
                 isFill = true;
             }
-            else if (state == State::text) {
+            else if (state == State::text) 
+            {
                 ChangeCursor(IDC_IBEAM);
             }
             InvalidateRect(hwnd, nullptr, false);
@@ -304,11 +310,23 @@ void MainWin::leftBtnUp(const POINT& pos)
         case State::lastPathDrag:
         case State::line:
         case State::number:
-        case State::mosaic:
         case State::text:
         {
             History::LastShapeShowDragger();
             state = State::lastPathDrag;
+            break;
+        }
+        case State::mosaic:
+        {
+            History::LastShapeShowDragger();
+            auto shape = (Shape::Mosaic*)History::GetLastDrawShape();
+            if (shape->isFill) {
+                state = State::lastPathDrag;
+            }
+            else
+            {
+                shape->EndDraw();
+            }            
             break;
         }
         case State::eraser:

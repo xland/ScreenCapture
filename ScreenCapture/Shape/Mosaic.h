@@ -12,18 +12,17 @@ namespace Shape {
 			void ShowDragger() override;
 			void MouseInDragger(const double& x, const double& y) override;
 			void DragDragger(const double& x, const double& y) override;
-			BLImageData* bgImgData;
-			BLImageData* canvasImgData;
-			float screenW, screenH;
+			void InitMosaicImg();
 			BLBox box;
 			int strokeWidth;
+			bool isFill = false;
 		private:
 			void setSamplingPoints(BLPointI* points,const int& x, const int& y);
-			void setSqureColor(BLPointI* points, unsigned char* bgData, unsigned char* canvasData);
-			void drawMosaic();
 			BLBox draggers[4];
 			double tempDraggerX, tempDraggerY;
 			int draggerIndex = -1;
+			std::vector<BLPoint> points;
+			BLImage* mosaicPatchImg = nullptr;
 	};
 }
 

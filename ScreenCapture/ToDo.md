@@ -1,4 +1,5 @@
-﻿- 线条粗细不应该时三个选择按钮，应该时一个滑块
+﻿- 画马赛克线，上一步，下一步，鼠标光标不对
+- 线条粗细不应该时三个选择按钮，应该时一个滑块
 - 使用画笔绘制马赛克
 - 改变子工具条按钮时，应该相应的改变最后一个元素的形态或颜色
 - 如果工具条在右侧屏幕的左边缘，并超出了右侧屏幕的左边缘，部分工具条显示不全
@@ -21,4 +22,21 @@
 - 工具条应该重构为类，这样钉住的窗口也可以使用工具条对象了
 - Mosaic的这两个对象，确实有用吗？BLImageData* bgImgData
 - WM_LBUTTONDOWN text 为啥不enddraw
+- Pen应该用smoothQuadTo
+- Eraser和Pen为什么画完了之后要重置win->MouseDownPos，直接用数组里最后一个点
+- 为啥enddraw之后还要清prepareImage
+- ----------------------------------
+- 马赛克子工具条增加一个矩形选择按钮
+- 点击此按钮，
+- 按钮未选中，设置马赛克shape对象isFill为true
+- 清除prepareImage,然后先贴bgImage，再贴CanvaseImage
+- 复制一份prepareImageCopy
+- 使用算法把prepareImage马赛克化
+- 把prepareImage贴到canvasImage
+- 把prepareImageCopy画到prepareImage上
+- 删除prepareImage
+- 鼠标在绘图区域拖动时，擦除prepareImage对应的鼠标路径
+- 鼠标up，绘制结束时，把prepareImage贴到canvasImage上，得到路径对应的矩形，根据这个矩形扣一块canvasImage上的图像，并存储在shape对象中
+- 清除CanvaseImage，在CanvaseImage上重绘History，贴上刚刚扣出的Image
+- undo redo时，马赛克子工具条上的矩形选择按钮应该处于禁用状态
 

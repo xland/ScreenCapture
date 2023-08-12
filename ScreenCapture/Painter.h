@@ -17,6 +17,7 @@ public:
 	BLContext* PaintBoard();
 	void DrawPixelInfo();
 	LONG pixelX{ -999999 } , pixelY{ -999999 };
+	bool IsMosaicUsePen = false;
 	int x, y, w, h;
 	bool isDrawing = false;
 	unsigned char* bgPixels;  //todo 马赛克那边可以少个变量
@@ -24,10 +25,11 @@ public:
 	BLImage* bgImage;
 	BLImage* boardImage;
 	BLImage* prepareImage;
+	BLImage* mosaicImage;
 	BLContext* paintCtx;
-	HBITMAP bgHbitmap;
 private:
 	Painter();
 	void shotScreen();
+	HBITMAP bgHbitmap;
 };
 
