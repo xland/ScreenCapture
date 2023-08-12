@@ -79,8 +79,7 @@ namespace Shape {
         }
         auto context = painter->paintCtx;
         auto win = MainWin::Get();
-        context->begin(*Painter::Get()->prepareImage);
-        isFill = win->isFill;
+        context->begin(*Painter::Get()->prepareImage);    
         painter->IsMosaicUsePen = !isFill;
         if (isFill) {
             if (x1 != -1) {
@@ -136,7 +135,7 @@ namespace Shape {
             int w = box.x1 - box.x0;
             int h = box.y1 - box.y0;
             context->begin(*painter->canvasImage);
-            context->blitImage(BLPoint(0,0), *painter->mosaicImage, BLRectI((int)box.x0, (int)box.y0, (int)w, (int)h));
+            context->blitImage(BLPoint(box.x0, box.y0), *painter->mosaicImage, BLRectI((int)box.x0, (int)box.y0, (int)w, (int)h));
             context->end();
         }
         else
@@ -172,8 +171,8 @@ namespace Shape {
             int w = box.x1 - box.x0;
             int h = box.y1 - box.y0;
             context->begin(*painter->canvasImage);
-            context->blitImage(BLPoint(0, 0), *painter->mosaicImage, BLRectI((int)box.x0, (int)box.y0, (int)w, (int)h));
-            context->blitImage(BLPoint(0, 0), *painter->prepareImage, BLRectI((int)box.x0, (int)box.y0, (int)w, (int)h));
+            context->blitImage(BLPoint(box.x0, box.y0), *painter->mosaicImage, BLRectI((int)box.x0, (int)box.y0, (int)w, (int)h));
+            context->blitImage(BLPoint(box.x0, box.y0), *painter->prepareImage, BLRectI((int)box.x0, (int)box.y0, (int)w, (int)h));
             context->end();            
         }
         delete painter->mosaicImage;

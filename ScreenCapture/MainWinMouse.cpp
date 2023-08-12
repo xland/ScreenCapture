@@ -97,7 +97,7 @@ void MainWin::leftBtnDownStartDraw()
         {
             auto shape = new Shape::Mosaic();
             shape->strokeWidth = strokeWidths[strokeBtnIndex] + 6;
-            shape->isFill = true;
+            shape->isFill = isFill;
             shape->InitMosaicImg();
             History::Push(shape);
             preState = state;
