@@ -47,7 +47,7 @@ child.on("close", (code) => {
 
 - Download [AutoHotKey](https://www.autohotkey.com/) and install it.
 - Create a `.ahk` script file in `Startup` folder and set the file's content:
-```
+```c
 /*
     C:\Users\[UserName]\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\ScreenCapture.ahk
     ^  :  Ctrl
