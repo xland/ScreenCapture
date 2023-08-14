@@ -13,7 +13,6 @@ namespace Shape {
 		void MouseInDragger(const double& x, const double& y) override;
 		void DragDragger(const double& x, const double& y) override;
 		BLPath path;
-		bool isFill = false;
 		bool isEraser = false;
 		bool isTansparent = false;
 		double strokeWidth;

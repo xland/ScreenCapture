@@ -14,7 +14,6 @@ namespace Shape {
         void DragDragger(const double& x, const double& y) override;
         BLRgba32 color;
         double strokeWidth;
-        bool isFill = false;
         unsigned int number;
     private:
         BLBox draggers[2];

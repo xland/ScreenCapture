@@ -19,8 +19,12 @@ Shape::Shape* History::GetLastDrawShape()
 bool History::LastShapeHasDragger()
 {
 	auto& shape = history[lastDrawShapeIndex];
-	if (shape->state == State::eraser || shape->state == State::pen)
+	if (shape->state == State::pen)
 	{  //这两个根本就没有MouseInDragger方法
+		return false;
+	}
+	if (shape->state == State::eraser && !((Shape::Eraser*)shape)->isFill) {
+		//用画线的方式画橡皮擦
 		return false;
 	}
 	if (shape->state == State::mosaic && !((Shape::Mosaic*)shape)->isFill)
@@ -73,7 +77,7 @@ void History::LastShapeMouseInDragger(const POINT& pos)
 		ChangeCursor(IDC_CROSS);
 		return;
 	}
-	if (!Painter::Get()->isDrawing) return;	
+	if (!Painter::Get()->isDrawing && shape->state != State::eraser) return;	
 	if (shape->state == State::text) {
 		ChangeCursor(IDC_IBEAM);
 	}

@@ -19,7 +19,6 @@ namespace Shape {
 		void InsertWord(const std::wstring& word);
 		void activeKeyboard(LONG x, LONG y);
 		bool moveCursorIndex(const bool& toLeft);
-		bool isFill = false;
 		BLRgba32 color;
 		double fontSize;
 	private:

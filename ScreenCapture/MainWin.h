@@ -138,6 +138,7 @@ private:
 	void clickSubToolNormal();
 	void clickSubToolPen();
 	void clickSubToolMosaic();
+	void clickSubToolEraser();
 	void clickSubToolText();
 	BLBox toolBoxSub;
 	int mouseEnterSubToolIndex = -1;

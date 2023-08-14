@@ -136,22 +136,15 @@ void MainWin::drawSubToolMosaic()
 
 void MainWin::drawSubToolEraser()
 {
-	//×¢ÊÍµôµÄÄÚÈÝ°üº¬¾ØÐÎÏðÆ¤²Á
-	//drawSubToolBackground(isFill?1:4,true);
-	//BLPoint point;
-	//point.x = toolBoxSub.x0 + iconLeftMargin;
-	//point.y = toolBoxSub.y0 + 38;
-	//drawBtnCheckable(point, Icon::Name::rectFill, isFill, mouseEnterSubToolIndex == 0);	
-	//if (!isFill) {
-	//	point.x += toolBtnWidth;
-	//	drawStrokeWidthBtns(point, 1);
-	//}
-
-	drawSubToolBackground(3, true);
+	drawSubToolBackground(isFill?1:4,true);
 	BLPoint point;
 	point.x = toolBoxSub.x0 + iconLeftMargin;
 	point.y = toolBoxSub.y0 + 38;
-	drawStrokeWidthBtns(point, 0);
+	drawBtnCheckable(point, Icon::Name::rectFill, isFill, mouseEnterSubToolIndex == 0);	
+	if (!isFill) {
+		point.x += toolBtnWidth;
+		drawStrokeWidthBtns(point, 1);
+	}
 }
 
 void MainWin::drawColorBtns(BLPoint& point,const int& index)
@@ -190,7 +183,7 @@ void MainWin::subToolBtnClick()
 			clickSubToolNormal();
 			break;
 		}
-		case 4:
+		case 4: //Pen
 		{
 			clickSubToolPen();
 			break;
@@ -212,7 +205,7 @@ void MainWin::subToolBtnClick()
 		}
 		case 8://Eraser
 		{
-			clickSubToolPen();
+			clickSubToolEraser();
 			break;
 		}
 	}
@@ -291,6 +284,26 @@ void MainWin::clickSubToolMosaic()
 		case 3:
 		{
 			strokeBtnIndex = mouseEnterSubToolIndex-1;
+			break;
+		}
+	}
+	InvalidateRect(hwnd, nullptr, false);
+}
+
+void MainWin::clickSubToolEraser()
+{
+	switch (mouseEnterSubToolIndex)
+	{
+		case 0:
+		{
+			isFill = !isFill;
+			break;
+		}
+		case 1:
+		case 2:
+		case 3:
+		{
+			strokeBtnIndex = mouseEnterSubToolIndex - 1;
 			break;
 		}
 	}

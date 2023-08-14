@@ -14,7 +14,6 @@ namespace Shape {
         double strokeWidth;
         BLRgba32 color;
         double x1, y1, x2, y2;
-        bool isFill = false;
     private:
         double tempDraggerX, tempDraggerY;
         int draggerIndex = -1;

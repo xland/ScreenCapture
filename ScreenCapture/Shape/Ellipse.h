@@ -11,7 +11,6 @@ namespace Shape {
 		void MouseInDragger(const double& x, const double& y) override;
 		bool EndDraw() override;
 		void DragDragger(const double& x, const double& y) override;		
-		bool isFill = false;
 		bool isTansparent = false;//todo
 		BLRgba32 color;
 		double strokeWidth;

@@ -90,7 +90,11 @@ void MainWin::leftBtnDownStartDraw()
         {
             auto shape = new Shape::Eraser();
             shape->strokeWidth = strokeWidths[strokeBtnIndex] + 36;
+            shape->isFill = isFill;
+            shape->CopyCanvasImg();
             History::Push(shape);
+            preState = state;
+            painter->isDrawing = true;
             break;
         }
         case State::mosaic:
@@ -166,16 +170,12 @@ void MainWin::leftBtnDown(const POINT& pos)
             selectedToolIndex = mouseEnterMainToolIndex;
             state = (State)(selectedToolIndex+2); 
             //设置几个图形默认是否需要填充
-            if (state == State::box||
-                state == State::ellipse||
-                state == State::line) 
+            if (state == State::box|| state == State::ellipse||
+                state == State::line || state == State::eraser) 
             {
                 isFill = false;
             }
-            else if (state == State::arrow || 
-                state == State::number ||
-                state == State::mosaic
-                ) 
+            else if (state == State::arrow || state == State::number || state == State::mosaic) 
             {
                 isFill = true;
             }
@@ -279,9 +279,7 @@ void MainWin::mouseMove(const POINT& pos)
             {
                 ChangeCursor(IDC_CROSS);
             }
-        }
-
-        
+        }        
     }
 
 }
@@ -312,25 +310,12 @@ void MainWin::leftBtnUp(const POINT& pos)
         case State::number:
         case State::text:
         case State::mosaic:
+        case State::eraser:
         {
             History::LastShapeShowDragger();
             state = State::lastPathDrag;
             break;
         }
-        //case State::mosaic:
-        //{
-        //    History::LastShapeShowDragger();
-        //    auto shape = (Shape::Mosaic*)History::GetLastDrawShape();
-        //    if (shape->isFill) {
-        //        state = State::lastPathDrag;
-        //    }
-        //    else
-        //    {
-        //        shape->EndDraw();
-        //    }            
-        //    break;
-        //}
-        case State::eraser:
         case State::pen: 
         {
             History::LastShapeShowDragger();
