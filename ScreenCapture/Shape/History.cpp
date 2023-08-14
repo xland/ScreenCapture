@@ -106,6 +106,13 @@ void  History::Undo()
 				delete painter->mosaicImage;
 				painter->mosaicImage = nullptr;
 			}
+			else if (history[index]->state == State::eraser) {
+				auto eraser = (Shape::Eraser*)history[index];
+				if (eraser->canvasImgCopy) {
+					delete eraser->canvasImgCopy;
+					eraser->canvasImgCopy = nullptr;
+				}
+			}
 			break;
 		}
 	}

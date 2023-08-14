@@ -15,6 +15,7 @@ namespace Shape {
 
     void Eraser::CopyCanvasImg()
     {
+        if (!isFill) return;
         auto painter = Painter::Get();
         auto paintCtx = painter->paintCtx;
         canvasImgCopy = new BLImage(*painter->canvasImage);
@@ -30,13 +31,18 @@ namespace Shape {
 	{
         auto painter = Painter::Get();
 		auto context = painter->paintCtx;
-		context->begin(*painter->prepareImage);
         BLRgba32 black(0, 0, 0);
         auto win = MainWin::Get();
         if (isFill) {
-            if (x1 != -1) {
+            if (x1 == -1) {
+                if (!canvasImgCopy) {
+                    CopyCanvasImg();
+                }
+            }
+            else {
                 SetBoxByPos(box, x1, y1, x2, y2);
             }
+            context->begin(*painter->prepareImage);
             context->clearAll();
             context->blitImage(BLRect(0, 0, painter->w, painter->h), *canvasImgCopy);
             context->setCompOp(BL_COMP_OP_CLEAR);
@@ -50,6 +56,7 @@ namespace Shape {
         }
         else
         {
+            context->begin(*painter->canvasImage);
             context->setCompOp(BL_COMP_OP_CLEAR);
             context->setStrokeStyle(black);
             context->setStrokeWidth(strokeWidth);
@@ -84,23 +91,30 @@ namespace Shape {
         if (!painter->isDrawing) {
             return true;
         }
-        if (!canvasImgCopy) {
-            CopyCanvasImg();
-        }
         auto context = painter->paintCtx;
-        context->begin(*painter->prepareImage);
         BLRgba32 black(0, 0, 0);
         auto win = MainWin::Get();
         if (isFill) {
-            context->clearAll();
-            context->blitImage(BLRect(0, 0, painter->w, painter->h), *canvasImgCopy);
+            context->begin(*painter->canvasImage);
+            if (canvasImgCopy) {
+                context->blitImage(BLRect(0, 0, painter->w, painter->h), *canvasImgCopy);
+                win->state = win->preState;
+                delete canvasImgCopy;
+                canvasImgCopy = nullptr;
+                static int i = 1;
+                Debug(std::to_string(i++));
+            }
             context->setCompOp(BL_COMP_OP_CLEAR);
             context->setFillStyle(black);
             context->fillBox(box);
             context->end();
+            context->begin(*painter->prepareImage);
+            context->clearAll();
+            context->end();
         }
         else
         {
+            context->begin(*painter->canvasImage);
             context->setCompOp(BL_COMP_OP_CLEAR);
             context->setStrokeStyle(black);
             context->setStrokeWidth(strokeWidth);
@@ -112,13 +126,6 @@ namespace Shape {
             }
             context->end();
         }
-        delete canvasImgCopy;
-        context->begin(*painter->canvasImage);
-        context->blitImage(BLRect(0, 0, painter->w, painter->h), *painter->prepareImage);
-        context->end();
-        context->begin(*painter->prepareImage);
-        context->clearAll();
-        context->end();
 		painter->isDrawing = false;
 		InvalidateRect(win->hwnd, nullptr, false);
 		return true;
@@ -126,9 +133,11 @@ namespace Shape {
 
     void Eraser::ShowDragger()
     {
+        auto painter = Painter::Get();
+        auto context = painter->paintCtx;
+        auto win = MainWin::Get();
         if (!isFill)
         {
-            InvalidateRect(MainWin::Get()->hwnd, nullptr, false);
             return;
         }
         draggers[0].x0 = box.x0 - draggerSize;
@@ -151,13 +160,13 @@ namespace Shape {
         draggers[3].x1 = box.x0 + draggerSize;
         draggers[3].y1 = box.y1 + draggerSize;
 
-        auto context = Painter::Get()->paintCtx;
-        context->begin(*Painter::Get()->prepareImage);
+        context->begin(*painter->prepareImage);
         context->setStrokeStyle(BLRgba32(0, 0, 0));
         context->setStrokeWidth(2);
         context->strokeBoxArray(draggers, 4);
         context->end();
-        InvalidateRect(MainWin::Get()->hwnd, nullptr, false);
+        win->state = State::lastPathDrag;
+        InvalidateRect(win->hwnd, nullptr, false);
     }
 
     void Eraser::MouseInDragger(const double& x, const double& y)

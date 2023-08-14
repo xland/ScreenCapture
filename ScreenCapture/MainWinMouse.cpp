@@ -281,7 +281,6 @@ void MainWin::mouseMove(const POINT& pos)
             }
         }        
     }
-
 }
 void MainWin::leftBtnUp(const POINT& pos)
 {
@@ -310,12 +309,12 @@ void MainWin::leftBtnUp(const POINT& pos)
         case State::number:
         case State::text:
         case State::mosaic:
-        case State::eraser:
         {
             History::LastShapeShowDragger();
             state = State::lastPathDrag;
             break;
         }
+        case State::eraser:
         case State::pen: 
         {
             History::LastShapeShowDragger();

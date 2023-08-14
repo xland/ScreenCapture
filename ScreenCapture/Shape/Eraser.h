@@ -14,12 +14,12 @@ namespace Shape {
 		void CopyCanvasImg();
 		double strokeWidth;
 		BLBox box;
+		BLImage* canvasImgCopy = nullptr;
 	private:
 		std::vector<BLPoint> points;
 		BLBox draggers[4];
 		double tempDraggerX, tempDraggerY;
 		int draggerIndex = -1;
-		BLImage* canvasImgCopy = nullptr;
 	};
 }
 
