@@ -10,7 +10,7 @@
 - Undo Redo support (Shapes in history can be edited).
 - Save to file or clipboard.
 - Camera aperture,Copy pixel color(RGB,HEX).
-- Very fast,Low memory cust,Low CPU useage.
+- Very fast,Low memory overhead,Low CPU useage.
 - Only one small executable file (with out any dll).
 - Can be easily integrated into any program.
 
