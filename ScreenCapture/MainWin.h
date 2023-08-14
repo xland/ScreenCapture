@@ -100,7 +100,7 @@ private:
 
 	//tool
 	void drawSplitter(const BLPoint& point);
-	BLRect getBtnRect(const BLPoint& point);
+	BLRoundRect getBtnRect(const BLPoint& point);
 	void drawBtn(const BLPoint& point, const Icon::Name& name,const bool& hover);
 	void drawBtnCheckable(const BLPoint& point, const Icon::Name& name, const bool& checked, const bool& hover);
 	void drawBtnColors(const BLPoint& point, const Icon::Name& name, const bool& checked, const bool& hover,const BLRgba32& color);
