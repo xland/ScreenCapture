@@ -117,7 +117,9 @@ void  History::Undo()
 		}
 	}
 	//容器中一个需要绘制的元素也没有
-	if (!hasNeedDrawShape) return;
+	if (!hasNeedDrawShape) {
+		return;
+	}
 	//重新在canvasImage上画所有需要绘制的元素
 	auto context = painter->paintCtx;
 	context->begin(*painter->canvasImage);
@@ -125,9 +127,12 @@ void  History::Undo()
 	context->end();
 	//最后一个需要绘制的元素的下标，-1为没有需要绘制的元素
 	lastDrawShapeIndex = index - 1;
+	auto win = MainWin::Get();
 	if (lastDrawShapeIndex < 0) {
 		//现在没有需要绘制的元素，不必渲染prepareImage
 		painter->isDrawing = false;
+		win->state = State::maskReady;
+		win->selectedToolIndex = -1;
 		InvalidateRect(MainWin::Get()->hwnd, nullptr, false);
 		return;
 	}
@@ -141,7 +146,7 @@ void  History::Undo()
 	painter->isDrawing = true;
 	history[lastDrawShapeIndex]->Draw(-1, -1, -1, -1); 
 	//painter->canvasImage->writeToFile("def.png");
-	auto win = MainWin::Get();
+	
 	win->selectedToolIndex = (int)history[lastDrawShapeIndex]->state - 2;
 	if (!LastShapeHasDragger()) {
 		InvalidateRect(win->hwnd, nullptr, false);

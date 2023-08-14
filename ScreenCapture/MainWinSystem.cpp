@@ -156,11 +156,12 @@ LRESULT CALLBACK MainWin::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
         }
         case WM_LBUTTONDOWN:
         {
+            IsLeftBtnDown = true;
             if (state >= State::maskReady) {
                 static auto t1 = std::chrono::system_clock::now();
                 auto t2 = std::chrono::system_clock::now();
                 auto count = floor<std::chrono::milliseconds>(t2 - t1).count();
-                if (count > 0 && count < 300 && mouseEnterMainToolIndex == -1 && mouseEnterSubToolIndex == -1) {
+                if (count > 0 && count < 260 && mouseEnterMainToolIndex == -1 && mouseEnterSubToolIndex == -1) {
                     if (!painter->isDrawing) {
                         saveClipboard();
                         return 0;
@@ -183,6 +184,7 @@ LRESULT CALLBACK MainWin::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
         }
         case WM_LBUTTONUP:
         {
+            IsLeftBtnDown = false;
             POINT point = getMousePoint(lParam);
             leftBtnUp(point);
             return 0;

@@ -129,7 +129,6 @@ void MainWin::leftBtnDownStartDraw()
 
 void MainWin::leftBtnDown(const POINT& pos)
 {
-    IsLeftBtnDown = true;
     MouseDownPos = pos;
     if (state != State::start) {
         if (mouseEnterMainToolIndex == 9) //undo
@@ -284,7 +283,6 @@ void MainWin::mouseMove(const POINT& pos)
 }
 void MainWin::leftBtnUp(const POINT& pos)
 {
-    IsLeftBtnDown = false;
     if (mouseEnterMainToolIndex != -1 || mouseEnterSubToolIndex != -1) {
         InvalidateRect(hwnd, nullptr, false); //undo redo 的按钮状态
         return;
