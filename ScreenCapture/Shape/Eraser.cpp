@@ -1,4 +1,4 @@
-#include "Eraser.h"
+﻿#include "Eraser.h"
 #include "../MainWin.h"
 namespace Shape {
 

@@ -45,7 +45,8 @@ void Painter::shotScreen()
     HBITMAP hBitmap = CreateCompatibleBitmap(hScreen, w, h);
     DeleteObject(SelectObject(hDC, hBitmap));
     BOOL bRet = BitBlt(hDC, 0, 0, w, h, hScreen, x, y, SRCCOPY);
-    unsigned int dataSize = w * h * 4;
+    unsigned int stride = w * 4;
+    unsigned int dataSize = stride * h;
     bgPixels = new unsigned char[dataSize];
     BITMAPINFO info = { sizeof(BITMAPINFOHEADER), (long)w, 0 - (long)h, 1, 32, BI_RGB, dataSize, 0, 0, 0, 0 };
     GetDIBits(hDC, hBitmap, 0, h, (LPVOID)bgPixels, &info, DIB_RGB_COLORS);
@@ -60,11 +61,11 @@ void Painter::shotScreen()
     canvasImage = new BLImage(w, h, BL_FORMAT_PRGB32);
     prepareImage = new BLImage(w, h, BL_FORMAT_PRGB32);
     bgImage = new BLImage();
-    bgImage->createFromData(w, h, BL_FORMAT_PRGB32, bgPixels, w * 4, [](void* impl, void* externalData, void* userData) {
+    bgImage->createFromData(w, h, BL_FORMAT_PRGB32, bgPixels, stride, BL_DATA_ACCESS_RW,[](void* impl, void* externalData, void* userData) {
         delete[] externalData;
     });
     boardImage = new BLImage();
-    boardImage->createFromData(w, h, BL_FORMAT_PRGB32, boardPixels, w * 4, [](void* impl, void* externalData, void* userData) {
+    boardImage->createFromData(w, h, BL_FORMAT_PRGB32, boardPixels, stride, BL_DATA_ACCESS_RW, [](void* impl, void* externalData, void* userData) {
         delete[] externalData; //todo
     });
     paintCtx = new BLContext();

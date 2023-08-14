@@ -1,4 +1,4 @@
-#include "MainWin.h"
+﻿#include "MainWin.h"
 #include <memory>
 
 static MainWin* mainWin;

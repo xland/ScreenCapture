@@ -1,4 +1,4 @@
-#include "Icon.h"
+﻿#include "Icon.h"
 
 static const char* icons[] = {
     reinterpret_cast<const char*>(u8"\ue8e8"),

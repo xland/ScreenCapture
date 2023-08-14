@@ -1,4 +1,4 @@
-#include "MainWin.h"
+Ôªø#include "MainWin.h"
 
 
 void MainWin::drawSubToolBackground(const int& btnCount, const bool isCenter)
@@ -152,9 +152,8 @@ void MainWin::drawColorBtns(BLPoint& point,const int& index)
 	for (size_t i = 0; i < std::size(colors); i++)
 	{
 		point.x += toolBtnWidth;
-		painter->paintCtx->setFillStyle(colors[i]);
 		Icon::Name name = i == colorBtnIndex ? Icon::Name::colorChecked : Icon::Name::colorUnChecked;
-		drawBtnColors(point, name, i==colorBtnIndex, mouseEnterSubToolIndex == index+i);
+		drawBtnColors(point, name, i==colorBtnIndex, mouseEnterSubToolIndex == index+i, colors[i]);
 	}
 }
 
@@ -175,10 +174,10 @@ void MainWin::subToolBtnClick()
 {
 	switch (selectedToolIndex)
 	{
-		case 0://æÿ–Œ
-		case 1://Õ÷‘≤
-		case 2://º˝Õ∑
-		case 3://±Í∫≈
+		case 0://Áü©ÂΩ¢
+		case 1://Ê§≠ÂúÜ
+		case 2://ÁÆ≠Â§¥
+		case 3://Ê†áÂè∑
 		{
 			clickSubToolNormal();
 			break;

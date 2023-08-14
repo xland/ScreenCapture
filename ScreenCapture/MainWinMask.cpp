@@ -1,4 +1,4 @@
-#include "MainWin.h"
+﻿#include "MainWin.h"
 
 
 void MainWin::checkMouseEnterMaskBox(const POINT& pos) {

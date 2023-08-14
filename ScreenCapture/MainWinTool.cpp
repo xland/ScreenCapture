@@ -1,22 +1,21 @@
-#include "MainWin.h"
+﻿#include "MainWin.h"
 
-void MainWin::drawBtnBackground(const BLPoint& point, const BLRgba32& color)
+
+BLRect MainWin::getBtnRect(const BLPoint& point)
 {
 	BLRect rect(point.x - iconLeftMargin / 2,
 		point.y - iconTopMargin + iconLeftMargin / 2,
 		toolBtnWidth - iconLeftMargin,
 		toolBoxHeight - iconLeftMargin);
-	BLVarCore val;
-	painter->paintCtx->getFillStyle(val);
-	painter->paintCtx->setFillStyle(color);
-	painter->paintCtx->fillRoundRect(rect, 6);
-	painter->paintCtx->setFillStyle(val);
+	return rect;
 }
 
 void MainWin::drawBtn(const BLPoint& point, const Icon::Name& name,const bool& hover)
 {
 	if (hover) {
-		drawBtnBackground(point, BLRgba32(238, 238, 238, 255));
+		auto rect = getBtnRect(point);
+		painter->paintCtx->setFillStyle(BLRgba32(238, 238, 238));
+		painter->paintCtx->fillRoundRect(rect, 6);
 	}
 	painter->paintCtx->setFillStyle(BLRgba32(30, 30, 30, 255));
 	painter->paintCtx->fillUtf8Text(point, *Font::Get()->fontIcon, Icon::GetIcon(name));
@@ -26,13 +25,17 @@ void MainWin::drawBtn(const BLPoint& point, const Icon::Name& name,const bool& h
 void MainWin::drawBtnCheckable(const BLPoint& point, const Icon::Name& name, const bool& checked, const bool& hover)
 {
 	if (checked) {
-		drawBtnBackground(point, BLRgba32(230, 244, 255, 255));
+		auto rect = getBtnRect(point);
+		painter->paintCtx->setFillStyle(BLRgba32(230, 244, 255));
+		painter->paintCtx->fillRoundRect(rect, 6);
 		painter->paintCtx->setFillStyle(BLRgba32(9, 88, 217, 255));
 	}
 	else
 	{
 		if (hover) {
-			drawBtnBackground(point, BLRgba32(238, 238, 238, 255));
+			auto rect = getBtnRect(point);
+			painter->paintCtx->setFillStyle(BLRgba32(238, 238, 238));
+			painter->paintCtx->fillRoundRect(rect, 6);
 		}
 		painter->paintCtx->setFillStyle(BLRgba32(30, 30, 30, 255));
 	}
@@ -43,13 +46,17 @@ void MainWin::drawBtnCheckable(const BLPoint& point, const Icon::Name& name, con
 void MainWin::drawBtnStrokeWidth(const BLPoint& point, const bool& checked, const bool& hover)
 {
 	if (checked) {
-		drawBtnBackground(point, BLRgba32(230, 244, 255, 255));
+		auto rect = getBtnRect(point);
+		painter->paintCtx->setFillStyle(BLRgba32(230, 244, 255));
+		painter->paintCtx->fillRoundRect(rect, 6);
 		painter->paintCtx->setFillStyle(BLRgba32(9, 88, 217, 255));
 	}
 	else
 	{
 		if (hover) {
-			drawBtnBackground(point, BLRgba32(238, 238, 238, 255));
+			auto rect = getBtnRect(point);
+			painter->paintCtx->setFillStyle(BLRgba32(238, 238, 238));
+			painter->paintCtx->fillRoundRect(rect, 6);
 		}
 		painter->paintCtx->setFillStyle(BLRgba32(30, 30, 30, 255));
 	}
@@ -69,14 +76,19 @@ void MainWin::drawBtnStrokeWidth(const BLPoint& point, const bool& checked, cons
 	}
 }
 
-void MainWin::drawBtnColors(const BLPoint& point, const Icon::Name& name, const bool& checked, const bool& hover)
+void MainWin::drawBtnColors(const BLPoint& point, const Icon::Name& name, const bool& checked, const bool& hover, const BLRgba32& color)
 {
+
+	auto rect = getBtnRect(point);
 	if (checked) {
-		drawBtnBackground(point, BLRgba32(230, 244, 255, 255));
+		painter->paintCtx->setFillStyle(BLRgba32(230, 244, 255));
+		painter->paintCtx->fillRoundRect(rect, 6);
 	}
 	else if (hover) {
-		drawBtnBackground(point, BLRgba32(238, 238, 238, 255));
+		painter->paintCtx->setFillStyle(BLRgba32(238, 238, 238));
+		painter->paintCtx->fillRoundRect(rect, 6);
 	}
+	painter->paintCtx->setFillStyle(color);
 	painter->paintCtx->fillUtf8Text(point, *Font::Get()->fontIcon, Icon::GetIcon(name));
 }
 
@@ -87,7 +99,9 @@ void MainWin::drawBtnUndoRedo(const BLPoint& point, const Icon::Name& name, cons
 	}
 	else {
 		if (hover) {
-			drawBtnBackground(point, BLRgba32(238, 238, 238, 255));
+			auto rect = getBtnRect(point);
+			painter->paintCtx->setFillStyle(BLRgba32(238, 238, 238));
+			painter->paintCtx->fillRoundRect(rect, 6);
 		}
 		painter->paintCtx->setFillStyle(BLRgba32(30, 30, 30, 255));
 	}

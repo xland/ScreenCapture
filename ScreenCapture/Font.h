@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "blend2d.h"
 class Font
 {

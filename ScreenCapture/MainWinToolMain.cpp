@@ -1,4 +1,4 @@
-#include "MainWin.h"
+ï»¿#include "MainWin.h"
 
 void MainWin::setToolBoxMain()
 {
@@ -6,41 +6,41 @@ void MainWin::setToolBoxMain()
 	auto heightSpan = toolBoxSpan * 3 + toolBoxHeight * 2;
 	if (int(painter->h - cutBox.y1) > heightSpan)
 	{
-		//ÆÁÄ»µ×²¿»¹ÓĞ×ã¹»µÄ¿Õ¼ä
-		//Á½¸ö¸ß¶È£¬ÎªÆÁÄ»µ×±ßÒ²ÁôÒ»µã¼äÏ¶ 
+		//å±å¹•åº•éƒ¨è¿˜æœ‰è¶³å¤Ÿçš„ç©ºé—´
+		//ä¸¤ä¸ªé«˜åº¦ï¼Œä¸ºå±å¹•åº•è¾¹ä¹Ÿç•™ä¸€ç‚¹é—´éš™ 
 		toolBoxMain.y0 = cutBox.y1 + toolBoxSpan;
 	}
 	else if(int(cutBox.y0) > heightSpan)
 	{
-		//ÆÁÄ»¶¥²¿»¹ÓĞ×ã¹»µÄ¿Õ¼ä
+		//å±å¹•é¡¶éƒ¨è¿˜æœ‰è¶³å¤Ÿçš„ç©ºé—´
 		if (selectedToolIndex == -1) 
 		{
-			//ÉĞÎ´È·¶¨state£¬Ö÷¹¤¾ßÌõÌù×Å½ØÍ¼Çø
+			//å°šæœªç¡®å®šstateï¼Œä¸»å·¥å…·æ¡è´´ç€æˆªå›¾åŒº
 			toolBoxMain.y0 = cutBox.y0 - toolBoxSpan - toolBoxHeight;			
 		}
 		else
 		{
-			//ÒÑ¾­È·¶¨ÁËstate£¬ÒªÎª×Ó¹¤¾ßÌõÁô³öÇøÓò
+			//å·²ç»ç¡®å®šäº†stateï¼Œè¦ä¸ºå­å·¥å…·æ¡ç•™å‡ºåŒºåŸŸ
 			toolBoxMain.y0 = cutBox.y0 - (double)toolBoxSpan * 2 - (double)toolBoxHeight * 2;
 		}		
 	}
 	else
 	{
-		//¶¥²¿µ×²¿¶¼Ã»ÓĞ×ã¹»µÄ¿Õ¼ä
+		//é¡¶éƒ¨åº•éƒ¨éƒ½æ²¡æœ‰è¶³å¤Ÿçš„ç©ºé—´
 		if (selectedToolIndex == -1) 
 		{
-			//ÉĞÎ´È·¶¨state£¬Ö÷¹¤¾ßÌõÌù×Å½ØÍ¼Çøµ×²¿ÉÏ·½
+			//å°šæœªç¡®å®šstateï¼Œä¸»å·¥å…·æ¡è´´ç€æˆªå›¾åŒºåº•éƒ¨ä¸Šæ–¹
 			toolBoxMain.y0 = cutBox.y1 - toolBoxSpan - toolBoxHeight;
 		}
 		else
 		{
-			//ÉĞÎ´È·¶¨state£¬Ö÷¹¤¾ßÌõÌù×Å½ØÍ¼Çøµ×²¿ÉÏ·½£¬²¢Îª×Ó¹¤¾ßÌõÁô³ö¿Õ¼ä
+			//å°šæœªç¡®å®šstateï¼Œä¸»å·¥å…·æ¡è´´ç€æˆªå›¾åŒºåº•éƒ¨ä¸Šæ–¹ï¼Œå¹¶ä¸ºå­å·¥å…·æ¡ç•™å‡ºç©ºé—´
 			toolBoxMain.y0 = cutBox.y1 - (double)toolBoxSpan * 2 - (double)toolBoxHeight * 2;
 		}
 	}
 	if (toolBoxMain.x0 < 0) {
-		//Èç¹û¹¤¾ßÌõ³¬³öÁËÆÁÄ»×ó²à£¬ÄÇÃ´ÈÃ¹¤¾ßÌõÓë½ØÍ¼ÇøÓò×ó²à¶ÔÆë
-		//todo Èç¹û¹¤¾ßÌõÔÚÓÒ²àÆÁÄ»µÄ×ó±ßÔµ£¬²¢³¬³öÁËÓÒ²àÆÁÄ»µÄ×ó±ßÔµ
+		//å¦‚æœå·¥å…·æ¡è¶…å‡ºäº†å±å¹•å·¦ä¾§ï¼Œé‚£ä¹ˆè®©å·¥å…·æ¡ä¸æˆªå›¾åŒºåŸŸå·¦ä¾§å¯¹é½
+		//todo å¦‚æœå·¥å…·æ¡åœ¨å³ä¾§å±å¹•çš„å·¦è¾¹ç¼˜ï¼Œå¹¶è¶…å‡ºäº†å³ä¾§å±å¹•çš„å·¦è¾¹ç¼˜
 		toolBoxMain.x0 = cutBox.x0;
 	}
 

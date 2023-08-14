@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include <blend2d.h>
 #include <windows.h>
 #include <windowsx.h>
@@ -100,15 +100,15 @@ private:
 
 	//tool
 	void drawSplitter(const BLPoint& point);
-	void drawBtnBackground(const BLPoint& point, const BLRgba32& color);
+	BLRect getBtnRect(const BLPoint& point);
 	void drawBtn(const BLPoint& point, const Icon::Name& name,const bool& hover);
 	void drawBtnCheckable(const BLPoint& point, const Icon::Name& name, const bool& checked, const bool& hover);
-	void drawBtnColors(const BLPoint& point, const Icon::Name& name, const bool& checked, const bool& hover);
+	void drawBtnColors(const BLPoint& point, const Icon::Name& name, const bool& checked, const bool& hover,const BLRgba32& color);
 	void drawBtnStrokeWidth(const BLPoint& point, const bool& checked, const bool& hover);
 	void drawBtnUndoRedo(const BLPoint& point, const Icon::Name& name, const bool& hover, const bool& enable);
 	bool checkMouseEnterToolBox(const POINT& pos);
 	int mainToolBtnCount = 14;
-	int toolBoxSpan = 12;//¹¤¾ßÌõ¾àÀë½ØÍ¼ÇøÓòµÄ¸ß¶È
+	int toolBoxSpan = 12;//å·¥å…·æ¡è·ç¦»æˆªå›¾åŒºåŸŸçš„é«˜åº¦
 	int toolBtnSpanWidth = 6;
 	int toolBtnSpanCount = 2;
 	int toolBtnWidth = 60;
