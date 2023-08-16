@@ -61,11 +61,11 @@ void Painter::shotScreen()
     canvasImage = new BLImage(w, h, BL_FORMAT_PRGB32);
     prepareImage = new BLImage(w, h, BL_FORMAT_PRGB32);
     bgImage = new BLImage();
-    bgImage->createFromData(w, h, BL_FORMAT_PRGB32, bgPixels, stride, BL_DATA_ACCESS_RW,[](void* impl, void* externalData, void* userData) {
+    bgImage->createFromData(w, h, BL_FORMAT_PRGB32, bgPixels, stride, [](void* impl, void* externalData, void* userData) {
         delete[] externalData;
     });
     boardImage = new BLImage();
-    boardImage->createFromData(w, h, BL_FORMAT_PRGB32, boardPixels, stride, BL_DATA_ACCESS_RW, [](void* impl, void* externalData, void* userData) {
+    boardImage->createFromData(w, h, BL_FORMAT_PRGB32, boardPixels, stride, [](void* impl, void* externalData, void* userData) {
         delete[] externalData; //todo
     });
     paintCtx = new BLContext();
