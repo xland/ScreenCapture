@@ -162,6 +162,7 @@ LRESULT CALLBACK MainWin::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
                 auto t2 = std::chrono::system_clock::now();
                 auto count = floor<std::chrono::milliseconds>(t2 - t1).count();
                 if (count > 0 && count < 260 && mouseEnterMainToolIndex == -1 && mouseEnterSubToolIndex == -1) {
+                    IsDoubleClick = true;
                     if (!painter->isDrawing) {
                         saveClipboard();
                         return 0;

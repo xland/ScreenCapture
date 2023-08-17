@@ -179,7 +179,7 @@ namespace Shape {
             return true;
         }
         auto win = MainWin::Get();
-        if (win->IsLeftBtnDown && box.contains(win->MouseDownPos.x, win->MouseDownPos.y)) {
+        if (win->IsLeftBtnDown && !win->IsDoubleClick && box.contains(win->MouseDownPos.x, win->MouseDownPos.y)) {
             SetIndex(win->MouseDownPos.x);
             Draw(win->MouseDownPos.x, win->MouseDownPos.y, -1, -1);
             return false;

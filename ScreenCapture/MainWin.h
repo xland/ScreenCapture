@@ -46,6 +46,7 @@ public:
 	bool IsShiftDown = false;
 	bool IsCtrlDown = false;
 	bool IsLeftBtnDown = false;
+	bool IsDoubleClick = false;
 	State state = State::start;
 	State preState;
 	int selectedToolIndex = -1;
