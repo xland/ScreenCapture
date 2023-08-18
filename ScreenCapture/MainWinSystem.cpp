@@ -255,6 +255,7 @@ LRESULT CALLBACK MainWin::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
                 }
                 case 90: { //Z
                     if (IsCtrlDown) {
+                        mouseEnterMainToolIndex = 9;
                         History::Undo();
                         return 1;
                     }
@@ -262,6 +263,7 @@ LRESULT CALLBACK MainWin::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
                 }
                 case 89: { //Y
                     if (IsCtrlDown) {
+                        mouseEnterMainToolIndex = 10;
                         History::Redo();
                         return 1;
                     }
