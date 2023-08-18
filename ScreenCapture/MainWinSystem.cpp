@@ -253,6 +253,20 @@ LRESULT CALLBACK MainWin::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
                     }
                     return 0;
                 }
+                case 90: { //Z
+                    if (IsCtrlDown) {
+                        History::Undo();
+                        return 1;
+                    }
+                    return 0;
+                }
+                case 89: { //Y
+                    if (IsCtrlDown) {
+                        History::Redo();
+                        return 1;
+                    }
+                    return 0;
+                }
             }
             return 0;
         }
