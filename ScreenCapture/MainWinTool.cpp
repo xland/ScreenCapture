@@ -28,7 +28,7 @@ void MainWin::drawBtnCheckable(const BLPoint& point, const Icon::Name& name, con
 		auto rect = getBtnRect(point);
 		painter->paintCtx->setFillStyle(BLRgba32(230, 244, 255));
 		painter->paintCtx->fillRoundRect(rect);
-		painter->paintCtx->setFillStyle(BLRgba32(9, 88, 217, 255));
+		painter->paintCtx->setFillStyle(BLRgba32(9, 88, 217));
 	}
 	else
 	{
@@ -37,7 +37,7 @@ void MainWin::drawBtnCheckable(const BLPoint& point, const Icon::Name& name, con
 			painter->paintCtx->setFillStyle(BLRgba32(238, 238, 238));
 			painter->paintCtx->fillRoundRect(rect);
 		}
-		painter->paintCtx->setFillStyle(BLRgba32(30, 30, 30, 255));
+		painter->paintCtx->setFillStyle(BLRgba32(30, 30, 30));
 	}
 	painter->paintCtx->fillUtf8Text(point, *Font::Get()->fontIcon, Icon::GetIcon(name));
 }
@@ -49,7 +49,7 @@ void MainWin::drawBtnStrokeWidth(const BLPoint& point, const bool& checked, cons
 		auto rect = getBtnRect(point);
 		painter->paintCtx->setFillStyle(BLRgba32(230, 244, 255));
 		painter->paintCtx->fillRoundRect(rect);
-		painter->paintCtx->setFillStyle(BLRgba32(9, 88, 217, 255));
+		painter->paintCtx->setFillStyle(BLRgba32(9, 88, 217));
 	}
 	else
 	{
@@ -58,7 +58,7 @@ void MainWin::drawBtnStrokeWidth(const BLPoint& point, const bool& checked, cons
 			painter->paintCtx->setFillStyle(BLRgba32(238, 238, 238));
 			painter->paintCtx->fillRoundRect(rect);
 		}
-		painter->paintCtx->setFillStyle(BLRgba32(30, 30, 30, 255));
+		painter->paintCtx->setFillStyle(BLRgba32(30, 30, 30));
 	}
 	auto iconChar = Icon::GetIcon(Icon::Name::dot);
 	auto fontSize = Font::Get()->fontIcon->size();
@@ -95,7 +95,7 @@ void MainWin::drawBtnColors(const BLPoint& point, const Icon::Name& name, const 
 void MainWin::drawBtnUndoRedo(const BLPoint& point, const Icon::Name& name, const bool& hover, const bool& enable)
 {
 	if (!enable) {
-		painter->paintCtx->setFillStyle(BLRgba32(180, 180, 180, 255));
+		painter->paintCtx->setFillStyle(BLRgba32(180, 180, 180));
 	}
 	else {
 		if (hover) {
@@ -103,7 +103,7 @@ void MainWin::drawBtnUndoRedo(const BLPoint& point, const Icon::Name& name, cons
 			painter->paintCtx->setFillStyle(BLRgba32(238, 238, 238));
 			painter->paintCtx->fillRoundRect(rect);
 		}
-		painter->paintCtx->setFillStyle(BLRgba32(30, 30, 30, 255));
+		painter->paintCtx->setFillStyle(BLRgba32(30, 30, 30));
 	}
 	painter->paintCtx->fillUtf8Text(point, *Font::Get()->fontIcon, Icon::GetIcon(name));
 }
@@ -111,7 +111,7 @@ void MainWin::drawBtnUndoRedo(const BLPoint& point, const Icon::Name& name, cons
 
 void MainWin::drawSplitter(const BLPoint& point)
 {
-	painter->paintCtx->setStrokeStyle(BLRgba32(180, 180, 180, 255));
+	painter->paintCtx->setStrokeStyle(BLRgba32(180, 180, 180));
 	painter->paintCtx->setStrokeWidth(0.6f);
 	auto x = point.x - iconLeftMargin + toolBtnSpanWidth / 2;
 	painter->paintCtx->strokeLine(x, point.y - 23, x, point.y + 2);

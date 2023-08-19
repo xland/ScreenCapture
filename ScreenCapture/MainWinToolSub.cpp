@@ -168,6 +168,14 @@ void MainWin::drawStrokeWidthBtns(BLPoint& point,const int& index)
 	font->setSize(86.0f);
 	drawBtnStrokeWidth(point, strokeBtnIndex == 2, mouseEnterSubToolIndex == index+2);
 	font->setSize(28.0f);
+
+	//BLRoundRect rect(point.x - iconLeftMargin, point.y-19, toolBtnWidth * 3, toolBoxHeight - iconTopMargin, 8);
+	//painter->paintCtx->setFillStyle(BLRgba32(230, 230, 230));
+	//painter->paintCtx->fillRoundRect(rect);	
+	//BLRoundRect rect2(point.x - iconLeftMargin, point.y - 19, toolBtnWidth * 2, toolBoxHeight - iconTopMargin, 8);
+	//painter->paintCtx->setFillStyle(BLRgba32(145, 202, 255));//230, 244, 255  9, 88, 217
+	//painter->paintCtx->fillRoundRect(rect2);
+	//point.x += toolBtnWidth*2;
 }
 
 void MainWin::subToolBtnClick()
