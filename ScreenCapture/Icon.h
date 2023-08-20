@@ -19,6 +19,7 @@ public:
         undo,
         redo,
 
+        //pin,
         save,
         copy,
         close,

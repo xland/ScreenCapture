@@ -27,17 +27,14 @@
 - Eraser和Pen为什么画完了之后要重置win->MouseDownPos，直接用数组里最后一个点
 - 为啥enddraw之后还要清prepareImage
 - ----------------------------------
-- 马赛克子工具条增加一个矩形选择按钮
-- 点击此按钮，
-- 按钮未选中，设置马赛克shape对象isFill为true
-- 清除prepareImage,然后先贴bgImage，再贴CanvaseImage
-- 复制一份prepareImageCopy
-- 使用算法把prepareImage马赛克化
-- 把prepareImage贴到canvasImage
-- 把prepareImageCopy画到prepareImage上
-- 删除prepareImage
-- 鼠标在绘图区域拖动时，擦除prepareImage对应的鼠标路径
-- 鼠标up，绘制结束时，把prepareImage贴到canvasImage上，得到路径对应的矩形，根据这个矩形扣一块canvasImage上的图像，并存储在shape对象中
-- 清除CanvaseImage，在CanvaseImage上重绘History，贴上刚刚扣出的Image
-- undo redo时，马赛克子工具条上的矩形选择按钮应该处于禁用状态
+- 抽象窗口基类，主窗口、钉住窗口、工具条窗口均继承自此基类
+- 父类至少实现RouteWindowMessage、CreateWindow、hwnd、Show、Close、WindowProc等
+- Close方法应能释放窗口占据的堆资源
+- 点击钉住窗口按钮，把截图区域的图像复制到一个BLImage中
+- 再创建一个无边框有阴影不能缩放窗口Dialog，并置顶
+- 把前面复制的BLImage传递给Dialog，并渲染出来
+- 再创建一个无边框有阴影的工具条Dialog，
+- 把工具条渲染在工具条窗口，此时不应该再显示钉按钮
+- 调用History对象的Clear方法，清空History对象
+- 关闭主窗口，释放主窗口持有的所有BLImage对象
 

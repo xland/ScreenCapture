@@ -17,7 +17,7 @@ void MainWin::drawBtn(const BLPoint& point, const Icon::Name& name,const bool& h
 		painter->paintCtx->setFillStyle(BLRgba32(238, 238, 238));
 		painter->paintCtx->fillRoundRect(rect);
 	}
-	painter->paintCtx->setFillStyle(BLRgba32(30, 30, 30, 255));
+	painter->paintCtx->setFillStyle(BLRgba32(30, 30, 30));
 	painter->paintCtx->fillUtf8Text(point, *Font::Get()->fontIcon, Icon::GetIcon(name));
 }
 

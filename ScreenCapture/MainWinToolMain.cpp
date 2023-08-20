@@ -43,9 +43,6 @@ void MainWin::setToolBoxMain()
 		//todo 如果工具条在右侧屏幕的左边缘，并超出了右侧屏幕的左边缘
 		toolBoxMain.x0 = cutBox.x0;
 	}
-
-
-
 	toolBoxMain.y1 = toolBoxMain.y0 + toolBoxHeight;
 	toolBoxMain.x1 = toolBoxMain.x0 + toolBoxWidth;
 
@@ -55,7 +52,7 @@ void MainWin::drawToolMain()
 {
 	if (state == State::start) return;
 	setToolBoxMain();
-	painter->paintCtx->setFillStyle(BLRgba32(255, 255, 255, 255));
+	painter->paintCtx->setFillStyle(BLRgba32(255, 255, 255));
 	painter->paintCtx->fillBox(toolBoxMain);
 	BLPoint point;
 	point.x = toolBoxMain.x0 + iconLeftMargin;
@@ -83,6 +80,8 @@ void MainWin::drawToolMain()
 	}
 	drawSplitter(point);
 	point.x += toolBtnSpanWidth;
+	//drawBtn(point, Icon::Name::pin, (int)Icon::Name::pin == mouseEnterMainToolIndex);
+	//point.x += toolBtnWidth;
 	drawBtn(point, Icon::Name::save, (int)Icon::Name::save == mouseEnterMainToolIndex);
 	point.x += toolBtnWidth;
 	drawBtn(point, Icon::Name::copy, (int)Icon::Name::copy == mouseEnterMainToolIndex);

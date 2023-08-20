@@ -61,43 +61,6 @@ void MainWin::showWindow()
     ChangeCursor(IDC_ARROW);
 }
 
-void MainWin::initScaleFactor()
-{
-    int dpi = GetDpiForWindow(hwnd);
-    switch (dpi) {
-    case 96:
-        scaleFactor = 1.0;
-        break;
-    case 120:
-        scaleFactor = 1.25;
-        break;
-    case 144:
-        scaleFactor = 1.5;
-        break;
-    case 168:
-        scaleFactor = 1.75;
-        break;
-    case 192:
-        scaleFactor = 2.0;
-        break;
-    case 216:
-        scaleFactor = 2.25;
-        break;
-    case 240:
-        scaleFactor = 2.5;
-        break;
-    case 288:
-        scaleFactor = 3.0;
-        break;
-    case 336:
-        scaleFactor = 3.5;
-        break;
-    default:
-        scaleFactor = 1.0;
-        break;
-    }
-}
-
 LRESULT CALLBACK MainWin::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     switch (msg)

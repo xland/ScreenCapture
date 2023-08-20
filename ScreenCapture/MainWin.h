@@ -54,15 +54,12 @@ public:
 
 private:
 	MainWin(HINSTANCE hinstance);
-	//system
-	void initScaleFactor();
 	void createWindow();
 	void showWindow();
 	void saveFile();
 	void saveClipboard();
 	void initWindowBoxes();
 	void quitApp(const int& exitCode);
-	double scaleFactor;
 	HINSTANCE hinstance;
 	Painter* painter;
 	std::vector<BLBox> windowBoxes;

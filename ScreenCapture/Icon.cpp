@@ -16,6 +16,7 @@ static const char* icons[] = {
     reinterpret_cast<const char*>(u8"\ued85"), //undo
     reinterpret_cast<const char*>(u8"\ued8a"), //redo
 
+    //reinterpret_cast<const char*>(u8"\ue6a3"),  //pin
     reinterpret_cast<const char*>(u8"\ue62f"),  //save
     reinterpret_cast<const char*>(u8"\ue87f"), //copy
     reinterpret_cast<const char*>(u8"\ue6e7"), //close
