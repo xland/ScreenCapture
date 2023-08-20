@@ -12,6 +12,7 @@ public:
         pen,
         line,
         text,
+        //image,
         mosaic,
         eraser,
 
@@ -32,9 +33,6 @@ public:
 
         colorUnChecked,
         colorChecked,
-
-        bold,
-        italic,
 
     };
     static const char* GetIcon(Icon::Name icon);
