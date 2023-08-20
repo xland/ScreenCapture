@@ -11,9 +11,8 @@ public:
 	void Close();
 	HWND hwnd;
 protected:
-	void InitWindow(const int& x,const int& y,const unsigned int& w,const unsigned int& h);
+	void InitWindow(const int& x,const int& y,const unsigned int& w,const unsigned int& h,const bool& shadow);
 private:
-	static LRESULT CALLBACK RouteWindowMessageWhenInit(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 	static LRESULT CALLBACK RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 	LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 	void d2DCreateRes();

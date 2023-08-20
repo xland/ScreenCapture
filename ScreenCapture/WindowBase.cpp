@@ -1,23 +1,19 @@
 #include "WindowBase.h"
 #include <dwmapi.h>
+#include "Util.h"
 
-LRESULT CALLBACK WindowBase::RouteWindowMessageWhenInit(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
-    if (msg == WM_INITDIALOG)
+LRESULT CALLBACK WindowBase::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+    if (msg == WM_NCCREATE)
     {
-        WindowBase* dialog = (WindowBase*)lParam;
-        dialog->hwnd = hWnd;
-        SetWindowLongPtr(hWnd, DWLP_USER, (LONG_PTR)dialog);
-        SetWindowLongPtr(hWnd, DWLP_DLGPROC, (LONG_PTR)WindowBase::RouteWindowMessage);
-        return dialog->WindowProc(hWnd,msg, wParam, lParam);
+        CREATESTRUCT* pCS = reinterpret_cast<CREATESTRUCT*>(lParam);
+        LPVOID pThis = pCS->lpCreateParams;
+        SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pThis));
     }
-    return FALSE;  
-
-}
-
-LRESULT CALLBACK WindowBase::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
-{
-    WindowBase* dialog = (WindowBase*)GetWindowLongPtr(hWnd, DWLP_USER);
-    return dialog->WindowProc(hWnd, msg, wParam, lParam);
+    auto obj = reinterpret_cast<WindowBase*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
+    if (obj) {
+        return obj->WindowProc(hWnd, msg, wParam, lParam);
+    }
+    return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
 WindowBase::WindowBase()
@@ -34,33 +30,44 @@ WindowBase::~WindowBase()
 
 void WindowBase::Show()
 {
-
+    ShowWindow(hwnd, SW_SHOW);
+    UpdateWindow(hwnd);
+    ChangeCursor(IDC_ARROW);
 }
 void WindowBase::Close()
 {
 
 }
 
-void WindowBase::InitWindow(const int& x, const int& y, const unsigned int& w, const unsigned int& h)
+void WindowBase::InitWindow(const int& x, const int& y, const unsigned int& w, const unsigned int& h, const bool& shadow)
 {
     D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &factory);
     bgImage = new BLImage(w, h, BL_FORMAT_PRGB32);
 
-
-    struct MyDialog : DLGTEMPLATE {
-        WORD dummy[3] = { 0 };  // unused menu, class and title
-    }
-    dlg;
-    dlg.style = WS_POPUP | WS_CAPTION | DS_CENTER;//WS_OVERLAPPEDWINDOW;//
-    dlg.dwExtendedStyle = 0;
-    dlg.cdit = 0;
-    dlg.x = x;
-    dlg.y = y;
-    dlg.cx = w;//width
-    dlg.cy = h;//height
     auto hinstance = GetModuleHandle(NULL);
-    //this is model,modeless use CreateDialogIndirectParam
-    DialogBoxIndirectParam(hinstance, &dlg, nullptr, WindowBase::RouteWindowMessageWhenInit, (LPARAM)this);
+    WNDCLASSEX wcx{};
+    wcx.cbSize = sizeof(wcx);
+    wcx.style = CS_HREDRAW | CS_VREDRAW;
+    wcx.lpfnWndProc = &WindowBase::RouteWindowMessage;
+    wcx.cbWndExtra = sizeof(WindowBase*);
+    wcx.hInstance = hinstance;
+    wcx.hIcon = LoadIcon(NULL, IDI_APPLICATION);
+    wcx.hCursor = LoadCursor(NULL, IDC_ARROW);
+    wcx.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+    wcx.lpszClassName = L"ScreenCapture";
+    if (!RegisterClassEx(&wcx))
+    {
+        MessageBox(NULL, L"注册窗口类失败", L"系统提示", NULL);
+        return;
+    }
+    hwnd = CreateWindowEx(0, wcx.lpszClassName, wcx.lpszClassName, WS_OVERLAPPEDWINDOW, x, y, w, h, NULL, NULL, hinstance, static_cast<LPVOID>(this));
+    //hwnd = CreateWindowEx(0, wcx.lpszClassName, wcx.lpszClassName, WS_OVERLAPPEDWINDOW, 100, 100, 800, 600, NULL, NULL, hinstance, static_cast<LPVOID>(this));
+    if (shadow) {
+        MARGINS m{ 0, 0, 0, 1 };
+        DwmExtendFrameIntoClientArea(hwnd, &m);        
+    }
+    SetWindowPos(hwnd, nullptr, 0, 0, 0, 0, SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_NOMOVE | SWP_NOSIZE | SWP_FRAMECHANGED);
+    Show();
 }
 
 void WindowBase::d2DCreateRes()
@@ -83,21 +90,17 @@ LRESULT CALLBACK WindowBase::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPAR
 {
     switch (msg)
     {
-        case WM_INITDIALOG:
-        {
-            MARGINS m{ 0, 0, 0, 1 };
-            DwmExtendFrameIntoClientArea(hWnd, &m);
-            SetWindowPos(hWnd, nullptr, 0, 0, 0, 0, SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_NOMOVE | SWP_NOSIZE | SWP_FRAMECHANGED);
-            return TRUE;
-        }
         case WM_NCCALCSIZE:
         {
             if (wParam == TRUE)
             {
-                SetWindowLong(hWnd, DWLP_MSGRESULT, 0);
-                return TRUE;
+                return FALSE;
             }
-            return FALSE;
+            break;
+        }
+        case WM_NCHITTEST:
+        {
+            return HTCAPTION;
         }
         case WM_PAINT:
         {
@@ -114,21 +117,7 @@ LRESULT CALLBACK WindowBase::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPAR
             ValidateRect(hwnd, NULL);
             return TRUE;
         }
-        case WM_NCHITTEST:
-        {
-            SetWindowLong(hWnd, DWLP_MSGRESULT, HTCAPTION);
-            return TRUE;
-        }
-        case WM_COMMAND:
-        {
-            WORD id = LOWORD(wParam);
-            if (id == IDOK || id == IDCANCEL)
-            {
-                EndDialog(hWnd, id);
-                return TRUE;
-            }
-            return FALSE;
-        }
     }
-    return FALSE; // return FALSE to let DefDialogProc handle the message
+    
+    return DefWindowProcW(hWnd, msg, wParam, lParam);
 }

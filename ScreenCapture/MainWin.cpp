@@ -9,9 +9,9 @@ MainWin::MainWin(HINSTANCE hinstance):hinstance{hinstance}
     Painter::Init();
     painter = Painter::Get();
     initWindowBoxes();
-    createWindow();
-    //InitWindow(painter->x,painter->y,painter->w,painter->h);
+    createWindow();    
     showWindow();
+    //InitWindow(painter->x,painter->y,painter->w,painter->h,false);
 }
 MainWin::~MainWin()
 {
