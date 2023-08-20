@@ -11,6 +11,7 @@
 #include <iostream>
 #include <vector>
 
+#include "WindowBase.h"
 #include "State.h"
 #include "Icon.h"
 #include "Util.h"
@@ -31,6 +32,7 @@
 
 
 
+//class MainWin :public WindowBase
 class MainWin
 {
 public:
