@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <Windows.h>
 #include <d2d1.h>
 #include <blend2d.h>
@@ -23,6 +23,7 @@ protected:
 	virtual bool OnMouseMove(const int& x, const int& y) { return false; };
 	virtual bool OnKeyDown(const unsigned int& key) { return false; };
 	virtual bool OnKeyUp(const unsigned int& key) { return false; };
+	virtual bool OnChar(const unsigned int& key) { return true; };
 	void InitWindow(const bool& shadow);
 	unsigned char* pixelData;
 private:

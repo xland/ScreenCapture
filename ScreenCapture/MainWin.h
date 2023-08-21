@@ -70,6 +70,7 @@ private:
 	bool OnTimer(const unsigned int& id) override;
 	bool OnKeyDown(const unsigned int& key) override;
 	bool OnKeyUp(const unsigned int& key) override;
+	bool OnChar(const unsigned int& val) override;
 	void drawPixelInfo();
 	std::wstring getPixelColorRgb();
 	std::wstring getPixelColorHex();

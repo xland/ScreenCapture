@@ -1,4 +1,4 @@
-#include "WindowBase.h"
+﻿#include "WindowBase.h"
 #include <windowsx.h>
 #include <dwmapi.h>
 #include "Util.h"
@@ -47,10 +47,12 @@ void WindowBase::InitWindow(const bool& shadow)
     wcx.lpszClassName = L"ScreenCapture";
     if (!RegisterClassEx(&wcx))
     {
-        MessageBox(NULL, L"ע�ᴰ����ʧ��", L"ϵͳ��ʾ", NULL);
+        MessageBox(NULL, L"注册窗口类失败", L"系统提示", NULL);
         return;
     }
     this->hwnd = CreateWindowEx(0, wcx.lpszClassName, wcx.lpszClassName, WS_OVERLAPPEDWINDOW, x, y, w, h, NULL, NULL, hinstance, static_cast<LPVOID>(this));
+    BOOL attrib = TRUE;
+    DwmSetWindowAttribute(hwnd, DWMWA_TRANSITIONS_FORCEDISABLED, &attrib, sizeof(attrib));//移除窗口打开与关闭时的动画效果
     if (shadow) {
         MARGINS m{ 0, 0, 0, 1 };
         DwmExtendFrameIntoClientArea(hwnd, &m);        
@@ -196,9 +198,9 @@ LRESULT CALLBACK WindowBase::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPAR
         case WM_KEYUP: {
             return OnKeyUp(wParam);
         }
-        //case WM_CHAR: {
-        //    return true;
-        //}
+        case WM_CHAR: {
+            return OnChar(wParam);
+        }
     }    
     return DefWindowProcW(hWnd, msg, wParam, lParam);
 }

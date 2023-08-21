@@ -303,53 +303,29 @@ bool MainWin::OnKeyUp(const unsigned int& key)
     return false;
 }
 
-//LRESULT CALLBACK WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
-//{
-//    switch (msg)
-//    {
-//        case WM_LBUTTONDBLCLK:
-//        {
-//            saveClipboard();
-//            return 0;
-//        }
-//        case WM_DESTROY:
-//        {
-//            PostQuitMessage(0);
-//            return 1;
-//        }        
-//        case WM_CHAR:
-//        {
-//            if (wParam == 13) { //enter
-//                History::LastShapeDrawEnd();
-//                return 1;
-//            }
-//            auto shape = dynamic_cast<Shape::Text*>(History::GetLastDrawShape());
-//            if (!shape) return 0;
-//            if (wParam == 8) {
-//                shape->DeleteWord();
-//            }
-//            else
-//            {
-//                shape->InsertWord(std::wstring{(wchar_t)wParam});
-//            } 
-//            return 1;
-//        }        
-//    }
-//    return DefWindowProc(hWnd, msg, wParam, lParam);
-//}
-
+bool MainWin::OnChar(const unsigned int& val) {
+    if (val == 13) { //enter
+        History::LastShapeDrawEnd();
+        return 1;
+    }
+    auto shape = dynamic_cast<Shape::Text*>(History::GetLastDrawShape());
+    if (!shape) return 0;
+    if (val == 8) {
+        shape->DeleteWord();
+    }
+    else
+    {
+        shape->InsertWord(std::wstring{(wchar_t)val});
+    }
+    return true;
+}
 
 void MainWin::saveFile()
 {
     SYSTEMTIME localTime;
     GetLocalTime(&localTime);
-    std::wstring name = std::to_wstring(localTime.wYear)+ 
-        std::to_wstring(localTime.wMonth) + 
-        std::to_wstring(localTime.wDay) + 
-        std::to_wstring(localTime.wHour) + 
-        std::to_wstring(localTime.wMinute) + 
-        std::to_wstring(localTime.wSecond) + 
-        std::to_wstring(localTime.wMilliseconds);
+    std::wstring name = std::format(L"{}{}{}{}{}{}{}",localTime.wYear, localTime.wMonth, localTime.wDay, 
+        localTime.wHour, localTime.wMinute, localTime.wSecond, localTime.wMilliseconds);
     ATL::CComPtr<IFileSaveDialog> saveDialog;
     auto result = saveDialog.CoCreateInstance(CLSID_FileSaveDialog);
     saveDialog->SetDefaultExtension(L"png");
