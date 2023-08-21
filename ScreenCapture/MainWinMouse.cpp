@@ -16,7 +16,7 @@ void MainWin::leftBtnDownStartDraw()
             dragStartCutBoxEndPos = BLPoint(cutBox.x1, cutBox.y1);
             if (mouseInMaskBoxIndex < 8) {
                 setCutBox(MouseDownPos);
-                InvalidateRect(hwnd, nullptr, false);
+                Refresh();
             }
             return;
         }
@@ -28,7 +28,7 @@ void MainWin::leftBtnDownStartDraw()
             box->strokeWidth = strokeWidths[strokeBtnIndex];
             History::Push(box);
             preState = state;
-            painter->isDrawing = true;
+            IsDrawing = true;
             break;
         }
         case State::ellipse:
@@ -39,7 +39,7 @@ void MainWin::leftBtnDownStartDraw()
             ellipse->strokeWidth = strokeWidths[strokeBtnIndex];
             History::Push(ellipse);
             preState = state;
-            painter->isDrawing = true;
+            IsDrawing = true;
             break;
         }
         case State::arrow:
@@ -50,7 +50,7 @@ void MainWin::leftBtnDownStartDraw()
             arrow->strokeWidth = strokeWidths[strokeBtnIndex];
             History::Push(arrow);
             preState = state;
-            painter->isDrawing = true;
+            IsDrawing = true;
             break;
         }
         case State::pen:
@@ -60,7 +60,7 @@ void MainWin::leftBtnDownStartDraw()
             shape->color = colors[colorBtnIndex];
             shape->strokeWidth = strokeWidths[strokeBtnIndex];
             History::Push(shape);
-            painter->isDrawing = true;
+            IsDrawing = true;
             break;
         }
         case State::line:
@@ -71,7 +71,7 @@ void MainWin::leftBtnDownStartDraw()
             shape->isFill = isFill;
             History::Push(shape);
             preState = state;
-            painter->isDrawing = true;
+            IsDrawing = true;
             break;
         }
         case State::number:
@@ -83,7 +83,7 @@ void MainWin::leftBtnDownStartDraw()
             History::Push(shape);
             shape->SetNumber();
             preState = state;
-            painter->isDrawing = true;
+            IsDrawing = true;
             break;
         }
         case State::eraser:
@@ -94,7 +94,7 @@ void MainWin::leftBtnDownStartDraw()
             shape->CopyCanvasImg();
             History::Push(shape);
             preState = state;
-            painter->isDrawing = true;
+            IsDrawing = true;
             break;
         }
         case State::mosaic:
@@ -105,7 +105,7 @@ void MainWin::leftBtnDownStartDraw()
             shape->InitMosaicImg();
             History::Push(shape);
             preState = state;
-            painter->isDrawing = true;
+            IsDrawing = true;
             break;
         }
         case State::text:
@@ -116,7 +116,7 @@ void MainWin::leftBtnDownStartDraw()
             shape->Draw(MouseDownPos.x, MouseDownPos.y, -1, -1);
             SetTimer(hwnd, 999, 660, (TIMERPROC)NULL);
             preState = state;
-            painter->isDrawing = true;
+            IsDrawing = true;
             break;
         }
         case State::lastPathDrag:
@@ -127,43 +127,67 @@ void MainWin::leftBtnDownStartDraw()
 }
 
 
-void MainWin::leftBtnDown(const POINT& pos)
+bool MainWin::OnLeftButtonDown(const int& x, const int& y)
 {
-    MouseDownPos = pos;
+    MouseDownPos.x = x;
+    MouseDownPos.y = y;
+    IsLeftBtnDown = true;
+    if (state >= State::maskReady) {
+        static auto t1 = std::chrono::system_clock::now();
+        auto t2 = std::chrono::system_clock::now();
+        auto count = floor<std::chrono::milliseconds>(t2 - t1).count();
+        if (count > 0 && count < 260 && mouseEnterMainToolIndex == -1 && mouseEnterSubToolIndex == -1) {
+            IsDoubleClick = true;
+            if (!IsDrawing) {
+                saveClipboard();
+                return false;
+            }
+            else
+            {
+                auto shape = dynamic_cast<Shape::Text*>(History::GetLastDrawShape());
+                if (shape) {
+                    shape->EndDraw();
+                }
+                SetTimer(hwnd, 998, 60, (TIMERPROC)NULL);
+                return false;
+            }
+        }
+        t1 = t2;
+    }
     if (state != State::start) {
         if (mouseEnterMainToolIndex == 9) //undo
         {
             History::Undo();
-            return;
+            return false;
         }
         else if (mouseEnterMainToolIndex == 10) //redo
         {
             History::Redo();
-            return;
+            return false;
         }
         else if (mouseEnterMainToolIndex == 11) //save file
         {
             IsLeftBtnDown = false;
             History::LastShapeDrawEnd();
             saveFile();
-            return;
+            return false;
         }
         else if (mouseEnterMainToolIndex == 12) //save clipboard
         {
             IsLeftBtnDown = false;
             History::LastShapeDrawEnd();
             SetTimer(hwnd, 998, 60, (TIMERPROC)NULL);
-            return;
+            return false;
         }
         else if (mouseEnterMainToolIndex == 13) //close
         {
             quitApp(1);
-            return;
+            return false;
         }
         if (!History::LastShapeDrawEnd()) { 
             //draggerIndex == -1时返回false
             //text shape也会在这里改变光标位置
-            return;
+            return false;
         }
         if (mouseEnterMainToolIndex != -1 && mouseEnterMainToolIndex < 9) {            
             selectedToolIndex = mouseEnterMainToolIndex;
@@ -182,45 +206,48 @@ void MainWin::leftBtnDown(const POINT& pos)
             {
                 ChangeCursor(IDC_IBEAM);
             }
-            InvalidateRect(hwnd, nullptr, false);
-            return;
+            Refresh();
+            return false;
         }
         if (mouseEnterSubToolIndex != -1) {
             subToolBtnClick();
-            return;
+            return false;
         }
         leftBtnDownStartDraw();
     }
+    return false;
 }
-void MainWin::rightBtnDown(const POINT& pos)
+bool MainWin::OnRightButtonDown(const int& x, const int& y)
 {
-    MouseDownPos = pos;
-    if (painter->isDrawing)
+    MouseDownPos.x = x;
+    MouseDownPos.y = y;
+    if (IsDrawing)
     {
         History::LastShapeDrawEnd();
-        return;
+        return false;
     }
     quitApp(2);
+    return false;
 }
-void MainWin::mouseMove(const POINT& pos)
+bool MainWin::OnMouseMove(const int& x, const int& y)
 { 
-    painter->pixelX = pos.x;
-    painter->pixelY = pos.y;
+    pixelX = x;
+    pixelY = y;
     if (IsLeftBtnDown) {
         switch (state)
         {
             case State::start:
             {
-                BLPoint startPos(pos.x, pos.y);
+                BLPoint startPos(x, y);
                 BLPoint endPos(MouseDownPos.x, MouseDownPos.y);
                 setCutBox(startPos, endPos);
-                InvalidateRect(hwnd, nullptr, false);
+                Refresh();
                 break;
             }
             case State::maskReady:
             {
-                setCutBox(pos);
-                InvalidateRect(hwnd, nullptr, false);
+                setCutBox(POINT{ .x{x},.y{y}});
+                Refresh();
                 break;
             }
             case State::box:
@@ -232,13 +259,13 @@ void MainWin::mouseMove(const POINT& pos)
             case State::pen:
             case State::eraser:
             {
-                History::LastShapeDraw(pos,MouseDownPos);
+                History::LastShapeDraw(POINT{ .x{x},.y{y} },MouseDownPos);
                 break;
             }
             case State::text:
             case State::lastPathDrag:
             {
-                History::LastShapeDragDragger(pos);
+                History::LastShapeDragDragger(POINT{ .x{x},.y{y} });
                 break;
             }
             default:
@@ -250,26 +277,26 @@ void MainWin::mouseMove(const POINT& pos)
             ChangeCursor(IDC_CROSS);
             for (size_t i = 0; i < windowBoxes.size(); i++)
             {
-                if (windowBoxes[i].contains(pos.x, pos.y)) {
+                if (windowBoxes[i].contains(x, y)) {
                     BLPoint startPos(windowBoxes[i].x0, windowBoxes[i].y0);
                     BLPoint endPos(windowBoxes[i].x1, windowBoxes[i].y1);
                     setCutBox(startPos, endPos);
                     break;
                 }
             }
-            InvalidateRect(hwnd, nullptr, false);
-            return;
+            Refresh();
+            return false;
         }
-        if (checkMouseEnterToolBox(pos)) {
-            return;
+        if (checkMouseEnterToolBox(POINT{ .x{x},.y{y} })) {
+            return false;
         }
         if (state == State::maskReady) {
-            checkMouseEnterMaskBox(pos);
+            checkMouseEnterMaskBox(POINT{ .x{x},.y{y} });
         }
         else
         {
             if (state == State::lastPathDrag) {
-                History::LastShapeMouseInDragger(pos);
+                History::LastShapeMouseInDragger(POINT{ .x{x},.y{y} });
             }
             else if (state == State::text) {
                 ChangeCursor(IDC_IBEAM);
@@ -280,19 +307,21 @@ void MainWin::mouseMove(const POINT& pos)
             }
         }        
     }
+    return false;
 }
-void MainWin::leftBtnUp(const POINT& pos)
+bool MainWin::OnLeftButtonUp(const int& x, const int& y)
 {
+    IsLeftBtnDown = false;
     if (mouseEnterMainToolIndex != -1 || mouseEnterSubToolIndex != -1) {
-        InvalidateRect(hwnd, nullptr, false); //undo redo 的按钮状态
-        return;
+        Refresh(); //undo redo 的按钮状态
+        return false;
     }
     switch (state)
     {
         case State::start:
         {
             state = State::maskReady;
-            InvalidateRect(hwnd, nullptr, false);
+            Refresh();
             break;
         }
         case State::maskReady:
@@ -316,8 +345,9 @@ void MainWin::leftBtnUp(const POINT& pos)
         case State::pen: 
         {
             History::LastShapeShowDragger();
-            InvalidateRect(hwnd, nullptr, false);
+            Refresh();
             break;
         }
     }
+    return false;
 }

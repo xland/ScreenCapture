@@ -3,10 +3,10 @@
 
 void MainWin::drawSubToolBackground(const int& btnCount, const bool isCenter)
 {
-	painter->paintCtx->setFillStyle(BLRgba32(255, 255, 255, 255));
+	PaintCtx->setFillStyle(BLRgba32(255, 255, 255, 255));
 	auto x = toolBoxMain.x0 + (double)selectedToolIndex * toolBtnWidth + toolBtnWidth / 2 ;
 	auto y = toolBoxMain.y1 + toolBoxSpan / 2;
-	painter->paintCtx->fillTriangle(x, y, x + 6, y + toolBoxSpan / 2, x - 6, y + toolBoxSpan / 2);
+	PaintCtx->fillTriangle(x, y, x + 6, y + toolBoxSpan / 2, x - 6, y + toolBoxSpan / 2);
 	if (isCenter) {
 		toolBoxSub.x0 = x- btnCount * toolBtnWidth/2;
 		toolBoxSub.y0 = toolBoxMain.y1 + toolBoxSpan;
@@ -20,7 +20,7 @@ void MainWin::drawSubToolBackground(const int& btnCount, const bool isCenter)
 		toolBoxSub.x1 = toolBoxSub.x0 + btnCount * toolBtnWidth;
 		toolBoxSub.y1 = toolBoxSub.y0 + toolBoxHeight;
 	}
-	painter->paintCtx->fillBox(toolBoxSub);
+	PaintCtx->fillBox(toolBoxSub);
 }
 
 void MainWin::drawSubTool()
@@ -170,11 +170,11 @@ void MainWin::drawStrokeWidthBtns(BLPoint& point,const int& index)
 	font->setSize(28.0f);
 
 	//BLRoundRect rect(point.x - iconLeftMargin, point.y-19, toolBtnWidth * 3, toolBoxHeight - iconTopMargin, 8);
-	//painter->paintCtx->setFillStyle(BLRgba32(230, 230, 230));
-	//painter->paintCtx->fillRoundRect(rect);	
+	//PaintCtx->setFillStyle(BLRgba32(230, 230, 230));
+	//PaintCtx->fillRoundRect(rect);	
 	//BLRoundRect rect2(point.x - iconLeftMargin, point.y - 19, toolBtnWidth * 2, toolBoxHeight - iconTopMargin, 8);
-	//painter->paintCtx->setFillStyle(BLRgba32(145, 202, 255));//230, 244, 255  9, 88, 217
-	//painter->paintCtx->fillRoundRect(rect2);
+	//PaintCtx->setFillStyle(BLRgba32(145, 202, 255));//230, 244, 255  9, 88, 217
+	//PaintCtx->fillRoundRect(rect2);
 	//point.x += toolBtnWidth*2;
 }
 
@@ -248,7 +248,7 @@ void MainWin::clickSubToolNormal()
 			break;
 		}
 	}
-	InvalidateRect(hwnd, nullptr, false);
+	Refresh();
 }
 void MainWin::clickSubToolPen()
 {
@@ -274,7 +274,7 @@ void MainWin::clickSubToolPen()
 		break;
 	}
 	}
-	InvalidateRect(hwnd, nullptr, false);
+	Refresh();
 }
 
 void MainWin::clickSubToolMosaic()
@@ -294,7 +294,7 @@ void MainWin::clickSubToolMosaic()
 			break;
 		}
 	}
-	InvalidateRect(hwnd, nullptr, false);
+	Refresh();
 }
 
 void MainWin::clickSubToolEraser()
@@ -314,11 +314,11 @@ void MainWin::clickSubToolEraser()
 			break;
 		}
 	}
-	InvalidateRect(hwnd, nullptr, false);
+	Refresh();
 }
 
 void MainWin::clickSubToolText()
 {
 	colorBtnIndex = mouseEnterSubToolIndex;
-	InvalidateRect(hwnd, nullptr, false);
+	Refresh();
 }

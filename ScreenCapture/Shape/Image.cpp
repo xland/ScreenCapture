@@ -3,19 +3,20 @@
 namespace Shape {
     void Image::Draw(const double& x1, const double& y1, const double& x2, const double& y2)
     {
-        auto context = Painter::Get()->paintCtx;
-        context->begin(*Painter::Get()->prepareImage);
+        auto win = MainWin::Get();
+        auto context = win->PaintCtx;
+        context->begin(*win->prepareImage);
         context->clearAll();
 
         
-        InvalidateRect(MainWin::Get()->hwnd, nullptr, false);
+        win->Refresh();
     }
     bool Image::EndDraw()
     {
         
         auto win = MainWin::Get();
         win->state = win->preState;
-        InvalidateRect(win->hwnd, nullptr, false);
+        win->Refresh();
         return true;
     }
     void Image::ShowDragger()
@@ -39,14 +40,14 @@ namespace Shape {
         draggers[3].y0 = box.y1 - draggerSize;
         draggers[3].x1 = box.x0 + draggerSize;
         draggers[3].y1 = box.y1 + draggerSize;
-
-        auto context = Painter::Get()->paintCtx;
-        context->begin(*Painter::Get()->prepareImage);
+        auto win = MainWin::Get();
+        auto context = win->PaintCtx;
+        context->begin(*win->prepareImage);
         context->setStrokeStyle(BLRgba32(0, 0, 0));
         context->setStrokeWidth(2);
         context->strokeBoxArray(draggers, 4);
         context->end();
-        InvalidateRect(MainWin::Get()->hwnd, nullptr, false);
+        InvalidateRect(win->hwnd, nullptr, false);
     }
     void Image::MouseInDragger(const double& x, const double& y)
     {

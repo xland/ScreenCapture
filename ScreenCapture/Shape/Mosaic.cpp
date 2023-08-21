@@ -31,32 +31,32 @@ namespace Shape {
     }
     void Mosaic::InitMosaicImg()
     {
-        auto painter = Painter::Get();
-        auto paintCtx = painter->paintCtx;
+        auto win = MainWin::Get();
+        auto PaintCtx = win->PaintCtx;
         //先在prepareImage上贴bgImage，再贴canvasImage
-        paintCtx->begin(*painter->prepareImage);
-        paintCtx->blitImage(BLRect(0, 0, painter->w, painter->h), *painter->bgImage);
-        paintCtx->blitImage(BLRect(0, 0, painter->w, painter->h), *painter->canvasImage);
-        paintCtx->end();
+        PaintCtx->begin(*win->prepareImage);
+        PaintCtx->blitImage(BLRect(0, 0, win->w, win->h), *win->desktopImage);
+        PaintCtx->blitImage(BLRect(0, 0, win->w, win->h), *win->canvasImage);
+        PaintCtx->end();
         //得到prepareImage上的像素数据
         BLImageData imgData;
-        painter->prepareImage->getData(&imgData);
+        win->prepareImage->getData(&imgData);
         unsigned char* pixelData = (unsigned char*)(imgData.pixelData);
         //创建mosaicImage，并在mosaicImage上生成马赛克图像（使用的是prepareImage上的像素数据）
         //以后的repaint，会使用mosaicImage代替CanvaseImage
-        painter->mosaicImage = new BLImage(painter->w, painter->h, BL_FORMAT_PRGB32);
-        paintCtx->begin(*painter->mosaicImage);
+        win->mosaicImage = new BLImage(win->w, win->h, BL_FORMAT_PRGB32);
+        PaintCtx->begin(*win->mosaicImage);
         BLPointI points[5];
-        auto totalPixelSize = painter->w * 4 * painter->h;
-        for (size_t y = 0; y <= painter->h; y+=strokeWidth)
+        auto totalPixelSize = win->w * 4 * win->h;
+        for (size_t y = 0; y <= win->h; y+=strokeWidth)
         {
-            for (size_t x = 0; x <= painter->w; x+=strokeWidth)
+            for (size_t x = 0; x <= win->w; x+=strokeWidth)
             {
                 setSamplingPoints(points, x, y);
                 unsigned int b{ 0 }, g{ 0 }, r{ 0 };
                 for (size_t i = 0; i < 5; i++)
                 {
-                    auto index = points[i].y * (int)painter->w * 4 + points[i].x * 4;
+                    auto index = points[i].y * (int)win->w * 4 + points[i].x * 4;
                     if (index > totalPixelSize) {
                         break;
                     }
@@ -64,23 +64,22 @@ namespace Shape {
                     g += pixelData[index + 1];
                     r += pixelData[index + 2];
                 }
-                paintCtx->setFillStyle(BLRgba32(r / 5, g / 5, b / 5, 255));
-                paintCtx->fillBox(points[0].x, points[0].y, points[4].x, points[4].y);
+                PaintCtx->setFillStyle(BLRgba32(r / 5, g / 5, b / 5, 255));
+                PaintCtx->fillBox(points[0].x, points[0].y, points[4].x, points[4].y);
             }
         }
-        paintCtx->end();
-        painter->IsMosaicUsePen = !isFill;
+        PaintCtx->end();
+        win->IsMosaicUsePen = !isFill;
     }
 	void Mosaic::Draw(const double& x1, const double& y1, const double& x2, const double& y2)
 	{
-        auto painter = Painter::Get();
-        if (painter->mosaicImage == nullptr) {
+        auto win = MainWin::Get();
+        if (win->mosaicImage == nullptr) {
             InitMosaicImg();
         }
-        auto context = painter->paintCtx;
-        auto win = MainWin::Get();
-        context->begin(*Painter::Get()->prepareImage);    
-        painter->IsMosaicUsePen = !isFill;
+        auto context = win->PaintCtx;
+        context->begin(*win->prepareImage);    
+        win->IsMosaicUsePen = !isFill;
         if (isFill) {
             if (x1 != -1) {
                 SetBoxByPos(box, x1, y1, x2, y2);
@@ -88,7 +87,7 @@ namespace Shape {
             context->clearAll();
             int w = box.x1 - box.x0;
             int h = box.y1 - box.y0;
-            context->blitImage(BLPoint(box.x0, box.y0), *painter->mosaicImage, BLRectI((int)box.x0, (int)box.y0, (int)w, (int)h));
+            context->blitImage(BLPoint(box.x0, box.y0), *win->mosaicImage, BLRectI((int)box.x0, (int)box.y0, (int)w, (int)h));
             context->setStrokeStyle(BLRgba32(0, 0, 0));
             context->setStrokeWidth(1);
             context->strokeBox(box);
@@ -121,37 +120,37 @@ namespace Shape {
                 context->end();
             }
         }
-        InvalidateRect(win->hwnd, nullptr, false);
+        win->Refresh();
 	}
 
     bool Mosaic::EndDraw()
     {
-        auto painter = Painter::Get();
-        auto context = painter->paintCtx;
-        if (!painter->isDrawing) {
+        auto win = MainWin::Get();
+        auto context = win->PaintCtx;
+        if (!win->IsDrawing) {
             return true;
         }
         if (draggerIndex != -1) {
             return false;
         }
         if (isFill) {
-            if (painter->mosaicImage == nullptr) {
+            if (win->mosaicImage == nullptr) {
                 InitMosaicImg();
             }
             int w = box.x1 - box.x0;
             int h = box.y1 - box.y0;
-            context->begin(*painter->canvasImage);
-            context->blitImage(BLPoint(box.x0, box.y0), *painter->mosaicImage, BLRectI((int)box.x0, (int)box.y0, (int)w, (int)h));
+            context->begin(*win->canvasImage);
+            context->blitImage(BLPoint(box.x0, box.y0), *win->mosaicImage, BLRectI((int)box.x0, (int)box.y0, (int)w, (int)h));
             context->end();
         }
         else
         {
-            if (painter->mosaicImage == nullptr) {
+            if (win->mosaicImage == nullptr) {
                 InitMosaicImg();
                 Draw(-1, -1, -1, -1);//这里有一个小小的循环调用
                 return true; 
             }
-            painter->IsMosaicUsePen = false;
+            win->IsMosaicUsePen = false;
             box.x0 = 999999999;
             box.y0 = 999999999;
             box.x1 = -1;
@@ -177,32 +176,32 @@ namespace Shape {
             box.y1 += strokeWidth*2;
             if (box.x0 < 0) box.x0 = 0;
             if (box.y0 < 0) box.y0 = 0;
-            if (box.x1 > painter->w) box.x1 = painter->w;
-            if (box.y1 > painter->h) box.y1 = painter->h;
+            if (box.x1 > win->w) box.x1 = win->w;
+            if (box.y1 > win->h) box.y1 = win->h;
             int w = box.x1 - box.x0;
             int h = box.y1 - box.y0;
-            context->begin(*painter->canvasImage);
-            context->blitImage(BLPoint(box.x0, box.y0), *painter->mosaicImage, BLRectI((int)box.x0, (int)box.y0, (int)w, (int)h));
-            context->blitImage(BLPoint(box.x0, box.y0), *painter->prepareImage, BLRectI((int)box.x0, (int)box.y0, (int)w, (int)h));
+            context->begin(*win->canvasImage);
+            context->blitImage(BLPoint(box.x0, box.y0), *win->mosaicImage, BLRectI((int)box.x0, (int)box.y0, (int)w, (int)h));
+            context->blitImage(BLPoint(box.x0, box.y0), *win->prepareImage, BLRectI((int)box.x0, (int)box.y0, (int)w, (int)h));
             context->end();
         }
-        delete painter->mosaicImage;
-        painter->IsMosaicUsePen = false;
-        painter->mosaicImage = nullptr;
-        painter->isDrawing = false;
-        context->begin(*painter->prepareImage);
+        delete win->mosaicImage;
+        win->IsMosaicUsePen = false;
+        win->mosaicImage = nullptr;
+        win->IsDrawing = false;
+        context->begin(*win->prepareImage);
         context->clearAll();
         context->end();
-        auto win = MainWin::Get();
         win->state = win->preState;
-        InvalidateRect(win->hwnd, nullptr, false);
+        win->Refresh();
         return true;
     }
     void Mosaic::ShowDragger()
     {
+        auto win = MainWin::Get();
         if (!isFill)
         {
-            InvalidateRect(MainWin::Get()->hwnd, nullptr, false);
+            win->Refresh();
             return;
         }
         draggers[0].x0 = box.x0 - draggerSize;
@@ -224,14 +223,13 @@ namespace Shape {
         draggers[3].y0 = box.y1 - draggerSize;
         draggers[3].x1 = box.x0 + draggerSize;
         draggers[3].y1 = box.y1 + draggerSize;
-
-        auto context = Painter::Get()->paintCtx;
-        context->begin(*Painter::Get()->prepareImage);
+        auto context = win->PaintCtx;
+        context->begin(*win->prepareImage);
         context->setStrokeStyle(BLRgba32(0, 0, 0));
         context->setStrokeWidth(2);
         context->strokeBoxArray(draggers, 4);
         context->end();
-        InvalidateRect(MainWin::Get()->hwnd, nullptr, false);
+        win->Refresh();
     }
 
     void Mosaic::MouseInDragger(const double& x, const double& y)
@@ -319,7 +317,7 @@ namespace Shape {
                 auto y1 = y - win->MouseDownPos.y + box.y1;
                 win->MouseDownPos.x = x;
                 win->MouseDownPos.y = y;
-                if (x0<0 || y0<0 || x1>Painter::Get()->w || y1>Painter::Get()->h) return;
+                if (x0<0 || y0<0 || x1>win->w || y1>win->h) return;
                 box.x0 = x0;
                 box.y0 = y0;
                 box.x1 = x1;

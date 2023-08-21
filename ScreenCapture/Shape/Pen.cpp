@@ -12,8 +12,9 @@ namespace Shape {
 	}
 	void Pen::Draw(const double& x1, const double& y1, const double& x2, const double& y2)
 	{
-		auto context = Painter::Get()->paintCtx;
-		context->begin(*Painter::Get()->canvasImage); //直接画，不然上一步干不掉它
+		auto win = MainWin::Get();
+		auto context = win->PaintCtx;
+		context->begin(*win->canvasImage); //直接画，不然上一步干不掉它
 		context->setStrokeStyle(color);
 		context->setStrokeWidth(strokeWidth);
 		context->setStrokeCaps(BL_STROKE_CAP_ROUND);
@@ -33,17 +34,16 @@ namespace Shape {
 			points.push_back(BLPoint(x1, y1));
 		}		
 		context->end();
-		auto win = MainWin::Get();
 		win->MouseDownPos.x = (LONG)x1;
 		win->MouseDownPos.y = (LONG)y1;
-		InvalidateRect(win->hwnd, nullptr, false);		
+		win->Refresh();		
 	}
     bool Pen::EndDraw()
     {
-        auto painter = Painter::Get();
-		painter->isDrawing = false;
-        auto context = painter->paintCtx;
-        context->begin(*painter->canvasImage);
+        auto win = MainWin::Get();
+		win->IsDrawing = false;
+        auto context = win->PaintCtx;
+        context->begin(*win->canvasImage);
 		context->setStrokeStyle(color);
 		context->setStrokeWidth(strokeWidth);
 		context->setStrokeCaps(BL_STROKE_CAP_ROUND);
@@ -53,8 +53,7 @@ namespace Shape {
 			context->strokeLine(points[i].x, points[i].y, points[i+1].x, points[i + 1].y);
 		}		
 		context->end();
-        auto win = MainWin::Get();
-        InvalidateRect(win->hwnd, nullptr, false);
+        win->Refresh();
         return true;
     }
 }

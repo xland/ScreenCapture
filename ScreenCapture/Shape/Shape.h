@@ -1,7 +1,6 @@
 #pragma once
 #include <vector>
 #include "blend2d.h"
-#include "../Painter.h"
 #include "../State.h"
 namespace Shape {
 	class Shape

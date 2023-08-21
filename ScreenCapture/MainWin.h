@@ -16,7 +16,6 @@
 #include "Icon.h"
 #include "Util.h"
 #include "Font.h"
-#include "Painter.h"
 
 #include "Shape/History.h"
 #include "Shape/Box.h"
@@ -32,18 +31,15 @@
 
 
 
-//class MainWin :public WindowBase
-class MainWin
+class MainWin :public WindowBase
+//class MainWin
 {
 public:
 	~MainWin();
-	static LRESULT CALLBACK RouteWindowMessage(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
-	LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
-	static void Init(HINSTANCE hinstance);
+	static void Init();
 	static MainWin* Get();
 	static void Dispose();
 	static int GetQuitCode();
-	HWND hwnd;
 	POINT MouseDownPos;
 	bool IsShiftDown = false;
 	bool IsCtrlDown = false;
@@ -53,26 +49,41 @@ public:
 	State preState;
 	int selectedToolIndex = -1;
 	bool isFill = false;
-
+	bool IsDrawing = false;
+	bool IsMosaicUsePen = false;
+	BLContext* PaintCtx;
+	BLImage* prepareImage;
+	BLImage* canvasImage;
+	BLImage* desktopImage;
+	BLImage* mosaicImage;
+protected:
+	
 private:
-	MainWin(HINSTANCE hinstance);
-	void createWindow();
-	void showWindow();
+	MainWin();
 	void saveFile();
 	void saveClipboard();
 	void initWindowBoxes();
 	void quitApp(const int& exitCode);
-	HINSTANCE hinstance;
-	Painter* painter;
 	std::vector<BLBox> windowBoxes;
 
+	//system
+	void initLayerImg();
+	bool OnPaint() override;
+	bool OnTimer(const unsigned int& id) override;
+	bool OnKeyDown(const unsigned int& key) override;
+	bool OnKeyUp(const unsigned int& key) override;
+	void drawPixelInfo();
+	std::wstring getPixelColorRgb();
+	std::wstring getPixelColorHex();
+	LONG pixelX{ -999999 }, pixelY{ -999999 };
+	BLImage* BottomImage;
+
 	//mouse
-	void leftBtnDown(const POINT& pos);
-	void rightBtnDown(const POINT& pos);
-	void mouseMove(const POINT& pos);
-	void leftBtnUp(const POINT& pos);
+	bool OnLeftButtonDown(const int& x, const int& y) override;
+	bool OnRightButtonDown(const int& x, const int& y) override;
+	bool OnMouseMove(const int& x, const int& y) override;
+	bool OnLeftButtonUp(const int& x, const int& y) override;
 	void leftBtnDownStartDraw();
-	inline POINT getMousePoint(const LPARAM& lParam);	
 	BLRgba32 colors[8] {
 		BLRgba32(207, 19, 34, 255),
 		BLRgba32(212, 136, 6, 255),

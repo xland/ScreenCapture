@@ -1,5 +1,4 @@
 ﻿#include "History.h"
-#include "../Painter.h"
 #include "../MainWin.h"
 
 static std::vector<Shape::Shape*> history;
@@ -77,7 +76,8 @@ void History::LastShapeMouseInDragger(const POINT& pos)
 		ChangeCursor(IDC_CROSS);
 		return;
 	}
-	if (!Painter::Get()->isDrawing && shape->state != State::eraser) return;	
+	auto win = MainWin::Get();
+	if (!win->IsDrawing && shape->state != State::eraser) return;	
 	if (shape->state == State::text) {
 		ChangeCursor(IDC_IBEAM);
 	}
@@ -92,7 +92,7 @@ void  History::Undo()
 {
 	//容器中一个元素也没有
 	if (history.size() < 1) return;
-	auto painter = Painter::Get();
+	auto win = MainWin::Get();
 	bool hasNeedDrawShape = false;
 	int index = history.size() - 1;
 	for (; index >=0 ; index--)
@@ -102,9 +102,9 @@ void  History::Undo()
 			hasNeedDrawShape = true;
 			if (history[index]->state == State::mosaic) {
 				//如果要取消的元素是马赛克，那么就干掉之前生成的马赛克背景大图
-				painter->IsMosaicUsePen = false;
-				delete painter->mosaicImage;
-				painter->mosaicImage = nullptr;
+				win->IsMosaicUsePen = false;
+				delete win->mosaicImage;
+				win->mosaicImage = nullptr;
 			}
 			else if (history[index]->state == State::eraser) {
 				auto eraser = (Shape::Eraser*)history[index];
@@ -121,41 +121,40 @@ void  History::Undo()
 		return;
 	}
 	//重新在canvasImage上画所有需要绘制的元素
-	auto context = painter->paintCtx;
-	context->begin(*painter->canvasImage);
+	auto context = win->PaintCtx;
+	context->begin(*win->canvasImage);
 	context->clearAll();
 	context->end();
 	//最后一个需要绘制的元素的下标，-1为没有需要绘制的元素
 	lastDrawShapeIndex = index - 1;
-	auto win = MainWin::Get();
 	if (lastDrawShapeIndex < 0) {
 		//现在没有需要绘制的元素，不必渲染prepareImage
-		painter->isDrawing = false;
+		win->IsDrawing = false;
 		win->state = State::maskReady;
 		win->selectedToolIndex = -1;
-		InvalidateRect(MainWin::Get()->hwnd, nullptr, false);
+		win->Refresh();
 		return;
 	}
 	for (size_t i = 0; i < lastDrawShapeIndex; i++)
 	{
-		painter->isDrawing = true;
+		win->IsDrawing = true;
 		history[i]->EndDraw();
-		//painter->canvasImage->writeToFile("abc.png");
+		//win->canvasImage->writeToFile("abc.png");
 	}
 	//把最后一个需要绘制的元素画到prepareImage上，方便用户修改
-	painter->isDrawing = true;
+	win->IsDrawing = true;
 	history[lastDrawShapeIndex]->Draw(-1, -1, -1, -1); 
-	//painter->canvasImage->writeToFile("def.png");
+	//win->canvasImage->writeToFile("def.png");
 	
 	win->selectedToolIndex = (int)history[lastDrawShapeIndex]->state - 2;
 	if (!LastShapeHasDragger()) {
-		InvalidateRect(win->hwnd, nullptr, false);
+		win->Refresh();
 		return;
 	}
 	history[lastDrawShapeIndex]->ShowDragger();
 	win->preState = history[lastDrawShapeIndex]->state;
 	win->state = State::lastPathDrag;
-	InvalidateRect(win->hwnd, nullptr, false);	
+	win->Refresh();	
 }
 
 void  History::Redo()
@@ -166,28 +165,27 @@ void  History::Redo()
 	if (lastDrawShapeIndex + 1 >= history.size()) return;
 	//下一个也画上了
 	//if (history[lastDrawShapeIndex + 1]->needDraw) return;
-	auto painter = Painter::Get();
+	auto win = MainWin::Get();
 	//当前这个shape是否还未被画到canvasImg上，如果是，则画上去
 	//第一个元素被上一步之后，lastDrawShapeIndex就是-1
-	if (lastDrawShapeIndex != -1 && painter->isDrawing) {
+	if (lastDrawShapeIndex != -1 && win->IsDrawing) {
 		history[lastDrawShapeIndex]->EndDraw();
 	}	
 	//得到下一个shape
 	lastDrawShapeIndex += 1;
 	auto& shape = history[lastDrawShapeIndex];	
-	painter->isDrawing = true;
+	win->IsDrawing = true;
 	shape->needDraw = true;
 	shape->Draw(-1, -1, -1, -1);
-	auto win = MainWin::Get();
 	win->selectedToolIndex = (int)shape->state - 2;
 	if (!LastShapeHasDragger()) {
-		InvalidateRect(win->hwnd, nullptr, false);
+		win->Refresh();
 		return;
 	}
 	shape->ShowDragger();
 	win->preState = shape->state;
 	win->state = State::lastPathDrag;
-	InvalidateRect(win->hwnd, nullptr, false);
+	win->Refresh();
 }
 
 std::pair<bool, bool> History::UndoRedoEnable() {

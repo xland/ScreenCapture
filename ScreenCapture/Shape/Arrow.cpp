@@ -15,8 +15,9 @@ namespace Shape {
 	void Arrow::Draw(const double& x1, const double& y1, const double& x2, const double& y2)
 	{
         isTemp = false;
-        auto context = Painter::Get()->paintCtx;
-        context->begin(*Painter::Get()->prepareImage);
+        auto win = MainWin::Get();
+        auto context = win->PaintCtx;
+        context->begin(*win->prepareImage);
         context->clearAll();
         context->setStrokeCaps(BL_STROKE_CAP_ROUND);
         if(x1 != -1){
@@ -69,19 +70,19 @@ namespace Shape {
             context->strokePath(path);
         }
         context->end();
-        InvalidateRect(MainWin::Get()->hwnd, nullptr, false);
+        win->Refresh();
 	}
     bool Arrow::EndDraw()
     {
-        auto painter = Painter::Get();
-        if (!painter->isDrawing) {
+        auto win = MainWin::Get();
+        if (!win->IsDrawing) {
             return true;
         }
         if (draggerIndex != -1) {
             return false;
         }
-        auto context = painter->paintCtx;
-        context->begin(*painter->canvasImage);        
+        auto context = win->PaintCtx;
+        context->begin(*win->canvasImage);
         if (isFill)
         {
             context->setFillStyle(color);
@@ -94,17 +95,17 @@ namespace Shape {
             context->strokePath(path);
         }
         context->end();
-        context->begin(*painter->prepareImage);
+        context->begin(*win->prepareImage);
         context->clearAll();
         context->end();
-        painter->isDrawing = false;
-        auto win = MainWin::Get();
+        win->IsDrawing = false;
         win->state = win->preState;
-        InvalidateRect(win->hwnd, nullptr, false);
+        win->Refresh();
         return true;
     }
     void Arrow::ShowDragger()
     {
+        auto win = MainWin::Get();
         const BLPoint* points = path.vertexData();
         if (!points)return;
         draggers[0].x0 = points[0].x - draggerSize;
@@ -117,13 +118,13 @@ namespace Shape {
         draggers[1].x1 = points[3].x + draggerSize;
         draggers[1].y1 = points[3].y + draggerSize;
 
-        auto context = Painter::Get()->paintCtx;
-        context->begin(*Painter::Get()->prepareImage);
+        auto context = win->PaintCtx;
+        context->begin(*win->prepareImage);
         context->setStrokeStyle(BLRgba32(0, 0, 0));
         context->setStrokeWidth(2);
         context->strokeBoxArray(draggers, 2);
         context->end();
-        InvalidateRect(MainWin::Get()->hwnd, nullptr, false);
+        win->Refresh();
     }
     void Arrow::MouseInDragger(const double& x, const double& y)
     {

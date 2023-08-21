@@ -4,23 +4,27 @@
 static MainWin* mainWin;
 
 
-MainWin::MainWin(HINSTANCE hinstance):hinstance{hinstance}
+MainWin::MainWin()
 {
-    Painter::Init();
-    painter = Painter::Get();
     initWindowBoxes();
-    createWindow();    
-    showWindow();
-    //InitWindow(painter->x,painter->y,painter->w,painter->h,false);
+    //createWindow();    
+    //showWindow();
+    initLayerImg();
+    InitWindow(false);
 }
 MainWin::~MainWin()
 {
     Font::Dispose();
-    Painter::Dispose();
+    delete PaintCtx;
+    delete desktopImage;
+    delete canvasImage;
+    delete prepareImage;
+    delete mosaicImage;
+    delete BottomImage;
 }
-void MainWin::Init(HINSTANCE hinstance)
+void MainWin::Init()
 {
-    mainWin = new MainWin(hinstance);
+    mainWin = new MainWin();
 }
 MainWin* MainWin::Get()
 {

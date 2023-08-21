@@ -23,8 +23,9 @@ namespace Shape {
     }
 	void Number::Draw(const double& x1, const double& y1, const double& x2, const double& y2)
 	{
-        auto context = Painter::Get()->paintCtx;
-        context->begin(*Painter::Get()->prepareImage);
+        auto win = MainWin::Get();
+        auto context = win->PaintCtx;
+        context->begin(*win->prepareImage);
         context->clearAll();        
 
         if(x1 != -1){
@@ -84,19 +85,19 @@ namespace Shape {
         }
         context->fillUtf8Text(p, *font, std::to_string(number).c_str());
         context->end();
-        InvalidateRect(MainWin::Get()->hwnd, nullptr, false);
+        win->Refresh();
 	}
     bool Number::EndDraw()
     {
-        auto painter = Painter::Get();
-        if (!painter->isDrawing) {
+        auto win = MainWin::Get();
+        if (!win->IsDrawing) {
             return true;
         }
         if (draggerIndex != -1) {
             return false;
         }
-        auto context = painter->paintCtx;
-        context->begin(*painter->canvasImage);
+        auto context = win->PaintCtx;
+        context->begin(*win->canvasImage);
         
         context->setFillStyle(color);
         context->fillPath(path);
@@ -128,13 +129,12 @@ namespace Shape {
         context->fillUtf8Text(p, *font, std::to_string(number).c_str());
 
         context->end();
-        context->begin(*painter->prepareImage);
+        context->begin(*win->prepareImage);
         context->clearAll();
         context->end();
-        painter->isDrawing = false;
-        auto win = MainWin::Get();
+        win->IsDrawing = false;
         win->state = win->preState;
-        InvalidateRect(win->hwnd, nullptr, false);
+        win->Refresh();
         return true;
     }
     void Number::ShowDragger()
@@ -149,14 +149,14 @@ namespace Shape {
         draggers[1].y0 = circle.cy - draggerSize;
         draggers[1].x1 = circle.cx + draggerSize;
         draggers[1].y1 = circle.cy + draggerSize;
-
-        auto context = Painter::Get()->paintCtx;
-        context->begin(*Painter::Get()->prepareImage);
+        auto win = MainWin::Get();
+        auto context = win->PaintCtx;
+        context->begin(*win->prepareImage);
         context->setStrokeStyle(BLRgba32(0, 0, 0));
         context->setStrokeWidth(2);
         context->strokeBoxArray(draggers,2);
         context->end();
-        InvalidateRect(MainWin::Get()->hwnd, nullptr, false);
+        win->Refresh();
     }
     void Number::MouseInDragger(const double& x, const double& y)
     {

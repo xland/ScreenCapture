@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include "Shape.h"
+#include <Windows.h>
 
 class History
 {

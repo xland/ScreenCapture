@@ -106,8 +106,8 @@ namespace Shape {
         if (x1 == -1) {
             SetTimer(win->hwnd, 999, 660, (TIMERPROC)NULL);
         }
-        auto context = Painter::Get()->paintCtx;
-        context->begin(*Painter::Get()->prepareImage);
+        auto context = win->PaintCtx;
+        context->begin(*win->prepareImage);
         context->clearAll();
         if (box.x0 == -1) {
             box.x0 = x1 - margin;
@@ -170,15 +170,14 @@ namespace Shape {
             context->strokeBoxArray(draggers, 4);
         }
         context->end();
-        InvalidateRect(win->hwnd, nullptr, false);
+        win->Refresh();
     }
     bool Text::EndDraw()
     {
-        auto painter = Painter::Get();
-        if (!painter->isDrawing) {
+        auto win = MainWin::Get();
+        if (!win->IsDrawing) {
             return true;
         }
-        auto win = MainWin::Get();
         if (win->IsLeftBtnDown && !win->IsDoubleClick && box.contains(win->MouseDownPos.x, win->MouseDownPos.y)) {
             SetIndex(win->MouseDownPos.x);
             Draw(win->MouseDownPos.x, win->MouseDownPos.y, -1, -1);
@@ -188,8 +187,8 @@ namespace Shape {
             return false;
         }
         KillTimer(win->hwnd, 999);
-        auto context = painter->paintCtx;
-        context->begin(*painter->canvasImage);
+        auto context = win->PaintCtx;
+        context->begin(*win->canvasImage);
         auto font = Font::Get()->fontText;
         font->setSize(fontSize);
         auto utf8 = ConvertToUTF8(text);
@@ -197,19 +196,19 @@ namespace Shape {
         context->fillUtf8Text(BLPoint(box.x0 + margin, box.y0 + font->metrics().ascent + margin), *font, utf8.c_str());
         context->end();
 
-        context->begin(*painter->prepareImage);
+        context->begin(*win->prepareImage);
         context->clearAll();
         context->end();
-        painter->isDrawing = false;
+        win->IsDrawing = false;
         win->state = win->preState;
-        InvalidateRect(win->hwnd, nullptr, false);
+        win->Refresh();
         return true;
     }
     void Text::ShowDragger()
     {
         auto win = MainWin::Get();
         isDraggingDragger = false;
-        InvalidateRect(win->hwnd, nullptr, false);
+        win->Refresh();
     }
     void Text::MouseInDragger(const double& x, const double& y)
     {
