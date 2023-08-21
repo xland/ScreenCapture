@@ -19,8 +19,7 @@ LRESULT CALLBACK WindowBase::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wPar
 
 WindowBase::WindowBase()
 {
-    D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &factory);//todo error handle    
-    
+    D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &factory);//todo error handle
 }
 
 WindowBase::~WindowBase()
@@ -161,10 +160,10 @@ LRESULT CALLBACK WindowBase::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPAR
             }
             break;
         }
-        //case WM_NCHITTEST:
-        //{
-        //    return HTCAPTION;
-        //}
+        case WM_NCHITTEST:
+        {
+            return OnHitTest(); //HTCAPTION;
+        }
         case WM_SETCURSOR: {
             return true;
         }

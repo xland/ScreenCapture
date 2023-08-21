@@ -24,6 +24,7 @@ protected:
 	virtual bool OnKeyDown(const unsigned int& key) { return false; };
 	virtual bool OnKeyUp(const unsigned int& key) { return false; };
 	virtual bool OnChar(const unsigned int& key) { return true; };
+	virtual int OnHitTest() { return HTCLIENT; };
 	void InitWindow(const bool& shadow);
 	unsigned char* pixelData;
 private:
