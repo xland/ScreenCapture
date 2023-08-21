@@ -17,7 +17,7 @@ namespace Shape {
         isTemp = false;
         auto win = MainWin::Get();
         auto context = win->PaintCtx;
-        context->begin(*win->prepareImage);
+        context->begin(*win->PrepareImage);
         context->clearAll();
         context->setStrokeCaps(BL_STROKE_CAP_ROUND);
         if(x1 != -1){
@@ -58,7 +58,7 @@ namespace Shape {
             path.lineTo(X4, Y4);
             path.lineTo(x2, y2);
         }
-        if (isFill)
+        if (IsFill)
         {
             context->setFillStyle(color);
             context->fillPath(path);
@@ -82,8 +82,8 @@ namespace Shape {
             return false;
         }
         auto context = win->PaintCtx;
-        context->begin(*win->canvasImage);
-        if (isFill)
+        context->begin(*win->CanvasImage);
+        if (IsFill)
         {
             context->setFillStyle(color);
             context->fillPath(path);
@@ -95,11 +95,11 @@ namespace Shape {
             context->strokePath(path);
         }
         context->end();
-        context->begin(*win->prepareImage);
+        context->begin(*win->PrepareImage);
         context->clearAll();
         context->end();
         win->IsDrawing = false;
-        win->state = win->preState;
+        win->state = win->PreState;
         win->Refresh();
         return true;
     }
@@ -119,7 +119,7 @@ namespace Shape {
         draggers[1].y1 = points[3].y + draggerSize;
 
         auto context = win->PaintCtx;
-        context->begin(*win->prepareImage);
+        context->begin(*win->PrepareImage);
         context->setStrokeStyle(BLRgba32(0, 0, 0));
         context->setStrokeWidth(2);
         context->strokeBoxArray(draggers, 2);

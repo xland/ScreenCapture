@@ -22,11 +22,11 @@ bool History::LastShapeHasDragger()
 	{  //这两个根本就没有MouseInDragger方法
 		return false;
 	}
-	if (shape->state == State::eraser && !((Shape::Eraser*)shape)->isFill) {
+	if (shape->state == State::eraser && !((Shape::Eraser*)shape)->IsFill) {
 		//用画线的方式画橡皮擦
 		return false;
 	}
-	if (shape->state == State::mosaic && !((Shape::Mosaic*)shape)->isFill)
+	if (shape->state == State::mosaic && !((Shape::Mosaic*)shape)->IsFill)
 	{  //用画线的方式画马赛克
 		return false;
 	}
@@ -103,8 +103,8 @@ void  History::Undo()
 			if (history[index]->state == State::mosaic) {
 				//如果要取消的元素是马赛克，那么就干掉之前生成的马赛克背景大图
 				win->IsMosaicUsePen = false;
-				delete win->mosaicImage;
-				win->mosaicImage = nullptr;
+				delete win->MosaicImage;
+				win->MosaicImage = nullptr;
 			}
 			else if (history[index]->state == State::eraser) {
 				auto eraser = (Shape::Eraser*)history[index];
@@ -120,18 +120,18 @@ void  History::Undo()
 	if (!hasNeedDrawShape) {
 		return;
 	}
-	//重新在canvasImage上画所有需要绘制的元素
+	//重新在CanvasImage上画所有需要绘制的元素
 	auto context = win->PaintCtx;
-	context->begin(*win->canvasImage);
+	context->begin(*win->CanvasImage);
 	context->clearAll();
 	context->end();
 	//最后一个需要绘制的元素的下标，-1为没有需要绘制的元素
 	lastDrawShapeIndex = index - 1;
 	if (lastDrawShapeIndex < 0) {
-		//现在没有需要绘制的元素，不必渲染prepareImage
+		//现在没有需要绘制的元素，不必渲染PrepareImage
 		win->IsDrawing = false;
 		win->state = State::maskReady;
-		win->selectedToolIndex = -1;
+		win->SelectedToolIndex = -1;
 		win->Refresh();
 		return;
 	}
@@ -139,20 +139,20 @@ void  History::Undo()
 	{
 		win->IsDrawing = true;
 		history[i]->EndDraw();
-		//win->canvasImage->writeToFile("abc.png");
+		//win->CanvasImage->writeToFile("abc.png");
 	}
-	//把最后一个需要绘制的元素画到prepareImage上，方便用户修改
+	//把最后一个需要绘制的元素画到PrepareImage上，方便用户修改
 	win->IsDrawing = true;
 	history[lastDrawShapeIndex]->Draw(-1, -1, -1, -1); 
-	//win->canvasImage->writeToFile("def.png");
+	//win->CanvasImage->writeToFile("def.png");
 	
-	win->selectedToolIndex = (int)history[lastDrawShapeIndex]->state - 2;
+	win->SelectedToolIndex = (int)history[lastDrawShapeIndex]->state - 2;
 	if (!LastShapeHasDragger()) {
 		win->Refresh();
 		return;
 	}
 	history[lastDrawShapeIndex]->ShowDragger();
-	win->preState = history[lastDrawShapeIndex]->state;
+	win->PreState = history[lastDrawShapeIndex]->state;
 	win->state = State::lastPathDrag;
 	win->Refresh();	
 }
@@ -177,13 +177,13 @@ void  History::Redo()
 	win->IsDrawing = true;
 	shape->needDraw = true;
 	shape->Draw(-1, -1, -1, -1);
-	win->selectedToolIndex = (int)shape->state - 2;
+	win->SelectedToolIndex = (int)shape->state - 2;
 	if (!LastShapeHasDragger()) {
 		win->Refresh();
 		return;
 	}
 	shape->ShowDragger();
-	win->preState = shape->state;
+	win->PreState = shape->state;
 	win->state = State::lastPathDrag;
 	win->Refresh();
 }

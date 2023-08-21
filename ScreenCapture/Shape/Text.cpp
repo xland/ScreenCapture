@@ -107,7 +107,7 @@ namespace Shape {
             SetTimer(win->hwnd, 999, 660, (TIMERPROC)NULL);
         }
         auto context = win->PaintCtx;
-        context->begin(*win->prepareImage);
+        context->begin(*win->PrepareImage);
         context->clearAll();
         if (box.x0 == -1) {
             box.x0 = x1 - margin;
@@ -188,7 +188,7 @@ namespace Shape {
         }
         KillTimer(win->hwnd, 999);
         auto context = win->PaintCtx;
-        context->begin(*win->canvasImage);
+        context->begin(*win->CanvasImage);
         auto font = Font::Get()->fontText;
         font->setSize(fontSize);
         auto utf8 = ConvertToUTF8(text);
@@ -196,11 +196,11 @@ namespace Shape {
         context->fillUtf8Text(BLPoint(box.x0 + margin, box.y0 + font->metrics().ascent + margin), *font, utf8.c_str());
         context->end();
 
-        context->begin(*win->prepareImage);
+        context->begin(*win->PrepareImage);
         context->clearAll();
         context->end();
         win->IsDrawing = false;
-        win->state = win->preState;
+        win->state = win->PreState;
         win->Refresh();
         return true;
     }

@@ -33,19 +33,19 @@ namespace Shape {
     {
         auto win = MainWin::Get();
         auto PaintCtx = win->PaintCtx;
-        //先在prepareImage上贴bgImage，再贴canvasImage
-        PaintCtx->begin(*win->prepareImage);
-        PaintCtx->blitImage(BLRect(0, 0, win->w, win->h), *win->desktopImage);
-        PaintCtx->blitImage(BLRect(0, 0, win->w, win->h), *win->canvasImage);
+        //先在PrepareImage上贴bgImage，再贴CanvasImage
+        PaintCtx->begin(*win->PrepareImage);
+        PaintCtx->blitImage(BLRect(0, 0, win->w, win->h), *win->DesktopImage);
+        PaintCtx->blitImage(BLRect(0, 0, win->w, win->h), *win->CanvasImage);
         PaintCtx->end();
-        //得到prepareImage上的像素数据
+        //得到PrepareImage上的像素数据
         BLImageData imgData;
-        win->prepareImage->getData(&imgData);
+        win->PrepareImage->getData(&imgData);
         unsigned char* pixelData = (unsigned char*)(imgData.pixelData);
-        //创建mosaicImage，并在mosaicImage上生成马赛克图像（使用的是prepareImage上的像素数据）
-        //以后的repaint，会使用mosaicImage代替CanvaseImage
-        win->mosaicImage = new BLImage(win->w, win->h, BL_FORMAT_PRGB32);
-        PaintCtx->begin(*win->mosaicImage);
+        //创建MosaicImage，并在MosaicImage上生成马赛克图像（使用的是PrepareImage上的像素数据）
+        //以后的repaint，会使用MosaicImage代替CanvaseImage
+        win->MosaicImage = new BLImage(win->w, win->h, BL_FORMAT_PRGB32);
+        PaintCtx->begin(*win->MosaicImage);
         BLPointI points[5];
         auto totalPixelSize = win->w * 4 * win->h;
         for (size_t y = 0; y <= win->h; y+=strokeWidth)
@@ -69,25 +69,25 @@ namespace Shape {
             }
         }
         PaintCtx->end();
-        win->IsMosaicUsePen = !isFill;
+        win->IsMosaicUsePen = !IsFill;
     }
 	void Mosaic::Draw(const double& x1, const double& y1, const double& x2, const double& y2)
 	{
         auto win = MainWin::Get();
-        if (win->mosaicImage == nullptr) {
+        if (win->MosaicImage == nullptr) {
             InitMosaicImg();
         }
         auto context = win->PaintCtx;
-        context->begin(*win->prepareImage);    
-        win->IsMosaicUsePen = !isFill;
-        if (isFill) {
+        context->begin(*win->PrepareImage);    
+        win->IsMosaicUsePen = !IsFill;
+        if (IsFill) {
             if (x1 != -1) {
                 SetBoxByPos(box, x1, y1, x2, y2);
             }
             context->clearAll();
             int w = box.x1 - box.x0;
             int h = box.y1 - box.y0;
-            context->blitImage(BLPoint(box.x0, box.y0), *win->mosaicImage, BLRectI((int)box.x0, (int)box.y0, (int)w, (int)h));
+            context->blitImage(BLPoint(box.x0, box.y0), *win->MosaicImage, BLRectI((int)box.x0, (int)box.y0, (int)w, (int)h));
             context->setStrokeStyle(BLRgba32(0, 0, 0));
             context->setStrokeWidth(1);
             context->strokeBox(box);
@@ -133,19 +133,19 @@ namespace Shape {
         if (draggerIndex != -1) {
             return false;
         }
-        if (isFill) {
-            if (win->mosaicImage == nullptr) {
+        if (IsFill) {
+            if (win->MosaicImage == nullptr) {
                 InitMosaicImg();
             }
             int w = box.x1 - box.x0;
             int h = box.y1 - box.y0;
-            context->begin(*win->canvasImage);
-            context->blitImage(BLPoint(box.x0, box.y0), *win->mosaicImage, BLRectI((int)box.x0, (int)box.y0, (int)w, (int)h));
+            context->begin(*win->CanvasImage);
+            context->blitImage(BLPoint(box.x0, box.y0), *win->MosaicImage, BLRectI((int)box.x0, (int)box.y0, (int)w, (int)h));
             context->end();
         }
         else
         {
-            if (win->mosaicImage == nullptr) {
+            if (win->MosaicImage == nullptr) {
                 InitMosaicImg();
                 Draw(-1, -1, -1, -1);//这里有一个小小的循环调用
                 return true; 
@@ -180,26 +180,26 @@ namespace Shape {
             if (box.y1 > win->h) box.y1 = win->h;
             int w = box.x1 - box.x0;
             int h = box.y1 - box.y0;
-            context->begin(*win->canvasImage);
-            context->blitImage(BLPoint(box.x0, box.y0), *win->mosaicImage, BLRectI((int)box.x0, (int)box.y0, (int)w, (int)h));
-            context->blitImage(BLPoint(box.x0, box.y0), *win->prepareImage, BLRectI((int)box.x0, (int)box.y0, (int)w, (int)h));
+            context->begin(*win->CanvasImage);
+            context->blitImage(BLPoint(box.x0, box.y0), *win->MosaicImage, BLRectI((int)box.x0, (int)box.y0, (int)w, (int)h));
+            context->blitImage(BLPoint(box.x0, box.y0), *win->PrepareImage, BLRectI((int)box.x0, (int)box.y0, (int)w, (int)h));
             context->end();
         }
-        delete win->mosaicImage;
+        delete win->MosaicImage;
         win->IsMosaicUsePen = false;
-        win->mosaicImage = nullptr;
+        win->MosaicImage = nullptr;
         win->IsDrawing = false;
-        context->begin(*win->prepareImage);
+        context->begin(*win->PrepareImage);
         context->clearAll();
         context->end();
-        win->state = win->preState;
+        win->state = win->PreState;
         win->Refresh();
         return true;
     }
     void Mosaic::ShowDragger()
     {
         auto win = MainWin::Get();
-        if (!isFill)
+        if (!IsFill)
         {
             win->Refresh();
             return;
@@ -224,7 +224,7 @@ namespace Shape {
         draggers[3].x1 = box.x0 + draggerSize;
         draggers[3].y1 = box.y1 + draggerSize;
         auto context = win->PaintCtx;
-        context->begin(*win->prepareImage);
+        context->begin(*win->PrepareImage);
         context->setStrokeStyle(BLRgba32(0, 0, 0));
         context->setStrokeWidth(2);
         context->strokeBoxArray(draggers, 4);
@@ -234,7 +234,7 @@ namespace Shape {
 
     void Mosaic::MouseInDragger(const double& x, const double& y)
     {
-        if (!isFill)
+        if (!IsFill)
         {
             ChangeCursor(IDC_CROSS);
             return;
@@ -290,7 +290,7 @@ namespace Shape {
     }
     void Mosaic::DragDragger(const double& x, const double& y)
     {
-        if (!isFill) return;
+        if (!IsFill) return;
         switch (draggerIndex)
         {
             case 0: {

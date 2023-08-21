@@ -14,9 +14,9 @@ namespace Shape {
 	{
         auto win = MainWin::Get();
 		auto context = win->PaintCtx;
-		context->begin(*win->prepareImage);
+		context->begin(*win->PrepareImage);
 		context->clearAll();
-		if (isFill) {
+		if (IsFill) {
 			context->setStrokeStyle(color);
 		}
 		else
@@ -49,8 +49,8 @@ namespace Shape {
             return false;
         }
         auto context = win->PaintCtx;
-        context->begin(*win->canvasImage);
-        if (isFill) {
+        context->begin(*win->CanvasImage);
+        if (IsFill) {
             context->setStrokeStyle(color);
         }
         else
@@ -61,11 +61,11 @@ namespace Shape {
         context->setStrokeCaps(BL_STROKE_CAP_ROUND);
         context->strokeLine(x2, y2, x1, y1);
         context->end();
-        context->begin(*win->prepareImage);
+        context->begin(*win->PrepareImage);
         context->clearAll();
         context->end();
         win->IsDrawing = false;
-        win->state = win->preState;
+        win->state = win->PreState;
         win->Refresh();
         return true;
     }
@@ -82,7 +82,7 @@ namespace Shape {
         draggers[1].y1 = y2 + draggerSize;
         auto win = MainWin::Get();
         auto context = win->PaintCtx;
-        context->begin(*win->prepareImage);
+        context->begin(*win->PrepareImage);
         context->setStrokeStyle(BLRgba32(0, 0, 0));
         context->setStrokeWidth(2);
         context->strokeBoxArray(draggers, 2);

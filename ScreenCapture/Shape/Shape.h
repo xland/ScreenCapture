@@ -19,7 +19,7 @@ namespace Shape {
 		bool isTemp = true;
 		bool needDraw = true;
 		State state;
-		bool isFill = false;
+		bool IsFill = false;
 	protected:
 		int draggerSize = 6;
 	};

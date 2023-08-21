@@ -15,7 +15,7 @@ namespace Shape {
 			void InitMosaicImg();
 			BLBox box;
 			int strokeWidth;
-			bool isFill = false;
+			bool IsFill = false;
 		private:
 			void setSamplingPoints(BLPointI* points,const int& x, const int& y);
 			BLBox draggers[4];

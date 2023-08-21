@@ -25,7 +25,7 @@
 - WM_LBUTTONDOWN text 为啥不enddraw
 - Pen应该用smoothQuadTo
 - Eraser和Pen为什么画完了之后要重置win->MouseDownPos，直接用数组里最后一个点
-- 为啥enddraw之后还要清prepareImage
+- 为啥enddraw之后还要清PrepareImage
 - ----------------------------------
 - 抽象窗口基类，主窗口、钉住窗口、工具条窗口均继承自此基类
 - 父类至少实现RouteWindowMessage、CreateWindow、hwnd、Show、Close、WindowProc等

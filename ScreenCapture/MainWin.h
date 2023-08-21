@@ -46,27 +46,25 @@ public:
 	bool IsLeftBtnDown = false;
 	bool IsDoubleClick = false;
 	State state = State::start;
-	State preState;
-	int selectedToolIndex = -1;
-	bool isFill = false;
+	State PreState;
+	int SelectedToolIndex = -1;
+	bool IsFill = false;
 	bool IsDrawing = false;
 	bool IsMosaicUsePen = false;
 	BLContext* PaintCtx;
-	BLImage* prepareImage;
-	BLImage* canvasImage;
-	BLImage* desktopImage;
-	BLImage* mosaicImage;
+	BLImage* PrepareImage;
+	BLImage* CanvasImage;
+	BLImage* DesktopImage;
+	BLImage* MosaicImage;
 protected:
 	
 private:
 	MainWin();
+	//system
 	void saveFile();
 	void saveClipboard();
 	void initWindowBoxes();
-	void quitApp(const int& exitCode);
-	std::vector<BLBox> windowBoxes;
-
-	//system
+	void quitApp(const int& exitCode);	
 	void initLayerImg();
 	bool OnPaint() override;
 	bool OnTimer(const unsigned int& id) override;
@@ -75,8 +73,9 @@ private:
 	void drawPixelInfo();
 	std::wstring getPixelColorRgb();
 	std::wstring getPixelColorHex();
+	std::vector<BLBox> windowBoxes;
 	LONG pixelX{ -999999 }, pixelY{ -999999 };
-	BLImage* BottomImage;
+	BLImage* bottomImage;
 
 	//mouse
 	bool OnLeftButtonDown(const int& x, const int& y) override;

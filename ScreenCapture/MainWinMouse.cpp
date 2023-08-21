@@ -24,10 +24,10 @@ void MainWin::leftBtnDownStartDraw()
         {
             auto box = new Shape::Box();
             box->color = colors[colorBtnIndex];
-            box->isFill = isFill;
+            box->IsFill = IsFill;
             box->strokeWidth = strokeWidths[strokeBtnIndex];
             History::Push(box);
-            preState = state;
+            PreState = state;
             IsDrawing = true;
             break;
         }
@@ -35,10 +35,10 @@ void MainWin::leftBtnDownStartDraw()
         {
             auto ellipse = new Shape::Ellipse();
             ellipse->color = colors[colorBtnIndex];
-            ellipse->isFill = isFill;
+            ellipse->IsFill = IsFill;
             ellipse->strokeWidth = strokeWidths[strokeBtnIndex];
             History::Push(ellipse);
-            preState = state;
+            PreState = state;
             IsDrawing = true;
             break;
         }
@@ -46,10 +46,10 @@ void MainWin::leftBtnDownStartDraw()
         {
             auto arrow = new Shape::Arrow();
             arrow->color = colors[colorBtnIndex];
-            arrow->isFill = isFill;
+            arrow->IsFill = IsFill;
             arrow->strokeWidth = strokeWidths[strokeBtnIndex];
             History::Push(arrow);
-            preState = state;
+            PreState = state;
             IsDrawing = true;
             break;
         }
@@ -68,9 +68,9 @@ void MainWin::leftBtnDownStartDraw()
             auto shape = new Shape::Line();
             shape->color = colors[colorBtnIndex];
             shape->strokeWidth = strokeWidths[strokeBtnIndex] + 26;
-            shape->isFill = isFill;
+            shape->IsFill = IsFill;
             History::Push(shape);
-            preState = state;
+            PreState = state;
             IsDrawing = true;
             break;
         }
@@ -79,10 +79,10 @@ void MainWin::leftBtnDownStartDraw()
             auto shape = new Shape::Number();
             shape->color = colors[colorBtnIndex];
             shape->strokeWidth = strokeWidths[strokeBtnIndex];
-            shape->isFill = isFill;
+            shape->IsFill = IsFill;
             History::Push(shape);
             shape->SetNumber();
-            preState = state;
+            PreState = state;
             IsDrawing = true;
             break;
         }
@@ -90,10 +90,10 @@ void MainWin::leftBtnDownStartDraw()
         {
             auto shape = new Shape::Eraser();
             shape->strokeWidth = strokeWidths[strokeBtnIndex] + 36;
-            shape->isFill = isFill;
+            shape->IsFill = IsFill;
             shape->CopyCanvasImg();
             History::Push(shape);
-            preState = state;
+            PreState = state;
             IsDrawing = true;
             break;
         }
@@ -101,10 +101,10 @@ void MainWin::leftBtnDownStartDraw()
         {
             auto shape = new Shape::Mosaic();
             shape->strokeWidth = strokeWidths[strokeBtnIndex] + 6;
-            shape->isFill = isFill;
+            shape->IsFill = IsFill;
             shape->InitMosaicImg();
             History::Push(shape);
-            preState = state;
+            PreState = state;
             IsDrawing = true;
             break;
         }
@@ -115,7 +115,7 @@ void MainWin::leftBtnDownStartDraw()
             History::Push(shape);
             shape->Draw(MouseDownPos.x, MouseDownPos.y, -1, -1);
             SetTimer(hwnd, 999, 660, (TIMERPROC)NULL);
-            preState = state;
+            PreState = state;
             IsDrawing = true;
             break;
         }
@@ -190,17 +190,17 @@ bool MainWin::OnLeftButtonDown(const int& x, const int& y)
             return false;
         }
         if (mouseEnterMainToolIndex != -1 && mouseEnterMainToolIndex < 9) {            
-            selectedToolIndex = mouseEnterMainToolIndex;
-            state = (State)(selectedToolIndex+2); 
+            SelectedToolIndex = mouseEnterMainToolIndex;
+            state = (State)(SelectedToolIndex+2); 
             //设置几个图形默认是否需要填充
             if (state == State::box|| state == State::ellipse||
                 state == State::line || state == State::eraser) 
             {
-                isFill = false;
+                IsFill = false;
             }
             else if (state == State::arrow || state == State::number || state == State::mosaic) 
             {
-                isFill = true;
+                IsFill = true;
             }
             else if (state == State::text) 
             {

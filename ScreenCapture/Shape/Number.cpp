@@ -25,7 +25,7 @@ namespace Shape {
 	{
         auto win = MainWin::Get();
         auto context = win->PaintCtx;
-        context->begin(*win->prepareImage);
+        context->begin(*win->PrepareImage);
         context->clearAll();        
 
         if(x1 != -1){
@@ -59,7 +59,7 @@ namespace Shape {
         }
         context->setFillStyle(color);
         context->fillPath(path);
-        if (isFill)
+        if (IsFill)
         {
             context->setFillStyle(color);
             context->fillCircle(circle);
@@ -97,11 +97,11 @@ namespace Shape {
             return false;
         }
         auto context = win->PaintCtx;
-        context->begin(*win->canvasImage);
+        context->begin(*win->CanvasImage);
         
         context->setFillStyle(color);
         context->fillPath(path);
-        if (isFill)
+        if (IsFill)
         {
             context->setFillStyle(color);
             context->fillCircle(circle);
@@ -129,11 +129,11 @@ namespace Shape {
         context->fillUtf8Text(p, *font, std::to_string(number).c_str());
 
         context->end();
-        context->begin(*win->prepareImage);
+        context->begin(*win->PrepareImage);
         context->clearAll();
         context->end();
         win->IsDrawing = false;
-        win->state = win->preState;
+        win->state = win->PreState;
         win->Refresh();
         return true;
     }
@@ -151,7 +151,7 @@ namespace Shape {
         draggers[1].y1 = circle.cy + draggerSize;
         auto win = MainWin::Get();
         auto context = win->PaintCtx;
-        context->begin(*win->prepareImage);
+        context->begin(*win->PrepareImage);
         context->setStrokeStyle(BLRgba32(0, 0, 0));
         context->setStrokeWidth(2);
         context->strokeBoxArray(draggers,2);

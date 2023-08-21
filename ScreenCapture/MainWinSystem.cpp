@@ -41,39 +41,39 @@ void MainWin::initLayerImg() {
     DeleteObject(hBitmap);
 
     PaintCtx = new BLContext();
-    desktopImage = new BLImage();
-    desktopImage->createFromData(w, h, BL_FORMAT_PRGB32, desktopPixelData, stride, BL_DATA_ACCESS_RW, [](void* impl, void* externalData, void* userData) {
+    DesktopImage = new BLImage();
+    DesktopImage->createFromData(w, h, BL_FORMAT_PRGB32, desktopPixelData, stride, BL_DATA_ACCESS_RW, [](void* impl, void* externalData, void* userData) {
         delete[] externalData;
         });
-    canvasImage = new BLImage(w, h, BL_FORMAT_PRGB32);
-    prepareImage = new BLImage(w, h, BL_FORMAT_PRGB32);
-    PaintCtx->begin(*prepareImage);
+    CanvasImage = new BLImage(w, h, BL_FORMAT_PRGB32);
+    PrepareImage = new BLImage(w, h, BL_FORMAT_PRGB32);
+    PaintCtx->begin(*PrepareImage);
     PaintCtx->clearAll();
     PaintCtx->end();
-    PaintCtx->begin(*canvasImage);
+    PaintCtx->begin(*CanvasImage);
     PaintCtx->clearAll();
     PaintCtx->end();
 
 
-    BottomImage = new BLImage(w, h, BL_FORMAT_PRGB32);
+    bottomImage = new BLImage(w, h, BL_FORMAT_PRGB32);
     BLImageData imgData;
-    BottomImage->getData(&imgData);
+    bottomImage->getData(&imgData);
     pixelData = (unsigned char*)imgData.pixelData;
 }
 
 bool MainWin::OnPaint()
 {
-    PaintCtx->begin(*BottomImage);
-    PaintCtx->blitImage(BLRect(0, 0, w, h), *desktopImage);
+    PaintCtx->begin(*bottomImage);
+    PaintCtx->blitImage(BLRect(0, 0, w, h), *DesktopImage);
     if (IsMosaicUsePen) {
-        PaintCtx->blitImage(BLRect(0, 0, w, h), *mosaicImage);
+        PaintCtx->blitImage(BLRect(0, 0, w, h), *MosaicImage);
     }
     else
     {
-        PaintCtx->blitImage(BLRect(0, 0, w, h), *canvasImage);
+        PaintCtx->blitImage(BLRect(0, 0, w, h), *CanvasImage);
     }
     if (IsDrawing) {
-        PaintCtx->blitImage(BLRect(0, 0, w, h), *prepareImage);
+        PaintCtx->blitImage(BLRect(0, 0, w, h), *PrepareImage);
     }
     PaintCtx->setFillStyle(BLRgba32(0, 0, 0, 180));
     PaintCtx->fillBoxArray(maskBoxes, 8);
@@ -374,8 +374,8 @@ void MainWin::saveFile()
     auto h = cutBox.y1 - cutBox.y0;
     BLImage imgSave(w, h, BL_FORMAT_PRGB32);
     PaintCtx->begin(imgSave);
-    PaintCtx->blitImage(BLPoint(0,0), *desktopImage, BLRectI((int)cutBox.x0, (int)cutBox.y0, (int)w, (int)h));
-    PaintCtx->blitImage(BLPoint(0,0), *canvasImage, BLRectI((int)cutBox.x0, (int)cutBox.y0, (int)w, (int)h));
+    PaintCtx->blitImage(BLPoint(0,0), *DesktopImage, BLRectI((int)cutBox.x0, (int)cutBox.y0, (int)w, (int)h));
+    PaintCtx->blitImage(BLPoint(0,0), *CanvasImage, BLRectI((int)cutBox.x0, (int)cutBox.y0, (int)w, (int)h));
     PaintCtx->end();
     auto filePathUtf8 = ConvertToUTF8(filePath);
     imgSave.writeToFile(filePathUtf8.c_str());

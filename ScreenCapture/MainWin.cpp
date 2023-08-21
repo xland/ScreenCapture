@@ -16,11 +16,11 @@ MainWin::~MainWin()
 {
     Font::Dispose();
     delete PaintCtx;
-    delete desktopImage;
-    delete canvasImage;
-    delete prepareImage;
-    delete mosaicImage;
-    delete BottomImage;
+    delete DesktopImage;
+    delete CanvasImage;
+    delete PrepareImage;
+    delete MosaicImage;
+    delete bottomImage;
 }
 void MainWin::Init()
 {

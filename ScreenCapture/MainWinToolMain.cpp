@@ -13,7 +13,7 @@ void MainWin::setToolBoxMain()
 	else if(int(cutBox.y0) > heightSpan)
 	{
 		//屏幕顶部还有足够的空间
-		if (selectedToolIndex == -1) 
+		if (SelectedToolIndex == -1) 
 		{
 			//尚未确定state，主工具条贴着截图区
 			toolBoxMain.y0 = cutBox.y0 - toolBoxSpan - toolBoxHeight;			
@@ -27,7 +27,7 @@ void MainWin::setToolBoxMain()
 	else
 	{
 		//顶部底部都没有足够的空间
-		if (selectedToolIndex == -1) 
+		if (SelectedToolIndex == -1) 
 		{
 			//尚未确定state，主工具条贴着截图区底部上方
 			toolBoxMain.y0 = cutBox.y1 - toolBoxSpan - toolBoxHeight;
@@ -59,7 +59,7 @@ void MainWin::drawToolMain()
 	point.y = toolBoxMain.y0 + iconTopMargin;
 	for (size_t i = 0; i < 9; i++)
 	{
-		drawBtnCheckable(point, (Icon::Name)i, selectedToolIndex == i, mouseEnterMainToolIndex == i);
+		drawBtnCheckable(point, (Icon::Name)i, SelectedToolIndex == i, mouseEnterMainToolIndex == i);
 		point.x += toolBtnWidth;
 	}
 	drawSplitter(point);
@@ -88,7 +88,7 @@ void MainWin::drawToolMain()
 	point.x += toolBtnWidth;
 	drawBtn(point, Icon::Name::close, (int)Icon::Name::close == mouseEnterMainToolIndex);
 	point.x += toolBtnWidth;
-	if (selectedToolIndex != -1) {
+	if (SelectedToolIndex != -1) {
 		drawSubTool();
 	}
 }

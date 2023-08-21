@@ -14,7 +14,7 @@ namespace Shape {
 	{
 		auto win = MainWin::Get();
 		auto context = win->PaintCtx;
-		context->begin(*win->canvasImage); //直接画，不然上一步干不掉它
+		context->begin(*win->CanvasImage); //直接画，不然上一步干不掉它
 		context->setStrokeStyle(color);
 		context->setStrokeWidth(strokeWidth);
 		context->setStrokeCaps(BL_STROKE_CAP_ROUND);
@@ -43,7 +43,7 @@ namespace Shape {
         auto win = MainWin::Get();
 		win->IsDrawing = false;
         auto context = win->PaintCtx;
-        context->begin(*win->canvasImage);
+        context->begin(*win->CanvasImage);
 		context->setStrokeStyle(color);
 		context->setStrokeWidth(strokeWidth);
 		context->setStrokeCaps(BL_STROKE_CAP_ROUND);

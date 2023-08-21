@@ -15,7 +15,7 @@ namespace Shape {
     {
         auto win = MainWin::Get();
         auto context = win->PaintCtx;
-        context->begin(*win->prepareImage);
+        context->begin(*win->PrepareImage);
         context->clearAll();
         if (x1 != -1) {
             if (win->IsShiftDown) {
@@ -31,7 +31,7 @@ namespace Shape {
         ellipse.ry = (box.y1 - box.y0) / 2;
         ellipse.cx = box.x0 + ellipse.rx;
         ellipse.cy = box.y0 + ellipse.ry;
-        if (isFill)
+        if (IsFill)
         {
             context->setFillStyle(color);
             context->fillEllipse(ellipse);
@@ -122,7 +122,7 @@ namespace Shape {
         draggers[3].y1 = box.y1 + draggerSize;
         auto win = MainWin::Get();
         auto context = win->PaintCtx;
-        context->begin(*win->prepareImage);
+        context->begin(*win->PrepareImage);
         context->setStrokeStyle(BLRgba32(0, 0, 0));
         context->setStrokeWidth(2);
         context->strokeBoxArray(draggers, 4);
@@ -140,13 +140,13 @@ namespace Shape {
             return false;
         }
         auto context = win->PaintCtx;
-        context->begin(*win->canvasImage);
+        context->begin(*win->CanvasImage);
         BLEllipse ellipse;
         ellipse.rx = (box.x1 - box.x0) / 2;
         ellipse.ry = (box.y1 - box.y0) / 2;
         ellipse.cx = box.x0 + ellipse.rx;
         ellipse.cy = box.y0 + ellipse.ry;
-        if (isFill)
+        if (IsFill)
         {
             context->setFillStyle(color);
             context->fillEllipse(ellipse);
@@ -158,11 +158,11 @@ namespace Shape {
             context->strokeEllipse(ellipse);
         }
         context->end();
-        context->begin(*win->prepareImage);
+        context->begin(*win->PrepareImage);
         context->clearAll();
         context->end();
         win->IsDrawing = false;
-        win->state = win->preState;
+        win->state = win->PreState;
         win->Refresh();
         return true;
     }

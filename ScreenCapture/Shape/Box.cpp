@@ -17,7 +17,7 @@ namespace Shape {
 	{
         auto win = MainWin::Get();
         auto context = win->PaintCtx;
-        context->begin(*win->prepareImage);
+        context->begin(*win->PrepareImage);
         context->clearAll();
         
         if (x1 != -1) {
@@ -29,7 +29,7 @@ namespace Shape {
                 SetBoxByPos(box, x1, y1, x2, y2);
             }
         }       
-        if (isFill)
+        if (IsFill)
         {
             context->setFillStyle(color);
             context->fillBox(box);
@@ -54,8 +54,8 @@ namespace Shape {
             return false;
         }
         auto context = win->PaintCtx;
-        context->begin(*win->canvasImage);
-        if (isFill)
+        context->begin(*win->CanvasImage);
+        if (IsFill)
         {
             context->setFillStyle(color);
             context->fillBox(box);
@@ -67,11 +67,11 @@ namespace Shape {
             context->strokeBox(box);
         }
         context->end();
-        context->begin(*win->prepareImage);
+        context->begin(*win->PrepareImage);
         context->clearAll();
         context->end();
         win->IsDrawing = false;
-        win->state = win->preState;
+        win->state = win->PreState;
         win->Refresh();
         return true;
     }
@@ -99,7 +99,7 @@ namespace Shape {
         draggers[3].y1 = box.y1 + draggerSize;
         auto win = MainWin::Get();
         auto context = win->PaintCtx;
-        context->begin(*win->prepareImage);
+        context->begin(*win->PrepareImage);
         context->setStrokeStyle(BLRgba32(0, 0, 0));
         context->setStrokeWidth(2);
         context->strokeBoxArray(draggers, 4);

@@ -4,7 +4,7 @@
 void MainWin::drawSubToolBackground(const int& btnCount, const bool isCenter)
 {
 	PaintCtx->setFillStyle(BLRgba32(255, 255, 255, 255));
-	auto x = toolBoxMain.x0 + (double)selectedToolIndex * toolBtnWidth + toolBtnWidth / 2 ;
+	auto x = toolBoxMain.x0 + (double)SelectedToolIndex * toolBtnWidth + toolBtnWidth / 2 ;
 	auto y = toolBoxMain.y1 + toolBoxSpan / 2;
 	PaintCtx->fillTriangle(x, y, x + 6, y + toolBoxSpan / 2, x - 6, y + toolBoxSpan / 2);
 	if (isCenter) {
@@ -25,7 +25,7 @@ void MainWin::drawSubToolBackground(const int& btnCount, const bool isCenter)
 
 void MainWin::drawSubTool()
 {
-	switch (selectedToolIndex)
+	switch (SelectedToolIndex)
 	{
 		case 0:
 		{
@@ -76,12 +76,12 @@ void MainWin::drawSubTool()
 }
 void MainWin::drawSubToolNormal(const Icon::Name& icon)
 {
-	drawSubToolBackground(isFill?9:12);
+	drawSubToolBackground(IsFill?9:12);
 	BLPoint point;
 	point.x = toolBoxSub.x0 + iconLeftMargin;
 	point.y = toolBoxSub.y0 + 38;
-	drawBtnCheckable(point, icon, isFill, mouseEnterSubToolIndex == 0);	
-	if (!isFill) {
+	drawBtnCheckable(point, icon, IsFill, mouseEnterSubToolIndex == 0);	
+	if (!IsFill) {
 		point.x += toolBtnWidth;
 		drawStrokeWidthBtns(point, 1);
 		drawColorBtns(point, 4);
@@ -98,7 +98,7 @@ void MainWin::drawSubToolLine()
 	BLPoint point;
 	point.x = toolBoxSub.x0 + iconLeftMargin;
 	point.y = toolBoxSub.y0 + 38;
-	drawBtnCheckable(point, Icon::Name::transparent, !isFill, mouseEnterSubToolIndex == 0);
+	drawBtnCheckable(point, Icon::Name::transparent, !IsFill, mouseEnterSubToolIndex == 0);
 	point.x += toolBtnWidth;
 	drawStrokeWidthBtns(point, 1);
 	drawColorBtns(point, 4);
@@ -129,19 +129,19 @@ void MainWin::drawSubToolMosaic()
 	BLPoint point;
 	point.x = toolBoxSub.x0 + iconLeftMargin;
 	point.y = toolBoxSub.y0 + 38;
-	drawBtnCheckable(point, Icon::Name::rectFill, isFill, mouseEnterSubToolIndex == 0);
+	drawBtnCheckable(point, Icon::Name::rectFill, IsFill, mouseEnterSubToolIndex == 0);
 	point.x += toolBtnWidth;
 	drawStrokeWidthBtns(point, 1);
 }
 
 void MainWin::drawSubToolEraser()
 {
-	drawSubToolBackground(isFill?1:4,true);
+	drawSubToolBackground(IsFill?1:4,true);
 	BLPoint point;
 	point.x = toolBoxSub.x0 + iconLeftMargin;
 	point.y = toolBoxSub.y0 + 38;
-	drawBtnCheckable(point, Icon::Name::rectFill, isFill, mouseEnterSubToolIndex == 0);	
-	if (!isFill) {
+	drawBtnCheckable(point, Icon::Name::rectFill, IsFill, mouseEnterSubToolIndex == 0);	
+	if (!IsFill) {
 		point.x += toolBtnWidth;
 		drawStrokeWidthBtns(point, 1);
 	}
@@ -180,7 +180,7 @@ void MainWin::drawStrokeWidthBtns(BLPoint& point,const int& index)
 
 void MainWin::subToolBtnClick()
 {
-	switch (selectedToolIndex)
+	switch (SelectedToolIndex)
 	{
 		case 0://矩形
 		case 1://椭圆
@@ -220,12 +220,12 @@ void MainWin::subToolBtnClick()
 void MainWin::clickSubToolNormal()
 {
 	auto index = mouseEnterSubToolIndex;
-	if (selectedToolIndex < 4 && index != 0 && isFill) index += 3;
+	if (SelectedToolIndex < 4 && index != 0 && IsFill) index += 3;
 	switch (index)
 	{
 		case 0:
 		{
-			isFill = !isFill;
+			IsFill = !IsFill;
 			break;
 		}
 		case 1:
@@ -283,7 +283,7 @@ void MainWin::clickSubToolMosaic()
 	{
 		case 0:
 		{
-			isFill = !isFill;
+			IsFill = !IsFill;
 			break;
 		}
 		case 1:
@@ -303,7 +303,7 @@ void MainWin::clickSubToolEraser()
 	{
 		case 0:
 		{
-			isFill = !isFill;
+			IsFill = !IsFill;
 			break;
 		}
 		case 1:

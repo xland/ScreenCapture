@@ -15,14 +15,14 @@ namespace Shape {
 
     void Eraser::CopyCanvasImg()
     {
-        if (!isFill) return;
+        if (!IsFill) return;
         auto win = MainWin::Get();
         auto PaintCtx = win->PaintCtx;
-        canvasImgCopy = new BLImage(*win->canvasImage);
-        PaintCtx->begin(*win->prepareImage);
-        PaintCtx->blitImage(BLRect(0, 0, win->w, win->h), *win->canvasImage);
+        canvasImgCopy = new BLImage(*win->CanvasImage);
+        PaintCtx->begin(*win->PrepareImage);
+        PaintCtx->blitImage(BLRect(0, 0, win->w, win->h), *win->CanvasImage);
         PaintCtx->end();
-        PaintCtx->begin(*win->canvasImage);
+        PaintCtx->begin(*win->CanvasImage);
         PaintCtx->clearAll();
         PaintCtx->end();
     }
@@ -32,7 +32,7 @@ namespace Shape {
         auto win = MainWin::Get();
 		auto context = win->PaintCtx;
         BLRgba32 black(0, 0, 0);
-        if (isFill) {
+        if (IsFill) {
             if (x1 == -1) {
                 if (!canvasImgCopy) {
                     CopyCanvasImg();
@@ -41,7 +41,7 @@ namespace Shape {
             else {
                 SetBoxByPos(box, x1, y1, x2, y2);
             }
-            context->begin(*win->prepareImage);
+            context->begin(*win->PrepareImage);
             context->clearAll();
             context->blitImage(BLRect(0, 0, win->w, win->h), *canvasImgCopy);
             context->setCompOp(BL_COMP_OP_CLEAR);
@@ -55,7 +55,7 @@ namespace Shape {
         }
         else
         {
-            context->begin(*win->canvasImage);
+            context->begin(*win->CanvasImage);
             context->setCompOp(BL_COMP_OP_CLEAR);
             context->setStrokeStyle(black);
             context->setStrokeWidth(strokeWidth);
@@ -92,11 +92,11 @@ namespace Shape {
         }
         auto context = win->PaintCtx;
         BLRgba32 black(0, 0, 0);
-        if (isFill) {
-            context->begin(*win->canvasImage);
+        if (IsFill) {
+            context->begin(*win->CanvasImage);
             if (canvasImgCopy) {
                 context->blitImage(BLRect(0, 0, win->w, win->h), *canvasImgCopy);
-                win->state = win->preState;
+                win->state = win->PreState;
                 delete canvasImgCopy;
                 canvasImgCopy = nullptr;
                 static int i = 1;
@@ -106,13 +106,13 @@ namespace Shape {
             context->setFillStyle(black);
             context->fillBox(box);
             context->end();
-            context->begin(*win->prepareImage);
+            context->begin(*win->PrepareImage);
             context->clearAll();
             context->end();
         }
         else
         {
-            context->begin(*win->canvasImage);
+            context->begin(*win->CanvasImage);
             context->setCompOp(BL_COMP_OP_CLEAR);
             context->setStrokeStyle(black);
             context->setStrokeWidth(strokeWidth);
@@ -133,7 +133,7 @@ namespace Shape {
     {
         auto win = MainWin::Get();
         auto context = win->PaintCtx;
-        if (!isFill)
+        if (!IsFill)
         {
             return;
         }
@@ -157,7 +157,7 @@ namespace Shape {
         draggers[3].x1 = box.x0 + draggerSize;
         draggers[3].y1 = box.y1 + draggerSize;
 
-        context->begin(*win->prepareImage);
+        context->begin(*win->PrepareImage);
         context->setStrokeStyle(BLRgba32(0, 0, 0));
         context->setStrokeWidth(2);
         context->strokeBoxArray(draggers, 4);
@@ -168,7 +168,7 @@ namespace Shape {
 
     void Eraser::MouseInDragger(const double& x, const double& y)
     {
-        if (!isFill)
+        if (!IsFill)
         {
             ChangeCursor(IDC_CROSS);
             return;
@@ -224,7 +224,7 @@ namespace Shape {
     }
     void Eraser::DragDragger(const double& x, const double& y)
     {
-        if (!isFill) return;
+        if (!IsFill) return;
         switch (draggerIndex)
         {
         case 0: {

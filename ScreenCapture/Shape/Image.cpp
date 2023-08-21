@@ -5,7 +5,7 @@ namespace Shape {
     {
         auto win = MainWin::Get();
         auto context = win->PaintCtx;
-        context->begin(*win->prepareImage);
+        context->begin(*win->PrepareImage);
         context->clearAll();
 
         
@@ -15,7 +15,7 @@ namespace Shape {
     {
         
         auto win = MainWin::Get();
-        win->state = win->preState;
+        win->state = win->PreState;
         win->Refresh();
         return true;
     }
@@ -42,7 +42,7 @@ namespace Shape {
         draggers[3].y1 = box.y1 + draggerSize;
         auto win = MainWin::Get();
         auto context = win->PaintCtx;
-        context->begin(*win->prepareImage);
+        context->begin(*win->PrepareImage);
         context->setStrokeStyle(BLRgba32(0, 0, 0));
         context->setStrokeWidth(2);
         context->strokeBoxArray(draggers, 4);
