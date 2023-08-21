@@ -1,6 +1,7 @@
 /build/**
 /build-*/**
 /.vs/
+/lib
 /Debug/
 /Release/
 /ScreenCapture/.vs/
