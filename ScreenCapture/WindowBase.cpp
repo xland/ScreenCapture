@@ -60,7 +60,7 @@ void WindowBase::InitWindow(const int& x, const int& y, const unsigned int& w, c
         MessageBox(NULL, L"注册窗口类失败", L"系统提示", NULL);
         return;
     }
-    hwnd = CreateWindowEx(0, wcx.lpszClassName, wcx.lpszClassName, WS_OVERLAPPEDWINDOW, x, y, w, h, NULL, NULL, hinstance, static_cast<LPVOID>(this));
+    hwnd = CreateWindowEx(WS_EX_TOOLWINDOW, wcx.lpszClassName, wcx.lpszClassName, WS_OVERLAPPEDWINDOW, x, y, w, h, NULL, NULL, hinstance, static_cast<LPVOID>(this));
     //hwnd = CreateWindowEx(0, wcx.lpszClassName, wcx.lpszClassName, WS_OVERLAPPEDWINDOW, 100, 100, 800, 600, NULL, NULL, hinstance, static_cast<LPVOID>(this));
     if (shadow) {
         MARGINS m{ 0, 0, 0, 1 };

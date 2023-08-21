@@ -49,7 +49,7 @@ void MainWin::createWindow()
         MessageBox(NULL, L"注册窗口类失败", L"系统提示", NULL);
         return;
     }
-    hwnd = CreateWindowEx(0, wcx.lpszClassName, wcx.lpszClassName, WS_OVERLAPPEDWINDOW, painter->x, painter->y, painter->w, painter->h, NULL, NULL, hinstance, static_cast<LPVOID>(this));
+    hwnd = CreateWindowEx(WS_EX_TOOLWINDOW, wcx.lpszClassName, wcx.lpszClassName, WS_OVERLAPPEDWINDOW, painter->x, painter->y, painter->w, painter->h, NULL, NULL, hinstance, static_cast<LPVOID>(this));
     BOOL attrib = TRUE;
     DwmSetWindowAttribute(hwnd, DWMWA_TRANSITIONS_FORCEDISABLED, &attrib, sizeof(attrib));
 }
