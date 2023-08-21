@@ -17,13 +17,44 @@ LRESULT CALLBACK WindowBase::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wPar
     return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
+/// <summary>
+/// 0 undefined
+/// 1 quit by press close btn;
+/// 2 quit by press right mouse btn;
+/// 3 quit by press esc keyboard
+/// 4 quit when copy rgb color
+/// 5 quit when copy hex color
+/// 6 quit when save to file
+/// 7 quit when save to clipboard
+/// </summary>
+static int mainWinQuitCode = 0;
+void WindowBase::quitApp(const int& exitCode)
+{
+    mainWinQuitCode = exitCode;
+    CloseWindow(hwnd);
+    PostQuitMessage(0);
+}
+int WindowBase::GetQuitCode()
+{
+    return mainWinQuitCode;
+}
+
 WindowBase::WindowBase()
 {
     D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &factory);//todo error handle
+    initLayerImg();
+    InitWindow(false);
 }
 
 WindowBase::~WindowBase()
 {
+    Font::Dispose();
+    delete PaintCtx;
+    delete DesktopImage;
+    delete CanvasImage;
+    delete PrepareImage;
+    delete MosaicImage;
+    delete bottomImage;
     d2DImage->Release();
     render->Release();
     factory->Release();
@@ -73,42 +104,23 @@ void WindowBase::Close()
 
 }
 
+bool WindowBase::OnTimer(const unsigned int& id)
+{
+    if (id == 999) {
+        auto shape = dynamic_cast<Shape::Text*>(History::GetLastDrawShape());
+        if (shape) {
+            shape->Draw(-1, -1, -1, -1);
+        }
+    }
+    else if (id == 998) {
+        saveClipboard();
+    }
+    return true;
+}
+
 void WindowBase::Refresh()
 {
     InvalidateRect(hwnd, nullptr, false);
-}
-
-bool WindowBase::paint()
-{
-    auto subResult = OnPaint();
-    if (!render){
-        D2D1_SIZE_U size = D2D1::SizeU(w, h);
-        factory->CreateHwndRenderTarget(D2D1::RenderTargetProperties(), D2D1::HwndRenderTargetProperties(hwnd, size), &render);
-        render->SetTransform(D2D1::Matrix3x2F::Identity());
-        D2D1_BITMAP_PROPERTIES bmpPorp;
-        bmpPorp.dpiX = 0;
-        bmpPorp.dpiY = 0;
-        bmpPorp.pixelFormat.format = DXGI_FORMAT_B8G8R8A8_UNORM;
-        bmpPorp.pixelFormat.alphaMode = D2D1_ALPHA_MODE_IGNORE;
-        render->CreateBitmap(size, NULL, NULL, bmpPorp, &d2DImage);
-    }
-    static auto rect = D2D1::RectU(0, 0, w, h);
-    static unsigned int stride = w * 4;
-    static unsigned int tempW = w / scaleFactor;
-    static unsigned int tempH = h / scaleFactor;
-    static auto rect2 = D2D1::RectF(0, 0, tempW, tempH);
-    d2DImage->CopyFromMemory(&rect, pixelData, stride);
-    render->BeginDraw();
-    render->DrawBitmap(d2DImage, rect2);
-    auto result = render->EndDraw();
-    if (D2DERR_RECREATE_TARGET == result)
-    {
-        d2DImage->Release();
-        render->Release();
-        render = nullptr;
-    }
-    ValidateRect(hwnd, NULL);
-    return subResult;
 }
 
 void WindowBase::initScaleFactor()
@@ -178,9 +190,6 @@ LRESULT CALLBACK WindowBase::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPAR
         }
         case WM_RBUTTONDOWN: {
             return OnRightButtonDown(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));            
-        }
-        case WM_RBUTTONUP: {
-            return OnRightButtonUp(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));            
         }
         case WM_LBUTTONDOWN: {
             return OnLeftButtonDown(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));            

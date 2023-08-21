@@ -1,11 +1,28 @@
 ﻿#include "MainWin.h"
 
 
-void MainWin::checkMouseEnterMaskBox(const POINT& pos) {
+void MainWin::DrawMaskBox() {
+    PaintCtx->setFillStyle(BLRgba32(0, 0, 0, 180));
+    PaintCtx->fillBoxArray(maskBoxes, 8);
+    PaintCtx->setStrokeStyle(BLRgba32(22, 119, 255));
+    PaintCtx->setStrokeWidth(cutBoxBorderWidth);
+    PaintCtx->strokeBox(cutBox);
+}
+
+void MainWin::SetCutBoxWhenLeftButtonDown() {
+    dragStartCutBoxStartPos = BLPoint(cutBox.x0, cutBox.y0);
+    dragStartCutBoxEndPos = BLPoint(cutBox.x1, cutBox.y1);
+    if (mouseInMaskBoxIndex < 8) {
+        SetCutBox(MouseDownPos.x, MouseDownPos.y);
+        Refresh();
+    }
+}
+
+void MainWin::CheckMouseEnterMaskBox(const int& x, const int& y) {
     int index = -1;
     for (size_t i = 0; i < 8; i++)
     {
-        if (maskBoxes[i].contains(pos.x, pos.y)) {
+        if (maskBoxes[i].contains(x, y)) {
             index = i;
             break;
         }
@@ -43,9 +60,9 @@ void MainWin::checkMouseEnterMaskBox(const POINT& pos) {
     ChangeCursor(cursor);
 }
 
-void MainWin::setCutBox(BLPoint& startPos, BLPoint& endPos)
+void MainWin::SetCutBox(const int& x1, const int& y1, const int& x2, const int& y2)
 {
-    SetBoxByPos(cutBox, startPos.x,startPos.y, endPos.x,endPos.y);
+    SetBoxByPos(cutBox, x1,y1, x2,y2);
     maskBoxes[0].x0 = 0;
     maskBoxes[0].x1 = cutBox.x0;
     maskBoxes[1].x0 = cutBox.x0;
@@ -82,55 +99,55 @@ void MainWin::setCutBox(BLPoint& startPos, BLPoint& endPos)
 }
 
 
-void MainWin::setCutBox(const POINT& pos)
+void MainWin::SetCutBox(const int& x, const int& y)
 {
     switch (mouseInMaskBoxIndex)
     {
         case 0: {            
-            dragStartCutBoxStartPos.x = pos.x;
-            dragStartCutBoxStartPos.y = pos.y;
+            dragStartCutBoxStartPos.x = x;
+            dragStartCutBoxStartPos.y = y;
             break;
         }
         case 1: {
-            dragStartCutBoxStartPos.y = pos.y;
+            dragStartCutBoxStartPos.y = y;
             break;
         }
         case 2: {
-            dragStartCutBoxStartPos.y = pos.y;
-            dragStartCutBoxEndPos.x = pos.x;
+            dragStartCutBoxStartPos.y = y;
+            dragStartCutBoxEndPos.x = x;
             break;
         }
         case 3: {
-            dragStartCutBoxEndPos.x = pos.x;
+            dragStartCutBoxEndPos.x = x;
             break;
         }
         case 4: {
-            dragStartCutBoxEndPos.x = pos.x;
-            dragStartCutBoxEndPos.y = pos.y;
+            dragStartCutBoxEndPos.x = x;
+            dragStartCutBoxEndPos.y = y;
             break;
         }
         case 5: {
-            dragStartCutBoxEndPos.y = pos.y;
+            dragStartCutBoxEndPos.y = y;
             break;
         }
         case 6: {
-            dragStartCutBoxEndPos.y = pos.y;
-            dragStartCutBoxStartPos.x = pos.x;
+            dragStartCutBoxEndPos.y = y;
+            dragStartCutBoxStartPos.x = x;
             break;
         }
         case 7: {
-            dragStartCutBoxStartPos.x = pos.x;
+            dragStartCutBoxStartPos.x = x;
             break;
         }
         case 8: {
-            auto xSpan = pos.x - MouseDownPos.x;
-            auto ySpan = pos.y - MouseDownPos.y;
+            auto xSpan = x - MouseDownPos.x;
+            auto ySpan = y - MouseDownPos.y;
             dragStartCutBoxStartPos.x += xSpan;
             dragStartCutBoxStartPos.y += ySpan;
             dragStartCutBoxEndPos.x += xSpan;
             dragStartCutBoxEndPos.y += ySpan;
-            MouseDownPos = pos;
+            MouseDownPos = POINT(x,y);
         }
     }
-    setCutBox(dragStartCutBoxStartPos, dragStartCutBoxEndPos);
+    SetCutBox(dragStartCutBoxStartPos.x, dragStartCutBoxStartPos.y, dragStartCutBoxEndPos.x, dragStartCutBoxEndPos.y);
 }

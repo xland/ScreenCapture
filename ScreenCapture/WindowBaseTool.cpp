@@ -1,7 +1,7 @@
-﻿#include "MainWin.h"
+﻿#include "WindowBase.h"
 
 
-BLRoundRect MainWin::getBtnRect(const BLPoint& point)
+BLRoundRect WindowBase::getBtnRect(const BLPoint& point)
 {
 	BLRoundRect rect(point.x - iconLeftMargin / 2,
 		point.y - iconTopMargin + iconLeftMargin / 2,
@@ -10,7 +10,7 @@ BLRoundRect MainWin::getBtnRect(const BLPoint& point)
 	return rect;
 }
 
-void MainWin::drawBtn(const BLPoint& point, const Icon::Name& name,const bool& hover)
+void WindowBase::drawBtn(const BLPoint& point, const Icon::Name& name,const bool& hover)
 {
 	if (hover) {
 		auto rect = getBtnRect(point);
@@ -22,7 +22,7 @@ void MainWin::drawBtn(const BLPoint& point, const Icon::Name& name,const bool& h
 }
 
 
-void MainWin::drawBtnCheckable(const BLPoint& point, const Icon::Name& name, const bool& checked, const bool& hover)
+void WindowBase::drawBtnCheckable(const BLPoint& point, const Icon::Name& name, const bool& checked, const bool& hover)
 {
 	if (checked) {
 		auto rect = getBtnRect(point);
@@ -43,7 +43,7 @@ void MainWin::drawBtnCheckable(const BLPoint& point, const Icon::Name& name, con
 }
 
 
-void MainWin::drawBtnStrokeWidth(const BLPoint& point, const bool& checked, const bool& hover)
+void WindowBase::drawBtnStrokeWidth(const BLPoint& point, const bool& checked, const bool& hover)
 {
 	if (checked) {
 		auto rect = getBtnRect(point);
@@ -76,7 +76,7 @@ void MainWin::drawBtnStrokeWidth(const BLPoint& point, const bool& checked, cons
 	}
 }
 
-void MainWin::drawBtnColors(const BLPoint& point, const Icon::Name& name, const bool& checked, const bool& hover, const BLRgba32& color)
+void WindowBase::drawBtnColors(const BLPoint& point, const Icon::Name& name, const bool& checked, const bool& hover, const BLRgba32& color)
 {
 
 	auto rect = getBtnRect(point);
@@ -92,7 +92,7 @@ void MainWin::drawBtnColors(const BLPoint& point, const Icon::Name& name, const 
 	PaintCtx->fillUtf8Text(point, *Font::Get()->fontIcon, Icon::GetIcon(name));
 }
 
-void MainWin::drawBtnUndoRedo(const BLPoint& point, const Icon::Name& name, const bool& hover, const bool& enable)
+void WindowBase::drawBtnUndoRedo(const BLPoint& point, const Icon::Name& name, const bool& hover, const bool& enable)
 {
 	if (!enable) {
 		PaintCtx->setFillStyle(BLRgba32(180, 180, 180));
@@ -109,7 +109,7 @@ void MainWin::drawBtnUndoRedo(const BLPoint& point, const Icon::Name& name, cons
 }
 
 
-void MainWin::drawSplitter(const BLPoint& point)
+void WindowBase::drawSplitter(const BLPoint& point)
 {
 	PaintCtx->setStrokeStyle(BLRgba32(180, 180, 180));
 	PaintCtx->setStrokeWidth(0.6f);
@@ -117,7 +117,7 @@ void MainWin::drawSplitter(const BLPoint& point)
 	PaintCtx->strokeLine(x, point.y - 23, x, point.y + 2);
 }
 
-bool MainWin::checkMouseEnterToolBox(const POINT& pos)
+bool WindowBase::checkMouseEnterToolBox(const POINT& pos)
 {
 	bool result = false;
 	int tempIndex;

@@ -1,6 +1,6 @@
-﻿#include "MainWin.h"
+﻿#include "WindowBase.h"
 
-void MainWin::setToolBoxMain()
+void WindowBase::setToolBoxMain()
 {
 	toolBoxMain.x0 = cutBox.x1 - toolBoxWidth;
 	auto heightSpan = toolBoxSpan * 3 + toolBoxHeight * 2;
@@ -48,7 +48,7 @@ void MainWin::setToolBoxMain()
 
 }
 
-void MainWin::drawToolMain()
+void WindowBase::drawToolMain()
 {
 	if (state == State::start) return;
 	setToolBoxMain();

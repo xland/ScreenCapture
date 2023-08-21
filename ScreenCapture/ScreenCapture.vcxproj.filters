@@ -21,13 +21,7 @@
     <ClCompile Include="MainWin.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="MainWinMouse.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="MainWinSystem.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="MainWinToolMain.cpp">
+    <ClCompile Include="WindowBaseToolMain.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="MainWinMask.cpp">
@@ -36,10 +30,10 @@
     <ClCompile Include="Icon.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="MainWinToolSub.cpp">
+    <ClCompile Include="WindowBaseToolSub.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="MainWinTool.cpp">
+    <ClCompile Include="WindowBaseTool.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Shape\Arrow.cpp">
@@ -85,6 +79,21 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="WindowBase.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="WindowBaseSave.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="WindowBaseKeyChar.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="WindowBaseMouse.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="WindowBasePixel.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="WindowBasePaint.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

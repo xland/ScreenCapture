@@ -121,7 +121,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>blend2d.lib;winmm.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib;Dwmapi.lib;imm32.lib;D2d1.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>blend2d.lib;winmm.lib;kernel32.lib;user32.lib;shell32.lib;advapi32.lib;Dwmapi.lib;imm32.lib;D2d1.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <DelayLoadDLLs>
       </DelayLoadDLLs>
       <AdditionalLibraryDirectories>D:\sdk\blend2d\build\$(configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -148,7 +148,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>blend2d.lib;winmm.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib;Dwmapi.lib;imm32.lib;D2d1.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>blend2d.lib;winmm.lib;kernel32.lib;user32.lib;shell32.lib;advapi32.lib;Dwmapi.lib;imm32.lib;D2d1.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <DelayLoadDLLs>
       </DelayLoadDLLs>
       <AdditionalLibraryDirectories>D:\sdk\blend2d\build\$(configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -173,16 +173,19 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainWin.cpp" />
     <ClCompile Include="MainWinMask.cpp" />
-    <ClCompile Include="MainWinMouse.cpp" />
-    <ClCompile Include="MainWinTool.cpp" />
-    <ClCompile Include="MainWinToolSub.cpp" />
-    <ClCompile Include="MainWinSystem.cpp" />
-    <ClCompile Include="MainWinToolMain.cpp" />
+    <ClCompile Include="WindowBasePaint.cpp" />
+    <ClCompile Include="WindowBasePixel.cpp" />
+    <ClCompile Include="WindowBaseTool.cpp" />
+    <ClCompile Include="WindowBaseToolSub.cpp" />
+    <ClCompile Include="WindowBaseToolMain.cpp" />
     <ClCompile Include="Shape\Arrow.cpp" />
     <ClCompile Include="Shape\Shape.cpp" />
     <ClCompile Include="Shape\Text.cpp" />
     <ClCompile Include="Util.cpp" />
     <ClCompile Include="WindowBase.cpp" />
+    <ClCompile Include="WindowBaseKeyChar.cpp" />
+    <ClCompile Include="WindowBaseMouse.cpp" />
+    <ClCompile Include="WindowBaseSave.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shape\Image.h" />

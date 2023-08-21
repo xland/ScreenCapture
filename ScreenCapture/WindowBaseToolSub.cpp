@@ -1,7 +1,7 @@
-﻿#include "MainWin.h"
+﻿#include "WindowBase.h"
 
 
-void MainWin::drawSubToolBackground(const int& btnCount, const bool isCenter)
+void WindowBase::drawSubToolBackground(const int& btnCount, const bool isCenter)
 {
 	PaintCtx->setFillStyle(BLRgba32(255, 255, 255, 255));
 	auto x = toolBoxMain.x0 + (double)SelectedToolIndex * toolBtnWidth + toolBtnWidth / 2 ;
@@ -23,7 +23,7 @@ void MainWin::drawSubToolBackground(const int& btnCount, const bool isCenter)
 	PaintCtx->fillBox(toolBoxSub);
 }
 
-void MainWin::drawSubTool()
+void WindowBase::drawSubTool()
 {
 	switch (SelectedToolIndex)
 	{
@@ -74,7 +74,7 @@ void MainWin::drawSubTool()
 		}
 	}
 }
-void MainWin::drawSubToolNormal(const Icon::Name& icon)
+void WindowBase::drawSubToolNormal(const Icon::Name& icon)
 {
 	drawSubToolBackground(IsFill?9:12);
 	BLPoint point;
@@ -92,7 +92,7 @@ void MainWin::drawSubToolNormal(const Icon::Name& icon)
 	}	
 }
 
-void MainWin::drawSubToolLine()
+void WindowBase::drawSubToolLine()
 {
 	drawSubToolBackground(12);
 	BLPoint point;
@@ -104,7 +104,7 @@ void MainWin::drawSubToolLine()
 	drawColorBtns(point, 4);
 }
 
-void MainWin::drawSubToolPen()
+void WindowBase::drawSubToolPen()
 {
 	drawSubToolBackground(11);
 	BLPoint point;
@@ -114,7 +114,7 @@ void MainWin::drawSubToolPen()
 	drawColorBtns(point,3);
 }
 
-void MainWin::drawSubToolText()
+void WindowBase::drawSubToolText()
 {
 	drawSubToolBackground(8,true);
 	BLPoint point;
@@ -123,7 +123,7 @@ void MainWin::drawSubToolText()
 	drawColorBtns(point, 0);
 }
 
-void MainWin::drawSubToolMosaic()
+void WindowBase::drawSubToolMosaic()
 {
 	drawSubToolBackground(4,true);
 	BLPoint point;
@@ -134,7 +134,7 @@ void MainWin::drawSubToolMosaic()
 	drawStrokeWidthBtns(point, 1);
 }
 
-void MainWin::drawSubToolEraser()
+void WindowBase::drawSubToolEraser()
 {
 	drawSubToolBackground(IsFill?1:4,true);
 	BLPoint point;
@@ -147,7 +147,7 @@ void MainWin::drawSubToolEraser()
 	}
 }
 
-void MainWin::drawColorBtns(BLPoint& point,const int& index)
+void WindowBase::drawColorBtns(BLPoint& point,const int& index)
 {
 	for (size_t i = 0; i < std::size(colors); i++)
 	{
@@ -157,7 +157,7 @@ void MainWin::drawColorBtns(BLPoint& point,const int& index)
 	}
 }
 
-void MainWin::drawStrokeWidthBtns(BLPoint& point,const int& index)
+void WindowBase::drawStrokeWidthBtns(BLPoint& point,const int& index)
 {
 	drawBtnStrokeWidth(point, strokeBtnIndex == 0, mouseEnterSubToolIndex == index);
 	point.x += toolBtnWidth;
@@ -178,7 +178,7 @@ void MainWin::drawStrokeWidthBtns(BLPoint& point,const int& index)
 	//point.x += toolBtnWidth*2;
 }
 
-void MainWin::subToolBtnClick()
+void WindowBase::subToolBtnClick()
 {
 	switch (SelectedToolIndex)
 	{
@@ -217,7 +217,7 @@ void MainWin::subToolBtnClick()
 		}
 	}
 }
-void MainWin::clickSubToolNormal()
+void WindowBase::clickSubToolNormal()
 {
 	auto index = mouseEnterSubToolIndex;
 	if (SelectedToolIndex < 4 && index != 0 && IsFill) index += 3;
@@ -250,7 +250,7 @@ void MainWin::clickSubToolNormal()
 	}
 	Refresh();
 }
-void MainWin::clickSubToolPen()
+void WindowBase::clickSubToolPen()
 {
 	switch (mouseEnterSubToolIndex)
 	{
@@ -277,7 +277,7 @@ void MainWin::clickSubToolPen()
 	Refresh();
 }
 
-void MainWin::clickSubToolMosaic()
+void WindowBase::clickSubToolMosaic()
 {
 	switch (mouseEnterSubToolIndex)
 	{
@@ -297,7 +297,7 @@ void MainWin::clickSubToolMosaic()
 	Refresh();
 }
 
-void MainWin::clickSubToolEraser()
+void WindowBase::clickSubToolEraser()
 {
 	switch (mouseEnterSubToolIndex)
 	{
@@ -317,7 +317,7 @@ void MainWin::clickSubToolEraser()
 	Refresh();
 }
 
-void MainWin::clickSubToolText()
+void WindowBase::clickSubToolText()
 {
 	colorBtnIndex = mouseEnterSubToolIndex;
 	Refresh();
