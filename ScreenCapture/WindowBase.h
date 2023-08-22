@@ -58,20 +58,20 @@ public:
 	
 
 protected:
-	virtual int OnHitTest() { return HTCLIENT; };		
+	virtual int OnHitTest() { return HTCLIENT; };
 	virtual void SetCutBoxWhenLeftButtonDown() {};
 	virtual void SetCutBox(const int& x, const int& y) {};
 	virtual void SetCutBox(const int& x1, const int& y1, const int& x2, const int& y2) {};
 	virtual void HighLightWindowBox(const int& x, const int& y) {};
 	virtual void CheckMouseEnterMaskBox(const int& x, const int& y) {};
 	virtual void DrawMaskBox() {};
+	void InitWindow(const bool& shadow);
 	BLBox cutBox;
 	int cutBoxBorderWidth = 4;
 	int mouseInMaskBoxIndex = -1; //todo
 private:
 	static LRESULT CALLBACK RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-	LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
-	void InitWindow(const bool& shadow);
+	LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);	
 	void quitApp(const int& exitCode);
 	void initScaleFactor();
 	bool OnTimer(const unsigned int& id);

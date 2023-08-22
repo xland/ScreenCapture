@@ -119,8 +119,6 @@ void WindowBase::leftBtnDownStartDraw()
     }
     }
 }
-
-
 bool WindowBase::OnLeftButtonDown(const int& x, const int& y)
 {
     MouseDownPos.x = x;

@@ -6,6 +6,7 @@ static MainWin* mainWin;
 MainWin::MainWin()
 {
     enumDesktopWindow();
+    InitWindow(false);
 }
 MainWin::~MainWin()
 {
@@ -54,5 +55,4 @@ void MainWin::HighLightWindowBox(const int& x, const int& y)
             break;
         }
     }
-    Refresh();
 }

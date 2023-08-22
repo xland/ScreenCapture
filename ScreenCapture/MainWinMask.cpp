@@ -14,7 +14,6 @@ void MainWin::SetCutBoxWhenLeftButtonDown() {
     dragStartCutBoxEndPos = BLPoint(cutBox.x1, cutBox.y1);
     if (mouseInMaskBoxIndex < 8) {
         SetCutBox(MouseDownPos.x, MouseDownPos.y);
-        Refresh();
     }
 }
 
@@ -96,6 +95,8 @@ void MainWin::SetCutBox(const int& x1, const int& y1, const int& x2, const int& 
     maskBoxes[6].y1 = h;
     maskBoxes[7].y0 = cutBox.y0;
     maskBoxes[7].y1 = cutBox.y1;
+
+    Refresh();
 }
 
 

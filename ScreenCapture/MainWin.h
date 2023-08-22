@@ -32,6 +32,7 @@ private:
 	void SetCutBox(const int& x1, const int& y1, const int& x2, const int& y2) override;
 	void HighLightWindowBox(const int& x, const int& y) override;
 	void DrawMaskBox() override;
+	
 	BLBox maskBoxes[8];	
 	BLPoint dragStartCutBoxStartPos;
 	BLPoint dragStartCutBoxEndPos;

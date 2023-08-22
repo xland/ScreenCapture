@@ -42,8 +42,7 @@ int WindowBase::GetQuitCode()
 WindowBase::WindowBase()
 {
     D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &factory);//todo error handle
-    initLayerImg();
-    InitWindow(false);
+    initLayerImg();    
 }
 
 WindowBase::~WindowBase()
