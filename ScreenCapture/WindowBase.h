@@ -1,6 +1,5 @@
 ﻿#pragma once
 #include <Windows.h>
-#include <d2d1.h>
 #include <blend2d.h>
 
 #include "State.h"
@@ -18,6 +17,7 @@
 #include "Shape/Text.h"
 #include "Shape/Eraser.h"
 #include "Shape/Mosaic.h"
+#include "Painter.h"
 
 class WindowBase
 {
@@ -47,6 +47,7 @@ public:
 	BLImage* MosaicImage;
 	bool IsDrawing = false;
 	bool IsMosaicUsePen = false;
+	unsigned int stride;
 	//mouse
 	POINT MouseDownPos;
 	bool IsLeftBtnDown = false;
@@ -65,6 +66,7 @@ protected:
 	virtual void HighLightWindowBox(const int& x, const int& y) {};
 	virtual void CheckMouseEnterMaskBox(const int& x, const int& y) {};
 	virtual void DrawMaskBox() {};
+	virtual void PinWindow() {};
 	void InitWindow(const bool& shadow);
 	void InitLayerImg();
 	BLBox cutBox;
@@ -79,13 +81,12 @@ private:
 	float scaleFactor;
 
 	//paint
-	bool paint();
+	//bool paint();
 	bool OnPaint();
 	BLImage* bottomImage;
-	ID2D1Factory* factory;
-	ID2D1HwndRenderTarget* render;
-	ID2D1Bitmap* d2DImage;
 	unsigned char* pixelData;
+	Painter* painter;
+
 
 	//get color
 	std::wstring getPixelRgb();
@@ -120,7 +121,7 @@ private:
 	void drawBtnStrokeWidth(const BLPoint& point, const bool& checked, const bool& hover);
 	void drawBtnUndoRedo(const BLPoint& point, const Icon::Name& name, const bool& hover, const bool& enable);
 	bool checkMouseEnterToolBox(const POINT& pos);
-	int mainToolBtnCount = 14;
+	int mainToolBtnCount = 15;
 	int toolBoxSpan = 12;//工具条距离截图区域的高度
 	int toolBtnSpanWidth = 6;
 	int toolBtnSpanCount = 2;

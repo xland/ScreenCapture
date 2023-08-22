@@ -3,6 +3,18 @@
 #include <dwmapi.h>
 #include "Util.h"
 
+/// <summary>
+/// 0 undefined
+/// 1 quit by press close btn;
+/// 2 quit by press right mouse btn;
+/// 3 quit by press esc keyboard
+/// 4 quit when copy rgb color
+/// 5 quit when copy hex color
+/// 6 quit when save to file
+/// 7 quit when save to clipboard
+/// </summary>
+static int mainWinQuitCode = 0;
+
 LRESULT CALLBACK WindowBase::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     if (msg == WM_NCCREATE)
     {
@@ -17,31 +29,9 @@ LRESULT CALLBACK WindowBase::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wPar
     return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
-/// <summary>
-/// 0 undefined
-/// 1 quit by press close btn;
-/// 2 quit by press right mouse btn;
-/// 3 quit by press esc keyboard
-/// 4 quit when copy rgb color
-/// 5 quit when copy hex color
-/// 6 quit when save to file
-/// 7 quit when save to clipboard
-/// </summary>
-static int mainWinQuitCode = 0;
-void WindowBase::quitApp(const int& exitCode)
-{
-    mainWinQuitCode = exitCode;
-    CloseWindow(hwnd);
-    PostQuitMessage(0);
-}
-int WindowBase::GetQuitCode()
-{
-    return mainWinQuitCode;
-}
 
 WindowBase::WindowBase()
 {
-    D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &factory);//todo error handle
 }
 
 WindowBase::~WindowBase()
@@ -53,12 +43,19 @@ WindowBase::~WindowBase()
     delete PrepareImage;
     delete MosaicImage;
     delete bottomImage;
-    d2DImage->Release();
-    render->Release();
-    factory->Release();
+    delete painter;
 }
 
-
+void WindowBase::quitApp(const int& exitCode)
+{
+    mainWinQuitCode = exitCode;
+    CloseWindow(hwnd);
+    PostQuitMessage(0);
+}
+int WindowBase::GetQuitCode()
+{
+    return mainWinQuitCode;
+}
 
 void WindowBase::InitWindow(const bool& shadow)
 {
@@ -72,13 +69,13 @@ void WindowBase::InitWindow(const bool& shadow)
     wcx.hIcon = LoadIcon(NULL, IDI_APPLICATION);
     wcx.hCursor = LoadCursor(NULL, IDC_ARROW);
     wcx.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
-    wcx.lpszClassName = L"ScreenCapture";
+    wcx.lpszClassName = shadow?L"SCsub":L"SCmain";
     if (!RegisterClassEx(&wcx))
     {
         MessageBox(NULL, L"注册窗口类失败", L"系统提示", NULL);
         return;
     }
-    this->hwnd = CreateWindowEx(0, wcx.lpszClassName, wcx.lpszClassName, WS_OVERLAPPEDWINDOW, x, y, w, h, NULL, NULL, hinstance, static_cast<LPVOID>(this));
+    this->hwnd = CreateWindowEx(WS_EX_NOREDIRECTIONBITMAP, wcx.lpszClassName, wcx.lpszClassName, WS_OVERLAPPEDWINDOW, x, y, w, h, NULL, NULL, hinstance, static_cast<LPVOID>(this));
     BOOL attrib = TRUE;
     DwmSetWindowAttribute(hwnd, DWMWA_TRANSITIONS_FORCEDISABLED, &attrib, sizeof(attrib));//移除窗口打开与关闭时的动画效果
     if (shadow) {
@@ -87,7 +84,7 @@ void WindowBase::InitWindow(const bool& shadow)
     }
     SetWindowPos(hwnd, nullptr, 0, 0, 0, 0, SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_NOMOVE | SWP_NOSIZE | SWP_FRAMECHANGED);
     initScaleFactor();
-    Show();
+    painter = new Painter(hwnd);
 }
 
 void WindowBase::Show()
@@ -99,7 +96,7 @@ void WindowBase::Show()
 
 void WindowBase::Close()
 {
-
+    CloseWindow(hwnd);
 }
 
 bool WindowBase::OnTimer(const unsigned int& id)
@@ -114,11 +111,6 @@ bool WindowBase::OnTimer(const unsigned int& id)
         saveClipboard();
     }
     return true;
-}
-
-void WindowBase::Refresh()
-{
-    InvalidateRect(hwnd, nullptr, false);
 }
 
 void WindowBase::initScaleFactor()
@@ -155,7 +147,7 @@ void WindowBase::initScaleFactor()
     default:
         scaleFactor = 1.0;
         break;
-    }
+    }    
 }
 
 LRESULT CALLBACK WindowBase::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -180,9 +172,9 @@ LRESULT CALLBACK WindowBase::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPAR
         case WM_ERASEBKGND: {
             return true;
         }
-        case WM_PAINT: {
-            return paint();            
-        }
+        //case WM_PAINT: {
+        //    return paint();            
+        //}
         case WM_TIMER: {
             return OnTimer(wParam);            
         }
@@ -206,6 +198,13 @@ LRESULT CALLBACK WindowBase::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPAR
         }
         case WM_CHAR: {
             return OnChar(wParam);
+        }
+        case WM_SIZE:
+        {
+            if (painter) {
+                painter->OnResize(hWnd, LOWORD(lParam), HIWORD(lParam));
+            }            
+            return false;
         }
     }    
     return DefWindowProcW(hWnd, msg, wParam, lParam);

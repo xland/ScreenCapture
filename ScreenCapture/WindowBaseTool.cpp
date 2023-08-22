@@ -3,11 +3,8 @@
 
 BLRoundRect WindowBase::getBtnRect(const BLPoint& point)
 {
-	BLRoundRect rect(point.x - iconLeftMargin / 2,
-		point.y - iconTopMargin + iconLeftMargin / 2,
-		toolBtnWidth - iconLeftMargin,
-		toolBoxHeight - iconLeftMargin,6);
-	return rect;
+	return BLRoundRect(point.x - iconLeftMargin / 2, point.y - iconTopMargin + iconLeftMargin / 2,
+		toolBtnWidth - iconLeftMargin, toolBoxHeight - iconLeftMargin,6);
 }
 
 void WindowBase::drawBtn(const BLPoint& point, const Icon::Name& name,const bool& hover)

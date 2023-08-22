@@ -80,8 +80,8 @@ void WindowBase::drawToolMain()
 	}
 	drawSplitter(point);
 	point.x += toolBtnSpanWidth;
-	//drawBtn(point, Icon::Name::pin, (int)Icon::Name::pin == mouseEnterMainToolIndex);
-	//point.x += toolBtnWidth;
+	drawBtn(point, Icon::Name::pin, (int)Icon::Name::pin == mouseEnterMainToolIndex);
+	point.x += toolBtnWidth;
 	drawBtn(point, Icon::Name::save, (int)Icon::Name::save == mouseEnterMainToolIndex);
 	point.x += toolBtnWidth;
 	drawBtn(point, Icon::Name::copy, (int)Icon::Name::copy == mouseEnterMainToolIndex);

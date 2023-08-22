@@ -3,8 +3,9 @@
 class PinWin : public WindowBase
 {
 public:
-	PinWin();
+	PinWin(const int& x,const int& y,BLImage* img);
 	~PinWin();
 private:
+	int OnHitTest() override;
 };
 

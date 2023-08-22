@@ -16,6 +16,7 @@ private:
 	MainWin();
 	void initWindowSize();
 	void shotScreen();
+	void PinWindow() override;
 
 	//desktop window boxes
 	void enumDesktopWindow();

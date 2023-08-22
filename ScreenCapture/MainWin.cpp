@@ -1,4 +1,5 @@
 ﻿#include "MainWin.h"
+#include "PinWin.h"
 
 static MainWin* mainWin;
 
@@ -8,8 +9,10 @@ MainWin::MainWin()
     initWindowSize();
     shotScreen();
     enumDesktopWindow();
+    
     InitLayerImg();
     InitWindow(false);
+    Show();
 }
 MainWin::~MainWin()
 {
@@ -55,4 +58,18 @@ void MainWin::shotScreen()
     OriginalImage->createFromData(w, h, BL_FORMAT_PRGB32, desktopPixelData, stride, BL_DATA_ACCESS_RW, [](void* impl, void* externalData, void* userData) {
         delete[] externalData;
         });
+}
+
+void MainWin::PinWindow() {
+    auto w = cutBox.x1 - cutBox.x0;
+    auto h = cutBox.y1 - cutBox.y0;
+    auto img = new BLImage (w, h, BL_FORMAT_PRGB32);
+    PaintCtx->begin(*img);
+    PaintCtx->clearAll();
+    PaintCtx->blitImage(BLPoint(0,0), *OriginalImage, BLRectI((int)cutBox.x0, (int)cutBox.y0, (int)w, (int)h));
+    PaintCtx->blitImage(BLPoint(0,0), *CanvasImage, BLRectI((int)cutBox.x0, (int)cutBox.y0, (int)w, (int)h));    
+    PaintCtx->end();
+    auto pinWin = new PinWin(cutBox.x0,cutBox.y0,img);
+    pinWin->Show();
+    Close();
 }

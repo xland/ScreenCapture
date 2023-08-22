@@ -4,7 +4,7 @@
 
 std::wstring WindowBase::getPixelRgb()
 {
-    size_t pixelIndex = pixelY * w * 4 + pixelX * 4;
+    size_t pixelIndex = pixelY * stride + pixelX * 4;
     auto result = std::to_wstring(pixelData[pixelIndex + 2]) + L"," +
         std::to_wstring(pixelData[pixelIndex + 1]) + L"," +
         std::to_wstring(pixelData[pixelIndex]);
@@ -12,7 +12,7 @@ std::wstring WindowBase::getPixelRgb()
 }
 std::wstring WindowBase::getPixelHex()
 {
-    size_t pixelIndex = pixelY * w * 4 + pixelX * 4;
+    size_t pixelIndex = pixelY * stride + pixelX * 4;
     std::wstringstream ss;
     int rgb = ((pixelData[pixelIndex + 2] << 16) | (pixelData[pixelIndex + 1] << 8) | pixelData[pixelIndex]);
     ss << std::hex << rgb;
@@ -45,7 +45,7 @@ void WindowBase::drawPixelInfo()
         auto srcY = pixelY - 5;
         auto dstX = rectDst.x;
         auto dstY = rectDst.y;
-        static size_t dataSize = w * 4 * h;
+        static size_t dataSize = stride * h;
         for (size_t y = 0; y < 10; y++)
         {
             for (size_t x = 0; x < 20; x++) {
@@ -58,7 +58,7 @@ void WindowBase::drawPixelInfo()
                 }
                 else
                 {
-                    size_t indexSrc = srcY * w * 4 + srcX * 4;
+                    size_t indexSrc = srcY * stride + srcX * 4;
                     color.setB(pixelData[indexSrc]);
                     color.setG(pixelData[indexSrc + 1]);
                     color.setR(pixelData[indexSrc + 2]);
@@ -99,7 +99,7 @@ void WindowBase::drawPixelInfo()
     auto textY = rectDst.y + rectDst.h + 14 + font->metrics().ascent;
     std::string utf8 = std::format("Position:X:{} Y:{}", pixelX, pixelY);
     PaintCtx->fillUtf8Text(BLPoint(textX, textY), *font, utf8.data());
-    size_t pixelIndex = pixelY * w * 4 + pixelX * 4;
+    size_t pixelIndex = pixelY * stride + pixelX * 4;
     utf8 = std::format("RGB(Ctr+R):{},{},{}", pixelData[pixelIndex + 2], pixelData[pixelIndex + 1], pixelData[pixelIndex]);
     PaintCtx->fillUtf8Text(BLPoint(textX, textY + 28), *font, utf8.data());
     std::stringstream ss;

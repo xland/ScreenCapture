@@ -121,7 +121,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>blend2d.lib;winmm.lib;kernel32.lib;user32.lib;shell32.lib;advapi32.lib;Dwmapi.lib;imm32.lib;D2d1.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>blend2d.lib;winmm.lib;kernel32.lib;user32.lib;shell32.lib;advapi32.lib;Dwmapi.lib;imm32.lib;d2d1.lib;dxgi.lib;d3d11.lib;dcomp.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <DelayLoadDLLs>
       </DelayLoadDLLs>
       <AdditionalLibraryDirectories>D:\sdk\blend2d\build\$(configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -148,7 +148,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>blend2d.lib;winmm.lib;kernel32.lib;user32.lib;shell32.lib;advapi32.lib;Dwmapi.lib;imm32.lib;D2d1.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>blend2d.lib;winmm.lib;kernel32.lib;user32.lib;shell32.lib;advapi32.lib;Dwmapi.lib;imm32.lib;d2d1.lib;dxgi.lib;d3d11.lib;dcomp.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <DelayLoadDLLs>
       </DelayLoadDLLs>
       <AdditionalLibraryDirectories>D:\sdk\blend2d\build\$(configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -160,6 +160,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="MainWinDesktopWinBox.cpp" />
+    <ClCompile Include="Painter.cpp" />
     <ClCompile Include="PinWin.cpp" />
     <ClCompile Include="Shape\Image.cpp" />
     <ClCompile Include="Shape\Mosaic.cpp" />
@@ -190,6 +191,7 @@
     <ClCompile Include="WindowBaseSave.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Painter.h" />
     <ClInclude Include="PinWin.h" />
     <ClInclude Include="Shape\Image.h" />
     <ClInclude Include="Shape\Mosaic.h" />

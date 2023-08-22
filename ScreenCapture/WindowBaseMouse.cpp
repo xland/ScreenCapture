@@ -157,21 +157,26 @@ bool WindowBase::OnLeftButtonDown(const int& x, const int& y)
             History::Redo();
             return false;
         }
-        else if (mouseEnterMainToolIndex == 11) //save file
+        else if (mouseEnterMainToolIndex == 11) //pin window
+        {
+            PinWindow();
+            return false;
+        }
+        else if (mouseEnterMainToolIndex == 12) //save file
         {
             IsLeftBtnDown = false;
             History::LastShapeDrawEnd();
             saveFile();
             return false;
         }
-        else if (mouseEnterMainToolIndex == 12) //save clipboard
+        else if (mouseEnterMainToolIndex == 13) //save clipboard
         {
             IsLeftBtnDown = false;
             History::LastShapeDrawEnd();
             SetTimer(hwnd, 998, 60, (TIMERPROC)NULL);
             return false;
         }
-        else if (mouseEnterMainToolIndex == 13) //close
+        else if (mouseEnterMainToolIndex == 14) //close
         {
             quitApp(1);
             return false;

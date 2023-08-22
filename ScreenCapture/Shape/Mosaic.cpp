@@ -47,7 +47,7 @@ namespace Shape {
         win->MosaicImage = new BLImage(win->w, win->h, BL_FORMAT_PRGB32);
         PaintCtx->begin(*win->MosaicImage);
         BLPointI points[5];
-        auto totalPixelSize = win->w * 4 * win->h;
+        auto totalPixelSize = win->stride * win->h;
         for (size_t y = 0; y <= win->h; y+=strokeWidth)
         {
             for (size_t x = 0; x <= win->w; x+=strokeWidth)
@@ -56,7 +56,7 @@ namespace Shape {
                 unsigned int b{ 0 }, g{ 0 }, r{ 0 };
                 for (size_t i = 0; i < 5; i++)
                 {
-                    auto index = points[i].y * (int)win->w * 4 + points[i].x * 4;
+                    auto index = points[i].y * (int)win->stride + points[i].x * 4;
                     if (index > totalPixelSize) {
                         break;
                     }
