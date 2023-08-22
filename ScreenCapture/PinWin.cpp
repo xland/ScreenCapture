@@ -5,11 +5,12 @@ PinWin::PinWin(const int& x, const int& y, BLImage* img)
 {
 	this->x = x;
 	this->y = y;
-	w = img->width();
-	h = img->height();
+	this->w = img->width();
+	this->h = img->height();
 	OriginalImage = img;
 	InitLayerImg();
-	InitWindow(true);
+	InitWindow();
+	Show();
 }
 PinWin::~PinWin()
 {

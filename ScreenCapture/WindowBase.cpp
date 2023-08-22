@@ -2,6 +2,7 @@
 #include <windowsx.h>
 #include <dwmapi.h>
 #include "Util.h"
+#include <format>
 
 /// <summary>
 /// 0 undefined
@@ -24,7 +25,14 @@ LRESULT CALLBACK WindowBase::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wPar
     }
     auto obj = reinterpret_cast<WindowBase*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
     if (obj) {
-        return obj->WindowProc(hWnd, msg, wParam, lParam);
+        if (msg == WM_CLOSE) {
+            delete obj;
+        }
+        else
+        {
+            return obj->WindowProc(hWnd, msg, wParam, lParam);
+        }
+        
     }
     return DefWindowProc(hWnd, msg, wParam, lParam);
 }
@@ -57,8 +65,10 @@ int WindowBase::GetQuitCode()
     return mainWinQuitCode;
 }
 
-void WindowBase::InitWindow(const bool& shadow)
+void WindowBase::InitWindow()
 {
+    static int num = 0;
+    std::wstring className = std::format(L"ScreenCapture{}", num++);
     auto hinstance = GetModuleHandle(NULL);
     WNDCLASSEX wcx{};
     wcx.cbSize = sizeof(wcx);
@@ -69,7 +79,7 @@ void WindowBase::InitWindow(const bool& shadow)
     wcx.hIcon = LoadIcon(NULL, IDI_APPLICATION);
     wcx.hCursor = LoadCursor(NULL, IDC_ARROW);
     wcx.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
-    wcx.lpszClassName = shadow?L"SCsub":L"SCmain";
+    wcx.lpszClassName = className.c_str();
     if (!RegisterClassEx(&wcx))
     {
         MessageBox(NULL, L"注册窗口类失败", L"系统提示", NULL);
@@ -78,12 +88,7 @@ void WindowBase::InitWindow(const bool& shadow)
     this->hwnd = CreateWindowEx(WS_EX_NOREDIRECTIONBITMAP, wcx.lpszClassName, wcx.lpszClassName, WS_OVERLAPPEDWINDOW, x, y, w, h, NULL, NULL, hinstance, static_cast<LPVOID>(this));
     BOOL attrib = TRUE;
     DwmSetWindowAttribute(hwnd, DWMWA_TRANSITIONS_FORCEDISABLED, &attrib, sizeof(attrib));//移除窗口打开与关闭时的动画效果
-    if (shadow) {
-        MARGINS m{ 0, 0, 0, 1 };
-        DwmExtendFrameIntoClientArea(hwnd, &m);        
-    }
     SetWindowPos(hwnd, nullptr, 0, 0, 0, 0, SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_NOMOVE | SWP_NOSIZE | SWP_FRAMECHANGED);
-    initScaleFactor();
     painter = new Painter(hwnd);
 }
 
@@ -113,43 +118,6 @@ bool WindowBase::OnTimer(const unsigned int& id)
     return true;
 }
 
-void WindowBase::initScaleFactor()
-{
-    int dpi = GetDpiForWindow(hwnd);
-    switch (dpi) {
-    case 96:
-        scaleFactor = 1.0;
-        break;
-    case 120:
-        scaleFactor = 1.25;
-        break;
-    case 144:
-        scaleFactor = 1.5;
-        break;
-    case 168:
-        scaleFactor = 1.75;
-        break;
-    case 192:
-        scaleFactor = 2.0;
-        break;
-    case 216:
-        scaleFactor = 2.25;
-        break;
-    case 240:
-        scaleFactor = 2.5;
-        break;
-    case 288:
-        scaleFactor = 3.0;
-        break;
-    case 336:
-        scaleFactor = 3.5;
-        break;
-    default:
-        scaleFactor = 1.0;
-        break;
-    }    
-}
-
 LRESULT CALLBACK WindowBase::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     switch (msg)
@@ -172,9 +140,6 @@ LRESULT CALLBACK WindowBase::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPAR
         case WM_ERASEBKGND: {
             return true;
         }
-        //case WM_PAINT: {
-        //    return paint();            
-        //}
         case WM_TIMER: {
             return OnTimer(wParam);            
         }
@@ -203,6 +168,7 @@ LRESULT CALLBACK WindowBase::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPAR
         {
             if (painter) {
                 painter->OnResize(hWnd, LOWORD(lParam), HIWORD(lParam));
+                Refresh();
             }            
             return false;
         }

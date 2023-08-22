@@ -67,7 +67,7 @@ protected:
 	virtual void CheckMouseEnterMaskBox(const int& x, const int& y) {};
 	virtual void DrawMaskBox() {};
 	virtual void PinWindow() {};
-	void InitWindow(const bool& shadow);
+	void InitWindow();
 	void InitLayerImg();
 	BLBox cutBox;
 	int cutBoxBorderWidth = 4;
@@ -76,9 +76,7 @@ private:
 	static LRESULT CALLBACK RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 	LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);	
 	void quitApp(const int& exitCode);
-	void initScaleFactor();
 	bool OnTimer(const unsigned int& id);
-	float scaleFactor;
 
 	//paint
 	//bool paint();

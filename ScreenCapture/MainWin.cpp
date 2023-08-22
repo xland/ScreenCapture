@@ -8,10 +8,9 @@ MainWin::MainWin()
 {
     initWindowSize();
     shotScreen();
-    enumDesktopWindow();
-    
+    enumDesktopWindow();    
     InitLayerImg();
-    InitWindow(false);
+    InitWindow();
     Show();
 }
 MainWin::~MainWin()
@@ -63,13 +62,12 @@ void MainWin::shotScreen()
 void MainWin::PinWindow() {
     auto w = cutBox.x1 - cutBox.x0;
     auto h = cutBox.y1 - cutBox.y0;
-    auto img = new BLImage (w, h, BL_FORMAT_PRGB32);
+    auto img = new BLImage (w + 16, h + 16, BL_FORMAT_PRGB32);
     PaintCtx->begin(*img);
     PaintCtx->clearAll();
-    PaintCtx->blitImage(BLPoint(0,0), *OriginalImage, BLRectI((int)cutBox.x0, (int)cutBox.y0, (int)w, (int)h));
-    PaintCtx->blitImage(BLPoint(0,0), *CanvasImage, BLRectI((int)cutBox.x0, (int)cutBox.y0, (int)w, (int)h));    
+    PaintCtx->blitImage(BLPoint(8,8), *OriginalImage, BLRectI((int)cutBox.x0, (int)cutBox.y0, (int)w, (int)h));
+    PaintCtx->blitImage(BLPoint(8,8), *CanvasImage, BLRectI((int)cutBox.x0, (int)cutBox.y0, (int)w, (int)h));    
     PaintCtx->end();
-    auto pinWin = new PinWin(cutBox.x0,cutBox.y0,img);
-    pinWin->Show();
-    Close();
+    new PinWin(cutBox.x0,cutBox.y0,img);
+    SendMessage(hwnd, WM_CLOSE, NULL, NULL);
 }
