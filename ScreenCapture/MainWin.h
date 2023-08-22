@@ -1,14 +1,6 @@
 ﻿#pragma once
 #include <blend2d.h>
 #include <windows.h>
-#include <windowsx.h>
-#include <algorithm>
-#include <stdlib.h>
-#include <malloc.h>
-#include <memory.h>
-#include <wchar.h>
-#include <math.h>
-#include <iostream>
 #include <vector>
 
 #include "WindowBase.h"

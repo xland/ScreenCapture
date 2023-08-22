@@ -31,7 +31,7 @@ void Font::initFontText()
     BLFontFace face;
     BLResult err = face.createFromFile("C:\\Windows\\Fonts\\simhei.ttf"); //黑体
     if (err) {
-        printf("Failed to load a font face (err=%u)\n", err);
+        MessageBox(NULL, L"系统字体加载失败", L"系统提示", NULL);
         return;
     }
     fontText = new BLFont();
