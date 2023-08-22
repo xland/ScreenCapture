@@ -35,7 +35,7 @@ namespace Shape {
         auto PaintCtx = win->PaintCtx;
         //先在PrepareImage上贴bgImage，再贴CanvasImage
         PaintCtx->begin(*win->PrepareImage);
-        PaintCtx->blitImage(BLRect(0, 0, win->w, win->h), *win->DesktopImage);
+        PaintCtx->blitImage(BLRect(0, 0, win->w, win->h), *win->OriginalImage);
         PaintCtx->blitImage(BLRect(0, 0, win->w, win->h), *win->CanvasImage);
         PaintCtx->end();
         //得到PrepareImage上的像素数据

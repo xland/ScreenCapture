@@ -42,14 +42,13 @@ int WindowBase::GetQuitCode()
 WindowBase::WindowBase()
 {
     D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &factory);//todo error handle
-    initLayerImg();    
 }
 
 WindowBase::~WindowBase()
 {
     Font::Dispose();
     delete PaintCtx;
-    delete DesktopImage;
+    delete OriginalImage;
     delete CanvasImage;
     delete PrepareImage;
     delete MosaicImage;

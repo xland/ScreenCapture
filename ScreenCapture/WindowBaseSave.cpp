@@ -35,7 +35,7 @@ void WindowBase::saveFile()
     auto h = cutBox.y1 - cutBox.y0;
     BLImage imgSave(w, h, BL_FORMAT_PRGB32);
     PaintCtx->begin(imgSave);
-    PaintCtx->blitImage(BLPoint(0, 0), *DesktopImage, BLRectI((int)cutBox.x0, (int)cutBox.y0, (int)w, (int)h));
+    PaintCtx->blitImage(BLPoint(0, 0), *OriginalImage, BLRectI((int)cutBox.x0, (int)cutBox.y0, (int)w, (int)h));
     PaintCtx->blitImage(BLPoint(0, 0), *CanvasImage, BLRectI((int)cutBox.x0, (int)cutBox.y0, (int)w, (int)h));
     PaintCtx->end();
     auto filePathUtf8 = ConvertToUTF8(filePath);

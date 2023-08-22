@@ -43,7 +43,7 @@ public:
 	BLContext* PaintCtx;
 	BLImage* PrepareImage;
 	BLImage* CanvasImage;
-	BLImage* DesktopImage;
+	BLImage* OriginalImage;
 	BLImage* MosaicImage;
 	bool IsDrawing = false;
 	bool IsMosaicUsePen = false;
@@ -51,7 +51,7 @@ public:
 	POINT MouseDownPos;
 	bool IsLeftBtnDown = false;
 	bool IsDoubleClick = false;
-
+	//key
 	bool IsShiftDown = false;
 	bool IsCtrlDown = false;
 
@@ -66,6 +66,7 @@ protected:
 	virtual void CheckMouseEnterMaskBox(const int& x, const int& y) {};
 	virtual void DrawMaskBox() {};
 	void InitWindow(const bool& shadow);
+	void InitLayerImg();
 	BLBox cutBox;
 	int cutBoxBorderWidth = 4;
 	int mouseInMaskBoxIndex = -1; //todo
@@ -79,7 +80,6 @@ private:
 
 	//paint
 	bool paint();
-	void initLayerImg();
 	bool OnPaint();
 	BLImage* bottomImage;
 	ID2D1Factory* factory;

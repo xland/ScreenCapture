@@ -5,7 +5,10 @@ static MainWin* mainWin;
 
 MainWin::MainWin()
 {
+    initWindowSize();
+    shotScreen();
     enumDesktopWindow();
+    InitLayerImg();
     InitWindow(false);
 }
 MainWin::~MainWin()
@@ -25,34 +28,31 @@ void MainWin::Dispose()
     delete mainWin;
 }
 
-void MainWin::enumDesktopWindow()
+void MainWin::initWindowSize()
 {
-    EnumWindows([](HWND hwnd, LPARAM lparam)
-        {
-            if (!hwnd) return TRUE;
-            if (!IsWindowVisible(hwnd)) return TRUE;
-            if (IsIconic(hwnd)) return TRUE;
-            if (GetWindowTextLength(hwnd) < 1) return TRUE;
-            auto self = (MainWin*)lparam;
-            RECT rect;
-            GetWindowRect(hwnd, &rect);
-            if (rect.right - rect.left <= 6 || rect.bottom - rect.top <= 6) {
-                return TRUE;
-            }
-            BLBox item(rect.left - self->x, rect.top - self->y,
-                rect.right - self->x, rect.bottom - self->y);
-            self->desktopWindowBoxes.push_back(std::move(item));
-            return TRUE;
-        }, (LPARAM)this);
+    x = GetSystemMetrics(SM_XVIRTUALSCREEN);
+    y = GetSystemMetrics(SM_YVIRTUALSCREEN);
+    w = GetSystemMetrics(SM_CXVIRTUALSCREEN);
+    h = GetSystemMetrics(SM_CYVIRTUALSCREEN);
 }
 
-void MainWin::HighLightWindowBox(const int& x, const int& y)
+void MainWin::shotScreen()
 {
-    for (size_t i = 0; i < desktopWindowBoxes.size(); i++)
-    {
-        if (desktopWindowBoxes[i].contains(x, y)) {
-            SetCutBox(desktopWindowBoxes[i].x0, desktopWindowBoxes[i].y0, desktopWindowBoxes[i].x1, desktopWindowBoxes[i].y1);
-            break;
-        }
-    }
+    HDC hScreen = GetDC(NULL);
+    HDC hDC = CreateCompatibleDC(hScreen);
+    HBITMAP hBitmap = CreateCompatibleBitmap(hScreen, w, h);
+    DeleteObject(SelectObject(hDC, hBitmap));
+    BOOL bRet = BitBlt(hDC, 0, 0, w, h, hScreen, x, y, SRCCOPY);
+    unsigned int stride = w * 4;
+    unsigned int dataSize = stride * h;
+    auto desktopPixelData = new unsigned char[dataSize];
+    BITMAPINFO info = { sizeof(BITMAPINFOHEADER), (long)w, 0 - (long)h, 1, 32, BI_RGB, dataSize, 0, 0, 0, 0 };
+    GetDIBits(hDC, hBitmap, 0, h, desktopPixelData, &info, DIB_RGB_COLORS);
+    DeleteDC(hDC);
+    DeleteObject(hBitmap);
+
+    OriginalImage = new BLImage();
+    OriginalImage->createFromData(w, h, BL_FORMAT_PRGB32, desktopPixelData, stride, BL_DATA_ACCESS_RW, [](void* impl, void* externalData, void* userData) {
+        delete[] externalData;
+        });
 }

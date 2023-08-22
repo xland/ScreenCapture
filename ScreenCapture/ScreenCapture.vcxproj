@@ -159,6 +159,8 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="MainWinDesktopWinBox.cpp" />
+    <ClCompile Include="PinWin.cpp" />
     <ClCompile Include="Shape\Image.cpp" />
     <ClCompile Include="Shape\Mosaic.cpp" />
     <ClCompile Include="Shape\Eraser.cpp" />
@@ -188,6 +190,7 @@
     <ClCompile Include="WindowBaseSave.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="PinWin.h" />
     <ClInclude Include="Shape\Image.h" />
     <ClInclude Include="Shape\Mosaic.h" />
     <ClInclude Include="Shape\Eraser.h" />
