@@ -1,5 +1,5 @@
 ﻿#include "Eraser.h"
-#include "../MainWin.h"
+#include "../WindowBase.h"
 namespace Shape {
 
 	Eraser::Eraser()
@@ -16,7 +16,7 @@ namespace Shape {
     void Eraser::CopyCanvasImg()
     {
         if (!IsFill) return;
-        auto win = MainWin::Get();
+        auto win = WindowBase::Get();
         auto PaintCtx = win->PaintCtx;
         canvasImgCopy = new BLImage(*win->CanvasImage);
         PaintCtx->begin(*win->PrepareImage);
@@ -29,7 +29,7 @@ namespace Shape {
 
 	void Eraser::Draw(const double& x1, const double& y1, const double& x2, const double& y2)
 	{
-        auto win = MainWin::Get();
+        auto win = WindowBase::Get();
 		auto context = win->PaintCtx;
         BLRgba32 black(0, 0, 0);
         if (IsFill) {
@@ -86,7 +86,7 @@ namespace Shape {
         if (draggerIndex != -1) {
             return false;
         }
-        auto win = MainWin::Get();
+        auto win = WindowBase::Get();
         if (!win->IsDrawing) {
             return true;
         }
@@ -131,7 +131,7 @@ namespace Shape {
 
     void Eraser::ShowDragger()
     {
-        auto win = MainWin::Get();
+        auto win = WindowBase::Get();
         auto context = win->PaintCtx;
         if (!IsFill)
         {
@@ -244,7 +244,7 @@ namespace Shape {
             break;
         }
         case 4: {
-            auto win = MainWin::Get();
+            auto win = WindowBase::Get();
             auto x0 = x - win->MouseDownPos.x + box.x0;
             auto y0 = y - win->MouseDownPos.y + box.y0;
             auto x1 = x - win->MouseDownPos.x + box.x1;

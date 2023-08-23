@@ -6,7 +6,8 @@ public:
 	PinWin(const int& x,const int& y, const int& w, const int& h, BLImage* img);
 	~PinWin();
 private:
-	int OnHitTest() override;
+	int OnHitTest(const int& x, const int& y) override;
+	void SetToolMainPos() override;
 	void drawSrcImg();
 	void drawShadow();
 	BLImage* srcImg;

@@ -15,7 +15,7 @@
 /// 7 quit when save to clipboard
 /// </summary>
 static int mainWinQuitCode = 0;
-
+static WindowBase* windowInstance;
 LRESULT CALLBACK WindowBase::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     if (msg == WM_NCCREATE)
     {
@@ -39,11 +39,11 @@ LRESULT CALLBACK WindowBase::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wPar
 
 
 WindowBase::WindowBase(){
+    windowInstance = this;
 }
 
 WindowBase::~WindowBase()
-{
-    Font::Dispose();
+{    
     delete PaintCtx;
     delete OriginalImage;
     delete CanvasImage;
@@ -51,6 +51,11 @@ WindowBase::~WindowBase()
     delete MosaicImage;
     delete BottomImage;
     delete painter;
+}
+
+WindowBase* WindowBase::Get()
+{
+    return windowInstance;
 }
 
 void WindowBase::quitApp(const int& exitCode)
@@ -100,7 +105,7 @@ void WindowBase::Show()
 
 void WindowBase::Close()
 {
-    CloseWindow(hwnd);
+    SendMessage(hwnd, WM_CLOSE, NULL, NULL);
 }
 
 bool WindowBase::OnTimer(const unsigned int& id)
@@ -131,7 +136,7 @@ LRESULT CALLBACK WindowBase::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPAR
         }
         case WM_NCHITTEST:
         {
-            return OnHitTest(); //HTCAPTION;
+            return OnHitTest(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)); //HTCAPTION;
         }
         case WM_SETCURSOR: {
             return true;

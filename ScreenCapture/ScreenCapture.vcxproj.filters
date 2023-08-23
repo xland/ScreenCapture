@@ -21,9 +21,6 @@
     <ClCompile Include="MainWin.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="WindowBaseToolMain.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="MainWinMask.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -54,7 +51,7 @@
     <ClCompile Include="Shape\Number.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Shape\History.cpp">
+    <ClCompile Include="History.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Util.cpp">
@@ -137,7 +134,7 @@
     <ClInclude Include="Shape\Number.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Shape\History.h">
+    <ClInclude Include="History.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Util.h">

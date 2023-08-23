@@ -1,5 +1,5 @@
 ﻿#include "History.h"
-#include "../MainWin.h"
+#include "MainWin.h"
 
 static std::vector<Shape::Shape*> history;
 //最后一个需要绘制的元素的下标，-1为没有需要绘制的元素
@@ -47,6 +47,17 @@ void History::Push(Shape::Shape* shape)
 	history.erase(end, history.end());
 	history.push_back(shape);
 }
+
+void History::Clear() {
+	auto end = std::remove_if(history.begin(),
+		history.end(),
+		[](Shape::Shape* item) {
+			delete item;
+			return true;
+		});
+	history.erase(end, history.end());
+}
+
 bool History::LastShapeDrawEnd()
 {
 	if (lastDrawShapeIndex < 0) return true;
@@ -61,7 +72,7 @@ void History::LastShapeDraw(const POINT& pos1, const POINT& pos2)
 
 void History::LastShapeShowDragger()
 {
-	auto win = MainWin::Get();
+	auto win = WindowBase::Get();
 	if (win->state != State::lastPathDrag) {
 		lastDrawShapeIndex += 1;
 		history[lastDrawShapeIndex]->isTemp = false;
@@ -76,7 +87,7 @@ void History::LastShapeMouseInDragger(const POINT& pos)
 		ChangeCursor(IDC_CROSS);
 		return;
 	}
-	auto win = MainWin::Get();
+	auto win = WindowBase::Get();
 	if (!win->IsDrawing && shape->state != State::eraser) return;	
 	if (shape->state == State::text) {
 		ChangeCursor(IDC_IBEAM);
@@ -92,7 +103,7 @@ void  History::Undo()
 {
 	//容器中一个元素也没有
 	if (history.size() < 1) return;
-	auto win = MainWin::Get();
+	auto win = WindowBase::Get();
 	bool hasNeedDrawShape = false;
 	int index = history.size() - 1;
 	for (; index >=0 ; index--)
@@ -163,7 +174,7 @@ void  History::Redo()
 	if (lastDrawShapeIndex + 1 >= history.size()) return;
 	//下一个也画上了
 	//if (history[lastDrawShapeIndex + 1]->needDraw) return;
-	auto win = MainWin::Get();
+	auto win = WindowBase::Get();
 	//当前这个shape是否还未被画到canvasImg上，如果是，则画上去
 	//第一个元素被上一步之后，lastDrawShapeIndex就是-1
 	if (lastDrawShapeIndex != -1 && win->IsDrawing) {

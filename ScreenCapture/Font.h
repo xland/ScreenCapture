@@ -4,6 +4,7 @@ class Font
 {
 public:
 	~Font();
+	static void Init();
 	static void Dispose();
 	static Font* Get();
 	BLFont* fontIcon;

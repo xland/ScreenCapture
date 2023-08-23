@@ -168,7 +168,7 @@
     <ClCompile Include="Font.cpp" />
     <ClCompile Include="Shape\Line.cpp" />
     <ClCompile Include="Shape\Pen.cpp" />
-    <ClCompile Include="Shape\History.cpp" />
+    <ClCompile Include="History.cpp" />
     <ClCompile Include="Shape\Number.cpp" />
     <ClCompile Include="Shape\Ellipse.cpp" />
     <ClCompile Include="Shape\Box.cpp" />
@@ -180,7 +180,6 @@
     <ClCompile Include="WindowBasePixel.cpp" />
     <ClCompile Include="WindowBaseTool.cpp" />
     <ClCompile Include="WindowBaseToolSub.cpp" />
-    <ClCompile Include="WindowBaseToolMain.cpp" />
     <ClCompile Include="Shape\Arrow.cpp" />
     <ClCompile Include="Shape\Shape.cpp" />
     <ClCompile Include="Shape\Text.cpp" />
@@ -199,7 +198,7 @@
     <ClInclude Include="Font.h" />
     <ClInclude Include="Shape\Line.h" />
     <ClInclude Include="Shape\Pen.h" />
-    <ClInclude Include="Shape\History.h" />
+    <ClInclude Include="History.h" />
     <ClInclude Include="Shape\Number.h" />
     <ClInclude Include="Shape\Ellipse.h" />
     <ClInclude Include="Shape\Box.h" />

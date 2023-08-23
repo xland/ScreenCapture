@@ -1,6 +1,6 @@
 ﻿#include "Box.h"
 #include "../Util.h"
-#include "../MainWin.h"
+#include "../WindowBase.h"
 #include "../State.h"
 
 namespace Shape {
@@ -15,7 +15,7 @@ namespace Shape {
     }
 	void Box::Draw(const double& x1, const double& y1, const double& x2, const double& y2)
 	{
-        auto win = MainWin::Get();
+        auto win = WindowBase::Get();
         auto context = win->PaintCtx;
         context->begin(*win->PrepareImage);
         context->clearAll();
@@ -46,7 +46,7 @@ namespace Shape {
 
     bool Box::EndDraw()
     {
-        auto win = MainWin::Get();
+        auto win = WindowBase::Get();
         if (!win->IsDrawing) {
             return true;
         }
@@ -97,7 +97,7 @@ namespace Shape {
         draggers[3].y0 = box.y1 - draggerSize;
         draggers[3].x1 = box.x0 + draggerSize;
         draggers[3].y1 = box.y1 + draggerSize;
-        auto win = MainWin::Get();
+        auto win = WindowBase::Get();
         auto context = win->PaintCtx;
         context->begin(*win->PrepareImage);
         context->setStrokeStyle(BLRgba32(0, 0, 0));
@@ -179,7 +179,7 @@ namespace Shape {
                 break;
             }
             case 4: {
-                auto win = MainWin::Get();
+                auto win = WindowBase::Get();
                 auto xSpan = x - win->MouseDownPos.x;
                 auto ySpan = y - win->MouseDownPos.y;
                 box.x0 += xSpan;

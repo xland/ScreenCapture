@@ -1,6 +1,6 @@
 ﻿#include "Arrow.h"
 #include <math.h>
-#include "../MainWin.h"
+#include "../WindowBase.h"
 
 namespace Shape {
 
@@ -15,7 +15,7 @@ namespace Shape {
 	void Arrow::Draw(const double& x1, const double& y1, const double& x2, const double& y2)
 	{
         isTemp = false;
-        auto win = MainWin::Get();
+        auto win = WindowBase::Get();
         auto context = win->PaintCtx;
         context->begin(*win->PrepareImage);
         context->clearAll();
@@ -74,7 +74,7 @@ namespace Shape {
 	}
     bool Arrow::EndDraw()
     {
-        auto win = MainWin::Get();
+        auto win = WindowBase::Get();
         if (!win->IsDrawing) {
             return true;
         }
@@ -105,7 +105,7 @@ namespace Shape {
     }
     void Arrow::ShowDragger()
     {
-        auto win = MainWin::Get();
+        auto win = WindowBase::Get();
         const BLPoint* points = path.vertexData();
         if (!points)return;
         draggers[0].x0 = points[0].x - draggerSize;

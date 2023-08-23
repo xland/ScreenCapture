@@ -1,8 +1,6 @@
 ﻿#include "MainWin.h"
 #include "PinWin.h"
 
-static MainWin* mainWin;
-
 
 MainWin::MainWin()
 {
@@ -17,18 +15,6 @@ MainWin::MainWin()
 MainWin::~MainWin()
 {
 
-}
-void MainWin::Init()
-{
-    mainWin = new MainWin();
-}
-MainWin* MainWin::Get()
-{
-    return mainWin;
-}
-void MainWin::Dispose()
-{
-    delete mainWin;
 }
 
 void MainWin::initWindowSize()
@@ -73,7 +59,7 @@ void MainWin::PinWindow() {
         w = toolBoxWidth;
     }
     w += 32;
-    h = h + toolBoxSpan + toolBoxHeight + 32;
+    h = h + toolBoxSpan*2 + toolBoxHeight*2 + 32;
     new PinWin(cutBox.x0,cutBox.y0,w,h,img);
     SendMessage(hwnd, WM_CLOSE, NULL, NULL);
 }

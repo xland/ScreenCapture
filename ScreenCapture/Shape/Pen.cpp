@@ -1,5 +1,5 @@
 #include "Pen.h"
-#include "../MainWin.h"
+#include "../WindowBase.h"
 namespace Shape {
 
 	Pen::Pen()
@@ -12,7 +12,7 @@ namespace Shape {
 	}
 	void Pen::Draw(const double& x1, const double& y1, const double& x2, const double& y2)
 	{
-		auto win = MainWin::Get();
+		auto win = WindowBase::Get();
 		auto context = win->PaintCtx;
 		context->begin(*win->CanvasImage); //直接画，不然上一步干不掉它
 		context->setStrokeStyle(color);
@@ -40,7 +40,7 @@ namespace Shape {
 	}
     bool Pen::EndDraw()
     {
-        auto win = MainWin::Get();
+        auto win = WindowBase::Get();
 		win->IsDrawing = false;
         auto context = win->PaintCtx;
         context->begin(*win->CanvasImage);

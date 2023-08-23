@@ -27,6 +27,7 @@ void WindowBase::InitLayerImg() {
 void WindowBase::Refresh()
 {
     PaintCtx->begin(*BottomImage);
+    PaintCtx->clearAll();
     PaintCtx->blitImage(BLRect(0, 0, w, h), *OriginalImage);
     if (IsMosaicUsePen) {
         PaintCtx->blitImage(BLRect(0, 0, w, h), *MosaicImage);

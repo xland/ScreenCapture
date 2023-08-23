@@ -8,12 +8,9 @@
 class MainWin :public WindowBase
 {
 public:
-	~MainWin();
-	static void Init();
-	static MainWin* Get();
-	static void Dispose();
-private:
 	MainWin();
+	~MainWin();
+private:
 	void initWindowSize();
 	void shotScreen();
 	void PinWindow() override;

@@ -11,25 +11,20 @@ Font::Font()
 }
 Font::~Font()
 {
-    if (fontText) {
-        delete fontText;
-        fontText = nullptr;
-    }    
-    if (fontIcon) {
-        delete fontIcon;
-        fontIcon = nullptr;
-    }
+    delete fontText;
+    delete fontIcon;
     
 }
 void Font::Dispose()
 {
     delete font;
 }
+void Font::Init() {
+    font = new Font();
+}
+
 Font* Font::Get()
 {
-    if (!font) {
-        font = new Font();
-    }
     return font;
 }
 

@@ -4,7 +4,7 @@
 #include <string>
 #include <Windows.h> 
 #include "../Font.h"
-#include "../MainWin.h"
+#include "../WindowBase.h"
 namespace Shape {
     static int num = 1;
     Number::Number()
@@ -23,7 +23,7 @@ namespace Shape {
     }
 	void Number::Draw(const double& x1, const double& y1, const double& x2, const double& y2)
 	{
-        auto win = MainWin::Get();
+        auto win = WindowBase::Get();
         auto context = win->PaintCtx;
         context->begin(*win->PrepareImage);
         context->clearAll();        
@@ -89,7 +89,7 @@ namespace Shape {
 	}
     bool Number::EndDraw()
     {
-        auto win = MainWin::Get();
+        auto win = WindowBase::Get();
         if (!win->IsDrawing) {
             return true;
         }
@@ -149,7 +149,7 @@ namespace Shape {
         draggers[1].y0 = circle.cy - draggerSize;
         draggers[1].x1 = circle.cx + draggerSize;
         draggers[1].y1 = circle.cy + draggerSize;
-        auto win = MainWin::Get();
+        auto win = WindowBase::Get();
         auto context = win->PaintCtx;
         context->begin(*win->PrepareImage);
         context->setStrokeStyle(BLRgba32(0, 0, 0));
@@ -185,7 +185,7 @@ namespace Shape {
             Draw(x, y, tempDraggerX, tempDraggerY);
         }
         else if (draggerIndex == 1) {
-            auto win = MainWin::Get();
+            auto win = WindowBase::Get();
             auto xSpan = x - win->MouseDownPos.x;
             auto ySpan = y - win->MouseDownPos.y;
             tempDraggerX += xSpan;

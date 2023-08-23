@@ -1,9 +1,10 @@
 ﻿#include "PinWin.h"
-
+#include "History.h"
 
 PinWin::PinWin(const int& x, const int& y, const int& w, const int& h, BLImage* img)
 {
     state = State::maskReady;
+    History::Clear();
 	this->x = x;
 	this->y = y;
 	this->w = w;
@@ -22,18 +23,29 @@ PinWin::~PinWin()
 {
 
 }
-int PinWin::OnHitTest() {
-
-	//LONG cur_style = GetWindowLong(hwnd, GWL_EXSTYLE);
-	//SetWindowLong(hwnd, GWL_EXSTYLE, cur_style | WS_EX_TRANSPARENT | WS_EX_LAYERED);
-	return HTCAPTION; //HTTRANSPARENT;
+int PinWin::OnHitTest(const int& x, const int& y) {
+    if (state == State::maskReady && 
+        x > this->x + 16 && x<this->x + 16 + srcImg->width() && 
+        y>this->y + 16 && y < this->y + 16 + srcImg->height()) {
+        return HTCAPTION;
+    }
+    return HTCLIENT;
 }
 
 void PinWin::drawSrcImg() {
     PaintCtx->begin(*OriginalImage);
+    PaintCtx->clearAll();
     drawShadow();
     PaintCtx->blitImage(BLPoint(16, 16), *srcImg);
     PaintCtx->end();
+}
+
+void PinWin::SetToolMainPos()
+{
+    toolBoxMain.x0 = 16;
+    toolBoxMain.y0 = 16 + srcImg->height() + toolBoxSpan;
+    toolBoxMain.x1 = toolBoxMain.x0 + toolBoxWidth;
+    toolBoxMain.y1 = toolBoxMain.y0 + toolBoxHeight;
 }
 
 void PinWin::drawShadow()

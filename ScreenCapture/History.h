@@ -1,6 +1,6 @@
 #pragma once
 #include <vector>
-#include "Shape.h"
+#include "Shape/Shape.h"
 #include <Windows.h>
 
 class History
@@ -15,6 +15,7 @@ public:
 	static void LastShapeShowDragger();
 	static void LastShapeMouseInDragger(const POINT& pos);
 	static void LastShapeDragDragger(const POINT& pos);
+	static void Clear();
 	static void Undo();
 	static void Redo();
 	static Shape::Shape* GetLastDrawShape();

@@ -1,6 +1,6 @@
 ﻿#include "Mosaic.h"
 #include "../Util.h"
-#include "../MainWin.h"
+#include "../WindowBase.h"
 
 namespace Shape {
 
@@ -31,7 +31,7 @@ namespace Shape {
     }
     void Mosaic::InitMosaicImg()
     {
-        auto win = MainWin::Get();
+        auto win = WindowBase::Get();
         auto PaintCtx = win->PaintCtx;
         //先在PrepareImage上贴bgImage，再贴CanvasImage
         PaintCtx->begin(*win->PrepareImage);
@@ -73,7 +73,7 @@ namespace Shape {
     }
 	void Mosaic::Draw(const double& x1, const double& y1, const double& x2, const double& y2)
 	{
-        auto win = MainWin::Get();
+        auto win = WindowBase::Get();
         if (win->MosaicImage == nullptr) {
             InitMosaicImg();
         }
@@ -125,7 +125,7 @@ namespace Shape {
 
     bool Mosaic::EndDraw()
     {
-        auto win = MainWin::Get();
+        auto win = WindowBase::Get();
         auto context = win->PaintCtx;
         if (!win->IsDrawing) {
             return true;
@@ -198,7 +198,7 @@ namespace Shape {
     }
     void Mosaic::ShowDragger()
     {
-        auto win = MainWin::Get();
+        auto win = WindowBase::Get();
         if (!IsFill)
         {
             win->Refresh();
@@ -310,7 +310,7 @@ namespace Shape {
                 break;
             }
             case 4: {
-                auto win = MainWin::Get();
+                auto win = WindowBase::Get();
                 auto x0 = x - win->MouseDownPos.x + box.x0;
                 auto y0 = y - win->MouseDownPos.y + box.y0;
                 auto x1 = x - win->MouseDownPos.x + box.x1;

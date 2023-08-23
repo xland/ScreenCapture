@@ -7,7 +7,7 @@
 #include "Util.h"
 #include "Font.h"
 
-#include "Shape/History.h"
+#include "History.h"
 #include "Shape/Box.h"
 #include "Shape/Ellipse.h"
 #include "Shape/Arrow.h"
@@ -24,6 +24,7 @@ class WindowBase
 public:
 	WindowBase();
 	~WindowBase();
+	static WindowBase* Get();
 	void Show();
 	void Close();
 	void Refresh();
@@ -60,7 +61,7 @@ public:
 	
 
 protected:
-	virtual int OnHitTest() { return HTCLIENT; };
+	virtual int OnHitTest(const int& x,const int& y) { return HTCLIENT; };
 	virtual void SetCutBoxWhenLeftButtonDown() {};
 	virtual void SetCutBox(const int& x, const int& y) {};
 	virtual void SetCutBox(const int& x1, const int& y1, const int& x2, const int& y2) {};
@@ -94,23 +95,16 @@ private:
 	void quitApp(const int& exitCode);
 	bool OnTimer(const unsigned int& id);
 	//paint
-	
-	
 	unsigned char* pixelData;
 	Painter* painter;
-
-
 	//get color
 	std::wstring getPixelRgb();
 	std::wstring getPixelHex();
 	void drawPixelInfo();
 	LONG pixelX{ -999999 }, pixelY{ -999999 };
-	
-
 	//save
 	void saveFile();
 	void saveClipboard();
-
 	//key
 	bool OnKeyDown(const unsigned int& key);
 	bool OnKeyUp(const unsigned int& key);

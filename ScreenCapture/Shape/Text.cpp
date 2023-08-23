@@ -1,7 +1,7 @@
 #include "Text.h"
 #include "../Font.h"
 #include "../Util.h"
-#include "../MainWin.h"
+#include "../WindowBase.h"
 
 static double _fontSize = 68.0f;
 
@@ -16,7 +16,7 @@ namespace Shape {
     }
     void Text::activeKeyboard(LONG x, LONG y)
     {
-        auto win = MainWin::Get();
+        auto win = WindowBase::Get();
         if (HIMC himc = ImmGetContext(win->hwnd))
         {
             COMPOSITIONFORM comp = {};
@@ -97,12 +97,13 @@ namespace Shape {
     }
     void Text::Draw(const double& x1, const double& y1, const double& x2, const double& y2)
     {
+
+        auto win = WindowBase::Get();
         if (!needDraw)
         {
-            KillTimer(MainWin::Get()->hwnd, 999);
+            KillTimer(win->hwnd, 999);
             return;
         }
-        auto win = MainWin::Get();
         if (x1 == -1) {
             SetTimer(win->hwnd, 999, 660, (TIMERPROC)NULL);
         }
@@ -174,7 +175,7 @@ namespace Shape {
     }
     bool Text::EndDraw()
     {
-        auto win = MainWin::Get();
+        auto win = WindowBase::Get();
         if (!win->IsDrawing) {
             return true;
         }
@@ -206,7 +207,7 @@ namespace Shape {
     }
     void Text::ShowDragger()
     {
-        auto win = MainWin::Get();
+        auto win = WindowBase::Get();
         isDraggingDragger = false;
         win->Refresh();
     }
@@ -311,7 +312,7 @@ namespace Shape {
                 break;
             }
             case 4: {
-                auto win = MainWin::Get();
+                auto win = WindowBase::Get();
                 auto xSpan = x - win->MouseDownPos.x;
                 auto ySpan = y - win->MouseDownPos.y;
                 box.x0 += xSpan;

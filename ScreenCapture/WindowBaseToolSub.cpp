@@ -3,7 +3,7 @@
 
 void WindowBase::drawSubToolBackground(const int& btnCount, const bool isCenter)
 {
-	PaintCtx->setFillStyle(BLRgba32(255, 255, 255, 255));
+	PaintCtx->setFillStyle(BLRgba32(255, 255, 255));
 	auto x = toolBoxMain.x0 + (double)SelectedToolIndex * toolBtnWidth + toolBtnWidth / 2 ;
 	auto y = toolBoxMain.y1 + toolBoxSpan / 2;
 	PaintCtx->fillTriangle(x, y, x + 6, y + toolBoxSpan / 2, x - 6, y + toolBoxSpan / 2);
@@ -21,6 +21,8 @@ void WindowBase::drawSubToolBackground(const int& btnCount, const bool isCenter)
 		toolBoxSub.y1 = toolBoxSub.y0 + toolBoxHeight;
 	}
 	PaintCtx->fillBox(toolBoxSub);
+	PaintCtx->setStrokeWidth(1.0f);
+	PaintCtx->strokeBox(toolBoxSub, BLRgba32(9, 88, 217));
 }
 
 void WindowBase::drawSubTool()

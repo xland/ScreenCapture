@@ -1,5 +1,5 @@
 #include "Line.h"
-#include "../MainWin.h"
+#include "../WindowBase.h"
 namespace Shape {
 
     Line::Line()
@@ -12,7 +12,7 @@ namespace Shape {
     }
 	void Line::Draw(const double& x1, const double& y1, const double& x2, const double& y2)
 	{
-        auto win = MainWin::Get();
+        auto win = WindowBase::Get();
 		auto context = win->PaintCtx;
 		context->begin(*win->PrepareImage);
 		context->clearAll();
@@ -41,7 +41,7 @@ namespace Shape {
 	}
     bool Line::EndDraw()
     {
-        auto win = MainWin::Get();
+        auto win = WindowBase::Get();
         if (!win->IsDrawing) {
             return true;
         }
@@ -80,7 +80,7 @@ namespace Shape {
         draggers[1].y0 = y2 - draggerSize;
         draggers[1].x1 = x2 + draggerSize;
         draggers[1].y1 = y2 + draggerSize;
-        auto win = MainWin::Get();
+        auto win = WindowBase::Get();
         auto context = win->PaintCtx;
         context->begin(*win->PrepareImage);
         context->setStrokeStyle(BLRgba32(0, 0, 0));
