@@ -32,7 +32,7 @@ public:
 	unsigned int w, h;
 	HWND hwnd;
 
-	State state = State::start;
+	State state;
 	State PreState;
 	int SelectedToolIndex = -1;
 
@@ -69,6 +69,7 @@ protected:
 	virtual void PinWindow() {};
 	virtual void OnResize() {};
 	virtual void BeforeDrawTool(){}
+	virtual void SetToolMainPos() {};
 	void InitWindow();
 	void InitLayerImg();
 	BLBox cutBox;
@@ -85,6 +86,7 @@ protected:
 	int toolBoxHeight = 56;
 	int iconLeftMargin = 16;
 	int iconTopMargin = 38;
+	BLBox toolBoxMain;
 
 private:
 	static LRESULT CALLBACK RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -134,9 +136,7 @@ private:
 
 
 	//tool main
-	void setToolBoxMain();
 	void drawToolMain();
-	BLBox toolBoxMain;
 	int mouseEnterMainToolIndex = -1;
 
 	//tool sub

@@ -6,6 +6,7 @@ static MainWin* mainWin;
 
 MainWin::MainWin()
 {
+    state = State::start;
     initWindowSize();
     shotScreen();
     enumDesktopWindow();    
@@ -75,4 +76,53 @@ void MainWin::PinWindow() {
     h = h + toolBoxSpan + toolBoxHeight + 32;
     new PinWin(cutBox.x0,cutBox.y0,w,h,img);
     SendMessage(hwnd, WM_CLOSE, NULL, NULL);
+}
+
+
+void MainWin::SetToolMainPos()
+{
+    toolBoxMain.x0 = cutBox.x1 - toolBoxWidth;
+    auto heightSpan = toolBoxSpan * 3 + toolBoxHeight * 2;
+    if (int(h - cutBox.y1) > heightSpan)
+    {
+        //屏幕底部还有足够的空间
+        //两个高度，为屏幕底边也留一点间隙 
+        toolBoxMain.y0 = cutBox.y1 + toolBoxSpan;
+    }
+    else if (int(cutBox.y0) > heightSpan)
+    {
+        //屏幕顶部还有足够的空间
+        if (SelectedToolIndex == -1)
+        {
+            //尚未确定state，主工具条贴着截图区
+            toolBoxMain.y0 = cutBox.y0 - toolBoxSpan - toolBoxHeight;
+        }
+        else
+        {
+            //已经确定了state，要为子工具条留出区域
+            toolBoxMain.y0 = cutBox.y0 - (double)toolBoxSpan * 2 - (double)toolBoxHeight * 2;
+        }
+    }
+    else
+    {
+        //顶部底部都没有足够的空间
+        if (SelectedToolIndex == -1)
+        {
+            //尚未确定state，主工具条贴着截图区底部上方
+            toolBoxMain.y0 = cutBox.y1 - toolBoxSpan - toolBoxHeight;
+        }
+        else
+        {
+            //尚未确定state，主工具条贴着截图区底部上方，并为子工具条留出空间
+            toolBoxMain.y0 = cutBox.y1 - (double)toolBoxSpan * 2 - (double)toolBoxHeight * 2;
+        }
+    }
+    if (toolBoxMain.x0 < 0) {
+        //如果工具条超出了屏幕左侧，那么让工具条与截图区域左侧对齐
+        //todo 如果工具条在右侧屏幕的左边缘，并超出了右侧屏幕的左边缘
+        toolBoxMain.x0 = cutBox.x0;
+    }
+    toolBoxMain.y1 = toolBoxMain.y0 + toolBoxHeight;
+    toolBoxMain.x1 = toolBoxMain.x0 + toolBoxWidth;
+
 }

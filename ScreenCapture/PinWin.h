@@ -7,6 +7,8 @@ public:
 	~PinWin();
 private:
 	int OnHitTest() override;
+	void drawSrcImg();
 	void drawShadow();
+	BLImage* srcImg;
 };
 

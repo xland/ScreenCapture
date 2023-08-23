@@ -3,12 +3,18 @@
 
 PinWin::PinWin(const int& x, const int& y, const int& w, const int& h, BLImage* img)
 {
+    state = State::maskReady;
 	this->x = x;
 	this->y = y;
-	this->w = img->width();
-	this->h = img->height();
-	OriginalImage = img;
+	this->w = w;
+	this->h = h;
+    srcImg = img;
 	InitLayerImg();
+    OriginalImage = new BLImage(w, h, BL_FORMAT_PRGB32);
+    PaintCtx->begin(*OriginalImage);
+    PaintCtx->clearAll();
+    PaintCtx->end();
+    drawSrcImg();
 	InitWindow();
 	Show();
 }
@@ -18,13 +24,22 @@ PinWin::~PinWin()
 }
 int PinWin::OnHitTest() {
 
-	LONG cur_style = GetWindowLong(hwnd, GWL_EXSTYLE);
-	SetWindowLong(hwnd, GWL_EXSTYLE, cur_style | WS_EX_TRANSPARENT | WS_EX_LAYERED);
-	return HTCLIENT; //HTTRANSPARENT;
+	//LONG cur_style = GetWindowLong(hwnd, GWL_EXSTYLE);
+	//SetWindowLong(hwnd, GWL_EXSTYLE, cur_style | WS_EX_TRANSPARENT | WS_EX_LAYERED);
+	return HTCAPTION; //HTTRANSPARENT;
 }
+
+void PinWin::drawSrcImg() {
+    PaintCtx->begin(*OriginalImage);
+    drawShadow();
+    PaintCtx->blitImage(BLPoint(16, 16), *srcImg);
+    PaintCtx->end();
+}
+
 void PinWin::drawShadow()
 {
-    
+    unsigned w = srcImg->width();
+    unsigned h = srcImg->height();
     {//左上
         BLGradient radial(BLRadialGradientValues(16, 16, 16, 16, 16));
         radial.addStop(0.0, BLRgba32(0x12000000));

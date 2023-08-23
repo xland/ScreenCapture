@@ -157,11 +157,7 @@ bool WindowBase::OnLeftButtonDown(const int& x, const int& y)
             History::Redo();
             return false;
         }
-        else if (mouseEnterMainToolIndex == 11) //pin window
-        {
-            PinWindow();
-            return false;
-        }
+         //pin window   
         else if (mouseEnterMainToolIndex == 12) //save file
         {
             IsLeftBtnDown = false;
@@ -303,6 +299,11 @@ bool WindowBase::OnLeftButtonUp(const int& x, const int& y)
 {
     IsLeftBtnDown = false;
     if (mouseEnterMainToolIndex != -1 || mouseEnterSubToolIndex != -1) {
+        if (mouseEnterMainToolIndex == 11) //pin window
+        {
+            PinWindow();
+            return false;
+        }
         Refresh(); //undo redo 的按钮状态
         return false;
     }

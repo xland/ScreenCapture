@@ -27,9 +27,6 @@
 - Eraser和Pen为什么画完了之后要重置win->MouseDownPos，直接用数组里最后一个点
 - 为啥enddraw之后还要清PrepareImage
 - ----------------------------------
-- 抽象窗口基类，主窗口、钉住窗口、工具条窗口均继承自此基类
-- 父类至少实现RouteWindowMessage、CreateWindow、hwnd、Show、Close、WindowProc等
-- Close方法应能释放窗口占据的堆资源
 - 点击钉住窗口按钮，把截图区域的图像复制到一个BLImage中
 - 再创建一个无边框有阴影不能缩放窗口Dialog，并置顶
 - 把前面复制的BLImage传递给Dialog，并渲染出来

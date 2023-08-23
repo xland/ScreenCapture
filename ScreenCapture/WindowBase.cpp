@@ -166,11 +166,16 @@ LRESULT CALLBACK WindowBase::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPAR
         case WM_SIZE:
         {
             if (painter) {
+                this->w = LOWORD(lParam);
+                this->h = HIWORD(lParam);
                 OnResize();
-                painter->OnResize(hWnd, LOWORD(lParam), HIWORD(lParam));
+                painter->OnResize(hWnd, w, h);
                 Refresh();
             }            
             return false;
+        }
+        case WM_MOVING: {
+
         }
     }    
     return DefWindowProcW(hWnd, msg, wParam, lParam);
