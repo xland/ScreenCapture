@@ -11,8 +11,13 @@ Font::Font()
 }
 Font::~Font()
 {
-    delete fontText;
-    delete fontIcon;
+    if (fontText) {
+        delete fontText;
+    }    
+    if (fontIcon) {
+        delete fontIcon;
+    }
+    
 }
 void Font::Dispose()
 {

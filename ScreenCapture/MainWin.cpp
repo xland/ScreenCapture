@@ -65,19 +65,94 @@ void MainWin::PinWindow() {
     auto img = new BLImage (w + 32, h + 32, BL_FORMAT_PRGB32);
     PaintCtx->begin(*img);
     PaintCtx->clearAll();
-    PaintCtx->setFillStyle(BLRgba32(100, 100, 100, 100));
-    PaintCtx->fillBox(0, 0, 10, 10);
-    //PaintCtx->blitImage(BLPoint(16,16), *OriginalImage, BLRectI((int)cutBox.x0, (int)cutBox.y0, (int)w, (int)h));
-    //PaintCtx->blitImage(BLPoint(16,16), *CanvasImage, BLRectI((int)cutBox.x0, (int)cutBox.y0, (int)w, (int)h));
-    //BLGradient linear(BLLinearGradientValues(0, 0, 16, 16));
-    //linear.addStop(0.0, BLRgba32(0x00000000));
-    //linear.addStop(0.5, BLRgba32(0x11000000));
-    //linear.addStop(1.0, BLRgba32(0x33000000));
-    //PaintCtx->setFillStyle(linear);
+
+    {
+        BLGradient radial(BLRadialGradientValues(16, 16, 16, 16, 16));
+        radial.addStop(0.0, BLRgba32(0x12000000));
+        radial.addStop(1.0, BLRgba32(0x00000000));
+        PaintCtx->fillCircle(16, 16, 16, radial);
+
+        PaintCtx->setCompOp(BL_COMP_OP_CLEAR);
+        PaintCtx->setFillStyle(BLRgba32(0xFF000000));
+        PaintCtx->fillBox(16, 0, 32,16);
+        PaintCtx->fillBox(0, 16, 16, 32);
+        PaintCtx->setCompOp(BL_COMP_OP_SRC_OVER);
+    }
+
+    {
+        BLGradient radial(BLRadialGradientValues(w+16, 16, w+16, 16, 16));
+        radial.addStop(0.0, BLRgba32(0x12000000));
+        radial.addStop(1.0, BLRgba32(0x00000000));
+        PaintCtx->fillCircle(w+16, 16, 16, radial);
+
+        PaintCtx->setCompOp(BL_COMP_OP_CLEAR);
+        PaintCtx->setFillStyle(BLRgba32(0xFF000000));
+        PaintCtx->fillBox(w, 0, w+16, 16);
+        PaintCtx->fillBox(w+16, 16, w+32, 32);
+        PaintCtx->setCompOp(BL_COMP_OP_SRC_OVER);
+    }
+
+    {
+        BLGradient radial(BLRadialGradientValues(w+16, h+16, w+16, h+16, 16));
+        radial.addStop(0.0, BLRgba32(0x12000000));
+        radial.addStop(1.0, BLRgba32(0x00000000));
+        PaintCtx->fillCircle(w + 16, h + 16, 16, radial);
+
+        PaintCtx->setCompOp(BL_COMP_OP_CLEAR);
+        PaintCtx->setFillStyle(BLRgba32(0xFF000000));
+        PaintCtx->fillBox(w+16, h, w+32, h+16);
+        PaintCtx->fillBox(w, h+16, w+16, h+32);
+        PaintCtx->setCompOp(BL_COMP_OP_SRC_OVER);
+    }
+
+    {
+        BLGradient radial(BLRadialGradientValues(16, h+16, 16, h+16, 16));
+        radial.addStop(0.0, BLRgba32(0x12000000));
+        radial.addStop(1.0, BLRgba32(0x00000000));
+        PaintCtx->fillCircle(16, h + 16, 16, radial);
+
+        PaintCtx->setCompOp(BL_COMP_OP_CLEAR);
+        PaintCtx->setFillStyle(BLRgba32(0xFF000000));
+        PaintCtx->fillBox(0, h, 16, h+16);
+        PaintCtx->fillBox(16, h+16, 32, h+32);
+        PaintCtx->setCompOp(BL_COMP_OP_SRC_OVER);
+    }
+
+    {
+        BLGradient linear(BLLinearGradientValues(0, 0, 0, 16));
+        linear.addStop(0.0, BLRgba32(0x00000000));
+        linear.addStop(1.0, BLRgba32(0x12000000));
+        PaintCtx->fillBox(16, 0, w+16, 16, linear);
+    }
+    {
+
+        BLGradient linear(BLLinearGradientValues(w + 16, 0, w + 32, 0));
+        linear.addStop(0.0, BLRgba32(0x12000000));
+        linear.addStop(1.0, BLRgba32(0x00000000));
+        PaintCtx->fillBox(w + 16, 16, w + 32, h + 16, linear);
+    }    
+    {
+        BLGradient linear(BLLinearGradientValues(0, h + 16, 0, h + 32));
+        linear.addStop(0.0, BLRgba32(0x12000000));
+        linear.addStop(1.0, BLRgba32(0x00000000));
+        PaintCtx->fillBox(16, h+16, w + 16, h + 32, linear);
+    }
+    {
+        BLGradient linear(BLLinearGradientValues(0, 0, 16, 0));
+        linear.addStop(0.0, BLRgba32(0x00000000));
+        linear.addStop(1.0, BLRgba32(0x12000000));
+        PaintCtx->fillBox(0, 16, 16, h + 16, linear);
+    }
+
+
+
+
+    PaintCtx->blitImage(BLPoint(16, 16), *OriginalImage, BLRectI((int)cutBox.x0, (int)cutBox.y0, (int)w, (int)h));
+    PaintCtx->blitImage(BLPoint(16, 16), *CanvasImage, BLRectI((int)cutBox.x0, (int)cutBox.y0, (int)w, (int)h));
+
+
     //PaintCtx->fillBox(0, 0, 16, 16);
-    //linear.setValues(BLLinearGradientValues(0, 0, 0, 16));
-    //PaintCtx->setFillStyle(linear);
-    //PaintCtx->fillBox(16, 0, w+16, 16);
+
     //linear.setValues(BLLinearGradientValues(0, 16, 16, 0));
     //PaintCtx->setFillStyle(linear);
     //PaintCtx->fillBox(w+16, 0, w + 32, 16);

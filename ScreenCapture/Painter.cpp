@@ -33,23 +33,10 @@ Painter::~Painter() {
 	SafeRelease(&m_pD2DFactory1);
 	SafeRelease(&m_pDCompositionDevice);
 	SafeRelease(&m_pDCompositionTarget);
-	SafeRelease(&d2DImage);
 }
 
 void Painter::Paint(unsigned int& w, unsigned int& h, unsigned char* data, unsigned int& stride) {
 	auto rect = D2D1::RectU(0, 0, w, h);
-	if (w < 1000) {
-		unsigned b = data[20];
-		unsigned g = data[21];
-		unsigned r = data[22];
-		unsigned a = data[23];
-
-
-		b = data[0];
-		g = data[1];
-		r = data[2];
-		a = data[3];
-	}
 	m_pD2DTargetBitmap->CopyFromMemory(&rect, data, stride);
 	HRESULT hr = m_pDXGISwapChain1->Present(1, 0);
 }

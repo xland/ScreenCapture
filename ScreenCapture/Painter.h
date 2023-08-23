@@ -29,6 +29,5 @@ private:
 
 	IDCompositionDevice* m_pDCompositionDevice = NULL;
 	IDCompositionTarget* m_pDCompositionTarget = NULL;
-	ID2D1Bitmap* d2DImage;
 };
 
