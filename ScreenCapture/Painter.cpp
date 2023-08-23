@@ -36,8 +36,20 @@ Painter::~Painter() {
 	SafeRelease(&d2DImage);
 }
 
-void Painter::Paint(unsigned int& w, unsigned int& h, void* data, unsigned int& stride) {
+void Painter::Paint(unsigned int& w, unsigned int& h, unsigned char* data, unsigned int& stride) {
 	auto rect = D2D1::RectU(0, 0, w, h);
+	if (w < 1000) {
+		unsigned b = data[20];
+		unsigned g = data[21];
+		unsigned r = data[22];
+		unsigned a = data[23];
+
+
+		b = data[0];
+		g = data[1];
+		r = data[2];
+		a = data[3];
+	}
 	m_pD2DTargetBitmap->CopyFromMemory(&rect, data, stride);
 	HRESULT hr = m_pDXGISwapChain1->Present(1, 0);
 }
@@ -127,7 +139,7 @@ HRESULT Painter::ConfigureSwapChain(HWND hWnd)
 	HRESULT hr = S_OK;
 	D2D1_BITMAP_PROPERTIES1 bitmapProperties = D2D1::BitmapProperties1(
 		D2D1_BITMAP_OPTIONS::D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS::D2D1_BITMAP_OPTIONS_CANNOT_DRAW,
-		D2D1::PixelFormat(DXGI_FORMAT::DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE::D2D1_ALPHA_MODE_PREMULTIPLIED),
+		D2D1::PixelFormat(DXGI_FORMAT::DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE::D2D1_ALPHA_MODE_IGNORE), //D2D1_ALPHA_MODE::D2D1_ALPHA_MODE_PREMULTIPLIED
 		0,
 		0,
 		NULL

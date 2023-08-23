@@ -10,7 +10,7 @@ public:
 	Painter(const HWND& hwnd);
 	~Painter();
 	void OnResize(HWND hWnd, UINT nWidth, UINT nHeight);
-	void Paint(unsigned int& w, unsigned int& h,void* data,unsigned int& stride);
+	void Paint(unsigned int& w, unsigned int& h, unsigned char* data,unsigned int& stride);
 private:
 	HRESULT CreateD2D1Factory();
 	HRESULT CreateSwapChain(HWND hWnd);

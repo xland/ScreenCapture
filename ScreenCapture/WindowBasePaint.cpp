@@ -3,6 +3,7 @@
 void WindowBase::InitLayerImg() {
     CanvasImage = new BLImage(w, h, BL_FORMAT_PRGB32);
     PrepareImage = new BLImage(w, h, BL_FORMAT_PRGB32);
+    bottomImage = new BLImage(w, h, BL_FORMAT_PRGB32);
 
     PaintCtx = new BLContext();
     PaintCtx->begin(*PrepareImage);
@@ -11,8 +12,10 @@ void WindowBase::InitLayerImg() {
     PaintCtx->begin(*CanvasImage);
     PaintCtx->clearAll();
     PaintCtx->end();
-
-    bottomImage = new BLImage(w, h, BL_FORMAT_PRGB32);
+    PaintCtx->begin(*bottomImage);
+    PaintCtx->clearAll();
+    PaintCtx->end();
+    
     BLImageData imgData;
     bottomImage->getData(&imgData);
     pixelData = (unsigned char*)imgData.pixelData;
