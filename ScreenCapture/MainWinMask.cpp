@@ -1,7 +1,7 @@
 ﻿#include "MainWin.h"
 
 
-void MainWin::DrawMaskBox() {
+void MainWin::BeforeDrawTool() {
     PaintCtx->setFillStyle(BLRgba32(0, 0, 0, 180));
     PaintCtx->fillBoxArray(maskBoxes, 8);
     PaintCtx->setStrokeStyle(BLRgba32(22, 119, 255));
@@ -17,7 +17,7 @@ void MainWin::SetCutBoxWhenLeftButtonDown() {
     }
 }
 
-void MainWin::CheckMouseEnterMaskBox(const int& x, const int& y) {
+void MainWin::MouseMoveWhenMaskReady(const int& x, const int& y) {
     int index = -1;
     for (size_t i = 0; i < 8; i++)
     {

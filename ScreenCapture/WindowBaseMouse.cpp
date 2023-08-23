@@ -187,6 +187,12 @@ bool WindowBase::OnLeftButtonDown(const int& x, const int& y)
             return false;
         }
         if (mouseEnterMainToolIndex != -1 && mouseEnterMainToolIndex < 9) {
+            if (SelectedToolIndex == mouseEnterMainToolIndex) {
+                state = State::maskReady;
+                SelectedToolIndex = -1;
+                Refresh();
+                return false;
+            }
             SelectedToolIndex = mouseEnterMainToolIndex;
             state = (State)(SelectedToolIndex + 2);
             //设置几个图形默认是否需要填充
@@ -275,7 +281,7 @@ bool WindowBase::OnMouseMove(const int& x, const int& y)
             return false;
         }
         if (state == State::maskReady) {
-            CheckMouseEnterMaskBox(x,y);
+            MouseMoveWhenMaskReady(x,y);
         }
         else
         {
@@ -310,6 +316,7 @@ bool WindowBase::OnLeftButtonUp(const int& x, const int& y)
     }
     case State::maskReady:
     {
+        Refresh();
         break;
     }
     case State::box:

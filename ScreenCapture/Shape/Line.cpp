@@ -37,7 +37,7 @@ namespace Shape {
             context->strokeLine(x2, y2, x1, y1);
         }		
 		context->end();
-		InvalidateRect(win->hwnd, nullptr, false);
+        win->Refresh();
 	}
     bool Line::EndDraw()
     {
@@ -87,7 +87,7 @@ namespace Shape {
         context->setStrokeWidth(2);
         context->strokeBoxArray(draggers, 2);
         context->end();
-        InvalidateRect(win->hwnd, nullptr, false);
+        win->Refresh();
     }
     void Line::MouseInDragger(const double& x, const double& y)
     {

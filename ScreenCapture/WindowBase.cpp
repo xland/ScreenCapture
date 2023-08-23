@@ -38,8 +38,7 @@ LRESULT CALLBACK WindowBase::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wPar
 }
 
 
-WindowBase::WindowBase()
-{
+WindowBase::WindowBase(){
 }
 
 WindowBase::~WindowBase()
@@ -50,7 +49,7 @@ WindowBase::~WindowBase()
     delete CanvasImage;
     delete PrepareImage;
     delete MosaicImage;
-    delete bottomImage;
+    delete BottomImage;
     delete painter;
 }
 
@@ -167,6 +166,7 @@ LRESULT CALLBACK WindowBase::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPAR
         case WM_SIZE:
         {
             if (painter) {
+                OnResize();
                 painter->OnResize(hWnd, LOWORD(lParam), HIWORD(lParam));
                 Refresh();
             }            

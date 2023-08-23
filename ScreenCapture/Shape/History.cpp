@@ -139,12 +139,10 @@ void  History::Undo()
 	{
 		win->IsDrawing = true;
 		history[i]->EndDraw();
-		//win->CanvasImage->writeToFile("abc.png");
 	}
 	//把最后一个需要绘制的元素画到PrepareImage上，方便用户修改
 	win->IsDrawing = true;
 	history[lastDrawShapeIndex]->Draw(-1, -1, -1, -1); 
-	//win->CanvasImage->writeToFile("def.png");
 	
 	win->SelectedToolIndex = (int)history[lastDrawShapeIndex]->state - 2;
 	if (!LastShapeHasDragger()) {

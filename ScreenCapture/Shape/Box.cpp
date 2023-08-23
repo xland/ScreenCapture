@@ -104,7 +104,7 @@ namespace Shape {
         context->setStrokeWidth(2);
         context->strokeBoxArray(draggers, 4);
         context->end();
-        InvalidateRect(win->hwnd, nullptr, false);
+        win->Refresh();
     }
 
     void Box::MouseInDragger(const double& x, const double& y)

@@ -45,6 +45,7 @@ public:
 	BLImage* CanvasImage;
 	BLImage* OriginalImage;
 	BLImage* MosaicImage;
+	BLImage* BottomImage;
 	bool IsDrawing = false;
 	bool IsMosaicUsePen = false;
 	unsigned int stride;
@@ -64,24 +65,35 @@ protected:
 	virtual void SetCutBox(const int& x, const int& y) {};
 	virtual void SetCutBox(const int& x1, const int& y1, const int& x2, const int& y2) {};
 	virtual void HighLightWindowBox(const int& x, const int& y) {};
-	virtual void CheckMouseEnterMaskBox(const int& x, const int& y) {};
-	virtual void DrawMaskBox() {};
+	virtual void MouseMoveWhenMaskReady(const int& x, const int& y) {};
 	virtual void PinWindow() {};
+	virtual void OnResize() {};
+	virtual void BeforeDrawTool(){}
 	void InitWindow();
 	void InitLayerImg();
 	BLBox cutBox;
 	int cutBoxBorderWidth = 4;
 	int mouseInMaskBoxIndex = -1; //todo
+
+
+	int mainToolBtnCount = 15;
+	int toolBoxSpan = 12;//工具条距离截图区域的高度
+	int toolBtnSpanWidth = 6;
+	int toolBtnSpanCount = 2;
+	int toolBtnWidth = 60;
+	int toolBoxWidth = mainToolBtnCount * toolBtnWidth + toolBtnSpanWidth * toolBtnSpanCount;
+	int toolBoxHeight = 56;
+	int iconLeftMargin = 16;
+	int iconTopMargin = 38;
+
 private:
 	static LRESULT CALLBACK RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 	LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);	
 	void quitApp(const int& exitCode);
 	bool OnTimer(const unsigned int& id);
-
 	//paint
-	//bool paint();
-	bool OnPaint();
-	BLImage* bottomImage;
+	
+	
 	unsigned char* pixelData;
 	Painter* painter;
 
@@ -119,15 +131,7 @@ private:
 	void drawBtnStrokeWidth(const BLPoint& point, const bool& checked, const bool& hover);
 	void drawBtnUndoRedo(const BLPoint& point, const Icon::Name& name, const bool& hover, const bool& enable);
 	bool checkMouseEnterToolBox(const POINT& pos);
-	int mainToolBtnCount = 15;
-	int toolBoxSpan = 12;//工具条距离截图区域的高度
-	int toolBtnSpanWidth = 6;
-	int toolBtnSpanCount = 2;
-	int toolBtnWidth = 60;
-	int toolBoxWidth = mainToolBtnCount * toolBtnWidth + toolBtnSpanWidth * toolBtnSpanCount;
-	int toolBoxHeight = 56;
-	int iconLeftMargin = 16;
-	int iconTopMargin = 38;
+
 
 	//tool main
 	void setToolBoxMain();

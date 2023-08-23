@@ -25,10 +25,10 @@ private:
 
 	//mask
 	void SetCutBoxWhenLeftButtonDown() override;
-	void CheckMouseEnterMaskBox(const int& x, const int& y) override;
+	void MouseMoveWhenMaskReady(const int& x, const int& y) override;
 	void SetCutBox(const int& x, const int& y) override;
 	void SetCutBox(const int& x1, const int& y1, const int& x2, const int& y2) override;
-	void DrawMaskBox() override;	
+	void BeforeDrawTool() override;
 	BLBox maskBoxes[8];	
 	BLPoint dragStartCutBoxStartPos;
 	BLPoint dragStartCutBoxEndPos;

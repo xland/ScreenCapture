@@ -13,9 +13,11 @@ Font::~Font()
 {
     if (fontText) {
         delete fontText;
+        fontText = nullptr;
     }    
     if (fontIcon) {
         delete fontIcon;
+        fontIcon = nullptr;
     }
     
 }
