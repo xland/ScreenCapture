@@ -1,21 +1,15 @@
 ﻿#include "PinWin.h"
 #include "History.h"
 
-PinWin::PinWin(const int& x, const int& y, const int& w, const int& h, BLImage* img)
+PinWin::PinWin(const int& x, const int& y, BLImage* img)
 {
-    state = State::maskReady;
-    History::Clear();
-	this->x = x;
-	this->y = y;
-	this->w = w;
-	this->h = h;
-    srcImg = img;
+    state = State::maskReady;    
+	this->x = x-16;
+	this->y = y-16;
+	this->w = img->width() + 32;
+	this->h = img->height() + 32;
+    OriginalImage = img;
 	InitLayerImg();
-    OriginalImage = new BLImage(w, h, BL_FORMAT_PRGB32);
-    PaintCtx->begin(*OriginalImage);
-    PaintCtx->clearAll();
-    PaintCtx->end();
-    drawSrcImg();
 	InitWindow();
 	Show();
 }
@@ -23,35 +17,24 @@ PinWin::~PinWin()
 {
 
 }
-int PinWin::OnHitTest(const int& x, const int& y) {
-    if (state == State::maskReady && 
-        x > this->x + 16 && x<this->x + 16 + srcImg->width() && 
-        y>this->y + 16 && y < this->y + 16 + srcImg->height()) {
-        return HTCAPTION;
-    }
-    return HTCLIENT;
-}
 
-void PinWin::drawSrcImg() {
-    PaintCtx->begin(*OriginalImage);
+void PinWin::BeforePaint() {
+    PaintCtx->begin(*BottomImage);
     PaintCtx->clearAll();
     drawShadow();
-    PaintCtx->blitImage(BLPoint(16, 16), *srcImg);
+    PaintCtx->blitImage(BLPoint(16, 16), *OriginalImage);
     PaintCtx->end();
 }
 
-void PinWin::SetToolMainPos()
-{
-    toolBoxMain.x0 = 16;
-    toolBoxMain.y0 = 16 + srcImg->height() + toolBoxSpan;
-    toolBoxMain.x1 = toolBoxMain.x0 + toolBoxWidth;
-    toolBoxMain.y1 = toolBoxMain.y0 + toolBoxHeight;
+int PinWin::OnHitTest(const int& x, const int& y) {
+    return HTCAPTION;
 }
 
 void PinWin::drawShadow()
 {
-    unsigned w = srcImg->width();
-    unsigned h = srcImg->height();
+    unsigned w = this->w - 32;
+    unsigned h = this->h - 32;
+
     {//左上
         BLGradient radial(BLRadialGradientValues(16, 16, 16, 16, 16));
         radial.addStop(0.0, BLRgba32(0x12000000));

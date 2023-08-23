@@ -1,7 +1,7 @@
 ﻿#include "MainWin.h"
 
 
-void MainWin::BeforeDrawTool() {
+void MainWin::drawMaskBoxes() {
     PaintCtx->setFillStyle(BLRgba32(0, 0, 0, 180));
     PaintCtx->fillBoxArray(maskBoxes, 8);
     PaintCtx->setStrokeStyle(BLRgba32(22, 119, 255));

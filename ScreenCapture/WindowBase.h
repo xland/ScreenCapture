@@ -69,10 +69,11 @@ protected:
 	virtual void MouseMoveWhenMaskReady(const int& x, const int& y) {};
 	virtual void PinWindow() {};
 	virtual void OnResize() {};
-	virtual void BeforeDrawTool(){}
-	virtual void SetToolMainPos() {};
+	virtual void BeforePaint() {};
 	void InitWindow();
 	void InitLayerImg();
+	void drawToolMain();
+	void drawPixelInfo();
 	BLBox cutBox;
 	int cutBoxBorderWidth = 4;
 	int mouseInMaskBoxIndex = -1; //todo
@@ -100,7 +101,6 @@ private:
 	//get color
 	std::wstring getPixelRgb();
 	std::wstring getPixelHex();
-	void drawPixelInfo();
 	LONG pixelX{ -999999 }, pixelY{ -999999 };
 	//save
 	void saveFile();
@@ -130,7 +130,6 @@ private:
 
 
 	//tool main
-	void drawToolMain();
 	int mouseEnterMainToolIndex = -1;
 
 	//tool sub

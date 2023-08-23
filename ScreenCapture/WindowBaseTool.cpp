@@ -152,9 +152,7 @@ bool WindowBase::checkMouseEnterToolBox(const POINT& pos)
 }
 
 void WindowBase::drawToolMain()
-{
-	if (state == State::start) return;
-	SetToolMainPos();
+{	
 	PaintCtx->setFillStyle(BLRgba32(255, 255, 255));
 	PaintCtx->fillBox(toolBoxMain);
 	PaintCtx->setStrokeWidth(1.0f);

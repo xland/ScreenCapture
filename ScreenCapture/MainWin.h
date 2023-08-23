@@ -14,7 +14,8 @@ private:
 	void initWindowSize();
 	void shotScreen();
 	void PinWindow() override;
-	void SetToolMainPos() override;
+	void setToolMainPos();
+	void BeforePaint() override;
 
 	//desktop window boxes
 	void enumDesktopWindow();
@@ -26,7 +27,7 @@ private:
 	void MouseMoveWhenMaskReady(const int& x, const int& y) override;
 	void SetCutBox(const int& x, const int& y) override;
 	void SetCutBox(const int& x1, const int& y1, const int& x2, const int& y2) override;
-	void BeforeDrawTool() override;
+	void drawMaskBoxes();
 	BLBox maskBoxes[8];	
 	BLPoint dragStartCutBoxStartPos;
 	BLPoint dragStartCutBoxEndPos;

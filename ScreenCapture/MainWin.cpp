@@ -46,26 +46,46 @@ void MainWin::shotScreen()
         });
 }
 
-void MainWin::PinWindow() {
+void MainWin::BeforePaint() {
+    PaintCtx->begin(*BottomImage);
+    PaintCtx->blitImage(BLRect(0, 0, w, h), *OriginalImage);
+    if (IsMosaicUsePen) {
+        PaintCtx->blitImage(BLRect(0, 0, w, h), *MosaicImage);
+    }
+    else
+    {
+        PaintCtx->blitImage(BLRect(0, 0, w, h), *CanvasImage);
+    }
+    if (IsDrawing) {
+        PaintCtx->blitImage(BLRect(0, 0, w, h), *PrepareImage);
+    }
+    drawMaskBoxes();
+    if (state != State::start) {
+        setToolMainPos();
+        drawToolMain();
+    }    
+    if (!IsLeftBtnDown && state == State::start) {
+        drawPixelInfo();
+    }
+    PaintCtx->end();
+}
+
+void MainWin::PinWindow() {    
     auto w = cutBox.x1 - cutBox.x0;
     auto h = cutBox.y1 - cutBox.y0;
     auto img = new BLImage(w, h, BL_FORMAT_PRGB32);
     PaintCtx->begin(*img);
+    PaintCtx->clearAll();
     PaintCtx->blitImage(BLPoint(0,0), *OriginalImage, BLRectI((int)cutBox.x0, (int)cutBox.y0, (int)w, (int)h));
     PaintCtx->blitImage(BLPoint(0,0), *CanvasImage, BLRectI((int)cutBox.x0, (int)cutBox.y0, (int)w, (int)h));
     PaintCtx->end();
-
-    if (w < toolBoxWidth) {
-        w = toolBoxWidth;
-    }
-    w += 32;
-    h = h + toolBoxSpan*2 + toolBoxHeight*2 + 32;
-    new PinWin(cutBox.x0,cutBox.y0,w,h,img);
+    new PinWin(cutBox.x0, cutBox.y0, img);
+    History::Clear();
     SendMessage(hwnd, WM_CLOSE, NULL, NULL);
 }
 
 
-void MainWin::SetToolMainPos()
+void MainWin::setToolMainPos()
 {
     toolBoxMain.x0 = cutBox.x1 - toolBoxWidth;
     auto heightSpan = toolBoxSpan * 3 + toolBoxHeight * 2;

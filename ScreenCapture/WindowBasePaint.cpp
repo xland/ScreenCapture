@@ -14,8 +14,7 @@ void WindowBase::InitLayerImg() {
     PaintCtx->end();
     PaintCtx->begin(*BottomImage);
     PaintCtx->clearAll();
-    PaintCtx->end();
-    
+    PaintCtx->end();    
     BLImageData imgData;
     BottomImage->getData(&imgData);
     pixelData = (unsigned char*)imgData.pixelData;
@@ -26,25 +25,7 @@ void WindowBase::InitLayerImg() {
 
 void WindowBase::Refresh()
 {
-    PaintCtx->begin(*BottomImage);
-    PaintCtx->clearAll();
-    PaintCtx->blitImage(BLRect(0, 0, w, h), *OriginalImage);
-    if (IsMosaicUsePen) {
-        PaintCtx->blitImage(BLRect(0, 0, w, h), *MosaicImage);
-    }
-    else
-    {
-        PaintCtx->blitImage(BLRect(0, 0, w, h), *CanvasImage);
-    }
-    if (IsDrawing) {
-        PaintCtx->blitImage(BLRect(0, 0, w, h), *PrepareImage);
-    }
-    BeforeDrawTool();
-    drawToolMain();
-    if (!IsLeftBtnDown && state == State::start) {
-        drawPixelInfo();
-    }
-    PaintCtx->end();
+    BeforePaint();
     painter->Paint(w, h, pixelData, stride);
 
 }
