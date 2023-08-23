@@ -7,7 +7,10 @@ PinWin::PinWin(const int& x, const int& y, BLImage* img)
 	this->x = x-16;
 	this->y = y-16;
 	this->w = img->width() + 32;
-	this->h = img->height() + 32;
+    if (w < toolBoxWidth+32) {
+        this->w = toolBoxWidth+32;
+    }
+	this->h = img->height() + 32 + 2*toolBoxHeight + 2*toolBoxSpan;
     OriginalImage = img;
 	InitLayerImg();
 	InitWindow();
@@ -22,22 +25,66 @@ void PinWin::BeforePaint() {
     PaintCtx->begin(*BottomImage);
     PaintCtx->clearAll();
     drawShadow();
-    PaintCtx->blitImage(BLPoint(16, 16), *OriginalImage);
+    BLPoint startPos(16, 16);
+    BLRectI srcRect(16, 16, OriginalImage->width(), OriginalImage->height());
+    PaintCtx->blitImage(startPos, *OriginalImage);
+    if (IsMosaicUsePen) {
+        PaintCtx->blitImage(startPos, *MosaicImage, srcRect);
+    }
+    else
+    {
+        PaintCtx->blitImage(startPos, *CanvasImage,srcRect);
+    }
+    if (IsDrawing) {
+        PaintCtx->blitImage(startPos, *PrepareImage,srcRect);
+    }
+    setToolBoxPos();
+    drawToolMain();
     PaintCtx->end();
 }
 
 int PinWin::OnHitTest(const int& x, const int& y) {
+    
+    if (checkMouseEnterToolBox(x-this->x, y-this->y)) {
+        return HTCLIENT;
+    }
+    if (x > this->x + 16 && x<this->x + OriginalImage->width() + 16 && y>this->y + 16 && y < this->y + OriginalImage->height() + 16) {
+        if (state == State::maskReady) {
+            ChangeCursor(IDC_SIZEALL);
+            return HTCAPTION;
+        }
+        else
+        {
+            return HTCLIENT;
+        }
+        
+    }
+    
+
+
+
+    //LONG cur_style = GetWindowLong(hwnd, GWL_EXSTYLE);
+    //SetWindowLong(hwnd, GWL_EXSTYLE, cur_style | WS_EX_TRANSPARENT | WS_EX_LAYERED);
+
     return HTCAPTION;
+}
+
+void PinWin::setToolBoxPos()
+{
+    toolBoxMain.x0 = 16;
+    toolBoxMain.y0 = OriginalImage->height() + 32;
+    toolBoxMain.y1 = toolBoxMain.y0 + toolBoxHeight;
+    toolBoxMain.x1 = toolBoxMain.x0 + toolBoxWidth;
 }
 
 void PinWin::drawShadow()
 {
-    unsigned w = this->w - 32;
-    unsigned h = this->h - 32;
+    unsigned w = OriginalImage->width();
+    unsigned h = OriginalImage->height();
 
     {//左上
         BLGradient radial(BLRadialGradientValues(16, 16, 16, 16, 16));
-        radial.addStop(0.0, BLRgba32(0x12000000));
+        radial.addStop(0.0, BLRgba32(0x22000000));
         radial.addStop(1.0, BLRgba32(0x00000000));
         PaintCtx->fillCircle(16, 16, 16, radial);
 
@@ -49,7 +96,7 @@ void PinWin::drawShadow()
     }
     {//右上
         BLGradient radial(BLRadialGradientValues(w + 16, 16, w + 16, 16, 16));
-        radial.addStop(0.0, BLRgba32(0x12000000));
+        radial.addStop(0.0, BLRgba32(0x22000000));
         radial.addStop(1.0, BLRgba32(0x00000000));
         PaintCtx->fillCircle(w + 16, 16, 16, radial);
 
@@ -61,7 +108,7 @@ void PinWin::drawShadow()
     }
     { //右下
         BLGradient radial(BLRadialGradientValues(w + 16, h + 16, w + 16, h + 16, 16));
-        radial.addStop(0.0, BLRgba32(0x12000000));
+        radial.addStop(0.0, BLRgba32(0x22000000));
         radial.addStop(1.0, BLRgba32(0x00000000));
         PaintCtx->fillCircle(w + 16, h + 16, 16, radial);
 
@@ -73,7 +120,7 @@ void PinWin::drawShadow()
     }
     { //左下
         BLGradient radial(BLRadialGradientValues(16, h + 16, 16, h + 16, 16));
-        radial.addStop(0.0, BLRgba32(0x12000000));
+        radial.addStop(0.0, BLRgba32(0x22000000));
         radial.addStop(1.0, BLRgba32(0x00000000));
         PaintCtx->fillCircle(16, h + 16, 16, radial);
 
@@ -86,25 +133,25 @@ void PinWin::drawShadow()
     { //上
         BLGradient linear(BLLinearGradientValues(0, 0, 0, 16));
         linear.addStop(0.0, BLRgba32(0x00000000));
-        linear.addStop(1.0, BLRgba32(0x12000000));
+        linear.addStop(1.0, BLRgba32(0x22000000));
         PaintCtx->fillBox(16, 0, w + 16, 16, linear);
     }
     { //右
         BLGradient linear(BLLinearGradientValues(w + 16, 0, w + 32, 0));
-        linear.addStop(0.0, BLRgba32(0x12000000));
+        linear.addStop(0.0, BLRgba32(0x22000000));
         linear.addStop(1.0, BLRgba32(0x00000000));
         PaintCtx->fillBox(w + 16, 16, w + 32, h + 16, linear);
     }
     { //下
         BLGradient linear(BLLinearGradientValues(0, h + 16, 0, h + 32));
-        linear.addStop(0.0, BLRgba32(0x12000000));
+        linear.addStop(0.0, BLRgba32(0x22000000));
         linear.addStop(1.0, BLRgba32(0x00000000));
         PaintCtx->fillBox(16, h + 16, w + 16, h + 32, linear);
     }
     { //左
         BLGradient linear(BLLinearGradientValues(0, 0, 16, 0));
         linear.addStop(0.0, BLRgba32(0x00000000));
-        linear.addStop(1.0, BLRgba32(0x12000000));
+        linear.addStop(1.0, BLRgba32(0x22000000));
         PaintCtx->fillBox(0, 16, 16, h + 16, linear);
     }
 }

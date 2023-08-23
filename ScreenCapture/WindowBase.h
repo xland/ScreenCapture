@@ -79,6 +79,7 @@ protected:
 	int mouseInMaskBoxIndex = -1; //todo
 
 
+	bool checkMouseEnterToolBox(const int& x, const int& y);
 	int mainToolBtnCount = 15;
 	int toolBoxSpan = 12;//工具条距离截图区域的高度
 	int toolBtnSpanWidth = 6;
@@ -126,7 +127,7 @@ private:
 	void drawBtnColors(const BLPoint& point, const Icon::Name& name, const bool& checked, const bool& hover, const BLRgba32& color);
 	void drawBtnStrokeWidth(const BLPoint& point, const bool& checked, const bool& hover);
 	void drawBtnUndoRedo(const BLPoint& point, const Icon::Name& name, const bool& hover, const bool& enable);
-	bool checkMouseEnterToolBox(const POINT& pos);
+	
 
 
 	//tool main

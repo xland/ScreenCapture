@@ -61,7 +61,7 @@ void MainWin::BeforePaint() {
     }
     drawMaskBoxes();
     if (state != State::start) {
-        setToolMainPos();
+        setToolBoxPos();
         drawToolMain();
     }    
     if (!IsLeftBtnDown && state == State::start) {
@@ -85,7 +85,7 @@ void MainWin::PinWindow() {
 }
 
 
-void MainWin::setToolMainPos()
+void MainWin::setToolBoxPos()
 {
     toolBoxMain.x0 = cutBox.x1 - toolBoxWidth;
     auto heightSpan = toolBoxSpan * 3 + toolBoxHeight * 2;

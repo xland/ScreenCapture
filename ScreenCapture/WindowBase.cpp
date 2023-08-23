@@ -144,6 +144,12 @@ LRESULT CALLBACK WindowBase::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPAR
         case WM_ERASEBKGND: {
             return true;
         }
+        case WM_PAINT: {
+            BeforePaint();
+            painter->Paint(w, h, pixelData, stride);
+            ValidateRect(hwnd, NULL);
+            return true;
+        }
         case WM_TIMER: {
             return OnTimer(wParam);            
         }
@@ -175,12 +181,13 @@ LRESULT CALLBACK WindowBase::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPAR
                 this->h = HIWORD(lParam);
                 OnResize();
                 painter->OnResize(hWnd, w, h);
-                Refresh();
             }            
-            return false;
+            return true;
         }
-        case WM_MOVING: {
-
+        case WM_MOVE: {
+            this->x = LOWORD(lParam);
+            this->y = HIWORD(lParam);
+            return true;
         }
     }    
     return DefWindowProcW(hWnd, msg, wParam, lParam);

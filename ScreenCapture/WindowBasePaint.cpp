@@ -24,8 +24,6 @@ void WindowBase::InitLayerImg() {
 
 
 void WindowBase::Refresh()
-{
-    BeforePaint();
-    painter->Paint(w, h, pixelData, stride);
-
+{    
+    InvalidateRect(hwnd, nullptr, false);
 }

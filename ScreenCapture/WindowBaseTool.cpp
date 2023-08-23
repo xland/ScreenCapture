@@ -114,12 +114,12 @@ void WindowBase::drawSplitter(const BLPoint& point)
 	PaintCtx->strokeLine(x, point.y - 23, x, point.y + 2);
 }
 
-bool WindowBase::checkMouseEnterToolBox(const POINT& pos)
+bool WindowBase::checkMouseEnterToolBox(const int& x, const int& y)
 {
 	bool result = false;
 	int tempIndex;
-	if (toolBoxMain.contains(pos.x, pos.y)) {
-		tempIndex = floor((pos.x - toolBoxMain.x0) / toolBtnWidth);
+	if (toolBoxMain.contains(x, y)) {
+		tempIndex = floor((x - toolBoxMain.x0) / toolBtnWidth);
 		result = true;
 		ChangeCursor(IDC_HAND);
 	}
@@ -134,8 +134,8 @@ bool WindowBase::checkMouseEnterToolBox(const POINT& pos)
 	}
 	if(result) return result;
 
-	if (toolBoxSub.contains(pos.x, pos.y)) {
-		tempIndex = floor((pos.x - toolBoxSub.x0) / toolBtnWidth);
+	if (toolBoxSub.contains(x, y)) {
+		tempIndex = floor((x - toolBoxSub.x0) / toolBtnWidth);
 		ChangeCursor(IDC_HAND);
 		result = true;
 	}

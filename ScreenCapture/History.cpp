@@ -56,6 +56,7 @@ void History::Clear() {
 			return true;
 		});
 	history.erase(end, history.end());
+	lastDrawShapeIndex = -1;
 }
 
 bool History::LastShapeDrawEnd()

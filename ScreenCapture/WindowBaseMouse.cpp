@@ -273,7 +273,7 @@ bool WindowBase::OnMouseMove(const int& x, const int& y)
             HighLightWindowBox(x, y);
             return false;
         }
-        if (checkMouseEnterToolBox(POINT{ .x{x},.y{y} })) {
+        if (checkMouseEnterToolBox(x,y) ){
             return false;
         }
         if (state == State::maskReady) {

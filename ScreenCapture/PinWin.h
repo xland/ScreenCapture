@@ -8,7 +8,7 @@ public:
 private:
 	int OnHitTest(const int& x, const int& y) override;
 	void BeforePaint() override;
-	//void drawSrcImg();
+	void setToolBoxPos();
 	void drawShadow();
 	BLImage* srcImg;
 };
