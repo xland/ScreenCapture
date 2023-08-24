@@ -1,12 +1,48 @@
 ﻿#include "MainWin.h"
-
+#include <format>
 
 void MainWin::drawMaskBoxes() {
-    PaintCtx->setFillStyle(BLRgba32(0, 0, 0, 180));
+    PaintCtx->setFillStyle(BLRgba32(0, 0, 0, 160));
     PaintCtx->fillBoxArray(maskBoxes, 8);
     PaintCtx->setStrokeStyle(BLRgba32(22, 119, 255));
     PaintCtx->setStrokeWidth(cutBoxBorderWidth);
     PaintCtx->strokeBox(cutBox);
+    
+
+
+    auto str = std::format("X:{} Y:{} W:{} H:{}", cutBox.x0, cutBox.y0, cutBox.x1 - cutBox.x0, cutBox.y1 - cutBox.y0);
+    auto font = Font::Get()->fontText;
+    font->setSize(20.0);
+    BLFontMetrics fm = font->metrics();
+    BLTextMetrics tm;
+    BLGlyphBuffer gb;
+    gb.setUtf8Text(str.c_str()); //utf8.c_str()
+    font->shape(gb);
+    font->getTextMetrics(gb, tm);
+    
+
+
+    BLBox infoTextBox;
+    infoTextBox.x0 = cutBox.x0;
+    if (infoTextBox.x0 < x) {
+        infoTextBox.x0 = x;
+    }
+    infoTextBox.y0 = cutBox.y0 - 46;
+    if (infoTextBox.y0 < 0) {
+        infoTextBox.y0 = cutBox.y1 + 6;
+    }
+    if (infoTextBox.y0 + 40 > h) {
+        infoTextBox.y0 = cutBox.y0 + 6;
+    }
+    infoTextBox.x1 = infoTextBox.x0 + tm.boundingBox.x1 - tm.boundingBox.x0 + 18;
+    infoTextBox.y1 = infoTextBox.y0 +40;
+    PaintCtx->fillBox(infoTextBox);
+
+    
+    
+    
+    PaintCtx->setFillStyle(BLRgba32(255,255, 255));
+    PaintCtx->fillUtf8Text(BLPoint(infoTextBox.x0+8, infoTextBox.y1-12), *font, str.c_str());
 }
 
 void MainWin::SetCutBoxWhenLeftButtonDown() {
