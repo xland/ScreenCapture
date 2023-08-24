@@ -44,7 +44,9 @@ void PinWin::BeforePaint() {
 }
 
 int PinWin::OnHitTest(const int& x, const int& y) {
-    
+    if (!OriginalImage) {
+        return HTNOWHERE;
+    }
     if (checkMouseEnterToolBox(x-this->x, y-this->y)) {
         return HTCLIENT;
     }
@@ -59,13 +61,8 @@ int PinWin::OnHitTest(const int& x, const int& y) {
         }
         
     }
-    
-
-
-
     //LONG cur_style = GetWindowLong(hwnd, GWL_EXSTYLE);
     //SetWindowLong(hwnd, GWL_EXSTYLE, cur_style | WS_EX_TRANSPARENT | WS_EX_LAYERED);
-
     return HTCAPTION;
 }
 

@@ -24,8 +24,8 @@ namespace Shape {
             path.clear();
             path.moveTo(x2, y2);
             //path.lineTo(x2, y2);
-            double height = 52.0;
-            double width = 52.0;
+            double height = 32.0;
+            double width = 32.0;
             auto x = x1 - x2;
             auto y = y2 - y1;
             auto z = sqrt(x * x + y * y);

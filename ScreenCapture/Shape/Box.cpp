@@ -2,6 +2,7 @@
 #include "../Util.h"
 #include "../WindowBase.h"
 #include "../State.h"
+#include <format>
 
 namespace Shape {
 

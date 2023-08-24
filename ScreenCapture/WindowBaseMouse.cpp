@@ -254,13 +254,13 @@ bool WindowBase::OnMouseMove(const int& x, const int& y)
         case State::pen:
         case State::eraser:
         {
-            History::LastShapeDraw(POINT{ .x{x},.y{y} }, MouseDownPos);
+            History::LastShapeDraw(POINT{ .x{x},.y{y} }, MouseDownPos,state);
             break;
         }
         case State::text:
         case State::lastPathDrag:
         {
-            History::LastShapeDragDragger(POINT{ .x{x},.y{y} });
+            History::LastShapeDragDragger(x,y);
             break;
         }
         default:

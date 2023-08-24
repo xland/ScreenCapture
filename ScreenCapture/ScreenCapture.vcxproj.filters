@@ -90,9 +90,6 @@
     <ClCompile Include="WindowBasePixel.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="WindowBasePaint.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="PinWin.cpp">
       <Filter>源文件</Filter>
     </ClCompile>

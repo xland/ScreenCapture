@@ -64,10 +64,11 @@ bool History::LastShapeDrawEnd()
 	if (lastDrawShapeIndex < 0) return true;
 	return history[lastDrawShapeIndex]->EndDraw();
 }
-void History::LastShapeDraw(const POINT& pos1, const POINT& pos2)
+void History::LastShapeDraw(const POINT& pos1, const POINT& pos2, const State& state)
 {
 	if (history.size() < 1) return;
 	auto shape = history[history.size() - 1];
+	if (shape->state != state) return;
 	shape->Draw(pos1.x, pos1.y, pos2.x, pos2.y);
 }
 
@@ -95,10 +96,10 @@ void History::LastShapeMouseInDragger(const POINT& pos)
 	}
 	shape->MouseInDragger(pos.x, pos.y);
 }
-void History::LastShapeDragDragger(const POINT& pos)
+void History::LastShapeDragDragger(const int& x, const int& y)
 {
 	if (lastDrawShapeIndex < 0) return;
-	history[lastDrawShapeIndex]->DragDragger(pos.x, pos.y);
+	history[lastDrawShapeIndex]->DragDragger(x, y);
 }
 void  History::Undo()
 {
@@ -161,7 +162,7 @@ void  History::Undo()
 		win->Refresh();
 		return;
 	}
-	history[lastDrawShapeIndex]->ShowDragger();
+	history[lastDrawShapeIndex]->ShowDragger();//todo
 	win->PreState = history[lastDrawShapeIndex]->state;
 	win->state = State::lastPathDrag;
 	win->Refresh();	

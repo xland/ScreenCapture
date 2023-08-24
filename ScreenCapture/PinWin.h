@@ -10,6 +10,5 @@ private:
 	void BeforePaint() override;
 	void setToolBoxPos();
 	void drawShadow();
-	BLImage* srcImg;
 };
 

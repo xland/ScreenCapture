@@ -122,6 +122,34 @@ bool WindowBase::OnTimer(const unsigned int& id)
     return true;
 }
 
+void WindowBase::InitLayerImg() {
+    PrepareImage = new BLImage(w, h, BL_FORMAT_PRGB32);
+    CanvasImage = new BLImage(w, h, BL_FORMAT_PRGB32);
+    BottomImage = new BLImage(w, h, BL_FORMAT_PRGB32);
+
+    PaintCtx = new BLContext();
+    PaintCtx->begin(*PrepareImage);
+    PaintCtx->clearAll();
+    PaintCtx->end();
+    PaintCtx->begin(*CanvasImage);
+    PaintCtx->clearAll();
+    PaintCtx->end();
+    PaintCtx->begin(*BottomImage);
+    PaintCtx->clearAll();
+    PaintCtx->end();
+    BLImageData imgData;
+    BottomImage->getData(&imgData);
+    pixelData = (unsigned char*)imgData.pixelData;
+    stride = imgData.stride;
+}
+
+
+
+void WindowBase::Refresh()
+{
+    InvalidateRect(hwnd, nullptr, false);
+}
+
 LRESULT CALLBACK WindowBase::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     switch (msg)
@@ -136,7 +164,7 @@ LRESULT CALLBACK WindowBase::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPAR
         }
         case WM_NCHITTEST:
         {
-            return OnHitTest(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)); //HTCAPTION;
+            return OnHitTest(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
         }
         case WM_SETCURSOR: {
             return true;
@@ -185,8 +213,8 @@ LRESULT CALLBACK WindowBase::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPAR
             return true;
         }
         case WM_MOVE: {
-            this->x = LOWORD(lParam);
-            this->y = HIWORD(lParam);
+            //this->x = LOWORD(lParam);
+            //this->y = HIWORD(lParam);
             return true;
         }
     }    

@@ -176,7 +176,6 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainWin.cpp" />
     <ClCompile Include="MainWinMask.cpp" />
-    <ClCompile Include="WindowBasePaint.cpp" />
     <ClCompile Include="WindowBasePixel.cpp" />
     <ClCompile Include="WindowBaseTool.cpp" />
     <ClCompile Include="WindowBaseToolSub.cpp" />
