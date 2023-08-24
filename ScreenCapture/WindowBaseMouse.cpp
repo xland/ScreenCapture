@@ -301,12 +301,12 @@ bool WindowBase::OnMouseMove(const int& x, const int& y)
 bool WindowBase::OnLeftButtonUp(const int& x, const int& y)
 {
     if (mouseEnterMainToolIndex != -1 || mouseEnterSubToolIndex != -1) {
-        if (mouseEnterMainToolIndex == 11) //pin window
+        if (mouseEnterMainToolIndex == 11 && IsMainWin) //pin window
         {
             PinWindow();
             return false;
         }
-        Refresh(); //undo redo 的按钮状态
+        Refresh();
         return false;
     }
     switch (state)

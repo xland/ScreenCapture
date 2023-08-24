@@ -128,7 +128,7 @@ private:
 	void drawBtnCheckable(const BLPoint& point, const Icon::Name& name, const bool& checked, const bool& hover);
 	void drawBtnColors(const BLPoint& point, const Icon::Name& name, const bool& checked, const bool& hover, const BLRgba32& color);
 	void drawBtnStrokeWidth(const BLPoint& point, const bool& checked, const bool& hover);
-	void drawBtnUndoRedo(const BLPoint& point, const Icon::Name& name, const bool& hover, const bool& enable);
+	void drawBtnEnable(const BLPoint& point, const Icon::Name& name, const bool& hover, const bool& enable);
 	
 
 

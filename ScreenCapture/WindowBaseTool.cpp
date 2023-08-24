@@ -89,7 +89,7 @@ void WindowBase::drawBtnColors(const BLPoint& point, const Icon::Name& name, con
 	PaintCtx->fillUtf8Text(point, *Font::Get()->fontIcon, Icon::GetIcon(name));
 }
 
-void WindowBase::drawBtnUndoRedo(const BLPoint& point, const Icon::Name& name, const bool& hover, const bool& enable)
+void WindowBase::drawBtnEnable(const BLPoint& point, const Icon::Name& name, const bool& hover, const bool& enable)
 {
 	if (!enable) {
 		PaintCtx->setFillStyle(BLRgba32(180, 180, 180));
@@ -168,22 +168,23 @@ void WindowBase::drawToolMain()
 	drawSplitter(point);
 	point.x += toolBtnSpanWidth;
 	if (IsLeftBtnDown) {
-		drawBtnUndoRedo(point, Icon::Name::undo, (int)Icon::Name::undo == mouseEnterMainToolIndex, false);
+		drawBtnEnable(point, Icon::Name::undo, (int)Icon::Name::undo == mouseEnterMainToolIndex, false);
 		point.x += toolBtnWidth;
-		drawBtnUndoRedo(point, Icon::Name::redo, (int)Icon::Name::redo == mouseEnterMainToolIndex, false);
+		drawBtnEnable(point, Icon::Name::redo, (int)Icon::Name::redo == mouseEnterMainToolIndex, false);
 		point.x += toolBtnWidth;
 	}
 	else
 	{
 		auto enables = History::UndoRedoEnable();
-		drawBtnUndoRedo(point, Icon::Name::undo, (int)Icon::Name::undo == mouseEnterMainToolIndex, enables.first);
+		drawBtnEnable(point, Icon::Name::undo, (int)Icon::Name::undo == mouseEnterMainToolIndex, enables.first);
 		point.x += toolBtnWidth;
-		drawBtnUndoRedo(point, Icon::Name::redo, (int)Icon::Name::redo == mouseEnterMainToolIndex, enables.second);
+		drawBtnEnable(point, Icon::Name::redo, (int)Icon::Name::redo == mouseEnterMainToolIndex, enables.second);
 		point.x += toolBtnWidth;
 	}
 	drawSplitter(point);
 	point.x += toolBtnSpanWidth;
-	drawBtn(point, Icon::Name::pin, (int)Icon::Name::pin == mouseEnterMainToolIndex);
+	//drawBtn(point, Icon::Name::pin, (int)Icon::Name::pin == mouseEnterMainToolIndex);
+	drawBtnEnable(point, Icon::Name::pin, (int)Icon::Name::pin == mouseEnterMainToolIndex, IsMainWin);
 	point.x += toolBtnWidth;
 	drawBtn(point, Icon::Name::save, (int)Icon::Name::save == mouseEnterMainToolIndex);
 	point.x += toolBtnWidth;
