@@ -81,7 +81,8 @@ void MainWin::BeforePaint() {
     PaintCtx->end();
 }
 
-void MainWin::PinWindow() {    
+void MainWin::PinWindow() {   
+    History::LastShapeDrawEnd();
     auto w = cutBox.x1 - cutBox.x0;
     auto h = cutBox.y1 - cutBox.y0;
     auto img = new BLImage(w, h, BL_FORMAT_PRGB32);
@@ -89,6 +90,7 @@ void MainWin::PinWindow() {
     PaintCtx->clearAll();
     PaintCtx->blitImage(BLPoint(0,0), *OriginalImage, BLRectI((int)cutBox.x0, (int)cutBox.y0, (int)w, (int)h));
     PaintCtx->blitImage(BLPoint(0,0), *CanvasImage, BLRectI((int)cutBox.x0, (int)cutBox.y0, (int)w, (int)h));
+    PaintCtx->blitImage(BLPoint(0, 0), *PrepareImage, BLRectI((int)cutBox.x0, (int)cutBox.y0, (int)w, (int)h));
     PaintCtx->end();
     new PinWin(cutBox.x0, cutBox.y0, img);
     History::Clear();

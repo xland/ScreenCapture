@@ -76,7 +76,11 @@ void History::LastShapeShowDragger()
 {
 	auto win = WindowBase::Get();
 	if (win->state != State::lastPathDrag) {
-		lastDrawShapeIndex += 1;
+		lastDrawShapeIndex += 1;  //todo 切换到矩形橡皮擦时会崩溃		
+		if (lastDrawShapeIndex >= history.size()) {
+			lastDrawShapeIndex -= 1;
+			return;
+		}
 		history[lastDrawShapeIndex]->isTemp = false;
 	}
 	history[lastDrawShapeIndex]->ShowDragger();

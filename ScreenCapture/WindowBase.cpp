@@ -97,11 +97,13 @@ void WindowBase::InitWindow()
         MessageBox(NULL, L"注册窗口类失败", L"系统提示", NULL);
         return;
     }
+    //WS_EX_NOREDIRECTIONBITMAP
     this->hwnd = CreateWindowEx(WS_EX_NOREDIRECTIONBITMAP, wcx.lpszClassName, wcx.lpszClassName, WS_OVERLAPPEDWINDOW, x, y, w, h, NULL, NULL, hinstance, static_cast<LPVOID>(this));
     BOOL attrib = TRUE;
     DwmSetWindowAttribute(hwnd, DWMWA_TRANSITIONS_FORCEDISABLED, &attrib, sizeof(attrib));//移除窗口打开与关闭时的动画效果
     SetWindowPos(hwnd, nullptr, 0, 0, 0, 0, SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_NOMOVE | SWP_NOSIZE | SWP_FRAMECHANGED);
     painter = new Painter(hwnd);
+    SetLayeredWindowAttributes(hwnd, RGB(0, 255, 0), 100, LWA_COLORKEY);
 }
 
 void WindowBase::Show()
@@ -222,11 +224,16 @@ LRESULT CALLBACK WindowBase::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPAR
             }            
             return true;
         }
-        case WM_MOVE: {
-            //this->x = LOWORD(lParam);
-            //this->y = HIWORD(lParam);
+        case WM_EXITSIZEMOVE: {
+            RECT rect;
+            GetWindowRect(hWnd, &rect);
+            this->x = rect.left;
+            this->y = rect.top;
             return true;
         }
+        //case WM_WINDOWPOSCHANGING: {
+
+        //}
     }    
     return DefWindowProcW(hWnd, msg, wParam, lParam);
 }

@@ -158,7 +158,14 @@ bool WindowBase::OnLeftButtonDown(const int& x, const int& y)
             History::Redo();
             return false;
         }
-         //pin window   
+        else if (mouseEnterMainToolIndex == 11 && IsMainWin) //pin window
+        {
+            IsLeftBtnDown = false;
+            if (IsMainWin) {
+                PinWindow();
+            }            
+            return false;
+        }
         else if (mouseEnterMainToolIndex == 12) //save file
         {
             IsLeftBtnDown = false;
@@ -301,11 +308,6 @@ bool WindowBase::OnMouseMove(const int& x, const int& y)
 bool WindowBase::OnLeftButtonUp(const int& x, const int& y)
 {
     if (mouseEnterMainToolIndex != -1 || mouseEnterSubToolIndex != -1) {
-        if (mouseEnterMainToolIndex == 11 && IsMainWin) //pin window
-        {
-            PinWindow();
-            return false;
-        }
         Refresh();
         return false;
     }

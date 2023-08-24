@@ -19,6 +19,11 @@ PinWin::PinWin(const int& x, const int& y, BLImage* img)
     IsMainWin = false;
 	InitLayerImg();
 	InitWindow();
+    /*auto rgnImg = CreateRectRgn(16, 16, 16 + img->width(), 16 + img->height());
+    auto rgnTool = CreateRectRgn(16, OriginalImage->height() + 32, toolBoxMain.x0 + toolBoxWidth, toolBoxMain.y0 + toolBoxHeight);
+    HRGN resultRgn{};
+    CombineRgn(resultRgn, rgnImg, rgnTool, RGN_AND);
+    SetWindowRgn(hwnd, resultRgn, true);*/
 	Show();
 }
 PinWin::~PinWin()
@@ -40,6 +45,7 @@ void PinWin::SaveFile(const std::string& filePath) {
 void PinWin::BeforePaint() {
     PaintCtx->begin(*BottomImage);
     PaintCtx->clearAll();
+    //PaintCtx->fillAll(BLRgba32(0, 255, 0));
     drawShadow();
     BLPoint startPos(16, 16);
     BLRectI srcRect(16, 16, OriginalImage->width(), OriginalImage->height());
@@ -77,9 +83,7 @@ int PinWin::OnHitTest(const int& x, const int& y) {
         }
         
     }
-    //LONG cur_style = GetWindowLong(hwnd, GWL_EXSTYLE);
-    //SetWindowLong(hwnd, GWL_EXSTYLE, cur_style | WS_EX_TRANSPARENT | WS_EX_LAYERED);
-    return HTCAPTION;
+    return HTNOWHERE;
 }
 
 void PinWin::setToolBoxPos()
