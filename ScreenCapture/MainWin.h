@@ -16,6 +16,7 @@ private:
 	void PinWindow() override;
 	void setToolBoxPos();
 	void BeforePaint() override;
+	void SaveFile(const std::string& filePath) override;
 
 	//desktop window boxes
 	void enumDesktopWindow();

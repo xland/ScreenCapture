@@ -57,6 +57,7 @@ public:
 	//key
 	bool IsShiftDown = false;
 	bool IsCtrlDown = false;
+	bool IsMainWin = true;
 
 	
 
@@ -70,6 +71,8 @@ protected:
 	virtual void PinWindow() {};
 	virtual void OnResize() {};
 	virtual void BeforePaint() {};
+	virtual void SaveFile(const std::string& filePath) {};
+	void SaveFile();
 	void InitWindow();
 	void InitLayerImg();
 	void drawToolMain();
@@ -104,7 +107,6 @@ private:
 	std::wstring getPixelHex();
 	LONG pixelX{ -999999 }, pixelY{ -999999 };
 	//save
-	void saveFile();
 	void saveClipboard();
 	//key
 	bool OnKeyDown(const unsigned int& key);

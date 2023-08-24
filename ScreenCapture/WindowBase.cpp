@@ -3,6 +3,8 @@
 #include <dwmapi.h>
 #include "Util.h"
 #include <format>
+#include "MainWin.h"
+#include "PinWin.h"
 
 /// <summary>
 /// 0 undefined
@@ -26,7 +28,13 @@ LRESULT CALLBACK WindowBase::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wPar
     auto obj = reinterpret_cast<WindowBase*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
     if (obj) {
         if (msg == WM_CLOSE) {
-            delete obj;
+            if (obj->IsMainWin) {
+                delete (MainWin*)obj;
+            }
+            else
+            {
+                delete (PinWin*)obj;
+            }            
         }
         else
         {
@@ -61,7 +69,7 @@ WindowBase* WindowBase::Get()
 void WindowBase::quitApp(const int& exitCode)
 {
     mainWinQuitCode = exitCode;
-    CloseWindow(hwnd);
+    SendMessage(hwnd, WM_CLOSE, NULL, NULL);
     PostQuitMessage(0);
 }
 int WindowBase::GetQuitCode()

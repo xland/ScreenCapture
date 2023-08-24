@@ -46,6 +46,17 @@ void MainWin::shotScreen()
         });
 }
 
+void MainWin::SaveFile(const std::string& filePath) {
+    auto w = cutBox.x1 - cutBox.x0;
+    auto h = cutBox.y1 - cutBox.y0;
+    BLImage imgSave(w, h, BL_FORMAT_PRGB32);
+    PaintCtx->begin(imgSave);
+    PaintCtx->blitImage(BLPoint(0, 0), *OriginalImage, BLRectI((int)cutBox.x0, (int)cutBox.y0, (int)w, (int)h));
+    PaintCtx->blitImage(BLPoint(0, 0), *CanvasImage, BLRectI((int)cutBox.x0, (int)cutBox.y0, (int)w, (int)h));
+    PaintCtx->end();
+    imgSave.writeToFile(filePath.c_str());
+}
+
 void MainWin::BeforePaint() {
     PaintCtx->begin(*BottomImage);
     PaintCtx->blitImage(BLRect(0, 0, w, h), *OriginalImage);

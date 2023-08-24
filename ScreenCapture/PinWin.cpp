@@ -12,6 +12,11 @@ PinWin::PinWin(const int& x, const int& y, BLImage* img)
     }
 	this->h = img->height() + 32 + 2*toolBoxHeight + 2*toolBoxSpan;
     OriginalImage = img;
+    cutBox.x0 = 16;
+    cutBox.y0 = 16;
+    cutBox.x1 = 16 + img->width();
+    cutBox.y1 = 16 + img->height();
+    IsMainWin = false;
 	InitLayerImg();
 	InitWindow();
 	Show();
@@ -19,6 +24,17 @@ PinWin::PinWin(const int& x, const int& y, BLImage* img)
 PinWin::~PinWin()
 {
 
+}
+
+void PinWin::SaveFile(const std::string& filePath) {
+    auto w = cutBox.x1 - cutBox.x0;
+    auto h = cutBox.y1 - cutBox.y0;
+    BLImage imgSave(w, h, BL_FORMAT_PRGB32);
+    PaintCtx->begin(imgSave);
+    PaintCtx->blitImage(BLPoint(0, 0), *OriginalImage, BLRectI(0, 0, (int)w, (int)h));
+    PaintCtx->blitImage(BLPoint(0, 0), *CanvasImage, BLRectI(16, 16, (int)w, (int)h));
+    PaintCtx->end();
+    imgSave.writeToFile(filePath.c_str());
 }
 
 void PinWin::BeforePaint() {

@@ -163,7 +163,7 @@ bool WindowBase::OnLeftButtonDown(const int& x, const int& y)
         {
             IsLeftBtnDown = false;
             History::LastShapeDrawEnd();
-            saveFile();
+            SaveFile();
             return false;
         }
         else if (mouseEnterMainToolIndex == 13) //save clipboard

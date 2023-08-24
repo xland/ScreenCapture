@@ -7,6 +7,7 @@ public:
 	~PinWin();
 private:
 	int OnHitTest(const int& x, const int& y) override;
+	void SaveFile(const std::string& filePath) override;
 	void BeforePaint() override;
 	void setToolBoxPos();
 	void drawShadow();
