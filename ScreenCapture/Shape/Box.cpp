@@ -41,6 +41,11 @@ namespace Shape {
             context->setStrokeWidth(strokeWidth);
             context->strokeBox(box);
         }
+
+        //Debug(std::format("box:{},{},{},{}", box.x0, box.y0, box.x1, box.y1));
+        //if (box.x0 > 100) {
+        //    auto i = 1;
+        //}
         context->end();
         win->Refresh();        
 	}
@@ -67,6 +72,8 @@ namespace Shape {
             context->setStrokeWidth(strokeWidth);
             context->strokeBox(box);
         }
+
+
         context->end();
         context->begin(*win->PrepareImage);
         context->clearAll();

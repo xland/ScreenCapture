@@ -166,6 +166,7 @@ void  History::Undo()
 	win->PreState = history[lastDrawShapeIndex]->state;
 	win->state = State::lastPathDrag;
 	win->Refresh();	
+	win->CanvasImage->writeToFile("allen.png");
 }
 
 void  History::Redo()

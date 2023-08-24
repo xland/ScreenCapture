@@ -123,7 +123,6 @@ bool WindowBase::OnLeftButtonDown(const int& x, const int& y)
 {
     MouseDownPos.x = x;
     MouseDownPos.y = y;
-    IsLeftBtnDown = true;
     if (state >= State::maskReady) {
         static auto t1 = std::chrono::system_clock::now();
         auto t2 = std::chrono::system_clock::now();
@@ -149,11 +148,13 @@ bool WindowBase::OnLeftButtonDown(const int& x, const int& y)
     if (state != State::start) {
         if (mouseEnterMainToolIndex == 9) //undo
         {
+            IsLeftBtnDown = false;
             History::Undo();
             return false;
         }
         else if (mouseEnterMainToolIndex == 10) //redo
         {
+            IsLeftBtnDown = false;
             History::Redo();
             return false;
         }
@@ -174,6 +175,7 @@ bool WindowBase::OnLeftButtonDown(const int& x, const int& y)
         }
         else if (mouseEnterMainToolIndex == 14) //close
         {
+            IsLeftBtnDown = false;
             quitApp(1);
             return false;
         }
@@ -209,6 +211,7 @@ bool WindowBase::OnLeftButtonDown(const int& x, const int& y)
             return false;
         }
         if (mouseEnterSubToolIndex != -1) {
+            IsLeftBtnDown = false;
             subToolBtnClick();
             return false;
         }
@@ -297,7 +300,6 @@ bool WindowBase::OnMouseMove(const int& x, const int& y)
 }
 bool WindowBase::OnLeftButtonUp(const int& x, const int& y)
 {
-    IsLeftBtnDown = false;
     if (mouseEnterMainToolIndex != -1 || mouseEnterSubToolIndex != -1) {
         if (mouseEnterMainToolIndex == 11) //pin window
         {

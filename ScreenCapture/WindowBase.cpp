@@ -185,9 +185,11 @@ LRESULT CALLBACK WindowBase::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPAR
             return OnRightButtonDown(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));            
         }
         case WM_LBUTTONDOWN: {
+            IsLeftBtnDown = true;
             return OnLeftButtonDown(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));            
         }
         case WM_LBUTTONUP: {
+            IsLeftBtnDown = false;
             return OnLeftButtonUp(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
         }
         case WM_MOUSEMOVE: {
