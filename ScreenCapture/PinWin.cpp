@@ -19,11 +19,11 @@ PinWin::PinWin(const int& x, const int& y, BLImage* img)
     IsMainWin = false;
 	InitLayerImg();
 	InitWindow();
-    /*auto rgnImg = CreateRectRgn(16, 16, 16 + img->width(), 16 + img->height());
+    auto rgnImg = CreateRectRgn(16, 16, 16 + img->width(), 16 + img->height());
     auto rgnTool = CreateRectRgn(16, OriginalImage->height() + 32, toolBoxMain.x0 + toolBoxWidth, toolBoxMain.y0 + toolBoxHeight);
     HRGN resultRgn{};
     CombineRgn(resultRgn, rgnImg, rgnTool, RGN_AND);
-    SetWindowRgn(hwnd, resultRgn, true);*/
+    SetWindowRgn(hwnd, resultRgn, true);
 	Show();
 }
 PinWin::~PinWin()

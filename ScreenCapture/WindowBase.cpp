@@ -57,8 +57,9 @@ WindowBase::~WindowBase()
     delete CanvasImage;
     delete PrepareImage;
     delete MosaicImage;
-    delete BottomImage;
-    delete painter;
+    //delete BottomImage;
+    //delete painter;
+    DeleteObject(bottomHbitmap);
 }
 
 WindowBase* WindowBase::Get()
@@ -102,7 +103,7 @@ void WindowBase::InitWindow()
     BOOL attrib = TRUE;
     DwmSetWindowAttribute(hwnd, DWMWA_TRANSITIONS_FORCEDISABLED, &attrib, sizeof(attrib));//移除窗口打开与关闭时的动画效果
     SetWindowPos(hwnd, nullptr, 0, 0, 0, 0, SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_NOMOVE | SWP_NOSIZE | SWP_FRAMECHANGED);
-    painter = new Painter(hwnd);
+    //painter = new Painter(hwnd);
     SetLayeredWindowAttributes(hwnd, RGB(0, 255, 0), 100, LWA_COLORKEY);
 }
 
@@ -135,7 +136,6 @@ bool WindowBase::OnTimer(const unsigned int& id)
 void WindowBase::InitLayerImg() {
     PrepareImage = new BLImage(w, h, BL_FORMAT_PRGB32);
     CanvasImage = new BLImage(w, h, BL_FORMAT_PRGB32);
-    BottomImage = new BLImage(w, h, BL_FORMAT_PRGB32);
 
     PaintCtx = new BLContext();
     PaintCtx->begin(*PrepareImage);
@@ -144,9 +144,9 @@ void WindowBase::InitLayerImg() {
     PaintCtx->begin(*CanvasImage);
     PaintCtx->clearAll();
     PaintCtx->end();
-    PaintCtx->begin(*BottomImage);
+    /*PaintCtx->begin(*BottomImage);
     PaintCtx->clearAll();
-    PaintCtx->end();
+    PaintCtx->end();*/
     BLImageData imgData;
     BottomImage->getData(&imgData);
     pixelData = (unsigned char*)imgData.pixelData;
@@ -183,10 +183,20 @@ LRESULT CALLBACK WindowBase::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPAR
             return true;
         }
         case WM_PAINT: {
+            //BeforePaint();
+            //painter->Paint(w, h, pixelData, stride);
+            //ValidateRect(hwnd, NULL);
+            //return true;
             BeforePaint();
-            painter->Paint(w, h, pixelData, stride);
+            PAINTSTRUCT ps;
+            HDC hdc = BeginPaint(hwnd, &ps);
+            HDC hdcBmp = CreateCompatibleDC(hdc);
+            DeleteObject(SelectObject(hdcBmp, bottomHbitmap));
+            BitBlt(hdc, 0, 0, (int)w, (int)h, hdcBmp, 0, 0, SRCCOPY);
+            DeleteDC(hdcBmp);
+            EndPaint(hwnd, &ps);
             ValidateRect(hwnd, NULL);
-            return true;
+
         }
         case WM_TIMER: {
             return OnTimer(wParam);            
@@ -216,12 +226,15 @@ LRESULT CALLBACK WindowBase::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPAR
         }
         case WM_SIZE:
         {
-            if (painter) {
+/*            if (painter) {
                 this->w = LOWORD(lParam);
                 this->h = HIWORD(lParam);
                 OnResize();
                 painter->OnResize(hWnd, w, h);
-            }            
+            }   */        
+            this->w = LOWORD(lParam);
+            this->h = HIWORD(lParam);
+            OnResize();
             return true;
         }
         case WM_EXITSIZEMOVE: {

@@ -47,6 +47,7 @@ public:
 	BLImage* OriginalImage;
 	BLImage* MosaicImage;
 	BLImage* BottomImage;
+	HBITMAP bottomHbitmap;
 	bool IsDrawing = false;
 	bool IsMosaicUsePen = false;
 	unsigned int stride;

@@ -40,10 +40,21 @@ void MainWin::shotScreen()
     DeleteDC(hDC);
     DeleteObject(hBitmap);
 
+
+    auto bottomPixels = new unsigned char[dataSize];
+    bottomHbitmap = CreateDIBSection(hScreen, &info, DIB_RGB_COLORS, reinterpret_cast<void**>(&bottomPixels), NULL, NULL);
+    ReleaseDC(NULL, hScreen);
+
     OriginalImage = new BLImage();
     OriginalImage->createFromData(w, h, BL_FORMAT_PRGB32, desktopPixelData, stride, BL_DATA_ACCESS_RW, [](void* impl, void* externalData, void* userData) {
         delete[] externalData;
         });
+
+
+    BottomImage = new BLImage();
+    BottomImage->createFromData(w, h, BL_FORMAT_PRGB32, bottomPixels, stride, BL_DATA_ACCESS_RW, [](void* impl, void* externalData, void* userData) {
+        delete[] externalData; //todo
+    });
 }
 
 void MainWin::SaveFile(const std::string& filePath) {
@@ -92,8 +103,8 @@ void MainWin::PinWindow() {
     PaintCtx->blitImage(BLPoint(0,0), *CanvasImage, BLRectI((int)cutBox.x0, (int)cutBox.y0, (int)w, (int)h));
     PaintCtx->blitImage(BLPoint(0, 0), *PrepareImage, BLRectI((int)cutBox.x0, (int)cutBox.y0, (int)w, (int)h));
     PaintCtx->end();
-    new PinWin(cutBox.x0, cutBox.y0, img);
     History::Clear();
+    new PinWin(cutBox.x0, cutBox.y0, img);    
     SendMessage(hwnd, WM_CLOSE, NULL, NULL);
 }
 
