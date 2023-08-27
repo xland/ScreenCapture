@@ -99,7 +99,7 @@ void WindowBase::InitWindow()
         return;
     }
     //WS_EX_NOREDIRECTIONBITMAP
-    this->hwnd = CreateWindowEx(WS_EX_NOREDIRECTIONBITMAP, wcx.lpszClassName, wcx.lpszClassName, WS_OVERLAPPEDWINDOW, x, y, w, h, NULL, NULL, hinstance, static_cast<LPVOID>(this));
+    this->hwnd = CreateWindowEx(NULL, wcx.lpszClassName, wcx.lpszClassName, WS_OVERLAPPEDWINDOW, x, y, w, h, NULL, NULL, hinstance, static_cast<LPVOID>(this));
     BOOL attrib = TRUE;
     DwmSetWindowAttribute(hwnd, DWMWA_TRANSITIONS_FORCEDISABLED, &attrib, sizeof(attrib));//移除窗口打开与关闭时的动画效果
     SetWindowPos(hwnd, nullptr, 0, 0, 0, 0, SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_NOMOVE | SWP_NOSIZE | SWP_FRAMECHANGED);
@@ -144,13 +144,7 @@ void WindowBase::InitLayerImg() {
     PaintCtx->begin(*CanvasImage);
     PaintCtx->clearAll();
     PaintCtx->end();
-    /*PaintCtx->begin(*BottomImage);
-    PaintCtx->clearAll();
-    PaintCtx->end();*/
-    BLImageData imgData;
-    BottomImage->getData(&imgData);
-    pixelData = (unsigned char*)imgData.pixelData;
-    stride = imgData.stride;
+
 }
 
 
@@ -183,19 +177,16 @@ LRESULT CALLBACK WindowBase::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPAR
             return true;
         }
         case WM_PAINT: {
-            //BeforePaint();
-            //painter->Paint(w, h, pixelData, stride);
-            //ValidateRect(hwnd, NULL);
-            //return true;
             BeforePaint();
             PAINTSTRUCT ps;
-            HDC hdc = BeginPaint(hwnd, &ps);
+            HDC hdc = BeginPaint(hWnd, &ps);
             HDC hdcBmp = CreateCompatibleDC(hdc);
             DeleteObject(SelectObject(hdcBmp, bottomHbitmap));
             BitBlt(hdc, 0, 0, (int)w, (int)h, hdcBmp, 0, 0, SRCCOPY);
             DeleteDC(hdcBmp);
-            EndPaint(hwnd, &ps);
-            ValidateRect(hwnd, NULL);
+            EndPaint(hWnd, &ps);
+            ValidateRect(hWnd, NULL);
+            return 0;
 
         }
         case WM_TIMER: {

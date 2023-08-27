@@ -47,6 +47,7 @@ public:
 	BLImage* OriginalImage;
 	BLImage* MosaicImage;
 	BLImage* BottomImage;
+	unsigned char* pixelData;
 	HBITMAP bottomHbitmap;
 	bool IsDrawing = false;
 	bool IsMosaicUsePen = false;
@@ -101,7 +102,6 @@ private:
 	void quitApp(const int& exitCode);
 	bool OnTimer(const unsigned int& id);
 	//paint
-	unsigned char* pixelData;
 	Painter* painter;
 	//get color
 	std::wstring getPixelRgb();

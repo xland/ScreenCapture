@@ -32,27 +32,22 @@ void MainWin::shotScreen()
     HBITMAP hBitmap = CreateCompatibleBitmap(hScreen, w, h);
     DeleteObject(SelectObject(hDC, hBitmap));
     BOOL bRet = BitBlt(hDC, 0, 0, w, h, hScreen, x, y, SRCCOPY);
-    unsigned int stride = w * 4;
+    stride = w * 4;
     unsigned int dataSize = stride * h;
-    auto desktopPixelData = new unsigned char[dataSize];
+    auto desktopPixel = new unsigned char[dataSize];
     BITMAPINFO info = { sizeof(BITMAPINFOHEADER), (long)w, 0 - (long)h, 1, 32, BI_RGB, dataSize, 0, 0, 0, 0 };
-    GetDIBits(hDC, hBitmap, 0, h, desktopPixelData, &info, DIB_RGB_COLORS);
+    GetDIBits(hDC, hBitmap, 0, h, desktopPixel, &info, DIB_RGB_COLORS);
     DeleteDC(hDC);
     DeleteObject(hBitmap);
-
-
-    auto bottomPixels = new unsigned char[dataSize];
-    bottomHbitmap = CreateDIBSection(hScreen, &info, DIB_RGB_COLORS, reinterpret_cast<void**>(&bottomPixels), NULL, NULL);
-    ReleaseDC(NULL, hScreen);
-
-    OriginalImage = new BLImage();
-    OriginalImage->createFromData(w, h, BL_FORMAT_PRGB32, desktopPixelData, stride, BL_DATA_ACCESS_RW, [](void* impl, void* externalData, void* userData) {
+    OriginalImage = new BLImage(w, h, BL_FORMAT_PRGB32);
+    OriginalImage->createFromData(w, h, BL_FORMAT_PRGB32, desktopPixel, stride, BL_DATA_ACCESS_RW, [](void* impl, void* externalData, void* userData) {
         delete[] externalData;
         });
-
-
+    pixelData = new unsigned char[dataSize];
+    bottomHbitmap = CreateDIBSection(hScreen, &info, DIB_RGB_COLORS, reinterpret_cast<void**>(&pixelData), NULL, NULL);
+    ReleaseDC(NULL, hScreen);
     BottomImage = new BLImage();
-    BottomImage->createFromData(w, h, BL_FORMAT_PRGB32, bottomPixels, stride, BL_DATA_ACCESS_RW, [](void* impl, void* externalData, void* userData) {
+    BottomImage->createFromData(w, h, BL_FORMAT_PRGB32, pixelData, stride, BL_DATA_ACCESS_RW, [](void* impl, void* externalData, void* userData) {
         delete[] externalData; //todo
     });
 }
@@ -85,11 +80,14 @@ void MainWin::BeforePaint() {
     if (state != State::start) {
         setToolBoxPos();
         drawToolMain();
-    }    
-    if (!IsLeftBtnDown && state == State::start) {
-        drawPixelInfo();
-    }
+    }   
     PaintCtx->end();
+    if (!IsLeftBtnDown && state == State::start) {        
+        PaintCtx->begin(*BottomImage);
+        drawPixelInfo();
+        PaintCtx->end();
+    }
+    
 }
 
 void MainWin::PinWindow() {   

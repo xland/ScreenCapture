@@ -29,6 +29,7 @@ void WindowBase::drawPixelInfo()
     if (pixelY == -999999 && pixelX == -999999) {
         return;
     }
+    //Debug(std::format("{},{}", pixelX, pixelY).c_str());
     BLRectI rectDst;
     rectDst.x = pixelX + 10;
     rectDst.y = pixelY + 10;
