@@ -181,18 +181,26 @@ LRESULT CALLBACK WindowBase::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPAR
             return OnTimer(wParam);            
         }
         case WM_RBUTTONDOWN: {
-            return OnRightButtonDown(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));            
+            auto x = GET_X_LPARAM(lParam);
+            auto y = GET_Y_LPARAM(lParam);
+            return OnRightButtonDown(x, y);            
         }
         case WM_LBUTTONDOWN: {
             IsLeftBtnDown = true;
-            return OnLeftButtonDown(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));            
+            auto x = GET_X_LPARAM(lParam);
+            auto y = GET_Y_LPARAM(lParam);
+            return OnLeftButtonDown(x,y);            
         }
         case WM_LBUTTONUP: {
             IsLeftBtnDown = false;
-            return OnLeftButtonUp(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+            auto x = GET_X_LPARAM(lParam);
+            auto y = GET_Y_LPARAM(lParam);
+            return OnLeftButtonUp(x, y);
         }
         case WM_MOUSEMOVE: {
-            return OnMouseMove(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));            
+            auto x = GET_X_LPARAM(lParam);
+            auto y = GET_Y_LPARAM(lParam);
+            return OnMouseMove(x,y);            
         }
         case WM_KEYDOWN: {
             return OnKeyDown(wParam);
@@ -204,13 +212,7 @@ LRESULT CALLBACK WindowBase::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPAR
             return OnChar(wParam);
         }
         case WM_SIZE:
-        {
-/*            if (painter) {
-                this->w = LOWORD(lParam);
-                this->h = HIWORD(lParam);
-                OnResize();
-                painter->OnResize(hWnd, w, h);
-            }   */        
+        {    
             this->w = LOWORD(lParam);
             this->h = HIWORD(lParam);
             OnResize();

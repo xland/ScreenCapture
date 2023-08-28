@@ -35,29 +35,39 @@ namespace Shape {
         auto PaintCtx = win->PaintCtx;
         //先在PrepareImage上贴OriginalImage，再贴CanvasImage
         PaintCtx->begin(*win->PrepareImage);
-        PaintCtx->blitImage(BLPoint(0, 0), *win->OriginalImage);
-        PaintCtx->blitImage(BLPoint(0, 0), *win->CanvasImage);
+        if (win->IsMainWin) {
+            
+            BLPoint startPos(0, 0);
+            PaintCtx->blitImage(startPos, *win->OriginalImage);
+            PaintCtx->blitImage(startPos, *win->CanvasImage);
+        }
+        else
+        {
+            BLPoint startPos(16, 16);
+            PaintCtx->blitImage(startPos, *win->OriginalImage);
+            BLRectI srcRect(16, 16, win->OriginalImage->width(), win->OriginalImage->height());
+            PaintCtx->blitImage(startPos, *win->CanvasImage,srcRect);
+        }
         PaintCtx->end();
         //得到PrepareImage上的像素数据
         BLImageData imgData;
         win->PrepareImage->getData(&imgData);
-        auto dataSize = imgData.stride * imgData.size.h;
         unsigned char* pixelData = (unsigned char*)(imgData.pixelData);
         //创建MosaicImage，并在MosaicImage上生成马赛克图像（使用的是PrepareImage上的像素数据）
         //以后的repaint，会使用MosaicImage代替CanvaseImage
         win->MosaicImage = new BLImage(imgData.size.w, imgData.size.h, BL_FORMAT_PRGB32);
         PaintCtx->begin(*win->MosaicImage);
         BLPointI points[5];
-        for (size_t y = 0; y <= win->PrepareImage->height(); y+=strokeWidth)
+        for (size_t y = 0; y <= win->MosaicImage->height(); y+=strokeWidth)
         {
-            for (size_t x = 0; x <= win->PrepareImage->width(); x+=strokeWidth)
+            for (size_t x = 0; x <= win->MosaicImage->width(); x+=strokeWidth)
             {
                 setSamplingPoints(points, x, y);
                 unsigned int b{ 0 }, g{ 0 }, r{ 0 };
                 for (size_t i = 0; i < 5; i++)
                 {
                     auto index = points[i].y * imgData.stride + points[i].x * 4;
-                    if (index > dataSize) {
+                    if (index > win->dataSize) {
                         break;
                     }
                     b += pixelData[index];
@@ -92,7 +102,6 @@ namespace Shape {
             context->setStrokeWidth(1);
             context->strokeBox(box);
             context->end();
-            win->MosaicImage->writeToFile("allen.png");
         }
         else
         {

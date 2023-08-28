@@ -15,11 +15,11 @@ PinWin::PinWin(const int& x, const int& y, BLImage* img)
     dataSize = stride * h;
     //-------------------------------------------
     PaintCtx = new BLContext();
-    PrepareImage = new BLImage(img->width(), img->height(), BL_FORMAT_PRGB32);
+    PrepareImage = new BLImage(w, h, BL_FORMAT_PRGB32);
     PaintCtx->begin(*PrepareImage);
     PaintCtx->clearAll();
     PaintCtx->end();
-    CanvasImage = new BLImage(img->width(), img->height(), BL_FORMAT_PRGB32);
+    CanvasImage = new BLImage(w, h, BL_FORMAT_PRGB32);
     PaintCtx->begin(*CanvasImage);
     PaintCtx->clearAll();
     PaintCtx->end();
@@ -62,13 +62,13 @@ void PinWin::BeforePaint() {
     BLRectI srcRect(16, 16, OriginalImage->width(), OriginalImage->height());
     PaintCtx->blitImage(startPos, *OriginalImage);
     if (IsMosaicUsePen) {
-        PaintCtx->blitImage(startPos, *MosaicImage,srcRect);        
+        PaintCtx->blitImage(startPos, *MosaicImage, srcRect);
     }
     else {
-        PaintCtx->blitImage(startPos, *CanvasImage,srcRect);
+        PaintCtx->blitImage(startPos, *CanvasImage, srcRect);
     }
     if (IsDrawing) {
-        PaintCtx->blitImage(startPos, *PrepareImage,srcRect);
+        PaintCtx->blitImage(startPos, *PrepareImage, srcRect);
     }
     setToolBoxPos();
     drawToolMain();
