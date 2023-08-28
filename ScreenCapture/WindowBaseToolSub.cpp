@@ -21,8 +21,10 @@ void WindowBase::drawSubToolBackground(const int& btnCount, const bool isCenter)
 		toolBoxSub.y1 = toolBoxSub.y0 + toolBoxHeight;
 	}
 	PaintCtx->fillBox(toolBoxSub);
-	PaintCtx->setStrokeWidth(1.0f);
-	PaintCtx->strokeBox(toolBoxSub, BLRgba32(9, 88, 217));
+	if (!IsMainWin) {
+		PaintCtx->setStrokeWidth(1.0f);
+		PaintCtx->strokeBox(toolBoxSub, BLRgba32(9, 88, 217));
+	}
 }
 
 void WindowBase::drawSubTool()

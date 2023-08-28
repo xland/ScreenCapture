@@ -108,7 +108,6 @@ void MainWin::PinWindow() {
     PaintCtx->clearAll();
     PaintCtx->blitImage(BLPoint(0,0), *OriginalImage, BLRectI((int)cutBox.x0, (int)cutBox.y0, (int)w, (int)h));
     PaintCtx->blitImage(BLPoint(0,0), *CanvasImage, BLRectI((int)cutBox.x0, (int)cutBox.y0, (int)w, (int)h));
-    //PaintCtx->blitImage(BLPoint(0,0), *PrepareImage, BLRectI((int)cutBox.x0, (int)cutBox.y0, (int)w, (int)h));
     PaintCtx->end();
     History::Clear();
     new PinWin(x+ cutBox.x0, y+cutBox.y0, img);

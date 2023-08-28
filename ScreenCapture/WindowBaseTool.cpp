@@ -155,8 +155,10 @@ void WindowBase::drawToolMain()
 {	
 	PaintCtx->setFillStyle(BLRgba32(255, 255, 255));
 	PaintCtx->fillBox(toolBoxMain);
-	PaintCtx->setStrokeWidth(1.0f);
-	PaintCtx->strokeBox(toolBoxMain, BLRgba32(9, 88, 217));
+	if (!IsMainWin) {
+		PaintCtx->setStrokeWidth(1.0f);
+		PaintCtx->strokeBox(toolBoxMain, BLRgba32(9, 88, 217));
+	}
 	BLPoint point;
 	point.x = toolBoxMain.x0 + iconLeftMargin;
 	point.y = toolBoxMain.y0 + iconTopMargin;
