@@ -17,7 +17,9 @@
 #include "Shape/Text.h"
 #include "Shape/Eraser.h"
 #include "Shape/Mosaic.h"
-#include "Painter.h"
+
+
+#define WM_REFRESH (WM_APP+1)
 
 class WindowBase
 {
@@ -52,6 +54,9 @@ public:
 	bool IsDrawing = false;
 	bool IsMosaicUsePen = false;
 	unsigned int stride;
+	HDC hCompatibleDC = NULL;
+	HBITMAP hCustomBmp = NULL;
+
 	//mouse
 	POINT MouseDownPos;
 	bool IsLeftBtnDown = false;
@@ -101,8 +106,6 @@ private:
 	LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);	
 	void quitApp(const int& exitCode);
 	bool OnTimer(const unsigned int& id);
-	//paint
-	Painter* painter;
 	//get color
 	std::wstring getPixelRgb();
 	std::wstring getPixelHex();
@@ -130,9 +133,6 @@ private:
 	void drawBtnColors(const BLPoint& point, const Icon::Name& name, const bool& checked, const bool& hover, const BLRgba32& color);
 	void drawBtnStrokeWidth(const BLPoint& point, const bool& checked, const bool& hover);
 	void drawBtnEnable(const BLPoint& point, const Icon::Name& name, const bool& hover, const bool& enable);
-	
-
-
 	//tool main
 	int mouseEnterMainToolIndex = -1;
 

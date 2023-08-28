@@ -5,6 +5,7 @@
 #include <format>
 #include "MainWin.h"
 #include "PinWin.h"
+#include <thread>
 
 /// <summary>
 /// 0 undefined
@@ -98,13 +99,10 @@ void WindowBase::InitWindow()
         MessageBox(NULL, L"注册窗口类失败", L"系统提示", NULL);
         return;
     }
-    //WS_EX_NOREDIRECTIONBITMAP
-    this->hwnd = CreateWindowEx(NULL, wcx.lpszClassName, wcx.lpszClassName, WS_OVERLAPPEDWINDOW, x, y, w, h, NULL, NULL, hinstance, static_cast<LPVOID>(this));
+    this->hwnd = CreateWindowEx(WS_EX_LAYERED, wcx.lpszClassName, wcx.lpszClassName, WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_POPUP, x, y, w, h, NULL, NULL, hinstance, static_cast<LPVOID>(this));
     BOOL attrib = TRUE;
     DwmSetWindowAttribute(hwnd, DWMWA_TRANSITIONS_FORCEDISABLED, &attrib, sizeof(attrib));//移除窗口打开与关闭时的动画效果
-    SetWindowPos(hwnd, nullptr, 0, 0, 0, 0, SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_NOMOVE | SWP_NOSIZE | SWP_FRAMECHANGED);
-    //painter = new Painter(hwnd);
-    SetLayeredWindowAttributes(hwnd, RGB(0, 255, 0), 100, LWA_COLORKEY);
+    SetWindowPos(hwnd, nullptr, 0, 0, 0, 0, SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_NOMOVE | SWP_NOSIZE | SWP_FRAMECHANGED);    
 }
 
 void WindowBase::Show()
@@ -112,6 +110,7 @@ void WindowBase::Show()
     ShowWindow(hwnd, SW_SHOW);
     UpdateWindow(hwnd);
     ChangeCursor(IDC_ARROW);
+    Refresh();
 }
 
 void WindowBase::Close()
@@ -151,7 +150,10 @@ void WindowBase::InitLayerImg() {
 
 void WindowBase::Refresh()
 {
-    InvalidateRect(hwnd, nullptr, false);
+
+    PostMessage(hwnd, WM_REFRESH, NULL, NULL);
+    //InvalidateRect(hwnd, nullptr, false);
+
 }
 
 LRESULT CALLBACK WindowBase::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -173,22 +175,61 @@ LRESULT CALLBACK WindowBase::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPAR
         case WM_SETCURSOR: {
             return true;
         }
-        case WM_ERASEBKGND: {
-            return true;
-        }
-        case WM_PAINT: {
+        case WM_REFRESH: {
             BeforePaint();
-            PAINTSTRUCT ps;
-            HDC hdc = BeginPaint(hWnd, &ps);
-            HDC hdcBmp = CreateCompatibleDC(hdc);
-            DeleteObject(SelectObject(hdcBmp, bottomHbitmap));
-            BitBlt(hdc, 0, 0, (int)w, (int)h, hdcBmp, 0, 0, SRCCOPY);
-            DeleteDC(hdcBmp);
-            EndPaint(hWnd, &ps);
-            ValidateRect(hWnd, NULL);
-            return 0;
-
+            HDC hdc;
+            hdc = GetDC(hwnd);
+            if (hCompatibleDC == NULL)
+            {
+                hCompatibleDC = CreateCompatibleDC(NULL);
+                hCustomBmp = CreateCompatibleBitmap(hdc, w, h); //创建一副与当前DC兼容的位图
+                SelectObject(hCompatibleDC, hCustomBmp);
+            }
+            BITMAPINFO info = { sizeof(BITMAPINFOHEADER), (long)w, 0 - (long)h, 1, 32, BI_RGB, stride*h, 0, 0, 0, 0 };
+            SetDIBits(hdc, hCustomBmp, 0, h, pixelData, &info, DIB_RGB_COLORS); //使用指定的DIB颜色数据来设置位图中的像素
+            BLENDFUNCTION blend = { 0 };
+            blend.BlendOp = AC_SRC_OVER;
+            blend.SourceConstantAlpha = 255;
+            blend.AlphaFormat = AC_SRC_ALPHA;//按通道混合
+            POINT	pSrc = { 0, 0 };
+            SIZE	sizeWnd = { w, h };
+            UpdateLayeredWindow(hwnd, hdc, NULL, &sizeWnd, hCompatibleDC, &pSrc, NULL, &blend, ULW_ALPHA);//更新分层窗口
+            ReleaseDC(hwnd, hdc);
+            return 1;
         }
+        //case WM_ERASEBKGND: {
+        //    //RECT rect;
+        //    //GetClientRect(hWnd, &rect);
+        //    //FillRect((HDC)wParam, &rect, CreateSolidBrush(RGB(255, 0, 255)));
+        //    return true;
+        //}
+        //case WM_PAINT: {
+        //    BeforePaint();
+
+        //    //BLENDFUNCTION blend = { 0 };
+        //    //blend.BlendOp = AC_SRC_OVER;
+        //    //blend.SourceConstantAlpha = 255;
+        //    //blend.AlphaFormat = AC_SRC_ALPHA;//按通道混合
+        //    //POINT	pSrc = { 0, 0 };
+        //    //SIZE	sizeWnd = { w, h };
+        //    //PAINTSTRUCT ps;
+        //    //HDC hdc = BeginPaint(hWnd, &ps);
+        //    //HDC hdcBmp = CreateCompatibleDC(hdc);
+        //    //DeleteObject(SelectObject(hdcBmp, bottomHbitmap));
+        //    //BitBlt(hdc, 0, 0, (int)w, (int)h, hdcBmp, 0, 0, SRCCOPY);
+        //    //UpdateLayeredWindow(hwnd, hdc, NULL, &sizeWnd, hdcBmp, &pSrc, NULL, &blend, ULW_ALPHA);//更新分层窗口
+        //    //DeleteDC(hdcBmp);
+        //    //EndPaint(hWnd, &ps);
+        //    PAINTSTRUCT ps;
+        //    HDC hdc = BeginPaint(hWnd, &ps);
+        //    HDC hdcBmp = CreateCompatibleDC(hdc);
+        //    DeleteObject(SelectObject(hdcBmp, bottomHbitmap));
+        //    BitBlt(hdc, 0, 0, (int)w, (int)h, hdcBmp, 0, 0, SRCCOPY);
+        //    DeleteDC(hdcBmp);
+        //    EndPaint(hWnd, &ps);
+        //    ValidateRect(hWnd, NULL);
+        //    return 0;
+        //}
         case WM_TIMER: {
             return OnTimer(wParam);            
         }

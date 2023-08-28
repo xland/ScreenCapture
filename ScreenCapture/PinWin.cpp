@@ -18,12 +18,21 @@ PinWin::PinWin(const int& x, const int& y, BLImage* img)
     cutBox.y1 = 16 + img->height();
     IsMainWin = false;
 	InitLayerImg();
+
+    BLImageData imgData;
+    CanvasImage->getData(&imgData);
+    stride = imgData.stride;
+    auto dataSize = stride * imgData.size.h;
+    HDC hScreen = GetDC(NULL);
+    pixelData = new unsigned char[dataSize];
+    BITMAPINFO info = { sizeof(BITMAPINFOHEADER), (long)w, 0 - (long)h, 1, 32, BI_RGB, dataSize, 0, 0, 0, 0 };
+    bottomHbitmap = CreateDIBSection(hScreen, &info, DIB_RGB_COLORS, reinterpret_cast<void**>(&pixelData), NULL, NULL);
+    ReleaseDC(NULL, hScreen);
+    BottomImage = new BLImage();
+    BottomImage->createFromData(w, h, BL_FORMAT_PRGB32, pixelData, stride, BL_DATA_ACCESS_RW, [](void* impl, void* externalData, void* userData) {
+        delete[] externalData; //todo
+        });
 	InitWindow();
-    auto rgnImg = CreateRectRgn(16, 16, 16 + img->width(), 16 + img->height());
-    auto rgnTool = CreateRectRgn(16, OriginalImage->height() + 32, toolBoxMain.x0 + toolBoxWidth, toolBoxMain.y0 + toolBoxHeight);
-    HRGN resultRgn{};
-    CombineRgn(resultRgn, rgnImg, rgnTool, RGN_AND);
-    SetWindowRgn(hwnd, resultRgn, true);
 	Show();
 }
 PinWin::~PinWin()
@@ -45,7 +54,6 @@ void PinWin::SaveFile(const std::string& filePath) {
 void PinWin::BeforePaint() {
     PaintCtx->begin(*BottomImage);
     PaintCtx->clearAll();
-    //PaintCtx->fillAll(BLRgba32(0, 255, 0));
     drawShadow();
     BLPoint startPos(16, 16);
     BLRectI srcRect(16, 16, OriginalImage->width(), OriginalImage->height());
