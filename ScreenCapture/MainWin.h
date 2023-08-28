@@ -11,7 +11,7 @@ public:
 	MainWin();
 	~MainWin();
 private:
-	void initWindowSize();
+	void initLayer();
 	void shotScreen();
 	void PinWindow() override;
 	void setToolBoxPos();

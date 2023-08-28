@@ -35,36 +35,36 @@ namespace Shape {
         auto PaintCtx = win->PaintCtx;
         //先在PrepareImage上贴OriginalImage，再贴CanvasImage
         PaintCtx->begin(*win->PrepareImage);
-        PaintCtx->blitImage(BLRect(0, 0, win->w, win->h), *win->OriginalImage);
-        PaintCtx->blitImage(BLRect(0, 0, win->w, win->h), *win->CanvasImage);
+        PaintCtx->blitImage(BLPoint(0, 0), *win->OriginalImage);
+        PaintCtx->blitImage(BLPoint(0, 0), *win->CanvasImage);
         PaintCtx->end();
         //得到PrepareImage上的像素数据
         BLImageData imgData;
         win->PrepareImage->getData(&imgData);
+        auto dataSize = imgData.stride * imgData.size.h;
         unsigned char* pixelData = (unsigned char*)(imgData.pixelData);
         //创建MosaicImage，并在MosaicImage上生成马赛克图像（使用的是PrepareImage上的像素数据）
         //以后的repaint，会使用MosaicImage代替CanvaseImage
-        win->MosaicImage = new BLImage(win->w, win->h, BL_FORMAT_PRGB32);
+        win->MosaicImage = new BLImage(imgData.size.w, imgData.size.h, BL_FORMAT_PRGB32);
         PaintCtx->begin(*win->MosaicImage);
         BLPointI points[5];
-        auto totalPixelSize = win->stride * win->h;
-        for (size_t y = 0; y <= win->h; y+=strokeWidth)
+        for (size_t y = 0; y <= win->PrepareImage->height(); y+=strokeWidth)
         {
-            for (size_t x = 0; x <= win->w; x+=strokeWidth)
+            for (size_t x = 0; x <= win->PrepareImage->width(); x+=strokeWidth)
             {
                 setSamplingPoints(points, x, y);
                 unsigned int b{ 0 }, g{ 0 }, r{ 0 };
                 for (size_t i = 0; i < 5; i++)
                 {
-                    auto index = points[i].y * (int)win->stride + points[i].x * 4;
-                    if (index > totalPixelSize) {
+                    auto index = points[i].y * imgData.stride + points[i].x * 4;
+                    if (index > dataSize) {
                         break;
                     }
                     b += pixelData[index];
                     g += pixelData[index + 1];
                     r += pixelData[index + 2];
                 }
-                PaintCtx->setFillStyle(BLRgba32(r / 5, g / 5, b / 5, 255));
+                PaintCtx->setFillStyle(BLRgba32(r / 5, g / 5, b / 5));
                 PaintCtx->fillBox(points[0].x, points[0].y, points[4].x, points[4].y);
             }
         }
@@ -92,6 +92,7 @@ namespace Shape {
             context->setStrokeWidth(1);
             context->strokeBox(box);
             context->end();
+            win->MosaicImage->writeToFile("allen.png");
         }
         else
         {

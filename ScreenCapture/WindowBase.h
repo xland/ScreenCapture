@@ -81,7 +81,6 @@ protected:
 	virtual void SaveFile(const std::string& filePath) {};
 	void SaveFile();
 	void InitWindow();
-	void InitLayerImg();
 	void drawToolMain();
 	void drawPixelInfo();
 	BLBox cutBox;

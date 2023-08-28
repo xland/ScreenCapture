@@ -132,23 +132,7 @@ bool WindowBase::OnTimer(const unsigned int& id)
     return true;
 }
 
-void WindowBase::InitLayerImg() {
-    PaintCtx = new BLContext();
-    PrepareImage = new BLImage(w, h, BL_FORMAT_PRGB32);    
-    PaintCtx->begin(*PrepareImage);
-    PaintCtx->clearAll();
-    PaintCtx->end();
-    CanvasImage = new BLImage(w, h, BL_FORMAT_PRGB32);
-    PaintCtx->begin(*CanvasImage);
-    PaintCtx->clearAll();
-    PaintCtx->end();
 
-    pixelData = new unsigned char[dataSize]; 
-    BottomImage = new BLImage();
-    BottomImage->createFromData(w, h, BL_FORMAT_PRGB32, pixelData, stride, BL_DATA_ACCESS_RW, [](void* impl, void* externalData, void* userData) {
-        delete[] externalData;
-    });
-}
 void WindowBase::Refresh()
 {
     PostMessage(hwnd, WM_REFRESH, NULL, NULL);

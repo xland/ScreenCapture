@@ -5,8 +5,7 @@
 MainWin::MainWin()
 {
     state = State::start;
-    initWindowSize();
-    InitLayerImg();
+    initLayer();
     shotScreen();
     enumDesktopWindow();
     InitWindow();
@@ -17,7 +16,7 @@ MainWin::~MainWin()
 
 }
 
-void MainWin::initWindowSize()
+void MainWin::initLayer()
 {
     x = GetSystemMetrics(SM_XVIRTUALSCREEN);
     y = GetSystemMetrics(SM_YVIRTUALSCREEN);
@@ -25,6 +24,22 @@ void MainWin::initWindowSize()
     h = GetSystemMetrics(SM_CYVIRTUALSCREEN);
     stride = w * 4;
     dataSize = stride * h;
+
+    PaintCtx = new BLContext();
+    PrepareImage = new BLImage(w, h, BL_FORMAT_PRGB32);
+    PaintCtx->begin(*PrepareImage);
+    PaintCtx->clearAll();
+    PaintCtx->end();
+    CanvasImage = new BLImage(w, h, BL_FORMAT_PRGB32);
+    PaintCtx->begin(*CanvasImage);
+    PaintCtx->clearAll();
+    PaintCtx->end();
+
+    pixelData = new unsigned char[dataSize];
+    BottomImage = new BLImage();
+    BottomImage->createFromData(w, h, BL_FORMAT_PRGB32, pixelData, stride, BL_DATA_ACCESS_RW, [](void* impl, void* externalData, void* userData) {
+        delete[] externalData;
+        });
 }
 
 void MainWin::shotScreen()

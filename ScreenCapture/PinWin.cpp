@@ -14,7 +14,21 @@ PinWin::PinWin(const int& x, const int& y, BLImage* img)
     stride = w * 4;
     dataSize = stride * h;
     //-------------------------------------------
-    InitLayerImg();
+    PaintCtx = new BLContext();
+    PrepareImage = new BLImage(img->width(), img->height(), BL_FORMAT_PRGB32);
+    PaintCtx->begin(*PrepareImage);
+    PaintCtx->clearAll();
+    PaintCtx->end();
+    CanvasImage = new BLImage(img->width(), img->height(), BL_FORMAT_PRGB32);
+    PaintCtx->begin(*CanvasImage);
+    PaintCtx->clearAll();
+    PaintCtx->end();
+    pixelData = new unsigned char[dataSize];
+    BottomImage = new BLImage();
+    BottomImage->createFromData(w, h, BL_FORMAT_PRGB32, pixelData, stride, BL_DATA_ACCESS_RW, [](void* impl, void* externalData, void* userData) {
+        delete[] externalData;
+    });
+    //---------------------------------------------
     OriginalImage = img;
     cutBox.x0 = 16;
     cutBox.y0 = 16;
@@ -30,12 +44,12 @@ PinWin::~PinWin()
 }
 
 void PinWin::SaveFile(const std::string& filePath) {
-    auto w = cutBox.x1 - cutBox.x0;
-    auto h = cutBox.y1 - cutBox.y0;
+    auto w = OriginalImage->width();
+    auto h = OriginalImage->height();
     BLImage imgSave(w, h, BL_FORMAT_PRGB32);
     PaintCtx->begin(imgSave);
-    PaintCtx->blitImage(BLPoint(0, 0), *OriginalImage, BLRectI(0, 0, (int)w, (int)h));
-    PaintCtx->blitImage(BLPoint(0, 0), *CanvasImage, BLRectI(16, 16, (int)w, (int)h));
+    PaintCtx->blitImage(BLPoint(0, 0), *OriginalImage, BLRectI(0, 0, w, h));
+    PaintCtx->blitImage(BLPoint(0, 0), *CanvasImage, BLRectI(0, 0, w, h));
     PaintCtx->end();
     imgSave.writeToFile(filePath.c_str());
 }
@@ -48,10 +62,9 @@ void PinWin::BeforePaint() {
     BLRectI srcRect(16, 16, OriginalImage->width(), OriginalImage->height());
     PaintCtx->blitImage(startPos, *OriginalImage);
     if (IsMosaicUsePen) {
-        PaintCtx->blitImage(startPos, *MosaicImage, srcRect);
+        PaintCtx->blitImage(startPos, *MosaicImage,srcRect);        
     }
-    else
-    {
+    else {
         PaintCtx->blitImage(startPos, *CanvasImage,srcRect);
     }
     if (IsDrawing) {
