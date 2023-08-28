@@ -23,6 +23,8 @@ void MainWin::initWindowSize()
     y = GetSystemMetrics(SM_YVIRTUALSCREEN);
     w = GetSystemMetrics(SM_CXVIRTUALSCREEN);
     h = GetSystemMetrics(SM_CYVIRTUALSCREEN);
+    stride = w * 4;
+    dataSize = stride * h;
 }
 
 void MainWin::shotScreen()
@@ -32,15 +34,13 @@ void MainWin::shotScreen()
     HBITMAP hBitmap = CreateCompatibleBitmap(hScreen, w, h);
     DeleteObject(SelectObject(hDC, hBitmap));
     BOOL bRet = BitBlt(hDC, 0, 0, w, h, hScreen, x, y, SRCCOPY);
-    stride = w * 4;
-    unsigned int dataSize = stride * h;
     auto desktopPixel = new unsigned char[dataSize];
     BITMAPINFO info = { sizeof(BITMAPINFOHEADER), (long)w, 0 - (long)h, 1, 32, BI_RGB, dataSize, 0, 0, 0, 0 };
     GetDIBits(hDC, hBitmap, 0, h, desktopPixel, &info, DIB_RGB_COLORS);
     DeleteDC(hDC);
     DeleteObject(hBitmap);
     ReleaseDC(NULL, hScreen);
-    OriginalImage = new BLImage(w, h, BL_FORMAT_PRGB32);
+    OriginalImage = new BLImage();
     OriginalImage->createFromData(w, h, BL_FORMAT_PRGB32, desktopPixel, stride, BL_DATA_ACCESS_RW, [](void* impl, void* externalData, void* userData) {
         delete[] externalData;
     });
@@ -93,7 +93,7 @@ void MainWin::PinWindow() {
     PaintCtx->clearAll();
     PaintCtx->blitImage(BLPoint(0,0), *OriginalImage, BLRectI((int)cutBox.x0, (int)cutBox.y0, (int)w, (int)h));
     PaintCtx->blitImage(BLPoint(0,0), *CanvasImage, BLRectI((int)cutBox.x0, (int)cutBox.y0, (int)w, (int)h));
-    PaintCtx->blitImage(BLPoint(0, 0), *PrepareImage, BLRectI((int)cutBox.x0, (int)cutBox.y0, (int)w, (int)h));
+    PaintCtx->blitImage(BLPoint(0,0), *PrepareImage, BLRectI((int)cutBox.x0, (int)cutBox.y0, (int)w, (int)h));
     PaintCtx->end();
     History::Clear();
     new PinWin(cutBox.x0, cutBox.y0, img);    

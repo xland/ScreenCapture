@@ -11,6 +11,9 @@ PinWin::PinWin(const int& x, const int& y, BLImage* img)
         this->w = toolBoxWidth+32;
     }
 	this->h = img->height() + 32 + 2*toolBoxHeight + 2*toolBoxSpan;
+    stride = w * 4;
+    dataSize = stride * h;
+    //-------------------------------------------
     InitLayerImg();
     OriginalImage = img;
     cutBox.x0 = 16;
@@ -25,6 +28,7 @@ PinWin::~PinWin()
 {
 
 }
+
 void PinWin::SaveFile(const std::string& filePath) {
     auto w = cutBox.x1 - cutBox.x0;
     auto h = cutBox.y1 - cutBox.y0;

@@ -53,7 +53,8 @@ public:
 	HBITMAP bottomHbitmap;
 	bool IsDrawing = false;
 	bool IsMosaicUsePen = false;
-	unsigned int stride;
+	unsigned long stride;
+	unsigned long dataSize;
 	HDC hCompatibleDC = NULL;
 
 	//mouse

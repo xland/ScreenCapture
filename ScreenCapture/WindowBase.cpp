@@ -133,20 +133,21 @@ bool WindowBase::OnTimer(const unsigned int& id)
 }
 
 void WindowBase::InitLayerImg() {
-    PrepareImage = new BLImage(w, h, BL_FORMAT_PRGB32);
-    CanvasImage = new BLImage(w, h, BL_FORMAT_PRGB32);
-    BottomImage = new BLImage(w, h, BL_FORMAT_PRGB32);
     PaintCtx = new BLContext();
+    PrepareImage = new BLImage(w, h, BL_FORMAT_PRGB32);    
     PaintCtx->begin(*PrepareImage);
     PaintCtx->clearAll();
     PaintCtx->end();
+    CanvasImage = new BLImage(w, h, BL_FORMAT_PRGB32);
     PaintCtx->begin(*CanvasImage);
     PaintCtx->clearAll();
     PaintCtx->end();
-    BLImageData imgData;
-    BottomImage->getData(&imgData);
-    stride = imgData.stride;
-    pixelData = (unsigned char*)imgData.pixelData;
+
+    pixelData = new unsigned char[dataSize]; 
+    BottomImage = new BLImage();
+    BottomImage->createFromData(w, h, BL_FORMAT_PRGB32, pixelData, stride, BL_DATA_ACCESS_RW, [](void* impl, void* externalData, void* userData) {
+        delete[] externalData;
+    });
 }
 void WindowBase::Refresh()
 {
@@ -181,16 +182,13 @@ LRESULT CALLBACK WindowBase::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPAR
             {
                 hCompatibleDC = CreateCompatibleDC(NULL);
                 bottomHbitmap = CreateCompatibleBitmap(hdc, w, h); //创建一副与当前DC兼容的位图
-                SelectObject(hCompatibleDC, bottomHbitmap);
+                DeleteObject(SelectObject(hCompatibleDC, bottomHbitmap));
             }
-            BITMAPINFO info = { sizeof(BITMAPINFOHEADER), (long)w, 0 - (long)h, 1, 32, BI_RGB, stride*h, 0, 0, 0, 0 };
+            BITMAPINFO info = { sizeof(BITMAPINFOHEADER), w, 0 - h, 1, 32, BI_RGB, stride*h, 0, 0, 0, 0 };
             SetDIBits(hdc, bottomHbitmap, 0, h, pixelData, &info, DIB_RGB_COLORS); //使用指定的DIB颜色数据来设置位图中的像素
-            BLENDFUNCTION blend = { 0 };
-            blend.BlendOp = AC_SRC_OVER;
-            blend.SourceConstantAlpha = 255;
-            blend.AlphaFormat = AC_SRC_ALPHA;//按通道混合
-            POINT	pSrc = { 0, 0 };
-            SIZE	sizeWnd = { w, h };
+            BLENDFUNCTION blend = { .BlendOp{AC_SRC_OVER},.SourceConstantAlpha{255},.AlphaFormat{AC_SRC_ALPHA} };//按通道混合
+            POINT pSrc = { 0, 0 };
+            SIZE sizeWnd = { w, h };
             UpdateLayeredWindow(hwnd, hdc, NULL, &sizeWnd, hCompatibleDC, &pSrc, NULL, &blend, ULW_ALPHA);//更新分层窗口
             ReleaseDC(hwnd, hdc);
             return 1;
