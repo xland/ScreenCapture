@@ -11,35 +11,20 @@ PinWin::PinWin(const int& x, const int& y, BLImage* img)
         this->w = toolBoxWidth+32;
     }
 	this->h = img->height() + 32 + 2*toolBoxHeight + 2*toolBoxSpan;
+    InitLayerImg();
     OriginalImage = img;
     cutBox.x0 = 16;
     cutBox.y0 = 16;
     cutBox.x1 = 16 + img->width();
     cutBox.y1 = 16 + img->height();
     IsMainWin = false;
-	InitLayerImg();
-
-    BLImageData imgData;
-    CanvasImage->getData(&imgData);
-    stride = imgData.stride;
-    auto dataSize = stride * imgData.size.h;
-    HDC hScreen = GetDC(NULL);
-    pixelData = new unsigned char[dataSize];
-    BITMAPINFO info = { sizeof(BITMAPINFOHEADER), (long)w, 0 - (long)h, 1, 32, BI_RGB, dataSize, 0, 0, 0, 0 };
-    bottomHbitmap = CreateDIBSection(hScreen, &info, DIB_RGB_COLORS, reinterpret_cast<void**>(&pixelData), NULL, NULL);
-    ReleaseDC(NULL, hScreen);
-    BottomImage = new BLImage();
-    BottomImage->createFromData(w, h, BL_FORMAT_PRGB32, pixelData, stride, BL_DATA_ACCESS_RW, [](void* impl, void* externalData, void* userData) {
-        delete[] externalData; //todo
-        });
 	InitWindow();
-	Show();
+	Show();    
 }
 PinWin::~PinWin()
 {
 
 }
-
 void PinWin::SaveFile(const std::string& filePath) {
     auto w = cutBox.x1 - cutBox.x0;
     auto h = cutBox.y1 - cutBox.y0;
@@ -106,7 +91,6 @@ void PinWin::drawShadow()
 {
     unsigned w = OriginalImage->width();
     unsigned h = OriginalImage->height();
-
     {//左上
         BLGradient radial(BLRadialGradientValues(16, 16, 16, 16, 16));
         radial.addStop(0.0, BLRgba32(0x22000000));

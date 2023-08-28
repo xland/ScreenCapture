@@ -6,9 +6,9 @@ MainWin::MainWin()
 {
     state = State::start;
     initWindowSize();
-    shotScreen();
-    enumDesktopWindow();    
     InitLayerImg();
+    shotScreen();
+    enumDesktopWindow();
     InitWindow();
     Show();
 }
@@ -39,16 +39,10 @@ void MainWin::shotScreen()
     GetDIBits(hDC, hBitmap, 0, h, desktopPixel, &info, DIB_RGB_COLORS);
     DeleteDC(hDC);
     DeleteObject(hBitmap);
+    ReleaseDC(NULL, hScreen);
     OriginalImage = new BLImage(w, h, BL_FORMAT_PRGB32);
     OriginalImage->createFromData(w, h, BL_FORMAT_PRGB32, desktopPixel, stride, BL_DATA_ACCESS_RW, [](void* impl, void* externalData, void* userData) {
         delete[] externalData;
-        });
-    pixelData = new unsigned char[dataSize];
-    bottomHbitmap = CreateDIBSection(hScreen, &info, DIB_RGB_COLORS, reinterpret_cast<void**>(&pixelData), NULL, NULL);
-    ReleaseDC(NULL, hScreen);
-    BottomImage = new BLImage();
-    BottomImage->createFromData(w, h, BL_FORMAT_PRGB32, pixelData, stride, BL_DATA_ACCESS_RW, [](void* impl, void* externalData, void* userData) {
-        delete[] externalData; //todo
     });
 }
 

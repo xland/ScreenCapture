@@ -58,8 +58,8 @@ WindowBase::~WindowBase()
     delete CanvasImage;
     delete PrepareImage;
     delete MosaicImage;
-    //delete BottomImage;
-    //delete painter;
+    delete BottomImage;
+    DeleteObject(hCompatibleDC);
     DeleteObject(bottomHbitmap);
 }
 
@@ -135,7 +135,7 @@ bool WindowBase::OnTimer(const unsigned int& id)
 void WindowBase::InitLayerImg() {
     PrepareImage = new BLImage(w, h, BL_FORMAT_PRGB32);
     CanvasImage = new BLImage(w, h, BL_FORMAT_PRGB32);
-
+    BottomImage = new BLImage(w, h, BL_FORMAT_PRGB32);
     PaintCtx = new BLContext();
     PaintCtx->begin(*PrepareImage);
     PaintCtx->clearAll();
@@ -143,17 +143,15 @@ void WindowBase::InitLayerImg() {
     PaintCtx->begin(*CanvasImage);
     PaintCtx->clearAll();
     PaintCtx->end();
-
+    BLImageData imgData;
+    BottomImage->getData(&imgData);
+    stride = imgData.stride;
+    pixelData = (unsigned char*)imgData.pixelData;
 }
-
-
-
 void WindowBase::Refresh()
 {
-
     PostMessage(hwnd, WM_REFRESH, NULL, NULL);
     //InvalidateRect(hwnd, nullptr, false);
-
 }
 
 LRESULT CALLBACK WindowBase::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -182,11 +180,11 @@ LRESULT CALLBACK WindowBase::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPAR
             if (hCompatibleDC == NULL)
             {
                 hCompatibleDC = CreateCompatibleDC(NULL);
-                hCustomBmp = CreateCompatibleBitmap(hdc, w, h); //创建一副与当前DC兼容的位图
-                SelectObject(hCompatibleDC, hCustomBmp);
+                bottomHbitmap = CreateCompatibleBitmap(hdc, w, h); //创建一副与当前DC兼容的位图
+                SelectObject(hCompatibleDC, bottomHbitmap);
             }
             BITMAPINFO info = { sizeof(BITMAPINFOHEADER), (long)w, 0 - (long)h, 1, 32, BI_RGB, stride*h, 0, 0, 0, 0 };
-            SetDIBits(hdc, hCustomBmp, 0, h, pixelData, &info, DIB_RGB_COLORS); //使用指定的DIB颜色数据来设置位图中的像素
+            SetDIBits(hdc, bottomHbitmap, 0, h, pixelData, &info, DIB_RGB_COLORS); //使用指定的DIB颜色数据来设置位图中的像素
             BLENDFUNCTION blend = { 0 };
             blend.BlendOp = AC_SRC_OVER;
             blend.SourceConstantAlpha = 255;
@@ -197,39 +195,6 @@ LRESULT CALLBACK WindowBase::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPAR
             ReleaseDC(hwnd, hdc);
             return 1;
         }
-        //case WM_ERASEBKGND: {
-        //    //RECT rect;
-        //    //GetClientRect(hWnd, &rect);
-        //    //FillRect((HDC)wParam, &rect, CreateSolidBrush(RGB(255, 0, 255)));
-        //    return true;
-        //}
-        //case WM_PAINT: {
-        //    BeforePaint();
-
-        //    //BLENDFUNCTION blend = { 0 };
-        //    //blend.BlendOp = AC_SRC_OVER;
-        //    //blend.SourceConstantAlpha = 255;
-        //    //blend.AlphaFormat = AC_SRC_ALPHA;//按通道混合
-        //    //POINT	pSrc = { 0, 0 };
-        //    //SIZE	sizeWnd = { w, h };
-        //    //PAINTSTRUCT ps;
-        //    //HDC hdc = BeginPaint(hWnd, &ps);
-        //    //HDC hdcBmp = CreateCompatibleDC(hdc);
-        //    //DeleteObject(SelectObject(hdcBmp, bottomHbitmap));
-        //    //BitBlt(hdc, 0, 0, (int)w, (int)h, hdcBmp, 0, 0, SRCCOPY);
-        //    //UpdateLayeredWindow(hwnd, hdc, NULL, &sizeWnd, hdcBmp, &pSrc, NULL, &blend, ULW_ALPHA);//更新分层窗口
-        //    //DeleteDC(hdcBmp);
-        //    //EndPaint(hWnd, &ps);
-        //    PAINTSTRUCT ps;
-        //    HDC hdc = BeginPaint(hWnd, &ps);
-        //    HDC hdcBmp = CreateCompatibleDC(hdc);
-        //    DeleteObject(SelectObject(hdcBmp, bottomHbitmap));
-        //    BitBlt(hdc, 0, 0, (int)w, (int)h, hdcBmp, 0, 0, SRCCOPY);
-        //    DeleteDC(hdcBmp);
-        //    EndPaint(hWnd, &ps);
-        //    ValidateRect(hWnd, NULL);
-        //    return 0;
-        //}
         case WM_TIMER: {
             return OnTimer(wParam);            
         }

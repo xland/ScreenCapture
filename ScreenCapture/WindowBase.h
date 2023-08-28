@@ -55,7 +55,6 @@ public:
 	bool IsMosaicUsePen = false;
 	unsigned int stride;
 	HDC hCompatibleDC = NULL;
-	HBITMAP hCustomBmp = NULL;
 
 	//mouse
 	POINT MouseDownPos;
