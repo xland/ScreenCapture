@@ -33,7 +33,7 @@ namespace Shape {
     {
         auto win = WindowBase::Get();
         auto PaintCtx = win->PaintCtx;
-        //先在PrepareImage上贴bgImage，再贴CanvasImage
+        //先在PrepareImage上贴OriginalImage，再贴CanvasImage
         PaintCtx->begin(*win->PrepareImage);
         PaintCtx->blitImage(BLRect(0, 0, win->w, win->h), *win->OriginalImage);
         PaintCtx->blitImage(BLRect(0, 0, win->w, win->h), *win->CanvasImage);
