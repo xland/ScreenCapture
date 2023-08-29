@@ -170,4 +170,9 @@
   <ItemGroup>
     <Font Include="Res\iconfont.ttf" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="Res\Logo.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+  </ItemGroup>
 </Project>

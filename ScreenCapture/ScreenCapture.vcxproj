@@ -218,6 +218,9 @@
   <ItemGroup>
     <Font Include="Res\iconfont.ttf" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="Res\Logo.ico" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

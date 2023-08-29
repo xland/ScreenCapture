@@ -39,8 +39,9 @@ public:
 	State PreState;
 	int SelectedToolIndex = -1;
 
-	//tool sub
+	//tool
 	bool IsFill = false;
+	std::vector<BLBoxI> screens;
 
 	//paint
 	BLContext* PaintCtx;
