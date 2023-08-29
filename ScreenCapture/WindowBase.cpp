@@ -215,7 +215,6 @@ LRESULT CALLBACK WindowBase::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPAR
         {    
             this->w = LOWORD(lParam);
             this->h = HIWORD(lParam);
-            OnResize();
             return true;
         }
         case WM_EXITSIZEMOVE: {

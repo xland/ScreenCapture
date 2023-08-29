@@ -76,7 +76,6 @@ protected:
 	virtual void HighLightWindowBox(const int& x, const int& y) {};
 	virtual void MouseMoveWhenMaskReady(const int& x, const int& y) {};
 	virtual void PinWindow() {};
-	virtual void OnResize() {};
 	virtual void BeforePaint() {};
 	virtual void SaveFile(const std::string& filePath) {};
 	void SaveFile();
