@@ -49,6 +49,16 @@ LRESULT CALLBACK WindowBase::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wPar
 
 WindowBase::WindowBase(){
     windowInstance = this;
+
+    EnumDisplayMonitors(NULL, NULL, [](HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMonitor, LPARAM lParam)
+        {
+            auto self = (WindowBase*)lParam;
+            MONITORINFO info;
+            info.cbSize = sizeof(MONITORINFO);
+            GetMonitorInfo(hMonitor, &info);
+
+            return TRUE;
+        }, (LPARAM)this);
 }
 
 WindowBase::~WindowBase()
