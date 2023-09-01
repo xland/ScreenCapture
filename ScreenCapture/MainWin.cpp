@@ -153,19 +153,16 @@ void MainWin::setToolBoxPos()
             //尚未确定state，主工具条贴着截图区底部上方，并为子工具条留出空间
             toolBoxMain.y0 = cutBox.y1 - (double)toolBoxSpan * 2 - (double)toolBoxHeight * 2;
         }
-    }
-    if (toolBoxMain.x0 < 0) {
-        //如果工具条超出了屏幕左侧，那么让工具条与截图区域左侧对齐
-        toolBoxMain.x0 = cutBox.x0;
+        toolBoxMain.x0 -= toolBoxSpan;
     }
     toolBoxMain.y1 = toolBoxMain.y0 + toolBoxHeight;
     toolBoxMain.x1 = toolBoxMain.x0 + toolBoxWidth;
     bool flag = true;
     for (size_t i = 0; i < screens.size(); i++)
     {
-        if (screens[i].contains(toolBoxMain.x1, toolBoxMain.y1) 
-            || screens[i].contains(toolBoxMain.x1 - toolBoxWidth, toolBoxMain.y1- toolBoxHeight/2)
-            ) {
+        auto x = this->x + toolBoxMain.x0 + toolBoxWidth / 2;
+        auto y = this->y + toolBoxMain.y0 + toolBoxHeight / 2;
+        if (screens[i].contains(x,y)) {
             flag = false;
             break;
         }
@@ -182,6 +179,7 @@ void MainWin::setToolBoxPos()
             //尚未确定state，主工具条贴着截图区底部上方，并为子工具条留出空间
             toolBoxMain.y0 = cutBox.y1 - (double)toolBoxSpan * 2 - (double)toolBoxHeight * 2;
         }
+        toolBoxMain.x0 -= toolBoxSpan;
         toolBoxMain.y1 = toolBoxMain.y0 + toolBoxHeight;
         toolBoxMain.x1 = toolBoxMain.x0 + toolBoxWidth;
     }
