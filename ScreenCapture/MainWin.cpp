@@ -160,19 +160,17 @@ void MainWin::setToolBoxPos()
     }
     toolBoxMain.y1 = toolBoxMain.y0 + toolBoxHeight;
     toolBoxMain.x1 = toolBoxMain.x0 + toolBoxWidth;
-    bool flag = false;
+    bool flag = true;
     for (size_t i = 0; i < screens.size(); i++)
     {
-        if (screens[i].contains(toolBoxMain.x0, toolBoxMain.y0)) {
-            flag = true;
-            break;
-        }
-        if (screens[i].contains(toolBoxMain.x1, toolBoxMain.y1)) {
-            flag = true;
+        if (screens[i].contains(toolBoxMain.x1, toolBoxMain.y1) 
+            || screens[i].contains(toolBoxMain.x1 - toolBoxWidth, toolBoxMain.y1- toolBoxHeight/2)
+            ) {
+            flag = false;
             break;
         }
     }
-    if (!flag) {
+    if (flag) {
         //顶部底部都没有足够的空间
         if (SelectedToolIndex == -1)
         {
