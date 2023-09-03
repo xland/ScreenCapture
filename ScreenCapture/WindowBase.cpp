@@ -5,7 +5,7 @@
 #include <format>
 #include "MainWin.h"
 #include "PinWin.h"
-#include <thread>
+#include "resource.h"
 
 /// <summary>
 /// 0 undefined
@@ -99,8 +99,8 @@ void WindowBase::InitWindow()
     wcx.lpfnWndProc = &WindowBase::RouteWindowMessage;
     wcx.cbWndExtra = sizeof(WindowBase*);
     wcx.hInstance = hinstance;
-    wcx.hIcon = LoadIcon(NULL, IDI_APPLICATION);
-    wcx.hCursor = LoadCursor(NULL, IDC_ARROW);
+    wcx.hIcon = LoadIcon(hinstance, MAKEINTRESOURCE(IDI_ICON1));;
+    wcx.hCursor = LoadCursor(hinstance, IDC_ARROW);
     wcx.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
     wcx.lpszClassName = className.c_str();
     if (!RegisterClassEx(&wcx))
