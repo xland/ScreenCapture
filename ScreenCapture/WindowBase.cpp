@@ -68,7 +68,7 @@ WindowBase::~WindowBase()
     delete PrepareImage;
     delete MosaicImage;
     delete BottomImage;
-    DeleteObject(hCompatibleDC);
+    DeleteDC(hCompatibleDC);
     DeleteObject(bottomHbitmap);
 }
 
