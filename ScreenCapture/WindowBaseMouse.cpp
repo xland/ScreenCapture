@@ -129,19 +129,18 @@ bool WindowBase::OnLeftButtonDown(const int& x, const int& y)
         auto count = floor<std::chrono::milliseconds>(t2 - t1).count();
         if (count > 0 && count < 260 && mouseEnterMainToolIndex == -1 && mouseEnterSubToolIndex == -1) {
             IsDoubleClick = true;
-            if (!IsDrawing) {
-                saveClipboard();
-                return false;
-            }
-            else
-            {
+            if (IsDrawing) {
                 auto shape = dynamic_cast<Shape::Text*>(History::GetLastDrawShape());
                 if (shape) {
                     shape->EndDraw();
                 }
-                SetTimer(hwnd, 998, 60, (TIMERPROC)NULL);
-                return false;
             }
+            else
+            {
+                Refresh();
+            }
+            SetTimer(hwnd, 998, 60, (TIMERPROC)NULL);
+            return false;
         }
         t1 = t2;
     }
@@ -176,7 +175,10 @@ bool WindowBase::OnLeftButtonDown(const int& x, const int& y)
         else if (mouseEnterMainToolIndex == 13) //save clipboard
         {
             IsLeftBtnDown = false;
-            History::LastShapeDrawEnd();
+            if (History::LastShapeDrawEnd()) {
+                Refresh();
+            }
+            IsDoubleClick = true;
             SetTimer(hwnd, 998, 60, (TIMERPROC)NULL);
             return false;
         }

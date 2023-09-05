@@ -86,7 +86,7 @@ void MainWin::BeforePaint() {
         PaintCtx->blitImage(BLRect(0, 0, w, h), *PrepareImage);
     }
     drawMaskBoxes();
-    if (state != State::start) {
+    if (state != State::start && !IsDoubleClick) {
         setToolBoxPos();
         drawToolMain();
     }   
