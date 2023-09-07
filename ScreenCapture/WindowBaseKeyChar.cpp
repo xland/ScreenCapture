@@ -10,7 +10,25 @@ bool WindowBase::OnKeyDown(const unsigned int& key) {
         shape->DeleteWord(false);
         return false;
     }
+    case VK_UP: {
+        if (state == State::start) {
+            SetCursorPos(pixelX, --pixelY);
+            return true;
+        }
+        return true;
+    }
+    case VK_DOWN: {
+        if (state == State::start) {
+            SetCursorPos(pixelX, ++pixelY);
+            return true;
+        }
+        return true;
+    }
     case VK_LEFT: {
+        if (state == State::start) {
+            SetCursorPos(--pixelX, pixelY);
+            return true;
+        }
         auto shape = dynamic_cast<Shape::Text*>(History::GetLastDrawShape());
         if (!shape) return false;
         if (shape->moveCursorIndex(true)) {
@@ -19,6 +37,10 @@ bool WindowBase::OnKeyDown(const unsigned int& key) {
         return false;
     }
     case VK_RIGHT: {
+        if (state == State::start) {
+            SetCursorPos(++pixelX, pixelY);
+            return true;
+        }
         auto shape = dynamic_cast<Shape::Text*>(History::GetLastDrawShape());
         if (!shape) return false;
         if (shape->moveCursorIndex(false)) {

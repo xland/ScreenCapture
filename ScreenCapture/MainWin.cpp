@@ -90,13 +90,14 @@ void MainWin::BeforePaint() {
         setToolBoxPos();
         drawToolMain();
     }   
-    PaintCtx->end();
-    if (!IsLeftBtnDown && state == State::start) {        
-        PaintCtx->begin(*BottomImage);
+    if (state == State::start) {
         drawPixelInfo();
         PaintCtx->end();
     }
-    
+    PaintCtx->setStrokeStyle(BLRgba32(22, 119, 255));
+    PaintCtx->setStrokeWidth(cutBoxBorderWidth);
+    PaintCtx->strokeBox(cutBox);
+    PaintCtx->end();
 }
 
 void MainWin::PinWindow() {   

@@ -4,11 +4,6 @@
 void MainWin::drawMaskBoxes() {
     PaintCtx->setFillStyle(BLRgba32(0, 0, 0, 160));
     PaintCtx->fillBoxArray(maskBoxes, 8);
-    PaintCtx->setStrokeStyle(BLRgba32(22, 119, 255));
-    PaintCtx->setStrokeWidth(cutBoxBorderWidth);
-    PaintCtx->strokeBox(cutBox);
-    
-
 
     auto str = std::format("X:{} Y:{} W:{} H:{}", cutBox.x0, cutBox.y0, cutBox.x1 - cutBox.x0, cutBox.y1 - cutBox.y0);
     auto font = Font::Get()->fontText;
