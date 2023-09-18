@@ -99,7 +99,7 @@ void WindowBase::InitWindow()
     wcx.lpfnWndProc = &WindowBase::RouteWindowMessage;
     wcx.cbWndExtra = sizeof(WindowBase*);
     wcx.hInstance = hinstance;
-    wcx.hIcon = LoadIcon(hinstance, MAKEINTRESOURCE(IDI_ICON1));;
+    wcx.hIcon = LoadIcon(hinstance, MAKEINTRESOURCE(IDI_ICON1));
     wcx.hCursor = LoadCursor(hinstance, IDC_ARROW);
     wcx.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
     wcx.lpszClassName = className.c_str();
