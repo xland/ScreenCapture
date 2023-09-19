@@ -108,7 +108,11 @@ void WindowBase::InitWindow()
         MessageBox(NULL, L"注册窗口类失败", L"系统提示", NULL);
         return;
     }
+#ifdef DEBUG
     auto exStyle = IsMainWin ? WS_EX_LAYERED : WS_EX_LAYERED | WS_EX_TOPMOST;
+#else
+    auto exStyle = WS_EX_LAYERED | WS_EX_TOPMOST;
+#endif // DEBUG    
     this->hwnd = CreateWindowEx(exStyle, wcx.lpszClassName, wcx.lpszClassName, WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_POPUP, x, y, w, h, NULL, NULL, hinstance, static_cast<LPVOID>(this));
     BOOL attrib = TRUE;
     DwmSetWindowAttribute(hwnd, DWMWA_TRANSITIONS_FORCEDISABLED, &attrib, sizeof(attrib));//移除窗口打开与关闭时的动画效果
