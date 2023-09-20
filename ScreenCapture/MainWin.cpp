@@ -85,18 +85,17 @@ void MainWin::BeforePaint() {
     if (IsDrawing) {
         PaintCtx->blitImage(BLRect(0, 0, w, h), *PrepareImage);
     }
-    drawMaskBoxes();
-    if (state != State::start && !IsDoubleClick) {
-        setToolBoxPos();
-        drawToolMain();
-    }   
+    drawMaskBoxes(); 
     if (state == State::start) {
         drawPixelInfo();
-        PaintCtx->end();
     }
     PaintCtx->setStrokeStyle(BLRgba32(22, 119, 255));
     PaintCtx->setStrokeWidth(cutBoxBorderWidth);
     PaintCtx->strokeBox(cutBox);
+    if (state != State::start && !IsDoubleClick) {
+        setToolBoxPos();
+        drawToolMain();
+    }
     PaintCtx->end();
 }
 
@@ -115,73 +114,109 @@ void MainWin::PinWindow() {
     SendMessage(hwnd, WM_CLOSE, NULL, NULL);
 }
 
-
-void MainWin::setToolBoxPos()
-{
-    toolBoxMain.x0 = cutBox.x1 - toolBoxWidth;
-    auto heightSpan = toolBoxSpan * 3 + toolBoxHeight * 2;
-
-    if (int(h - cutBox.y1) > heightSpan)
-    {
-        //屏幕底部还有足够的空间
-        //两个高度，为屏幕底边也留一点间隙 
-        toolBoxMain.y0 = cutBox.y1 + toolBoxSpan;
-    }
-    else if (int(cutBox.y0) > heightSpan)
-    {
-        //屏幕顶部还有足够的空间
-        if (SelectedToolIndex == -1)
-        {
-            //尚未确定state，主工具条贴着截图区
-            toolBoxMain.y0 = cutBox.y0 - toolBoxSpan - toolBoxHeight;
-        }
-        else
-        {
-            //已经确定了state，要为子工具条留出区域
-            toolBoxMain.y0 = cutBox.y0 - (double)toolBoxSpan * 2 - (double)toolBoxHeight * 2;
-        }
-    }
-    else
-    {
-        //顶部底部都没有足够的空间
-        if (SelectedToolIndex == -1)
-        {
-            //尚未确定state，主工具条贴着截图区底部上方
-            toolBoxMain.y0 = cutBox.y1 - toolBoxSpan - toolBoxHeight;
-        }
-        else
-        {
-            //尚未确定state，主工具条贴着截图区底部上方，并为子工具条留出空间
-            toolBoxMain.y0 = cutBox.y1 - (double)toolBoxSpan * 2 - (double)toolBoxHeight * 2;
-        }
-        toolBoxMain.x0 -= toolBoxSpan;
-    }
-    toolBoxMain.y1 = toolBoxMain.y0 + toolBoxHeight;
-    toolBoxMain.x1 = toolBoxMain.x0 + toolBoxWidth;
-    bool flag = true;
+int MainWin::getScreenIndex(const double& x, const double& y) {
+    int index = -1;
     for (size_t i = 0; i < screens.size(); i++)
     {
-        auto x = this->x + toolBoxMain.x0 + toolBoxWidth / 2;
-        auto y = this->y + toolBoxMain.y0 + toolBoxHeight / 2;
-        if (screens[i].contains(x,y)) {
-            flag = false;
+        if (screens[i].contains(x, y)) {
+            index = i;
             break;
         }
     }
-    if (flag) {
-        //顶部底部都没有足够的空间
-        if (SelectedToolIndex == -1)
-        {
-            //尚未确定state，主工具条贴着截图区底部上方
-            toolBoxMain.y0 = cutBox.y1 - toolBoxSpan - toolBoxHeight;
+    return index;
+}
+
+void MainWin::setToolBoxPos()
+{
+    //三个缝隙高度和两个工具条高度
+    auto heightSpan = toolBoxSpan * 3 + toolBoxHeight * 2;
+    //工具条右下角是否在屏幕内(多减2个像素控制边界)
+    auto index = getScreenIndex(cutBox.x1-2, cutBox.y1 + heightSpan);
+    if (index >= 0) {
+        //工具条左上角是否在屏幕内
+        if (getScreenIndex(cutBox.x1 - toolBoxWidth, cutBox.y1 + toolBoxSpan)>=0) {
+            toolBoxMain.x0 = cutBox.x1 - toolBoxWidth;
+            toolBoxMain.y0 = cutBox.y1 + toolBoxSpan;
         }
         else
         {
-            //尚未确定state，主工具条贴着截图区底部上方，并为子工具条留出空间
-            toolBoxMain.y0 = cutBox.y1 - (double)toolBoxSpan * 2 - (double)toolBoxHeight * 2;
+            //工具条左上角不在屏幕中
+            toolBoxMain.x0 = screens[index].x0;
+            toolBoxMain.y0 = cutBox.y1 + toolBoxSpan;
         }
-        toolBoxMain.x0 -= toolBoxSpan;
-        toolBoxMain.y1 = toolBoxMain.y0 + toolBoxHeight;
-        toolBoxMain.x1 = toolBoxMain.x0 + toolBoxWidth;
+    }    
+    else
+    {
+        //判断屏幕顶部是否有足够的空间，工具条右上角是否在屏幕内
+        index = getScreenIndex(cutBox.x1, cutBox.y0 - heightSpan);
+        if (index >= 0) {
+            //工具条左上角是否在屏幕内
+            if (getScreenIndex(cutBox.x1 - toolBoxWidth, cutBox.y0 - heightSpan) >= 0) {
+                toolBoxMain.x0 = cutBox.x1 - toolBoxWidth;
+                if (SelectedToolIndex == -1)
+                {
+                    //不需要显示子工具条，主工具条贴着截图区
+                    toolBoxMain.y0 = cutBox.y0 - toolBoxSpan - toolBoxHeight;
+                }
+                else
+                {
+                    //需要显示子工具条，要为子工具条留出区域
+                    toolBoxMain.y0 = cutBox.y0 - toolBoxSpan * 2 - toolBoxHeight * 2;
+                } 
+            }
+            else
+            {
+                //工具条左上角不在屏幕中
+                toolBoxMain.x0 = screens[index].x0;
+                if (SelectedToolIndex == -1)
+                {
+                    //不需要显示子工具条，主工具条贴着截图区
+                    toolBoxMain.y0 = cutBox.y0 - toolBoxSpan - toolBoxHeight;
+                }
+                else
+                {
+                    //需要显示子工具条，要为子工具条留出区域
+                    toolBoxMain.y0 = cutBox.y0 - toolBoxSpan * 2 - toolBoxHeight * 2;
+                }
+            }
+        }
+        else
+        {
+            //屏幕顶部和屏幕底部都没有足够的空间，工具条显示在截图区域内
+            //工具条左上角是否在屏幕内
+            if (getScreenIndex(cutBox.x1 - toolBoxWidth, cutBox.y1 - heightSpan) >= 0) {
+                toolBoxMain.x0 = cutBox.x1 - toolBoxWidth;
+                if (SelectedToolIndex == -1)
+                {
+                    //不需要显示子工具条，主工具条贴着截图区
+                    toolBoxMain.y0 = cutBox.y1 - toolBoxSpan - toolBoxHeight;
+                }
+                else
+                {
+                    //需要显示子工具条，要为子工具条留出区域
+                    toolBoxMain.y0 = cutBox.y1 - toolBoxSpan * 2 - toolBoxHeight * 2;
+                }
+            }
+            else
+            {
+                //工具条左上角不在屏幕中，得到截图区域所在屏幕
+                index = getScreenIndex(cutBox.x1, cutBox.y1);
+                if (index >= 0) {
+                    toolBoxMain.x0 = screens[index].x0;
+                    if (SelectedToolIndex == -1)
+                    {
+                        //不需要显示子工具条，主工具条贴着截图区
+                        toolBoxMain.y0 = cutBox.y1 - toolBoxSpan - toolBoxHeight;
+                    }
+                    else
+                    {
+                        //需要显示子工具条，要为子工具条留出区域
+                        toolBoxMain.y0 = cutBox.y1 - toolBoxSpan * 2 - toolBoxHeight * 2;
+                    }
+                }
+            }
+        }
     }
+    toolBoxMain.y1 = toolBoxMain.y0 + toolBoxHeight;
+    toolBoxMain.x1 = toolBoxMain.x0 + toolBoxWidth;
 }

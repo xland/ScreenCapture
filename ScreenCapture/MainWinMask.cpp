@@ -92,7 +92,29 @@ void MainWin::MouseMoveWhenMaskReady(const int& x, const int& y) {
 
 void MainWin::SetCutBox(const int& x1, const int& y1, const int& x2, const int& y2)
 {
+
     SetBoxByPos(cutBox, x1,y1, x2,y2);
+    if (cutBox.x0 < x) {
+        auto boxWidth = cutBox.x1 - cutBox.x0;
+        cutBox.x0 = x;
+        cutBox.x1 = x + boxWidth;
+    }
+    if (cutBox.x1 > x + w) {
+        auto boxWidth = cutBox.x1 - cutBox.x0;
+        cutBox.x1 = x + w;
+        cutBox.x0 = cutBox.x1 - boxWidth;
+    }
+    if (cutBox.y0 < y) {
+        auto boxHeight = cutBox.y1 - cutBox.y0;
+        cutBox.y0 = y;
+        cutBox.y1 = y + boxHeight;
+    }
+    if (cutBox.y1 > y + h) {
+        auto boxHeight = cutBox.y1 - cutBox.y0;
+        cutBox.y1 = y + h;
+        cutBox.y0 = cutBox.y1 - boxHeight;
+    }
+
     maskBoxes[0].x0 = 0;
     maskBoxes[0].x1 = cutBox.x0;
     maskBoxes[1].x0 = cutBox.x0;

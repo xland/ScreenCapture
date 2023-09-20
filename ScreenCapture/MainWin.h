@@ -15,6 +15,7 @@ private:
 	void shotScreen();
 	void PinWindow() override;
 	void setToolBoxPos();
+	int getScreenIndex(const double& x, const double& y);
 	void BeforePaint() override;
 	void SaveFile(const std::string& filePath) override;
 
