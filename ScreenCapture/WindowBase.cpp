@@ -49,15 +49,6 @@ LRESULT CALLBACK WindowBase::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wPar
 
 WindowBase::WindowBase(){
     windowInstance = this;
-    EnumDisplayMonitors(NULL, NULL, [](HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMonitor, LPARAM lParam)
-        {
-            auto self = (WindowBase*)lParam;
-            MONITORINFO info;
-            info.cbSize = sizeof(MONITORINFO);
-            GetMonitorInfo(hMonitor, &info);
-            self->screens.push_back(BLBoxI(info.rcMonitor.left, info.rcMonitor.top, info.rcMonitor.right, info.rcMonitor.bottom));
-            return TRUE;
-        }, (LPARAM)this);
 }
 
 WindowBase::~WindowBase()
@@ -116,7 +107,21 @@ void WindowBase::InitWindow()
     this->hwnd = CreateWindowEx(exStyle, wcx.lpszClassName, wcx.lpszClassName, WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_POPUP, x, y, w, h, NULL, NULL, hinstance, static_cast<LPVOID>(this));
     BOOL attrib = TRUE;
     DwmSetWindowAttribute(hwnd, DWMWA_TRANSITIONS_FORCEDISABLED, &attrib, sizeof(attrib));//移除窗口打开与关闭时的动画效果
-    SetWindowPos(hwnd, nullptr, 0, 0, 0, 0, SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_NOMOVE | SWP_NOSIZE | SWP_FRAMECHANGED);    
+    SetWindowPos(hwnd, nullptr, 0, 0, 0, 0, SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_NOMOVE | SWP_NOSIZE | SWP_FRAMECHANGED);
+
+    EnumDisplayMonitors(NULL, NULL, [](HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMonitor, LPARAM lParam)
+            {
+                auto self = (WindowBase*)lParam;
+                MONITORINFO info;
+                info.cbSize = sizeof(MONITORINFO);
+                GetMonitorInfo(hMonitor, &info);
+                POINT leftTop{ .x{info.rcMonitor.left},.y{info.rcMonitor.top} };
+                POINT rightBottom{ .x{info.rcMonitor.right},.y{info.rcMonitor.bottom} };
+                ScreenToClient(self->hwnd, &leftTop);
+                ScreenToClient(self->hwnd, &rightBottom);
+                self->screens.push_back(BLBoxI(leftTop.x, leftTop.y, rightBottom.x, rightBottom.y));
+                return TRUE;
+    }, (LPARAM)this);
 }
 
 void WindowBase::Show()

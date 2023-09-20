@@ -94,24 +94,24 @@ void MainWin::SetCutBox(const int& x1, const int& y1, const int& x2, const int& 
 {
 
     SetBoxByPos(cutBox, x1,y1, x2,y2);
-    if (cutBox.x0 < x) {
+    if (cutBox.x0 < 0) {
         auto boxWidth = cutBox.x1 - cutBox.x0;
-        cutBox.x0 = x;
-        cutBox.x1 = x + boxWidth;
+        cutBox.x0 = 0;
+        cutBox.x1 = boxWidth;
     }
-    if (cutBox.x1 > x + w) {
+    if (cutBox.x1 > w) {
         auto boxWidth = cutBox.x1 - cutBox.x0;
-        cutBox.x1 = x + w;
+        cutBox.x1 = w;
         cutBox.x0 = cutBox.x1 - boxWidth;
     }
-    if (cutBox.y0 < y) {
+    if (cutBox.y0 < 0) {
         auto boxHeight = cutBox.y1 - cutBox.y0;
-        cutBox.y0 = y;
-        cutBox.y1 = y + boxHeight;
+        cutBox.y0 = 0;
+        cutBox.y1 = boxHeight;
     }
-    if (cutBox.y1 > y + h) {
+    if (cutBox.y1 > h) {
         auto boxHeight = cutBox.y1 - cutBox.y0;
-        cutBox.y1 = y + h;
+        cutBox.y1 = h;
         cutBox.y0 = cutBox.y1 - boxHeight;
     }
 
