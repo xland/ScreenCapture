@@ -108,7 +108,7 @@ void WindowBase::InitWindow()
         MessageBox(NULL, L"注册窗口类失败", L"系统提示", NULL);
         return;
     }
-#ifdef DEBUG
+#ifdef _DEBUG
     auto exStyle = IsMainWin ? WS_EX_LAYERED : WS_EX_LAYERED | WS_EX_TOPMOST;
 #else
     auto exStyle = WS_EX_LAYERED | WS_EX_TOPMOST;

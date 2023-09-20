@@ -15,6 +15,11 @@ bool WindowBase::OnKeyDown(const unsigned int& key) {
             SetCursorPos(pixelX, --pixelY);
             return true;
         }
+        else if (state == State::maskReady) {
+            SetCutBox(cutBox.x0, cutBox.y0 - 1, cutBox.x1, cutBox.y1 - 1);
+            Refresh();
+            return true;
+        }
         return true;
     }
     case VK_DOWN: {
@@ -22,11 +27,21 @@ bool WindowBase::OnKeyDown(const unsigned int& key) {
             SetCursorPos(pixelX, ++pixelY);
             return true;
         }
+        else if (state == State::maskReady) {
+            SetCutBox(cutBox.x0, cutBox.y0+1, cutBox.x1, cutBox.y1+1);
+            Refresh();
+            return true;
+        }
         return true;
     }
     case VK_LEFT: {
         if (state == State::start) {
             SetCursorPos(--pixelX, pixelY);
+            return true;
+        }
+        else if (state == State::maskReady) {
+            SetCutBox(cutBox.x0 - 1, cutBox.y0, cutBox.x1 - 1, cutBox.y1);
+            Refresh();
             return true;
         }
         auto shape = dynamic_cast<Shape::Text*>(History::GetLastDrawShape());
@@ -39,6 +54,11 @@ bool WindowBase::OnKeyDown(const unsigned int& key) {
     case VK_RIGHT: {
         if (state == State::start) {
             SetCursorPos(++pixelX, pixelY);
+            return true;
+        }
+        else if (state == State::maskReady) {
+            SetCutBox(cutBox.x0 + 1, cutBox.y0, cutBox.x1 + 1, cutBox.y1);
+            Refresh();
             return true;
         }
         auto shape = dynamic_cast<Shape::Text*>(History::GetLastDrawShape());
