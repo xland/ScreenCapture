@@ -147,8 +147,8 @@ void MainWin::setToolBoxPos()
     }    
     else
     {
-        //判断屏幕顶部是否有足够的空间，工具条右上角是否在屏幕内
-        index = getScreenIndex(cutBox.x1, cutBox.y0 - heightSpan);
+        //判断屏幕顶部是否有足够的空间，工具条右上角是否在屏幕内(多减2个像素控制边界)
+        index = getScreenIndex(cutBox.x1-2, cutBox.y0 - heightSpan);
         if (index >= 0) {
             //工具条左上角是否在屏幕内
             if (getScreenIndex(cutBox.x1 - toolBoxWidth, cutBox.y0 - heightSpan) >= 0) {
