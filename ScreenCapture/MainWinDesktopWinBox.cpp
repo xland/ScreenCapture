@@ -14,9 +14,12 @@ void MainWin::enumDesktopWindow()
             DwmGetWindowAttribute(hwnd, DWMWA_EXTENDED_FRAME_BOUNDS, &rect, sizeof(RECT));
             if (rect.right - rect.left <= 6 || rect.bottom - rect.top <= 6) {
                 return TRUE;
-            }            
-            BLBox item(rect.left - self->x, rect.top - self->y,
-                rect.right - self->x, rect.bottom - self->y);
+            }
+            if (rect.left < self->x) rect.left = self->x;
+            if (rect.right > self->x + self->w) rect.right = self->x + self->w;
+            if (rect.top < self->y) rect.top = self->y;
+            if (rect.bottom > self->y + self->h) rect.bottom = self->y + self->h;
+            BLBox item(rect.left - self->x, rect.top - self->y, rect.right - self->x, rect.bottom - self->y);
             self->desktopWindowBoxes.push_back(std::move(item));
             return TRUE;
         }, (LPARAM)this);
