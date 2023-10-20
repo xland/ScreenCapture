@@ -1,6 +1,10 @@
 ﻿#include "Font.h"
 #include <Windows.h>
+#include <shlobj.h>
+#include <string>
+#include <filesystem>
 #include "resource.h"
+#include "Util.h"
 
 static Font* font;
 
@@ -30,8 +34,23 @@ Font* Font::Get()
 
 void Font::initFontText()
 {
+    LPTSTR fontPathStr = new TCHAR[MAX_PATH];
+    if (SHGetFolderPath(nullptr, CSIDL_FONTS, nullptr, SHGFP_TYPE_CURRENT, fontPathStr) != S_OK) {
+        delete[] fontPathStr;
+        MessageBox(NULL, L"找不到系统字体路径", L"系统提示", NULL);
+        return;
+    }
+    auto fontPathWStr = std::wstring{ fontPathStr };
+    delete[] fontPathStr;
+    auto fontPath = std::filesystem::path(fontPathWStr);
+    fontPath.append(L"simhei.ttf");
+    if (!std::filesystem::exists(fontPath)) {
+        MessageBox(NULL, L"找不到系统字体文件", L"系统提示", NULL);
+        return;
+    }
+    auto fontPathStdStr = ConvertToUTF8(fontPath.wstring());
     BLFontFace face;
-    BLResult err = face.createFromFile("C:\\Windows\\Fonts\\simhei.ttf"); //黑体
+    BLResult err = face.createFromFile(fontPathStdStr.c_str()); //黑体
     if (err) {
         MessageBox(NULL, L"系统字体加载失败", L"系统提示", NULL);
         return;
