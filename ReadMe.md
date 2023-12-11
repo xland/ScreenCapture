@@ -1,3 +1,8 @@
+> The next major version is developed in the master branch.
+The last stable version is here [v0.2.12](https://github.com/xland/ScreenCapture/tree/0.2.12).
+
+---
+
 ![](./Doc/banner.png)
 
 
