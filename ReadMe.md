@@ -1,4 +1,4 @@
-> The next major version (2.0.0) is developed in the main branch.
+The next major version (2.0.0) is developed in the main branch.
 The last stable version is available in the [1.x.y](https://github.com/xland/ScreenCapture/tree/1-x-y) branch.
 ---
 
