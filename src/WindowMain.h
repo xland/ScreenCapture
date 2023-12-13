@@ -2,27 +2,18 @@
 #include <Windows.h>
 #include <string>
 #include <format>
-#include "include/core/SkSurface.h"
-#include "include/core/SkCanvas.h"
+#include "WindowBase.h"
 
-#define WM_REFRESH (WM_APP + 1)
-
-class WindowMain
+class WindowMain : public WindowBase
 {
 public:
     WindowMain();
     ~WindowMain();
 
 private:
-    static LRESULT CALLBACK RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-    LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
-    HWND hwnd;
-    int x{200};
-    int y{200};
-    int w{1000};
-    int h{800};
-    HDC hCompatibleDC = NULL;
-    HBITMAP bottomHbitmap;
-    unsigned char *pixelData;
-    sk_sp<SkSurface> surface;
+    LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) override;
+    void shotScreen();
+    void initSize();
+    void paint(SkCanvas *canvas) override;
+    unsigned char *desktopPixel;
 };
