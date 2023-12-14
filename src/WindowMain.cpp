@@ -1,6 +1,8 @@
 ﻿#include <windowsx.h>
 #include "WindowMain.h"
 #include "CutMask.h"
+#include "ToolMain.h"
+#include "ToolSub.h"
 #include "include/core/SkBitmap.h"
 #include "include/core/SkCanvas.h"
 
@@ -9,6 +11,8 @@ WindowMain *windowMain;
 WindowMain::WindowMain()
 {
     CutMask::init();
+    ToolMain::init();
+    ToolSub::init();
     initSize();
     shotScreen();
     initWindow();
@@ -21,6 +25,8 @@ WindowMain::~WindowMain()
 {
     delete[] desktopPixel;
     delete CutMask::get();
+    delete ToolMain::get();
+    delete ToolSub::get();
 }
 
 void WindowMain::init()
@@ -74,15 +80,24 @@ LRESULT WindowMain::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam
 
 bool WindowMain::onMouseDown(int x, int y)
 {
-    return CutMask::get()->OnMouseDown(x, y);
+    CutMask::get()->OnMouseDown(x, y);
+    ToolMain::get()->OnMouseDown(x, y);
+    ToolSub::get()->OnMouseDown(x, y);
+    return false;
 }
 bool WindowMain::onMouseUp(int x, int y)
 {
-    return CutMask::get()->OnMouseUp(x, y);
+    CutMask::get()->OnMouseUp(x, y);
+    ToolMain::get()->OnMouseUp(x, y);
+    ToolSub::get()->OnMouseUp(x, y);
+    return false;
 }
 bool WindowMain::onMouseMove(int x, int y)
 {
-    return CutMask::get()->OnMouseMove(x, y);
+    CutMask::get()->OnMouseMove(x, y);
+    ToolMain::get()->OnMouseUp(x, y);
+    ToolSub::get()->OnMouseUp(x, y);
+    return false;
 }
 
 void WindowMain::shotScreen()
