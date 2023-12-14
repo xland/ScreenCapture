@@ -32,7 +32,10 @@ set(SRC_LIST
     ./src/Shape/ShapeBase.h
     ./src/Shape/Arrow.cpp
     ./src/Shape/Arrow.h
-    ./src/Shape/Pen.cpp)
+    ./src/Shape/Pen.cpp
+    ./res/res.h
+    ./res/res.rc
+)
 add_executable(ScreenCapture ${SRC_LIST})
 
 if(WIN32)
