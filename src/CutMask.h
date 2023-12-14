@@ -14,6 +14,7 @@ public:
     bool OnMouseUp(int x, int y) override;
     bool OnMouseMove(int x, int y) override;
     bool OnPaint(SkCanvas *base, SkCanvas *board, SkCanvas *canvas) override;
+    bool OnPaintFinish(SkCanvas *base) override;
 
 private:
     std::vector<SkRect> masks;

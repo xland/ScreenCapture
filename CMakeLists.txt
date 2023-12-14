@@ -20,6 +20,11 @@ set(SRC_LIST
     ./src/main.cpp
     ./src/Util.cpp
     ./src/Util.h
+    ./src/ToolMain.cpp
+    ./src/ToolMain.h
+    ./src/ToolSub.cpp
+    ./src/ToolSub.h
+    ./src/State.h
     ./src/Shape/Pen.h
     ./src/Shape/ShapeBase.cpp
     ./src/Shape/ShapeBase.h

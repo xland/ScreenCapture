@@ -18,6 +18,7 @@ private:
     void shotScreen();
     void initSize();
     void paint(SkCanvas *base, SkCanvas *board, SkCanvas *canvas) override;
+    void paintFinish(SkCanvas *base) override;
     bool onMouseDown(int x, int y);
     bool onMouseUp(int x, int y);
     bool onMouseMove(int x, int y);

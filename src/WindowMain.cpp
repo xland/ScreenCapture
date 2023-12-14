@@ -117,3 +117,8 @@ void WindowMain::paint(SkCanvas *base, SkCanvas *board, SkCanvas *canvas)
     base->drawImage(bitmap.asImage(), 0, 0);
     cutMask->OnPaint(base, board, canvas);
 }
+
+void WindowMain::paintFinish(SkCanvas *base)
+{
+    cutMask->OnPaintFinish(base);
+}

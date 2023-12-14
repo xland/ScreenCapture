@@ -13,7 +13,7 @@ public:
     ~WindowBase();
     void Show();
     void Refresh();
-    void Close(const int& exitCode);
+    void Close(const int &exitCode);
     int x, y, w, h;
     bool IsMouseDown{false};
 
@@ -22,6 +22,7 @@ protected:
     void initWindow();
     void initCanvas();
     virtual void paint(SkCanvas *base, SkCanvas *board, SkCanvas *canvas) = 0;
+    virtual void paintFinish(SkCanvas *base) = 0;
     unsigned char *pixelBase;
     unsigned char *pixelBoard;
     unsigned char *pixelCanvas;

@@ -34,6 +34,7 @@ void WindowBase::Refresh()
     base->drawImage(boardImg, 0, 0);
     sk_sp<SkImage> canvasImg = surfaceCanvas->makeImageSnapshot();
     base->drawImage(canvasImg, 0, 0);
+    paintFinish(base);
     HDC hdc = GetDC(hwnd);
     static BITMAPINFO info = {sizeof(BITMAPINFOHEADER), w, 0 - h, 1, 32, BI_RGB, w * 4 * h, 0, 0, 0, 0};
     SetDIBits(hdc, bottomHbitmap, 0, h, pixelBase, &info, DIB_RGB_COLORS);
@@ -64,7 +65,7 @@ void WindowBase::initCanvas()
     surfaceCanvas = SkSurface::MakeRasterDirect(info, pixelCanvas, stride);
 }
 
-void WindowBase::Close(const int& exitCode)
+void WindowBase::Close(const int &exitCode)
 {
     SendMessage(hwnd, WM_CLOSE, NULL, NULL);
     PostQuitMessage(0);
@@ -95,17 +96,20 @@ LRESULT CALLBACK WindowBase::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wPar
         {
             return true;
         }
-        case WM_KEYDOWN: {
+        case WM_KEYDOWN:
+        {
             switch (wParam)
             {
-            case VK_ESCAPE: {
+            case VK_ESCAPE:
+            {
                 obj->Close(3);
                 return false;
             }
             }
             return false;
         }
-        case WM_KEYUP: {
+        case WM_KEYUP:
+        {
             return false;
         }
         default:
