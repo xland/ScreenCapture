@@ -6,8 +6,9 @@
 
 WindowMain *windowMain;
 
-WindowMain::WindowMain() : cutMask{new CutMask()}
+WindowMain::WindowMain()
 {
+    CutMask::init();
     initSize();
     shotScreen();
     initWindow();
@@ -19,7 +20,7 @@ WindowMain::WindowMain() : cutMask{new CutMask()}
 WindowMain::~WindowMain()
 {
     delete[] desktopPixel;
-    delete cutMask;
+    delete CutMask::get();
 }
 
 void WindowMain::init()
@@ -73,15 +74,15 @@ LRESULT WindowMain::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam
 
 bool WindowMain::onMouseDown(int x, int y)
 {
-    return cutMask->OnMouseDown(x, y);
+    return CutMask::get()->OnMouseDown(x, y);
 }
 bool WindowMain::onMouseUp(int x, int y)
 {
-    return cutMask->OnMouseUp(x, y);
+    return CutMask::get()->OnMouseUp(x, y);
 }
 bool WindowMain::onMouseMove(int x, int y)
 {
-    return cutMask->OnMouseMove(x, y);
+    return CutMask::get()->OnMouseMove(x, y);
 }
 
 void WindowMain::shotScreen()
@@ -115,10 +116,10 @@ void WindowMain::paint(SkCanvas *base, SkCanvas *board, SkCanvas *canvas)
     SkBitmap bitmap;
     bitmap.installPixels(info, desktopPixel, w * 4);
     base->drawImage(bitmap.asImage(), 0, 0);
-    cutMask->OnPaint(base, board, canvas);
+    CutMask::get()->OnPaint(base, board, canvas);
 }
 
 void WindowMain::paintFinish(SkCanvas *base)
 {
-    cutMask->OnPaintFinish(base);
+    CutMask::get()->OnPaintFinish(base);
 }

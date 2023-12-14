@@ -3,6 +3,8 @@
 #include "include/core/SkColor.h"
 #include "State.h"
 
+CutMask* cutMask;
+
 CutMask::CutMask()
 {
     for (size_t i = 0; i < 8; i++)
@@ -13,6 +15,19 @@ CutMask::CutMask()
 
 CutMask::~CutMask()
 {
+}
+
+void CutMask::init()
+{
+    if (!cutMask)
+    {
+        cutMask = new CutMask();
+    }
+}
+
+CutMask* CutMask::get()
+{
+    return cutMask;
 }
 
 bool CutMask::OnMouseDown(int x, int y)
@@ -30,16 +45,16 @@ bool CutMask::OnMouseMove(int x, int y)
     {
         return false;
     }
-    rectCenter.setLTRB(start.x(), start.y(), x, y);
-    rectCenter.sort();
-    masks[0].setLTRB(0, 0, rectCenter.left(), rectCenter.top());
-    masks[1].setLTRB(rectCenter.left(), 0, rectCenter.right(), rectCenter.top());
-    masks[2].setLTRB(rectCenter.right(), 0, winMain->w, rectCenter.top());
-    masks[3].setLTRB(rectCenter.right(), rectCenter.top(), winMain->w, rectCenter.bottom());
-    masks[4].setLTRB(rectCenter.right(), rectCenter.bottom(), winMain->w, winMain->h);
-    masks[5].setLTRB(rectCenter.left(), rectCenter.bottom(), rectCenter.right(), winMain->h);
-    masks[6].setLTRB(0, rectCenter.bottom(), rectCenter.left(), winMain->h);
-    masks[7].setLTRB(0, rectCenter.top(), rectCenter.left(), rectCenter.bottom());
+    CutRect.setLTRB(start.x(), start.y(), x, y);
+    CutRect.sort();
+    masks[0].setLTRB(0, 0, CutRect.left(), CutRect.top());
+    masks[1].setLTRB(CutRect.left(), 0, CutRect.right(), CutRect.top());
+    masks[2].setLTRB(CutRect.right(), 0, winMain->w, CutRect.top());
+    masks[3].setLTRB(CutRect.right(), CutRect.top(), winMain->w, CutRect.bottom());
+    masks[4].setLTRB(CutRect.right(), CutRect.bottom(), winMain->w, winMain->h);
+    masks[5].setLTRB(CutRect.left(), CutRect.bottom(), CutRect.right(), winMain->h);
+    masks[6].setLTRB(0, CutRect.bottom(), CutRect.left(), winMain->h);
+    masks[7].setLTRB(0, CutRect.top(), CutRect.left(), CutRect.bottom());
     winMain->Refresh();
     return false;
 }
@@ -69,10 +84,17 @@ bool CutMask::OnPaintFinish(SkCanvas *base)
     {
         base->drawRect(masks[i], paint);
     }
+    paint.setColor(SkColorSetARGB(255, 22, 118, 255));
+    paint.setStrokeWidth(6);
+    paint.setStyle(SkPaint::Style::kStroke_Style);
+    base->drawRect(CutRect, paint);
     return false;
 }
 bool CutMask::OnMouseUp(int x, int y)
 {
     state = State::tool;
+    auto winMain = WindowMain::get();
+    winMain->surfaceCanvas->getCanvas()->clear(SK_ColorTRANSPARENT);
+    winMain->Refresh();
     return false;
 }

@@ -23,5 +23,4 @@ private:
     bool onMouseUp(int x, int y);
     bool onMouseMove(int x, int y);
     unsigned char *desktopPixel;
-    CutMask *cutMask;
 };

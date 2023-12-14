@@ -16,6 +16,9 @@ public:
     void Close(const int &exitCode);
     int x, y, w, h;
     bool IsMouseDown{false};
+    sk_sp<SkSurface> surfaceBase;
+    sk_sp<SkSurface> surfaceBoard;
+    sk_sp<SkSurface> surfaceCanvas;
 
 protected:
     virtual LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) = 0;
@@ -32,7 +35,4 @@ private:
     HWND hwnd;
     HDC hCompatibleDC = NULL;
     HBITMAP bottomHbitmap;
-    sk_sp<SkSurface> surfaceBase;
-    sk_sp<SkSurface> surfaceBoard;
-    sk_sp<SkSurface> surfaceCanvas;
 };
