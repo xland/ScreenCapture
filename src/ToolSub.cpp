@@ -1,6 +1,6 @@
 #include "ToolSub.h"
-
-ToolSub *ToolSub;
+#include "State.h"
+ToolSub * toolSub;
 
 ToolSub::~ToolSub()
 {
@@ -8,15 +8,15 @@ ToolSub::~ToolSub()
 
 void ToolSub::init()
 {
-    if (!ToolSub)
+    if (!toolSub)
     {
-        cutMask = new CutMask();
+        toolSub = new ToolSub();
     }
 }
 
 ToolSub *ToolSub::get()
 {
-    return ToolSub;
+    return toolSub;
 }
 
 bool ToolSub::OnMouseDown(int x, int y)
@@ -41,6 +41,7 @@ bool ToolSub::OnPaint(SkCanvas *base, SkCanvas *board, SkCanvas *canvas)
 
 bool ToolSub::OnPaintFinish(SkCanvas *base)
 {
+
     return false;
 }
 

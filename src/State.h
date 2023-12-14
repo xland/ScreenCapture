@@ -25,4 +25,3 @@ enum class State
     mosaic,
     eraser
 };
-State state = State::start;

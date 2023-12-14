@@ -1,4 +1,4 @@
-
+#pragma once
 #include "include/core/SkCanvas.h"
 class EventHandler
 {

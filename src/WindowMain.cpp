@@ -132,9 +132,13 @@ void WindowMain::paint(SkCanvas *base, SkCanvas *board, SkCanvas *canvas)
     bitmap.installPixels(info, desktopPixel, w * 4);
     base->drawImage(bitmap.asImage(), 0, 0);
     CutMask::get()->OnPaint(base, board, canvas);
+    ToolMain::get()->OnPaint(base, board, canvas);
+    ToolSub::get()->OnPaint(base, board, canvas);
 }
 
 void WindowMain::paintFinish(SkCanvas *base)
 {
     CutMask::get()->OnPaintFinish(base);
+    ToolMain::get()->OnPaintFinish(base);
+    ToolSub::get()->OnPaintFinish(base);
 }

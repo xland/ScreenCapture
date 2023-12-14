@@ -32,16 +32,17 @@ CutMask* CutMask::get()
 
 bool CutMask::OnMouseDown(int x, int y)
 {    
-    if (state < State::mask) {
+    auto winMain = WindowMain::get();
+    if (winMain->state < State::mask) {
         start.set(x, y);
-        state = State::mask;
+        winMain->state = State::mask;
     }    
     return false;
 }
 bool CutMask::OnMouseMove(int x, int y)
 {
     auto winMain = WindowMain::get();
-    if (!winMain->IsMouseDown || state != State::mask)
+    if (!winMain->IsMouseDown || winMain->state != State::mask)
     {
         return false;
     }
@@ -60,7 +61,8 @@ bool CutMask::OnMouseMove(int x, int y)
 }
 bool CutMask::OnPaint(SkCanvas *base, SkCanvas *board, SkCanvas *canvas)
 {
-    if (state == State::mask)
+    auto winMain = WindowMain::get();
+    if (winMain && winMain->state == State::mask)
     {
         SkPaint paint;
         paint.setColor(SkColorSetARGB(160, 0, 0, 0));
@@ -74,7 +76,8 @@ bool CutMask::OnPaint(SkCanvas *base, SkCanvas *board, SkCanvas *canvas)
 }
 bool CutMask::OnPaintFinish(SkCanvas *base)
 {
-    if (state <= State::mask)
+    auto winMain = WindowMain::get();
+    if (winMain && winMain->state <= State::mask)
     {
         return false;
     }
@@ -85,15 +88,15 @@ bool CutMask::OnPaintFinish(SkCanvas *base)
         base->drawRect(masks[i], paint);
     }
     paint.setColor(SkColorSetARGB(255, 22, 118, 255));
-    paint.setStrokeWidth(6);
+    paint.setStrokeWidth(4);
     paint.setStyle(SkPaint::Style::kStroke_Style);
     base->drawRect(CutRect, paint);
     return false;
 }
 bool CutMask::OnMouseUp(int x, int y)
 {
-    state = State::tool;
     auto winMain = WindowMain::get();
+    winMain->state = State::tool;
     winMain->surfaceCanvas->getCanvas()->clear(SK_ColorTRANSPARENT);
     winMain->Refresh();
     return false;
