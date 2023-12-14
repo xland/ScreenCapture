@@ -6,9 +6,27 @@ set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:WINDOWS")
 add_definitions(-DUNICODE -D_UNICODE -DNOMINMAX -D_SILENCE_ALL_CXX20_DEPRECATION_WARNINGS -DSK_ENABLE_SKSL)
 link_directories(D:/sdk/skia/out)
 include_directories(D:/sdk/skia)
-aux_source_directory(./src DIR_SRCS)
-aux_source_directory(./src/Shape DIR_SRCS_Shape)
-add_executable(ScreenCapture ${DIR_SRCS} ${DIR_SRCS_Shape})
+set(SRC_LIST
+    ./src/WindowBase.cpp
+    ./src/WindowBase.h
+    ./src/WindowMain.cpp
+    ./src/WindowMain.h
+    ./src/WindowPin.cpp
+    ./src/WindowPin.h
+    ./src/CutMask.cpp
+    ./src/CutMask.h
+    ./src/EventHandler.cpp
+    ./src/EventHandler.h
+    ./src/main.cpp
+    ./src/Util.cpp
+    ./src/Util.h
+    ./src/Shape/Pen.h
+    ./src/Shape/ShapeBase.cpp
+    ./src/Shape/ShapeBase.h
+    ./src/Shape/Arrow.cpp
+    ./src/Shape/Arrow.h
+    ./src/Shape/Pen.cpp)
+add_executable(ScreenCapture ${SRC_LIST})
 
 if(WIN32)
     set_property(TARGET ScreenCapture PROPERTY VS_DPI_AWARE "PerMonitor")

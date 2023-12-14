@@ -13,6 +13,7 @@ public:
     ~WindowBase();
     void Show();
     void Refresh();
+    void Close(const int& exitCode);
     int x, y, w, h;
     bool IsMouseDown{false};
 

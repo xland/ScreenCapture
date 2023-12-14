@@ -63,6 +63,13 @@ void WindowBase::initCanvas()
     surfaceBoard = SkSurface::MakeRasterDirect(info, pixelBoard, stride);
     surfaceCanvas = SkSurface::MakeRasterDirect(info, pixelCanvas, stride);
 }
+
+void WindowBase::Close(const int& exitCode)
+{
+    SendMessage(hwnd, WM_CLOSE, NULL, NULL);
+    PostQuitMessage(0);
+}
+
 LRESULT CALLBACK WindowBase::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     if (msg == WM_NCCREATE)
@@ -87,6 +94,19 @@ LRESULT CALLBACK WindowBase::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wPar
         case WM_SETCURSOR:
         {
             return true;
+        }
+        case WM_KEYDOWN: {
+            switch (wParam)
+            {
+            case VK_ESCAPE: {
+                obj->Close(3);
+                return false;
+            }
+            }
+            return false;
+        }
+        case WM_KEYUP: {
+            return false;
         }
         default:
         {

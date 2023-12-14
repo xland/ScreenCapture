@@ -42,7 +42,7 @@ bool CutMask::OnMouseMove(int x, int y)
 bool CutMask::OnPaint(SkCanvas *base, SkCanvas *board, SkCanvas *canvas)
 {
     SkPaint paint;
-    paint.setColor(SkColorSetARGB(200, 0, 0, 0));
+    paint.setColor(SkColorSetARGB(160, 0, 0, 0));
     auto winMain = WindowMain::get();
     if (winMain && winMain->IsMouseDown)
     {
