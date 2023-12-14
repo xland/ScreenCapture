@@ -1,5 +1,4 @@
 #include "WindowBase.h"
-#include <windowsx.h>
 #include <dwmapi.h>
 #include "include/effects/SkRuntimeEffect.h"
 #include "Util.h"
@@ -10,7 +9,9 @@ WindowBase::WindowBase()
 
 WindowBase::~WindowBase()
 {
-    delete[] pixelData;
+    delete[] pixelBase;
+    delete[] pixelBoard;
+    delete[] pixelCanvas;
     DeleteDC(hCompatibleDC);
     DeleteObject(bottomHbitmap);
 }
@@ -19,18 +20,26 @@ void WindowBase::Show()
 {
     ShowWindow(hwnd, SW_SHOW);
     UpdateWindow(hwnd);
+    HCURSOR hCursor = LoadCursor(NULL, IDC_ARROW);
+    SetCursor(hCursor);
 }
 
 void WindowBase::Refresh()
 {
-    auto canvas = surface->getCanvas();
-    paint(canvas);
+    auto base = surfaceBase->getCanvas();
+    auto board = surfaceBoard->getCanvas();
+    auto canvas = surfaceCanvas->getCanvas();
+    paint(base, board, canvas);
+    sk_sp<SkImage> boardImg = surfaceBoard->makeImageSnapshot();
+    base->drawImage(boardImg, 0, 0);
+    sk_sp<SkImage> canvasImg = surfaceCanvas->makeImageSnapshot();
+    base->drawImage(canvasImg, 0, 0);
     HDC hdc = GetDC(hwnd);
-    BITMAPINFO info = {sizeof(BITMAPINFOHEADER), w, 0 - h, 1, 32, BI_RGB, w * 4 * h, 0, 0, 0, 0};
-    SetDIBits(hdc, bottomHbitmap, 0, h, pixelData, &info, DIB_RGB_COLORS);
-    BLENDFUNCTION blend = {.BlendOp{AC_SRC_OVER}, .SourceConstantAlpha{255}, .AlphaFormat{AC_SRC_ALPHA}};
-    POINT pSrc = {0, 0};
-    SIZE sizeWnd = {w, h};
+    static BITMAPINFO info = {sizeof(BITMAPINFOHEADER), w, 0 - h, 1, 32, BI_RGB, w * 4 * h, 0, 0, 0, 0};
+    SetDIBits(hdc, bottomHbitmap, 0, h, pixelBase, &info, DIB_RGB_COLORS);
+    static BLENDFUNCTION blend = {.BlendOp{AC_SRC_OVER}, .SourceConstantAlpha{255}, .AlphaFormat{AC_SRC_ALPHA}};
+    static POINT pSrc = {0, 0};
+    static SIZE sizeWnd = {w, h};
     UpdateLayeredWindow(hwnd, hdc, NULL, &sizeWnd, hCompatibleDC, &pSrc, NULL, &blend, ULW_ALPHA);
     ReleaseDC(hwnd, hdc);
 }
@@ -41,10 +50,18 @@ void WindowBase::initCanvas()
     hCompatibleDC = CreateCompatibleDC(NULL);
     bottomHbitmap = CreateCompatibleBitmap(hdc, w, h);
     DeleteObject(SelectObject(hCompatibleDC, bottomHbitmap));
-    SkImageInfo info = SkImageInfo::MakeN32Premul(w, h);
-    pixelData = new unsigned char[w * h * 4];
-    surface = SkSurface::MakeRasterDirect(info, pixelData, w * 4);
     ReleaseDC(hwnd, hdc);
+    SkImageInfo info = SkImageInfo::MakeN32Premul(w, h);
+    auto stride = w * 4;
+    auto size = stride * h;
+    pixelBase = new unsigned char[size];
+    pixelBoard = new unsigned char[size];
+    pixelCanvas = new unsigned char[size];
+    memset(pixelBoard, 0, size);
+    memset(pixelCanvas, 0, size);
+    surfaceBase = SkSurface::MakeRasterDirect(info, pixelBase, stride);
+    surfaceBoard = SkSurface::MakeRasterDirect(info, pixelBoard, stride);
+    surfaceCanvas = SkSurface::MakeRasterDirect(info, pixelCanvas, stride);
 }
 LRESULT CALLBACK WindowBase::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -73,10 +90,7 @@ LRESULT CALLBACK WindowBase::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wPar
         }
         default:
         {
-            if (obj->pixelData)
-            {
-                return obj->WindowProc(hWnd, msg, wParam, lParam);
-            }
+            return obj->WindowProc(hWnd, msg, wParam, lParam);
         }
         }
     }

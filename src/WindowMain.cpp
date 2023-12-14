@@ -1,8 +1,12 @@
-﻿#include "WindowMain.h"
+﻿#include <windowsx.h>
+#include "WindowMain.h"
+#include "CutMask.h"
 #include "include/core/SkBitmap.h"
 #include "include/core/SkCanvas.h"
 
-WindowMain::WindowMain()
+WindowMain *windowMain;
+
+WindowMain::WindowMain() : cutMask{new CutMask()}
 {
     initSize();
     shotScreen();
@@ -14,12 +18,47 @@ WindowMain::WindowMain()
 
 WindowMain::~WindowMain()
 {
+    delete[] desktopPixel;
+    delete cutMask;
+}
+
+void WindowMain::init()
+{
+    if (!windowMain)
+    {
+        windowMain = new WindowMain();
+    }
+}
+
+WindowMain *WindowMain::get()
+{
+    return windowMain;
 }
 
 LRESULT WindowMain::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
     switch (msg)
     {
+    case WM_LBUTTONDOWN:
+    {
+        IsMouseDown = true;
+        auto x = GET_X_LPARAM(lparam);
+        auto y = GET_Y_LPARAM(lparam);
+        return onMouseDown(x, y);
+    }
+    case WM_LBUTTONUP:
+    {
+        IsMouseDown = false;
+        auto x = GET_X_LPARAM(lparam);
+        auto y = GET_Y_LPARAM(lparam);
+        return onMouseUp(x, y);
+    }
+    case WM_MOUSEMOVE:
+    {
+        auto x = GET_X_LPARAM(lparam);
+        auto y = GET_Y_LPARAM(lparam);
+        return onMouseMove(x, y);
+    }
     case WM_NCDESTROY:
     {
         delete this;
@@ -30,6 +69,19 @@ LRESULT WindowMain::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam
         break;
     }
     return DefWindowProc(hwnd, msg, wparam, lparam);
+}
+
+bool WindowMain::onMouseDown(int x, int y)
+{
+    return cutMask->OnMouseDown(x, y);
+}
+bool WindowMain::onMouseUp(int x, int y)
+{
+    return cutMask->OnMouseUp(x, y);
+}
+bool WindowMain::onMouseMove(int x, int y)
+{
+    return cutMask->OnMouseMove(x, y);
 }
 
 void WindowMain::shotScreen()
@@ -56,11 +108,12 @@ void WindowMain::initSize()
     h = GetSystemMetrics(SM_CYVIRTUALSCREEN);
 }
 
-void WindowMain::paint(SkCanvas *canvas)
+void WindowMain::paint(SkCanvas *base, SkCanvas *board, SkCanvas *canvas)
 {
     // SkImageInfo info = SkImageInfo::Make(w, h, kRGBA_8888_SkColorType, kPremul_SkAlphaType);
-    SkImageInfo info = SkImageInfo::MakeN32Premul(w, h);
+    static SkImageInfo info = SkImageInfo::MakeN32Premul(w, h);
     SkBitmap bitmap;
     bitmap.installPixels(info, desktopPixel, w * 4);
-    canvas->drawImage(bitmap.asImage(), 0, 0);
+    base->drawImage(bitmap.asImage(), 0, 0);
+    cutMask->OnPaint(base, board, canvas);
 }
