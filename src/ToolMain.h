@@ -23,7 +23,7 @@ private:
     int toolBtnWidth = 50;
     int toolBoxWidth = btnCount * toolBtnWidth;
     int toolBoxHeight = 46;
-    int iconLeftMargin = 16;
+    int iconLeftMargin = 14;
     SkRect toolMainRect;
     int indexHover {-1};
     int indexSelected{ -1 };
