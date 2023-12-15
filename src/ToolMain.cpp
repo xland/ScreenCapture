@@ -37,14 +37,21 @@ bool ToolMain::OnMouseUp(int x, int y)
 bool ToolMain::OnMouseMove(int x, int y)
 {
     auto winMain = WindowMain::get();
-    if (!winMain|| winMain->state < State::tool) {
+    if (!winMain|| winMain->state < State::tool) {        
         return false;
     }
     if (!toolMainRect.contains(x, y)) {
+        if (indexHover >= 0) {
+            indexHover = -1;
+            winMain->Refresh();
+        }        
         return false;
     }
-    indexHover = (x - toolMainRect.left()) / toolBtnWidth;
-    winMain->Refresh();
+    auto index = (x - toolMainRect.left()) / toolBtnWidth;
+    if (index != indexHover) {
+        indexHover = index;
+        winMain->Refresh();
+    }    
     return false;
 }
 
@@ -57,13 +64,17 @@ bool ToolMain::OnPaint(SkCanvas* canvas)
     auto mask = CutMask::get();
     toolMainRect.setLTRB(mask->CutRect.right() - toolBoxWidth,mask->CutRect.bottom()+ toolBoxSpan, mask->CutRect.right(), mask->CutRect.bottom() + toolBoxSpan+ toolBoxHeight);
     SkPaint paint;
-    //SkRect rect1;
-    //rect1.setLTRB(100, 100, 600, 600);
-    //SkRect rect2;
-    //rect2.setLTRB(200, 200, 400, 400);       
-    //base->drawDRRect(rect1, rect2, paint);
     paint.setColor(SkColorSetARGB(255, 238, 238, 238));
     canvas->drawRect(toolMainRect, paint);
+
+    if (indexHover >= 0) {
+        SkRect bgRect;
+        bgRect.setXYWH(toolMainRect.left() + indexHover * toolBtnWidth, toolMainRect.top(), toolBtnWidth, toolBoxHeight);
+        paint.setColor(SkColorSetARGB(255, 190, 190, 190));
+        canvas->drawRect(bgRect, paint);
+    }
+
+
     paint.setColor(SkColorSetARGB(255, 30, 30, 30));
     auto font = AppFont::Get();
     auto x = toolMainRect.left() + iconLeftMargin;
