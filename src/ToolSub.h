@@ -19,4 +19,5 @@ public:
 
 private:
     ToolSub();
+    SkRect toolRect;
 };

@@ -29,6 +29,7 @@ void WindowBase::Refresh()
     memcpy(pixelBack, pixelBase, w * h * 4);
     auto back = surfaceBack->getCanvas();
     auto front = surfaceFront->getCanvas();
+    front->clear(SK_ColorTRANSPARENT);
     //front->saveLayer(nullptr,nullptr);
     paint(front);
     //front->restore();

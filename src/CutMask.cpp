@@ -1,7 +1,6 @@
 #include "CutMask.h"
 #include "WindowMain.h"
 #include "include/core/SkColor.h"
-#include "include/core/SkPath.h"
 #include "State.h"
 
 CutMask* cutMask;
@@ -45,27 +44,27 @@ bool CutMask::OnMouseMove(int x, int y)
     }
     CutRect.setLTRB(start.x(), start.y(), x, y);
     CutRect.sort();
+    path.reset();
+    path.addRect(SkRect::MakeXYWH(0, 0, winMain->w, winMain->h));
+    path.addRect(CutRect, SkPathDirection::kCW);
+    path.setFillType(SkPathFillType::kEvenOdd);
     winMain->Refresh();
     return false;
 }
 bool CutMask::OnPaint(SkCanvas *canvas)
 {
     auto winMain = WindowMain::get();
-    if (winMain && winMain->state == State::mask)
-    {
-        canvas->clear(SK_ColorTRANSPARENT);
-        SkPaint paint;
-        paint.setColor(SkColorSetARGB(160, 0, 0, 0));        
-        SkPath path;
-        path.addRect(SkRect::MakeXYWH(0, 0, winMain->w, winMain->h));
-        path.addRect(CutRect, SkPathDirection::kCW);
-        path.setFillType(SkPathFillType::kEvenOdd);
-        canvas->drawPath(path, paint);
-        paint.setColor(SkColorSetARGB(255, 22, 118, 255));
-        paint.setStrokeWidth(4);
-        paint.setStyle(SkPaint::Style::kStroke_Style);
-        canvas->drawRect(CutRect, paint);
+    if (!winMain || winMain->state < State::mask)
+    {        
+        return false;
     }
+    SkPaint paint;
+    paint.setColor(SkColorSetARGB(160, 0, 0, 0));
+    canvas->drawPath(path, paint);
+    paint.setColor(SkColorSetARGB(255, 22, 118, 255));
+    paint.setStrokeWidth(4);
+    paint.setStyle(SkPaint::Style::kStroke_Style);
+    canvas->drawRect(CutRect, paint);
     return false;
 }
 bool CutMask::OnMouseUp(int x, int y)

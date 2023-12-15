@@ -7,6 +7,9 @@ add_definitions(-DUNICODE -D_UNICODE -DNOMINMAX -D_SILENCE_ALL_CXX20_DEPRECATION
 link_directories(D:/sdk/skia/out)
 include_directories(D:/sdk/skia)
 set(SRC_LIST
+    ./src/Icon.h
+    ./src/AppFont.cpp
+    ./src/AppFont.h
     ./src/WindowBase.cpp
     ./src/WindowBase.h
     ./src/WindowMain.cpp
@@ -20,8 +23,10 @@ set(SRC_LIST
     ./src/main.cpp
     ./src/Util.cpp
     ./src/Util.h
-    ./src/AppFont.cpp
-    ./src/AppFont.h
+    ./src/ToolBase.cpp
+    ./src/ToolBase.h
+    ./src/ToolBtn.cpp
+    ./src/ToolBtn.h
     ./src/ToolMain.cpp
     ./src/ToolMain.h
     ./src/ToolSub.cpp

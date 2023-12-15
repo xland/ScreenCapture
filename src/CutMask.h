@@ -3,6 +3,7 @@
 #include "include/core/SkCanvas.h"
 #include "include/core/SkRect.h"
 #include "include/core/SkPoint.h"
+#include "include/core/SkPath.h"
 #include "EventHandler.h"
 #include <vector>
 
@@ -21,4 +22,5 @@ public:
 private:
     CutMask();
     SkPoint start;
+    SkPath path;
 };

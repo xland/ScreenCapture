@@ -62,6 +62,12 @@ LRESULT WindowMain::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam
         auto y = GET_Y_LPARAM(lparam);
         return onMouseUp(x, y);
     }
+    case WM_RBUTTONDOWN:
+    {
+        delete this;
+        exit(0);
+        return true;
+    }
     case WM_MOUSEMOVE:
     {
         auto x = GET_X_LPARAM(lparam);

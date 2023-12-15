@@ -4,8 +4,29 @@
 #include "WindowMain.h"
 #include "AppFont.h"
 #include "include/core/SkTextBlob.h"
+#include "Icon.h"
 
 ToolMain *toolMain;
+
+ToolMain::ToolMain()
+{
+    btns.push_back(std::make_shared<ToolBtn>(Icon::rect, L"矩形"));
+    btns.push_back(std::make_shared<ToolBtn>(Icon::ellipse, L"圆形"));
+    btns.push_back(std::make_shared<ToolBtn>(Icon::arrow, L"箭头"));
+    btns.push_back(std::make_shared<ToolBtn>(Icon::number, L"标号"));
+    btns.push_back(std::make_shared<ToolBtn>(Icon::pen, L"画笔"));
+    btns.push_back(std::make_shared<ToolBtn>(Icon::line, L"直线"));
+    btns.push_back(std::make_shared<ToolBtn>(Icon::text, L"文本"));
+    btns.push_back(std::make_shared<ToolBtn>(Icon::mosaic, L"马赛克"));
+    btns.push_back(std::make_shared<ToolBtn>(Icon::eraser, L"橡皮擦"));
+    btns.push_back(std::make_shared<ToolBtn>(Icon::undo, L"上一步"));
+    btns.push_back(std::make_shared<ToolBtn>(Icon::redo, L"下一步"));
+    btns.push_back(std::make_shared<ToolBtn>(Icon::pin, L"钉住截图区"));
+    btns.push_back(std::make_shared<ToolBtn>(Icon::save, L"保存"));
+    btns.push_back(std::make_shared<ToolBtn>(Icon::close, L"退出"));
+    btns[9]->isDisable = true;
+    btns[10]->isDisable = true;
+}
 
 ToolMain::~ToolMain()
 {
@@ -27,17 +48,21 @@ ToolMain *ToolMain::get()
 bool ToolMain::OnMouseDown(int x, int y)
 {
     auto winMain = WindowMain::get();
-    if (!winMain || winMain->state < State::tool) {
+    if (!winMain || winMain->state < State::tool)
+    {
         return false;
     }
-    if (!toolMainRect.contains(x, y)) {
+    if (!toolRect.contains(x, y))
+    {
         return false;
     }
-    auto index = (x - toolMainRect.left()) / toolBtnWidth;
-    if (index == indexSelected) {
+    int index = (x - toolRect.left()) / btnWidth;
+    if (index == indexSelected)
+    {
         indexSelected = -1;
     }
-    else {
+    else
+    {
         indexSelected = index;
     }
     winMain->Refresh();
@@ -52,109 +77,75 @@ bool ToolMain::OnMouseUp(int x, int y)
 bool ToolMain::OnMouseMove(int x, int y)
 {
     auto winMain = WindowMain::get();
-    if (!winMain|| winMain->state < State::tool) {        
+    if (!winMain || winMain->state < State::tool)
+    {
         return false;
     }
-    if (!toolMainRect.contains(x, y)) {
-        if (indexHover >= 0) {
+    if (!toolRect.contains(x, y))
+    {
+        if (indexHover >= 0)
+        {
             indexHover = -1;
             winMain->Refresh();
-        }        
+        }
+        for (auto& btn : btns)
+        {
+            if (btn->isHover) {
+                btn->isHover = false;
+                winMain->Refresh();
+                break;
+            }
+        }
         return false;
     }
-    auto index = (x - toolMainRect.left()) / toolBtnWidth;
-    if (index != indexHover) {
-        indexHover = index;
+    int index = (x - toolRect.left()) / btnWidth;    
+    if (!btns[index]->isHover)
+    {
+        for (auto& btn : btns)
+        {
+            if (btn->isHover) {
+                btn->isHover = false;
+                break;
+            }
+        }
+        btns[index]->isHover = true;
         winMain->Refresh();
-    }    
+    }
     return false;
 }
 
-bool ToolMain::OnPaint(SkCanvas* canvas)
+bool ToolMain::OnPaint(SkCanvas *canvas)
 {
     auto winMain = WindowMain::get();
-    if (!winMain || winMain->state < State::tool) {
+    if (!winMain || winMain->state < State::tool)
+    {
         return false;
     }
     auto mask = CutMask::get();
-    toolMainRect.setLTRB(mask->CutRect.right() - toolBoxWidth,mask->CutRect.bottom()+ toolBoxSpan, mask->CutRect.right(), mask->CutRect.bottom() + toolBoxSpan+ toolBoxHeight);
+    toolRect.setLTRB(mask->CutRect.right() - btns.size()*ToolBtn::width, 
+        mask->CutRect.bottom() + marginTop, 
+        mask->CutRect.right(), 
+        mask->CutRect.bottom() + marginTop + ToolBtn::height);
     SkPaint paint;
+    paint.setAntiAlias(true);
     paint.setColor(SK_ColorWHITE);
-    canvas->drawRect(toolMainRect, paint);
-    if (indexHover >= 0) {
-        SkRect bgRect = SkRect::MakeXYWH(toolMainRect.left() + indexHover * toolBtnWidth+6, 
-            toolMainRect.top()+6, 
-            toolBtnWidth-12, 
-            toolBoxHeight-12);
-        paint.setColor(SkColorSetARGB(255, 238, 238, 238));
-        canvas->drawRoundRect(bgRect,6,6, paint);
-    }
-    if (indexSelected >= 0) {
-        SkRect bgRect = SkRect::MakeXYWH(toolMainRect.left() + indexSelected * toolBtnWidth + 6,
-            toolMainRect.top() + 6,
-            toolBtnWidth - 12,
-            toolBoxHeight - 12);
-        paint.setColor(SkColorSetARGB(255, 228, 238, 255));
-        canvas->drawRoundRect(bgRect, 6, 6, paint);
-    }
-    int fontIndex = 0;
-    paint.setColor(SkColorSetARGB(255, 30, 30, 30));
-    auto font = AppFont::Get();
-    auto x = toolMainRect.left() + iconLeftMargin;
-    auto y = toolMainRect.centerY() + 8; //release下这个值取不出： font->fontIconHeight / 2
+    canvas->drawRoundRect(toolRect, 3, 3, paint);
+    auto x = toolRect.left();
+    auto y = toolRect.top(); // release下这个值取不出： font->fontIconHeight / 2
+    for (auto& btn : btns)
     {
-        auto btns = { (const char*)u8"\ue8e8",(const char*)u8"\ue6bc", (const char*)u8"\ue603", (const char*)u8"\ue776", (const char*)u8"\ue601", (const char*)u8"\ue69b", (const char*)u8"\ue6ec", (const char*)u8"\ue82e", (const char*)u8"\ue6be"};
-        for(auto& var : btns)
-        {
-            if (fontIndex == indexSelected) {
-                paint.setColor(SkColorSetARGB(255, 9, 88, 217));
-            }
-            canvas->drawString(var, x, y, *font->fontIcon, paint);
-            if (fontIndex == indexSelected) {
-                paint.setColor(SkColorSetARGB(255, 30, 30, 30));
-            }
-            x += toolBtnWidth;
-            fontIndex += 1;
-        }
+        btn->Paint(canvas, paint, x, y);
+        x += ToolBtn::width;
     }
-    
     paint.setColor(SkColorSetARGB(255, 180, 180, 180));
-    x -= iconLeftMargin;
+    x = toolRect.left()+ToolBtn::width*9;
     paint.setStroke(true);
     paint.setStrokeWidth(1);
     paint.setStrokeCap(SkPaint::Cap::kRound_Cap);
-    canvas->drawLine(SkPoint::Make(x, y - 18), SkPoint::Make(x, y+2), paint);
-    x += iconLeftMargin;
-    
-    paint.setStroke(false);
-    paint.setColor(SkColorSetARGB(255, 30, 30, 30));
-    {
-        auto btns = { (const char*)u8"\ued85",(const char*)u8"\ued8a"};
-        for (auto& var : btns)
-        {
-            canvas->drawString(var, x, y, *font->fontIcon, paint);
-            x += toolBtnWidth;
-        }
-    }
-    paint.setColor(SkColorSetARGB(255, 180, 180, 180));
-    x -= iconLeftMargin;
-    paint.setStroke(true);
-    canvas->drawLine(SkPoint::Make(x, y - 18), SkPoint::Make(x, y + 2), paint);
-    x += iconLeftMargin;
-    paint.setStroke(false);
-    paint.setColor(SkColorSetARGB(255, 30, 30, 30)); 
-    {
-        auto btns = { (const char*)u8"\ue6a3",(const char*)u8"\ue62f",(const char*)u8"\ue87f",(const char*)u8"\ue6e7" };
-        for (auto& var : btns)
-        {
-            canvas->drawString(var, x, y, *font->fontIcon, paint);
-            x += toolBtnWidth;
-        }
-    }
+    canvas->drawLine(SkPoint::Make(x, y + 12), SkPoint::Make(x, toolRect.bottom()-12), paint);
+    x += ToolBtn::width * 2;
+    canvas->drawLine(SkPoint::Make(x, y + 12), SkPoint::Make(x, toolRect.bottom() - 12), paint);    
     return false;
-    
 }
 
-ToolMain::ToolMain()
-{
-}
+
