@@ -5,11 +5,13 @@
 #include "ToolSub.h"
 #include "include/core/SkBitmap.h"
 #include "include/core/SkCanvas.h"
+#include "AppFont.h"
 
 WindowMain *windowMain;
 
 WindowMain::WindowMain()
 {
+    AppFont::Init();
     CutMask::init();
     ToolMain::init();
     ToolSub::init();
@@ -27,6 +29,7 @@ WindowMain::~WindowMain()
     delete CutMask::get();
     delete ToolMain::get();
     delete ToolSub::get();
+    delete AppFont::Get();
 }
 
 void WindowMain::init()

@@ -20,8 +20,8 @@ set(SRC_LIST
     ./src/main.cpp
     ./src/Util.cpp
     ./src/Util.h
-    ./src/Font.cpp
-    ./src/Font.h
+    ./src/AppFont.cpp
+    ./src/AppFont.h
     ./src/ToolMain.cpp
     ./src/ToolMain.h
     ./src/ToolSub.cpp
