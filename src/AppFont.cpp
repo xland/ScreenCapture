@@ -12,7 +12,8 @@ static AppFont *appFont;
 
 AppFont::AppFont()
 {
-    fontText = SkTypeface::MakeFromName("Arial", SkFontStyle::Normal());
+    auto textFace = SkTypeface::MakeFromName("Arial", SkFontStyle::Normal());
+    fontText = new SkFont(textFace);
 
     HMODULE instance = GetModuleHandle(NULL);
     HRSRC resID = FindResource(instance, MAKEINTRESOURCE(IDR_ICON_FONT), L"ICON_FONT");
@@ -30,12 +31,18 @@ AppFont::AppFont()
     }
     LPVOID resData = LockResource(res);
     auto fontData = SkData::MakeWithoutCopy(resData, resSize);
-    fontIcon = SkTypeface::MakeFromData(fontData);
-
+    auto iconFace = SkTypeface::MakeFromData(fontData);
+    fontIcon = new SkFont(iconFace);
+    fontIcon->setSize(22);
+    SkRect rect;
+    fontIcon->measureText((const char*)u8"\ue8e8", sizeof((const char*)u8"\ue8e8"), SkTextEncoding::kUTF8, &rect);
+    fontIconHeight = rect.height();
     // paint->setTypeface(fontIcon);
 }
 AppFont::~AppFont()
 {
+    delete fontIcon;
+    delete fontText;
 }
 void AppFont::Init()
 {

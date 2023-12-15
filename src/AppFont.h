@@ -1,13 +1,14 @@
 #pragma once
-#include "include/core/SkTypeface.h"
+#include "include/core/SkFont.h"
 class AppFont
 {
 public:
     ~AppFont();
     static void Init();
     static AppFont *Get();
-    sk_sp<SkTypeface> fontIcon;
-    sk_sp<SkTypeface> fontText;
+    SkFont* fontIcon;
+    SkFont* fontText;
+    SkScalar fontIconHeight;
 
 private:
     AppFont();

@@ -24,8 +24,8 @@ private:
     int toolBtnSpanWidth = 6;
     int toolBtnSpanCount = 2;
     int toolBtnWidth = 50;
-    int toolBoxWidth = btnCount * toolBtnWidth + toolBtnSpanWidth * toolBtnSpanCount;
+    int toolBoxWidth = btnCount * toolBtnWidth + toolBtnSpanWidth * toolBtnSpanCount+4;
     int toolBoxHeight = 46;
     int iconLeftMargin = 16;
-    int iconTopMargin = 28;
+    int iconTopMargin = 38;
 };

@@ -98,8 +98,8 @@ bool WindowMain::onMouseUp(int x, int y)
 bool WindowMain::onMouseMove(int x, int y)
 {
     CutMask::get()->OnMouseMove(x, y);
-    ToolMain::get()->OnMouseUp(x, y);
-    ToolSub::get()->OnMouseUp(x, y);
+    ToolMain::get()->OnMouseMove(x, y);
+    ToolSub::get()->OnMouseMove(x, y);
     return false;
 }
 
