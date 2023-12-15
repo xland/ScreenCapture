@@ -15,17 +15,16 @@ public:
     bool OnMouseDown(int x, int y) override;
     bool OnMouseUp(int x, int y) override;
     bool OnMouseMove(int x, int y) override;
-    bool OnPaint(SkCanvas *base, SkCanvas *board, SkCanvas *canvas) override;
-    bool OnPaintFinish(SkCanvas *base) override;
+    bool OnPaint(SkCanvas* canvas) override;
 private:
     ToolMain();
     int btnCount = 15;
     int toolBoxSpan = 12;//工具条距离截图区域的高度
-    int toolBtnSpanWidth = 6;
-    int toolBtnSpanCount = 2;
     int toolBtnWidth = 50;
-    int toolBoxWidth = btnCount * toolBtnWidth + toolBtnSpanWidth * toolBtnSpanCount+4;
+    int toolBoxWidth = btnCount * toolBtnWidth;
     int toolBoxHeight = 46;
     int iconLeftMargin = 16;
-    int iconTopMargin = 38;
+    SkRect toolMainRect;
+    int indexHover {-1};
+    int indexSelected{ -1 };
 };

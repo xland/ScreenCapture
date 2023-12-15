@@ -10,8 +10,8 @@ WindowBase::WindowBase()
 WindowBase::~WindowBase()
 {
     delete[] pixelBase;
-    delete[] pixelBoard;
-    delete[] pixelCanvas;
+    delete[] pixelBack;
+    delete[] pixelFront;
     DeleteDC(hCompatibleDC);
     DeleteObject(bottomHbitmap);
 }
@@ -26,18 +26,17 @@ void WindowBase::Show()
 
 void WindowBase::Refresh()
 {
-    auto base = surfaceBase->getCanvas();
-    auto board = surfaceBoard->getCanvas();
-    auto canvas = surfaceCanvas->getCanvas();
-    paint(base, board, canvas);
-    sk_sp<SkImage> boardImg = surfaceBoard->makeImageSnapshot();
-    base->drawImage(boardImg, 0, 0);
-    sk_sp<SkImage> canvasImg = surfaceCanvas->makeImageSnapshot();
-    base->drawImage(canvasImg, 0, 0);
-    paintFinish(base);
+    memcpy(pixelBack, pixelBase, w * h * 4);
+    auto back = surfaceBack->getCanvas();
+    auto front = surfaceFront->getCanvas();
+    //front->saveLayer(nullptr,nullptr);
+    paint(front);
+    //front->restore();
+    sk_sp<SkImage> img = surfaceFront->makeImageSnapshot();
+    back->drawImage(img, 0, 0);
     HDC hdc = GetDC(hwnd);
     static BITMAPINFO info = {sizeof(BITMAPINFOHEADER), w, 0 - h, 1, 32, BI_RGB, w * 4 * h, 0, 0, 0, 0};
-    SetDIBits(hdc, bottomHbitmap, 0, h, pixelBase, &info, DIB_RGB_COLORS);
+    SetDIBits(hdc, bottomHbitmap, 0, h, pixelBack, &info, DIB_RGB_COLORS);
     static BLENDFUNCTION blend = {.BlendOp{AC_SRC_OVER}, .SourceConstantAlpha{255}, .AlphaFormat{AC_SRC_ALPHA}};
     static POINT pSrc = {0, 0};
     static SIZE sizeWnd = {w, h};
@@ -55,14 +54,11 @@ void WindowBase::initCanvas()
     SkImageInfo info = SkImageInfo::MakeN32Premul(w, h);
     auto stride = w * 4;
     auto size = stride * h;
-    pixelBase = new unsigned char[size];
-    pixelBoard = new unsigned char[size];
-    pixelCanvas = new unsigned char[size];
-    memset(pixelBoard, 0, size);
-    memset(pixelCanvas, 0, size);
-    surfaceBase = SkSurface::MakeRasterDirect(info, pixelBase, stride);
-    surfaceBoard = SkSurface::MakeRasterDirect(info, pixelBoard, stride);
-    surfaceCanvas = SkSurface::MakeRasterDirect(info, pixelCanvas, stride);
+    pixelBack = new unsigned char[size];
+    pixelFront = new unsigned char[size];
+    memset(pixelFront, 0, size);
+    surfaceBack = SkSurface::MakeRasterDirect(info, pixelBack, stride);
+    surfaceFront = SkSurface::MakeRasterDirect(info, pixelFront, stride);
 }
 
 void WindowBase::Close(const int &exitCode)

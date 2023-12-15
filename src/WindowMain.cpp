@@ -25,7 +25,6 @@ WindowMain::WindowMain()
 
 WindowMain::~WindowMain()
 {
-    delete[] desktopPixel;
     delete CutMask::get();
     delete ToolMain::get();
     delete ToolSub::get();
@@ -111,9 +110,9 @@ void WindowMain::shotScreen()
     DeleteObject(SelectObject(hDC, hBitmap));
     BOOL bRet = BitBlt(hDC, 0, 0, w, h, hScreen, x, y, SRCCOPY);
     long long dataSize = w * h * 4;
-    desktopPixel = new unsigned char[dataSize];
+    pixelBase = new unsigned char[dataSize];
     BITMAPINFO info = {sizeof(BITMAPINFOHEADER), (long)w, 0 - (long)h, 1, 32, BI_RGB, (DWORD)dataSize, 0, 0, 0, 0};
-    GetDIBits(hDC, hBitmap, 0, h, desktopPixel, &info, DIB_RGB_COLORS);
+    GetDIBits(hDC, hBitmap, 0, h, pixelBase, &info, DIB_RGB_COLORS);
     DeleteDC(hDC);
     DeleteObject(hBitmap);
     ReleaseDC(NULL, hScreen);
@@ -127,21 +126,9 @@ void WindowMain::initSize()
     h = GetSystemMetrics(SM_CYVIRTUALSCREEN);
 }
 
-void WindowMain::paint(SkCanvas *base, SkCanvas *board, SkCanvas *canvas)
+void WindowMain::paint(SkCanvas *canvas)
 {
-    // SkImageInfo info = SkImageInfo::Make(w, h, kRGBA_8888_SkColorType, kPremul_SkAlphaType);
-    static SkImageInfo info = SkImageInfo::MakeN32Premul(w, h);
-    SkBitmap bitmap;
-    bitmap.installPixels(info, desktopPixel, w * 4);
-    base->drawImage(bitmap.asImage(), 0, 0);
-    CutMask::get()->OnPaint(base, board, canvas);
-    ToolMain::get()->OnPaint(base, board, canvas);
-    ToolSub::get()->OnPaint(base, board, canvas);
-}
-
-void WindowMain::paintFinish(SkCanvas *base)
-{
-    CutMask::get()->OnPaintFinish(base);
-    ToolMain::get()->OnPaintFinish(base);
-    ToolSub::get()->OnPaintFinish(base);
+    CutMask::get()->OnPaint(canvas);
+    ToolMain::get()->OnPaint(canvas);
+    ToolSub::get()->OnPaint(canvas);
 }

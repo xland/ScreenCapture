@@ -18,10 +18,8 @@ private:
     LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) override;
     void shotScreen();
     void initSize();
-    void paint(SkCanvas *base, SkCanvas *board, SkCanvas *canvas) override;
-    void paintFinish(SkCanvas *base) override;
+    void paint(SkCanvas *canvas) override;
     bool onMouseDown(int x, int y);
     bool onMouseUp(int x, int y);
     bool onMouseMove(int x, int y);
-    unsigned char *desktopPixel;
 };

@@ -34,14 +34,8 @@ bool ToolSub::OnMouseMove(int x, int y)
     return false;
 }
 
-bool ToolSub::OnPaint(SkCanvas *base, SkCanvas *board, SkCanvas *canvas)
+bool ToolSub::OnPaint(SkCanvas* canvas)
 {
-    return false;
-}
-
-bool ToolSub::OnPaintFinish(SkCanvas *base)
-{
-
     return false;
 }
 

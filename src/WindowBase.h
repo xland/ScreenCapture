@@ -16,19 +16,17 @@ public:
     void Close(const int &exitCode);
     int x, y, w, h;
     bool IsMouseDown{false};
-    sk_sp<SkSurface> surfaceBase;
-    sk_sp<SkSurface> surfaceBoard;
-    sk_sp<SkSurface> surfaceCanvas;
+    sk_sp<SkSurface> surfaceBack;
+    sk_sp<SkSurface> surfaceFront;
 
 protected:
     virtual LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) = 0;
     void initWindow();
     void initCanvas();
-    virtual void paint(SkCanvas *base, SkCanvas *board, SkCanvas *canvas) = 0;
-    virtual void paintFinish(SkCanvas *base) = 0;
+    virtual void paint(SkCanvas *canvas) = 0;
     unsigned char *pixelBase;
-    unsigned char *pixelBoard;
-    unsigned char *pixelCanvas;
+    unsigned char* pixelBack;
+    unsigned char *pixelFront;
 
 private:
     static LRESULT CALLBACK RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
