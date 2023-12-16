@@ -33,11 +33,6 @@ AppFont::AppFont()
     auto fontData = SkData::MakeWithoutCopy(resData, resSize);
     auto iconFace = SkTypeface::MakeFromData(fontData);
     fontIcon = new SkFont(iconFace);
-    fontIcon->setSize(22);
-    SkRect rect;
-    fontIcon->measureText((const char*)u8"\ue8e8", sizeof((const char*)u8"\ue8e8"), SkTextEncoding::kUTF8, &rect);
-    fontIconHeight = rect.height();
-    // paint->setTypeface(fontIcon);
 }
 AppFont::~AppFont()
 {

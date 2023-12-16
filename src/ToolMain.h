@@ -14,11 +14,7 @@ public:
     static void init();
     static ToolMain *get();
     bool OnMouseDown(int x, int y) override;
-    bool OnMouseUp(int x, int y) override;
-    bool OnMouseMove(int x, int y) override;
     bool OnPaint(SkCanvas *canvas) override;
-
 private:
     ToolMain();
-    std::vector<std::shared_ptr<ToolBtn>> btns;
 };

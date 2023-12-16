@@ -1,51 +1,42 @@
 #include "ToolBase.h"
 #include "Icon.h"
+#include "WindowMain.h"
 
-ToolBase::ToolBase()
+ToolBase::ToolBase() :IndexHovered{ -1 }, IndexSelected{ -1 }
 {
-    auto icon = Icon::ellipse;
+
 }
 
 ToolBase::~ToolBase()
 {
 }
 
-void ToolBase::drawBgRect(SkCanvas* canvas, SkPaint& paint)
+bool ToolBase::OnMouseMove(int x, int y)
 {
-    if (indexSelected >= 0)
+    auto winMain = WindowMain::get();
+    if (!winMain || winMain->state < State::tool)
     {
-        SkRect bgRect = SkRect::MakeXYWH(toolRect.left() + indexSelected * btnWidth + 6,
-            toolRect.top() + 6,
-            btnWidth - 12,
-            height - 12);
-        paint.setColor(SkColorSetARGB(255, 228, 238, 255));
-        canvas->drawRoundRect(bgRect, 6, 6, paint);
+        return false;
     }
-    if (indexHover >= 0 && indexHover != indexSelected)
+    if (!ToolRect.contains(x, y))
     {
-        SkRect bgRect = SkRect::MakeXYWH(toolRect.left() + indexHover * btnWidth + 6,
-            toolRect.top() + 6,
-            btnWidth - 12,
-            height - 12);
-        paint.setColor(SkColorSetARGB(255, 238, 238, 238));
-        canvas->drawRoundRect(bgRect, 6, 6, paint);
+        if (IndexHovered >= 0)
+        {
+            btns[IndexHovered]->isHover = false;
+            IndexHovered = -1;
+            winMain->Refresh();
+        }
+        return false;
     }
-}
-
-void ToolBase::drawBtnCheckable(SkCanvas* canvas, SkPaint& paint, std::initializer_list<const char*>& btns)
-{
-    //for (auto& var : btns)
-    //{
-    //    if (fontIndex == indexSelected)
-    //    {
-    //        paint.setColor(SkColorSetARGB(255, 9, 88, 217));
-    //    }
-    //    canvas->drawString(var, x, y, *font->fontIcon, paint);
-    //    if (fontIndex == indexSelected)
-    //    {
-    //        paint.setColor(SkColorSetARGB(255, 30, 30, 30));
-    //    }
-    //    x += btnWidth;
-    //    fontIndex += 1;
-    //}
+    int index = (x - ToolRect.left()) / ToolBtn::width;
+    if (index != IndexHovered)
+    {
+        btns[index]->isHover = true;
+        if (IndexHovered >= 0) {
+            btns[IndexHovered]->isHover = false;
+        }
+        IndexHovered = index;
+        winMain->Refresh();
+    }
+    return false;
 }

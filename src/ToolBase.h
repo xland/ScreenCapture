@@ -4,6 +4,7 @@
 #include "include/core/SkRect.h"
 #include "include/core/SkPoint.h"
 #include "EventHandler.h"
+#include "ToolBtn.h"
 #include <vector>
 
 class ToolBase : public EventHandler
@@ -11,15 +12,12 @@ class ToolBase : public EventHandler
 public:
     ToolBase();
     ~ToolBase();
-    SkRect toolRect;
-    int indexHover{-1};
-    int indexSelected{-1};
-    int marginTop{12};
-    int btnWidth{50};
-    int height{46};
-    int iconLeftMargin{14};
+    bool OnMouseMove(int x, int y) override;
+    SkRect ToolRect;
+    int MarginTop{8};
+    int IndexHovered;
+    int IndexSelected;
 protected:
-    void drawBgRect(SkCanvas* canvas,SkPaint& paint);
-    void drawBtnCheckable(SkCanvas* canvas, SkPaint& paint,std::initializer_list<const char*>& btns);
+    std::vector<std::shared_ptr<ToolBtn>> btns;
 private:
 };
