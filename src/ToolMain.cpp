@@ -5,6 +5,7 @@
 #include "AppFont.h"
 #include "include/core/SkTextBlob.h"
 #include "Icon.h"
+#include "ToolSub.h"
 
 ToolMain *toolMain;
 
@@ -17,6 +18,7 @@ ToolMain::ToolMain()
     btns.push_back(std::make_shared<ToolBtn>(Icon::pen, L"画笔"));
     btns.push_back(std::make_shared<ToolBtn>(Icon::line, L"直线"));
     btns.push_back(std::make_shared<ToolBtn>(Icon::text, L"文本"));
+    //btns.push_back(std::make_shared<ToolBtn>(Icon::image, L"图片"));
     btns.push_back(std::make_shared<ToolBtn>(Icon::mosaic, L"马赛克"));
     btns.push_back(std::make_shared<ToolBtn>(Icon::eraser, L"橡皮擦"));
     btns.push_back(std::make_shared<ToolBtn>(Icon::undo, L"上一步",true,false));
@@ -68,6 +70,7 @@ bool ToolMain::OnMouseDown(int x, int y)
                 btns[IndexSelected]->isSelected = false;
             }
             IndexSelected = IndexHovered;
+            ToolSub::get()->InitBtns(IndexSelected);
             winMain->Refresh();
         }             
     }

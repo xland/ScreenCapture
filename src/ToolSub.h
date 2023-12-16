@@ -12,8 +12,11 @@ public:
     static void init();
     static ToolSub *get();
     bool OnMouseDown(int x, int y) override;
+    void InitBtns(int mainToolSelectedIndex);
     bool OnPaint(SkCanvas* canvas) override;
 
 private:
     ToolSub();
+    void addStrokeWidthBtns(int index);
+    void addColorBtns();
 };
