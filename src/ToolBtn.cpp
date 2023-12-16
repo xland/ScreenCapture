@@ -1,8 +1,8 @@
 #include "ToolBtn.h"
 #include "AppFont.h"
 
-ToolBtn::ToolBtn(const char* icon, std::wstring&& tip, bool isDisable, bool selectable, int fontSize, SkColor fontColor):
-	icon{icon},tip{tip},isHover{false},isSelected{false},isDisable{ isDisable },
+ToolBtn::ToolBtn(const char* icon, std::wstring&& tip, bool isDisable, bool selectable, int fontSize, SkColor fontColor, bool isSelected):
+	icon{icon},tip{tip},isHover{false},isSelected{isSelected},isDisable{ isDisable },
     selectable{selectable},fontSize{fontSize},fontColor{fontColor}
 {
 }
@@ -39,6 +39,9 @@ void ToolBtn::Paint(SkCanvas* canvas, SkPaint& paint, float& x, float& y)
     }
     auto font = AppFont::Get();
     font->fontIcon->setSize(fontSize);
+    if (fontColor != SK_ColorTRANSPARENT) {
+        paint.setColor(fontColor);
+    }
     if (fontSize == 22) {
         canvas->drawString(icon, x + 14, y + ToolBtn::height / 2 + 8, *font->fontIcon, paint);
     }
@@ -46,7 +49,7 @@ void ToolBtn::Paint(SkCanvas* canvas, SkPaint& paint, float& x, float& y)
         canvas->drawString(icon, x-1, y + ToolBtn::height / 2 + 19, *font->fontIcon, paint);
     }
     else if (fontSize == 82) {
-        canvas->drawString(icon, x - 16, y + ToolBtn::height / 2 + 30, *font->fontIcon, paint);
+        canvas->drawString(icon, x - 16, y + ToolBtn::height / 2 + 29.5, *font->fontIcon, paint);
     }
     
 }

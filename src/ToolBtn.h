@@ -9,7 +9,7 @@
 class ToolBtn
 {
 public:
-    ToolBtn(const char* icon,std::wstring&& tip,bool isDisable=false,bool selectable=true,int fontSize = 22, SkColor fontColor=SK_ColorTRANSPARENT);
+    ToolBtn(const char* icon,std::wstring&& tip,bool isDisable=false,bool selectable=true,int fontSize = 22, SkColor fontColor=SK_ColorTRANSPARENT,bool isSelected=false);
     ~ToolBtn();
     void Paint(SkCanvas* canvas, SkPaint& paint, float& x, float& y);
     const static int width{50};
