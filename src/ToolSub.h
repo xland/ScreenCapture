@@ -14,6 +14,9 @@ public:
     bool OnMouseDown(const int& x, const int& y) override;
     void InitBtns(int mainToolSelectedIndex);
     bool OnPaint(SkCanvas* canvas) override;
+    bool getFill();
+    int getStroke();
+    SkColor getColor();
 
 private:
     ToolSub();

@@ -22,4 +22,5 @@ public:
 private:
     Recorder();
     std::vector<std::shared_ptr<ShapeBase>> shapes;
+    int wipIndex;
 };

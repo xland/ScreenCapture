@@ -1,6 +1,6 @@
 #include "ShapeBase.h"
 
-ShapeBase::ShapeBase()
+ShapeBase::ShapeBase():IsWIP{true}
 {
 }
 

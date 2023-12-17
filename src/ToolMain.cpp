@@ -60,6 +60,7 @@ bool ToolMain::OnMouseDown(const int& x, const int& y)
     {
         btns[IndexHovered]->isSelected = false;
         IndexSelected = -1;
+        winMain->state = State::tool;
         winMain->Refresh();
     }
     else
@@ -71,10 +72,11 @@ bool ToolMain::OnMouseDown(const int& x, const int& y)
             }
             IndexSelected = IndexHovered;
             ToolSub::get()->InitBtns(IndexSelected);
+            winMain->state = (State)(IndexSelected + 3);
             winMain->Refresh();
         }             
     }
-    return false;
+    return true;
 }
 
 

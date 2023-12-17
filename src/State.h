@@ -12,7 +12,6 @@ enum class State
     pen,
     line,
     text,
-    image,
     mosaic,
     eraser
 };

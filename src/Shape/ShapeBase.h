@@ -14,6 +14,7 @@ class ShapeBase : public EventHandler
 public:
     ShapeBase();
     ~ShapeBase();
-
+    bool IsWIP;
+    int startX, startY;
 private:
 };

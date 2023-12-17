@@ -66,7 +66,7 @@ bool ToolSub::OnMouseDown(const int& x, const int& y)
     int index = (x - ToolRect.left()) / ToolBtn::width;
     if (btns[index]->icon == Icon::dot) {
         if (btns[index]->isSelected) {
-            return false;
+            return true;
         }
         for (auto& btn : btns)
         {
@@ -78,7 +78,7 @@ bool ToolSub::OnMouseDown(const int& x, const int& y)
         }
         btns[index]->isSelected = true;
         winMain->Refresh();
-        return false;
+        return true;
     }
     else if (btns[index]->icon == Icon::uncheck) {
         for (auto& btn : btns)
@@ -93,7 +93,7 @@ bool ToolSub::OnMouseDown(const int& x, const int& y)
         btns[index]->icon = Icon::check;
         btns[index]->isSelected = true;
         winMain->Refresh();
-        return false;
+        return true;
     }
     if (index == 0) {
         if (btns[0]->isSelected) {
@@ -110,7 +110,7 @@ bool ToolSub::OnMouseDown(const int& x, const int& y)
         }
         winMain->Refresh();
     }
-    return false;
+    return true;
 }
 
 void ToolSub::InitBtns(int mainToolSelectedIndex)
@@ -206,4 +206,30 @@ bool ToolSub::OnPaint(SkCanvas *canvas)
         left += ToolBtn::width;
     }
     return false;
+}
+
+bool ToolSub::getFill()
+{
+    return btns[0]->isSelected;
+}
+
+int ToolSub::getStroke()
+{
+    if (btns[1]->isSelected) {
+        return 1;
+    }
+    else if (btns[2]->isSelected) {
+        return 2;
+    }
+    else {
+        return 3;
+    }
+}
+
+SkColor ToolSub::getColor()
+{
+    auto it = std::find_if(btns.begin(), btns.end(), [](auto& btn) {
+        return btn->icon == Icon::check;
+        });
+    return it->get()->fontColor;
 }

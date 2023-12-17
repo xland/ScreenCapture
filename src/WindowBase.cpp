@@ -9,9 +9,9 @@ WindowBase::WindowBase()
 
 WindowBase::~WindowBase()
 {
-    delete[] pixelBase;
-    delete[] pixelBack;
     delete[] pixelFront;
+    delete[] pixelBack;
+    delete[] pixelBase;
     DeleteDC(hCompatibleDC);
     DeleteObject(bottomHbitmap);
 }
@@ -27,7 +27,8 @@ void WindowBase::Show()
 
 void WindowBase::Refresh()
 {
-    memcpy(pixelBack, pixelBase, w * h * 4);
+    static size_t size = w * 4 * h;
+    memcpy(pixelBack, pixelBase, size);
     auto back = surfaceBack->getCanvas();
     auto front = surfaceFront->getCanvas();
     front->clear(SK_ColorTRANSPARENT);
@@ -54,12 +55,11 @@ void WindowBase::initCanvas()
     DeleteObject(SelectObject(hCompatibleDC, bottomHbitmap));
     ReleaseDC(hwnd, hdc);
     SkImageInfo info = SkImageInfo::MakeN32Premul(w, h);
-    auto stride = w * 4;
-    auto size = stride * h;
+    size_t stride = w * 4;
+    size_t size = stride * h;
     pixelBack = new unsigned char[size];
-    pixelFront = new unsigned char[size];
-    memset(pixelFront, 0, size);
     surfaceBack = SkSurface::MakeRasterDirect(info, pixelBack, stride);
+    pixelFront = new unsigned char[size];
     surfaceFront = SkSurface::MakeRasterDirect(info, pixelFront, stride);
 }
 

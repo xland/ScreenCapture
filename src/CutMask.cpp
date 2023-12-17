@@ -45,7 +45,7 @@ bool CutMask::OnMouseMove(const int& x, const int& y)
     path.addRect(CutRect, SkPathDirection::kCW);
     path.setFillType(SkPathFillType::kEvenOdd);
     winMain->Refresh();
-    return false;
+    return true;
 }
 bool CutMask::OnPaint(SkCanvas *canvas)
 {
@@ -61,7 +61,10 @@ bool CutMask::OnPaint(SkCanvas *canvas)
 bool CutMask::OnMouseUp(const int& x, const int& y)
 {
     auto winMain = WindowMain::get();
+    if (winMain->state != State::mask) {
+        return false;
+    }
     winMain->state = State::tool;
     winMain->Refresh();
-    return false;
+    return true;
 }
