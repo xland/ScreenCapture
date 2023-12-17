@@ -62,7 +62,7 @@ bool CutMask::OnPaint(SkCanvas *canvas)
     paint.setColor(SkColorSetARGB(160, 0, 0, 0));
     canvas->drawPath(path, paint);
     paint.setColor(SkColorSetARGB(255, 22, 118, 255));
-    paint.setStrokeWidth(4);
+    paint.setStrokeWidth(3);
     paint.setStyle(SkPaint::Style::kStroke_Style);
     canvas->drawRect(CutRect, paint);
     return false;

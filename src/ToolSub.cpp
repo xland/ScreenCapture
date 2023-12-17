@@ -98,7 +98,7 @@ bool ToolSub::OnMouseDown(int x, int y)
     if (index == 0) {
         if (btns[0]->isSelected) {
             btns[0]->isSelected = false;
-            if (ToolMain::get()->IndexSelected != 5) { 
+            if (ToolMain::get()->IndexSelected != 5) { //transparen line
                 addStrokeWidthBtns(1);
             }            
         }

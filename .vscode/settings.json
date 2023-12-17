@@ -27,7 +27,13 @@
         "string_view": "cpp",
         "unordered_map": "cpp",
         "unordered_set": "cpp",
-        "new": "cpp"
+        "new": "cpp",
+        "future": "cpp",
+        "istream": "cpp",
+        "memory": "cpp",
+        "type_traits": "cpp",
+        "*.inc": "cpp",
+        "tuple": "cpp"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }

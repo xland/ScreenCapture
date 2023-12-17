@@ -1,11 +1,12 @@
 ﻿#include <windowsx.h>
 #include "WindowMain.h"
+#include "include/core/SkBitmap.h"
+#include "include/core/SkCanvas.h"
 #include "CutMask.h"
 #include "ToolMain.h"
 #include "ToolSub.h"
-#include "include/core/SkBitmap.h"
-#include "include/core/SkCanvas.h"
 #include "AppFont.h"
+#include "Recorder.h"
 
 WindowMain *windowMain;
 
@@ -15,6 +16,7 @@ WindowMain::WindowMain()
     CutMask::init();
     ToolMain::init();
     ToolSub::init();
+    Recorder::init();
     initSize();
     shotScreen();
     initWindow();

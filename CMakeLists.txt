@@ -7,6 +7,7 @@ add_definitions(-DUNICODE -D_UNICODE -DNOMINMAX -D_SILENCE_ALL_CXX20_DEPRECATION
 link_directories(D:/sdk/skia/out)
 include_directories(D:/sdk/skia)
 set(SRC_LIST
+    ./src/main.cpp
     ./src/Icon.h
     ./src/AppFont.cpp
     ./src/AppFont.h
@@ -16,11 +17,12 @@ set(SRC_LIST
     ./src/WindowMain.h
     ./src/WindowPin.cpp
     ./src/WindowPin.h
-    ./src/CutMask.cpp
-    ./src/CutMask.h
     ./src/EventHandler.cpp
     ./src/EventHandler.h
-    ./src/main.cpp
+    ./src/CutMask.cpp
+    ./src/CutMask.h
+    ./src/Recorder.cpp
+    ./src/Recorder.h
     ./src/Util.cpp
     ./src/Util.h
     ./src/ToolBase.cpp
