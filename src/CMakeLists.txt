@@ -1,0 +1,31 @@
+set(SRC
+    main.cpp
+    Icon.h
+    AppFont.cpp
+    AppFont.h
+    WindowBase.cpp
+    WindowBase.h
+    WindowMain.cpp
+    WindowMain.h
+    WindowPin.cpp
+    WindowPin.h
+    EventHandler.cpp
+    EventHandler.h
+    CutMask.cpp
+    CutMask.h
+    Recorder.cpp
+    Recorder.h
+    Util.cpp
+    Util.h
+    ToolBase.cpp
+    ToolBase.h
+    ToolBtn.cpp
+    ToolBtn.h
+    ToolMain.cpp
+    ToolMain.h
+    ToolSub.cpp
+    ToolSub.h
+    State.h
+)
+target_sources(ScreenCapture PRIVATE ${SRC})
+add_subdirectory(Shape)

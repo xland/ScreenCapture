@@ -6,44 +6,9 @@ set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:WINDOWS")
 add_definitions(-DUNICODE -D_UNICODE -DNOMINMAX -D_SILENCE_ALL_CXX20_DEPRECATION_WARNINGS -DSK_ENABLE_SKSL)
 link_directories(D:/sdk/skia/out)
 include_directories(D:/sdk/skia)
-set(SRC_LIST
-    ./src/main.cpp
-    ./src/Icon.h
-    ./src/AppFont.cpp
-    ./src/AppFont.h
-    ./src/WindowBase.cpp
-    ./src/WindowBase.h
-    ./src/WindowMain.cpp
-    ./src/WindowMain.h
-    ./src/WindowPin.cpp
-    ./src/WindowPin.h
-    ./src/EventHandler.cpp
-    ./src/EventHandler.h
-    ./src/CutMask.cpp
-    ./src/CutMask.h
-    ./src/Recorder.cpp
-    ./src/Recorder.h
-    ./src/Util.cpp
-    ./src/Util.h
-    ./src/ToolBase.cpp
-    ./src/ToolBase.h
-    ./src/ToolBtn.cpp
-    ./src/ToolBtn.h
-    ./src/ToolMain.cpp
-    ./src/ToolMain.h
-    ./src/ToolSub.cpp
-    ./src/ToolSub.h
-    ./src/State.h
-    ./src/Shape/Pen.h
-    ./src/Shape/ShapeBase.cpp
-    ./src/Shape/ShapeBase.h
-    ./src/Shape/Arrow.cpp
-    ./src/Shape/Arrow.h
-    ./src/Shape/Pen.cpp
-    ./res/res.h
-    ./res/res.rc
-)
-add_executable(ScreenCapture ${SRC_LIST})
+add_executable(ScreenCapture)
+add_subdirectory(res)
+add_subdirectory(src)
 
 if(WIN32)
     set_property(TARGET ScreenCapture PROPERTY VS_DPI_AWARE "PerMonitor")
