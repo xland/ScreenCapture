@@ -26,7 +26,7 @@ CutMask* CutMask::get()
     return cutMask;
 }
 
-bool CutMask::OnMouseDown(int x, int y)
+bool CutMask::OnMouseDown(const int& x, const int& y)
 {    
     auto winMain = WindowMain::get();
     if (winMain->state < State::mask) {
@@ -35,7 +35,7 @@ bool CutMask::OnMouseDown(int x, int y)
     }
     return false;
 }
-bool CutMask::OnMouseMove(int x, int y)
+bool CutMask::OnMouseMove(const int& x, const int& y)
 {
     auto winMain = WindowMain::get();
     if (!winMain->IsMouseDown || winMain->state != State::mask)
@@ -67,7 +67,7 @@ bool CutMask::OnPaint(SkCanvas *canvas)
     canvas->drawRect(CutRect, paint);
     return false;
 }
-bool CutMask::OnMouseUp(int x, int y)
+bool CutMask::OnMouseUp(const int& x, const int& y)
 {
     auto winMain = WindowMain::get();
     winMain->state = State::tool;

@@ -4,23 +4,19 @@
 #include "include/core/SkRect.h"
 #include "include/core/SkPoint.h"
 #include "include/core/SkPath.h"
-#include "EventHandler.h"
+#include "ShapeBase.h"
 #include <vector>
 
-class CutMask : public EventHandler
+class Rect : public ShapeBase
 {
 public:
-    ~CutMask();
-    static void init();
-    static CutMask* get();
+    Rect();
+    ~Rect();
     bool OnMouseDown(const int& x, const int& y) override;
     bool OnMouseUp(const int& x, const int& y) override;
     bool OnMouseMove(const int& x, const int& y) override;
-    bool OnPaint(SkCanvas* canvas) override;
-    SkRect CutRect;
+    bool OnPaint(SkCanvas *canvas) override;
 
 private:
-    CutMask();
-    SkPoint start;
-    SkPath path;
+    SkRect rect;
 };

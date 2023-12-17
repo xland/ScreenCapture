@@ -12,7 +12,7 @@ class ToolBase : public EventHandler
 public:
     ToolBase();
     ~ToolBase();
-    bool OnMouseMove(int x, int y) override;
+    bool OnMouseMove(const int& x, const int& y) override;
     SkRect ToolRect;
     int MarginTop{8};
     int IndexHovered;

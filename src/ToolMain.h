@@ -13,7 +13,7 @@ public:
     ~ToolMain();
     static void init();
     static ToolMain *get();
-    bool OnMouseDown(int x, int y) override;
+    bool OnMouseDown(const int& x, const int& y) override;
     bool OnPaint(SkCanvas *canvas) override;
 private:
     ToolMain();

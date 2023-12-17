@@ -11,7 +11,7 @@ ToolBase::~ToolBase()
 {
 }
 
-bool ToolBase::OnMouseMove(int x, int y)
+bool ToolBase::OnMouseMove(const int& x, const int& y)
 {
     auto winMain = WindowMain::get();
     if (!winMain || winMain->state < State::tool)

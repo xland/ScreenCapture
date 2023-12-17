@@ -1,9 +1,11 @@
 set(SHAPE
-    Pen.h
     ShapeBase.cpp
     ShapeBase.h
+    Rect.cpp
+    Rect.h
+    Pen.cpp
+    Pen.h
     Arrow.cpp
     Arrow.h
-    Pen.cpp
 )
 target_sources(ScreenCapture PRIVATE ${SHAPE})

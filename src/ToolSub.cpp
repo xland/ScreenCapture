@@ -52,7 +52,7 @@ ToolSub *ToolSub::get()
     return toolSub;
 }
 
-bool ToolSub::OnMouseDown(int x, int y)
+bool ToolSub::OnMouseDown(const int& x, const int& y)
 {
     auto winMain = WindowMain::get();
     if (!winMain || winMain->state < State::tool)

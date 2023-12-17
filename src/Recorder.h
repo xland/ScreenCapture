@@ -14,9 +14,9 @@ public:
     ~Recorder();
     static void init();
     static Recorder *get();
-    bool OnMouseDown(int x, int y) override;
-    bool OnMouseUp(int x, int y) override;
-    bool OnMouseMove(int x, int y) override;
+    bool OnMouseDown(const int& x, const int& y) override;
+    bool OnMouseUp(const int& x, const int& y) override;
+    bool OnMouseMove(const int& x, const int& y) override;
     bool OnPaint(SkCanvas *canvas) override;
 
 private:

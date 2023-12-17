@@ -93,6 +93,7 @@ bool WindowMain::onMouseDown(int x, int y)
     CutMask::get()->OnMouseDown(x, y);
     ToolMain::get()->OnMouseDown(x, y);
     ToolSub::get()->OnMouseDown(x, y);
+    Recorder::get()->OnMouseDown(x, y);
     return false;
 }
 bool WindowMain::onMouseUp(int x, int y)
@@ -100,6 +101,7 @@ bool WindowMain::onMouseUp(int x, int y)
     CutMask::get()->OnMouseUp(x, y);
     ToolMain::get()->OnMouseUp(x, y);
     ToolSub::get()->OnMouseUp(x, y);
+    Recorder::get()->OnMouseUp(x, y);
     return false;
 }
 bool WindowMain::onMouseMove(int x, int y)
@@ -107,9 +109,16 @@ bool WindowMain::onMouseMove(int x, int y)
     CutMask::get()->OnMouseMove(x, y);
     ToolMain::get()->OnMouseMove(x, y);
     ToolSub::get()->OnMouseMove(x, y);
+    Recorder::get()->OnMouseMove(x, y);
     return false;
 }
-
+void WindowMain::paint(SkCanvas* canvas)
+{
+    CutMask::get()->OnPaint(canvas);
+    ToolMain::get()->OnPaint(canvas);
+    ToolSub::get()->OnPaint(canvas);
+    Recorder::get()->OnPaint(canvas);
+}
 void WindowMain::shotScreen()
 {
     HDC hScreen = GetDC(NULL);
@@ -132,11 +141,4 @@ void WindowMain::initSize()
     y = GetSystemMetrics(SM_YVIRTUALSCREEN);
     w = GetSystemMetrics(SM_CXVIRTUALSCREEN);
     h = GetSystemMetrics(SM_CYVIRTUALSCREEN);
-}
-
-void WindowMain::paint(SkCanvas *canvas)
-{
-    CutMask::get()->OnPaint(canvas);
-    ToolMain::get()->OnPaint(canvas);
-    ToolSub::get()->OnPaint(canvas);
 }

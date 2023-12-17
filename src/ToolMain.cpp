@@ -45,7 +45,7 @@ ToolMain *ToolMain::get()
     return toolMain;
 }
 
-bool ToolMain::OnMouseDown(int x, int y)
+bool ToolMain::OnMouseDown(const int& x, const int& y)
 {
     auto winMain = WindowMain::get();
     if (!winMain || winMain->state < State::tool)

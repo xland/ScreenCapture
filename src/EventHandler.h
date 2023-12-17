@@ -5,10 +5,10 @@ class EventHandler
 public:
     EventHandler();
     ~EventHandler();
-    virtual bool OnMouseDown(int x, int y) { return false; };
-    virtual bool OnMouseUp(int x, int y) { return false; };
-    virtual bool OnMouseMove(int x, int y) { return false; };
-    virtual bool OnDrag(int x, int y) { return false; };
+    virtual bool OnMouseDown(const int& x, const int& y) { return false; };
+    virtual bool OnMouseUp(const int& x, const int& y) { return false; };
+    virtual bool OnMouseMove(const int& x, const int& y) { return false; };
+    virtual bool OnDrag(const int& x, const int& y) { return false; };
     virtual bool OnPaint(SkCanvas *canvas) { return false; };
 
 protected:
