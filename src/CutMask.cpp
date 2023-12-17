@@ -28,11 +28,7 @@ CutMask* CutMask::get()
 
 bool CutMask::OnMouseDown(const int& x, const int& y)
 {    
-    auto winMain = WindowMain::get();
-    if (winMain->state < State::mask) {
-        start.set(x, y);
-        winMain->state = State::mask;
-    }
+    start.set(x, y);
     return false;
 }
 bool CutMask::OnMouseMove(const int& x, const int& y)
@@ -53,11 +49,6 @@ bool CutMask::OnMouseMove(const int& x, const int& y)
 }
 bool CutMask::OnPaint(SkCanvas *canvas)
 {
-    auto winMain = WindowMain::get();
-    if (!winMain || winMain->state < State::mask)
-    {        
-        return false;
-    }
     SkPaint paint;
     paint.setColor(SkColorSetARGB(160, 0, 0, 0));
     canvas->drawPath(path, paint);

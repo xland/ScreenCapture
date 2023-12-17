@@ -14,7 +14,7 @@ ToolBase::~ToolBase()
 bool ToolBase::OnMouseMove(const int& x, const int& y)
 {
     auto winMain = WindowMain::get();
-    if (!winMain || winMain->state < State::tool)
+    if (winMain->state < State::tool)
     {
         return false;
     }

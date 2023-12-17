@@ -55,7 +55,7 @@ ToolSub *ToolSub::get()
 bool ToolSub::OnMouseDown(const int& x, const int& y)
 {
     auto winMain = WindowMain::get();
-    if (!winMain || winMain->state < State::tool)
+    if (winMain->state < State::tool)
     {
         return false;
     }
@@ -173,7 +173,7 @@ void ToolSub::InitBtns(int mainToolSelectedIndex)
 bool ToolSub::OnPaint(SkCanvas *canvas)
 {
     auto winMain = WindowMain::get();
-    if (!winMain || winMain->state < State::tool)
+    if (winMain->state < State::tool)
     {
         return false;
     }

@@ -20,9 +20,8 @@ WindowMain::WindowMain()
     initSize();
     shotScreen();
     initWindow();
-    Show();
     initCanvas();
-    Refresh();
+    state = State::mask;
 }
 
 WindowMain::~WindowMain()
@@ -38,6 +37,7 @@ void WindowMain::init()
     if (!windowMain)
     {
         windowMain = new WindowMain();
+        windowMain->Show();
     }
 }
 
@@ -64,17 +64,17 @@ LRESULT WindowMain::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam
         auto y = GET_Y_LPARAM(lparam);
         return onMouseUp(x, y);
     }
-    case WM_RBUTTONDOWN:
-    {
-        delete this;
-        exit(0);
-        return true;
-    }
     case WM_MOUSEMOVE:
     {
         auto x = GET_X_LPARAM(lparam);
         auto y = GET_Y_LPARAM(lparam);
         return onMouseMove(x, y);
+    }
+    case WM_RBUTTONDOWN:
+    {
+        delete this;
+        exit(0);
+        return true;
     }
     case WM_NCDESTROY:
     {

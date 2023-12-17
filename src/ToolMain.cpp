@@ -48,7 +48,7 @@ ToolMain *ToolMain::get()
 bool ToolMain::OnMouseDown(const int& x, const int& y)
 {
     auto winMain = WindowMain::get();
-    if (!winMain || winMain->state < State::tool)
+    if (winMain->state < State::tool)
     {
         return false;
     }
@@ -81,7 +81,7 @@ bool ToolMain::OnMouseDown(const int& x, const int& y)
 bool ToolMain::OnPaint(SkCanvas *canvas)
 {
     auto winMain = WindowMain::get();
-    if (!winMain || winMain->state < State::tool)
+    if (winMain->state < State::tool)
     {
         return false;
     }
