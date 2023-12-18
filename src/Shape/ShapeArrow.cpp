@@ -54,7 +54,7 @@ bool ShapeArrow::OnMouseMove(const int &x, const int &y)
     return false;
 }
 
-bool ShapeArrow::OnMoseDrag(const int &x, const int &y)
+bool ShapeArrow::OnMoseDrag(const int &x1, const int &y1)
 {
     IsWIP = false;
     showDragger = false;
@@ -63,14 +63,14 @@ bool ShapeArrow::OnMoseDrag(const int &x, const int &y)
     //path.lineTo(x2, y2);
     double height = 32.0;
     double width = 32.0;
-    auto x = x - startX;
-    auto y = startY - y;
+    auto x = x1 - startX;
+    auto y = startY - y1;
     auto z = sqrt(x * x + y * y);
     auto sin = y / z;
     auto cos = x / z;
     // △底边的中点
-    double centerX = x - height * cos;
-    double centerY = y + height * sin;
+    double centerX = x1 - height * cos;
+    double centerY = y1 + height * sin;
     double tempA = width / 4 * sin;
     double tempB = width / 4 * cos;
     // △ 左下的顶点与底边中点之间中间位置的点
@@ -82,7 +82,7 @@ bool ShapeArrow::OnMoseDrag(const int &x, const int &y)
     double Y2 = Y1 - tempB;
     path.lineTo(X2, Y2);
     // △ 上部顶点，也就是箭头终点
-    path.lineTo(x, y);
+    path.lineTo(x1, y1);
     // △ 右下顶点
     tempA = width / 2 * sin;
     tempB = width / 2 * cos;
@@ -93,7 +93,7 @@ bool ShapeArrow::OnMoseDrag(const int &x, const int &y)
     double X4 = centerX + tempA / 2;
     double Y4 = centerY + tempB / 2;
     path.lineTo(X4, Y4);
-    path.lineTo(x, y);
+    path.lineTo(startX, startY);
     WindowMain::get()->Refresh();
     return false;
 }
@@ -101,6 +101,7 @@ bool ShapeArrow::OnMoseDrag(const int &x, const int &y)
 bool ShapeArrow::OnPaint(SkCanvas* canvas)
 {
     SkPaint paint;
+    paint.setAntiAlias(true);
     if (stroke)
     {
         paint.setStroke(true);
