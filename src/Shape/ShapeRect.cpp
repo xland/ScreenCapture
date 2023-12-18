@@ -1,24 +1,24 @@
-#include "Ellipse.h"
+#include "ShapeRect.h"
 #include "../WindowMain.h"
 #include "../ToolSub.h"
 
-Ellipse::Ellipse(const int &x, const int &y) : ShapeBase(x, y), rect{SkRect::MakeXYWH(x, y, 0, 0)}
+ShapeRect::ShapeRect(const int& x, const int& y):ShapeBase(x,y), rect{SkRect::MakeXYWH(x,y,0,0)}
 {
     initParams();
 }
 
-Ellipse::~Ellipse()
+ShapeRect::~ShapeRect()
 {
 }
 
-bool Rect::OnMouseDown(const int &x, const int &y)
+bool ShapeRect::OnMouseDown(const int& x, const int& y)
 {
     startX = x;
     startY = y;
     return false;
 }
 
-bool Rect::OnMouseUp(const int &x, const int &y)
+bool ShapeRect::OnMouseUp(const int& x, const int& y)
 {
     rect.sort();
     unsigned size = 10;
@@ -29,8 +29,8 @@ bool Rect::OnMouseUp(const int &x, const int &y)
     float b = rect.bottom() - half;
     float wCenter = l + rect.width() / 2;
     float hCenter = t + rect.height() / 2;
-    draggers[0].setXYWH(l, t, size, size);
-    draggers[1].setXYWH(wCenter, t, size, size);
+    draggers[0].setXYWH(l, t,size,size);
+    draggers[1].setXYWH(wCenter, t, size, size); 
     draggers[2].setXYWH(r, t, size, size);
     draggers[3].setXYWH(r, hCenter, size, size);
     draggers[4].setXYWH(r, b, size, size);
@@ -42,12 +42,11 @@ bool Rect::OnMouseUp(const int &x, const int &y)
     return false;
 }
 
-bool Rect::OnMouseMove(const int &x, const int &y)
+bool ShapeRect::OnMouseMove(const int& x, const int& y)
 {
     for (size_t i = 0; i < draggers.size(); i++)
     {
-        if (draggers[i].contains(x, y))
-        {
+        if (draggers[i].contains(x, y)) {
             HoverIndex = i;
             setCursor();
             return true;
@@ -56,8 +55,7 @@ bool Rect::OnMouseMove(const int &x, const int &y)
     auto halfStroke = strokeWidth / 2 + 2;
     auto rectOut = rect.makeOutset(halfStroke, halfStroke);
     auto rectInner = rect.makeInset(halfStroke, halfStroke);
-    if (rectOut.contains(x, y) && !rectInner.contains(x, y))
-    {
+    if (rectOut.contains(x, y) && !rectInner.contains(x, y)) {
         HoverIndex = 8;
         setCursor();
         return true;
@@ -65,30 +63,27 @@ bool Rect::OnMouseMove(const int &x, const int &y)
     return false;
 }
 
-bool Rect::OnPaint(SkCanvas *canvas)
+bool ShapeRect::OnPaint(SkCanvas* canvas)
 {
     SkPaint paint;
-    if (stroke)
-    {
+    if (stroke) {
         paint.setStroke(true);
         paint.setStrokeWidth(strokeWidth);
     }
-    paint.setColor(color);
+    paint.setColor(color);    
     canvas->drawRect(rect, paint);
     paint.setStroke(true);
     paint.setStrokeWidth(1);
     paint.setColor(SK_ColorBLACK);
-    if (showDragger)
-    {
-        for (auto &dragger : draggers)
-        {
+    if (showDragger) {
+        for (auto& dragger : draggers) {
             canvas->drawRect(dragger, paint);
         }
     }
     return false;
 }
 
-bool Rect::OnMoseDrag(const int &x, const int &y)
+bool ShapeRect::OnMoseDrag(const int& x, const int& y)
 {
     IsWIP = false;
     showDragger = false;
@@ -138,10 +133,9 @@ bool Rect::OnMoseDrag(const int &x, const int &y)
         rect.fLeft = x;
         break;
     }
-    case 8:
-    {
+    case 8: {
 
-        rect.offset(x - startX, y - startY);
+        rect.offset(x-startX, y-startY);
         startX = x;
         startY = y;
         break;
@@ -153,7 +147,7 @@ bool Rect::OnMoseDrag(const int &x, const int &y)
     return false;
 }
 
-void Rect::setCursor()
+void ShapeRect::setCursor()
 {
     switch (HoverIndex)
     {
@@ -181,8 +175,7 @@ void Rect::setCursor()
         SetCursor(LoadCursor(nullptr, IDC_SIZEWE));
         break;
     }
-    case 8:
-    {
+    case 8: {
         SetCursor(LoadCursor(nullptr, IDC_SIZEALL));
         break;
     }
@@ -192,19 +185,16 @@ void Rect::setCursor()
     }
 }
 
-void Rect::initParams()
+void ShapeRect::initParams()
 {
     auto tool = ToolSub::get();
     stroke = !tool->getFill();
-    if (stroke)
-    {
+    if (stroke) {
         auto stroke = tool->getStroke();
-        if (stroke == 1)
-        {
+        if (stroke == 1) {
             strokeWidth = 4;
         }
-        else if (stroke == 2)
-        {
+        else if (stroke == 2) {
             strokeWidth = 8;
         }
         else
@@ -216,5 +206,5 @@ void Rect::initParams()
     for (size_t i = 0; i < 8; i++)
     {
         draggers.push_back(SkRect::MakeEmpty());
-    }
+    }    
 }

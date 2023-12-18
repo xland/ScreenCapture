@@ -7,8 +7,7 @@ enum class State
     tool,
     rect,
     ellipse,
-    Elllipse
-        arrow,
+    arrow,
     number,
     pen,
     line,

@@ -19,7 +19,7 @@
  - 工具栏 
    - 主工具栏
    - 子工具栏
-
+- GPU SUPPORT
 
 
 - undo redo的时候,在SkPictureRecorder对象中重放绘制操作会更快

@@ -7,11 +7,11 @@
 #include "ShapeBase.h"
 #include <vector>
 
-class Rect : public ShapeBase
+class ShapeRect : public ShapeBase
 {
 public:
-    Rect(const int& x, const int& y);
-    ~Rect();
+    ShapeRect(const int& x, const int& y);
+    ~ShapeRect();
     bool OnMouseDown(const int& x, const int& y) override;
     bool OnMouseUp(const int& x, const int& y) override;
     bool OnMouseMove(const int& x, const int& y) override;

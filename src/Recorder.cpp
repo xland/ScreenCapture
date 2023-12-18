@@ -1,7 +1,8 @@
 #include "Recorder.h"
 #include "Shape/ShapeBase.h"
 #include "WindowMain.h"
-#include "Shape/Rect.h"
+#include "Shape/ShapeRect.h"
+#include "Shape/ShapeEllipse.h"
 Recorder *recorder;
 
 Recorder::Recorder()
@@ -98,10 +99,11 @@ void Recorder::createShape(const int& x, const int& y, const State& state)
     switch (state)
     {
     case State::rect: {
-        shapes.push_back(std::make_shared<Rect>(x, y));
+        shapes.push_back(std::make_shared<ShapeRect>(x, y));
         break;
     }
     case State::ellipse: {
+        shapes.push_back(std::make_shared<ShapeEllipse>(x, y));
         break;
     }
     case State::arrow: {
