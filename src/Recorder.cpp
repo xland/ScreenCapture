@@ -4,7 +4,7 @@
 #include "Shape/Rect.h"
 Recorder *recorder;
 
-Recorder::Recorder():curIndex{-1}
+Recorder::Recorder()
 {
 }
 
@@ -29,22 +29,16 @@ bool Recorder::OnMouseDown(const int& x, const int& y)
 {
     auto winMain = WindowMain::get();
     if (winMain->state < State::rect) {
-        curIndex = -1;
         return false;
     }
-    bool flag = false;
-    for (int i=shapes.size()-1;i>=0;i--)
-    {
-        flag = shapes[i]->OnMouseDown(x, y);
-        if (flag) {
-            curIndex = i;
-            return false;
-        }
+    if (curIndex >= 0) {
+        shapes[curIndex]->OnMouseDown(x, y);
+        return true;
     }
     switch (winMain->state)
     {
     case State::rect: {
-        shapes.push_back(std::make_shared<Rect>());
+        shapes.push_back(std::make_shared<Rect>(x,y));
         curIndex = shapes.size()-1;
         break;
     }
@@ -80,21 +74,27 @@ bool Recorder::OnMouseDown(const int& x, const int& y)
     return false;
 }
 bool Recorder::OnMouseMove(const int& x, const int& y)
-{  
-    if (curIndex < 0) {
-        for (size_t i = 0; i < shapes.size(); i++)
-        {
-            auto flag = shapes[i]->OnCheckHover(x, y);
-            if (flag) {
-
-            }
+{
+    for (int i = shapes.size() - 1; i >= 0; i--)
+    {
+        auto flag = shapes[i]->OnMouseMove(x, y);
+        if (flag) {
+            curIndex = i;
+            break;
         }
-        return false;
+        else {
+            curIndex = -1;
+        }
     }
-    auto mainWin = WindowMain::get();
-    if (mainWin->IsMouseDown) {
-        shapes[curIndex]->OnMouseMove(x, y);
-        return true;
+    if (curIndex < 0) {
+        SetCursor(LoadCursor(nullptr, IDC_ARROW));
+    }
+    return false;
+}
+bool Recorder::OnMouseDrag(const int& x, const int& y)
+{
+    if (curIndex >= 0) {
+        shapes[curIndex]->OnMoseDrag(x, y);
     }
     return false;
 }
@@ -110,6 +110,7 @@ bool Recorder::OnMouseUp(const int& x, const int& y)
     {
         shape->OnMouseUp(x, y);
     }
+    curIndex = -1;
     return false;
 }
 

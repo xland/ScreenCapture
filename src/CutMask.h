@@ -15,6 +15,7 @@ public:
     bool OnMouseDown(const int& x, const int& y);
     bool OnMouseUp(const int& x, const int& y);
     bool OnMouseMove(const int& x, const int& y);
+    bool OnMouseDrag(const int& x, const int& y);
     bool OnPaint(SkCanvas* canvas);
     SkRect CutRect;
 

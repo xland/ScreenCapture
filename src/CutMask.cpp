@@ -33,8 +33,12 @@ bool CutMask::OnMouseDown(const int& x, const int& y)
 }
 bool CutMask::OnMouseMove(const int& x, const int& y)
 {
+    return true;
+}
+bool CutMask::OnMouseDrag(const int& x, const int& y)
+{
     auto winMain = WindowMain::get();
-    if (!winMain->IsMouseDown || winMain->state != State::mask)
+    if (winMain->state != State::mask)
     {
         return false;
     }

@@ -22,4 +22,5 @@ private:
     bool onMouseDown(int x, int y);
     bool onMouseUp(int x, int y);
     bool onMouseMove(int x, int y);
+    bool onMouseDrag(int x, int y);
 };

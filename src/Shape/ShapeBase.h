@@ -11,15 +11,16 @@
 class ShapeBase
 {
 public:
-    ShapeBase();
+    ShapeBase(const int& x, const int& y);
     ~ShapeBase();
     virtual bool OnMouseDown(const int& x, const int& y) = 0;
     virtual bool OnMouseMove(const int& x, const int& y) = 0;
     virtual bool OnMouseUp(const int& x, const int& y) = 0;
     virtual bool OnPaint(SkCanvas* canvas) = 0;
-    virtual bool OnCheckHover(const int& x, const int& y) { return false; };
-    bool IsWIP;
-    bool IsHover;
+    virtual bool OnMoseDrag(const int& x, const int& y) { return false; };
+    bool IsWIP{true};
+    unsigned HoverIndex{4};
     int startX, startY;
+protected:
 private:
 };

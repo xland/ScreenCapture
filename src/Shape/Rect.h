@@ -10,16 +10,18 @@
 class Rect : public ShapeBase
 {
 public:
-    Rect();
+    Rect(const int& x, const int& y);
     ~Rect();
-    bool OnMouseDown(const int& x, const int& y);
-    bool OnMouseUp(const int& x, const int& y);
-    bool OnMouseMove(const int& x, const int& y);
-    bool OnPaint(SkCanvas *canvas);
-    bool OnCheckHover(const int& x, const int& y);
+    bool OnMouseDown(const int& x, const int& y) override;
+    bool OnMouseUp(const int& x, const int& y) override;
+    bool OnMouseMove(const int& x, const int& y) override;
+    bool OnPaint(SkCanvas *canvas) override;
+    bool OnMoseDrag(const int& x, const int& y) override;
 
 private:
+    void setCursor();
     void initParams();
+    bool showDragger{ false };
     std::vector<SkRect> draggers;
     SkRect rect;
     bool stroke{ true };

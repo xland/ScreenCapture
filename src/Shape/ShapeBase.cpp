@@ -1,6 +1,6 @@
 #include "ShapeBase.h"
 
-ShapeBase::ShapeBase():IsWIP{true}
+ShapeBase::ShapeBase(const int& x, const int& y):startX{x},startY{y}
 {
 }
 

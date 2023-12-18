@@ -69,7 +69,12 @@ LRESULT WindowMain::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam
     {
         auto x = GET_X_LPARAM(lparam);
         auto y = GET_Y_LPARAM(lparam);
-        return onMouseMove(x, y);
+        if (IsMouseDown) {
+            return onMouseDrag(x, y);
+        }
+        else {
+            return onMouseMove(x, y);
+        }        
     }
     case WM_RBUTTONDOWN:
     {
@@ -112,6 +117,12 @@ bool WindowMain::onMouseMove(int x, int y)
     CutMask::get()->OnMouseMove(x, y);
     ToolMain::get()->OnMouseMove(x, y);
     ToolSub::get()->OnMouseMove(x, y);
+    return false;
+}
+bool WindowMain::onMouseDrag(int x, int y)
+{
+    Recorder::get()->OnMouseDrag(x, y);
+    CutMask::get()->OnMouseDrag(x, y);
     return false;
 }
 void WindowMain::paint(SkCanvas* canvas)

@@ -20,9 +20,8 @@ void WindowBase::Show()
 {
     ShowWindow(hwnd, SW_SHOW);
     UpdateWindow(hwnd);
-    HCURSOR hCursor = LoadCursor(NULL, IDC_ARROW);
-    SetCursor(hCursor);
     Refresh();
+    SetCursor(LoadCursor(nullptr, IDC_ARROW));
 }
 
 void WindowBase::Refresh()
