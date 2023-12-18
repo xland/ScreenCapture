@@ -4,27 +4,16 @@
 #include "include/core/SkRect.h"
 #include "include/core/SkPoint.h"
 #include "include/core/SkPath.h"
-#include "ShapeBase.h"
+#include "ShapeRect.h"
 #include <vector>
 
-class ShapeEllipse : public ShapeBase
+class ShapeEllipse : public ShapeRect
 {
 public:
     ShapeEllipse(const int &x, const int &y);
     ~ShapeEllipse();
-    bool OnMouseDown(const int &x, const int &y) override;
-    bool OnMouseUp(const int &x, const int &y) override;
-    bool OnMouseMove(const int &x, const int &y) override;
     bool OnPaint(SkCanvas *canvas) override;
-    bool OnMoseDrag(const int &x, const int &y) override;
-
+protected:
+    bool isMouseOnBorder(const int& x, const int& y) override;
 private:
-    void setCursor();
-    void initParams();
-    bool showDragger{false};
-    std::vector<SkRect> draggers;
-    SkRect rect;
-    bool stroke{true};
-    int strokeWidth{4};
-    SkColor color{SkColorSetARGB(255, 207, 19, 34)};
 };

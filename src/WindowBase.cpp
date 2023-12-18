@@ -89,6 +89,10 @@ LRESULT CALLBACK WindowBase::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wPar
             }
             break;
         }
+        case WM_REFRESH: {
+            obj->Refresh();
+            return true;
+        }
         case WM_SETCURSOR:
         {
             return true;

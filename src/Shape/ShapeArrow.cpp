@@ -2,23 +2,23 @@
 #include "../WindowMain.h"
 #include "../ToolSub.h"
 
-ShapeRect::ShapeRect(const int& x, const int& y):ShapeBase(x,y), rect{SkRect::MakeXYWH(x,y,0,0)}
+ShapeArrow::ShapeArrow(const int &x, const int &y) : ShapeBase(x, y), rect{SkRect::MakeXYWH(x, y, 0, 0)}
 {
     initParams();
 }
 
-ShapeRect::~ShapeRect()
+ShapeArrow::~ShapeArrow()
 {
 }
 
-bool ShapeRect::OnMouseDown(const int& x, const int& y)
+bool ShapeArrow::OnMouseDown(const int &x, const int &y)
 {
     startX = x;
     startY = y;
     return false;
 }
 
-bool ShapeRect::OnMouseUp(const int& x, const int& y)
+bool ShapeArrow::OnMouseUp(const int &x, const int &y)
 {
     rect.sort();
     unsigned size = 10;
@@ -29,8 +29,8 @@ bool ShapeRect::OnMouseUp(const int& x, const int& y)
     float b = rect.bottom() - half;
     float wCenter = l + rect.width() / 2;
     float hCenter = t + rect.height() / 2;
-    draggers[0].setXYWH(l, t,size,size);
-    draggers[1].setXYWH(wCenter, t, size, size); 
+    draggers[0].setXYWH(l, t, size, size);
+    draggers[1].setXYWH(wCenter, t, size, size);
     draggers[2].setXYWH(r, t, size, size);
     draggers[3].setXYWH(r, hCenter, size, size);
     draggers[4].setXYWH(r, b, size, size);
@@ -40,14 +40,16 @@ bool ShapeRect::OnMouseUp(const int& x, const int& y)
     return false;
 }
 
-bool ShapeRect::OnMouseMove(const int& x, const int& y)
+bool ShapeArrow::OnMouseMove(const int &x, const int &y)
 {
     for (size_t i = 0; i < draggers.size(); i++)
     {
-        if (draggers[i].contains(x, y)) {
+        if (draggers[i].contains(x, y))
+        {
             HoverIndex = i;
             setCursor();
-            if (!showDragger) {
+            if (!showDragger)
+            {
                 showDragger = true;
                 WindowMain::get()->Refresh();
             }
@@ -55,10 +57,12 @@ bool ShapeRect::OnMouseMove(const int& x, const int& y)
         }
     }
     auto flag = isMouseOnBorder(x, y);
-    if (flag) {
+    if (flag)
+    {
         HoverIndex = 8;
         setCursor();
-        if (!showDragger) {
+        if (!showDragger)
+        {
             showDragger = true;
             WindowMain::get()->Refresh();
         }
@@ -67,20 +71,21 @@ bool ShapeRect::OnMouseMove(const int& x, const int& y)
     return false;
 }
 
-bool ShapeRect::OnPaint(SkCanvas* canvas)
+bool ShapeArrow::OnPaint(SkCanvas *canvas)
 {
     SkPaint paint;
-    if (stroke) {
+    if (stroke)
+    {
         paint.setStroke(true);
         paint.setStrokeWidth(strokeWidth);
     }
-    paint.setColor(color);    
+    paint.setColor(color);
     canvas->drawRect(rect, paint);
     paintDragger(canvas);
     return false;
 }
 
-bool ShapeRect::OnMoseDrag(const int& x, const int& y)
+bool ShapeArrow::OnMoseDrag(const int &x, const int &y)
 {
     IsWIP = false;
     showDragger = false;
@@ -130,9 +135,10 @@ bool ShapeRect::OnMoseDrag(const int& x, const int& y)
         rect.fLeft = x;
         break;
     }
-    case 8: {
+    case 8:
+    {
 
-        rect.offset(x-startX, y-startY);
+        rect.offset(x - startX, y - startY);
         startX = x;
         startY = y;
         break;
@@ -144,7 +150,7 @@ bool ShapeRect::OnMoseDrag(const int& x, const int& y)
     return false;
 }
 
-void ShapeRect::setCursor()
+void ShapeArrow::setCursor()
 {
     switch (HoverIndex)
     {
@@ -172,7 +178,8 @@ void ShapeRect::setCursor()
         SetCursor(LoadCursor(nullptr, IDC_SIZEWE));
         break;
     }
-    case 8: {
+    case 8:
+    {
         SetCursor(LoadCursor(nullptr, IDC_SIZEALL));
         break;
     }
@@ -182,41 +189,47 @@ void ShapeRect::setCursor()
     }
 }
 
-bool ShapeRect::isMouseOnBorder(const int& x, const int& y)
+bool ShapeArrow::isMouseOnBorder(const int &x, const int &y)
 {
     auto halfStroke = strokeWidth / 2 + 2;
     auto rectOut = rect.makeOutset(halfStroke, halfStroke);
     auto rectInner = rect.makeInset(halfStroke, halfStroke);
-    if (rectOut.contains(x, y) && !rectInner.contains(x, y)) {
+    if (rectOut.contains(x, y) && !rectInner.contains(x, y))
+    {
         return true;
     }
     return false;
 }
 
-void ShapeRect::paintDragger(SkCanvas* canvas)
+void ShapeArrow::paintDragger(SkCanvas *canvas)
 {
-    if (!showDragger) {
+    if (!showDragger)
+    {
         return;
     }
     SkPaint paint;
     paint.setStroke(true);
     paint.setStrokeWidth(1);
     paint.setColor(SK_ColorBLACK);
-    for (auto& dragger : draggers) {
+    for (auto &dragger : draggers)
+    {
         canvas->drawRect(dragger, paint);
     }
 }
 
-void ShapeRect::initParams()
+void ShapeArrow::initParams()
 {
     auto tool = ToolSub::get();
     stroke = !tool->getFill();
-    if (stroke) {
+    if (stroke)
+    {
         auto stroke = tool->getStroke();
-        if (stroke == 1) {
+        if (stroke == 1)
+        {
             strokeWidth = 4;
         }
-        else if (stroke == 2) {
+        else if (stroke == 2)
+        {
             strokeWidth = 8;
         }
         else
@@ -228,5 +241,5 @@ void ShapeRect::initParams()
     for (size_t i = 0; i < 8; i++)
     {
         draggers.push_back(SkRect::MakeEmpty());
-    }    
+    }
 }

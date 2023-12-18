@@ -15,16 +15,18 @@ public:
     bool OnMouseDown(const int& x, const int& y) override;
     bool OnMouseUp(const int& x, const int& y) override;
     bool OnMouseMove(const int& x, const int& y) override;
-    bool OnPaint(SkCanvas *canvas) override;
+    virtual bool OnPaint(SkCanvas *canvas) override;
     bool OnMoseDrag(const int& x, const int& y) override;
-
-private:
-    void setCursor();
+protected:
+    virtual bool isMouseOnBorder(const int& x, const int& y);
+    void paintDragger(SkCanvas* canvas);
     void initParams();
-    bool showDragger{ false };
-    std::vector<SkRect> draggers;
     SkRect rect;
     bool stroke{ true };
     int strokeWidth{ 4 };
     SkColor color{ SkColorSetARGB(255, 207, 19, 34) };
+    std::vector<SkRect> draggers;
+private:
+    void setCursor();
+    
 };

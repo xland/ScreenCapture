@@ -20,6 +20,7 @@
    - 主工具栏
    - 子工具栏
 - GPU SUPPORT
+- 工具栏取消选中之后再拖动元素，是有问题的
 
 
 - undo redo的时候,在SkPictureRecorder对象中重放绘制操作会更快

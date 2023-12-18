@@ -18,6 +18,7 @@ public:
     virtual bool OnMouseUp(const int& x, const int& y) = 0;
     virtual bool OnPaint(SkCanvas* canvas) = 0;
     virtual bool OnMoseDrag(const int& x, const int& y) { return false; };
+    bool showDragger{ false };
     bool IsWIP{true};
     unsigned HoverIndex{4};
     int startX, startY;

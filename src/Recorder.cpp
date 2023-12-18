@@ -5,8 +5,12 @@
 #include "Shape/ShapeEllipse.h"
 Recorder *recorder;
 
+
+
 Recorder::Recorder()
 {
+    auto func = std::bind(&Recorder::hideDragger, this);
+    timer = std::make_shared<Timeout>(func);
 }
 
 
@@ -54,7 +58,8 @@ bool Recorder::OnMouseMove(const int& x, const int& y)
         }
     }
     if (curIndex < 0) {
-        SetCursor(LoadCursor(nullptr, IDC_ARROW));
+        SetCursor(LoadCursor(nullptr, IDC_ARROW));        
+        timer->Start();
     }
     return false;
 }
@@ -73,10 +78,7 @@ bool Recorder::OnMouseUp(const int& x, const int& y)
     if (shapes[curIndex]->IsWIP) {
         shapes.erase(shapes.begin() + curIndex, shapes.begin() + 1);
     }
-    for (auto& shape : shapes)
-    {
-        shape->OnMouseUp(x, y);
-    }
+    shapes[curIndex]->OnMouseUp(x, y);
     curIndex = -1;
     return false;
 }
@@ -92,6 +94,24 @@ bool Recorder::OnPaint(SkCanvas* canvas)
     return false;
 }
 
+void Recorder::hideDragger()
+{
+    auto win = WindowMain::get();
+    if (!win) return;
+    bool flag = false;
+    for (size_t i = 0; i < shapes.size(); i++)
+    {
+        if (i != curIndex) {
+            if (shapes[i]->showDragger) {
+                shapes[i]->showDragger = false;
+                flag = true;
+            }            
+        }
+    }
+    if (flag) {
+        PostMessage(WindowMain::get()->hwnd, WM_REFRESH, NULL, NULL);
+    }    
+}
 
 
 void Recorder::createShape(const int& x, const int& y, const State& state)

@@ -5,7 +5,7 @@
 #include "include/core/SkSurface.h"
 #include "include/core/SkCanvas.h"
 #include "include/core/SkPictureRecorder.h"
-
+#define WM_REFRESH (WM_APP+1)
 class WindowBase
 {
 public:
@@ -14,6 +14,7 @@ public:
     void Show();
     void Refresh();
     void Close(const int &exitCode);
+    HWND hwnd;
     int x, y, w, h;
     bool IsMouseDown{false};
     sk_sp<SkSurface> surfaceBack;
@@ -30,7 +31,6 @@ protected:
 
 private:
     static LRESULT CALLBACK RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-    HWND hwnd;
     HDC hCompatibleDC = NULL;
     HBITMAP bottomHbitmap;
 };
