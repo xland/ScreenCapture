@@ -22,7 +22,7 @@ protected:
     virtual bool isMouseOnBorder(const int &x, const int &y);
     void paintDragger(SkCanvas *canvas);
     void initParams();
-    SkRect rect;
+    SkPath path;
     bool stroke{true};
     int strokeWidth{4};
     SkColor color{SkColorSetARGB(255, 207, 19, 34)};

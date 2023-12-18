@@ -1,8 +1,8 @@
-#include "ShapeRect.h"
+#include "ShapeArrow.h"
 #include "../WindowMain.h"
 #include "../ToolSub.h"
 
-ShapeArrow::ShapeArrow(const int &x, const int &y) : ShapeBase(x, y), rect{SkRect::MakeXYWH(x, y, 0, 0)}
+ShapeArrow::ShapeArrow(const int &x, const int &y) : ShapeBase(x, y)
 {
     initParams();
 }
@@ -20,23 +20,6 @@ bool ShapeArrow::OnMouseDown(const int &x, const int &y)
 
 bool ShapeArrow::OnMouseUp(const int &x, const int &y)
 {
-    rect.sort();
-    unsigned size = 10;
-    unsigned half = 5;
-    float l = rect.x() - half;
-    float t = rect.y() - half;
-    float r = rect.right() - half;
-    float b = rect.bottom() - half;
-    float wCenter = l + rect.width() / 2;
-    float hCenter = t + rect.height() / 2;
-    draggers[0].setXYWH(l, t, size, size);
-    draggers[1].setXYWH(wCenter, t, size, size);
-    draggers[2].setXYWH(r, t, size, size);
-    draggers[3].setXYWH(r, hCenter, size, size);
-    draggers[4].setXYWH(r, b, size, size);
-    draggers[5].setXYWH(wCenter, b, size, size);
-    draggers[6].setXYWH(l, b, size, size);
-    draggers[7].setXYWH(l, hCenter, size, size);
     return false;
 }
 
@@ -71,7 +54,51 @@ bool ShapeArrow::OnMouseMove(const int &x, const int &y)
     return false;
 }
 
-bool ShapeArrow::OnPaint(SkCanvas *canvas)
+bool ShapeArrow::OnMoseDrag(const int &x, const int &y)
+{
+    IsWIP = false;
+    showDragger = false;
+    path.reset();
+    path.moveTo(startX, startY);
+    //path.lineTo(x2, y2);
+    double height = 32.0;
+    double width = 32.0;
+    auto x = x - startX;
+    auto y = startY - y;
+    auto z = sqrt(x * x + y * y);
+    auto sin = y / z;
+    auto cos = x / z;
+    // △底边的中点
+    double centerX = x - height * cos;
+    double centerY = y + height * sin;
+    double tempA = width / 4 * sin;
+    double tempB = width / 4 * cos;
+    // △ 左下的顶点与底边中点之间中间位置的点
+    double X1 = centerX - tempA;
+    double Y1 = centerY - tempB;
+    path.lineTo(X1, Y1);
+    // △ 左下的顶点
+    double X2 = X1 - tempA;
+    double Y2 = Y1 - tempB;
+    path.lineTo(X2, Y2);
+    // △ 上部顶点，也就是箭头终点
+    path.lineTo(x, y);
+    // △ 右下顶点
+    tempA = width / 2 * sin;
+    tempB = width / 2 * cos;
+    double X3 = centerX + tempA;
+    double Y3 = centerY + tempB;
+    path.lineTo(X3, Y3);
+    // △ 右下的顶点与底边中点之间中间位置的点
+    double X4 = centerX + tempA / 2;
+    double Y4 = centerY + tempB / 2;
+    path.lineTo(X4, Y4);
+    path.lineTo(x, y);
+    WindowMain::get()->Refresh();
+    return false;
+}
+
+bool ShapeArrow::OnPaint(SkCanvas* canvas)
 {
     SkPaint paint;
     if (stroke)
@@ -80,73 +107,8 @@ bool ShapeArrow::OnPaint(SkCanvas *canvas)
         paint.setStrokeWidth(strokeWidth);
     }
     paint.setColor(color);
-    canvas->drawRect(rect, paint);
-    paintDragger(canvas);
-    return false;
-}
-
-bool ShapeArrow::OnMoseDrag(const int &x, const int &y)
-{
-    IsWIP = false;
-    showDragger = false;
-    switch (HoverIndex)
-    {
-    case 0:
-    {
-        rect.fLeft = x;
-        rect.fTop = y;
-        break;
-    }
-    case 1:
-    {
-        rect.fTop = y;
-        break;
-    }
-    case 2:
-    {
-        rect.fTop = y;
-        rect.fRight = x;
-        break;
-    }
-    case 3:
-    {
-        rect.fRight = x;
-        break;
-    }
-    case 4:
-    {
-        rect.fRight = x;
-        rect.fBottom = y;
-        break;
-    }
-    case 5:
-    {
-        rect.fBottom = y;
-        break;
-    }
-    case 6:
-    {
-        rect.fLeft = x;
-        rect.fBottom = y;
-        break;
-    }
-    case 7:
-    {
-        rect.fLeft = x;
-        break;
-    }
-    case 8:
-    {
-
-        rect.offset(x - startX, y - startY);
-        startX = x;
-        startY = y;
-        break;
-    }
-    default:
-        break;
-    }
-    WindowMain::get()->Refresh();
+    canvas->drawPath(path, paint);
+    //paintDragger(canvas);
     return false;
 }
 
@@ -191,13 +153,6 @@ void ShapeArrow::setCursor()
 
 bool ShapeArrow::isMouseOnBorder(const int &x, const int &y)
 {
-    auto halfStroke = strokeWidth / 2 + 2;
-    auto rectOut = rect.makeOutset(halfStroke, halfStroke);
-    auto rectInner = rect.makeInset(halfStroke, halfStroke);
-    if (rectOut.contains(x, y) && !rectInner.contains(x, y))
-    {
-        return true;
-    }
     return false;
 }
 
