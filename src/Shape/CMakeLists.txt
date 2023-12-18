@@ -1,6 +1,8 @@
 set(SHAPE
     ShapeBase.cpp
     ShapeBase.h
+    ShapeDragger.cpp
+    ShapeDragger.h
     Rect.cpp
     Rect.h
     Pen.cpp

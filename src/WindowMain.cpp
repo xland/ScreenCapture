@@ -104,8 +104,6 @@ bool WindowMain::onMouseUp(int x, int y)
 {
     Recorder::get()->OnMouseUp(x, y);
     CutMask::get()->OnMouseUp(x, y);
-    ToolMain::get()->OnMouseUp(x, y);
-    ToolSub::get()->OnMouseUp(x, y);
     return false;
 }
 bool WindowMain::onMouseMove(int x, int y)

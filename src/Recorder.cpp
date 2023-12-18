@@ -4,7 +4,7 @@
 #include "Shape/Rect.h"
 Recorder *recorder;
 
-Recorder::Recorder():wipIndex{-1}
+Recorder::Recorder():curIndex{-1}
 {
 }
 
@@ -29,7 +29,7 @@ bool Recorder::OnMouseDown(const int& x, const int& y)
 {
     auto winMain = WindowMain::get();
     if (winMain->state < State::rect) {
-        wipIndex = -1;
+        curIndex = -1;
         return false;
     }
     bool flag = false;
@@ -37,7 +37,7 @@ bool Recorder::OnMouseDown(const int& x, const int& y)
     {
         flag = shapes[i]->OnMouseDown(x, y);
         if (flag) {
-            wipIndex = i;
+            curIndex = i;
             return false;
         }
     }
@@ -45,7 +45,7 @@ bool Recorder::OnMouseDown(const int& x, const int& y)
     {
     case State::rect: {
         shapes.push_back(std::make_shared<Rect>());
-        wipIndex = shapes.size()-1;
+        curIndex = shapes.size()-1;
         break;
     }
     case State::ellipse: {
@@ -76,33 +76,41 @@ bool Recorder::OnMouseDown(const int& x, const int& y)
         return false;
         break;
     }
-    shapes[wipIndex]->OnMouseDown(x, y);
+    shapes[curIndex]->OnMouseDown(x, y);
     return false;
 }
 bool Recorder::OnMouseMove(const int& x, const int& y)
 {  
-    if (wipIndex < 0) {
+    if (curIndex < 0) {
+        for (size_t i = 0; i < shapes.size(); i++)
+        {
+            auto flag = shapes[i]->OnCheckHover(x, y);
+            if (flag) {
+
+            }
+        }
         return false;
     }
-    for (auto& shape : shapes)
-    {
-        shape->OnMouseMove(x, y);
+    auto mainWin = WindowMain::get();
+    if (mainWin->IsMouseDown) {
+        shapes[curIndex]->OnMouseMove(x, y);
+        return true;
     }
     return false;
 }
 bool Recorder::OnMouseUp(const int& x, const int& y)
 {
-    if (wipIndex < 0) {
+    if (curIndex < 0) {
         return false;
     }
     else {
-        if (shapes[wipIndex]->IsWIP) {
-            shapes.erase(shapes.begin() + wipIndex, shapes.begin() + 1);
+        if (shapes[curIndex]->IsWIP) {
+            shapes.erase(shapes.begin() + curIndex, shapes.begin() + 1);
         }
-        wipIndex = -1;
+        curIndex = -1;
         return false;
     }
-    wipIndex = -1;
+    curIndex = -1;
     for (auto& shape : shapes)
     {
         shape->OnMouseUp(x, y);

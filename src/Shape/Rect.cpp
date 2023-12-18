@@ -2,8 +2,9 @@
 #include "../WindowMain.h"
 #include "../ToolSub.h"
 
-Rect::Rect()
+Rect::Rect():rect{SkRect::MakeEmpty()}
 {
+    initParams();
 }
 
 Rect::~Rect()
@@ -24,35 +25,53 @@ bool Rect::OnMouseUp(const int& x, const int& y)
 
 bool Rect::OnMouseMove(const int& x, const int& y)
 {
+    if (IsWIP) {
+        IsWIP = false;
+    }
     rect.setLTRB(startX, startY, x, y);
     WindowMain::get()->Refresh();
-    IsWIP = false;
-    return false;
+    return true;
 }
 
 bool Rect::OnPaint(SkCanvas* canvas)
 {
     SkPaint paint;
-    auto tool = ToolSub::get();
-    if (tool->getFill()) {
-        paint.setStroke(false);
-    }
-    else
-    {
+    if (stroke) {
         paint.setStroke(true);
+        paint.setStrokeWidth(strokeWidth);
+    }
+    paint.setColor(color);    
+    canvas->drawRect(rect, paint);
+    return false;
+}
+
+bool Rect::OnCheckHover(const int& x, const int& y)
+{
+    auto halfStroke = strokeWidth / 2+2;
+    auto rectOut = rect.makeOutset(halfStroke,halfStroke);
+    auto rectInner = rect.makeInset(halfStroke, halfStroke);
+    if (rectOut.contains(x, y) && !rectInner.contains(x, y)) {
+        return true;
+    }
+    return false;
+}
+
+void Rect::initParams()
+{
+    auto tool = ToolSub::get();
+    stroke = !tool->getFill();
+    if (stroke) {
         auto stroke = tool->getStroke();
         if (stroke == 1) {
-            paint.setStrokeWidth(4);
+            strokeWidth = 4;
         }
         else if (stroke == 2) {
-            paint.setStrokeWidth(8);
+            strokeWidth = 8;
         }
         else
         {
-            paint.setStrokeWidth(16);
+            strokeWidth = 16;
         }
     }
-    paint.setColor(tool->getColor());    
-    canvas->drawRect(rect, paint);
-    return false;
+    color = tool->getColor();
 }

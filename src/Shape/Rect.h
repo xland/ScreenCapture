@@ -12,11 +12,16 @@ class Rect : public ShapeBase
 public:
     Rect();
     ~Rect();
-    bool OnMouseDown(const int& x, const int& y) override;
-    bool OnMouseUp(const int& x, const int& y) override;
-    bool OnMouseMove(const int& x, const int& y) override;
-    bool OnPaint(SkCanvas *canvas) override;
+    bool OnMouseDown(const int& x, const int& y);
+    bool OnMouseUp(const int& x, const int& y);
+    bool OnMouseMove(const int& x, const int& y);
+    bool OnPaint(SkCanvas *canvas);
+    bool OnCheckHover(const int& x, const int& y);
 
 private:
+    void initParams();
     SkRect rect;
+    bool stroke{ true };
+    int strokeWidth{ 4 };
+    SkColor color{ SkColorSetARGB(255, 207, 19, 34) };
 };

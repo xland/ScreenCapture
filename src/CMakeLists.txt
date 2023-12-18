@@ -9,8 +9,6 @@ set(SRC
     WindowMain.h
     WindowPin.cpp
     WindowPin.h
-    EventHandler.cpp
-    EventHandler.h
     CutMask.cpp
     CutMask.h
     Recorder.cpp
