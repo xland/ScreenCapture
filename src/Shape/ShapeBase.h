@@ -19,6 +19,7 @@ public:
     virtual bool OnPaint(SkCanvas* canvas) = 0;
     virtual bool OnCheckHover(const int& x, const int& y) { return false; };
     bool IsWIP;
+    bool IsHover;
     int startX, startY;
 private:
 };

@@ -20,6 +20,7 @@ public:
 
 private:
     void initParams();
+    std::vector<SkRect> draggers;
     SkRect rect;
     bool stroke{ true };
     int strokeWidth{ 4 };

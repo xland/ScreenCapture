@@ -103,14 +103,9 @@ bool Recorder::OnMouseUp(const int& x, const int& y)
     if (curIndex < 0) {
         return false;
     }
-    else {
-        if (shapes[curIndex]->IsWIP) {
-            shapes.erase(shapes.begin() + curIndex, shapes.begin() + 1);
-        }
-        curIndex = -1;
-        return false;
+    if (shapes[curIndex]->IsWIP) {
+        shapes.erase(shapes.begin() + curIndex, shapes.begin() + 1);
     }
-    curIndex = -1;
     for (auto& shape : shapes)
     {
         shape->OnMouseUp(x, y);

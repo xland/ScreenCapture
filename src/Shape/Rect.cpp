@@ -20,6 +20,15 @@ bool Rect::OnMouseDown(const int& x, const int& y)
 
 bool Rect::OnMouseUp(const int& x, const int& y)
 {
+    draggers.push_back(SkRect::MakeXYWH(rect.x() - 6, rect.y() - 6, 12, 12));
+    draggers.push_back(SkRect::MakeXYWH(rect.x()+ rect.width()/2 - 6, rect.y() - 6, 12, 12));
+    draggers.push_back(SkRect::MakeXYWH(rect.right() - 6, rect.y() - 6, 12, 12));
+    draggers.push_back(SkRect::MakeXYWH(rect.right() - 6, rect.y()+rect.height()/2 - 6, 12, 12));
+    draggers.push_back(SkRect::MakeXYWH(rect.right() - 6, rect.y() + rect.height() - 6, 12, 12));
+    draggers.push_back(SkRect::MakeXYWH(rect.x() + rect.width() / 2 - 6, rect.bottom() - 6, 12, 12));
+    draggers.push_back(SkRect::MakeXYWH(rect.x()- 6, rect.bottom() - 6, 12, 12));
+    draggers.push_back(SkRect::MakeXYWH(rect.x() - 6, rect.y() + rect.height() / 2 - 6, 12, 12));
+    WindowMain::get()->Refresh();
     return false;
 }
 
@@ -42,6 +51,12 @@ bool Rect::OnPaint(SkCanvas* canvas)
     }
     paint.setColor(color);    
     canvas->drawRect(rect, paint);
+    paint.setStroke(true);
+    paint.setStrokeWidth(1);
+    paint.setColor(SK_ColorBLACK);
+    for (auto& dragger : draggers) {
+        canvas->drawRect(dragger, paint);
+    }
     return false;
 }
 
@@ -51,6 +66,7 @@ bool Rect::OnCheckHover(const int& x, const int& y)
     auto rectOut = rect.makeOutset(halfStroke,halfStroke);
     auto rectInner = rect.makeInset(halfStroke, halfStroke);
     if (rectOut.contains(x, y) && !rectInner.contains(x, y)) {
+        IsHover = true;
         return true;
     }
     return false;
