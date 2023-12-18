@@ -8,6 +8,7 @@ Recorder::Recorder()
 {
 }
 
+
 Recorder::~Recorder()
 {
 }
@@ -31,45 +32,10 @@ bool Recorder::OnMouseDown(const int& x, const int& y)
     if (winMain->state < State::rect) {
         return false;
     }
-    if (curIndex >= 0) {
-        shapes[curIndex]->OnMouseDown(x, y);
-        return true;
-    }
-    switch (winMain->state)
-    {
-    case State::rect: {
-        shapes.push_back(std::make_shared<Rect>(x,y));
-        curIndex = shapes.size()-1;
-        break;
-    }
-    case State::ellipse: {
-        break;
-    }
-    case State::arrow: {
-        break;
-    }
-    case State::number: {
-        break;
-    }
-    case State::pen: {
-        break;
-    }
-    case State::line: {
-        break;
-    }
-    case State::text: {
-        break;
-    }
-    case State::mosaic: {
-        break;
-    }
-    case State::eraser: {
-        break;
-    }
-    default:
-        return false;
-        break;
-    }
+    if (curIndex < 0) {
+        createShape(x, y, winMain->state);
+        curIndex = shapes.size() - 1;
+    }    
     shapes[curIndex]->OnMouseDown(x, y);
     return false;
 }
@@ -123,4 +89,43 @@ bool Recorder::OnPaint(SkCanvas* canvas)
         shape->OnPaint(canvas);
     }
     return false;
+}
+
+
+
+void Recorder::createShape(const int& x, const int& y, const State& state)
+{
+    switch (state)
+    {
+    case State::rect: {
+        shapes.push_back(std::make_shared<Rect>(x, y));
+        break;
+    }
+    case State::ellipse: {
+        break;
+    }
+    case State::arrow: {
+        break;
+    }
+    case State::number: {
+        break;
+    }
+    case State::pen: {
+        break;
+    }
+    case State::line: {
+        break;
+    }
+    case State::text: {
+        break;
+    }
+    case State::mosaic: {
+        break;
+    }
+    case State::eraser: {
+        break;
+    }
+    default:
+        break;
+    }
 }

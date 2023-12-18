@@ -20,6 +20,7 @@ bool Rect::OnMouseDown(const int& x, const int& y)
 
 bool Rect::OnMouseUp(const int& x, const int& y)
 {
+    rect.sort();
     unsigned size = 10;
     unsigned half = 5;
     float l = rect.x() - half;
@@ -92,44 +93,57 @@ bool Rect::OnMoseDrag(const int& x, const int& y)
     {
         rect.fLeft = x;
         rect.fTop = y;
-        WindowMain::get()->Refresh();
-        return true;
+        break;
+    }
+    case 1:
+    {
+        rect.fTop = y;
+        break;
+    }
+    case 2:
+    {
+        rect.fTop = y;
+        rect.fRight = x;
+        break;
+    }
+    case 3:
+    {
+        rect.fRight = x;
         break;
     }
     case 4:
     {
         rect.fRight = x;
         rect.fBottom = y;
-        WindowMain::get()->Refresh();
-        return true;
         break;
     }
-    case 1:
     case 5:
     {
-        SetCursor(LoadCursor(nullptr, IDC_SIZENS));
+        rect.fBottom = y;
         break;
     }
-    case 2:
     case 6:
     {
-        SetCursor(LoadCursor(nullptr, IDC_SIZENESW));
+        rect.fLeft = x;
+        rect.fBottom = y;
         break;
     }
-    case 3:
     case 7:
     {
-        SetCursor(LoadCursor(nullptr, IDC_SIZEWE));
+        rect.fLeft = x;
         break;
     }
     case 8: {
-        SetCursor(LoadCursor(nullptr, IDC_SIZEALL));
+
+        rect.offset(x-startX, y-startY);
+        startX = x;
+        startY = y;
         break;
     }
     default:
-        SetCursor(LoadCursor(nullptr, IDC_ARROW));
         break;
     }
+    WindowMain::get()->Refresh();
     return false;
 }
 
@@ -192,6 +206,5 @@ void Rect::initParams()
     for (size_t i = 0; i < 8; i++)
     {
         draggers.push_back(SkRect::MakeEmpty());
-    }
-    
+    }    
 }

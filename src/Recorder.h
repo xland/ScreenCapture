@@ -4,6 +4,7 @@
 #include "include/core/SkRect.h"
 #include "include/core/SkPoint.h"
 #include "include/core/SkPath.h"
+#include "State.h"
 #include <vector>
 
 class ShapeBase;
@@ -21,6 +22,7 @@ public:
 
 private:
     Recorder();
+    void createShape(const int& x, const int& y,const State& state);
     std::vector<std::shared_ptr<ShapeBase>> shapes;
     int curIndex{-1};
 };
