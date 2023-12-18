@@ -3,6 +3,8 @@ set(SHAPE
     ShapeBase.h
     Rect.cpp
     Rect.h
+    Ellipse.cpp
+    Ellipse.h
     Pen.cpp
     Pen.h
     Arrow.cpp
