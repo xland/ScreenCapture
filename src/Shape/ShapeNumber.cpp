@@ -1,7 +1,9 @@
 ﻿#include "ShapeNumber.h"
 #include "../WindowMain.h"
 #include "../ToolSub.h"
+#include "../AppFont.h"
 #include "numbers"
+static int num = 1;
 
 ShapeNumber::ShapeNumber(const int &x, const int &y) : ShapeBase(x, y)
 {
@@ -12,6 +14,9 @@ ShapeNumber::ShapeNumber(const int &x, const int &y) : ShapeBase(x, y)
 
 ShapeNumber::~ShapeNumber()
 {
+    if (num > number) {
+        num = number;
+    }
 }
 
 bool ShapeNumber::OnMouseDown(const int &x, const int &y)
@@ -98,6 +103,15 @@ bool ShapeNumber::OnPaint(SkCanvas *canvas)
     paint.setColor(color);
     canvas->drawPath(path, paint);
     canvas->drawCircle(SkPoint::Make(startX, startY), r, paint);
+    auto str = std::to_string(number);
+    auto font = AppFont::Get()->fontText;
+    font->setSize(r);
+    paint.setColor(SK_ColorWHITE);
+    SkRect textBounds;
+    font->measureText(str.c_str(), str.size(), SkTextEncoding::kUTF8, &textBounds);
+    SkScalar x = startX - textBounds.width() / 2 - textBounds.left();
+    SkScalar y = startY + textBounds.height() / 2 - textBounds.bottom();
+    canvas->drawSimpleText(str.c_str(), str.size(), SkTextEncoding::kUTF8, x, y, *font, paint);
     paintDragger(canvas);
     return false;
 }
@@ -135,6 +149,8 @@ void ShapeNumber::paintDragger(SkCanvas *canvas)
 
 void ShapeNumber::initParams()
 {
+    number = num;
+    num += 1;
     HoverIndex = 0;
     auto tool = ToolSub::get();
     stroke = !tool->getFill();

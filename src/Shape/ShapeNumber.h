@@ -31,6 +31,7 @@ protected:
     int endX, endY;
     int hoverX, hoverY;
     float r;
+    int number{1};
 
 private:
 };
