@@ -4,8 +4,6 @@
 
 ShapeArrow::ShapeArrow(const int &x, const int &y) : ShapeBase(x, y)
 {
-    startX = x;
-    startY = y;
     initParams();
 }
 

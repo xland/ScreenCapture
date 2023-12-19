@@ -7,8 +7,6 @@ static int num = 1;
 
 ShapeNumber::ShapeNumber(const int &x, const int &y) : ShapeBase(x, y)
 {
-    startX = x;
-    startY = y;
     initParams();
 }
 
