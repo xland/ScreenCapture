@@ -1,10 +1,7 @@
 #include "AppFont.h"
 #include <Windows.h>
 #include <shlobj.h>
-#include <string>
-#include <filesystem>
 #include "../res/res.h"
-#include "Util.h"
 #include "include/core/SkFontStyle.h"
 #include "include/core/SkData.h"
 

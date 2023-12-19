@@ -6,9 +6,8 @@ public:
     ~AppFont();
     static void Init();
     static AppFont *Get();
-    SkFont* fontIcon;
-    SkFont* fontText;
-    SkScalar fontIconHeight;
+    SkFont* fontIcon{nullptr};
+    SkFont* fontText{ nullptr };
 
 private:
     AppFont();
