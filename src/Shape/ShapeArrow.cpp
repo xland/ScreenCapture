@@ -67,12 +67,12 @@ bool ShapeArrow::OnMoseDrag(const int &x, const int &y)
     if (HoverIndex == 0) {
         startX = x;
         startY = y;
-        makeArrowPath(startX, startY, endX, endY);
+        makePath(startX, startY, endX, endY);
     }
     else if(HoverIndex == 1) {
         endX = x;
         endY = y;
-        makeArrowPath(startX, startY, endX, endY);
+        makePath(startX, startY, endX, endY);
     }
     else {
         auto xSpan = x - hoverX;
@@ -81,7 +81,7 @@ bool ShapeArrow::OnMoseDrag(const int &x, const int &y)
         startY += ySpan;
         endX += xSpan;
         endY += ySpan;
-        makeArrowPath(startX, startY, endX, endY);
+        makePath(startX, startY, endX, endY);
         hoverX = x;
         hoverY = y;
     }
@@ -153,7 +153,7 @@ void ShapeArrow::initParams()
     }
 }
 
-void ShapeArrow::makeArrowPath(const int& x1, const int& y1, const int& x2, const int& y2)
+void ShapeArrow::makePath(const int& x1, const int& y1, const int& x2, const int& y2)
 {
     path.reset();
     path.moveTo(x1, y1);

@@ -1,6 +1,7 @@
 ﻿#include "ShapeNumber.h"
 #include "../WindowMain.h"
 #include "../ToolSub.h"
+#include "numbers"
 
 ShapeNumber::ShapeNumber(const int &x, const int &y) : ShapeBase(x, y)
 {
@@ -24,7 +25,7 @@ bool ShapeNumber::OnMouseUp(const int &x, const int &y)
 {
     unsigned size = 10;
     unsigned half = 5;
-    draggers[0].setXYWH(startX - half, startY - half, size, size);
+    draggers[0].setXYWH(endX - half, endY - half, size, size);
     return false;
 }
 
@@ -65,15 +66,9 @@ bool ShapeNumber::OnMoseDrag(const int &x, const int &y)
     showDragger = false;
     if (HoverIndex == 0)
     {
-        startX = x;
-        startY = y;
-        makeArrowPath(startX, startY, endX, endY);
-    }
-    else if (HoverIndex == 1)
-    {
         endX = x;
         endY = y;
-        makeArrowPath(startX, startY, endX, endY);
+        makePath(startX, startY, endX, endY);
     }
     else
     {
@@ -83,7 +78,7 @@ bool ShapeNumber::OnMoseDrag(const int &x, const int &y)
         startY += ySpan;
         endX += xSpan;
         endY += ySpan;
-        makeArrowPath(startX, startY, endX, endY);
+        makePath(startX, startY, endX, endY);
         hoverX = x;
         hoverY = y;
     }
@@ -102,13 +97,24 @@ bool ShapeNumber::OnPaint(SkCanvas *canvas)
     }
     paint.setColor(color);
     canvas->drawPath(path, paint);
+    canvas->drawCircle(SkPoint::Make(startX, startY), r, paint);
     paintDragger(canvas);
     return false;
 }
 
 bool ShapeNumber::isMouseOver(const int &x, const int &y)
 {
-    return path.contains(x, y);
+    auto flag1 = path.contains(x, y);
+    if (flag1) {
+        return true;
+    }
+    SkPath pathCircle;
+    pathCircle.addCircle(startX, startY, r);
+    auto flag2 = pathCircle.contains(x, y);
+    if (flag2) {
+        return true;
+    }
+    return false;
 }
 
 void ShapeNumber::paintDragger(SkCanvas *canvas)
@@ -129,7 +135,7 @@ void ShapeNumber::paintDragger(SkCanvas *canvas)
 
 void ShapeNumber::initParams()
 {
-    HoverIndex = 1;
+    HoverIndex = 0;
     auto tool = ToolSub::get();
     stroke = !tool->getFill();
     if (stroke)
@@ -152,41 +158,31 @@ void ShapeNumber::initParams()
     draggers.push_back(SkRect::MakeEmpty());
 }
 
-void ShapeNumber::makeArrowPath(const int &x1, const int &y1, const int &x2, const int &y2)
+void ShapeNumber::makePath(const int &x1, const int &y1, const int &x2, const int &y2)
 {
     path.reset();
-    path.moveTo(x1, y1);
-    double height = 32.0;
-    double width = 32.0;
+    SkPoint arrowPoint, centerPoint;
+    arrowPoint.fX = x2; //箭头顶点
+    arrowPoint.fY = y2;
+    centerPoint.fX = x1; //圆心
+    centerPoint.fY = y1;
     auto x = x2 - x1;
     auto y = y1 - y2;
-    auto z = sqrt(x * x + y * y);
-    auto sin = y / z;
-    auto cos = x / z;
-    // △底边的中点
-    double centerX = x2 - height * cos;
-    double centerY = y2 + height * sin;
-    double tempA = width / 4 * sin;
-    double tempB = width / 4 * cos;
-    // △ 左下的顶点与底边中点之间中间位置的点
-    double X1 = centerX - tempA;
-    double Y1 = centerY - tempB;
+    r = std::sqrt(x * x + y * y);//圆心到箭头顶点的长度
+    auto height = r / 3.0f; //箭头高度
+    r = r - height; //半径
+    auto radint = std::atan2(y, x); //反正切
+    auto angle = radint * 180 / std::numbers::pi; //角度
+    auto angleSpan = 16.f; //半角
+    auto angle1 = (angle + angleSpan) * std::numbers::pi / 180;//弧度
+    auto angle2 = (angle - angleSpan) * std::numbers::pi / 180;//弧度
+    auto X1 = centerPoint.fX + r * cos(angle1);//箭头与圆的交接点1
+    auto Y1 = centerPoint.fY - r * sin(angle1);
+    auto X2 = centerPoint.fX + r * cos(angle2);//箭头与圆的交接点2
+    auto Y2 = centerPoint.fY - r * sin(angle2);
+    path.moveTo(arrowPoint.fX, arrowPoint.fY);
     path.lineTo(X1, Y1);
-    // △ 左下的顶点
-    double X2 = X1 - tempA;
-    double Y2 = Y1 - tempB;
     path.lineTo(X2, Y2);
-    // △ 上部顶点，也就是箭头终点
-    path.lineTo(x2, y2);
-    // △ 右下顶点
-    tempA = width / 2 * sin;
-    tempB = width / 2 * cos;
-    double X3 = centerX + tempA;
-    double Y3 = centerY + tempB;
-    path.lineTo(X3, Y3);
-    // △ 右下的顶点与底边中点之间中间位置的点
-    double X4 = centerX + tempA / 2;
-    double Y4 = centerY + tempB / 2;
-    path.lineTo(X4, Y4);
-    path.lineTo(x1, y1);
+    path.close();
+    path.setFillType(SkPathFillType::kWinding);
 }
