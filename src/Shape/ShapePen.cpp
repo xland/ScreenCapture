@@ -4,7 +4,6 @@
 
 ShapePen::ShapePen(const int &x, const int &y) : ShapeBase(x, y)
 {
-    path.moveTo(x, y);
     initParams();
 }
 

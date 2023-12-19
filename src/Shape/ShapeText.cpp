@@ -1,43 +1,39 @@
-#include "ShapeLine.h"
+#include "ShapeText.h"
 #include "../WindowMain.h"
 #include "../ToolSub.h"
 
-ShapeLine::ShapeLine(const int &x, const int &y) : ShapeBase(x, y)
+ShapeText::ShapeText(const int &x, const int &y) : ShapeBase(x, y)
 {
-    path.moveTo(x, y);
     initParams();
 }
 
-ShapeLine::~ShapeLine()
+ShapeText::~ShapeText()
 {
 }
 
-bool ShapeLine::OnMouseDown(const int &x, const int &y)
-{
-    return false;
-}
-
-bool ShapeLine::OnMouseMove(const int &x, const int &y)
+bool ShapeText::OnMouseDown(const int &x, const int &y)
 {
     return false;
 }
 
-bool ShapeLine::OnMouseUp(const int &x, const int &y)
+bool ShapeText::OnMouseMove(const int &x, const int &y)
 {
     return false;
 }
 
-bool ShapeLine::OnMoseDrag(const int &x, const int &y)
+bool ShapeText::OnMouseUp(const int &x, const int &y)
+{
+    return false;
+}
+
+bool ShapeText::OnMoseDrag(const int &x, const int &y)
 {
     IsWIP = false;
-    path.reset();
-    path.moveTo(startX, startY);
-    path.lineTo(x, y);
     WindowMain::get()->Refresh();
     return false;
 }
 
-bool ShapeLine::OnPaint(SkCanvas *canvas)
+bool ShapeText::OnPaint(SkCanvas *canvas)
 {
     SkPaint paint;
     paint.setAntiAlias(true);
@@ -46,11 +42,10 @@ bool ShapeLine::OnPaint(SkCanvas *canvas)
     paint.setColor(color);
     paint.setStroke(true);
     paint.setStrokeWidth(strokeWidth);
-    canvas->drawPath(path, paint);
     return false;
 }
 
-void ShapeLine::initParams()
+void ShapeText::initParams()
 {
     auto tool = ToolSub::get();
     stroke = !tool->getFill();
