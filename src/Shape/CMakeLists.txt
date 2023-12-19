@@ -9,5 +9,7 @@ set(SHAPE
     ShapeArrow.h
     ShapeNumber.cpp
     ShapeNumber.h
+    ShapePen.cpp
+    ShapePen.h
 )
 target_sources(ScreenCapture PRIVATE ${SHAPE})

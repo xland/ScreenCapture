@@ -5,6 +5,7 @@
 #include "Shape/ShapeEllipse.h"
 #include "Shape/ShapeArrow.h"
 #include "Shape/ShapeNumber.h"
+#include "Shape/ShapePen.h"
 Recorder *recorder;
 
 
@@ -137,6 +138,7 @@ void Recorder::createShape(const int& x, const int& y, const State& state)
         break;
     }
     case State::pen: {
+        shapes.push_back(std::make_shared<ShapePen>(x, y));
         break;
     }
     case State::line: {
