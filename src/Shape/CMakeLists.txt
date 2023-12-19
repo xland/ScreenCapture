@@ -11,5 +11,7 @@ set(SHAPE
     ShapeNumber.h
     ShapePen.cpp
     ShapePen.h
+    ShapeLine.cpp
+    ShapeLine.h
 )
 target_sources(ScreenCapture PRIVATE ${SHAPE})
