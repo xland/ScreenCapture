@@ -88,13 +88,16 @@ LRESULT WindowMain::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam
         exit(0);
         return true;
     }
+    case WM_CHAR: {
+        return onChar(wparam);
+    }
     default:
         break;
     }
     return DefWindowProc(hwnd, msg, wparam, lparam);
 }
 
-bool WindowMain::onMouseDown(int x, int y)
+bool WindowMain::onMouseDown(const int& x, const int& y)
 {
     auto cmFlag = CutMask::get()->OnMouseDown(x, y);
     auto tmFlag = ToolMain::get()->OnMouseDown(x, y);
@@ -105,13 +108,13 @@ bool WindowMain::onMouseDown(int x, int y)
     Recorder::get()->OnMouseDown(x, y);
     return false;
 }
-bool WindowMain::onMouseUp(int x, int y)
+bool WindowMain::onMouseUp(const int& x, const int& y)
 {
     Recorder::get()->OnMouseUp(x, y);
     CutMask::get()->OnMouseUp(x, y);
     return false;
 }
-bool WindowMain::onMouseMove(int x, int y)
+bool WindowMain::onMouseMove(const int& x, const int& y)
 {
     Recorder::get()->OnMouseMove(x, y);
     CutMask::get()->OnMouseMove(x, y);
@@ -119,10 +122,15 @@ bool WindowMain::onMouseMove(int x, int y)
     ToolSub::get()->OnMouseMove(x, y);
     return false;
 }
-bool WindowMain::onMouseDrag(int x, int y)
+bool WindowMain::onMouseDrag(const int& x, const int& y)
 {
     Recorder::get()->OnMouseDrag(x, y);
     CutMask::get()->OnMouseDrag(x, y);
+    return false;
+}
+bool WindowMain::onChar(const unsigned int& val)
+{
+    Recorder::get()->onChar(val);
     return false;
 }
 void WindowMain::paint(SkCanvas* canvas)

@@ -17,6 +17,7 @@ bool ShapeText::OnMouseDown(const int &x, const int &y)
 {
     IsWIP = false;
     rect.setXYWH(x - 15, y - 50, 30, 100);
+    activeKeyboard(startX, startY + 25);
     WindowMain::get()->Refresh();
     return false;
 }
@@ -46,6 +47,13 @@ bool ShapeText::OnPaint(SkCanvas *canvas)
     paint.setStrokeWidth(2);
     canvas->drawRect(rect, paint);
     
+    //SkRect textBounds;
+    //font->measureText(str.c_str(), str.size(), SkTextEncoding::kUTF8, &textBounds);
+    //SkScalar x = startX - textBounds.width() / 2 - textBounds.left();
+    //SkScalar y = startY + textBounds.height() / 2 - textBounds.bottom();
+    //canvas->drawSimpleText(str.c_str(), str.size(), SkTextEncoding::kUTF8, x, y, *font, paint);
+
+
     canvas->drawLine(startX, startY - 25, startX, startY + 25,paint);
     return false;
 }
@@ -71,4 +79,28 @@ void ShapeText::initParams()
         }
     }
     color = tool->getColor();
+}
+void ShapeText::activeKeyboard(long x, long y)
+{
+    auto win = WindowMain::get();
+    if (HIMC himc = ImmGetContext(win->hwnd))
+    {
+        COMPOSITIONFORM comp = {};
+        comp.ptCurrentPos.x = x;
+        comp.ptCurrentPos.y = y;
+        comp.dwStyle = CFS_FORCE_POSITION;
+        ImmSetCompositionWindow(himc, &comp);
+        CANDIDATEFORM cand = {};
+        cand.dwStyle = CFS_CANDIDATEPOS;
+        cand.ptCurrentPos.x = x;
+        cand.ptCurrentPos.y = y;
+        ImmSetCandidateWindow(himc, &cand);
+        ImmReleaseContext(win->hwnd, himc);
+    }
+}
+void ShapeText::InsertWord(const std::wstring& word)
+{
+    text = text.substr(0, cursorIndex) + word + text.substr(cursorIndex);
+    cursorIndex += 1;
+    WindowMain::get()->Refresh();
 }

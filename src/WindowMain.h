@@ -19,8 +19,9 @@ private:
     void shotScreen();
     void initSize();
     void paint(SkCanvas *canvas) override;
-    bool onMouseDown(int x, int y);
-    bool onMouseUp(int x, int y);
-    bool onMouseMove(int x, int y);
-    bool onMouseDrag(int x, int y);
+    bool onMouseDown(const int& x, const int& y);
+    bool onMouseUp(const int& x, const int& y);
+    bool onMouseMove(const int& x, const int& y);
+    bool onMouseDrag(const int& x, const int& y);
+    bool onChar(const unsigned int& val);
 };

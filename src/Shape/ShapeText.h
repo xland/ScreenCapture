@@ -17,14 +17,16 @@ public:
     bool OnMouseUp(const int &x, const int &y) override;
     bool OnMoseDrag(const int &x, const int &y) override;
     bool OnPaint(SkCanvas *canvas) override;
+    void InsertWord(const std::wstring& word);
 
 protected:
 private:
+    SkColor color{ SkColorSetARGB(255, 207, 19, 34) };
+    void activeKeyboard(long x, long y);
+    void initParams();
     SkRect rect;
-    std::string text;
+    std::wstring text;
+    unsigned cursorIndex = 0;
     bool stroke{true};
     int strokeWidth{4};
-    SkColor color{SkColorSetARGB(255, 207, 19, 34)};
-
-    void initParams();
 };
