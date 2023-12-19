@@ -7,12 +7,13 @@
 #include "Shape/ShapeNumber.h"
 #include "Shape/ShapePen.h"
 #include "Shape/ShapeLine.h"
+#include "Shape/ShapeText.h"
+
 Recorder *recorder;
 
 Recorder::Recorder()
 {
-    auto func = std::bind(&Recorder::hideDragger, this);
-    timer = std::make_shared<Timeout>(func);
+    timer = std::make_shared<Timeout>();
 }
 
 Recorder::~Recorder()
@@ -55,6 +56,8 @@ bool Recorder::OnMouseMove(const int &x, const int &y)
         if (flag)
         {
             curIndex = i;
+            auto func = std::bind(&Recorder::hideDragger, this, std::placeholders::_1);
+            timer->Start(i,600,func);
             break;
         }
         else
@@ -64,8 +67,7 @@ bool Recorder::OnMouseMove(const int &x, const int &y)
     }
     if (curIndex < 0)
     {
-        SetCursor(LoadCursor(nullptr, IDC_ARROW));
-        timer->Start();
+        SetCursor(LoadCursor(nullptr, IDC_ARROW));        
     }
     return false;
 }
@@ -101,25 +103,19 @@ bool Recorder::OnPaint(SkCanvas *canvas)
     return false;
 }
 
-void Recorder::hideDragger()
+void Recorder::hideDragger(const int& id)
 {
     auto win = WindowMain::get();
-    if (!win)
+    if (!win) {
         return;
-    bool flag = false;
-    for (size_t i = 0; i < shapes.size(); i++)
-    {
-        if (i != curIndex)
-        {
-            if (shapes[i]->showDragger)
-            {
-                shapes[i]->showDragger = false;
-                flag = true;
-            }
-        }
     }
-    if (flag)
-    {
+    if (shapes[id]) {
+        if (id == curIndex) {
+            auto func = std::bind(&Recorder::hideDragger, this, std::placeholders::_1);
+            timer->Start(id, 600, func);
+            return;
+        }
+        shapes[id]->showDragger = false;
         PostMessage(WindowMain::get()->hwnd, WM_REFRESH, NULL, NULL);
     }
 }
@@ -160,6 +156,7 @@ void Recorder::createShape(const int &x, const int &y, const State &state)
     }
     case State::text:
     {
+        shapes.push_back(std::make_shared<ShapeText>(x, y));
         break;
     }
     case State::mosaic:

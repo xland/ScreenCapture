@@ -20,6 +20,7 @@ public:
 
 protected:
 private:
+    SkRect rect;
     std::string text;
     bool stroke{true};
     int strokeWidth{4};

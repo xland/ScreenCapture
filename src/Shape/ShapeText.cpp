@@ -2,6 +2,8 @@
 #include "../WindowMain.h"
 #include "../ToolSub.h"
 
+static float fontSize{ 80 };
+
 ShapeText::ShapeText(const int &x, const int &y) : ShapeBase(x, y)
 {
     initParams();
@@ -13,6 +15,9 @@ ShapeText::~ShapeText()
 
 bool ShapeText::OnMouseDown(const int &x, const int &y)
 {
+    IsWIP = false;
+    rect.setXYWH(x - 15, y - 50, 30, 100);
+    WindowMain::get()->Refresh();
     return false;
 }
 
@@ -36,12 +41,12 @@ bool ShapeText::OnMoseDrag(const int &x, const int &y)
 bool ShapeText::OnPaint(SkCanvas *canvas)
 {
     SkPaint paint;
-    paint.setAntiAlias(true);
-    paint.setStrokeCap(SkPaint::Cap::kRound_Cap);
-    paint.setStrokeJoin(SkPaint::kRound_Join);
     paint.setColor(color);
     paint.setStroke(true);
-    paint.setStrokeWidth(strokeWidth);
+    paint.setStrokeWidth(2);
+    canvas->drawRect(rect, paint);
+    
+    canvas->drawLine(startX, startY - 25, startX, startY + 25,paint);
     return false;
 }
 
