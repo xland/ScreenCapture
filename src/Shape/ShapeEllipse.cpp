@@ -26,14 +26,22 @@ bool ShapeEllipse::OnPaint(SkCanvas *canvas)
     return false;
 }
 
-bool ShapeEllipse::isMouseOnBorder(const int& x, const int& y)
+bool ShapeEllipse::isMouseOver(const int& x, const int& y)
 {
-    auto halfStroke = strokeWidth / 2 + 2;
-    auto rectOut = rect.makeOutset(halfStroke, halfStroke);
-    auto rectInner = rect.makeInset(halfStroke, halfStroke);
-    SkPath path;
-    path.addOval(rectOut);
-    path.addOval(rectInner);
-    path.setFillType(SkPathFillType::kEvenOdd);
-    return path.contains(x, y);
+    if (stroke) {
+        auto halfStroke = strokeWidth / 2 + 2;
+        auto rectOut = rect.makeOutset(halfStroke, halfStroke);
+        auto rectInner = rect.makeInset(halfStroke, halfStroke);
+        SkPath path;
+        path.addOval(rectOut);
+        path.addOval(rectInner);
+        path.setFillType(SkPathFillType::kEvenOdd);
+        return path.contains(x, y);
+    }
+    else {
+        SkPath path;
+        path.addOval(rect);
+        return path.contains(x, y);
+    }
+
 }

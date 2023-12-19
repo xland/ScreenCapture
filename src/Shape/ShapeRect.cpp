@@ -54,7 +54,7 @@ bool ShapeRect::OnMouseMove(const int& x, const int& y)
             return true;
         }
     }
-    auto flag = isMouseOnBorder(x, y);
+    auto flag = isMouseOver(x, y);
     if (flag) {
         HoverIndex = 8;
         setCursor();
@@ -182,15 +182,21 @@ void ShapeRect::setCursor()
     }
 }
 
-bool ShapeRect::isMouseOnBorder(const int& x, const int& y)
+bool ShapeRect::isMouseOver(const int& x, const int& y)
 {
-    auto halfStroke = strokeWidth / 2 + 2;
-    auto rectOut = rect.makeOutset(halfStroke, halfStroke);
-    auto rectInner = rect.makeInset(halfStroke, halfStroke);
-    if (rectOut.contains(x, y) && !rectInner.contains(x, y)) {
-        return true;
+    if (stroke) {
+        auto halfStroke = strokeWidth / 2 + 2;
+        auto rectOut = rect.makeOutset(halfStroke, halfStroke);
+        auto rectInner = rect.makeInset(halfStroke, halfStroke);
+        if (rectOut.contains(x, y) && !rectInner.contains(x, y)) {
+            return true;
+        }
+        return false;
     }
-    return false;
+    else {
+        return rect.contains(x, y);
+    }
+
 }
 
 void ShapeRect::paintDragger(SkCanvas* canvas)
@@ -209,6 +215,7 @@ void ShapeRect::paintDragger(SkCanvas* canvas)
 
 void ShapeRect::initParams()
 {
+    HoverIndex = 4;
     auto tool = ToolSub::get();
     stroke = !tool->getFill();
     if (stroke) {

@@ -18,7 +18,7 @@ public:
     virtual bool OnPaint(SkCanvas *canvas) override;
     bool OnMoseDrag(const int& x, const int& y) override;
 protected:
-    virtual bool isMouseOnBorder(const int& x, const int& y);
+    virtual bool isMouseOver(const int& x, const int& y);
     void paintDragger(SkCanvas* canvas);
     void initParams();
     SkRect rect;

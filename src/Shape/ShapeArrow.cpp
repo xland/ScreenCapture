@@ -4,6 +4,8 @@
 
 ShapeArrow::ShapeArrow(const int &x, const int &y) : ShapeBase(x, y)
 {
+    startX = x;
+    startY = y;
     initParams();
 }
 
@@ -13,13 +15,17 @@ ShapeArrow::~ShapeArrow()
 
 bool ShapeArrow::OnMouseDown(const int &x, const int &y)
 {
-    startX = x;
-    startY = y;
+    hoverX = x;
+    hoverY = y;
     return false;
 }
 
 bool ShapeArrow::OnMouseUp(const int &x, const int &y)
 {
+    unsigned size = 10;
+    unsigned half = 5;
+    draggers[0].setXYWH(startX-half, startY-half, size, size);
+    draggers[1].setXYWH(endX-half, endY-half, size, size);
     return false;
 }
 
@@ -30,7 +36,7 @@ bool ShapeArrow::OnMouseMove(const int &x, const int &y)
         if (draggers[i].contains(x, y))
         {
             HoverIndex = i;
-            setCursor();
+            SetCursor(LoadCursor(nullptr, IDC_SIZEALL));
             if (!showDragger)
             {
                 showDragger = true;
@@ -39,11 +45,11 @@ bool ShapeArrow::OnMouseMove(const int &x, const int &y)
             return true;
         }
     }
-    auto flag = isMouseOnBorder(x, y);
+    auto flag = isMouseOver(x, y);
     if (flag)
     {
         HoverIndex = 8;
-        setCursor();
+        SetCursor(LoadCursor(nullptr, IDC_SIZEALL));
         if (!showDragger)
         {
             showDragger = true;
@@ -54,46 +60,31 @@ bool ShapeArrow::OnMouseMove(const int &x, const int &y)
     return false;
 }
 
-bool ShapeArrow::OnMoseDrag(const int &x1, const int &y1)
+bool ShapeArrow::OnMoseDrag(const int &x, const int &y)
 {
     IsWIP = false;
     showDragger = false;
-    path.reset();
-    path.moveTo(startX, startY);
-    //path.lineTo(x2, y2);
-    double height = 32.0;
-    double width = 32.0;
-    auto x = x1 - startX;
-    auto y = startY - y1;
-    auto z = sqrt(x * x + y * y);
-    auto sin = y / z;
-    auto cos = x / z;
-    // △底边的中点
-    double centerX = x1 - height * cos;
-    double centerY = y1 + height * sin;
-    double tempA = width / 4 * sin;
-    double tempB = width / 4 * cos;
-    // △ 左下的顶点与底边中点之间中间位置的点
-    double X1 = centerX - tempA;
-    double Y1 = centerY - tempB;
-    path.lineTo(X1, Y1);
-    // △ 左下的顶点
-    double X2 = X1 - tempA;
-    double Y2 = Y1 - tempB;
-    path.lineTo(X2, Y2);
-    // △ 上部顶点，也就是箭头终点
-    path.lineTo(x1, y1);
-    // △ 右下顶点
-    tempA = width / 2 * sin;
-    tempB = width / 2 * cos;
-    double X3 = centerX + tempA;
-    double Y3 = centerY + tempB;
-    path.lineTo(X3, Y3);
-    // △ 右下的顶点与底边中点之间中间位置的点
-    double X4 = centerX + tempA / 2;
-    double Y4 = centerY + tempB / 2;
-    path.lineTo(X4, Y4);
-    path.lineTo(startX, startY);
+    if (HoverIndex == 0) {
+        startX = x;
+        startY = y;
+        makeArrowPath(startX, startY, endX, endY);
+    }
+    else if(HoverIndex == 1) {
+        endX = x;
+        endY = y;
+        makeArrowPath(startX, startY, endX, endY);
+    }
+    else {
+        auto xSpan = x - hoverX;
+        auto ySpan = y - hoverY;
+        startX += xSpan;
+        startY += ySpan;
+        endX += xSpan;
+        endY += ySpan;
+        makeArrowPath(startX, startY, endX, endY);
+        hoverX = x;
+        hoverY = y;
+    }
     WindowMain::get()->Refresh();
     return false;
 }
@@ -109,52 +100,13 @@ bool ShapeArrow::OnPaint(SkCanvas* canvas)
     }
     paint.setColor(color);
     canvas->drawPath(path, paint);
-    //paintDragger(canvas);
+    paintDragger(canvas);
     return false;
 }
 
-void ShapeArrow::setCursor()
+bool ShapeArrow::isMouseOver(const int &x, const int &y)
 {
-    switch (HoverIndex)
-    {
-    case 0:
-    case 4:
-    {
-        SetCursor(LoadCursor(nullptr, IDC_SIZENWSE));
-        break;
-    }
-    case 1:
-    case 5:
-    {
-        SetCursor(LoadCursor(nullptr, IDC_SIZENS));
-        break;
-    }
-    case 2:
-    case 6:
-    {
-        SetCursor(LoadCursor(nullptr, IDC_SIZENESW));
-        break;
-    }
-    case 3:
-    case 7:
-    {
-        SetCursor(LoadCursor(nullptr, IDC_SIZEWE));
-        break;
-    }
-    case 8:
-    {
-        SetCursor(LoadCursor(nullptr, IDC_SIZEALL));
-        break;
-    }
-    default:
-        SetCursor(LoadCursor(nullptr, IDC_ARROW));
-        break;
-    }
-}
-
-bool ShapeArrow::isMouseOnBorder(const int &x, const int &y)
-{
-    return false;
+    return path.contains(x,y);
 }
 
 void ShapeArrow::paintDragger(SkCanvas *canvas)
@@ -175,6 +127,7 @@ void ShapeArrow::paintDragger(SkCanvas *canvas)
 
 void ShapeArrow::initParams()
 {
+    HoverIndex = 1;
     auto tool = ToolSub::get();
     stroke = !tool->getFill();
     if (stroke)
@@ -194,8 +147,47 @@ void ShapeArrow::initParams()
         }
     }
     color = tool->getColor();
-    for (size_t i = 0; i < 8; i++)
+    for (size_t i = 0; i < 2; i++)
     {
         draggers.push_back(SkRect::MakeEmpty());
     }
+}
+
+void ShapeArrow::makeArrowPath(const int& x1, const int& y1, const int& x2, const int& y2)
+{
+    path.reset();
+    path.moveTo(x1, y1);
+    double height = 32.0;
+    double width = 32.0;
+    auto x = x2 - x1;
+    auto y = y1 - y2;
+    auto z = sqrt(x * x + y * y);
+    auto sin = y / z;
+    auto cos = x / z;
+    // △底边的中点
+    double centerX = x2 - height * cos;
+    double centerY = y2 + height * sin;
+    double tempA = width / 4 * sin;
+    double tempB = width / 4 * cos;
+    // △ 左下的顶点与底边中点之间中间位置的点
+    double X1 = centerX - tempA;
+    double Y1 = centerY - tempB;
+    path.lineTo(X1, Y1);
+    // △ 左下的顶点
+    double X2 = X1 - tempA;
+    double Y2 = Y1 - tempB;
+    path.lineTo(X2, Y2);
+    // △ 上部顶点，也就是箭头终点
+    path.lineTo(x2, y2);
+    // △ 右下顶点
+    tempA = width / 2 * sin;
+    tempB = width / 2 * cos;
+    double X3 = centerX + tempA;
+    double Y3 = centerY + tempB;
+    path.lineTo(X3, Y3);
+    // △ 右下的顶点与底边中点之间中间位置的点
+    double X4 = centerX + tempA / 2;
+    double Y4 = centerY + tempB / 2;
+    path.lineTo(X4, Y4);
+    path.lineTo(x1, y1);
 }

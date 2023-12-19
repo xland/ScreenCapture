@@ -20,7 +20,7 @@ public:
     virtual bool OnMoseDrag(const int& x, const int& y) { return false; };
     bool showDragger{ false };
     bool IsWIP{true};
-    unsigned HoverIndex{4};
+    int HoverIndex{-1};
     int startX, startY;
 protected:
 private:
