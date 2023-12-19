@@ -1,4 +1,4 @@
-#include "ShapeArrow.h"
+ï»¿#include "ShapeArrow.h"
 #include "../WindowMain.h"
 #include "../ToolSub.h"
 
@@ -164,28 +164,28 @@ void ShapeArrow::makeArrowPath(const int& x1, const int& y1, const int& x2, cons
     auto z = sqrt(x * x + y * y);
     auto sin = y / z;
     auto cos = x / z;
-    // ¡÷µ×±ßµÄÖĞµã
+    // â–³åº•è¾¹çš„ä¸­ç‚¹
     double centerX = x2 - height * cos;
     double centerY = y2 + height * sin;
     double tempA = width / 4 * sin;
     double tempB = width / 4 * cos;
-    // ¡÷ ×óÏÂµÄ¶¥µãÓëµ×±ßÖĞµãÖ®¼äÖĞ¼äÎ»ÖÃµÄµã
+    // â–³ å·¦ä¸‹çš„é¡¶ç‚¹ä¸åº•è¾¹ä¸­ç‚¹ä¹‹é—´ä¸­é—´ä½ç½®çš„ç‚¹
     double X1 = centerX - tempA;
     double Y1 = centerY - tempB;
     path.lineTo(X1, Y1);
-    // ¡÷ ×óÏÂµÄ¶¥µã
+    // â–³ å·¦ä¸‹çš„é¡¶ç‚¹
     double X2 = X1 - tempA;
     double Y2 = Y1 - tempB;
     path.lineTo(X2, Y2);
-    // ¡÷ ÉÏ²¿¶¥µã£¬Ò²¾ÍÊÇ¼ıÍ·ÖÕµã
+    // â–³ ä¸Šéƒ¨é¡¶ç‚¹ï¼Œä¹Ÿå°±æ˜¯ç®­å¤´ç»ˆç‚¹
     path.lineTo(x2, y2);
-    // ¡÷ ÓÒÏÂ¶¥µã
+    // â–³ å³ä¸‹é¡¶ç‚¹
     tempA = width / 2 * sin;
     tempB = width / 2 * cos;
     double X3 = centerX + tempA;
     double Y3 = centerY + tempB;
     path.lineTo(X3, Y3);
-    // ¡÷ ÓÒÏÂµÄ¶¥µãÓëµ×±ßÖĞµãÖ®¼äÖĞ¼äÎ»ÖÃµÄµã
+    // â–³ å³ä¸‹çš„é¡¶ç‚¹ä¸åº•è¾¹ä¸­ç‚¹ä¹‹é—´ä¸­é—´ä½ç½®çš„ç‚¹
     double X4 = centerX + tempA / 2;
     double Y4 = centerY + tempB / 2;
     path.lineTo(X4, Y4);
