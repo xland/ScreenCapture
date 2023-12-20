@@ -9,8 +9,8 @@ static AppFont *appFont;
 
 AppFont::AppFont()
 {
-    auto textFace = SkTypeface::MakeFromName("Arial", SkFontStyle::Normal());
-    fontText = new SkFont(textFace);
+    auto fontFace = SkTypeface::MakeFromName("Microsoft YaHei", SkFontStyle::Normal());
+    fontText = new SkFont(fontFace);
 
     HMODULE instance = GetModuleHandle(NULL);
     HRSRC resID = FindResource(instance, MAKEINTRESOURCE(IDR_ICON_FONT), L"ICON_FONT");

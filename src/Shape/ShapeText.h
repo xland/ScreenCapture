@@ -25,7 +25,7 @@ private:
     void activeKeyboard(long x, long y);
     void initParams();
     SkRect rect;
-    std::wstring text;
+    std::wstring text{ L"Line 1\nLine 2\nLine 3" };
     unsigned cursorIndex = 0;
     bool stroke{true};
     int strokeWidth{4};

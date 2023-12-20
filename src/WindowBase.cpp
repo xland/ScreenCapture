@@ -3,6 +3,12 @@
 #include "include/effects/SkRuntimeEffect.h"
 #include "Util.h"
 
+
+#include "modules/skparagraph/include/Paragraph.h"
+#include "modules/skparagraph/include/ParagraphBuilder.h"
+#include "modules/skparagraph/include/ParagraphStyle.h"
+#include "modules/skparagraph/include/TextStyle.h"
+
 WindowBase::WindowBase()
 {
 }
@@ -33,6 +39,30 @@ void WindowBase::Refresh()
     front->clear(SK_ColorTRANSPARENT);
     //front->saveLayer(nullptr,nullptr);
     paint(front);
+
+    SkPaint paint;
+    paint.setColor(SK_ColorRED);
+    paint.setStroke(false);
+    sk_sp<skia::textlayout::FontCollection> fontCollection = sk_make_sp<skia::textlayout::FontCollection>();
+    fontCollection->setDefaultFontManager(SkFontMgr::RefDefault());
+    fontCollection->enableFontFallback();
+    skia::textlayout::ParagraphStyle paraStyle;
+    auto builder = skia::textlayout::ParagraphBuilder::make(paraStyle, fontCollection);
+    skia::textlayout::TextStyle defaultStyle;
+    defaultStyle.setFontFamilies({ SkString{"Microsoft YaHei"} });
+    defaultStyle.setFontStyle(SkFontStyle(SkFontStyle::Weight::kBold_Weight, SkFontStyle::Width::kNormal_Width, SkFontStyle::Slant::kItalic_Slant));
+    //defaultStyle.setDecoration(skTextDe(TextDecoration::kNoDecoration));
+    defaultStyle.setFontSize(12);
+    defaultStyle.setForegroundColor(paint);
+    builder->pushStyle(defaultStyle);
+    builder->addPlaceholder(skia::textlayout::PlaceholderStyle());
+    const char* hello = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do";
+    builder->addText(hello, strlen(hello));
+    auto paragraph = builder->Build();
+    paragraph->layout(2048.f);
+    paragraph->paint(front, 200, 200);
+
+
     //front->restore();
     sk_sp<SkImage> img = surfaceFront->makeImageSnapshot();
     back->drawImage(img, 0, 0);

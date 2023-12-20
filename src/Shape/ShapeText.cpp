@@ -1,6 +1,22 @@
 #include "ShapeText.h"
 #include "../WindowMain.h"
 #include "../ToolSub.h"
+#include "../AppFont.h"
+#include <locale>
+#include <codecvt>
+#include "include/core/SkCanvas.h"
+#include "include/core/SkPaint.h"
+#include "include/core/SkRect.h"
+#include "include/core/SkSurface.h"
+#include "include/core/SkString.h"
+#include "include/utils/SkTextUtils.h"
+#include "include/core/SkFontMetrics.h"
+
+
+#include "modules/skparagraph/include/Paragraph.h"
+#include "modules/skparagraph/include/ParagraphBuilder.h"
+#include "modules/skparagraph/include/ParagraphStyle.h"
+#include "modules/skparagraph/include/TextStyle.h"
 
 static float fontSize{ 80 };
 
@@ -16,9 +32,21 @@ ShapeText::~ShapeText()
 bool ShapeText::OnMouseDown(const int &x, const int &y)
 {
     IsWIP = false;
-    rect.setXYWH(x - 15, y - 50, 30, 100);
-    activeKeyboard(startX, startY + 25);
-    WindowMain::get()->Refresh();
+    auto font = AppFont::Get()->fontText;
+    font->setSize(fontSize);
+    auto data = text.data();
+    auto length = wcslen(data) * 2;
+    SkRect textRect;
+    font->measureText(text.data(), length, SkTextEncoding::kUTF16, &textRect);
+    //SkFontMetrics metrics;
+    //font->getMetrics(&metrics);
+    //auto height = metrics.fBottom - metrics.fTop;
+    rect.setXYWH(x, y - textRect.height()/2, textRect.width(), textRect.height());
+    rect.fLeft -= 10;
+    rect.fRight += 10;
+    //activeKeyboard(startX, startY + 25);
+    //WindowMain::get()->Refresh();
+    PostMessage(WindowMain::get()->hwnd, WM_REFRESH, NULL, NULL);
     return false;
 }
 
@@ -46,20 +74,72 @@ bool ShapeText::OnPaint(SkCanvas *canvas)
     paint.setStroke(true);
     paint.setStrokeWidth(2);
     canvas->drawRect(rect, paint);
-    
-    //SkRect textBounds;
+    canvas->drawLine(startX, startY - 25, startX, startY + 25, paint);
+    SkRect textBounds;
+    auto font = AppFont::Get()->fontText;
+    std::string str{ "Line 1\nLine 2\nLine 3" };
     //font->measureText(str.c_str(), str.size(), SkTextEncoding::kUTF8, &textBounds);
     //SkScalar x = startX - textBounds.width() / 2 - textBounds.left();
-    //SkScalar y = startY + textBounds.height() / 2 - textBounds.bottom();
+    //SkScalar y = startY + textBounds.height() / 2 - textBounds.bottom();    
     //canvas->drawSimpleText(str.c_str(), str.size(), SkTextEncoding::kUTF8, x, y, *font, paint);
 
 
-    canvas->drawLine(startX, startY - 25, startX, startY + 25,paint);
+    //paint.setStroke(false);
+    //auto data = text.data();
+    //auto length = wcslen(data) * 2;
+    //auto font = AppFont::Get()->fontText;
+    //font->setSize(fontSize);
+
+
+    //std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
+    //// 创建多行宽字符文本
+    //std::wstring text = L"This is a multi-line text.\nSecond line.";
+    //// 分割文本为多行
+    //std::vector<SkString> lines;
+    //std::wstring::size_type pos = 0;
+    //while ((pos = text.find(L'\n', pos)) != std::wstring::npos) {
+    //    auto str = converter.to_bytes(text.substr(0, pos));
+    //    lines.push_back(SkString(str.c_str()));
+    //    text.erase(0, pos + 1);
+    //}
+    //auto str = converter.to_bytes(text.substr(0, pos));
+    //lines.push_back(SkString(str.c_str()));
+    //SkFontMetrics metrics;
+    //font->getMetrics(&metrics);
+    //auto height = metrics.fBottom - metrics.fTop;
+    //for (const auto& line : lines) {
+    //    SkTextUtils::DrawString(canvas, line.c_str(), startX, startY, *font, paint,SkTextUtils::kLeft_Align);
+    //    startY += height; // 下一行的位置在当前行下方加上文本大小
+    //}
+ 
+
+
+    paint.setColor(SK_ColorRED);
+    paint.setStroke(false);
+    sk_sp<skia::textlayout::FontCollection> fontCollection = sk_make_sp<skia::textlayout::FontCollection>();
+    fontCollection->setDefaultFontManager(SkFontMgr::RefDefault());
+    fontCollection->enableFontFallback();
+    skia::textlayout::ParagraphStyle paraStyle;
+    auto builder = skia::textlayout::ParagraphBuilder::make(paraStyle, fontCollection);
+    skia::textlayout::TextStyle defaultStyle;
+    defaultStyle.setFontFamilies({ SkString{"Microsoft YaHei"} });
+    defaultStyle.setFontStyle(SkFontStyle(SkFontStyle::Weight::kBold_Weight, SkFontStyle::Width::kNormal_Width, SkFontStyle::Slant::kItalic_Slant));
+    //defaultStyle.setDecoration(skTextDe(TextDecoration::kNoDecoration));
+    defaultStyle.setFontSize(fontSize);
+    defaultStyle.setForegroundColor(paint);
+    builder->pushStyle(defaultStyle);
+    const char* hello = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do";
+    builder->addText(hello,strlen(hello));
+    auto paragraph = builder->Build();
+    paragraph->layout(2048.f);
+    paragraph->paint(canvas, 200, 200);
+    
     return false;
 }
 
 void ShapeText::initParams()
 {
+
     auto tool = ToolSub::get();
     stroke = !tool->getFill();
     if (stroke)
