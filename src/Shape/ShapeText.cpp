@@ -13,11 +13,6 @@
 #include "include/core/SkFontMetrics.h"
 
 
-#include "modules/skparagraph/include/Paragraph.h"
-#include "modules/skparagraph/include/ParagraphBuilder.h"
-#include "modules/skparagraph/include/ParagraphStyle.h"
-#include "modules/skparagraph/include/TextStyle.h"
-
 static float fontSize{ 80 };
 
 ShapeText::ShapeText(const int &x, const int &y) : ShapeBase(x, y)
@@ -116,23 +111,6 @@ bool ShapeText::OnPaint(SkCanvas *canvas)
 
     paint.setColor(SK_ColorRED);
     paint.setStroke(false);
-    sk_sp<skia::textlayout::FontCollection> fontCollection = sk_make_sp<skia::textlayout::FontCollection>();
-    fontCollection->setDefaultFontManager(SkFontMgr::RefDefault());
-    fontCollection->enableFontFallback();
-    skia::textlayout::ParagraphStyle paraStyle;
-    auto builder = skia::textlayout::ParagraphBuilder::make(paraStyle, fontCollection);
-    skia::textlayout::TextStyle defaultStyle;
-    defaultStyle.setFontFamilies({ SkString{"Microsoft YaHei"} });
-    defaultStyle.setFontStyle(SkFontStyle(SkFontStyle::Weight::kBold_Weight, SkFontStyle::Width::kNormal_Width, SkFontStyle::Slant::kItalic_Slant));
-    //defaultStyle.setDecoration(skTextDe(TextDecoration::kNoDecoration));
-    defaultStyle.setFontSize(fontSize);
-    defaultStyle.setForegroundColor(paint);
-    builder->pushStyle(defaultStyle);
-    const char* hello = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do";
-    builder->addText(hello,strlen(hello));
-    auto paragraph = builder->Build();
-    paragraph->layout(2048.f);
-    paragraph->paint(canvas, 200, 200);
     
     return false;
 }
