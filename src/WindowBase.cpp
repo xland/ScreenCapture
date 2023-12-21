@@ -15,9 +15,9 @@ WindowBase::WindowBase()
 
 WindowBase::~WindowBase()
 {
-    delete[] pixelFront;
-    delete[] pixelBack;
-    delete[] pixelBase;
+    delete[] pixBase->addr();
+    delete pixBase;
+    delete pixBack;
     DeleteDC(hCompatibleDC);
     DeleteObject(bottomHbitmap);
 }
@@ -32,43 +32,90 @@ void WindowBase::Show()
 
 void WindowBase::Refresh()
 {
-    static size_t size = w * 4 * h;
-    memcpy(pixelBack, pixelBase, size);
+    surfaceBack->writePixels(*pixBase, 0, 0);
     auto back = surfaceBack->getCanvas();
     auto front = surfaceFront->getCanvas();
     front->clear(SK_ColorTRANSPARENT);
     //front->saveLayer(nullptr,nullptr);
     paint(front);
 
-    SkPaint paint;
-    paint.setColor(SK_ColorRED);
-    paint.setStroke(false);
-    sk_sp<skia::textlayout::FontCollection> fontCollection = sk_make_sp<skia::textlayout::FontCollection>();
-    fontCollection->setDefaultFontManager(SkFontMgr::RefDefault());
-    fontCollection->enableFontFallback();
-    skia::textlayout::ParagraphStyle paraStyle;
-    auto builder = skia::textlayout::ParagraphBuilder::make(paraStyle, fontCollection);
-    skia::textlayout::TextStyle defaultStyle;
-    defaultStyle.setFontFamilies({ SkString{"Microsoft YaHei"} });
-    defaultStyle.setFontStyle(SkFontStyle(SkFontStyle::Weight::kBold_Weight, SkFontStyle::Width::kNormal_Width, SkFontStyle::Slant::kItalic_Slant));
-    //defaultStyle.setDecoration(skTextDe(TextDecoration::kNoDecoration));
-    defaultStyle.setFontSize(12);
-    defaultStyle.setForegroundColor(paint);
-    builder->pushStyle(defaultStyle);
-    builder->addPlaceholder(skia::textlayout::PlaceholderStyle());
-    const char* hello = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do";
-    builder->addText(hello, strlen(hello));
-    auto paragraph = builder->Build();
-    paragraph->layout(2048.f);
-    paragraph->paint(front, 200, 200);
+    //auto fontMgr = SkFontMgr::RefDefault();
+//int count = fontMgr->countFamilies();
+//for (int i = 0; i < count; ++i) {
+//    SkString familyName;
+//    fontMgr->getFamilyName(i, &familyName);
+//    SkDebugf(familyName.c_str());
+//    //std::cout << "Font Family Name: " << familyName.c_str() << std::endl;
+//}
 
+    //SkPaint paint;
+    //paint.setColor(SK_ColorRED);
+    //paint.setStroke(false);
+    //sk_sp<skia::textlayout::FontCollection> fontCollection = sk_make_sp<skia::textlayout::FontCollection>();
+    //fontCollection->setDefaultFontManager(SkFontMgr::RefDefault());
+    //fontCollection->enableFontFallback();
+    //skia::textlayout::ParagraphStyle paraStyle;
+    //auto builder = skia::textlayout::ParagraphBuilder::make(paraStyle, fontCollection);
+    //skia::textlayout::TextStyle defaultStyle;
+    //std::vector<SkString> ffs;
+    //ffs.push_back(SkString{ "Arial" });
+    //defaultStyle.setFontFamilies(ffs);
+    //defaultStyle.setFontStyle(SkFontStyle(SkFontStyle::Weight::kBold_Weight, SkFontStyle::Width::kNormal_Width, SkFontStyle::Slant::kItalic_Slant));
+    ////defaultStyle.setDecoration(skTextDe(TextDecoration::kNoDecoration));
+    //defaultStyle.setFontSize(30);
+    //defaultStyle.setForegroundColor(paint);
+    //builder->pushStyle(defaultStyle);
+    //builder->addPlaceholder(skia::textlayout::PlaceholderStyle());
+    //std::string hello = "hello\nworld";
+    //builder->addText(hello.data(), hello.size());
+    //auto paragraph = builder->Build();
+    //auto l = builder->getText();
+    //paragraph->layout(148.f);
+    //paragraph->paint(front, 0, 0);
+
+
+    //auto fFontCollection = sk_make_sp<skia::textlayout::FontCollection>();
+    //fFontCollection->setDefaultFontManager(SkFontMgr::RefDefault());
+    //skia::textlayout::TextStyle fTStyle;
+    //fTStyle.setFontFamilies({ SkString("Arial") });
+    //fTStyle.setColor(SK_ColorBLACK);
+    //const char* text =
+    //    "This is a very long sentence to test if the text will properly wrap "
+    //    "around and go to the next line. Sometimes, short sentence. Longer "
+    //    "sentences are okay too because they are necessary. Very short. "
+    //    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod "
+    //    "tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim "
+    //    "veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea "
+    //    "commodo consequat. Duis aute irure dolor in reprehenderit in voluptate "
+    //    "velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint "
+    //    "occaecat cupidatat non proident, sunt in culpa qui officia deserunt "
+    //    "mollit anim id est laborum. "
+    //    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod "
+    //    "tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim "
+    //    "veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea "
+    //    "commodo consequat. Duis aute irure dolor in reprehenderit in voluptate "
+    //    "velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint "
+    //    "occaecat cupidatat non proident, sunt in culpa qui officia deserunt "
+    //    "mollit anim id est laborum.";
+    //skia::textlayout::ParagraphStyle paragraph_style;
+    //auto builder =
+    //    skia::textlayout::ParagraphBuilder::make(paragraph_style, fFontCollection);
+    //if (!builder) {
+    //    return;
+    //}
+    //builder->pushStyle(fTStyle);
+    //builder->addText(text,strlen(text));
+    //builder->pop();
+    //auto fParagraph = builder->Build();
+    //fParagraph->layout(1024);
+    //fParagraph->paint(front, 200, 200);
 
     //front->restore();
     sk_sp<SkImage> img = surfaceFront->makeImageSnapshot();
     back->drawImage(img, 0, 0);
     HDC hdc = GetDC(hwnd);
     static BITMAPINFO info = {sizeof(BITMAPINFOHEADER), w, 0 - h, 1, 32, BI_RGB, w * 4 * h, 0, 0, 0, 0};
-    SetDIBits(hdc, bottomHbitmap, 0, h, pixelBack, &info, DIB_RGB_COLORS);
+    SetDIBits(hdc, bottomHbitmap, 0, h, pixBack->addr(), &info, DIB_RGB_COLORS);
     static BLENDFUNCTION blend = {.BlendOp{AC_SRC_OVER}, .SourceConstantAlpha{255}, .AlphaFormat{AC_SRC_ALPHA}};
     static POINT pSrc = {0, 0};
     static SIZE sizeWnd = {w, h};
@@ -84,12 +131,10 @@ void WindowBase::initCanvas()
     DeleteObject(SelectObject(hCompatibleDC, bottomHbitmap));
     ReleaseDC(hwnd, hdc);
     SkImageInfo info = SkImageInfo::MakeN32Premul(w, h);
-    size_t stride = w * 4;
-    size_t size = stride * h;
-    pixelBack = new unsigned char[size];
-    surfaceBack = SkSurface::MakeRasterDirect(info, pixelBack, stride);
-    pixelFront = new unsigned char[size];
-    surfaceFront = SkSurface::MakeRasterDirect(info, pixelFront, stride);
+    surfaceBack = SkSurfaces::Raster(info);
+    pixBack = new SkPixmap();
+    surfaceBack->peekPixels(pixBack);
+    surfaceFront = SkSurfaces::Raster(info);
 }
 
 void WindowBase::Close(const int &exitCode)

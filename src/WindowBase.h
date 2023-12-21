@@ -25,9 +25,8 @@ protected:
     void initWindow();
     void initCanvas();
     virtual void paint(SkCanvas *canvas) = 0;
-    unsigned char *pixelBase;
-    unsigned char *pixelBack;
-    unsigned char *pixelFront;
+    SkPixmap* pixBase;
+    SkPixmap* pixBack;
 
 private:
     static LRESULT CALLBACK RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);

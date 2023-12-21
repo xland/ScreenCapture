@@ -147,13 +147,16 @@ void WindowMain::shotScreen()
     HBITMAP hBitmap = CreateCompatibleBitmap(hScreen, w, h);
     DeleteObject(SelectObject(hDC, hBitmap));
     BOOL bRet = BitBlt(hDC, 0, 0, w, h, hScreen, x, y, SRCCOPY);
-    long long dataSize = w * h * 4;
-    pixelBase = new unsigned char[dataSize];
+    long long rowBytes = w * 4;
+    long long dataSize = rowBytes * h;
+    auto desktop = new unsigned char[dataSize];
     BITMAPINFO info = {sizeof(BITMAPINFOHEADER), (long)w, 0 - (long)h, 1, 32, BI_RGB, (DWORD)dataSize, 0, 0, 0, 0};
-    GetDIBits(hDC, hBitmap, 0, h, pixelBase, &info, DIB_RGB_COLORS);
+    GetDIBits(hDC, hBitmap, 0, h, desktop, &info, DIB_RGB_COLORS);
     DeleteDC(hDC);
     DeleteObject(hBitmap);
     ReleaseDC(NULL, hScreen);
+    SkImageInfo imgInfo = SkImageInfo::MakeN32Premul(w, h);
+    pixBase = new SkPixmap(imgInfo, desktop, rowBytes);
 }
 
 void WindowMain::initSize()
