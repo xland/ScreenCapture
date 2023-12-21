@@ -24,4 +24,5 @@
 
 
 - undo redo的时候,在SkPictureRecorder对象中重放绘制操作会更快
-- 
+- SK_ENABLE_SKSL 是 Skia 中的一个宏，用于启用或禁用 Skia Shader Language（SKSL）编译器。SKSL 是 Skia 的着色器语言，用于编写图形渲染时使用的着色器代码。
+  - 看SkiaGUI有使用这玩意儿的示例
