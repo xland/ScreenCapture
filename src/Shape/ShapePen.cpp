@@ -49,6 +49,7 @@ bool ShapePen::OnPaint(SkCanvas *canvas)
 
 void ShapePen::initParams()
 {
+    path.moveTo(startX, startY);
     auto tool = ToolSub::get();
     stroke = !tool->getFill();
     if (stroke) {

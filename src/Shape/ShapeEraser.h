@@ -4,21 +4,21 @@
 #include "include/core/SkRect.h"
 #include "include/core/SkPoint.h"
 #include "include/core/SkPath.h"
-#include "ShapeRect.h"
+#include "ShapeBase.h"
 #include <vector>
 
-class ShapePen : public ShapeBase
+class ShapeEraser : public ShapeBase
 {
 public:
-    ShapePen(const int &x, const int &y);
-    ~ShapePen();
-    bool OnMouseDown(const int& x, const int& y) override;
-    bool OnMouseMove(const int& x, const int& y) override;
-    bool OnMouseUp(const int& x, const int& y) override;
-    bool OnMoseDrag(const int& x, const int& y) override;
+    ShapeEraser(const int &x, const int &y);
+    ~ShapeEraser();
     bool OnPaint(SkCanvas *canvas) override;
 
 protected:
+    bool OnMouseDown(const int& x, const int& y) override;
+    bool OnMouseUp(const int& x, const int& y) override;
+    bool OnMouseMove(const int& x, const int& y) override;
+    bool OnMoseDrag(const int& x, const int& y) override;
 
 private:
     SkPath path;
