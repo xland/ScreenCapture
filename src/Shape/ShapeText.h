@@ -18,6 +18,7 @@ public:
     bool OnMoseDrag(const int &x, const int &y) override;
     bool OnPaint(SkCanvas *canvas) override;
     void InsertWord(const std::wstring& word);
+    bool ShowCursor{ true };
 
 protected:
 private:
@@ -25,8 +26,7 @@ private:
     void activeKeyboard(long x, long y);
     void initParams();
     SkRect rect;
-    std::wstring text{ L"Line 1\nLine 2\nLine 3" };
-    unsigned cursorIndex = 0;
-    bool stroke{true};
-    int strokeWidth{4};
+    std::vector<std::wstring> lines;
+    int lineIndex{ 0 }, wordIndex{0};
+    float fontSize{ 80 };
 };

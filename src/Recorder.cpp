@@ -57,7 +57,7 @@ bool Recorder::OnMouseMove(const int &x, const int &y)
         {
             curIndex = i;
             auto func = std::bind(&Recorder::hideDragger, this, std::placeholders::_1);
-            timer->Start(i,600,func);
+            timer->Start(i,800,func);
             break;
         }
         else
@@ -117,21 +117,34 @@ bool Recorder::OnPaint(SkCanvas *canvas)
     return false;
 }
 
-void Recorder::hideDragger(const int& id)
+bool Recorder::hideDragger(const int& id)
 {
     auto win = WindowMain::get();
-    if (!win) {
-        return;
+    if (!win || !shapes[id]) {
+        return true;
     }
-    if (shapes[id]) {
-        if (id == curIndex) {
-            auto func = std::bind(&Recorder::hideDragger, this, std::placeholders::_1);
-            timer->Start(id, 600, func);
-            return;
-        }
-        shapes[id]->showDragger = false;
-        PostMessage(WindowMain::get()->hwnd, WM_REFRESH, NULL, NULL);
+    if (id == curIndex) {
+        auto func = std::bind(&Recorder::hideDragger, this, std::placeholders::_1);
+        timer->Start(id, 800, func);
+        return false;
     }
+    shapes[id]->showDragger = false;
+    PostMessage(WindowMain::get()->hwnd, WM_REFRESH, NULL, NULL);
+    return true;
+}
+
+bool Recorder::flashTextCursor(const int& id)
+{
+    auto win = WindowMain::get();
+    if (!win || !shapes[id]) {
+        return true;
+    }
+    auto shapeText = dynamic_cast<ShapeText*>(shapes[id].get());
+    shapeText->ShowCursor = !shapeText->ShowCursor;
+    auto func = std::bind(&Recorder::flashTextCursor, this, std::placeholders::_1);
+    timer->Start(id, 600, func);
+    PostMessage(WindowMain::get()->hwnd, WM_REFRESH, NULL, NULL);
+    return false;
 }
 
 void Recorder::createShape(const int &x, const int &y, const State &state)
@@ -171,6 +184,8 @@ void Recorder::createShape(const int &x, const int &y, const State &state)
     case State::text:
     {
         shapes.push_back(std::make_shared<ShapeText>(x, y));
+        auto func = std::bind(&Recorder::flashTextCursor, this, std::placeholders::_1);
+        timer->Start(shapes.size()-1, 600, func);
         break;
     }
     case State::mosaic:

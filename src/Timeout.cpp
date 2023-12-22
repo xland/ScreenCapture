@@ -17,7 +17,7 @@ Timeout::~Timeout()
     }
 }
 
-void Timeout::Start(const int id, const int& timeSpan, std::function<void(const int&)> taskFunc)
+void Timeout::Start(const int id, const int& timeSpan, std::function<bool(const int&)> taskFunc)
 {
     auto it = std::find_if(tasks.begin(), tasks.end(), [id](auto& task) {
         return task->id == id;
@@ -35,7 +35,17 @@ void Timeout::Start(const int id, const int& timeSpan, std::function<void(const 
             return a->startTime < b->startTime;
             });
     }
+}
 
+void Timeout::Remove(const int& id)
+{
+    auto it = std::find_if(tasks.begin(), tasks.end(), [id](std::shared_ptr<Task> task){
+        return task->id == id;
+    });
+    if (it != tasks.end()) {
+        std::lock_guard<std::mutex> lock(mutex);
+        tasks.erase(it);
+    }
 }
 
 void Timeout::asyncTask()
@@ -46,12 +56,11 @@ void Timeout::asyncTask()
         auto currentTime = std::chrono::steady_clock::now();
         auto it = std::remove_if(tasks.begin(), tasks.end(), [currentTime](auto& task) {
             if (task->startTime <= currentTime) {
-                task->taskFunc(task->id);
-                return true;
+                return task->taskFunc(task->id);
             }
             return false;
             });
-        {
+        if (it != tasks.end()) {
             std::lock_guard<std::mutex> lock(mutex);
             tasks.erase(it, tasks.end());
         }

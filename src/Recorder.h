@@ -24,7 +24,8 @@ public:
     std::vector<std::shared_ptr<ShapeBase>> shapes;
 
 private:
-    void hideDragger(const int& id);
+    bool hideDragger(const int& id);
+    bool flashTextCursor(const int& id);
     Recorder();
     void createShape(const int& x, const int& y,const State& state);
     int curIndex{-1};
