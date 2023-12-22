@@ -14,6 +14,8 @@
 ShapeText::ShapeText(const int &x, const int &y) : ShapeBase(x, y)
 {
     initParams();
+    setRect();
+    WindowMain::get()->Refresh();
 }
 
 ShapeText::~ShapeText()
@@ -22,34 +24,10 @@ ShapeText::~ShapeText()
 
 bool ShapeText::OnMouseDown(const int &x, const int &y)
 {
-    IsWIP = false;
-    auto font = AppFont::Get()->fontText;
-    font->setSize(fontSize);
-    SkFontMetrics metrics;
-    font->getMetrics(&metrics);
-    auto lineHeight = metrics.fBottom - metrics.fTop;
-    SkRect lineRect;
-    float left{ (float)x-10 }, top{ (float)y-10 }, width{ 20 }, height{ 0 };
-    for (size_t i = 0; i < lines.size(); i++)
-    {
-        auto data = lines[i].data();
-        auto length = wcslen(data) * 2;
-        font->measureText(data, length, SkTextEncoding::kUTF16, &lineRect);
-        width = std::max(width, lineRect.width());
-        height += lineHeight;
-        if (i == 0) {
-            top += lineRect.top();
-        }
+    if (!rect.contains(x, y)) {
+        return;
     }
-    if (width > 20) {
-        width += 20;
-    }
-    if (height == 0) {
-        height = lineHeight;
-    }
-    rect.setXYWH(left, top, width, height);
-    activeKeyboard(x, y+lineHeight-10);
-    WindowMain::get()->Refresh();
+
     return false;
 }
 
@@ -72,7 +50,43 @@ bool ShapeText::OnMoseDrag(const int &x, const int &y)
 
 bool ShapeText::OnChar(const unsigned int& val)
 {
-    std::wstring word{ (wchar_t)val };
+    if (val == 13) {
+        lineIndex += 1;
+        wordIndex = 0;
+        lines.push_back(L"");
+    }
+    else if (val == 8) {
+        if (lines.size() == 0) {
+            return false;
+        }
+        lines[lineIndex] = lines[lineIndex].substr(0, wordIndex - 1) + lines[lineIndex].substr(wordIndex);
+        if (lines[lineIndex].empty()) {
+            lines.erase(lines.begin() + lineIndex);
+            lineIndex -= 1;
+            if (lineIndex < 0) {
+                lineIndex = 0;
+                wordIndex = 0;
+            }
+            else {
+                wordIndex = lines[lineIndex].length();
+            }            
+        }
+        else {
+            wordIndex -= 1;
+        } 
+    }
+    else {
+        std::wstring word{ (wchar_t)val };
+        if (lines.size() == 0) {
+            lines.push_back(word);
+        }
+        else {
+            lines[lineIndex] += word;
+        }
+        wordIndex += 1;
+    }
+    setRect();
+    WindowMain::get()->Refresh();
     return false;
 }
 
@@ -103,16 +117,9 @@ bool ShapeText::OnPaint(SkCanvas *canvas)
     }
 
     auto lineHeight = metrics.fBottom - metrics.fTop;
-    float inputCursorX{ rect.left() + 10 }, inputCursorTop{ rect.top() + lineHeight * lineIndex + 10 };
+    float inputCursorTop{ rect.top() + lineHeight * lineIndex + 10 };
     float inputCursorBottom{ rect.top() + lineHeight * (lineIndex + 1) - 10 };
-    if (wordIndex > 0) {
-        SkRect lineRect;
-        auto subStr = lines[lineIndex].substr(0, wordIndex);
-        auto data = subStr.data();
-        auto length = wcslen(data) * 2;
-        font->measureText(data, length, SkTextEncoding::kUTF16, &lineRect);
-        inputCursorX += lineRect.width();
-    }
+    float inputCursorX{ getCursorX(font,lineHeight) };
     canvas->drawLine(inputCursorX, inputCursorTop, inputCursorX, inputCursorBottom, paint);
     //font->measureText(str.c_str(), str.size(), SkTextEncoding::kUTF8, &textBounds);
     //SkScalar x = startX - textBounds.width() / 2 - textBounds.left();
@@ -169,9 +176,47 @@ void ShapeText::activeKeyboard(long x, long y)
         ImmReleaseContext(win->hwnd, himc);
     }
 }
-void ShapeText::InsertWord(const std::wstring& word)
+void ShapeText::setRect()
 {
-    //text = text.substr(0, cursorIndex) + word + text.substr(cursorIndex);
-    //cursorIndex += 1;
-    WindowMain::get()->Refresh();
+    auto font = AppFont::Get()->fontText;
+    font->setSize(fontSize);
+    SkFontMetrics metrics;
+    font->getMetrics(&metrics);
+    auto lineHeight = metrics.fBottom - metrics.fTop;
+    SkRect lineRect;
+    float left{ (float)startX - 10 }, top{ (float)startY - 10 }, width{ 20 }, height{ 0 };
+    for (size_t i = 0; i < lines.size(); i++)
+    {
+        auto data = lines[i].data();
+        auto length = wcslen(data) * 2;
+        font->measureText(data, length, SkTextEncoding::kUTF16, &lineRect);
+        width = std::max(width, lineRect.width());
+        height += lineHeight;
+        if (i == 0) {
+            top += lineRect.top();
+        }
+    }
+    if (width > 20) {
+        width += 20;
+    }
+    if (height == 0) {
+        font->measureText(L"сю", 2, SkTextEncoding::kUTF16, &lineRect);
+        top += lineRect.top();
+        height = lineHeight;
+    }
+    rect.setXYWH(left, top, width, height);
+    activeKeyboard(getCursorX(font,lineHeight), startY + lineIndex * lineHeight);
+}
+float ShapeText::getCursorX(SkFont* font, float& lineHeight)
+{
+    float inputCursorX{ rect.left() + 10 };
+    if (wordIndex > 0) {
+        SkRect lineRect;
+        auto subStr = lines[lineIndex].substr(0, wordIndex);
+        auto data = subStr.data();
+        auto length = wcslen(data) * 2;
+        font->measureText(data, length, SkTextEncoding::kUTF16, &lineRect);
+        inputCursorX += lineRect.width();
+    }
+    return inputCursorX;
 }

@@ -18,13 +18,14 @@ public:
     bool OnMoseDrag(const int &x, const int &y) override;
     bool OnChar(const unsigned int& val) override;
     bool OnPaint(SkCanvas *canvas) override;
-    void InsertWord(const std::wstring& word);
     bool ShowCursor{ true };
 
 protected:
 private:
     SkColor color{ SkColorSetARGB(255, 207, 19, 34) };
     void activeKeyboard(long x, long y);
+    void setRect();
+    float getCursorX(SkFont* font,float& lineHeight);
     void initParams();
     SkRect rect;
     std::vector<std::wstring> lines;

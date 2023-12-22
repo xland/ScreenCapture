@@ -85,23 +85,17 @@ bool Recorder::OnMouseDrag(const int &x, const int &y)
 }
 bool Recorder::onChar(const unsigned int& val)
 {
-    if (val == 13) { //enter
-        return 1;
-    }
-    if (val == 8) {
-        //shape->DeleteWord();
-    }
-    else
-    {
-        shapes[curIndex]->OnChar(val);
-        //shape->InsertWord(std::wstring{ (wchar_t)wparam });
-    }
-    return false;
+    shapes[curIndex]->OnChar(val);
+    return false;    
 }
 bool Recorder::OnMouseUp(const int &x, const int &y)
 {
     if (curIndex < 0)
     {
+        return false;
+    }
+    auto winMain = WindowMain::get();
+    if (winMain->state == State::text) {
         return false;
     }
     if (shapes[curIndex]->IsWIP)
