@@ -29,6 +29,7 @@ private:
     void initParams();
     SkRect rect;
     std::vector<std::wstring> lines;
+    float lineHeight;
     int lineIndex{ 0 }, wordIndex{0};
     float fontSize{ 80 };
 };

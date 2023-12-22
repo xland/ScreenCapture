@@ -13,6 +13,11 @@
 
 ShapeText::ShapeText(const int &x, const int &y) : ShapeBase(x, y)
 {
+    auto font = AppFont::Get()->fontText;
+    font->setSize(fontSize);
+    SkFontMetrics metrics;
+    font->getMetrics(&metrics);
+    lineHeight = metrics.fBottom - metrics.fTop;
     initParams();
     setRect();
     WindowMain::get()->Refresh();
@@ -25,9 +30,36 @@ ShapeText::~ShapeText()
 bool ShapeText::OnMouseDown(const int &x, const int &y)
 {
     if (!rect.contains(x, y)) {
-        return;
+        return false;
     }
-
+    lineIndex = (y - rect.top()) / lineHeight;
+    if (lines.size() > 0) {
+        int index = 0;
+        float width = x - rect.left();
+        auto font = AppFont::Get()->fontText;
+        SkRect rect;
+        float tempW{0};
+        for (size_t i = 0; i < lines[lineIndex].length()+1; i++)
+        {
+            auto str = lines[lineIndex].substr(0, i);
+            auto data = str.data();
+            auto length = wcslen(data) * 2;
+            font->measureText(data, length, SkTextEncoding::kUTF16, &rect);            
+            if (rect.width() > width) {
+                float half = (rect.width() - tempW)/2+tempW;
+                if (half > width) {
+                    wordIndex = i-1;
+                }
+                else
+                {
+                    wordIndex = i;
+                }
+                break;
+            }
+            tempW = rect.width();
+        }
+    }
+    WindowMain::get()->Refresh();
     return false;
 }
 
@@ -81,7 +113,9 @@ bool ShapeText::OnChar(const unsigned int& val)
             lines.push_back(word);
         }
         else {
-            lines[lineIndex] += word;
+            auto str1 = lines[lineIndex].substr(0, wordIndex);
+            auto str2 = lines[lineIndex].substr(wordIndex);
+            lines[lineIndex] = str1+ word + str2;
         }
         wordIndex += 1;
     }
@@ -98,25 +132,19 @@ bool ShapeText::OnPaint(SkCanvas *canvas)
     paint.setStrokeWidth(2);
     canvas->drawRect(rect, paint);
     auto font = AppFont::Get()->fontText;
-    SkFontMetrics metrics;
-    font->getMetrics(&metrics);
-    font->setSize(fontSize); 
     paint.setStroke(false);
     SkRect textBounds;
-    auto height = metrics.fBottom - metrics.fTop;
     paint.setAntiAlias(true);
     float x{(float)startX}, y{ (float)startY };
     for (const auto& line : lines) {
         auto data = line.data();
         auto length = wcslen(data) * 2;
         SkTextUtils::Draw(canvas, data, length,SkTextEncoding::kUTF16,x, y, *font, paint,SkTextUtils::kLeft_Align);
-        y += height;
+        y += lineHeight;
     }
     if (!ShowCursor) {
         return false;
     }
-
-    auto lineHeight = metrics.fBottom - metrics.fTop;
     float inputCursorTop{ rect.top() + lineHeight * lineIndex + 10 };
     float inputCursorBottom{ rect.top() + lineHeight * (lineIndex + 1) - 10 };
     float inputCursorX{ getCursorX(font,lineHeight) };
@@ -178,11 +206,7 @@ void ShapeText::activeKeyboard(long x, long y)
 }
 void ShapeText::setRect()
 {
-    auto font = AppFont::Get()->fontText;
-    font->setSize(fontSize);
-    SkFontMetrics metrics;
-    font->getMetrics(&metrics);
-    auto lineHeight = metrics.fBottom - metrics.fTop;
+    auto font = AppFont::Get()->fontText;    
     SkRect lineRect;
     float left{ (float)startX - 10 }, top{ (float)startY - 10 }, width{ 20 }, height{ 0 };
     for (size_t i = 0; i < lines.size(); i++)
@@ -218,5 +242,5 @@ float ShapeText::getCursorX(SkFont* font, float& lineHeight)
         font->measureText(data, length, SkTextEncoding::kUTF16, &lineRect);
         inputCursorX += lineRect.width();
     }
-    return inputCursorX;
+    return inputCursorX+1;
 }
