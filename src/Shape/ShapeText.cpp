@@ -39,6 +39,7 @@ bool ShapeText::OnMouseDown(const int &x, const int &y)
         auto font = AppFont::Get()->fontText;
         SkRect rect;
         float tempW{0};
+        bool flag = false;
         for (size_t i = 0; i < lines[lineIndex].length()+1; i++)
         {
             auto str = lines[lineIndex].substr(0, i);
@@ -54,9 +55,13 @@ bool ShapeText::OnMouseDown(const int &x, const int &y)
                 {
                     wordIndex = i;
                 }
+                flag = true;
                 break;
             }
             tempW = rect.width();
+        }
+        if (!flag) {
+            wordIndex = lines[lineIndex].length();
         }
     }
     WindowMain::get()->Refresh();
@@ -83,6 +88,12 @@ bool ShapeText::OnMoseDrag(const int &x, const int &y)
 bool ShapeText::OnChar(const unsigned int& val)
 {
     if (val == 13) {
+        if (wordIndex != lines[lineIndex].length()) {
+            auto str1 = lines[lineIndex].substr(0, wordIndex);
+            auto str2 = lines[lineIndex].substr(wordIndex);
+            lines[lineIndex] = str1;
+            lines.insert(lines.begin() + lineIndex, str2);
+        }
         lineIndex += 1;
         wordIndex = 0;
         lines.push_back(L"");
