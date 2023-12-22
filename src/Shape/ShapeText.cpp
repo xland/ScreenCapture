@@ -35,10 +35,10 @@ bool ShapeText::OnMouseDown(const int &x, const int &y)
     lineIndex = (y - rect.top()) / lineHeight;
     if (lines.size() > 0) {
         int index = 0;
-        float width = x - rect.left();
+        float width = x - rect.left()-10;
         auto font = AppFont::Get()->fontText;
         SkRect rect;
-        float tempW{0};
+        float right{0};
         bool flag = false;
         for (size_t i = 0; i < lines[lineIndex].length()+1; i++)
         {
@@ -46,8 +46,8 @@ bool ShapeText::OnMouseDown(const int &x, const int &y)
             auto data = str.data();
             auto length = wcslen(data) * 2;
             font->measureText(data, length, SkTextEncoding::kUTF16, &rect);            
-            if (rect.width() > width) {
-                float half = (rect.width() - tempW)/2+tempW;
+            if (rect.right() > width) {
+                float half = (rect.right() - right)/2+right;
                 if (half > width) {
                     wordIndex = i-1;
                 }
@@ -58,7 +58,7 @@ bool ShapeText::OnMouseDown(const int &x, const int &y)
                 flag = true;
                 break;
             }
-            tempW = rect.width();
+            right = rect.right();
         }
         if (!flag) {
             wordIndex = lines[lineIndex].length();
@@ -92,11 +92,14 @@ bool ShapeText::OnChar(const unsigned int& val)
             auto str1 = lines[lineIndex].substr(0, wordIndex);
             auto str2 = lines[lineIndex].substr(wordIndex);
             lines[lineIndex] = str1;
-            lines.insert(lines.begin() + lineIndex, str2);
+            lines.insert(lines.begin() + lineIndex+1, str2);
+        }
+        else
+        {
+            lines.push_back(L"");
         }
         lineIndex += 1;
         wordIndex = 0;
-        lines.push_back(L"");
     }
     else if (val == 8) {
         if (lines.size() == 0) {
@@ -132,6 +135,59 @@ bool ShapeText::OnChar(const unsigned int& val)
     }
     setRect();
     WindowMain::get()->Refresh();
+    return false;
+}
+
+bool ShapeText::OnKeyDown(const unsigned int& val)
+{
+    if (val == VK_UP) {
+        if (lineIndex <= 0) {
+            return false;
+        }
+        lineIndex -= 1;
+        if (wordIndex > lines[lineIndex].length()) {
+            wordIndex = lines[lineIndex].length();
+        }
+        WindowMain::get()->Refresh();
+    }
+    else if (val == VK_DOWN) {
+        if (lineIndex > lines.size()-1) {
+            return false;
+        }
+        lineIndex += 1;
+        if (wordIndex > lines[lineIndex].length()) {
+            wordIndex = lines[lineIndex].length();
+        }
+        WindowMain::get()->Refresh();
+    }
+    else if (val == VK_LEFT) {
+        if (wordIndex == 0) {
+            if (lineIndex == 0) {
+                return false;
+            }
+            lineIndex -= 1;
+            wordIndex = lines[lineIndex].length();
+            WindowMain::get()->Refresh();
+            return false;
+        }
+        wordIndex -= 1;
+        WindowMain::get()->Refresh();
+        return false;        
+    }
+    else if (val == VK_RIGHT) {
+        if (wordIndex == lines[lineIndex].length()) {
+            if (lineIndex == lines.size() - 1) {
+                return false;
+            }
+            lineIndex += 1;
+            wordIndex = 0;
+            WindowMain::get()->Refresh();
+            return false;
+        }
+        wordIndex += 1;
+        WindowMain::get()->Refresh();
+        return false;
+    }
     return false;
 }
 
@@ -251,7 +307,7 @@ float ShapeText::getCursorX(SkFont* font, float& lineHeight)
         auto data = subStr.data();
         auto length = wcslen(data) * 2;
         font->measureText(data, length, SkTextEncoding::kUTF16, &lineRect);
-        inputCursorX += lineRect.width();
+        inputCursorX += lineRect.right();
     }
     return inputCursorX+1;
 }

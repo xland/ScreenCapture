@@ -88,8 +88,23 @@ LRESULT WindowMain::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam
         exit(0);
         return true;
     }
+    case WM_KEYDOWN:
+    {
+        switch (wparam)
+        {
+        case VK_ESCAPE:
+        {
+            this->Close(3);
+            return false;
+        }
+        default:
+        {
+            onKeyDown(wparam);
+        }
+        }
+        return false;
+    }
     case WM_CHAR: {
-        //std::wstring word{ (wchar_t)wparam };
         return onChar(wparam);
     }
     default:
@@ -132,6 +147,11 @@ bool WindowMain::onMouseDrag(const int& x, const int& y)
 bool WindowMain::onChar(const unsigned int& val)
 {
     Recorder::get()->onChar(val);
+    return false;
+}
+bool WindowMain::onKeyDown(const unsigned int& val)
+{
+    Recorder::get()->onKeyDown(val);
     return false;
 }
 void WindowMain::paint(SkCanvas* canvas)

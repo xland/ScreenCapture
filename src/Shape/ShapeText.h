@@ -17,6 +17,7 @@ public:
     bool OnMouseUp(const int &x, const int &y) override;
     bool OnMoseDrag(const int &x, const int &y) override;
     bool OnChar(const unsigned int& val) override;
+    bool OnKeyDown(const unsigned int& val) override;
     bool OnPaint(SkCanvas *canvas) override;
     bool ShowCursor{ true };
 

@@ -88,6 +88,11 @@ bool Recorder::onChar(const unsigned int& val)
     shapes[curIndex]->OnChar(val);
     return false;    
 }
+bool Recorder::onKeyDown(const unsigned int& val)
+{
+    shapes[curIndex]->OnKeyDown(val);
+    return false;
+}
 bool Recorder::OnMouseUp(const int &x, const int &y)
 {
     if (curIndex < 0)

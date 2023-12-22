@@ -20,6 +20,7 @@ public:
     bool OnMouseMove(const int &x, const int &y);
     bool OnMouseDrag(const int& x, const int& y);
     bool onChar(const unsigned int& val);
+    bool onKeyDown(const unsigned int& val);
     bool OnPaint(SkCanvas *canvas);
     std::vector<std::shared_ptr<ShapeBase>> shapes;
 

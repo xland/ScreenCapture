@@ -36,81 +36,7 @@ void WindowBase::Refresh()
     auto back = surfaceBack->getCanvas();
     auto front = surfaceFront->getCanvas();
     front->clear(SK_ColorTRANSPARENT);
-    //front->saveLayer(nullptr,nullptr);
     paint(front);
-
-    //auto fontMgr = SkFontMgr::RefDefault();
-//int count = fontMgr->countFamilies();
-//for (int i = 0; i < count; ++i) {
-//    SkString familyName;
-//    fontMgr->getFamilyName(i, &familyName);
-//    SkDebugf(familyName.c_str());
-//    //std::cout << "Font Family Name: " << familyName.c_str() << std::endl;
-//}
-
-    //SkPaint paint;
-    //paint.setColor(SK_ColorRED);
-    //paint.setStroke(false);
-    //sk_sp<skia::textlayout::FontCollection> fontCollection = sk_make_sp<skia::textlayout::FontCollection>();
-    //fontCollection->setDefaultFontManager(SkFontMgr::RefDefault());
-    //fontCollection->enableFontFallback();
-    //skia::textlayout::ParagraphStyle paraStyle;
-    //auto builder = skia::textlayout::ParagraphBuilder::make(paraStyle, fontCollection);
-    //skia::textlayout::TextStyle defaultStyle;
-    //std::vector<SkString> ffs;
-    //ffs.push_back(SkString{ "Arial" });
-    //defaultStyle.setFontFamilies(ffs);
-    //defaultStyle.setFontStyle(SkFontStyle(SkFontStyle::Weight::kBold_Weight, SkFontStyle::Width::kNormal_Width, SkFontStyle::Slant::kItalic_Slant));
-    ////defaultStyle.setDecoration(skTextDe(TextDecoration::kNoDecoration));
-    //defaultStyle.setFontSize(30);
-    //defaultStyle.setForegroundColor(paint);
-    //builder->pushStyle(defaultStyle);
-    //builder->addPlaceholder(skia::textlayout::PlaceholderStyle());
-    //std::string hello = "hello\nworld";
-    //builder->addText(hello.data(), hello.size());
-    //auto paragraph = builder->Build();
-    //auto l = builder->getText();
-    //paragraph->layout(148.f);
-    //paragraph->paint(front, 0, 0);
-
-
-    //auto fFontCollection = sk_make_sp<skia::textlayout::FontCollection>();
-    //fFontCollection->setDefaultFontManager(SkFontMgr::RefDefault());
-    //skia::textlayout::TextStyle fTStyle;
-    //fTStyle.setFontFamilies({ SkString("Arial") });
-    //fTStyle.setColor(SK_ColorBLACK);
-    //const char* text =
-    //    "This is a very long sentence to test if the text will properly wrap "
-    //    "around and go to the next line. Sometimes, short sentence. Longer "
-    //    "sentences are okay too because they are necessary. Very short. "
-    //    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod "
-    //    "tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim "
-    //    "veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea "
-    //    "commodo consequat. Duis aute irure dolor in reprehenderit in voluptate "
-    //    "velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint "
-    //    "occaecat cupidatat non proident, sunt in culpa qui officia deserunt "
-    //    "mollit anim id est laborum. "
-    //    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod "
-    //    "tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim "
-    //    "veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea "
-    //    "commodo consequat. Duis aute irure dolor in reprehenderit in voluptate "
-    //    "velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint "
-    //    "occaecat cupidatat non proident, sunt in culpa qui officia deserunt "
-    //    "mollit anim id est laborum.";
-    //skia::textlayout::ParagraphStyle paragraph_style;
-    //auto builder =
-    //    skia::textlayout::ParagraphBuilder::make(paragraph_style, fFontCollection);
-    //if (!builder) {
-    //    return;
-    //}
-    //builder->pushStyle(fTStyle);
-    //builder->addText(text,strlen(text));
-    //builder->pop();
-    //auto fParagraph = builder->Build();
-    //fParagraph->layout(1024);
-    //fParagraph->paint(front, 200, 200);
-
-    //front->restore();
     sk_sp<SkImage> img = surfaceFront->makeImageSnapshot();
     back->drawImage(img, 0, 0);
     HDC hdc = GetDC(hwnd);
@@ -171,18 +97,6 @@ LRESULT CALLBACK WindowBase::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wPar
         case WM_SETCURSOR:
         {
             return true;
-        }
-        case WM_KEYDOWN:
-        {
-            switch (wParam)
-            {
-            case VK_ESCAPE:
-            {
-                obj->Close(3);
-                return false;
-            }
-            }
-            return false;
         }
         case WM_KEYUP:
         {

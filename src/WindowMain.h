@@ -24,4 +24,5 @@ private:
     bool onMouseMove(const int& x, const int& y);
     bool onMouseDrag(const int& x, const int& y);
     bool onChar(const unsigned int& val);
+    bool onKeyDown(const unsigned int& val);
 };

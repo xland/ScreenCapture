@@ -17,9 +17,8 @@ public:
     virtual bool OnMouseMove(const int& x, const int& y) = 0;
     virtual bool OnMouseUp(const int& x, const int& y) = 0;
     virtual bool OnMoseDrag(const int& x, const int& y) { return false; };
-    virtual bool OnChar(const unsigned int& val) { 
-        std::wstring word{ (wchar_t)val };
-        return false; };
+    virtual bool OnChar(const unsigned int& val) { return false; };
+    virtual bool OnKeyDown(const unsigned int& val) { return false; };
     virtual bool OnPaint(SkCanvas* canvas) = 0;
     bool showDragger{ false };
     bool IsWIP{true};
