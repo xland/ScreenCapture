@@ -50,6 +50,10 @@ bool Recorder::OnMouseDown(const int &x, const int &y)
 }
 bool Recorder::OnMouseMove(const int &x, const int &y)
 {
+    auto winMain = WindowMain::get();
+    if (winMain->state == State::text) {
+        return false;
+    }
     for (int i = shapes.size() - 1; i >= 0; i--)
     {
         auto flag = shapes[i]->OnMouseMove(x, y);
@@ -89,6 +93,7 @@ bool Recorder::onChar(const unsigned int& val)
     }
     else
     {
+        shapes[curIndex]->OnChar(val);
         //shape->InsertWord(std::wstring{ (wchar_t)wparam });
     }
     return false;

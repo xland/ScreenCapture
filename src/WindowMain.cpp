@@ -89,6 +89,7 @@ LRESULT WindowMain::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam
         return true;
     }
     case WM_CHAR: {
+        //std::wstring word{ (wchar_t)wparam };
         return onChar(wparam);
     }
     default:

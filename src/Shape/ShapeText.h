@@ -16,6 +16,7 @@ public:
     bool OnMouseMove(const int &x, const int &y) override;
     bool OnMouseUp(const int &x, const int &y) override;
     bool OnMoseDrag(const int &x, const int &y) override;
+    bool OnChar(const unsigned int& val) override;
     bool OnPaint(SkCanvas *canvas) override;
     void InsertWord(const std::wstring& word);
     bool ShowCursor{ true };

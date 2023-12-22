@@ -2,8 +2,7 @@
 #include "../WindowMain.h"
 #include "../ToolSub.h"
 #include "../AppFont.h"
-#include <locale>
-#include <codecvt>
+
 #include "include/core/SkCanvas.h"
 #include "include/core/SkPaint.h"
 #include "include/core/SkRect.h"
@@ -71,6 +70,12 @@ bool ShapeText::OnMoseDrag(const int &x, const int &y)
     return false;
 }
 
+bool ShapeText::OnChar(const unsigned int& val)
+{
+    std::wstring word{ (wchar_t)val };
+    return false;
+}
+
 bool ShapeText::OnPaint(SkCanvas *canvas)
 {
     SkPaint paint;
@@ -90,8 +95,6 @@ bool ShapeText::OnPaint(SkCanvas *canvas)
     for (const auto& line : lines) {
         auto data = line.data();
         auto length = wcslen(data) * 2;
-        SkDebugf(std::to_string(length).c_str());
-        SkDebugf("\n");
         SkTextUtils::Draw(canvas, data, length,SkTextEncoding::kUTF16,x, y, *font, paint,SkTextUtils::kLeft_Align);
         y += height;
     }
@@ -116,11 +119,7 @@ bool ShapeText::OnPaint(SkCanvas *canvas)
     //SkScalar y = startY + textBounds.height() / 2 - textBounds.bottom();    
     //canvas->drawSimpleText(str.c_str(), str.size(), SkTextEncoding::kUTF8, x, y, *font, paint);
 
-    //paint.setStroke(false);
-    //auto data = text.data();
-    //auto length = wcslen(data) * 2;
-    //auto font = AppFont::Get()->fontText;
-    //font->setSize(fontSize);
+
 
 
     //std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
