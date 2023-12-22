@@ -9,6 +9,7 @@
 #include "Shape/ShapeLine.h"
 #include "Shape/ShapeText.h"
 #include "Shape/ShapeEraser.h"
+#include "Shape/ShapeMosaic.h"
 
 Recorder *recorder;
 
@@ -195,7 +196,7 @@ void Recorder::createShape(const int &x, const int &y, const State &state)
     }
     case State::mosaic:
     {
-        
+        shapes.push_back(std::make_shared<ShapeMosaic>(x, y));
         break;
     }
     case State::eraser:
