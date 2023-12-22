@@ -57,15 +57,14 @@ void ShapeEraser::initParams()
     if (stroke) {
         auto stroke = tool->getStroke();
         if (stroke == 1) {
-            strokeWidth = 4;
+            strokeWidth = 26;
         }
         else if (stroke == 2) {
-            strokeWidth = 8;
+            strokeWidth = 56;
         }
         else
         {
-            strokeWidth = 16;
+            strokeWidth = 86;
         }
     }
-    color = tool->getColor();
 }

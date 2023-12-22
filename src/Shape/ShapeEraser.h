@@ -23,7 +23,7 @@ protected:
 private:
     SkPath path;
     bool stroke{ true };
-    int strokeWidth{ 4 };
+    int strokeWidth{ 26 };
     SkColor color{ SkColorSetARGB(255, 207, 19, 34) };
     void initParams();
 };
