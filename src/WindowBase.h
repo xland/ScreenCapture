@@ -19,14 +19,14 @@ public:
     bool IsMouseDown{false};
     sk_sp<SkSurface> surfaceBack;
     sk_sp<SkSurface> surfaceFront;
+    SkPixmap* pixBase;
+    SkPixmap* pixBack;
 
 protected:
     virtual LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) = 0;
     void initWindow();
     void initCanvas();
     virtual void paint(SkCanvas *canvas) = 0;
-    SkPixmap* pixBase;
-    SkPixmap* pixBack;
 
 private:
     static LRESULT CALLBACK RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);

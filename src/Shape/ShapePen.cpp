@@ -37,7 +37,8 @@ bool ShapePen::OnMoseDrag(const int& x, const int& y)
 bool ShapePen::OnPaint(SkCanvas *canvas)
 {
     SkPaint paint;
-    paint.setAntiAlias(true);
+    paint.setAntiAlias(true);    
+    paint.setStyle(SkPaint::kStroke_Style);
     paint.setStrokeCap(SkPaint::Cap::kRound_Cap);
     paint.setStrokeJoin(SkPaint::kRound_Join);
     paint.setColor(color);

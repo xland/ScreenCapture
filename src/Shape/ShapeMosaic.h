@@ -21,6 +21,7 @@ protected:
     bool OnMoseDrag(const int &x, const int &y) override;
 
 private:
+    SkColor getMosaicRectColor(const SkRect& rect);
     SkPath path;
     bool stroke{true};
     int strokeWidth{26};
