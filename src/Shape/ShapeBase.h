@@ -20,6 +20,7 @@ public:
     virtual bool OnChar(const unsigned int& val) { return false; };
     virtual bool OnKeyDown(const unsigned int& val) { return false; };
     virtual bool OnPaint(SkCanvas* canvas) = 0;
+    virtual bool OnPaintFinish(SkCanvas* canvas) { return false; };
     bool showDragger{ false };
     bool IsWIP{true};
     int HoverIndex{-1};

@@ -6,8 +6,11 @@
 #include "include/effects/SkBlurMaskFilter.h"
 #include "include/core/SkPathMeasure.h"
 #include "include/core/SkColor.h"
+#include "include/core/SkStream.h"
+#include "include/encode/SkPngEncoder.h"
 
 static sk_sp<SkSurface> surface;
+static SkPixmap pixmap;
 
 
 ShapeMosaic::ShapeMosaic(const int &x, const int &y) : ShapeBase(x, y)
@@ -16,6 +19,7 @@ ShapeMosaic::ShapeMosaic(const int &x, const int &y) : ShapeBase(x, y)
         auto win = WindowMain::get();
         SkImageInfo info = SkImageInfo::MakeN32Premul(win->w, win->h);
         surface = SkSurfaces::Raster(info);
+
     }
     initParams();
 }
@@ -29,7 +33,7 @@ void samplePathCoordinates(const SkPath& path, int numSamples) {
     
 }
 
-bool ShapeMosaic::OnPaint(SkCanvas *canvas)
+bool ShapeMosaic::OnPaintFinish(SkCanvas *canvas)
 {
     auto win = WindowMain::get();
     float size = 10.f;
@@ -53,7 +57,6 @@ bool ShapeMosaic::OnPaint(SkCanvas *canvas)
         }
     }
     c->drawImage(win->surfaceBack->makeImageSnapshot(), 0, 0);
-    c->drawImage(win->surfaceFront->makeImageSnapshot(), 0, 0);
     paint.setAntiAlias(true);
     paint.setStroke(true);
     paint.setStrokeWidth(strokeWidth);
@@ -62,24 +65,13 @@ bool ShapeMosaic::OnPaint(SkCanvas *canvas)
     paint.setStrokeJoin(SkPaint::kRound_Join);
     paint.setBlendMode(SkBlendMode::kClear);
     c->drawPath(path, paint);
-
     canvas->drawImage(surface->makeImageSnapshot(), 0, 0);
-
-    //canvas->restore();
-    //paint.setAntiAlias(true);
-    //paint.setStrokeCap(SkPaint::Cap::kRound_Cap);
-    //paint.setStrokeJoin(SkPaint::kRound_Join);
-    //paint.setStroke(true);
-    //paint.setStrokeWidth(strokeWidth);
-    //SkSamplingOptions options;
-    //canvas->drawPath(path, paint);
     return false;
 }
 
 bool ShapeMosaic::OnMouseDown(const int &x, const int &y)
 {
-
-
+    path.moveTo(x, y);
     return false;
 }
 
@@ -102,8 +94,8 @@ bool ShapeMosaic::OnMoseDrag(const int &x, const int &y)
 }
 
 SkColor ShapeMosaic::getMosaicRectColor(const SkRect& rect)
-{
-    auto win = WindowMain::get();    
+{ 
+    auto win = WindowMain::get();
     SkColor4f colorSum = { 0, 0, 0, 0 };
     int count{ 0 };
     for (size_t x = rect.left(); x < rect.right(); x+=2)

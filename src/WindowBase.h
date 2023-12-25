@@ -27,6 +27,7 @@ protected:
     void initWindow();
     void initCanvas();
     virtual void paint(SkCanvas *canvas) = 0;
+    virtual void paintFinish(SkCanvas* canvas) = 0;
 
 private:
     static LRESULT CALLBACK RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);

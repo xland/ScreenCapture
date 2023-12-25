@@ -22,6 +22,7 @@ public:
     bool onChar(const unsigned int& val);
     bool onKeyDown(const unsigned int& val);
     bool OnPaint(SkCanvas *canvas);
+    bool OnPaintFinish(SkCanvas* canvas);
     std::vector<std::shared_ptr<ShapeBase>> shapes;
 
 private:

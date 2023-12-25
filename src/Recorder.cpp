@@ -50,6 +50,24 @@ bool Recorder::OnMouseDown(const int &x, const int &y)
     shapes[curIndex]->OnMouseDown(x, y);
     return false;
 }
+bool Recorder::OnMouseUp(const int &x, const int &y)
+{
+    if (curIndex < 0)
+    {
+        return false;
+    }
+    auto winMain = WindowMain::get();
+    if (winMain->state == State::text) {
+        return false;
+    }
+    if (shapes[curIndex]->IsWIP)
+    {
+        shapes.erase(shapes.begin() + curIndex, shapes.begin() + 1);
+    }
+    shapes[curIndex]->OnMouseUp(x, y);
+    curIndex = -1;
+    return false;
+}
 bool Recorder::OnMouseMove(const int &x, const int &y)
 {
     auto winMain = WindowMain::get();
@@ -95,30 +113,22 @@ bool Recorder::onKeyDown(const unsigned int& val)
     shapes[curIndex]->OnKeyDown(val);
     return false;
 }
-bool Recorder::OnMouseUp(const int &x, const int &y)
-{
-    if (curIndex < 0)
-    {
-        return false;
-    }
-    auto winMain = WindowMain::get();
-    if (winMain->state == State::text) {
-        return false;
-    }
-    if (shapes[curIndex]->IsWIP)
-    {
-        shapes.erase(shapes.begin() + curIndex, shapes.begin() + 1);
-    }
-    shapes[curIndex]->OnMouseUp(x, y);
-    curIndex = -1;
-    return false;
-}
+
 
 bool Recorder::OnPaint(SkCanvas *canvas)
 {
     for (auto &shape : shapes)
     {
         shape->OnPaint(canvas);
+    }
+    return false;
+}
+
+bool Recorder::OnPaintFinish(SkCanvas* canvas)
+{
+    for (auto& shape : shapes)
+    {
+        shape->OnPaintFinish(canvas);
     }
     return false;
 }

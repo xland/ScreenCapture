@@ -2,11 +2,6 @@
 #include <dwmapi.h>
 #include "Util.h"
 
-#include "include/core/SkShader.h"
-#include "include/core/SkTileMode.h"
-#include "include/core/SkPath.h"
-#include "include/effects/SkRuntimeEffect.h"
-
 WindowBase::WindowBase()
 {
 }
@@ -37,7 +32,7 @@ void WindowBase::Refresh()
     paint(front);
     sk_sp<SkImage> img = surfaceFront->makeImageSnapshot();
     back->drawImage(img,0,0);
-
+    paintFinish(back);
     HDC hdc = GetDC(hwnd);
     static BITMAPINFO info = {sizeof(BITMAPINFOHEADER), w, 0 - h, 1, 32, BI_RGB, w * 4 * h, 0, 0, 0, 0};
     SetDIBits(hdc, bottomHbitmap, 0, h, pixBack->addr(), &info, DIB_RGB_COLORS);

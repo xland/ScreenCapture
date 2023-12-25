@@ -161,6 +161,10 @@ void WindowMain::paint(SkCanvas* canvas)
     ToolMain::get()->OnPaint(canvas);
     ToolSub::get()->OnPaint(canvas);
 }
+void WindowMain::paintFinish(SkCanvas* canvas)
+{
+    Recorder::get()->OnPaintFinish(canvas);
+}
 void WindowMain::shotScreen()
 {
     HDC hScreen = GetDC(NULL);
