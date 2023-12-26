@@ -1,6 +1,7 @@
 #include "WindowBase.h"
 #include <dwmapi.h>
 #include "Util.h"
+#include "include/core/SkPath.h"
 
 WindowBase::WindowBase()
 {
@@ -33,6 +34,22 @@ void WindowBase::Refresh()
     sk_sp<SkImage> img = surfaceFront->makeImageSnapshot();
     back->drawImage(img,0,0);
     paintFinish(back);
+
+    //back->saveLayer(nullptr, nullptr);
+    //SkPaint paint;
+    //paint.setColor(SK_ColorBLUE);
+    //back->drawRect(SkRect::MakeXYWH(0, 0, 800, 600),paint);
+    //SkPath path;
+    //path.moveTo(0, 0);
+    //path.lineTo(400, 300);
+    //path.setFillType(SkPathFillType::kInverseWinding);
+    //paint.setStroke(true);
+    //paint.setStrokeWidth(60);
+    //paint.setBlendMode(SkBlendMode::kClear);
+    //back->drawPath(path, paint);
+    //back->restore();
+
+
     HDC hdc = GetDC(hwnd);
     static BITMAPINFO info = {sizeof(BITMAPINFOHEADER), w, 0 - h, 1, 32, BI_RGB, w * 4 * h, 0, 0, 0, 0};
     SetDIBits(hdc, bottomHbitmap, 0, h, pixBack->addr(), &info, DIB_RGB_COLORS);

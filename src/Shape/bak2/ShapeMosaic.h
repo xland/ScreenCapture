@@ -22,10 +22,10 @@ protected:
     bool OnMoseDrag(const int &x, const int &y) override;
 
 private:
-    SkColor getMosaicRectColor(const SkRect& rect);
     SkPath path;
     bool stroke{true};
     int strokeWidth{26};
     SkColor color{SkColorSetARGB(255, 207, 19, 34)};
     void initParams();
+    float size = 30.f;
 };
