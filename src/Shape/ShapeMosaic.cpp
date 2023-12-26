@@ -23,9 +23,12 @@ void samplePathCoordinates(const SkPath& path, int numSamples) {
     
 }
 
-bool ShapeMosaic::OnPaintFinish(SkCanvas *canvas)
+bool ShapeMosaic::OnPaint(SkCanvas *canvas)
 {
+
     auto win = WindowMain::get();
+    sk_sp<SkImage> img = win->surfaceFront->makeImageSnapshot();
+    win->surfaceBack->getCanvas()->drawImage(img, 0, 0);
     float size = 10.f;
     SkPathMeasure pathMeasure(path, false);
     float length = pathMeasure.getLength();
