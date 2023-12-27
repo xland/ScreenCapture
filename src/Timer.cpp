@@ -1,24 +1,40 @@
-#include "Timeout.h"
+#include "Timer.h"
 #include <future>
 #include <thread>
 
+Timer* timer;
 
-Timeout::Timeout()
+Timer::Timer()
 {
-    t = std::thread(&Timeout::asyncTask, this);
+    
 }
 
-Timeout::~Timeout()
+Timer::~Timer()
 {
     shouldTerminate = true;
-    if (t.joinable())
+    if (t->joinable())
     {
-        t.join();
+        t->join();
     }
+    delete t;
+    delete timer;
 }
 
-void Timeout::Start(const int id, const int& timeSpan, std::function<bool(const int&)> taskFunc)
+void Timer::init()
 {
+    timer = new Timer();
+}
+
+Timer* Timer::get()
+{
+    return timer;
+}
+
+void Timer::Start(const int id, const int& timeSpan, std::function<void()> taskFunc)
+{
+    if (t == nullptr) {
+        t = new std::thread(&Timer::asyncTask, this);
+    }
     auto it = std::find_if(tasks.begin(), tasks.end(), [id](auto& task) {
         return task->id == id;
         });
@@ -29,7 +45,7 @@ void Timeout::Start(const int id, const int& timeSpan, std::function<bool(const 
             it->get()->startTime = startTime;
         }
         else {
-            tasks.push_back(std::make_shared<Task>(id, startTime, taskFunc));
+            tasks.push_back(std::make_shared<TimerTask>(id, startTime, taskFunc));
         }
         std::sort(tasks.begin(), tasks.end(), [](auto& a, auto& b) {
             return a->startTime < b->startTime;
@@ -37,9 +53,9 @@ void Timeout::Start(const int id, const int& timeSpan, std::function<bool(const 
     }
 }
 
-void Timeout::Remove(const int& id)
+void Timer::Remove(const int& id)
 {
-    auto it = std::find_if(tasks.begin(), tasks.end(), [id](std::shared_ptr<Task> task){
+    auto it = std::find_if(tasks.begin(), tasks.end(), [id](std::shared_ptr<TimerTask> task){
         return task->id == id;
     });
     if (it != tasks.end()) {
@@ -48,7 +64,7 @@ void Timeout::Remove(const int& id)
     }
 }
 
-void Timeout::asyncTask()
+void Timer::asyncTask()
 {
     while (!shouldTerminate)
     {
@@ -56,7 +72,8 @@ void Timeout::asyncTask()
         auto currentTime = std::chrono::steady_clock::now();
         auto it = std::remove_if(tasks.begin(), tasks.end(), [currentTime](auto& task) {
             if (task->startTime <= currentTime) {
-                return task->taskFunc(task->id);
+                task->taskFunc();
+                return true;
             }
             return false;
             });

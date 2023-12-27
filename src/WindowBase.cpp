@@ -2,6 +2,9 @@
 #include <dwmapi.h>
 #include "Util.h"
 #include "include/core/SkPath.h"
+#include "ToolMain.h"
+#include "ToolSub.h"
+#include "CutMask.h"
 
 WindowBase::WindowBase()
 {
@@ -9,9 +12,9 @@ WindowBase::WindowBase()
 
 WindowBase::~WindowBase()
 {
-    delete[] pixBase->addr();
+    delete[] pixSrc->addr();
+    delete pixSrc;
     delete pixBase;
-    delete pixBack;
     DeleteDC(hCompatibleDC);
     DeleteObject(bottomHbitmap);
 }
@@ -26,14 +29,24 @@ void WindowBase::Show()
 
 void WindowBase::Refresh()
 {
-    surfaceBack->writePixels(*pixBase, 0, 0);
-    auto back = surfaceBack->getCanvas();
-    auto front = surfaceFront->getCanvas();
-    front->clear(SK_ColorTRANSPARENT);
-    paint(front);
-    sk_sp<SkImage> img = surfaceFront->makeImageSnapshot();
-    back->drawImage(img,0,0);
-    paintFinish(back);
+    {
+        surfaceBase->writePixels(*pixSrc, 0, 0);
+        sk_sp<SkImage> img = surfaceBack->makeImageSnapshot();
+        auto canvas = surfaceBase->getCanvas();
+        canvas->drawImage(img, 0.f, 0.f);
+        img = surfaceFront->makeImageSnapshot();
+        canvas->drawImage(img, 0.f, 0.f);
+        CutMask::get()->OnPaint(canvas);
+        ToolMain::get()->OnPaint(canvas);
+        ToolSub::get()->OnPaint(canvas);
+    }
+    //auto back = surfaceBack->getCanvas();
+    //auto front = surfaceFront->getCanvas();
+    //front->clear(SK_ColorTRANSPARENT);
+    //paint(front);
+    //sk_sp<SkImage> img = surfaceFront->makeImageSnapshot();
+    //back->drawImage(img,0,0);
+    //paintFinish(back);
 
     //back->saveLayer(nullptr, nullptr);
     //SkPaint paint;
@@ -49,10 +62,9 @@ void WindowBase::Refresh()
     //back->drawPath(path, paint);
     //back->restore();
 
-
     HDC hdc = GetDC(hwnd);
     static BITMAPINFO info = {sizeof(BITMAPINFOHEADER), w, 0 - h, 1, 32, BI_RGB, w * 4 * h, 0, 0, 0, 0};
-    SetDIBits(hdc, bottomHbitmap, 0, h, pixBack->addr(), &info, DIB_RGB_COLORS);
+    SetDIBits(hdc, bottomHbitmap, 0, h, pixBase->addr(), &info, DIB_RGB_COLORS);
     static BLENDFUNCTION blend = {.BlendOp{AC_SRC_OVER}, .SourceConstantAlpha{255}, .AlphaFormat{AC_SRC_ALPHA}};
     static POINT pSrc = {0, 0};
     static SIZE sizeWnd = {w, h};
@@ -68,10 +80,11 @@ void WindowBase::initCanvas()
     DeleteObject(SelectObject(hCompatibleDC, bottomHbitmap));
     ReleaseDC(hwnd, hdc);
     SkImageInfo info = SkImageInfo::MakeN32Premul(w, h);
+    surfaceBase = SkSurfaces::Raster(info);
     surfaceBack = SkSurfaces::Raster(info);
-    pixBack = new SkPixmap();
-    surfaceBack->peekPixels(pixBack);
     surfaceFront = SkSurfaces::Raster(info);
+    pixBase = new SkPixmap();
+    surfaceBase->peekPixels(pixBase);
 }
 
 void WindowBase::Close(const int &exitCode)

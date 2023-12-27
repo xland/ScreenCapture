@@ -60,7 +60,7 @@ bool ShapeArrow::OnMouseMove(const int &x, const int &y)
 
 bool ShapeArrow::OnMoseDrag(const int &x, const int &y)
 {
-    IsWIP = false;
+    isWip = false;
     showDragger = false;
     if (HoverIndex == 0) {
         startX = x;

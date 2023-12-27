@@ -15,8 +15,10 @@ set(SRC
     Recorder.h
     Util.cpp
     Util.h
-    Timeout.cpp
-    Timeout.h
+    TimerTask.cpp
+    TimerTask.h
+    Timer.cpp
+    Timer.h
     ToolBase.cpp
     ToolBase.h
     ToolBtn.cpp

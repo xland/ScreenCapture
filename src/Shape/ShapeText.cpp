@@ -80,7 +80,7 @@ bool ShapeText::OnMouseUp(const int &x, const int &y)
 
 bool ShapeText::OnMoseDrag(const int &x, const int &y)
 {
-    IsWIP = false;
+    isWip = false;
     WindowMain::get()->Refresh();
     return false;
 }

@@ -10,12 +10,12 @@
 #include "Shape/ShapeText.h"
 #include "Shape/ShapeEraser.h"
 #include "Shape/ShapeMosaic.h"
+#include "Shape/ShapeDragger.h"
 
 Recorder *recorder;
 
 Recorder::Recorder()
 {
-    timer = std::make_shared<Timeout>();
 }
 
 Recorder::~Recorder()
@@ -37,15 +37,25 @@ Recorder *Recorder::get()
 
 bool Recorder::OnMouseDown(const int &x, const int &y)
 {
-    auto winMain = WindowMain::get();
-    if (winMain->state < State::rect)
+    auto win = WindowMain::get();
+    if (win->state < State::rect)
     {
         return false;
     }
     if (curIndex < 0)
     {
-        createShape(x, y, winMain->state);
+        createShape(x, y, win->state);
         curIndex = shapes.size() - 1;
+    }
+    else {
+        auto canvasBack = win->surfaceBack->getCanvas();
+        canvasBack->clear(SK_ColorTRANSPARENT);
+        for (auto& shape : shapes)
+        {
+            if (!shape->isWip) {
+                shape->Paint(canvasBack);
+            }            
+        }
     }
     shapes[curIndex]->OnMouseDown(x, y);
     return false;
@@ -60,10 +70,11 @@ bool Recorder::OnMouseUp(const int &x, const int &y)
     if (winMain->state == State::text) {
         return false;
     }
-    if (shapes[curIndex]->IsWIP)
-    {
-        shapes.erase(shapes.begin() + curIndex, shapes.begin() + 1);
-    }
+    // todo 
+    //if (shapes[curIndex]->isWip)
+    //{
+    //    shapes.erase(shapes.begin() + curIndex, shapes.begin() + 1);
+    //}
     shapes[curIndex]->OnMouseUp(x, y);
     curIndex = -1;
     return false;
@@ -80,8 +91,6 @@ bool Recorder::OnMouseMove(const int &x, const int &y)
         if (flag)
         {
             curIndex = i;
-            auto func = std::bind(&Recorder::hideDragger, this, std::placeholders::_1);
-            timer->Start(i,800,func);
             break;
         }
         else
@@ -91,7 +100,11 @@ bool Recorder::OnMouseMove(const int &x, const int &y)
     }
     if (curIndex < 0)
     {
-        SetCursor(LoadCursor(nullptr, IDC_ARROW));        
+        SetCursor(LoadCursor(nullptr, IDC_ARROW));
+        Timer::get()->Start(0, 800, []() {
+            ShapeDragger::get()->hideDragger();
+            return true;
+            });
     }
     return false;
 }
@@ -115,39 +128,39 @@ bool Recorder::onKeyDown(const unsigned int& val)
 }
 
 
-bool Recorder::OnPaint(SkCanvas *canvas)
-{
-    for (auto &shape : shapes)
-    {
-        shape->OnPaint(canvas);
-    }
-    return false;
-}
+//bool Recorder::OnPaint(SkCanvas *canvas)
+//{
+//    for (auto &shape : shapes)
+//    {
+//        shape->OnPaint(canvas);
+//    }
+//    return false;
+//}
 
-bool Recorder::OnPaintFinish(SkCanvas* canvas)
-{
-    for (auto& shape : shapes)
-    {
-        shape->OnPaintFinish(canvas);
-    }
-    return false;
-}
+//bool Recorder::OnPaintFinish(SkCanvas* canvas)
+//{
+//    for (auto& shape : shapes)
+//    {
+//        shape->OnPaintFinish(canvas);
+//    }
+//    return false;
+//}
 
-bool Recorder::hideDragger(const int& id)
-{
-    auto win = WindowMain::get();
-    if (!win || !shapes[id]) {
-        return true;
-    }
-    if (id == curIndex) {
-        auto func = std::bind(&Recorder::hideDragger, this, std::placeholders::_1);
-        timer->Start(id, 800, func);
-        return false;
-    }
-    shapes[id]->showDragger = false;
-    PostMessage(WindowMain::get()->hwnd, WM_REFRESH, NULL, NULL);
-    return true;
-}
+//bool Recorder::hideDragger(const int& id)
+//{
+//    auto win = WindowMain::get();
+//    if (!win || !shapes[id]) {
+//        return true;
+//    }
+//    if (id == curIndex) {
+//        //auto func = std::bind(&Recorder::hideDragger, this, std::placeholders::_1);
+//        //timer->Start(id, 800, func);
+//        return false;
+//    }
+//    shapes[id]->showDragger = false;
+//    PostMessage(WindowMain::get()->hwnd, WM_REFRESH, NULL, NULL);
+//    return true;
+//}
 
 bool Recorder::flashTextCursor(const int& id)
 {
@@ -157,8 +170,8 @@ bool Recorder::flashTextCursor(const int& id)
     }
     auto shapeText = dynamic_cast<ShapeText*>(shapes[id].get());
     shapeText->ShowCursor = !shapeText->ShowCursor;
-    auto func = std::bind(&Recorder::flashTextCursor, this, std::placeholders::_1);
-    timer->Start(id, 600, func);
+    //auto func = std::bind(&Recorder::flashTextCursor, this, std::placeholders::_1);
+    //timer->Start(id, 600, func);
     PostMessage(WindowMain::get()->hwnd, WM_REFRESH, NULL, NULL);
     return false;
 }
@@ -200,8 +213,8 @@ void Recorder::createShape(const int &x, const int &y, const State &state)
     case State::text:
     {
         shapes.push_back(std::make_shared<ShapeText>(x, y));
-        auto func = std::bind(&Recorder::flashTextCursor, this, std::placeholders::_1);
-        timer->Start(shapes.size()-1, 600, func);
+        //auto func = std::bind(&Recorder::flashTextCursor, this, std::placeholders::_1);
+        //timer->Start(shapes.size()-1, 600, func);
         break;
     }
     case State::mosaic:

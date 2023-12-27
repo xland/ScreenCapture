@@ -7,6 +7,7 @@
  - 转发鼠标事件
  - 截图框
  - 取景框
+ - track mouse out window IsMouseDragging IsMouseDown to false
 
 
 

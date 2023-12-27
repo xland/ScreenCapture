@@ -29,7 +29,7 @@ bool ShapeLine::OnMouseUp(const int &x, const int &y)
 
 bool ShapeLine::OnMoseDrag(const int &x, const int &y)
 {
-    IsWIP = false;
+    isWip = false;
     path.reset();
     path.moveTo(startX, startY);
     path.lineTo(x, y);

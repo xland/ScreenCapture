@@ -7,6 +7,8 @@
 #include "ToolSub.h"
 #include "AppFont.h"
 #include "Recorder.h"
+#include "Timer.h"
+#include "Shape/ShapeDragger.h"
 
 WindowMain *windowMain;
 
@@ -17,6 +19,8 @@ WindowMain::WindowMain()
     ToolMain::init();
     ToolSub::init();
     Recorder::init();
+    ShapeDragger::init();
+    Timer::init();
     initSize();
     shotScreen();
     initWindow();
@@ -61,6 +65,7 @@ LRESULT WindowMain::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam
     case WM_LBUTTONUP:
     {
         IsMouseDown = false;
+        IsMouseDragging = false;
         auto x = GET_X_LPARAM(lparam);
         auto y = GET_Y_LPARAM(lparam);
         return onMouseUp(x, y);
@@ -70,6 +75,7 @@ LRESULT WindowMain::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam
         auto x = GET_X_LPARAM(lparam);
         auto y = GET_Y_LPARAM(lparam);
         if (IsMouseDown) {
+            IsMouseDragging = true;
             return onMouseDrag(x, y);
         }
         else {
@@ -154,17 +160,17 @@ bool WindowMain::onKeyDown(const unsigned int& val)
     Recorder::get()->onKeyDown(val);
     return false;
 }
-void WindowMain::paint(SkCanvas* canvas)
-{
-    Recorder::get()->OnPaint(canvas);
-    CutMask::get()->OnPaint(canvas);
-    ToolMain::get()->OnPaint(canvas);
-    ToolSub::get()->OnPaint(canvas);
-}
-void WindowMain::paintFinish(SkCanvas* canvas)
-{
-    Recorder::get()->OnPaintFinish(canvas);
-}
+//void WindowMain::paint(SkCanvas* canvas)
+//{
+//    Recorder::get()->OnPaint(canvas);
+//    CutMask::get()->OnPaint(canvas);
+//    ToolMain::get()->OnPaint(canvas);
+//    ToolSub::get()->OnPaint(canvas);
+//}
+//void WindowMain::paintFinish(SkCanvas* canvas)
+//{
+//    Recorder::get()->OnPaintFinish(canvas);
+//}
 void WindowMain::shotScreen()
 {
     HDC hScreen = GetDC(NULL);
@@ -181,7 +187,7 @@ void WindowMain::shotScreen()
     DeleteObject(hBitmap);
     ReleaseDC(NULL, hScreen);
     SkImageInfo imgInfo = SkImageInfo::MakeN32Premul(w, h);
-    pixBase = new SkPixmap(imgInfo, desktop, rowBytes);
+    pixSrc = new SkPixmap(imgInfo, desktop, rowBytes);
 }
 
 void WindowMain::initSize()

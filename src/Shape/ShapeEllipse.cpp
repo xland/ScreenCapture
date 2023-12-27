@@ -22,7 +22,7 @@ bool ShapeEllipse::OnPaint(SkCanvas *canvas)
     }
     paint.setColor(color);
     canvas->drawOval(rect, paint);
-    paintDragger(canvas);
+    //paintDragger(canvas);
     return false;
 }
 
@@ -43,5 +43,4 @@ bool ShapeEllipse::isMouseOver(const int& x, const int& y)
         path.addOval(rect);
         return path.contains(x, y);
     }
-
 }

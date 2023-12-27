@@ -6,7 +6,7 @@
 #include "include/core/SkPath.h"
 #include "State.h"
 #include <vector>
-#include "Timeout.h"
+#include "Timer.h"
 
 class ShapeBase;
 class Recorder
@@ -21,16 +21,14 @@ public:
     bool OnMouseDrag(const int& x, const int& y);
     bool onChar(const unsigned int& val);
     bool onKeyDown(const unsigned int& val);
-    bool OnPaint(SkCanvas *canvas);
-    bool OnPaintFinish(SkCanvas* canvas);
+    //bool OnPaint(SkCanvas *canvas);
+    //bool OnPaintFinish(SkCanvas* canvas);
     std::vector<std::shared_ptr<ShapeBase>> shapes;
-
+    int curIndex{ -1 };
 private:
     bool hideDragger(const int& id);
     bool flashTextCursor(const int& id);
     Recorder();
     void createShape(const int& x, const int& y,const State& state);
-    int curIndex{-1};
-
-    std::shared_ptr<Timeout> timer;
+    
 };

@@ -28,7 +28,7 @@ bool ShapePen::OnMouseUp(const int& x, const int& y)
 
 bool ShapePen::OnMoseDrag(const int& x, const int& y)
 {
-    IsWIP = false;
+    isWip = false;
     path.lineTo(x, y);
     WindowMain::get()->Refresh();
     return false;

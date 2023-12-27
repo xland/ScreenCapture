@@ -78,7 +78,7 @@ bool ShapeMosaic::OnMouseMove(const int &x, const int &y)
 
 bool ShapeMosaic::OnMoseDrag(const int &x, const int &y)
 {
-    IsWIP = false;
+    isWip = false;
     path.lineTo(x, y);
     WindowMain::get()->Refresh();
     return false;
@@ -93,7 +93,7 @@ SkColor ShapeMosaic::getMosaicRectColor(const SkRect& rect)
     {
         for (size_t y = rect.top(); y < rect.bottom(); y+=2)
         {
-            auto currentColor = win->pixBack->getColor4f(x, y);
+            auto currentColor = win->pixBase->getColor4f(x, y);
             colorSum.fR += currentColor.fR;
             colorSum.fG += currentColor.fG;
             colorSum.fB += currentColor.fB;

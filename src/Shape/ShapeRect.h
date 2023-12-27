@@ -12,14 +12,13 @@ class ShapeRect : public ShapeBase
 public:
     ShapeRect(const int& x, const int& y);
     ~ShapeRect();
-    bool OnMouseDown(const int& x, const int& y) override;
     bool OnMouseUp(const int& x, const int& y) override;
     bool OnMouseMove(const int& x, const int& y) override;
-    virtual bool OnPaint(SkCanvas *canvas) override;
     bool OnMoseDrag(const int& x, const int& y) override;
+    void Paint(SkCanvas* canvas) override;
 protected:
     virtual bool isMouseOver(const int& x, const int& y);
-    void paintDragger(SkCanvas* canvas);
+    
     void initParams();
     SkRect rect;
     bool stroke{ true };
@@ -28,5 +27,5 @@ protected:
     std::vector<SkRect> draggers;
 private:
     void setCursor();
-    
+    void showDragger();
 };

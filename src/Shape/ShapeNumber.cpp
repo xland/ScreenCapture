@@ -65,7 +65,7 @@ bool ShapeNumber::OnMouseMove(const int &x, const int &y)
 
 bool ShapeNumber::OnMoseDrag(const int &x, const int &y)
 {
-    IsWIP = false;
+    isWip = false;
     showDragger = false;
     if (HoverIndex == 0)
     {
