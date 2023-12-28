@@ -2,6 +2,7 @@
 #include "../WindowMain.h"
 #include "../ToolSub.h"
 #include "../AppFont.h"
+#include "ShapeDragger.h"
 #include "numbers"
 static int num = 1;
 
@@ -26,38 +27,23 @@ bool ShapeNumber::OnMouseDown(const int &x, const int &y)
 
 bool ShapeNumber::OnMouseUp(const int &x, const int &y)
 {
-    unsigned size = 10;
-    unsigned half = 5;
-    draggers[0].setXYWH(endX - half, endY - half, size, size);
+    auto win = WindowMain::get();
+    auto canvasBack = win->surfaceBack->getCanvas();
+    Paint(canvasBack);
+    isWip = false;
+    setDragger();
     return false;
 }
 
 bool ShapeNumber::OnMouseMove(const int &x, const int &y)
 {
-    for (size_t i = 0; i < draggers.size(); i++)
-    {
-        if (draggers[i].contains(x, y))
-        {
-            HoverIndex = i;
-            SetCursor(LoadCursor(nullptr, IDC_SIZEALL));
-            if (!showDragger)
-            {
-                showDragger = true;
-                WindowMain::get()->Refresh();
-            }
-            return true;
-        }
-    }
     auto flag = isMouseOver(x, y);
     if (flag)
     {
+        auto draggers = ShapeDragger::get();
+        setDragger();
+        Icon::myCursor(Icon::cursor::all);
         HoverIndex = 8;
-        SetCursor(LoadCursor(nullptr, IDC_SIZEALL));
-        if (!showDragger)
-        {
-            showDragger = true;
-            WindowMain::get()->Refresh();
-        }
         return true;
     }
     return false;
@@ -65,8 +51,6 @@ bool ShapeNumber::OnMouseMove(const int &x, const int &y)
 
 bool ShapeNumber::OnMoseDrag(const int &x, const int &y)
 {
-    isWip = false;
-    showDragger = false;
     if (HoverIndex == 0)
     {
         endX = x;
@@ -85,11 +69,15 @@ bool ShapeNumber::OnMoseDrag(const int &x, const int &y)
         hoverX = x;
         hoverY = y;
     }
+    auto win = WindowMain::get();
+    auto canvas = win->surfaceFront->getCanvas();
+    canvas->clear(SK_ColorTRANSPARENT);
+    Paint(canvas);
     WindowMain::get()->Refresh();
     return false;
 }
 
-bool ShapeNumber::OnPaint(SkCanvas *canvas)
+void ShapeNumber::Paint(SkCanvas *canvas)
 {
     SkPaint paint;
     paint.setAntiAlias(true);
@@ -110,8 +98,6 @@ bool ShapeNumber::OnPaint(SkCanvas *canvas)
     SkScalar x = startX - textBounds.width() / 2 - textBounds.left();
     SkScalar y = startY + textBounds.height() / 2 - textBounds.bottom();
     canvas->drawSimpleText(str.c_str(), str.size(), SkTextEncoding::kUTF8, x, y, *font, paint);
-    paintDragger(canvas);
-    return false;
 }
 
 bool ShapeNumber::isMouseOver(const int &x, const int &y)
@@ -127,22 +113,6 @@ bool ShapeNumber::isMouseOver(const int &x, const int &y)
         return true;
     }
     return false;
-}
-
-void ShapeNumber::paintDragger(SkCanvas *canvas)
-{
-    if (!showDragger)
-    {
-        return;
-    }
-    SkPaint paint;
-    paint.setStroke(true);
-    paint.setStrokeWidth(1);
-    paint.setColor(SK_ColorBLACK);
-    for (auto &dragger : draggers)
-    {
-        canvas->drawRect(dragger, paint);
-    }
 }
 
 void ShapeNumber::initParams()
@@ -199,4 +169,16 @@ void ShapeNumber::makePath(const int &x1, const int &y1, const int &x2, const in
     path.lineTo(X2, Y2);
     path.close();
     path.setFillType(SkPathFillType::kWinding);
+}
+
+void ShapeNumber::setDragger()
+{
+    auto shapeDragger = ShapeDragger::get();
+    unsigned half = shapeDragger->size / 2;
+    shapeDragger->setDragger(0, endX - half, endY - half);
+    shapeDragger->cursors[0] = Icon::cursor::all;
+    for (size_t i = 1; i < 8; i++)
+    {
+        shapeDragger->setDragger(i, -100, -100);
+    }
 }

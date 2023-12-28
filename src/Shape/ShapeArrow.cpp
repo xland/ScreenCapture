@@ -35,8 +35,6 @@ bool ShapeArrow::OnMouseMove(const int &x, const int &y)
     if (flag)
     {
         auto draggers = ShapeDragger::get();
-        draggers->cursors[0] = Icon::cursor::all;
-        draggers->cursors[1] = Icon::cursor::all;
         setDragger();
         Icon::myCursor(Icon::cursor::all);
         HoverIndex = 8;
@@ -47,8 +45,6 @@ bool ShapeArrow::OnMouseMove(const int &x, const int &y)
 
 bool ShapeArrow::OnMoseDrag(const int &x, const int &y)
 {
-    isWip = false;
-    showDragger = false;
     if (HoverIndex == 0) {
         startX = x;
         startY = y;
@@ -160,4 +156,10 @@ void ShapeArrow::setDragger()
     unsigned half = shapeDragger->size / 2;
     shapeDragger->setDragger(0, startX - half, startY - half);
     shapeDragger->setDragger(1, endX - half, endY - half);
+    for (size_t i = 2; i < 8; i++)
+    {
+        shapeDragger->setDragger(i, -100, -100);
+    }
+    shapeDragger->cursors[0] = Icon::cursor::all;
+    shapeDragger->cursors[1] = Icon::cursor::all;
 }

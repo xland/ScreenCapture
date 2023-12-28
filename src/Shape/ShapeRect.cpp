@@ -34,7 +34,6 @@ bool ShapeRect::OnMouseMove(const int& x, const int& y)
 {
     auto flag = isMouseOver(x, y);
     if (flag) {
-        setCursor();
         setDragger();
         Icon::myCursor(Icon::cursor::all);
         HoverIndex = 8;
@@ -108,19 +107,6 @@ bool ShapeRect::OnMoseDrag(const int& x, const int& y)
     return false;
 }
 
-void ShapeRect::setCursor()
-{
-    auto draggers = ShapeDragger::get();
-    draggers->cursors[0] = Icon::cursor::wnse;
-    draggers->cursors[4] = Icon::cursor::wnse;
-    draggers->cursors[1] = Icon::cursor::ns;
-    draggers->cursors[5] = Icon::cursor::ns;
-    draggers->cursors[2] = Icon::cursor::nesw;
-    draggers->cursors[6] = Icon::cursor::nesw;
-    draggers->cursors[3] = Icon::cursor::we;
-    draggers->cursors[7] = Icon::cursor::we;
-}
-
 void ShapeRect::setDragger()
 {
     rect.sort();
@@ -140,6 +126,14 @@ void ShapeRect::setDragger()
     shapeDragger->setDragger(5, wCenter, b);
     shapeDragger->setDragger(6, l, b);
     shapeDragger->setDragger(7, l, hCenter);
+    shapeDragger->cursors[0] = Icon::cursor::wnse;
+    shapeDragger->cursors[4] = Icon::cursor::wnse;
+    shapeDragger->cursors[1] = Icon::cursor::ns;
+    shapeDragger->cursors[5] = Icon::cursor::ns;
+    shapeDragger->cursors[2] = Icon::cursor::nesw;
+    shapeDragger->cursors[6] = Icon::cursor::nesw;
+    shapeDragger->cursors[3] = Icon::cursor::we;
+    shapeDragger->cursors[7] = Icon::cursor::we;
 }
 
 

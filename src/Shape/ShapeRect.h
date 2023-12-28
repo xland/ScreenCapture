@@ -27,6 +27,5 @@ protected:
     SkColor color{ SkColorSetARGB(255, 207, 19, 34) };
     std::vector<SkRect> draggers;
 private:
-    void setCursor();
     void setDragger();
 };
