@@ -124,15 +124,14 @@ void ShapeRect::setCursor()
 void ShapeRect::setDragger()
 {
     rect.sort();
-    unsigned size = 10;
-    unsigned half = 5;
+    auto shapeDragger = ShapeDragger::get();
+    unsigned half = shapeDragger->size/2;
     float l = rect.x() - half;
     float t = rect.y() - half;
     float r = rect.right() - half;
     float b = rect.bottom() - half;
     float wCenter = l + rect.width() / 2;
     float hCenter = t + rect.height() / 2;
-    auto shapeDragger = ShapeDragger::get();
     shapeDragger->setDragger(0, l, t);
     shapeDragger->setDragger(1, wCenter, t);
     shapeDragger->setDragger(2, r, t);

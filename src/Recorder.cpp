@@ -1,4 +1,4 @@
-#include "Recorder.h"
+﻿#include "Recorder.h"
 #include "WindowMain.h"
 #include "Icon.h"
 #include "Shape/ShapeBase.h"
@@ -83,8 +83,10 @@ bool Recorder::OnMouseUp(const int &x, const int &y)
     //{
     //    shapes.erase(shapes.begin() + curIndex, shapes.begin() + 1);
     //}
+    // 
     shapes[curIndex]->OnMouseUp(x, y);
-    curIndex = -1;
+    auto shapeDragger = ShapeDragger::get();
+    shapeDragger->showDragger(curIndex);
     return false;
 }
 bool Recorder::OnMouseMove(const int &x, const int &y)

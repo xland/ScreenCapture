@@ -1,6 +1,7 @@
 ﻿#include "ShapeArrow.h"
 #include "../WindowMain.h"
 #include "../ToolSub.h"
+#include "ShapeDragger.h"
 
 ShapeArrow::ShapeArrow(const int &x, const int &y) : ShapeBase(x, y)
 {
@@ -20,39 +21,25 @@ bool ShapeArrow::OnMouseDown(const int &x, const int &y)
 
 bool ShapeArrow::OnMouseUp(const int &x, const int &y)
 {
-    unsigned size = 10;
-    unsigned half = 5;
-    draggers[0].setXYWH(startX-half, startY-half, size, size);
-    draggers[1].setXYWH(endX-half, endY-half, size, size);
+    setDragger();
+    auto win = WindowMain::get();
+    auto canvasBack = win->surfaceBack->getCanvas();
+    Paint(canvasBack);
+    isWip = false;
     return false;
 }
 
 bool ShapeArrow::OnMouseMove(const int &x, const int &y)
 {
-    for (size_t i = 0; i < draggers.size(); i++)
-    {
-        if (draggers[i].contains(x, y))
-        {
-            HoverIndex = i;
-            SetCursor(LoadCursor(nullptr, IDC_SIZEALL));
-            if (!showDragger)
-            {
-                showDragger = true;
-                WindowMain::get()->Refresh();
-            }
-            return true;
-        }
-    }
-    auto flag = isMouseOver(x, y);
+    auto flag = path.contains(x, y);
     if (flag)
     {
+        auto draggers = ShapeDragger::get();
+        draggers->cursors[0] = Icon::cursor::all;
+        draggers->cursors[1] = Icon::cursor::all;
+        setDragger();
+        Icon::myCursor(Icon::cursor::all);
         HoverIndex = 8;
-        SetCursor(LoadCursor(nullptr, IDC_SIZEALL));
-        if (!showDragger)
-        {
-            showDragger = true;
-            WindowMain::get()->Refresh();
-        }
         return true;
     }
     return false;
@@ -83,11 +70,15 @@ bool ShapeArrow::OnMoseDrag(const int &x, const int &y)
         hoverX = x;
         hoverY = y;
     }
+    auto win = WindowMain::get();
+    auto canvas = win->surfaceFront->getCanvas();
+    canvas->clear(SK_ColorTRANSPARENT);
+    Paint(canvas);
     WindowMain::get()->Refresh();
     return false;
 }
 
-bool ShapeArrow::OnPaint(SkCanvas* canvas)
+void ShapeArrow::Paint(SkCanvas* canvas)
 {
     SkPaint paint;
     paint.setAntiAlias(true);
@@ -98,29 +89,6 @@ bool ShapeArrow::OnPaint(SkCanvas* canvas)
     }
     paint.setColor(color);
     canvas->drawPath(path, paint);
-    paintDragger(canvas);
-    return false;
-}
-
-bool ShapeArrow::isMouseOver(const int &x, const int &y)
-{
-    return path.contains(x,y);
-}
-
-void ShapeArrow::paintDragger(SkCanvas *canvas)
-{
-    if (!showDragger)
-    {
-        return;
-    }
-    SkPaint paint;
-    paint.setStroke(true);
-    paint.setStrokeWidth(1);
-    paint.setColor(SK_ColorBLACK);
-    for (auto &dragger : draggers)
-    {
-        canvas->drawRect(dragger, paint);
-    }
 }
 
 void ShapeArrow::initParams()
@@ -145,10 +113,6 @@ void ShapeArrow::initParams()
         }
     }
     color = tool->getColor();
-    for (size_t i = 0; i < 2; i++)
-    {
-        draggers.push_back(SkRect::MakeEmpty());
-    }
 }
 
 void ShapeArrow::makePath(const int& x1, const int& y1, const int& x2, const int& y2)
@@ -188,4 +152,12 @@ void ShapeArrow::makePath(const int& x1, const int& y1, const int& x2, const int
     double Y4 = centerY + tempB / 2;
     path.lineTo(X4, Y4);
     path.lineTo(x1, y1);
+}
+
+void ShapeArrow::setDragger()
+{
+    auto shapeDragger = ShapeDragger::get();
+    unsigned half = shapeDragger->size / 2;
+    shapeDragger->setDragger(0, startX - half, startY - half);
+    shapeDragger->setDragger(1, endX - half, endY - half);
 }
