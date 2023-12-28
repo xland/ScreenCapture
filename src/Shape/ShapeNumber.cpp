@@ -139,7 +139,6 @@ void ShapeNumber::initParams()
         }
     }
     color = tool->getColor();
-    draggers.push_back(SkRect::MakeEmpty());
 }
 
 void ShapeNumber::makePath(const int &x1, const int &y1, const int &x2, const int &y2)

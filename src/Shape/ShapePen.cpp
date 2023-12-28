@@ -1,6 +1,7 @@
 #include "ShapePen.h"
 #include "../WindowMain.h"
 #include "../ToolSub.h"
+#include "ShapeDragger.h"
 
 ShapePen::ShapePen(const int &x, const int &y) : ShapeBase(x, y)
 {
@@ -23,18 +24,26 @@ bool ShapePen::OnMouseMove(const int& x, const int& y)
 
 bool ShapePen::OnMouseUp(const int& x, const int& y)
 {
+    setDragger();
+    auto win = WindowMain::get();
+    auto canvasBack = win->surfaceBack->getCanvas();
+    Paint(canvasBack);
+    isWip = false;
     return false;
 }
 
 bool ShapePen::OnMoseDrag(const int& x, const int& y)
 {
-    isWip = false;
     path.lineTo(x, y);
+    auto win = WindowMain::get();
+    auto canvas = win->surfaceFront->getCanvas();
+    canvas->clear(SK_ColorTRANSPARENT);
+    Paint(canvas);
     WindowMain::get()->Refresh();
     return false;
 }
 
-bool ShapePen::OnPaint(SkCanvas *canvas)
+void ShapePen::Paint(SkCanvas *canvas)
 {
     SkPaint paint;
     paint.setAntiAlias(true);    
@@ -45,7 +54,6 @@ bool ShapePen::OnPaint(SkCanvas *canvas)
     paint.setStroke(true);
     paint.setStrokeWidth(strokeWidth);
     canvas->drawPath(path,paint);
-    return false;
 }
 
 void ShapePen::initParams()
@@ -67,4 +75,13 @@ void ShapePen::initParams()
         }
     }
     color = tool->getColor();
+}
+
+void ShapePen::setDragger()
+{
+    auto shapeDragger = ShapeDragger::get();
+    for (size_t i = 2; i < 8; i++)
+    {
+        shapeDragger->setDragger(i, -100, -100);
+    }
 }
