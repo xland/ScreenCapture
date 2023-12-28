@@ -16,7 +16,7 @@ public:
     bool OnMouseMove(const int &x, const int &y) override;
     bool OnMouseUp(const int &x, const int &y) override;
     bool OnMoseDrag(const int &x, const int &y) override;
-    bool OnPaint(SkCanvas *canvas) override;
+    void Paint(SkCanvas *canvas) override;
 
 protected:
 private:

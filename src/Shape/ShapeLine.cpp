@@ -37,7 +37,7 @@ bool ShapeLine::OnMoseDrag(const int &x, const int &y)
     return false;
 }
 
-bool ShapeLine::OnPaint(SkCanvas *canvas)
+void ShapeLine::Paint(SkCanvas *canvas)
 {
     SkPaint paint;
     paint.setAntiAlias(true);
@@ -47,7 +47,6 @@ bool ShapeLine::OnPaint(SkCanvas *canvas)
     paint.setStroke(true);
     paint.setStrokeWidth(strokeWidth);
     canvas->drawPath(path, paint);
-    return false;
 }
 
 void ShapeLine::initParams()
