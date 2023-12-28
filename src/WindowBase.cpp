@@ -31,8 +31,8 @@ void WindowBase::Refresh()
 {
     {
         surfaceBase->writePixels(*pixSrc, 0, 0);
-        sk_sp<SkImage> img = surfaceBack->makeImageSnapshot();
         auto canvas = surfaceBase->getCanvas();
+        auto img = surfaceBack->makeImageSnapshot();
         canvas->drawImage(img, 0.f, 0.f);
         img = surfaceFront->makeImageSnapshot();
         canvas->drawImage(img, 0.f, 0.f);

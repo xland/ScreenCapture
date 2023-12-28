@@ -11,7 +11,7 @@ ShapeEllipse::~ShapeEllipse()
 {
 }
 
-bool ShapeEllipse::OnPaint(SkCanvas *canvas)
+void ShapeEllipse::Paint(SkCanvas *canvas)
 {
     SkPaint paint;
     paint.setAntiAlias(true);
@@ -22,8 +22,6 @@ bool ShapeEllipse::OnPaint(SkCanvas *canvas)
     }
     paint.setColor(color);
     canvas->drawOval(rect, paint);
-    //paintDragger(canvas);
-    return false;
 }
 
 bool ShapeEllipse::isMouseOver(const int& x, const int& y)

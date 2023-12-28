@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include "include/core/SkRect.h"
+#include "../Icon.h"
 
 class ShapeDragger
 {
@@ -10,10 +11,12 @@ public:
     static ShapeDragger* get();
     void setDragger(size_t index, float x, float y);
     std::vector<SkRect> draggers;
+    std::vector<Icon::cursor> cursors;
     bool visible{ false };
-    void showDragger();
+    void showDragger(const int& shapeIndex);
     void hideDragger();
     int indexMouseAt(const int& x, const int& y);
+    int shapeIndex{ -1 };
 private:
     ShapeDragger();
     float size{ 10 };

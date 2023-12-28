@@ -13,30 +13,31 @@ ShapeRect::~ShapeRect()
 {
 }
 
+bool ShapeRect::OnMouseDown(const int& x, const int& y)
+{
+    startX = x;
+    startY = y;
+    return false;
+}
+
 bool ShapeRect::OnMouseUp(const int& x, const int& y)
 {
     auto win = WindowMain::get();
     auto canvasBack = win->surfaceBack->getCanvas();
     Paint(canvasBack);
     isWip = false;
-    showDragger();
+    setDragger();
     return false;
 }
 
 bool ShapeRect::OnMouseMove(const int& x, const int& y)
 {
-    auto shapeDragger = ShapeDragger::get();
-    int index = shapeDragger->indexMouseAt(x, y);
-    if (index >= 0) {
-        HoverIndex = index;
-        setCursor();
-        return true;
-    }
     auto flag = isMouseOver(x, y);
     if (flag) {
-        HoverIndex = 8;
         setCursor();
-        showDragger();
+        setDragger();
+        Icon::myCursor(Icon::cursor::all);
+        HoverIndex = 8;
         return true;
     }
     return false;
@@ -91,8 +92,7 @@ bool ShapeRect::OnMoseDrag(const int& x, const int& y)
         break;
     }
     case 8: {
-
-        rect.offset(x-startX, y-startY);
+        rect.offset(x - startX, y - startY);
         startX = x;
         startY = y;
         break;
@@ -110,40 +110,18 @@ bool ShapeRect::OnMoseDrag(const int& x, const int& y)
 
 void ShapeRect::setCursor()
 {
-    switch (HoverIndex)
-    {
-    case 0:
-    case 4:
-    {
-        SetCursor(LoadCursor(nullptr, IDC_SIZENWSE));
-        break;
-    }
-    case 1:
-    case 5:
-    {
-        SetCursor(LoadCursor(nullptr, IDC_SIZENS));
-        break;
-    }
-    case 2:
-    case 6:
-    {
-        SetCursor(LoadCursor(nullptr, IDC_SIZENESW));
-        break;
-    }
-    case 3:
-    case 7:
-    {
-        SetCursor(LoadCursor(nullptr, IDC_SIZEWE));
-        break;
-    }
-    case 8: {
-        SetCursor(LoadCursor(nullptr, IDC_SIZEALL));
-        break;
-    }
-    }
+    auto draggers = ShapeDragger::get();
+    draggers->cursors[0] = Icon::cursor::wnse;
+    draggers->cursors[4] = Icon::cursor::wnse;
+    draggers->cursors[1] = Icon::cursor::ns;
+    draggers->cursors[5] = Icon::cursor::ns;
+    draggers->cursors[2] = Icon::cursor::nesw;
+    draggers->cursors[6] = Icon::cursor::nesw;
+    draggers->cursors[3] = Icon::cursor::we;
+    draggers->cursors[7] = Icon::cursor::we;
 }
 
-void ShapeRect::showDragger()
+void ShapeRect::setDragger()
 {
     rect.sort();
     unsigned size = 10;
@@ -163,11 +141,6 @@ void ShapeRect::showDragger()
     shapeDragger->setDragger(5, wCenter, b);
     shapeDragger->setDragger(6, l, b);
     shapeDragger->setDragger(7, l, hCenter);
-    auto win = WindowMain::get();
-    auto canvasFront = win->surfaceFront->getCanvas();
-    canvasFront->clear(SK_ColorTRANSPARENT);
-    shapeDragger->showDragger();
-    win->Refresh();
 }
 
 

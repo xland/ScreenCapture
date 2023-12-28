@@ -9,6 +9,7 @@ ShapeDragger::ShapeDragger()
     for (size_t i = 0; i < 8; i++)
     {
         draggers.push_back(SkRect::MakeEmpty());
+        cursors.push_back(Icon::cursor::all);
     }
 }
 
@@ -32,10 +33,11 @@ void ShapeDragger::setDragger(size_t index, float x, float y)
     draggers[index].setXYWH(x, y, size, size);
 }
 
-void ShapeDragger::showDragger()
+void ShapeDragger::showDragger(const int& shapeIndex)
 {
     auto win = WindowMain::get();
     auto canvas = win->surfaceFront->getCanvas();
+    canvas->clear(SK_ColorTRANSPARENT);
     SkPaint paint;
     paint.setStroke(true);
     paint.setStrokeWidth(1);
@@ -44,6 +46,8 @@ void ShapeDragger::showDragger()
         canvas->drawRect(dragger, paint);
     }
     visible = true;
+    this->shapeIndex = shapeIndex;
+    win->Refresh();
 }
 
 void ShapeDragger::hideDragger()
@@ -52,6 +56,7 @@ void ShapeDragger::hideDragger()
     if (recorder->curIndex != -1) {
         return;
     }
+    shapeIndex = -1;
     auto win = WindowMain::get();
     auto canvas = win->surfaceFront->getCanvas();
     canvas->clear(SK_ColorTRANSPARENT);
@@ -67,6 +72,7 @@ int ShapeDragger::indexMouseAt(const int& x, const int& y)
     for (size_t i = 0; i < draggers.size(); i++)
     {
         if (draggers[i].contains(x, y)) {
+            Icon::myCursor(cursors[i]);
             return i;
         }
     }

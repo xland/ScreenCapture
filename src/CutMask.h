@@ -18,7 +18,7 @@ public:
     bool OnMouseDrag(const int& x, const int& y);
     bool OnPaint(SkCanvas* canvas);
     SkRect CutRect;
-
+    std::vector<SkRect> masks;
 private:
     CutMask();
     SkPoint start;

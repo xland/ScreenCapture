@@ -12,7 +12,7 @@ class ShapeEllipse : public ShapeRect
 public:
     ShapeEllipse(const int &x, const int &y);
     ~ShapeEllipse();
-    bool OnPaint(SkCanvas *canvas) override;
+    void Paint(SkCanvas *canvas) override;
 protected:
     bool isMouseOver(const int& x, const int& y) override;
 private:

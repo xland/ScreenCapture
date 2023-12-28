@@ -1,6 +1,7 @@
 #include "Recorder.h"
-#include "Shape/ShapeBase.h"
 #include "WindowMain.h"
+#include "Icon.h"
+#include "Shape/ShapeBase.h"
 #include "Shape/ShapeRect.h"
 #include "Shape/ShapeEllipse.h"
 #include "Shape/ShapeArrow.h"
@@ -46,18 +47,25 @@ bool Recorder::OnMouseDown(const int &x, const int &y)
     {
         createShape(x, y, win->state);
         curIndex = shapes.size() - 1;
+        shapes[curIndex]->OnMouseDown(x, y);
     }
     else {
+        shapes[curIndex]->isWip = true;
+        shapes[curIndex]->OnMouseDown(x, y);
         auto canvasBack = win->surfaceBack->getCanvas();
+        auto canvasFront = win->surfaceFront->getCanvas();
         canvasBack->clear(SK_ColorTRANSPARENT);
         for (auto& shape : shapes)
         {
             if (!shape->isWip) {
                 shape->Paint(canvasBack);
-            }            
+            }
+            else {
+                shape->Paint(canvasFront);
+            }
         }
+        win->Refresh();
     }
-    shapes[curIndex]->OnMouseDown(x, y);
     return false;
 }
 bool Recorder::OnMouseUp(const int &x, const int &y)
@@ -82,15 +90,20 @@ bool Recorder::OnMouseUp(const int &x, const int &y)
 bool Recorder::OnMouseMove(const int &x, const int &y)
 {
     auto winMain = WindowMain::get();
+    if (winMain->state <= State::tool) {
+        return false;
+    }
     if (winMain->state == State::text) {
         return false;
     }
+    auto shapeDragger = ShapeDragger::get();
     for (int i = shapes.size() - 1; i >= 0; i--)
     {
         auto flag = shapes[i]->OnMouseMove(x, y);
         if (flag)
         {
-            curIndex = i;
+            curIndex = i;            
+            shapeDragger->showDragger(i);            
             break;
         }
         else
@@ -98,12 +111,16 @@ bool Recorder::OnMouseMove(const int &x, const int &y)
             curIndex = -1;
         }
     }
+    int index = shapeDragger->indexMouseAt(x, y);
+    if (index >= 0) {
+        curIndex = shapeDragger->shapeIndex;
+        shapes[curIndex]->HoverIndex = index;
+    }
     if (curIndex < 0)
     {
         SetCursor(LoadCursor(nullptr, IDC_ARROW));
         Timer::get()->Start(0, 800, []() {
             ShapeDragger::get()->hideDragger();
-            return true;
             });
     }
     return false;
