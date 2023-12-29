@@ -18,7 +18,6 @@ public:
     std::vector<SkRect> draggers;
     std::vector<Icon::cursor> cursors;
     bool visible{ false };
-    bool textCursorVisible{ true };
 private:
     ShapeDragger();
 };

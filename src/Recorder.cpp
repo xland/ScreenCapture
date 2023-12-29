@@ -47,6 +47,7 @@ bool Recorder::OnMouseDown(const int &x, const int &y)
     {
         createShape(x, y, win->state);
         curIndex = shapes.size() - 1;
+        ShapeDragger::get()->shapeIndex = curIndex;
         shapes[curIndex]->OnMouseDown(x, y);
     }
     else {
@@ -92,10 +93,7 @@ bool Recorder::OnMouseUp(const int &x, const int &y)
 bool Recorder::OnMouseMove(const int &x, const int &y)
 {
     auto winMain = WindowMain::get();
-    if (winMain->state <= State::tool) {
-        return false;
-    }
-    if (winMain->state == State::text) {
+    if (winMain->state <= State::tool || shapes.size() == 0) {
         return false;
     }
     auto shapeDragger = ShapeDragger::get();
@@ -232,6 +230,7 @@ void Recorder::createShape(const int &x, const int &y, const State &state)
     case State::text:
     {
         shapes.push_back(std::make_shared<ShapeText>(x, y));
+        
         break;
     }
     case State::mosaic:

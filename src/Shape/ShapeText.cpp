@@ -21,11 +21,11 @@ ShapeText::ShapeText(const int &x, const int &y) : ShapeBase(x, y)
     lineHeight = metrics.fBottom - metrics.fTop;
     initParams();
     setRect();
+    setDragger();
     auto win = WindowMain::get();
     auto canvas = win->surfaceFront->getCanvas();
     canvas->clear(SK_ColorTRANSPARENT);
     Paint(canvas);
-    win->Refresh();
     auto func = std::bind(&ShapeText::FlashCursor, this);
     Timer::get()->Start(1, 800, func);
 }
@@ -36,23 +36,16 @@ ShapeText::~ShapeText()
 
 bool ShapeText::FlashCursor()
 {
-
-
-    if (isMouseOver) {
-        showCursor = !showCursor;
-        auto win = WindowMain::get();
-        auto canvas = win->surfaceFront->getCanvas();
-        canvas->clear(SK_ColorTRANSPARENT);
-        Paint(canvas);
-        win->Refresh();
-        auto func = std::bind(&ShapeText::FlashCursor, this);
-        Timer::get()->Start(1, 800, func);
-        return false;
-    }
-    else {
-        //showCursor = true; //下一次立刻出现
-        return true;
-    }
+    showCursor = !showCursor;
+    auto win = WindowMain::get();
+    auto canvas = win->surfaceFront->getCanvas();
+    canvas->clear(SK_ColorTRANSPARENT);
+    Paint(canvas);
+    auto dragger = ShapeDragger::get();
+    dragger->showDragger(dragger->shapeIndex);
+    auto func = std::bind(&ShapeText::FlashCursor, this);
+    Timer::get()->Start(1, 800, func);
+    return false;
 }
 
 bool ShapeText::OnMouseDown(const int &x, const int &y)
@@ -92,7 +85,8 @@ bool ShapeText::OnMouseDown(const int &x, const int &y)
             wordIndex = lines[lineIndex].length();
         }
     }
-    WindowMain::get()->Refresh();
+    auto dragger = ShapeDragger::get();
+    dragger->showDragger(dragger->shapeIndex);
     return false;
 }
 
@@ -100,13 +94,12 @@ bool ShapeText::OnMouseMove(const int &x, const int &y)
 {
     isMouseOver = rect.contains(x, y);
     if (isMouseOver) {
-        //方框也不画了，光标也不闪烁了，dragger也没有了
-        return false;
+        //方框也不画了，光标也不闪烁了，dragger也没有了        
+        return true;
     }
-
     //auto func = std::bind(&Recorder::flashTextCursor, this, std::placeholders::_1);
     //timer->Start(shapes.size()-1, 600, func);
-    return false;
+    return true;
 }
 
 bool ShapeText::OnMouseUp(const int &x, const int &y)
@@ -286,6 +279,27 @@ void ShapeText::initParams()
 {
     auto tool = ToolSub::get();
     color = tool->getColor();
+}
+void ShapeText::setDragger()
+{
+    auto shapeDragger = ShapeDragger::get();
+    unsigned half = shapeDragger->size / 2;
+    float l = rect.x() - half;
+    float t = rect.y() - half;
+    float r = rect.right() - half;
+    float b = rect.bottom() - half;
+    shapeDragger->setDragger(0, l, t);
+    shapeDragger->setDragger(2, r, t);
+    shapeDragger->setDragger(4, r, b);
+    shapeDragger->setDragger(6, l, b);
+    shapeDragger->setDragger(1, -100, -100);
+    shapeDragger->setDragger(3, -100, -100);
+    shapeDragger->setDragger(5, -100, -100);
+    shapeDragger->setDragger(7, -100, -100);
+    shapeDragger->cursors[0] = Icon::cursor::wnse;
+    shapeDragger->cursors[4] = Icon::cursor::wnse;
+    shapeDragger->cursors[2] = Icon::cursor::nesw;
+    shapeDragger->cursors[6] = Icon::cursor::nesw;    
 }
 void ShapeText::activeKeyboard(long x, long y)
 {
