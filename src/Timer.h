@@ -11,7 +11,7 @@ public:
     ~Timer();
     static void init();
     static Timer* get();
-    void Start(const int id,const int& timeSpan, std::function<void()> taskFunc);
+    void Start(const int id,const int& timeSpan, std::function<bool()> taskFunc);
     void Remove(const int& id);
 private:
     Timer();

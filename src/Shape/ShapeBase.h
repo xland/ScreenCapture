@@ -22,7 +22,6 @@ public:
     virtual bool OnPaint(SkCanvas* canvas) { return false; };
     virtual bool OnPaintFinish(SkCanvas* canvas) { return false; };
     virtual void Paint(SkCanvas* canvas) { };
-    bool showDragger{ false };
     bool isWip{true};
     int HoverIndex{-1};
     int startX, startY;

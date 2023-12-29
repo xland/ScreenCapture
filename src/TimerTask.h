@@ -5,8 +5,8 @@
 class TimerTask
 {
 public:
-    TimerTask(const int& id, std::chrono::steady_clock::time_point startTime, std::function<void()> taskFunc);
+    TimerTask(const int& id, std::chrono::steady_clock::time_point startTime, std::function<bool()> taskFunc);
     int id;
     std::chrono::steady_clock::time_point startTime;
-    std::function<void()> taskFunc;
+    std::function<bool()> taskFunc;
 };

@@ -30,8 +30,6 @@ ToolMain::ToolMain()
 
 ToolMain::~ToolMain()
 {
-    delete toolMain;
-    toolMain = nullptr;
 }
 
 void ToolMain::init()

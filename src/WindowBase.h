@@ -32,6 +32,7 @@ protected:
     //virtual void paintFinish(SkCanvas* canvas) = 0;
 
 private:
+    void refresh();
     static LRESULT CALLBACK RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
     HDC hCompatibleDC = NULL;
     HBITMAP bottomHbitmap;

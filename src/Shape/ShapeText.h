@@ -18,9 +18,8 @@ public:
     bool OnMoseDrag(const int &x, const int &y) override;
     bool OnChar(const unsigned int& val) override;
     bool OnKeyDown(const unsigned int& val) override;
-    bool OnPaint(SkCanvas *canvas) override;
-    bool ShowCursor{ true };
-
+    void Paint(SkCanvas *canvas) override;   
+    bool FlashCursor();
 protected:
 private:
     SkColor color{ SkColorSetARGB(255, 207, 19, 34) };
@@ -33,4 +32,6 @@ private:
     float lineHeight;
     int lineIndex{ 0 }, wordIndex{0};
     float fontSize{ 80 };
+    bool isMouseOver{true};
+    bool showCursor{ true };
 };

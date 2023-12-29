@@ -29,6 +29,32 @@ void WindowBase::Show()
 
 void WindowBase::Refresh()
 {
+    PostMessage(hwnd, WM_REFRESH, NULL, NULL);
+}
+
+void WindowBase::initCanvas()
+{
+    HDC hdc = GetDC(hwnd);
+    hCompatibleDC = CreateCompatibleDC(NULL);
+    bottomHbitmap = CreateCompatibleBitmap(hdc, w, h);
+    DeleteObject(SelectObject(hCompatibleDC, bottomHbitmap));
+    ReleaseDC(hwnd, hdc);
+    SkImageInfo info = SkImageInfo::MakeN32Premul(w, h);
+    surfaceBase = SkSurfaces::Raster(info);
+    surfaceBack = SkSurfaces::Raster(info);
+    surfaceFront = SkSurfaces::Raster(info);
+    pixBase = new SkPixmap();
+    surfaceBase->peekPixels(pixBase);
+}
+
+void WindowBase::Close(const int &exitCode)
+{
+    SendMessage(hwnd, WM_CLOSE, NULL, NULL);
+    PostQuitMessage(0);
+}
+
+void WindowBase::refresh()
+{
     {
         surfaceBase->writePixels(*pixSrc, 0, 0);
         auto canvas = surfaceBase->getCanvas();
@@ -64,34 +90,13 @@ void WindowBase::Refresh()
     //back->restore();
 
     HDC hdc = GetDC(hwnd);
-    static BITMAPINFO info = {sizeof(BITMAPINFOHEADER), w, 0 - h, 1, 32, BI_RGB, w * 4 * h, 0, 0, 0, 0};
+    static BITMAPINFO info = { sizeof(BITMAPINFOHEADER), w, 0 - h, 1, 32, BI_RGB, w * 4 * h, 0, 0, 0, 0 };
     SetDIBits(hdc, bottomHbitmap, 0, h, pixBase->addr(), &info, DIB_RGB_COLORS);
-    static BLENDFUNCTION blend = {.BlendOp{AC_SRC_OVER}, .SourceConstantAlpha{255}, .AlphaFormat{AC_SRC_ALPHA}};
-    static POINT pSrc = {0, 0};
-    static SIZE sizeWnd = {w, h};
+    static BLENDFUNCTION blend = { .BlendOp{AC_SRC_OVER}, .SourceConstantAlpha{255}, .AlphaFormat{AC_SRC_ALPHA} };
+    static POINT pSrc = { 0, 0 };
+    static SIZE sizeWnd = { w, h };
     UpdateLayeredWindow(hwnd, hdc, NULL, &sizeWnd, hCompatibleDC, &pSrc, NULL, &blend, ULW_ALPHA);
     ReleaseDC(hwnd, hdc);
-}
-
-void WindowBase::initCanvas()
-{
-    HDC hdc = GetDC(hwnd);
-    hCompatibleDC = CreateCompatibleDC(NULL);
-    bottomHbitmap = CreateCompatibleBitmap(hdc, w, h);
-    DeleteObject(SelectObject(hCompatibleDC, bottomHbitmap));
-    ReleaseDC(hwnd, hdc);
-    SkImageInfo info = SkImageInfo::MakeN32Premul(w, h);
-    surfaceBase = SkSurfaces::Raster(info);
-    surfaceBack = SkSurfaces::Raster(info);
-    surfaceFront = SkSurfaces::Raster(info);
-    pixBase = new SkPixmap();
-    surfaceBase->peekPixels(pixBase);
-}
-
-void WindowBase::Close(const int &exitCode)
-{
-    SendMessage(hwnd, WM_CLOSE, NULL, NULL);
-    PostQuitMessage(0);
 }
 
 LRESULT CALLBACK WindowBase::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -116,7 +121,7 @@ LRESULT CALLBACK WindowBase::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wPar
             break;
         }
         case WM_REFRESH: {
-            obj->Refresh();
+            obj->refresh();
             return true;
         }
         case WM_SETCURSOR:

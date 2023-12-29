@@ -122,7 +122,7 @@ bool Recorder::OnMouseMove(const int &x, const int &y)
     {
         SetCursor(LoadCursor(nullptr, IDC_ARROW));
         Timer::get()->Start(0, 800, []() {
-            ShapeDragger::get()->hideDragger();
+            return ShapeDragger::get()->hideDragger();
             });
     }
     return false;
@@ -181,19 +181,19 @@ bool Recorder::onKeyDown(const unsigned int& val)
 //    return true;
 //}
 
-bool Recorder::flashTextCursor(const int& id)
-{
-    auto win = WindowMain::get();
-    if (!win || !shapes[id]) {
-        return true;
-    }
-    auto shapeText = dynamic_cast<ShapeText*>(shapes[id].get());
-    shapeText->ShowCursor = !shapeText->ShowCursor;
-    //auto func = std::bind(&Recorder::flashTextCursor, this, std::placeholders::_1);
-    //timer->Start(id, 600, func);
-    PostMessage(WindowMain::get()->hwnd, WM_REFRESH, NULL, NULL);
-    return false;
-}
+//bool Recorder::flashTextCursor(const int& id)
+//{
+//    auto win = WindowMain::get();
+//    if (!win || !shapes[id]) {
+//        return true;
+//    }
+//    auto shapeText = dynamic_cast<ShapeText*>(shapes[id].get());
+//    shapeText->ShowCursor = !shapeText->ShowCursor;
+//    //auto func = std::bind(&Recorder::flashTextCursor, this, std::placeholders::_1);
+//    //timer->Start(id, 600, func);
+//    PostMessage(WindowMain::get()->hwnd, WM_REFRESH, NULL, NULL);
+//    return false;
+//}
 
 void Recorder::createShape(const int &x, const int &y, const State &state)
 {
@@ -232,8 +232,6 @@ void Recorder::createShape(const int &x, const int &y, const State &state)
     case State::text:
     {
         shapes.push_back(std::make_shared<ShapeText>(x, y));
-        //auto func = std::bind(&Recorder::flashTextCursor, this, std::placeholders::_1);
-        //timer->Start(shapes.size()-1, 600, func);
         break;
     }
     case State::mosaic:

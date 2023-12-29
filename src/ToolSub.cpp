@@ -14,8 +14,7 @@ ToolSub::ToolSub()
 }
 ToolSub::~ToolSub()
 {
-    delete toolSub;
-    toolSub = nullptr;
+
 }
 
 void ToolSub::addStrokeWidthBtns(int index)

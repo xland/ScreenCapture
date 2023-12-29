@@ -15,8 +15,6 @@ CutMask::CutMask()
 
 CutMask::~CutMask()
 {
-    delete cutMask;
-    cutMask = nullptr;
 }
 
 void CutMask::init()

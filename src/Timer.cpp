@@ -30,7 +30,7 @@ Timer* Timer::get()
     return timer;
 }
 
-void Timer::Start(const int id, const int& timeSpan, std::function<void()> taskFunc)
+void Timer::Start(const int id, const int& timeSpan, std::function<bool()> taskFunc)
 {
     if (t == nullptr) {
         t = new std::thread(&Timer::asyncTask, this);
@@ -72,8 +72,7 @@ void Timer::asyncTask()
         auto currentTime = std::chrono::steady_clock::now();
         auto it = std::remove_if(tasks.begin(), tasks.end(), [currentTime](auto& task) {
             if (task->startTime <= currentTime) {
-                task->taskFunc();
-                return true;
+                return task->taskFunc();
             }
             return false;
             });

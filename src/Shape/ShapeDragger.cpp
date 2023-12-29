@@ -50,11 +50,11 @@ void ShapeDragger::showDragger(const int& shapeIndex)
     win->Refresh();
 }
 
-void ShapeDragger::hideDragger()
+bool ShapeDragger::hideDragger()
 {
     auto recorder = Recorder::get();
     if (recorder->curIndex != -1) {
-        return;
+        return false;
     }
     shapeIndex = -1;
     auto win = WindowMain::get();
@@ -62,6 +62,7 @@ void ShapeDragger::hideDragger()
     canvas->clear(SK_ColorTRANSPARENT);
     win->Refresh();
     visible = false;
+    return true;
 }
 
 int ShapeDragger::indexMouseAt(const int& x, const int& y)

@@ -35,6 +35,7 @@ WindowMain::~WindowMain()
     delete ToolMain::get();
     delete CutMask::get();
     delete AppFont::Get();
+    windowMain = nullptr;
 }
 
 void WindowMain::init()
