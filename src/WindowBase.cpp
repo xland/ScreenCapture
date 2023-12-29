@@ -36,6 +36,7 @@ void WindowBase::Refresh()
         canvas->drawImage(img, 0.f, 0.f);
         img = surfaceFront->makeImageSnapshot();
         canvas->drawImage(img, 0.f, 0.f);
+        //todo get到的可能是空
         CutMask::get()->OnPaint(canvas);
         ToolMain::get()->OnPaint(canvas);
         ToolSub::get()->OnPaint(canvas);

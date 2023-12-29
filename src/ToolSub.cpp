@@ -12,6 +12,11 @@ ToolSub::ToolSub()
 {
     
 }
+ToolSub::~ToolSub()
+{
+    delete toolSub;
+    toolSub = nullptr;
+}
 
 void ToolSub::addStrokeWidthBtns(int index)
 {
@@ -35,9 +40,7 @@ void ToolSub::addColorBtns()
     btns.push_back(std::make_shared<ToolBtn>(Icon::uncheck, L"ºÚ", false, true, 22, SkColorSetARGB(255, 0, 0, 0)));
 }
 
-ToolSub::~ToolSub()
-{
-}
+
 
 void ToolSub::init()
 {

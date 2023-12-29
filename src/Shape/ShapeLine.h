@@ -20,10 +20,11 @@ public:
 
 protected:
 private:
-    SkPath path;
-    bool stroke{true};
-    int strokeWidth{4};
-    SkColor color{SkColorSetARGB(255, 207, 19, 34)};
-
+    void setDragger();
     void initParams();
+    SkPath path;
+    bool fill{ false };
+    int strokeWidth{ 4 };
+    int hoverX, hoverY;
+    SkColor color{ SkColorSetARGB(255, 207, 19, 34) };
 };
