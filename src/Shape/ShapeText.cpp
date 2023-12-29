@@ -27,7 +27,7 @@ ShapeText::ShapeText(const int &x, const int &y) : ShapeBase(x, y)
     canvas->clear(SK_ColorTRANSPARENT);
     Paint(canvas);
     auto func = std::bind(&ShapeText::FlashCursor, this);
-    Timer::get()->Start(1, 800, func);
+    Timer::get()->Start(1, 600, func);
 }
 
 ShapeText::~ShapeText()
@@ -44,7 +44,7 @@ bool ShapeText::FlashCursor()
     auto dragger = ShapeDragger::get();
     dragger->showDragger(dragger->shapeIndex);
     auto func = std::bind(&ShapeText::FlashCursor, this);
-    Timer::get()->Start(1, 800, func);
+    Timer::get()->Start(1, 600, func);
     return false;
 }
 
@@ -53,6 +53,9 @@ bool ShapeText::OnMouseDown(const int &x, const int &y)
     if (!rect.contains(x, y)) {
         return false;
     }
+
+    hoverX = x;
+    hoverY = y;
     lineIndex = (y - rect.top()) / lineHeight;
     if (lines.size() > 0) {
         int index = 0;
@@ -94,6 +97,7 @@ bool ShapeText::OnMouseMove(const int &x, const int &y)
 {
     isMouseOver = rect.contains(x, y);
     if (isMouseOver) {
+        HoverIndex = 8;
         Icon::myCursor(Icon::cursor::input);   
         return true;
     }
@@ -110,7 +114,17 @@ bool ShapeText::OnMouseUp(const int &x, const int &y)
 
 bool ShapeText::OnMoseDrag(const int &x, const int &y)
 {
-    isWip = false;
+    auto xSpan = x - hoverX;
+    auto ySpan = y - hoverY;
+    startX += xSpan;
+    startY += ySpan;
+    setRect();
+    hoverX = x;
+    hoverY = y;
+    auto win = WindowMain::get();
+    auto canvas = win->surfaceFront->getCanvas();
+    canvas->clear(SK_ColorTRANSPARENT);
+    Paint(canvas);
     WindowMain::get()->Refresh();
     return false;
 }
@@ -162,6 +176,9 @@ bool ShapeText::OnChar(const unsigned int& val)
             lines[lineIndex] = str1+ word + str2;
         }
         wordIndex += 1;
+    }
+    if (lines.size() != 0) {
+        isWip = false;
     }
     setRect();
     auto win = WindowMain::get();

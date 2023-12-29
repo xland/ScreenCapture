@@ -37,7 +37,7 @@ void ShapeDragger::showDragger(const int& shapeIndex)
 {
     auto win = WindowMain::get();
     auto canvas = win->surfaceFront->getCanvas();
-    //canvas->clear(SK_ColorTRANSPARENT);
+    canvas->clear(SK_ColorTRANSPARENT);
     SkPaint paint;
     paint.setStroke(true);
     paint.setStrokeWidth(1);

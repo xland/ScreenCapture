@@ -27,6 +27,7 @@ private:
     void setRect();
     float getCursorX(SkFont* font,float& lineHeight);
     void initParams();
+    int hoverX, hoverY;
     SkRect rect;
     std::vector<std::wstring> lines;
     float lineHeight;
