@@ -1,8 +1,9 @@
-#include "ShapeText.h"
+ï»¿#include "ShapeText.h"
 #include "../WindowMain.h"
 #include "../ToolSub.h"
 #include "../AppFont.h"
 #include "../Timer.h"
+#include "../Icon.h"
 #include "ShapeDragger.h"
 #include "include/core/SkCanvas.h"
 #include "include/core/SkPaint.h"
@@ -21,7 +22,6 @@ ShapeText::ShapeText(const int &x, const int &y) : ShapeBase(x, y)
     lineHeight = metrics.fBottom - metrics.fTop;
     initParams();
     setRect();
-    setDragger();
     auto win = WindowMain::get();
     auto canvas = win->surfaceFront->getCanvas();
     canvas->clear(SK_ColorTRANSPARENT);
@@ -94,9 +94,10 @@ bool ShapeText::OnMouseMove(const int &x, const int &y)
 {
     isMouseOver = rect.contains(x, y);
     if (isMouseOver) {
-        //·½¿òÒ²²»»­ÁË£¬¹â±êÒ²²»ÉÁË¸ÁË£¬draggerÒ²Ã»ÓÐÁË        
+        Icon::myCursor(Icon::cursor::input);   
         return true;
     }
+    Icon::myCursor(Icon::cursor::arrow);
     //auto func = std::bind(&Recorder::flashTextCursor, this, std::placeholders::_1);
     //timer->Start(shapes.size()-1, 600, func);
     return true;
@@ -116,7 +117,7 @@ bool ShapeText::OnMoseDrag(const int &x, const int &y)
 
 bool ShapeText::OnChar(const unsigned int& val)
 {
-    if (val == 13) {
+    if (val == 13) { //enter
         if (wordIndex != lines[lineIndex].length()) {
             auto str1 = lines[lineIndex].substr(0, wordIndex);
             auto str2 = lines[lineIndex].substr(wordIndex);
@@ -163,7 +164,11 @@ bool ShapeText::OnChar(const unsigned int& val)
         wordIndex += 1;
     }
     setRect();
-    WindowMain::get()->Refresh();
+    auto win = WindowMain::get();
+    auto canvas = win->surfaceFront->getCanvas();
+    canvas->clear(SK_ColorTRANSPARENT);
+    Paint(canvas);
+    win->Refresh();
     return false;
 }
 
@@ -254,9 +259,9 @@ void ShapeText::Paint(SkCanvas *canvas)
 
 
     //std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
-    //// ´´½¨¶àÐÐ¿í×Ö·ûÎÄ±¾
+    //// åˆ›å»ºå¤šè¡Œå®½å­—ç¬¦æ–‡æœ¬
     //std::wstring text = L"This is a multi-line text.\nSecond line.";
-    //// ·Ö¸îÎÄ±¾Îª¶àÐÐ
+    //// åˆ†å‰²æ–‡æœ¬ä¸ºå¤šè¡Œ
     //std::vector<SkString> lines;
     //std::wstring::size_type pos = 0;
     //while ((pos = text.find(L'\n', pos)) != std::wstring::npos) {
@@ -271,7 +276,7 @@ void ShapeText::Paint(SkCanvas *canvas)
     //auto height = metrics.fBottom - metrics.fTop;
     //for (const auto& line : lines) {
     //    SkTextUtils::DrawString(canvas, line.c_str(), startX, startY, *font, paint,SkTextUtils::kLeft_Align);
-    //    startY += height; // ÏÂÒ»ÐÐµÄÎ»ÖÃÔÚµ±Ç°ÐÐÏÂ·½¼ÓÉÏÎÄ±¾´óÐ¡
+    //    startY += height; // ä¸‹ä¸€è¡Œçš„ä½ç½®åœ¨å½“å‰è¡Œä¸‹æ–¹åŠ ä¸Šæ–‡æœ¬å¤§å°
     //}
 }
 
@@ -279,27 +284,6 @@ void ShapeText::initParams()
 {
     auto tool = ToolSub::get();
     color = tool->getColor();
-}
-void ShapeText::setDragger()
-{
-    auto shapeDragger = ShapeDragger::get();
-    unsigned half = shapeDragger->size / 2;
-    float l = rect.x() - half;
-    float t = rect.y() - half;
-    float r = rect.right() - half;
-    float b = rect.bottom() - half;
-    shapeDragger->setDragger(0, l, t);
-    shapeDragger->setDragger(2, r, t);
-    shapeDragger->setDragger(4, r, b);
-    shapeDragger->setDragger(6, l, b);
-    shapeDragger->setDragger(1, -100, -100);
-    shapeDragger->setDragger(3, -100, -100);
-    shapeDragger->setDragger(5, -100, -100);
-    shapeDragger->setDragger(7, -100, -100);
-    shapeDragger->cursors[0] = Icon::cursor::wnse;
-    shapeDragger->cursors[4] = Icon::cursor::wnse;
-    shapeDragger->cursors[2] = Icon::cursor::nesw;
-    shapeDragger->cursors[6] = Icon::cursor::nesw;    
 }
 void ShapeText::activeKeyboard(long x, long y)
 {
@@ -339,11 +323,31 @@ void ShapeText::setRect()
         width += 20;
     }
     if (height == 0) {
-        font->measureText(L"ÓÀ", 2, SkTextEncoding::kUTF16, &lineRect);
+        font->measureText(L"æ°¸", 2, SkTextEncoding::kUTF16, &lineRect);
         top += lineRect.top();
         height = lineHeight;
     }
     rect.setXYWH(left, top, width, height);
+
+    auto shapeDragger = ShapeDragger::get();
+    unsigned half = shapeDragger->size / 2;
+    float l = rect.x() - half;
+    float t = rect.y() - half;
+    float r = rect.right() - half;
+    float b = rect.bottom() - half;
+    shapeDragger->setDragger(0, l, t);
+    shapeDragger->setDragger(2, r, t);
+    shapeDragger->setDragger(4, r, b);
+    shapeDragger->setDragger(6, l, b);
+    shapeDragger->setDragger(1, -100, -100);
+    shapeDragger->setDragger(3, -100, -100);
+    shapeDragger->setDragger(5, -100, -100);
+    shapeDragger->setDragger(7, -100, -100);
+    shapeDragger->cursors[0] = Icon::cursor::wnse;
+    shapeDragger->cursors[4] = Icon::cursor::wnse;
+    shapeDragger->cursors[2] = Icon::cursor::nesw;
+    shapeDragger->cursors[6] = Icon::cursor::nesw;
+
     activeKeyboard(getCursorX(font,lineHeight), startY + lineIndex * lineHeight);
 }
 float ShapeText::getCursorX(SkFont* font, float& lineHeight)

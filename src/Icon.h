@@ -36,7 +36,8 @@ namespace Icon
         ns,
         nesw,
         we,
-        arrow
+        arrow,
+        input
     };
 
     static void myCursor(cursor cursorType = cursor::arrow) {
@@ -56,6 +57,9 @@ namespace Icon
             break;
         case Icon::cursor::we:
             SetCursor(LoadCursor(nullptr, IDC_SIZEWE));
+            break;
+        case Icon::cursor::input:
+            SetCursor(LoadCursor(nullptr, IDC_IBEAM));
             break;
         default:
             SetCursor(LoadCursor(nullptr, IDC_ARROW));
