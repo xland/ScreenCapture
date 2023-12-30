@@ -43,16 +43,16 @@ bool Recorder::OnMouseDown(const int &x, const int &y)
     {
         return false;
     }
-    if (curIndex < 0)
+    if (!curShape)
     {
         createShape(x, y, win->state);
-        curIndex = shapes.size() - 1;
-        ShapeDragger::get()->shapeIndex = curIndex;
-        shapes[curIndex]->OnMouseDown(x, y);
+        auto curIndex = shapes.size() - 1;
+        curShape = shapes[curIndex].get();
+        curShape->OnMouseDown(x, y);
     }
     else {
-        shapes[curIndex]->isWip = true;
-        shapes[curIndex]->OnMouseDown(x, y);
+        curShape->isWip = true;
+        curShape->OnMouseDown(x, y);
         auto canvasBack = win->surfaceBack->getCanvas();
         auto canvasFront = win->surfaceFront->getCanvas();
         canvasBack->clear(SK_ColorTRANSPARENT);
@@ -71,7 +71,7 @@ bool Recorder::OnMouseDown(const int &x, const int &y)
 }
 bool Recorder::OnMouseUp(const int &x, const int &y)
 {
-    if (curIndex < 0)
+    if (!curShape)
     {
         return false;
     }
@@ -85,9 +85,7 @@ bool Recorder::OnMouseUp(const int &x, const int &y)
     //    shapes.erase(shapes.begin() + curIndex, shapes.begin() + 1);
     //}
     // 
-    shapes[curIndex]->OnMouseUp(x, y);
-    auto shapeDragger = ShapeDragger::get();
-    shapeDragger->showDragger(curIndex);
+    curShape->OnMouseUp(x, y);
     return false;
 }
 bool Recorder::OnMouseMove(const int &x, const int &y)
@@ -97,26 +95,25 @@ bool Recorder::OnMouseMove(const int &x, const int &y)
         return false;
     }
     auto shapeDragger = ShapeDragger::get();
+    auto isMouseOnShape = false;
     for (int i = shapes.size() - 1; i >= 0; i--)
     {
         auto flag = shapes[i]->OnMouseMove(x, y);
         if (flag)
         {
-            curIndex = i;            
-            shapeDragger->showDragger(i);            
+            curShape = shapes[i].get();
+            isMouseOnShape = true;
             break;
         }
-        else
-        {
-            curIndex = -1;
-        }
+    }
+    if (!isMouseOnShape) {
+        curShape = nullptr;
     }
     int index = shapeDragger->indexMouseAt(x, y);
     if (index >= 0) {
-        curIndex = shapeDragger->shapeIndex;
-        shapes[curIndex]->HoverIndex = index;
+        curShape = shapeDragger->curShape;
     }
-    if (curIndex < 0)
+    if (!curShape)
     {
         SetCursor(LoadCursor(nullptr, IDC_ARROW));
         Timer::get()->Start(0, 800, []() {
@@ -127,20 +124,26 @@ bool Recorder::OnMouseMove(const int &x, const int &y)
 }
 bool Recorder::OnMouseDrag(const int &x, const int &y)
 {
-    if (curIndex >= 0)
+    if (curShape)
     {
-        shapes[curIndex]->OnMoseDrag(x, y);
+        curShape->OnMoseDrag(x, y);
     }
     return false;
 }
 bool Recorder::onChar(const unsigned int& val)
 {
-    shapes[curIndex]->OnChar(val);
+    if (curShape)
+    {
+        curShape->OnChar(val);
+    }
     return false;    
 }
 bool Recorder::onKeyDown(const unsigned int& val)
 {
-    shapes[curIndex]->OnKeyDown(val);
+    if (curShape)
+    {
+        curShape->OnKeyDown(val);
+    }
     return false;
 }
 

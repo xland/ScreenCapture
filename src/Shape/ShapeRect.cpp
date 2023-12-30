@@ -27,6 +27,7 @@ bool ShapeRect::OnMouseUp(const int& x, const int& y)
     Paint(canvasBack);
     isWip = false;
     setDragger();
+    win->Refresh();
     return false;
 }
 
@@ -37,6 +38,7 @@ bool ShapeRect::OnMouseMove(const int& x, const int& y)
         setDragger();
         Icon::myCursor(Icon::cursor::all);
         HoverIndex = 8;
+        WindowMain::get()->Refresh();
         return true;
     }
     return false;
@@ -134,6 +136,11 @@ void ShapeRect::setDragger()
     shapeDragger->cursors[6] = Icon::cursor::nesw;
     shapeDragger->cursors[3] = Icon::cursor::we;
     shapeDragger->cursors[7] = Icon::cursor::we;
+    auto win = WindowMain::get();
+    auto canvas = win->surfaceFront->getCanvas();
+    canvas->clear(SK_ColorTRANSPARENT);
+    shapeDragger->showDragger(canvas);
+    shapeDragger->curShape = this;
 }
 
 

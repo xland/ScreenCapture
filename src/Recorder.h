@@ -24,7 +24,7 @@ public:
     //bool OnPaint(SkCanvas *canvas);
     //bool OnPaintFinish(SkCanvas* canvas);
     std::vector<std::shared_ptr<ShapeBase>> shapes;
-    int curIndex{ -1 };
+    ShapeBase* curShape{ nullptr };
 private:
     //bool hideDragger(const int& id);
     //bool flashTextCursor(const int& id);

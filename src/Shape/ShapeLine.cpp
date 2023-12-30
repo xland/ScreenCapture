@@ -21,36 +21,13 @@ bool ShapeLine::OnMouseDown(const int &x, const int &y)
 
 bool ShapeLine::OnMouseMove(const int &x, const int &y)
 {
-    auto half = strokeWidth / 2 +2;
-
-    SkPoint p1(startX, startY);
-    auto p2 = path.getPoint(1);
-    auto xSpan = std::abs(p2.fX - p1.fX);
-    auto ySpan = std::abs(p2.fY - p1.fY);
-    auto lineLength = std::sqrt(xSpan * xSpan + ySpan * ySpan);
-    auto xPSpan = half * ySpan / lineLength;
-    auto yPSpan = half * xSpan / lineLength;
-    SkPath path;
-    if ((p2.fX > p1.fX && p2.fY > p1.fY) || (p1.fX > p2.fX && p1.fY > p2.fY)) {
-        path.moveTo(p1.fX + xPSpan, p1.fY - yPSpan);
-        path.lineTo(p2.fX + xPSpan, p2.fY - yPSpan);
-        path.lineTo(p2.fX - xPSpan, p2.fY + yPSpan);
-        path.lineTo(p1.fX - xPSpan, p1.fY + yPSpan);
-    }
-    else {
-        path.moveTo(p1.fX - yPSpan, p1.fY - xPSpan);
-        path.lineTo(p2.fX - yPSpan, p2.fY - xPSpan);
-        path.lineTo(p2.fX + yPSpan, p2.fY + xPSpan);
-        path.lineTo(p1.fX + xPSpan, p1.fY + yPSpan);
-    }
-    path.close();
-    auto flag = path.contains(x, y);
+    auto flag = pathAssist.contains(x, y);
     if (flag)
     {
-        auto draggers = ShapeDragger::get();
         setDragger();
         Icon::myCursor(Icon::cursor::all);
         HoverIndex = 8;
+        WindowMain::get()->Refresh();
         return true;
     }
     return false;
@@ -63,6 +40,31 @@ bool ShapeLine::OnMouseUp(const int &x, const int &y)
     auto canvasBack = win->surfaceBack->getCanvas();
     Paint(canvasBack);
     isWip = false;
+    win->Refresh();
+
+    pathAssist.reset();
+    auto half = strokeWidth / 2 + 2;
+    SkPoint p1(startX, startY);
+    auto p2 = path.getPoint(1);
+    auto xSpan = std::abs(p2.fX - p1.fX);
+    auto ySpan = std::abs(p2.fY - p1.fY);
+    auto lineLength = std::sqrt(xSpan * xSpan + ySpan * ySpan);
+    auto xPSpan = half * ySpan / lineLength;
+    auto yPSpan = half * xSpan / lineLength;
+    if ((p2.fX > p1.fX && p2.fY > p1.fY) || (p1.fX > p2.fX && p1.fY > p2.fY)) {
+        pathAssist.moveTo(p1.fX + xPSpan, p1.fY - yPSpan);
+        pathAssist.lineTo(p2.fX + xPSpan, p2.fY - yPSpan);
+        pathAssist.lineTo(p2.fX - xPSpan, p2.fY + yPSpan);
+        pathAssist.lineTo(p1.fX - xPSpan, p1.fY + yPSpan);
+    }
+    else {
+        pathAssist.moveTo(p1.fX - yPSpan, p1.fY - xPSpan);
+        pathAssist.lineTo(p2.fX - yPSpan, p2.fY - xPSpan);
+        pathAssist.lineTo(p2.fX + yPSpan, p2.fY + xPSpan);
+        pathAssist.lineTo(p1.fX + xPSpan, p1.fY + yPSpan);
+    }
+    pathAssist.close();
+
     return false;
 }
 
@@ -133,6 +135,11 @@ void ShapeLine::setDragger()
     }
     shapeDragger->cursors[0] = Icon::cursor::all;
     shapeDragger->cursors[1] = Icon::cursor::all;
+    auto win = WindowMain::get();
+    auto canvas = win->surfaceFront->getCanvas();
+    canvas->clear(SK_ColorTRANSPARENT);
+    shapeDragger->showDragger(canvas);
+    shapeDragger->curShape = this;
 }
 
 void ShapeLine::initParams()

@@ -42,7 +42,7 @@ bool ShapeText::FlashCursor()
     canvas->clear(SK_ColorTRANSPARENT);
     Paint(canvas);
     auto dragger = ShapeDragger::get();
-    dragger->showDragger(dragger->shapeIndex);
+    //dragger->showDragger(dragger->shapeIndex,false);
     auto func = std::bind(&ShapeText::FlashCursor, this);
     Timer::get()->Start(1, 600, func);
     return false;
@@ -89,7 +89,7 @@ bool ShapeText::OnMouseDown(const int &x, const int &y)
         }
     }
     auto dragger = ShapeDragger::get();
-    dragger->showDragger(dragger->shapeIndex);
+    //dragger->showDragger(dragger->shapeIndex,false);
     return false;
 }
 

@@ -23,6 +23,7 @@ private:
     void setDragger();
     void initParams();
     SkPath path;
+    SkPath pathAssist;
     bool fill{ false };
     int strokeWidth{ 4 };
     int hoverX, hoverY;

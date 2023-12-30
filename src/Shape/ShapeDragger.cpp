@@ -2,6 +2,7 @@
 #include "../WindowMain.h"
 #include "../Timer.h"
 #include "../Recorder.h"
+#include "ShapeBase.h"
 
 ShapeDragger* shapeDragger;
 ShapeDragger::ShapeDragger()
@@ -33,11 +34,8 @@ void ShapeDragger::setDragger(size_t index, float x, float y)
     draggers[index].setXYWH(x, y, size, size);
 }
 
-void ShapeDragger::showDragger(const int& shapeIndex)
-{
-    auto win = WindowMain::get();
-    auto canvas = win->surfaceFront->getCanvas();
-    canvas->clear(SK_ColorTRANSPARENT);
+void ShapeDragger::showDragger(SkCanvas* canvas)
+{   
     SkPaint paint;
     paint.setStroke(true);
     paint.setStrokeWidth(1);
@@ -46,22 +44,20 @@ void ShapeDragger::showDragger(const int& shapeIndex)
         canvas->drawRect(dragger, paint);
     }
     visible = true;
-    this->shapeIndex = shapeIndex;
-    win->Refresh();
 }
 
 bool ShapeDragger::hideDragger()
 {
     auto recorder = Recorder::get();
-    if (recorder->curIndex != -1) {
+    if (recorder->curShape) {
         return false;
     }
-    shapeIndex = -1;
     auto win = WindowMain::get();
     auto canvas = win->surfaceFront->getCanvas();
     canvas->clear(SK_ColorTRANSPARENT);
     win->Refresh();
     visible = false;
+    curShape = nullptr;
     return true;
 }
 
@@ -74,6 +70,7 @@ int ShapeDragger::indexMouseAt(const int& x, const int& y)
     {
         if (draggers[i].contains(x, y)) {
             Icon::myCursor(cursors[i]);
+            curShape->HoverIndex = i;
             return i;
         }
     }

@@ -26,6 +26,7 @@ bool ShapeArrow::OnMouseUp(const int &x, const int &y)
     auto canvasBack = win->surfaceBack->getCanvas();
     Paint(canvasBack);
     isWip = false;
+    win->Refresh();
     return false;
 }
 
@@ -34,10 +35,10 @@ bool ShapeArrow::OnMouseMove(const int &x, const int &y)
     auto flag = path.contains(x, y);
     if (flag)
     {
-        auto draggers = ShapeDragger::get();
         setDragger();
         Icon::myCursor(Icon::cursor::all);
         HoverIndex = 8;
+        WindowMain::get()->Refresh();
         return true;
     }
     return false;
@@ -162,4 +163,9 @@ void ShapeArrow::setDragger()
     }
     shapeDragger->cursors[0] = Icon::cursor::all;
     shapeDragger->cursors[1] = Icon::cursor::all;
+    auto win = WindowMain::get();
+    auto canvas = win->surfaceFront->getCanvas();
+    canvas->clear(SK_ColorTRANSPARENT);
+    shapeDragger->showDragger(canvas);
+    shapeDragger->curShape = this;
 }
