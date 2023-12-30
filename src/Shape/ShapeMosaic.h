@@ -5,7 +5,7 @@
 #include "include/core/SkPoint.h"
 #include "include/core/SkPath.h"
 #include "ShapeBase.h"
-#include <vector>
+#include <map>
 
 class ShapeMosaic : public ShapeBase
 {
@@ -13,7 +13,7 @@ public:
     ShapeMosaic(const int &x, const int &y);
     ~ShapeMosaic();
     bool OnPaintFinish(SkCanvas* canvas) override { return false; };
-    bool OnPaint(SkCanvas *canvas) override;
+    void Paint(SkCanvas *canvas) override;
 
 protected:
     bool OnMouseDown(const int &x, const int &y) override;
@@ -22,10 +22,13 @@ protected:
     bool OnMoseDrag(const int &x, const int &y) override;
 
 private:
-    SkColor getMosaicRectColor(const SkRect& rect);
+    void initParams();
+    void drawRectsByPoints(const SkPoint& point, SkCanvas* canvas);
     SkPath path;
     bool stroke{true};
     int strokeWidth{26};
+    float size{ 20 };
     SkColor color{SkColorSetARGB(255, 207, 19, 34)};
-    void initParams();
+    std::map<int, SkColor> colorCache;
+    SkPixmap* pixmap;
 };

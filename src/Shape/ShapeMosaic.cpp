@@ -23,51 +23,59 @@ void samplePathCoordinates(const SkPath& path, int numSamples) {
     
 }
 
-bool ShapeMosaic::OnPaint(SkCanvas *canvas)
+void ShapeMosaic::Paint(SkCanvas *canvas)
 {
-
     auto win = WindowMain::get();
-    sk_sp<SkImage> img = win->surfaceFront->makeImageSnapshot();
-    win->surfaceBack->getCanvas()->drawImage(img, 0, 0);
-    float size = 10.f;
     SkPathMeasure pathMeasure(path, false);
     float length = pathMeasure.getLength();
     SkPoint point;
     SkRect rect;
     int tempWidth = strokeWidth / 2;
-    SkPaint paint;
-    paint.setColor(SK_ColorRED);
     for (float distance = 0; distance < length; distance += size) {
         if (pathMeasure.getPosTan(distance, &point, nullptr)) {
-            for (int x = point.fX - tempWidth; x <= point.fX + tempWidth; x += size) {
-                for (int y = point.fY - tempWidth; y <= point.fY + tempWidth; y += size) {
-                    rect.setXYWH(x, y, size, size);
-                    paint.setColor(getMosaicRectColor(rect));
-                    canvas->drawRect(rect, paint);
-                }                
-            }
+            drawRectsByPoints(point, canvas);
         }
     }
+    SkPaint paint;
     paint.setAntiAlias(true);
     paint.setStroke(true);
     paint.setStrokeWidth(strokeWidth);
     paint.setStyle(SkPaint::kStroke_Style);
     paint.setStrokeCap(SkPaint::Cap::kRound_Cap);
     paint.setStrokeJoin(SkPaint::kRound_Join);
+    //paint.setColor(SK_ColorBLUE);    
     paint.setBlendMode(SkBlendMode::kClear);
     path.setFillType(SkPathFillType::kInverseWinding);
     canvas->drawPath(path, paint);
-    return false;
 }
 
 bool ShapeMosaic::OnMouseDown(const int &x, const int &y)
 {
+    auto win = WindowMain::get();
+    auto surfaceFront = win->surfaceFront;
+    surfaceFront->writePixels(*win->pixSrc, 0, 0);
+    auto canvas = win->surfaceFront->getCanvas();
+    canvas->drawImage(win->surfaceBack->makeImageSnapshot(), 0, 0);
+    SkImageInfo info = SkImageInfo::MakeN32Premul(win->w, win->h);
+    auto addr = new unsigned char[win->w * win->h * 4];
+    pixmap = new SkPixmap(info, addr, win->w * 4);
+    surfaceFront->readPixels(*pixmap,0,0);
+    canvas->clear(SK_ColorTRANSPARENT);
     path.moveTo(x, y);
     return false;
 }
 
 bool ShapeMosaic::OnMouseUp(const int &x, const int &y)
 {
+    //auto win = WindowMain::get();
+    //auto canvas = win->surfaceBack->getCanvas();
+    //canvas->clear(SK_ColorTRANSPARENT);
+    //Paint(canvas);
+    //win->Refresh();
+    delete[] pixmap->addr();
+    delete pixmap;
+    pixmap = nullptr;
+    colorCache.clear();
     return false;
 }
 
@@ -80,31 +88,59 @@ bool ShapeMosaic::OnMoseDrag(const int &x, const int &y)
 {
     isWip = false;
     path.lineTo(x, y);
-    WindowMain::get()->Refresh();
+    auto win = WindowMain::get();
+    auto canvas = win->surfaceFront->getCanvas();
+    canvas->clear(SK_ColorTRANSPARENT);
+    Paint(canvas);
+    win->Refresh();
     return false;
 }
 
-SkColor ShapeMosaic::getMosaicRectColor(const SkRect& rect)
-{ 
+void ShapeMosaic::drawRectsByPoints(const SkPoint& point, SkCanvas* canvas)
+{
     auto win = WindowMain::get();
+    int rowNum = std::ceil(win->w / size);
+    int rectNum = std::ceil(strokeWidth*2 / size);
+    int xIndex = (point.fX - strokeWidth) / size;
+    int yIndex = (point.fY - strokeWidth) / size;
     SkColor4f colorSum = { 0, 0, 0, 0 };
-    int count{ 0 };
-    for (size_t x = rect.left(); x < rect.right(); x+=2)
+    SkPaint paint;
+    for (size_t i = yIndex; i < yIndex+rectNum; i++)
     {
-        for (size_t y = rect.top(); y < rect.bottom(); y+=2)
+        for (size_t j = xIndex; j < xIndex+rectNum; j++)
         {
-            auto currentColor = win->pixBase->getColor4f(x, y);
-            colorSum.fR += currentColor.fR;
-            colorSum.fG += currentColor.fG;
-            colorSum.fB += currentColor.fB;
-            count++;
+            auto key = i*rowNum+j;
+            auto x = j * size;
+            auto y = i * size;
+            if (colorCache.contains(key)) {
+                paint.setColor(colorCache[key]);
+                canvas->drawRect(SkRect::MakeXYWH(x, y, size, size),paint);
+            }
+            else {
+                int count{ 0 };
+                for (size_t x1 = x; x1 <= x+size; x1 += 2)
+                {
+                    for (size_t y1 = y; y1 <= y+size; y1 += 2)
+                    {
+                        auto currentColor = pixmap->getColor4f(x1, y1);
+                        colorSum.fR += currentColor.fR;
+                        colorSum.fG += currentColor.fG;
+                        colorSum.fB += currentColor.fB;
+                        count++;
+                    }
+                }
+                colorSum.fR /= count;
+                colorSum.fG /= count;
+                colorSum.fB /= count;
+                colorSum.fA = 255;
+                auto color = colorSum.toSkColor();
+                paint.setColor(color);
+                canvas->drawRect(SkRect::MakeXYWH(x, y, size, size), paint);
+                colorCache.insert({ key, color });
+            }
         }
     }
-    colorSum.fR /= count;
-    colorSum.fG /= count;
-    colorSum.fB /= count;
-    colorSum.fA = 255;
-    return colorSum.toSkColor();
+
 }
 
 void ShapeMosaic::initParams()

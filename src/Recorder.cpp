@@ -232,8 +232,7 @@ void Recorder::createShape(const int &x, const int &y, const State &state)
     }
     case State::text:
     {
-        shapes.push_back(std::make_shared<ShapeText>(x, y));
-        
+        shapes.push_back(std::make_shared<ShapeText>(x, y));        
         break;
     }
     case State::mosaic:

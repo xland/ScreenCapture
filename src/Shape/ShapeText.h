@@ -24,7 +24,9 @@ protected:
 private:
     SkColor color{ SkColorSetARGB(255, 207, 19, 34) };
     void activeKeyboard(long x, long y);
-    void setRect();
+    void setRect(SkCanvas* canvas);
+    void setDragger(SkCanvas* canvas);
+    void setCursor(SkCanvas* canvas);
     float getCursorX(SkFont* font,float& lineHeight);
     void initParams();
     int hoverX, hoverY;
