@@ -70,7 +70,3 @@ child.on("close", (code) => {
 
 This project is under the [MIT license](./licence).
 
-[Blend2D](https://blend2d.com/) is used in this project.
-
-Please also comply with Blend2d's [Zlib open source license](https://github.com/blend2d/blend2d/blob/master/LICENSE.md).
-
