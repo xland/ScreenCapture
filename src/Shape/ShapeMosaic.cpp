@@ -18,19 +18,12 @@ ShapeMosaic::~ShapeMosaic()
 {
 }
 
-void samplePathCoordinates(const SkPath& path, int numSamples) {
-    // ´´½¨ SkPathMeasure
-    
-}
-
 void ShapeMosaic::Paint(SkCanvas *canvas)
 {
     auto win = WindowMain::get();
     SkPathMeasure pathMeasure(path, false);
     float length = pathMeasure.getLength();
     SkPoint point;
-    SkRect rect;
-    int tempWidth = strokeWidth / 2;
     for (float distance = 0; distance < length; distance += size) {
         if (pathMeasure.getPosTan(distance, &point, nullptr)) {
             drawRectsByPoints(point, canvas);
@@ -42,8 +35,7 @@ void ShapeMosaic::Paint(SkCanvas *canvas)
     paint.setStrokeWidth(strokeWidth);
     paint.setStyle(SkPaint::kStroke_Style);
     paint.setStrokeCap(SkPaint::Cap::kRound_Cap);
-    paint.setStrokeJoin(SkPaint::kRound_Join);
-    //paint.setColor(SK_ColorBLUE);    
+    paint.setStrokeJoin(SkPaint::kRound_Join);  
     paint.setBlendMode(SkBlendMode::kClear);
     path.setFillType(SkPathFillType::kInverseWinding);
     canvas->drawPath(path, paint);

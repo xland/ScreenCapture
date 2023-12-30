@@ -21,7 +21,5 @@ set(SHAPE
     ShapeEraser.h
     ShapeMosaic.cpp
     ShapeMosaic.h
-    ShapeMosaicShader.cpp
-    ShapeMosaicShader.h
 )
 target_sources(ScreenCapture PRIVATE ${SHAPE})
