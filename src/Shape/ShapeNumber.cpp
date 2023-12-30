@@ -89,16 +89,33 @@ void ShapeNumber::Paint(SkCanvas *canvas)
         paint.setStrokeWidth(strokeWidth);
     }
     paint.setColor(color);
-    canvas->drawPath(path, paint);
     canvas->drawCircle(SkPoint::Make(startX, startY), r, paint);
+    if (stroke) {
+        SkPath p = path;
+        p.lineTo(startX, startY);
+        p.close();
+        paint.setBlendMode(SkBlendMode::kClear);
+        paint.setStroke(false);
+        canvas->drawPath(p, paint);
+        paint.setStroke(true);
+        paint.setBlendMode(SkBlendMode::kSrc);
+    }
+    canvas->drawPath(path, paint);
     auto str = std::to_string(number);
     auto font = AppFont::Get()->fontText;
     font->setSize(r);
-    paint.setColor(SK_ColorWHITE);
+    if (stroke) {
+        paint.setStroke(false);
+    }
+    else {
+        paint.setColor(SK_ColorWHITE);
+    }
+    
     SkRect textBounds;
     font->measureText(str.c_str(), str.size(), SkTextEncoding::kUTF8, &textBounds);
     SkScalar x = startX - textBounds.width() / 2 - textBounds.left();
     SkScalar y = startY + textBounds.height() / 2 - textBounds.bottom();
+    
     canvas->drawSimpleText(str.c_str(), str.size(), SkTextEncoding::kUTF8, x, y, *font, paint);
 }
 
@@ -165,11 +182,11 @@ void ShapeNumber::makePath(const int &x1, const int &y1, const int &x2, const in
     auto Y1 = centerPoint.fY - r * sin(angle1);
     auto X2 = centerPoint.fX + r * cos(angle2);//箭头与圆的交接点2
     auto Y2 = centerPoint.fY - r * sin(angle2);
-    path.moveTo(arrowPoint.fX, arrowPoint.fY);
-    path.lineTo(X1, Y1);
+    path.moveTo(X1, Y1);
+    path.lineTo(arrowPoint.fX, arrowPoint.fY);
     path.lineTo(X2, Y2);
-    path.close();
-    path.setFillType(SkPathFillType::kWinding);
+    //path.close();
+    //path.setFillType(SkPathFillType::kWinding);
 }
 
 void ShapeNumber::setDragger()
