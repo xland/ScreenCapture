@@ -129,16 +129,9 @@ void ShapeLine::setDragger()
     unsigned half = shapeDragger->size / 2;
     shapeDragger->setDragger(0, startX - half, startY - half);
     shapeDragger->setDragger(1, endPoint.fX - half, endPoint.fY - half);
-    for (size_t i = 2; i < 8; i++)
-    {
-        shapeDragger->setDragger(i, -100, -100);
-    }
+    shapeDragger->disableDragger(2);
     shapeDragger->cursors[0] = Icon::cursor::all;
     shapeDragger->cursors[1] = Icon::cursor::all;
-    auto win = WindowMain::get();
-    auto canvas = win->surfaceFront->getCanvas();
-    canvas->clear(SK_ColorTRANSPARENT);
-    shapeDragger->showDragger(canvas);
     shapeDragger->curShape = this;
 }
 

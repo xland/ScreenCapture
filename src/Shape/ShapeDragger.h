@@ -14,6 +14,7 @@ public:
     void setDragger(size_t index, float x, float y);
     void showDragger(SkCanvas* canvas);
     bool hideDragger();
+    void disableDragger(const int& startIndex = 0);
     int indexMouseAt(const int& x, const int& y);
     ShapeBase* curShape;
     float size{ 10 };

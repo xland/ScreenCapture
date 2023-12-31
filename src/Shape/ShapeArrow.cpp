@@ -22,11 +22,7 @@ bool ShapeArrow::OnMouseDown(const int &x, const int &y)
 bool ShapeArrow::OnMouseUp(const int &x, const int &y)
 {
     setDragger();
-    auto win = WindowMain::get();
-    auto canvasBack = win->surfaceBack->getCanvas();
-    Paint(canvasBack);
     isWip = false;
-    win->Refresh();
     return false;
 }
 
@@ -38,7 +34,6 @@ bool ShapeArrow::OnMouseMove(const int &x, const int &y)
         setDragger();
         Icon::myCursor(Icon::cursor::all);
         HoverIndex = 8;
-        WindowMain::get()->Refresh();
         return true;
     }
     return false;
@@ -157,15 +152,8 @@ void ShapeArrow::setDragger()
     unsigned half = shapeDragger->size / 2;
     shapeDragger->setDragger(0, startX - half, startY - half);
     shapeDragger->setDragger(1, endX - half, endY - half);
-    for (size_t i = 2; i < 8; i++)
-    {
-        shapeDragger->setDragger(i, -100, -100);
-    }
+    shapeDragger->disableDragger(2);
     shapeDragger->cursors[0] = Icon::cursor::all;
     shapeDragger->cursors[1] = Icon::cursor::all;
-    auto win = WindowMain::get();
-    auto canvas = win->surfaceFront->getCanvas();
-    canvas->clear(SK_ColorTRANSPARENT);
-    shapeDragger->showDragger(canvas);
     shapeDragger->curShape = this;
 }

@@ -75,8 +75,8 @@ bool Recorder::OnMouseUp(const int &x, const int &y)
     {
         return false;
     }
-    auto winMain = WindowMain::get();
-    if (winMain->state == State::text) {
+    auto win = WindowMain::get();
+    if (win->state == State::text) {
         return false;
     }
     // todo 
@@ -86,15 +86,24 @@ bool Recorder::OnMouseUp(const int &x, const int &y)
     //}
     // 
     curShape->OnMouseUp(x, y);
+    auto canvasBack = win->surfaceBack->getCanvas();
+    auto canvasFront = win->surfaceFront->getCanvas();
+    canvasBack->clear(SK_ColorTRANSPARENT);
+    canvasFront->clear(SK_ColorTRANSPARENT);
+    for (auto& shape : shapes)
+    {
+        shape->Paint(canvasBack);
+    }
+    ShapeDragger::get()->showDragger(canvasFront);
+    win->Refresh();
     return false;
 }
 bool Recorder::OnMouseMove(const int &x, const int &y)
 {
-    auto winMain = WindowMain::get();
-    if (winMain->state <= State::tool || shapes.size() == 0) {
+    auto win = WindowMain::get();
+    if (win->state <= State::tool || shapes.size() == 0) {
         return false;
     }
-    auto shapeDragger = ShapeDragger::get();
     auto isMouseOnShape = false;
     for (int i = shapes.size() - 1; i >= 0; i--)
     {
@@ -109,12 +118,19 @@ bool Recorder::OnMouseMove(const int &x, const int &y)
     if (!isMouseOnShape) {
         curShape = nullptr;
     }
+    auto shapeDragger = ShapeDragger::get();
     int index = shapeDragger->indexMouseAt(x, y);
     if (index >= 0) {
         curShape = shapeDragger->curShape;
     }
-    if (!curShape)
+    if (curShape)
     {
+        auto canvas = win->surfaceFront->getCanvas();
+        canvas->clear(SK_ColorTRANSPARENT);
+        shapeDragger->showDragger(canvas);
+        win->Refresh();
+    }
+    else {
         SetCursor(LoadCursor(nullptr, IDC_ARROW));
         Timer::get()->Start(0, 800, []() {
             return ShapeDragger::get()->hideDragger();

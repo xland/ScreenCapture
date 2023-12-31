@@ -8,6 +8,8 @@
  - 截图框
  - 取景框
  - track mouse out window IsMouseDragging IsMouseDown to false
+ - 橡皮擦画在front上和画在back上表现不一样，鼠标up事件仔细观察一下
+ - 
 
 
 

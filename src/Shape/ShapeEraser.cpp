@@ -1,9 +1,11 @@
 #include "ShapeEraser.h"
 #include "../WindowMain.h"
 #include "../ToolSub.h"
+#include "ShapeDragger.h"
 
 ShapeEraser::ShapeEraser(const int &x, const int &y) : ShapeBase(x, y)
 {
+    isWip = false;
     initParams();
 }
 
@@ -11,7 +13,7 @@ ShapeEraser::~ShapeEraser()
 {
 }
 
-bool ShapeEraser::OnPaint(SkCanvas *canvas)
+void ShapeEraser::Paint(SkCanvas *canvas)
 {
     SkPaint paint;
     paint.setAntiAlias(true);
@@ -22,7 +24,6 @@ bool ShapeEraser::OnPaint(SkCanvas *canvas)
     paint.setStrokeWidth(strokeWidth);
     paint.setBlendMode(SkBlendMode::kClear);
     canvas->drawPath(path, paint);
-    return false;
 }
 
 bool ShapeEraser::OnMouseDown(const int& x, const int& y)
@@ -32,6 +33,7 @@ bool ShapeEraser::OnMouseDown(const int& x, const int& y)
 
 bool ShapeEraser::OnMouseUp(const int& x, const int& y)
 {
+    ShapeDragger::get()->disableDragger();    
     return false;
 }
 
@@ -42,8 +44,10 @@ bool ShapeEraser::OnMouseMove(const int& x, const int& y)
 
 bool ShapeEraser::OnMoseDrag(const int& x, const int& y)
 {
-    isWip = false;
     path.lineTo(x, y);
+    auto win = WindowMain::get();
+    auto canvas = win->surfaceBack->getCanvas();
+    Paint(canvas);
     WindowMain::get()->Refresh();
     return false;
 }

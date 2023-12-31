@@ -2,6 +2,7 @@
 #include <memory>
 #include "../WindowMain.h"
 #include "../ToolSub.h"
+#include "ShapeDragger.h"
 #include "include/effects/Sk2DPathEffect.h"
 #include "include/core/SkBlurTypes.h"
 #include "include/effects/SkBlurMaskFilter.h"
@@ -12,6 +13,7 @@
 
 ShapeMosaic::ShapeMosaic(const int &x, const int &y) : ShapeBase(x, y)
 {    
+    isWip = false;
     initParams();
 }
 
@@ -79,11 +81,7 @@ bool ShapeMosaic::OnMouseUp(const int &x, const int &y)
     delete[] pixmap->addr();
     delete pixmap;
     pixmap = nullptr;
-    auto win = WindowMain::get();
-    auto canvasBack = win->surfaceBack->getCanvas();
-    Paint(canvasBack);
-    isWip = false;
-    win->Refresh();
+    ShapeDragger::get()->disableDragger();
     return false;
 }
 

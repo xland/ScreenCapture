@@ -12,7 +12,7 @@ class ShapeEraser : public ShapeBase
 public:
     ShapeEraser(const int &x, const int &y);
     ~ShapeEraser();
-    bool OnPaint(SkCanvas *canvas) override;
+    void Paint(SkCanvas *canvas) override;
 
 protected:
     bool OnMouseDown(const int& x, const int& y) override;

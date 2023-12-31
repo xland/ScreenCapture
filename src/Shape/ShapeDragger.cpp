@@ -61,6 +61,14 @@ bool ShapeDragger::hideDragger()
     return true;
 }
 
+void ShapeDragger::disableDragger(const int& startIndex)
+{
+    for (size_t i = startIndex; i < draggers.size(); i++)
+    {
+        draggers[i].setXYWH(-100, -100, size, size);
+    }
+}
+
 int ShapeDragger::indexMouseAt(const int& x, const int& y)
 {
     if (!visible) {

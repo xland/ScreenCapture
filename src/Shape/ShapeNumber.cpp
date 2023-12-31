@@ -27,12 +27,8 @@ bool ShapeNumber::OnMouseDown(const int &x, const int &y)
 
 bool ShapeNumber::OnMouseUp(const int &x, const int &y)
 {
-    auto win = WindowMain::get();
-    auto canvasBack = win->surfaceBack->getCanvas();
-    Paint(canvasBack);
     isWip = false;
     setDragger();
-    win->Refresh();
     return false;
 }
 
@@ -178,13 +174,6 @@ void ShapeNumber::setDragger()
     unsigned half = shapeDragger->size / 2;
     shapeDragger->setDragger(0, endX - half, endY - half);
     shapeDragger->cursors[0] = Icon::cursor::all;
-    for (size_t i = 1; i < 8; i++)
-    {
-        shapeDragger->setDragger(i, -100, -100);
-    }
-    auto win = WindowMain::get();
-    auto canvas = win->surfaceFront->getCanvas();
-    canvas->clear(SK_ColorTRANSPARENT);
-    shapeDragger->showDragger(canvas);
+    shapeDragger->disableDragger(1);
     shapeDragger->curShape = this;
 }

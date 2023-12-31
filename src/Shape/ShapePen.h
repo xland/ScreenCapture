@@ -26,5 +26,4 @@ private:
     int strokeWidth{ 4 };
     SkColor color{ SkColorSetARGB(255, 207, 19, 34) };
     void initParams();
-    void setDragger();
 };

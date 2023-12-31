@@ -5,6 +5,7 @@
 
 ShapePen::ShapePen(const int &x, const int &y) : ShapeBase(x, y)
 {
+    isWip = false;
     initParams();
 }
 
@@ -24,11 +25,7 @@ bool ShapePen::OnMouseMove(const int& x, const int& y)
 
 bool ShapePen::OnMouseUp(const int& x, const int& y)
 {
-    setDragger();
-    auto win = WindowMain::get();
-    auto canvasBack = win->surfaceBack->getCanvas();
-    Paint(canvasBack);
-    isWip = false;
+    ShapeDragger::get()->disableDragger();
     return false;
 }
 
@@ -75,13 +72,4 @@ void ShapePen::initParams()
         }
     }
     color = tool->getColor();
-}
-
-void ShapePen::setDragger()
-{
-    auto shapeDragger = ShapeDragger::get();
-    for (size_t i = 2; i < 8; i++)
-    {
-        shapeDragger->setDragger(i, -100, -100);
-    }
 }
