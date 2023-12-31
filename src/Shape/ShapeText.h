@@ -19,22 +19,23 @@ public:
     bool OnChar(const unsigned int& val) override;
     bool OnKeyDown(const unsigned int& val) override;
     void Paint(SkCanvas *canvas) override;   
+    bool onMouseWheel(const int& delta) override;
     bool FlashCursor();
 protected:
 private:
     SkColor color{ SkColorSetARGB(255, 207, 19, 34) };
     void activeKeyboard(long x, long y);
     void setRect(SkCanvas* canvas);
-    void setDragger(SkCanvas* canvas);
     void setCursor(SkCanvas* canvas);
-    float getCursorX(SkFont* font,float& lineHeight);
+    float getCursorX();
+    void refresh();
     void initParams();
     int hoverX, hoverY;
     SkRect rect;
     std::vector<std::wstring> lines;
     float lineHeight;
     int lineIndex{ 0 }, wordIndex{0};
-    float fontSize{ 80 };
+    float fontSize{ 60 };
     bool isMouseOver{true};
     bool showCursor{ true };
 };

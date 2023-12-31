@@ -125,6 +125,9 @@ bool Recorder::OnMouseMove(const int &x, const int &y)
     }
     if (curShape)
     {
+        if (typeid(*curShape) == typeid(ShapeText)) {
+            return false;
+        }
         auto canvas = win->surfaceFront->getCanvas();
         canvas->clear(SK_ColorTRANSPARENT);
         shapeDragger->showDragger(canvas);
@@ -163,54 +166,14 @@ bool Recorder::onKeyDown(const unsigned int& val)
     return false;
 }
 
-
-//bool Recorder::OnPaint(SkCanvas *canvas)
-//{
-//    for (auto &shape : shapes)
-//    {
-//        shape->OnPaint(canvas);
-//    }
-//    return false;
-//}
-
-//bool Recorder::OnPaintFinish(SkCanvas* canvas)
-//{
-//    for (auto& shape : shapes)
-//    {
-//        shape->OnPaintFinish(canvas);
-//    }
-//    return false;
-//}
-
-//bool Recorder::hideDragger(const int& id)
-//{
-//    auto win = WindowMain::get();
-//    if (!win || !shapes[id]) {
-//        return true;
-//    }
-//    if (id == curIndex) {
-//        //auto func = std::bind(&Recorder::hideDragger, this, std::placeholders::_1);
-//        //timer->Start(id, 800, func);
-//        return false;
-//    }
-//    shapes[id]->showDragger = false;
-//    PostMessage(WindowMain::get()->hwnd, WM_REFRESH, NULL, NULL);
-//    return true;
-//}
-
-//bool Recorder::flashTextCursor(const int& id)
-//{
-//    auto win = WindowMain::get();
-//    if (!win || !shapes[id]) {
-//        return true;
-//    }
-//    auto shapeText = dynamic_cast<ShapeText*>(shapes[id].get());
-//    shapeText->ShowCursor = !shapeText->ShowCursor;
-//    //auto func = std::bind(&Recorder::flashTextCursor, this, std::placeholders::_1);
-//    //timer->Start(id, 600, func);
-//    PostMessage(WindowMain::get()->hwnd, WM_REFRESH, NULL, NULL);
-//    return false;
-//}
+bool Recorder::onMouseWheel(const int& delta)
+{
+    if (curShape)
+    {
+        curShape->onMouseWheel(delta);
+    }
+    return false;
+}
 
 void Recorder::createShape(const int &x, const int &y, const State &state)
 {

@@ -19,8 +19,7 @@ public:
     virtual bool OnMoseDrag(const int& x, const int& y) { return false; };
     virtual bool OnChar(const unsigned int& val) { return false; };
     virtual bool OnKeyDown(const unsigned int& val) { return false; };
-    virtual bool OnPaint(SkCanvas* canvas) { return false; };
-    virtual bool OnPaintFinish(SkCanvas* canvas) { return false; };
+    virtual bool onMouseWheel(const int& delta) { return false; };
     virtual void Paint(SkCanvas* canvas) { };
     bool isWip{true};
     int HoverIndex{-1};

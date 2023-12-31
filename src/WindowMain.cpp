@@ -114,6 +114,10 @@ LRESULT WindowMain::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam
     case WM_CHAR: {
         return onChar(wparam);
     }
+    case WM_MOUSEWHEEL: {
+        int delta = GET_WHEEL_DELTA_WPARAM(wparam);
+        onMouseWheel(delta);
+    }
     default:
         break;
     }
@@ -159,6 +163,11 @@ bool WindowMain::onChar(const unsigned int& val)
 bool WindowMain::onKeyDown(const unsigned int& val)
 {
     Recorder::get()->onKeyDown(val);
+    return false;
+}
+bool WindowMain::onMouseWheel(const int& delta)
+{
+    Recorder::get()->onMouseWheel(delta);
     return false;
 }
 //void WindowMain::paint(SkCanvas* canvas)

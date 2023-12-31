@@ -21,6 +21,7 @@ public:
     bool OnMouseDrag(const int& x, const int& y);
     bool onChar(const unsigned int& val);
     bool onKeyDown(const unsigned int& val);
+    bool onMouseWheel(const int& delta);
     //bool OnPaint(SkCanvas *canvas);
     //bool OnPaintFinish(SkCanvas* canvas);
     std::vector<std::shared_ptr<ShapeBase>> shapes;

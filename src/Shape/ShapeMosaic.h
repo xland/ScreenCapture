@@ -12,7 +12,6 @@ class ShapeMosaic : public ShapeBase
 public:
     ShapeMosaic(const int &x, const int &y);
     ~ShapeMosaic();
-    bool OnPaintFinish(SkCanvas* canvas) override { return false; };
     void Paint(SkCanvas *canvas) override;
 
 protected:
