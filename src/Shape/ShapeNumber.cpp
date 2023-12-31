@@ -87,19 +87,9 @@ void ShapeNumber::Paint(SkCanvas *canvas)
     {
         paint.setStroke(true);
         paint.setStrokeWidth(strokeWidth);
+        paint.setStyle(SkPaint::Style::kStroke_Style);
     }
     paint.setColor(color);
-    canvas->drawCircle(SkPoint::Make(startX, startY), r, paint);
-    if (stroke) {
-        SkPath p = path;
-        p.lineTo(startX, startY);
-        p.close();
-        paint.setBlendMode(SkBlendMode::kClear);
-        paint.setStroke(false);
-        canvas->drawPath(p, paint);
-        paint.setStroke(true);
-        paint.setBlendMode(SkBlendMode::kSrc);
-    }
     canvas->drawPath(path, paint);
     auto str = std::to_string(number);
     auto font = AppFont::Get()->fontText;
@@ -109,13 +99,11 @@ void ShapeNumber::Paint(SkCanvas *canvas)
     }
     else {
         paint.setColor(SK_ColorWHITE);
-    }
-    
+    }    
     SkRect textBounds;
     font->measureText(str.c_str(), str.size(), SkTextEncoding::kUTF8, &textBounds);
     SkScalar x = startX - textBounds.width() / 2 - textBounds.left();
-    SkScalar y = startY + textBounds.height() / 2 - textBounds.bottom();
-    
+    SkScalar y = startY + textBounds.height() / 2 - textBounds.bottom();    
     canvas->drawSimpleText(str.c_str(), str.size(), SkTextEncoding::kUTF8, x, y, *font, paint);
 }
 
@@ -162,12 +150,7 @@ void ShapeNumber::initParams()
 
 void ShapeNumber::makePath(const int &x1, const int &y1, const int &x2, const int &y2)
 {
-    path.reset();
-    SkPoint arrowPoint, centerPoint;
-    arrowPoint.fX = x2; //箭头顶点
-    arrowPoint.fY = y2;
-    centerPoint.fX = x1; //圆心
-    centerPoint.fY = y1;
+    //x1,y1圆心；x2,y2箭头顶点
     auto x = x2 - x1;
     auto y = y1 - y2;
     r = std::sqrt(x * x + y * y);//圆心到箭头顶点的长度
@@ -178,15 +161,15 @@ void ShapeNumber::makePath(const int &x1, const int &y1, const int &x2, const in
     auto angleSpan = 16.f; //半角
     auto angle1 = (angle + angleSpan) * std::numbers::pi / 180;//弧度
     auto angle2 = (angle - angleSpan) * std::numbers::pi / 180;//弧度
-    auto X1 = centerPoint.fX + r * cos(angle1);//箭头与圆的交接点1
-    auto Y1 = centerPoint.fY - r * sin(angle1);
-    auto X2 = centerPoint.fX + r * cos(angle2);//箭头与圆的交接点2
-    auto Y2 = centerPoint.fY - r * sin(angle2);
+    auto X1 = x1 + r * cos(angle1);//箭头与圆的交接点1
+    auto Y1 = y1 - r * sin(angle1);
+    auto X2 = x1 + r * cos(angle2);//箭头与圆的交接点2
+    auto Y2 = y1 - r * sin(angle2);    
+    path.reset(); 
     path.moveTo(X1, Y1);
-    path.lineTo(arrowPoint.fX, arrowPoint.fY);
-    path.lineTo(X2, Y2);
-    //path.close();
-    //path.setFillType(SkPathFillType::kWinding);
+    path.arcTo(r, r, 30, SkPath::kLarge_ArcSize, SkPathDirection::kCCW, X2, Y2);
+    path.lineTo(x2, y2);
+    path.close();
 }
 
 void ShapeNumber::setDragger()
