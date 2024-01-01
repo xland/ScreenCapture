@@ -6,6 +6,7 @@
 #include "include/core/SkTextBlob.h"
 #include "Icon.h"
 #include "ToolSub.h"
+#include "Recorder.h"
 
 ToolMain *toolMain;
 
@@ -21,8 +22,8 @@ ToolMain::ToolMain()
     //btns.push_back(std::make_shared<ToolBtn>(Icon::image, L"图片"));
     btns.push_back(std::make_shared<ToolBtn>(Icon::mosaic, L"马赛克"));
     btns.push_back(std::make_shared<ToolBtn>(Icon::eraser, L"橡皮擦"));
-    btns.push_back(std::make_shared<ToolBtn>(Icon::undo, L"上一步",true,false));
-    btns.push_back(std::make_shared<ToolBtn>(Icon::redo, L"下一步",true,false));
+    btns.push_back(std::make_shared<ToolBtn>(Icon::undo, L"上一步",true,false)); //9
+    btns.push_back(std::make_shared<ToolBtn>(Icon::redo, L"下一步",true,false)); //10
     btns.push_back(std::make_shared<ToolBtn>(Icon::pin, L"钉住截图区",false,false));
     btns.push_back(std::make_shared<ToolBtn>(Icon::save, L"保存", false, false));
     btns.push_back(std::make_shared<ToolBtn>(Icon::close, L"退出", false, false));
@@ -74,7 +75,22 @@ bool ToolMain::OnMouseDown(const int& x, const int& y)
             ToolSub::get()->InitBtns(IndexSelected);
             winMain->state = (State)(IndexSelected + 3);
             winMain->Refresh();
-        }             
+        }
+        else {
+            switch (IndexHovered)
+            {
+            case 9: {
+                Recorder::get()->undo();
+                break;
+            }
+            case 10: {
+                Recorder::get()->redo();
+                break;
+            }
+            default:
+                break;
+            }
+        }
     }
     return true;
 }
@@ -112,6 +128,16 @@ bool ToolMain::OnPaint(SkCanvas *canvas)
     x += ToolBtn::width * 2;
     canvas->drawLine(SkPoint::Make(x, y + 12), SkPoint::Make(x, ToolRect.bottom() - 12), paint);    
     return false;
+}
+
+void ToolMain::setUndoDisable(bool flag)
+{
+    btns[9]->isDisable = flag;
+}
+
+void ToolMain::setRedoDisable(bool flag)
+{
+    btns[10]->isDisable = flag;
 }
 
 

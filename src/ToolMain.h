@@ -15,6 +15,8 @@ public:
     static ToolMain *get();
     bool OnMouseDown(const int& x, const int& y) override;
     bool OnPaint(SkCanvas *canvas) override;
+    void setUndoDisable(bool flag);
+    void setRedoDisable(bool flag);
 private:
     ToolMain();
 };

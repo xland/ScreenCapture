@@ -12,6 +12,7 @@
 #include "Shape/ShapeEraser.h"
 #include "Shape/ShapeMosaic.h"
 #include "Shape/ShapeDragger.h"
+#include "ToolMain.h"
 
 Recorder *recorder;
 
@@ -58,11 +59,11 @@ bool Recorder::OnMouseDown(const int &x, const int &y)
         canvasBack->clear(SK_ColorTRANSPARENT);
         for (auto& shape : shapes)
         {
-            if (!shape->isWip) {
-                shape->Paint(canvasBack);
+            if (shape->isWip) {
+                shape->Paint(canvasFront);                
             }
             else {
-                shape->Paint(canvasFront);
+                shape->Paint(canvasBack);
             }
         }
         win->Refresh();
@@ -90,10 +91,21 @@ bool Recorder::OnMouseUp(const int &x, const int &y)
     auto canvasFront = win->surfaceFront->getCanvas();
     canvasBack->clear(SK_ColorTRANSPARENT);
     canvasFront->clear(SK_ColorTRANSPARENT);
+    bool undoDisable = true;
+    bool redoDisable = true;
     for (auto& shape : shapes)
     {
-        shape->Paint(canvasBack);
+        if (shape->isWip) {
+            redoDisable = false;
+        }
+        else {
+            shape->Paint(canvasBack);
+            undoDisable = false;
+        }
     }
+    auto toolMain = ToolMain::get();
+    toolMain->setUndoDisable(undoDisable);
+    toolMain->setRedoDisable(redoDisable);
     ShapeDragger::get()->showDragger(canvasFront);
     win->Refresh();
     return false;
@@ -173,6 +185,73 @@ bool Recorder::onMouseWheel(const int& delta)
         curShape->onMouseWheel(delta);
     }
     return false;
+}
+
+void Recorder::undo()
+{
+    bool undoDisable = true;
+    bool redoDisable = true;
+    auto win = WindowMain::get();
+    auto canvasBack = win->surfaceBack->getCanvas();
+    auto canvasFront = win->surfaceFront->getCanvas();
+    canvasBack->clear(SK_ColorTRANSPARENT);
+    canvasFront->clear(SK_ColorTRANSPARENT);
+    for (int i = shapes.size() - 1; i >= 0; i--)
+    {
+        if (!shapes[i]->isWip)
+        {
+            shapes[i]->isWip = true;
+            redoDisable = false;
+            break;
+        }
+    }
+    for (int i = 0; i < shapes.size(); i++)
+    {
+        if (shapes[i]->isWip)
+        {
+            break;
+        }
+        else {
+            shapes[i]->Paint(canvasBack);
+            undoDisable = false;
+        }
+    }
+    auto toolMain = ToolMain::get();
+    toolMain->setUndoDisable(undoDisable);
+    toolMain->setRedoDisable(redoDisable);
+    win->Refresh();
+}
+
+void Recorder::redo()
+{
+    bool undoDisable = true;
+    bool redoDisable = true;
+    auto win = WindowMain::get();
+    auto canvasBack = win->surfaceBack->getCanvas();
+    auto canvasFront = win->surfaceFront->getCanvas();
+    canvasBack->clear(SK_ColorTRANSPARENT);
+    canvasFront->clear(SK_ColorTRANSPARENT);
+    for (int i = 0; i < shapes.size(); i++)
+    {
+        if (shapes[i]->isWip)
+        {
+            shapes[i]->isWip = false;
+            shapes[i]->Paint(canvasBack);
+            undoDisable = false;
+            if (i < shapes.size() - 1) {
+                redoDisable = false;
+            }
+            break;
+        }
+        else {
+            shapes[i]->Paint(canvasBack);
+            undoDisable = false;
+        }
+    }
+    auto toolMain = ToolMain::get();
+    toolMain->setUndoDisable(undoDisable);
+    toolMain->setRedoDisable(redoDisable);
+    win->Refresh();
 }
 
 void Recorder::createShape(const int &x, const int &y, const State &state)
