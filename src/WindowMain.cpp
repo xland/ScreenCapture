@@ -85,8 +85,9 @@ LRESULT WindowMain::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam
     }
     case WM_RBUTTONDOWN:
     {
-        delete this;
-        exit(0);
+        auto x = GET_X_LPARAM(lparam);
+        auto y = GET_Y_LPARAM(lparam);
+        onMouseDownRight(x, y);
         return true;
     }
     case WM_NCDESTROY:
@@ -117,6 +118,7 @@ LRESULT WindowMain::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam
     case WM_MOUSEWHEEL: {
         int delta = GET_WHEEL_DELTA_WPARAM(wparam);
         onMouseWheel(delta);
+        return false;
     }
     default:
         break;
@@ -133,6 +135,11 @@ bool WindowMain::onMouseDown(const int& x, const int& y)
         return true;
     }
     Recorder::get()->OnMouseDown(x, y);
+    return false;
+}
+bool WindowMain::onMouseDownRight(const int& x, const int& y)
+{
+    Recorder::get()->OnMouseDownRight(x, y);
     return false;
 }
 bool WindowMain::onMouseUp(const int& x, const int& y)

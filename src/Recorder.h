@@ -16,6 +16,7 @@ public:
     static void init();
     static Recorder *get();
     bool OnMouseDown(const int &x, const int &y);
+    bool OnMouseDownRight(const int& x, const int& y);
     bool OnMouseUp(const int &x, const int &y);
     bool OnMouseMove(const int &x, const int &y);
     bool OnMouseDrag(const int& x, const int& y);

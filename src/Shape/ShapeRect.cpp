@@ -22,12 +22,8 @@ bool ShapeRect::OnMouseDown(const int& x, const int& y)
 
 bool ShapeRect::OnMouseUp(const int& x, const int& y)
 {
-    auto win = WindowMain::get();
-    auto canvasBack = win->surfaceBack->getCanvas();
-    Paint(canvasBack);
     isWip = false;
     setDragger();
-    win->Refresh();
     return false;
 }
 

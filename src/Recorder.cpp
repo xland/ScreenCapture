@@ -44,29 +44,46 @@ bool Recorder::OnMouseDown(const int &x, const int &y)
     {
         return false;
     }
-    if (!curShape)
+    if (curShape)
     {
-        createShape(x, y, win->state);
-        auto curIndex = shapes.size() - 1;
-        curShape = shapes[curIndex].get();
-        curShape->OnMouseDown(x, y);
-    }
-    else {
         curShape->isWip = true;
         curShape->OnMouseDown(x, y);
         auto canvasBack = win->surfaceBack->getCanvas();
         auto canvasFront = win->surfaceFront->getCanvas();
         canvasBack->clear(SK_ColorTRANSPARENT);
+        canvasFront->clear(SK_ColorTRANSPARENT);
         for (auto& shape : shapes)
         {
             if (shape->isWip) {
-                shape->Paint(canvasFront);                
+                shape->Paint(canvasFront);
             }
-            else {
+            else if (!shape->isDel) {
                 shape->Paint(canvasBack);
             }
         }
+        win->Refresh();        
+    }
+    else {
+        createShape(x, y, win->state);
+        auto curIndex = shapes.size() - 1;
+        curShape = shapes[curIndex].get();
+        curShape->OnMouseDown(x, y);
+    }
+    return false;
+}
+bool Recorder::OnMouseDownRight(const int& x, const int& y)
+{
+    if (curShape && typeid(*curShape) == typeid(ShapeText)) {
+        curShape->isWip = false;
+        Timer::get()->Remove(1);
+        auto win = WindowMain::get();
+        auto canvasBack = win->surfaceBack->getCanvas();
+        auto canvasFront = win->surfaceFront->getCanvas();
+        canvasBack->clear(SK_ColorTRANSPARENT);
+        canvasFront->clear(SK_ColorTRANSPARENT);
+        curShape->Paint(canvasBack);
         win->Refresh();
+        curShape = nullptr;
     }
     return false;
 }
@@ -93,13 +110,14 @@ bool Recorder::OnMouseUp(const int &x, const int &y)
     canvasFront->clear(SK_ColorTRANSPARENT);
     bool undoDisable = true;
     bool redoDisable = true;
+    //必须全部重绘一次，不然修改历史元素时，无法保证元素的绘制顺序
     for (auto& shape : shapes)
     {
-        if (shape->isWip) {
+        if (shape->isDel) {
             redoDisable = false;
         }
-        else {
-            shape->Paint(canvasBack);
+        else{
+            shape->Paint(canvasBack); 
             undoDisable = false;
         }
     }
@@ -116,19 +134,16 @@ bool Recorder::OnMouseMove(const int &x, const int &y)
     if (win->state <= State::tool || shapes.size() == 0) {
         return false;
     }
-    auto isMouseOnShape = false;
+    auto tempShape = curShape;
+    curShape = nullptr;
     for (int i = shapes.size() - 1; i >= 0; i--)
     {
         auto flag = shapes[i]->OnMouseMove(x, y);
         if (flag)
         {
             curShape = shapes[i].get();
-            isMouseOnShape = true;
             break;
         }
-    }
-    if (!isMouseOnShape) {
-        curShape = nullptr;
     }
     auto shapeDragger = ShapeDragger::get();
     int index = shapeDragger->indexMouseAt(x, y);
@@ -137,7 +152,8 @@ bool Recorder::OnMouseMove(const int &x, const int &y)
     }
     if (curShape)
     {
-        if (typeid(*curShape) == typeid(ShapeText)) {
+        //文本必须单独处理，因为文本可能还没输入结束
+        if (curShape && typeid(*curShape) == typeid(ShapeText)) {
             return false;
         }
         auto canvas = win->surfaceFront->getCanvas();
@@ -146,7 +162,10 @@ bool Recorder::OnMouseMove(const int &x, const int &y)
         win->Refresh();
     }
     else {
-        SetCursor(LoadCursor(nullptr, IDC_ARROW));
+        if (tempShape && typeid(*tempShape) == typeid(ShapeText)) {
+            curShape = tempShape;
+        }
+        Icon::myCursor(Icon::cursor::arrow);
         Timer::get()->Start(0, 800, []() {
             return ShapeDragger::get()->hideDragger();
             });
@@ -198,16 +217,16 @@ void Recorder::undo()
     canvasFront->clear(SK_ColorTRANSPARENT);
     for (int i = shapes.size() - 1; i >= 0; i--)
     {
-        if (!shapes[i]->isWip)
+        if (!shapes[i]->isDel)
         {
-            shapes[i]->isWip = true;
+            shapes[i]->isDel = true;
             redoDisable = false;
             break;
         }
     }
     for (int i = 0; i < shapes.size(); i++)
     {
-        if (shapes[i]->isWip)
+        if (shapes[i]->isDel)
         {
             break;
         }
@@ -233,9 +252,9 @@ void Recorder::redo()
     canvasFront->clear(SK_ColorTRANSPARENT);
     for (int i = 0; i < shapes.size(); i++)
     {
-        if (shapes[i]->isWip)
+        if (shapes[i]->isDel)
         {
-            shapes[i]->isWip = false;
+            shapes[i]->isDel = false;
             shapes[i]->Paint(canvasBack);
             undoDisable = false;
             if (i < shapes.size() - 1) {

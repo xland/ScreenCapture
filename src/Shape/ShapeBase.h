@@ -22,6 +22,7 @@ public:
     virtual bool onMouseWheel(const int& delta) { return false; };
     virtual void Paint(SkCanvas* canvas) { };
     bool isWip{true};
+    bool isDel{ false };
     int HoverIndex{-1};
     int startX, startY;
     int id;

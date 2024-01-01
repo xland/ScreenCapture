@@ -12,12 +12,14 @@
 #include "include/core/SkString.h"
 #include "include/utils/SkTextUtils.h"
 #include "include/core/SkFontMetrics.h"
+#include "../Recorder.h"
 
 ShapeText::ShapeText(const int &x, const int &y) : ShapeBase(x, y)
 {
+    auto tool = ToolSub::get();
+    color = tool->getColor();
     auto font = AppFont::Get()->fontText;
     font->setSize(fontSize);
-    initParams();
     refresh();
     auto func = std::bind(&ShapeText::FlashCursor, this);
     Timer::get()->Start(1, 600, func);
@@ -43,52 +45,61 @@ bool ShapeText::OnMouseDown(const int &x, const int &y)
     hoverX = x;
     hoverY = y;
     lineIndex = (y - rect.top()) / lineHeight;
-    if (lines.size() > 0) {
-        int index = 0;
-        float width = x - rect.left()-10;
-        auto font = AppFont::Get()->fontText;
-        SkRect rect;
-        float right{0};
-        bool flag = false;
-        for (size_t i = 0; i < lines[lineIndex].length()+1; i++)
-        {
-            auto str = lines[lineIndex].substr(0, i);
-            auto data = str.data();
-            auto length = wcslen(data) * 2;
-            font->measureText(data, length, SkTextEncoding::kUTF16, &rect);            
-            if (rect.right() > width) {
-                float half = (rect.right() - right)/2+right;
-                if (half > width) {
-                    wordIndex = i-1;
-                }
-                else
-                {
-                    wordIndex = i;
-                }
-                flag = true;
-                break;
+    if (lines.size() == 0) {
+        return false;
+    }
+    int index = 0;
+    float width = x - rect.left() - 10;
+    auto font = AppFont::Get()->fontText;
+    SkRect rect;
+    float right{ 0 };
+    bool flag = false;
+    for (size_t i = 0; i < lines[lineIndex].length() + 1; i++)
+    {
+        auto str = lines[lineIndex].substr(0, i);
+        auto data = str.data();
+        auto length = wcslen(data) * 2;
+        font->measureText(data, length, SkTextEncoding::kUTF16, &rect);
+        if (rect.right() > width) {
+            float half = (rect.right() - right) / 2 + right;
+            if (half > width) {
+                wordIndex = i - 1;
             }
-            right = rect.right();
+            else
+            {
+                wordIndex = i;
+            }
+            flag = true;
+            break;
         }
-        if (!flag) {
-            wordIndex = lines[lineIndex].length();
-        }
+        right = rect.right();
+    }
+    if (!flag) {
+        wordIndex = lines[lineIndex].length();
     }
     return false;
 }
 
 bool ShapeText::OnMouseMove(const int &x, const int &y)
 {
-    isMouseOver = rect.contains(x, y);
-    if (isMouseOver) {
+    bool flag = false;
+    if (rect.contains(x, y)) {
+        Icon::myCursor(Icon::cursor::input);
         HoverIndex = 8;
-        Icon::myCursor(Icon::cursor::input);   
-        return true;
+        flag = true;
     }
-    Icon::myCursor(Icon::cursor::arrow);
-    //auto func = std::bind(&Recorder::flashTextCursor, this, std::placeholders::_1);
-    //timer->Start(shapes.size()-1, 600, func);
-    return true;
+    else {
+        Icon::myCursor(Icon::cursor::arrow);
+        flag = false;
+    }
+    if (flag && !isWip) {
+        auto win = WindowMain::get();
+        auto canvasFront = win->surfaceFront->getCanvas();
+        canvasFront->clear(SK_ColorTRANSPARENT);
+        setRect(canvasFront);
+        win->Refresh();
+    }
+    return flag;
 }
 
 bool ShapeText::OnMouseUp(const int &x, const int &y)
@@ -170,9 +181,6 @@ bool ShapeText::OnChar(const unsigned int& val)
             lines[lineIndex] = str1+ word + str2;
         }
         wordIndex += 1;
-    }
-    if (lines.size() != 0) {
-        isWip = false;
     }
     refresh();
     return false;
@@ -281,13 +289,6 @@ void ShapeText::Paint(SkCanvas *canvas)
     //}
 }
 
-
-
-void ShapeText::initParams()
-{
-    auto tool = ToolSub::get();
-    color = tool->getColor();
-}
 void ShapeText::activeKeyboard(long x, long y)
 {
     auto win = WindowMain::get();

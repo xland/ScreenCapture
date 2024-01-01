@@ -114,7 +114,7 @@ void ShapeMosaic::drawRectsByPoints(const SkPoint& point, SkCanvas* canvas)
     {
         for (size_t j = xIndex; j < xIndex+rectNum; j++)
         {
-            auto key = i*rowNum+j;
+            int key = i*rowNum+j;
             auto x = j * size;
             auto y = i * size;
             if (colorCache.contains(key)) {

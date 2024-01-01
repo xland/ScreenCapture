@@ -29,7 +29,6 @@ private:
     void setCursor(SkCanvas* canvas);
     float getCursorX();
     void refresh();
-    void initParams();
     int hoverX, hoverY;
     SkRect rect;
     std::vector<std::wstring> lines;
