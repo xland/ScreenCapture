@@ -9,6 +9,8 @@ set(SRC
     WindowMain.h
     WindowPin.cpp
     WindowPin.h
+    PixelInfo.cpp
+    PixelInfo.h
     CutMask.cpp
     CutMask.h
     Recorder.cpp
