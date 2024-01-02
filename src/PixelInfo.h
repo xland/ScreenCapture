@@ -16,4 +16,5 @@ public:
 
 private:
     PixelInfo();
+    SkRect rect;
 };

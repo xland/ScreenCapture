@@ -8,6 +8,7 @@
 #include "AppFont.h"
 #include "Recorder.h"
 #include "Timer.h"
+#include "PixelInfo.h"
 #include "Shape/ShapeDragger.h"
 
 WindowMain *windowMain;
@@ -21,6 +22,7 @@ WindowMain::WindowMain()
     Recorder::init();
     ShapeDragger::init();
     Timer::init();
+    PixelInfo::init();
     initSize();
     shotScreen();
     initWindow();
@@ -150,6 +152,7 @@ bool WindowMain::onMouseUp(const int& x, const int& y)
 }
 bool WindowMain::onMouseMove(const int& x, const int& y)
 {
+    PixelInfo::get()->OnMouseMove(x, y);
     Recorder::get()->OnMouseMove(x, y);
     CutMask::get()->OnMouseMove(x, y);
     ToolMain::get()->OnMouseMove(x, y);
