@@ -20,6 +20,8 @@ public:
     SkRect CutRect;
 private:
     CutMask();
+    void setPath();
     SkPoint start{-1,-1};
     SkPath path;
+    int hoverIndex{ -1 };
 };
