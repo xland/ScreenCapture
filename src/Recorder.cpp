@@ -287,54 +287,68 @@ void Recorder::redo()
 
 void Recorder::createShape(const int &x, const int &y, const State &state)
 {
+    std::shared_ptr<ShapeBase> shape;
     switch (state)
     {
     case State::rect:
     {
-        shapes.push_back(std::make_shared<ShapeRect>(x, y));
+        shape = std::make_shared<ShapeRect>(x, y);
         break;
     }
     case State::ellipse:
     {
-        shapes.push_back(std::make_shared<ShapeEllipse>(x, y));
+        shape = std::make_shared<ShapeEllipse>(x, y);
         break;
     }
     case State::arrow:
     {
-        shapes.push_back(std::make_shared<ShapeArrow>(x, y));
+        shape = std::make_shared<ShapeArrow>(x, y);
         break;
     }
     case State::number:
     {
-        shapes.push_back(std::make_shared<ShapeNumber>(x, y));
+        shape = std::make_shared<ShapeNumber>(x, y);
         break;
     }
     case State::pen:
     {
-        shapes.push_back(std::make_shared<ShapePen>(x, y));
+        shape = std::make_shared<ShapePen>(x, y);
         break;
     }
     case State::line:
     {
-        shapes.push_back(std::make_shared<ShapeLine>(x, y));
+        shape = std::make_shared<ShapeLine>(x, y);
         break;
     }
     case State::text:
     {
-        shapes.push_back(std::make_shared<ShapeText>(x, y));        
+        shape = std::make_shared<ShapeText>(x, y);
         break;
     }
     case State::mosaic:
     {
-        shapes.push_back(std::make_shared<ShapeMosaic>(x, y));
+        shape = std::make_shared<ShapeMosaic>(x, y);
         break;
     }
     case State::eraser:
     {
-        shapes.push_back(std::make_shared<ShapeEraser>(x, y));
+        shape = std::make_shared<ShapeEraser>(x, y);
         break;
     }
     default:
         break;
     }
+    int index = shapes.size();
+    for (size_t i = 0; i < shapes.size(); i++)
+    {
+        if (shapes[i]->isDel) {
+            index = i - 1;
+            break;
+        }
+    }
+    if (index < 0) index = 0;
+    if (index < shapes.size()) {
+        shapes.erase(shapes.begin() + index,shapes.end());
+    }
+    shapes.push_back(std::move(shape));
 }

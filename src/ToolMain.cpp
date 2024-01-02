@@ -77,6 +77,9 @@ bool ToolMain::OnMouseDown(const int& x, const int& y)
             winMain->Refresh();
         }
         else {
+            if (btns[IndexHovered]->isDisable) {
+                return true;
+            }
             switch (IndexHovered)
             {
             case 9: {

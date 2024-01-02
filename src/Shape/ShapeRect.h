@@ -24,7 +24,6 @@ protected:
     bool stroke{ true };
     int strokeWidth{ 4 };
     SkColor color{ SkColorSetARGB(255, 207, 19, 34) };
-    std::vector<SkRect> draggers;
 private:
     void setDragger();
 };
