@@ -29,7 +29,22 @@ bool ShapeRect::OnMouseUp(const int& x, const int& y)
 
 bool ShapeRect::OnMouseMove(const int& x, const int& y)
 {
-    auto flag = isMouseOver(x, y);
+    bool flag = false;
+    if (stroke) {
+        auto halfStroke = strokeWidth / 2 + 2;
+        auto rectOut = rect.makeOutset(halfStroke, halfStroke);
+        auto rectInner = rect.makeInset(halfStroke, halfStroke);
+        if (rectOut.contains(x, y) && !rectInner.contains(x, y)) {
+            flag = true;
+        }
+        else
+        {
+            flag = false;
+        }
+    }
+    else {
+        flag = rect.contains(x, y);
+    }
     if (flag) {
         setDragger();
         Icon::myCursor(Icon::cursor::all);
@@ -133,23 +148,6 @@ void ShapeRect::setDragger()
     shapeDragger->cursors[3] = Icon::cursor::we;
     shapeDragger->cursors[7] = Icon::cursor::we;
     shapeDragger->curShape = this;
-}
-
-
-bool ShapeRect::isMouseOver(const int& x, const int& y)
-{
-    if (stroke) {
-        auto halfStroke = strokeWidth / 2 + 2;
-        auto rectOut = rect.makeOutset(halfStroke, halfStroke);
-        auto rectInner = rect.makeInset(halfStroke, halfStroke);
-        if (rectOut.contains(x, y) && !rectInner.contains(x, y)) {
-            return true;
-        }
-        return false;
-    }
-    else {
-        return rect.contains(x, y);
-    }
 }
 
 void ShapeRect::Paint(SkCanvas* canvas)

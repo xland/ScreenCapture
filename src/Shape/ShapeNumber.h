@@ -19,7 +19,6 @@ public:
     bool OnMoseDrag(const int &x, const int &y) override;
 
 protected:
-    bool isMouseOver(const int &x, const int &y);
     void initParams();
     void makePath(const int &x1, const int &y1, const int &x2, const int &y2);
     SkPath path;

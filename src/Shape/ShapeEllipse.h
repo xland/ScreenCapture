@@ -14,6 +14,6 @@ public:
     ~ShapeEllipse();
     void Paint(SkCanvas *canvas) override;
 protected:
-    bool isMouseOver(const int& x, const int& y) override;
+    bool OnMouseMove(const int& x, const int& y) override;
 private:
 };

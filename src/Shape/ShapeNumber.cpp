@@ -34,10 +34,8 @@ bool ShapeNumber::OnMouseUp(const int &x, const int &y)
 
 bool ShapeNumber::OnMouseMove(const int &x, const int &y)
 {
-    auto flag = isMouseOver(x, y);
-    if (flag)
+    if (path.contains(x, y))
     {
-        auto draggers = ShapeDragger::get();
         setDragger();
         Icon::myCursor(Icon::cursor::all);
         HoverIndex = 8;
@@ -101,21 +99,6 @@ void ShapeNumber::Paint(SkCanvas *canvas)
     SkScalar x = startX - textBounds.width() / 2 - textBounds.left();
     SkScalar y = startY + textBounds.height() / 2 - textBounds.bottom();    
     canvas->drawSimpleText(str.c_str(), str.size(), SkTextEncoding::kUTF8, x, y, *font, paint);
-}
-
-bool ShapeNumber::isMouseOver(const int &x, const int &y)
-{
-    auto flag1 = path.contains(x, y);
-    if (flag1) {
-        return true;
-    }
-    SkPath pathCircle;
-    pathCircle.addCircle(startX, startY, r);
-    auto flag2 = pathCircle.contains(x, y);
-    if (flag2) {
-        return true;
-    }
-    return false;
 }
 
 void ShapeNumber::initParams()

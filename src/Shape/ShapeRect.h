@@ -14,16 +14,15 @@ public:
     ~ShapeRect();
     bool OnMouseDown(const int& x, const int& y) override;
     bool OnMouseUp(const int& x, const int& y) override;
-    bool OnMouseMove(const int& x, const int& y) override;
+    virtual bool OnMouseMove(const int& x, const int& y) override;
     bool OnMoseDrag(const int& x, const int& y) override;
     virtual void Paint(SkCanvas* canvas) override;
 protected:
-    virtual bool isMouseOver(const int& x, const int& y);    
     void initParams();
+    void setDragger();
     SkRect rect;
     bool stroke{ true };
     int strokeWidth{ 4 };
     SkColor color{ SkColorSetARGB(255, 207, 19, 34) };
 private:
-    void setDragger();
 };

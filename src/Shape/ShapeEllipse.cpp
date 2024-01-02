@@ -1,6 +1,7 @@
 #include "ShapeEllipse.h"
 #include "../WindowMain.h"
 #include "../ToolSub.h"
+#include "../Icon.h"
 
 ShapeEllipse::ShapeEllipse(const int &x, const int &y) : ShapeRect(x, y)
 {
@@ -24,8 +25,9 @@ void ShapeEllipse::Paint(SkCanvas *canvas)
     canvas->drawOval(rect, paint);
 }
 
-bool ShapeEllipse::isMouseOver(const int& x, const int& y)
+bool ShapeEllipse::OnMouseMove(const int& x, const int& y)
 {
+    bool flag = false;
     if (stroke) {
         auto halfStroke = strokeWidth / 2 + 2;
         auto rectOut = rect.makeOutset(halfStroke, halfStroke);
@@ -34,11 +36,19 @@ bool ShapeEllipse::isMouseOver(const int& x, const int& y)
         path.addOval(rectOut);
         path.addOval(rectInner);
         path.setFillType(SkPathFillType::kEvenOdd);
-        return path.contains(x, y);
+        flag = path.contains(x, y);
     }
     else {
         SkPath path;
         path.addOval(rect);
-        return path.contains(x, y);
+        flag = path.contains(x, y);
     }
+    if (flag) {
+        setDragger();
+        Icon::myCursor(Icon::cursor::all);
+        HoverIndex = 8;
+        WindowMain::get()->Refresh();
+        return true;
+    }
+    return false;
 }

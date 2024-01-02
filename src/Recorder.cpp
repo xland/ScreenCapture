@@ -157,6 +157,7 @@ bool Recorder::OnMouseMove(const int &x, const int &y)
     curShape = nullptr;
     for (int i = shapes.size() - 1; i >= 0; i--)
     {
+        if (shapes[i]->isDel) continue;
         auto flag = shapes[i]->OnMouseMove(x, y);
         if (flag)
         {
