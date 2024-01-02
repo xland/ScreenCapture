@@ -10,10 +10,6 @@ CutMask* cutMask;
 
 CutMask::CutMask()
 {
-    for (size_t i = 0; i < 8; i++)
-    {
-        masks.push_back(SkRect::MakeEmpty());
-    }
 }
 
 CutMask::~CutMask()
@@ -59,18 +55,9 @@ bool CutMask::OnMouseDrag(const int& x, const int& y)
     }
     CutRect.setLTRB(start.x(), start.y(), x, y);
     CutRect.sort();
-    //path.reset();
-    //path.addRect(SkRect::MakeXYWH(0, 0, win->w, win->h));
-    //path.addRect(CutRect);
-    //path.setFillType(SkPathFillType::kEvenOdd);
-    masks[0].setLTRB(0, 0, CutRect.fLeft, CutRect.fTop);
-    masks[1].setLTRB(CutRect.fLeft, 0, CutRect.fRight, CutRect.fTop);
-    masks[2].setLTRB(CutRect.fRight, 0, win->w, CutRect.fTop);
-    masks[3].setLTRB(CutRect.fRight, CutRect.fTop, win->w, CutRect.fBottom);
-    masks[4].setLTRB(CutRect.fRight, CutRect.fBottom, win->w, win->h);
-    masks[5].setLTRB(CutRect.fLeft, CutRect.fBottom, CutRect.fRight, win->h);
-    masks[6].setLTRB(0, CutRect.fBottom, CutRect.fLeft, win->h);
-    masks[7].setLTRB(0, CutRect.fTop, CutRect.fLeft, CutRect.fBottom);
+    path.reset();
+    path.addRect(CutRect);
+    path.setFillType(SkPathFillType::kInverseWinding);
     win->Refresh();
     return true;
 }
@@ -82,12 +69,8 @@ bool CutMask::OnPaint(SkCanvas *canvas)
         return false;
     }
     SkPaint paint;
-    //canvas->drawPath(path, paint);
     paint.setColor(SkColorSetARGB(160, 0, 0, 0));
-    for (auto& mask :masks)
-    {
-        canvas->drawRect(mask, paint);
-    }
+    canvas->drawPath(path, paint);
     paint.setColor(SkColorSetARGB(255, 22, 118, 255));
     paint.setStrokeWidth(3);
     paint.setStyle(SkPaint::Style::kStroke_Style);
@@ -99,9 +82,9 @@ bool CutMask::OnPaint(SkCanvas *canvas)
     auto data = str.data();
     SkRect rectTemp;
     font->measureText(data, str.size(), SkTextEncoding::kUTF8, &rectTemp);
-    SkRect rectInfo = SkRect::MakeXYWH(CutRect.fLeft, CutRect.fTop - 38, rectTemp.width()+16, 32);
+    SkRect rectInfo = SkRect::MakeXYWH(CutRect.fLeft, CutRect.fTop - 36, rectTemp.width()+16, 32);
     if (CutRect.fTop < 38) {
-        rectInfo.offset(6, 44);
+        rectInfo.offset(6, 42);
     }
     paint.setStroke(false);
     paint.setColor(SkColorSetARGB(130, 0, 0, 0));
