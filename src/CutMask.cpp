@@ -3,6 +3,8 @@
 #include "include/core/SkColor.h"
 #include "State.h"
 #include "Icon.h"
+#include "AppFont.h"
+#include <format>
 
 CutMask* cutMask;
 
@@ -74,6 +76,11 @@ bool CutMask::OnMouseDrag(const int& x, const int& y)
 }
 bool CutMask::OnPaint(SkCanvas *canvas)
 {
+    auto win = WindowMain::get();
+    if (win->state < State::mask)
+    {
+        return false;
+    }
     SkPaint paint;
     //canvas->drawPath(path, paint);
     paint.setColor(SkColorSetARGB(160, 0, 0, 0));
@@ -85,6 +92,22 @@ bool CutMask::OnPaint(SkCanvas *canvas)
     paint.setStrokeWidth(3);
     paint.setStyle(SkPaint::Style::kStroke_Style);
     canvas->drawRect(CutRect, paint);
+    auto font = AppFont::Get()->fontText;
+    auto str = std::format("Left:{}  Top:{}  Right:{}  Bottom:{}  Width:{}  Height:{}", CutRect.fLeft, CutRect.fTop, CutRect.fRight,
+        CutRect.fBottom, CutRect.width(), CutRect.height());
+    font->setSize(14);
+    auto data = str.data();
+    SkRect rectTemp;
+    font->measureText(data, str.size(), SkTextEncoding::kUTF8, &rectTemp);
+    SkRect rectInfo = SkRect::MakeXYWH(CutRect.fLeft, CutRect.fTop - 38, rectTemp.width()+16, 32);
+    if (CutRect.fTop < 38) {
+        rectInfo.offset(6, 44);
+    }
+    paint.setStroke(false);
+    paint.setColor(SkColorSetARGB(130, 0, 0, 0));
+    canvas->drawRect(rectInfo, paint);
+    paint.setColor(SkColorSetARGB(255, 220, 220, 220));
+    canvas->drawSimpleText(data, str.size(), SkTextEncoding::kUTF8, rectInfo.fLeft + 8, rectInfo.fTop + 21, *font, paint);
     return false;
 }
 bool CutMask::OnMouseUp(const int& x, const int& y)
