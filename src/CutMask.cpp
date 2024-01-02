@@ -1,7 +1,8 @@
-#include "CutMask.h"
+﻿#include "CutMask.h"
 #include "WindowMain.h"
 #include "include/core/SkColor.h"
 #include "State.h"
+#include "Icon.h"
 
 CutMask* cutMask;
 
@@ -32,7 +33,15 @@ CutMask* CutMask::get()
 
 bool CutMask::OnMouseDown(const int& x, const int& y)
 {    
+    auto win = WindowMain::get();
+    if (win->state >= State::mask)
+    {
+        return false;
+    }
+    //清除PixelInfo
+    win->surfaceFront->getCanvas()->clear(SK_ColorTRANSPARENT);
     start.set(x, y);
+    win->state = State::mask;
     return false;
 }
 bool CutMask::OnMouseMove(const int& x, const int& y)
@@ -86,5 +95,6 @@ bool CutMask::OnMouseUp(const int& x, const int& y)
     }
     winMain->state = State::tool;
     winMain->Refresh();
+    Icon::myCursor();
     return true;
 }

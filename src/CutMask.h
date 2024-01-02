@@ -21,6 +21,6 @@ public:
     std::vector<SkRect> masks;
 private:
     CutMask();
-    SkPoint start;
+    SkPoint start{-1,-1};
     SkPath path;
 };

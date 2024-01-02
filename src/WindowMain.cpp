@@ -27,7 +27,7 @@ WindowMain::WindowMain()
     shotScreen();
     initWindow();
     initCanvas();
-    state = State::mask;
+    state = State::start;
 }
 
 WindowMain::~WindowMain()

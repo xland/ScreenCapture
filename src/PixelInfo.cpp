@@ -30,6 +30,10 @@ PixelInfo* PixelInfo::get()
 bool PixelInfo::OnMouseMove(const int& x, const int& y)
 {
     auto win = WindowMain::get();
+    if (win->state >= State::mask)
+    {
+        return false;
+    }
     float width = 200.0f;
     float height = 200.0f;
     rect.setXYWH(x + 10, y + 10, width, height);    

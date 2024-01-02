@@ -1,19 +1,14 @@
- - 取景框
+ - 
  - track mouse out window IsMouseDragging IsMouseDown to false
  - 橡皮擦画在front上和画在back上表现不一样，鼠标up事件仔细观察一下
  - 用del 删除元素
-
-
-
- - CMake定义一个变量，要求用户输入，以确定Skia库的位置
  - 辅助线
- - 取景框
  - 截图框
    - 截图Info
    - 蓝色边框
- - 工具栏 
-   - 主工具栏
-   - 子工具栏
+   - 键盘控制截图区域位置
+   - mask上加8个圆，用于开始绘图之后，修改截图区域
+   - 高亮系统中的窗口区域
 - GPU SUPPORT
 - 工具栏取消选中之后再拖动元素，是有问题的
 
