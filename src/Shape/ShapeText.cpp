@@ -20,9 +20,15 @@ ShapeText::ShapeText(const int &x, const int &y) : ShapeBase(x, y)
     color = tool->getColor();
     auto font = AppFont::Get()->fontText;
     font->setSize(fontSize);
-    refresh();
-    auto func = std::bind(&ShapeText::FlashCursor, this);
-    Timer::get()->Start(1, 600, func);
+    float left{ (float)startX - 10 }, top{ (float)startY - 10 }, width{ 20 }, height{ 0 };
+    SkRect lineRect;
+    font->measureText(L"中", 2, SkTextEncoding::kUTF16, &lineRect);
+    lineHeight = lineRect.height() + lineRect.bottom() + 10;
+    height = lineHeight;
+    top += lineRect.top();
+    rect.setXYWH(left, top, width, height);
+    activeKeyboard(getCursorX(), startY);
+    ShapeDragger::get()->disableDragger();
 }
 
 ShapeText::~ShapeText()
@@ -31,7 +37,7 @@ ShapeText::~ShapeText()
 
 bool ShapeText::FlashCursor()
 {
-    refresh();
+    Paint(nullptr);
     auto func = std::bind(&ShapeText::FlashCursor, this);
     Timer::get()->Start(1, 600, func);
     return false;
@@ -42,10 +48,16 @@ bool ShapeText::OnMouseDown(const int &x, const int &y)
     if (!rect.contains(x, y)) {
         return false;
     }
+    auto timer = Timer::get();
+    timer->Remove(1);
+    auto func = std::bind(&ShapeText::FlashCursor, this);
+    timer->Start(1, 600, func);
     hoverX = x;
     hoverY = y;
     lineIndex = (y - rect.top()) / lineHeight;
     if (lines.size() == 0) {
+        showCursor = true;
+        Paint(nullptr);
         return false;
     }
     int index = 0;
@@ -77,29 +89,22 @@ bool ShapeText::OnMouseDown(const int &x, const int &y)
     if (!flag) {
         wordIndex = lines[lineIndex].length();
     }
+    showCursor = true;
+    Paint(nullptr);
     return false;
 }
 
 bool ShapeText::OnMouseMove(const int &x, const int &y)
 {
-    bool flag = false;
     if (rect.contains(x, y)) {
         Icon::myCursor(Icon::cursor::input);
         HoverIndex = 8;
-        flag = true;
+        return true;
     }
     else {
         Icon::myCursor(Icon::cursor::arrow);
-        flag = false;
+        return false;
     }
-    if (flag && !isWip) {
-        auto win = WindowMain::get();
-        auto canvasFront = win->surfaceFront->getCanvas();
-        canvasFront->clear(SK_ColorTRANSPARENT);
-        setRect(canvasFront);
-        win->Refresh();
-    }
-    return flag;
 }
 
 bool ShapeText::OnMouseUp(const int &x, const int &y)
@@ -115,7 +120,8 @@ bool ShapeText::OnMoseDrag(const int &x, const int &y)
     startY += ySpan;
     hoverX = x;
     hoverY = y;
-    refresh();
+    showCursor = true;
+    Paint(nullptr);
     return false;
 }
 bool ShapeText::onMouseWheel(const int& delta)
@@ -131,7 +137,8 @@ bool ShapeText::onMouseWheel(const int& delta)
     }
     auto font = AppFont::Get()->fontText;
     font->setSize(fontSize);    
-    refresh();
+    showCursor = true;
+    Paint(nullptr);
     return false;
 }
 bool ShapeText::OnChar(const unsigned int& val)
@@ -182,7 +189,8 @@ bool ShapeText::OnChar(const unsigned int& val)
         }
         wordIndex += 1;
     }
-    refresh();
+    showCursor = true;
+    Paint(nullptr);
     return false;
 }
 
@@ -238,13 +246,30 @@ bool ShapeText::OnKeyDown(const unsigned int& val)
         return false;
     }
     if (needRefresh) {
-        refresh();
+        showCursor = true;
+        Paint(nullptr);
     }
     return false;
 }
 
 void ShapeText::Paint(SkCanvas *canvas)
 {
+    bool refreshFlag = false;
+    if (!canvas) {
+        auto win = WindowMain::get();
+        canvas = win->surfaceFront->getCanvas();
+        canvas->clear(SK_ColorTRANSPARENT);
+        refreshFlag = true;
+    }
+    if (isWip) {
+        setRect(canvas);
+        if (showCursor) {
+            setCursor(canvas);
+        }
+        showCursor = !showCursor;
+        activeKeyboard(getCursorX(), startY + lineIndex * lineHeight);
+    }
+    
     auto font = AppFont::Get()->fontText;
     SkPaint paint;
     paint.setStroke(false);
@@ -257,15 +282,15 @@ void ShapeText::Paint(SkCanvas *canvas)
         auto length = wcslen(data) * 2;
         SkTextUtils::Draw(canvas, data, length,SkTextEncoding::kUTF16, startX, y, *font, paint,SkTextUtils::kLeft_Align);
         y += lineHeight;
+    }      
+    if (refreshFlag) {
+        WindowMain::get()->Refresh();
     }
     
     //font->measureText(str.c_str(), str.size(), SkTextEncoding::kUTF8, &textBounds);
     //SkScalar x = startX - textBounds.width() / 2 - textBounds.left();
     //SkScalar y = startY + textBounds.height() / 2 - textBounds.bottom();    
     //canvas->drawSimpleText(str.c_str(), str.size(), SkTextEncoding::kUTF8, x, y, *font, paint);
-
-
-
 
     //std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
     //// 创建多行宽字符文本
@@ -344,17 +369,13 @@ void ShapeText::setRect(SkCanvas* canvas)
 }
 void ShapeText::setCursor(SkCanvas* canvas)
 {
-    showCursor = !showCursor;
-    if (!showCursor) {
-        return;
-    }
     SkPaint paint;
     paint.setStroke(true);
     paint.setStrokeWidth(1);
     paint.setColor(color);
     auto font = AppFont::Get()->fontText;
-    float inputCursorTop{ rect.top() + lineHeight * lineIndex + lineHeight/6};
-    float inputCursorBottom{ rect.top() + lineHeight * (lineIndex + 1)-lineHeight/6};
+    float inputCursorTop{ rect.top() + lineHeight * lineIndex + lineHeight / 6 };
+    float inputCursorBottom{ rect.top() + lineHeight * (lineIndex + 1) - lineHeight / 6 };
     float inputCursorX{ getCursorX() };
     canvas->drawLine(inputCursorX, inputCursorTop, inputCursorX, inputCursorBottom, paint);
 }
@@ -371,17 +392,4 @@ float ShapeText::getCursorX()
         inputCursorX += lineRect.right();
     }
     return inputCursorX+1;
-}
-
-void ShapeText::refresh()
-{
-    auto win = WindowMain::get();
-    auto canvas = win->surfaceFront->getCanvas();
-    canvas->clear(SK_ColorTRANSPARENT);
-    setRect(canvas);
-    Paint(canvas);
-    ShapeDragger::get()->disableDragger();
-    setCursor(canvas);
-    win->Refresh();
-    activeKeyboard(getCursorX(), startY + lineIndex * lineHeight);
 }

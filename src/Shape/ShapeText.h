@@ -21,6 +21,7 @@ public:
     void Paint(SkCanvas *canvas) override;   
     bool onMouseWheel(const int& delta) override;
     bool FlashCursor();
+    bool showCursor{ true };
 protected:
 private:
     SkColor color{ SkColorSetARGB(255, 207, 19, 34) };
@@ -28,7 +29,6 @@ private:
     void setRect(SkCanvas* canvas);
     void setCursor(SkCanvas* canvas);
     float getCursorX();
-    void refresh();
     int hoverX, hoverY;
     SkRect rect;
     std::vector<std::wstring> lines;
@@ -36,5 +36,4 @@ private:
     int lineIndex{ 0 }, wordIndex{0};
     float fontSize{ 60 };
     bool isMouseOver{true};
-    bool showCursor{ true };
 };

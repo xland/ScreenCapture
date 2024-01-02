@@ -46,6 +46,18 @@ bool Recorder::OnMouseDown(const int &x, const int &y)
     }
     if (curShape)
     {
+        //正在写字，左键单击无效
+        if (curShape && typeid(*curShape) == typeid(ShapeText) ) {
+            if (curShape->isWip) {
+                curShape->OnMouseDown(x, y);
+                return false;
+            }
+            else
+            {
+                auto temp = dynamic_cast<ShapeText*>(curShape);
+                temp->showCursor = true;
+            }
+        }
         curShape->isWip = true;
         curShape->OnMouseDown(x, y);
         auto canvasBack = win->surfaceBack->getCanvas();
@@ -73,17 +85,19 @@ bool Recorder::OnMouseDown(const int &x, const int &y)
 }
 bool Recorder::OnMouseDownRight(const int& x, const int& y)
 {
-    if (curShape && typeid(*curShape) == typeid(ShapeText)) {
+    //正在写字，右键点击 结束写字
+    if (curShape && curShape->isWip && typeid(*curShape) == typeid(ShapeText) ) {
         curShape->isWip = false;
         Timer::get()->Remove(1);
         auto win = WindowMain::get();
-        auto canvasBack = win->surfaceBack->getCanvas();
         auto canvasFront = win->surfaceFront->getCanvas();
-        canvasBack->clear(SK_ColorTRANSPARENT);
         canvasFront->clear(SK_ColorTRANSPARENT);
+        auto canvasBack = win->surfaceBack->getCanvas();
         curShape->Paint(canvasBack);
         win->Refresh();
         curShape = nullptr;
+        auto toolMain = ToolMain::get();
+        toolMain->setUndoDisable(false);
     }
     return false;
 }
@@ -93,8 +107,7 @@ bool Recorder::OnMouseUp(const int &x, const int &y)
     {
         return false;
     }
-    auto win = WindowMain::get();
-    if (win->state == State::text) {
+    if (curShape && curShape->isWip && typeid(*curShape) == typeid(ShapeText)) {
         return false;
     }
     // todo 
@@ -104,6 +117,8 @@ bool Recorder::OnMouseUp(const int &x, const int &y)
     //}
     // 
     curShape->OnMouseUp(x, y);
+
+    auto win = WindowMain::get();
     auto canvasBack = win->surfaceBack->getCanvas();
     auto canvasFront = win->surfaceFront->getCanvas();
     canvasBack->clear(SK_ColorTRANSPARENT);
@@ -134,7 +149,11 @@ bool Recorder::OnMouseMove(const int &x, const int &y)
     if (win->state <= State::tool || shapes.size() == 0) {
         return false;
     }
-    auto tempShape = curShape;
+    //写字时，鼠标移动到其他元素上必不能显示dragger，因为dragger会刷新front canvas，就会把字刷掉
+    if (curShape && curShape->isWip && typeid(*curShape) == typeid(ShapeText)) {
+        curShape->OnMouseMove(x, y);
+        return false;
+    }
     curShape = nullptr;
     for (int i = shapes.size() - 1; i >= 0; i--)
     {
@@ -152,19 +171,12 @@ bool Recorder::OnMouseMove(const int &x, const int &y)
     }
     if (curShape)
     {
-        //文本必须单独处理，因为文本可能还没输入结束
-        if (curShape && typeid(*curShape) == typeid(ShapeText)) {
-            return false;
-        }
         auto canvas = win->surfaceFront->getCanvas();
         canvas->clear(SK_ColorTRANSPARENT);
         shapeDragger->showDragger(canvas);
         win->Refresh();
     }
     else {
-        if (tempShape && typeid(*tempShape) == typeid(ShapeText)) {
-            curShape = tempShape;
-        }
         Icon::myCursor(Icon::cursor::arrow);
         Timer::get()->Start(0, 800, []() {
             return ShapeDragger::get()->hideDragger();

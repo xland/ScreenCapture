@@ -6,6 +6,7 @@
 ShapePen::ShapePen(const int &x, const int &y) : ShapeBase(x, y)
 {
     isWip = false;
+    ShapeDragger::get()->disableDragger();
     initParams();
 }
 
@@ -25,7 +26,6 @@ bool ShapePen::OnMouseMove(const int& x, const int& y)
 
 bool ShapePen::OnMouseUp(const int& x, const int& y)
 {
-    ShapeDragger::get()->disableDragger();
     return false;
 }
 
