@@ -155,17 +155,26 @@ bool WindowMain::onMouseUp(const int& x, const int& y)
 }
 bool WindowMain::onMouseMove(const int& x, const int& y)
 {
+    auto tm = ToolMain::get()->OnMouseMove(x, y);
+    auto ts = ToolSub::get()->OnMouseMove(x, y);
+    if (tm || ts) {
+        return false;
+    }
+    auto cm = CutMask::get()->OnMouseMove(x, y);
+    if (cm) {
+        return false;
+    }
     PixelInfo::get()->OnMouseMove(x, y);
     Recorder::get()->OnMouseMove(x, y);
-    CutMask::get()->OnMouseMove(x, y);
-    ToolMain::get()->OnMouseMove(x, y);
-    ToolSub::get()->OnMouseMove(x, y);
     return false;
 }
 bool WindowMain::onMouseDrag(const int& x, const int& y)
 {
-    Recorder::get()->OnMouseDrag(x, y);
-    CutMask::get()->OnMouseDrag(x, y);
+    auto cm = CutMask::get()->OnMouseDrag(x, y);
+    if (cm) {
+        return false;
+    }
+    Recorder::get()->OnMouseDrag(x, y);    
     return false;
 }
 bool WindowMain::onChar(const unsigned int& val)

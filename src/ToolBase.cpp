@@ -28,6 +28,7 @@ bool ToolBase::OnMouseMove(const int& x, const int& y)
         }
         return false;
     }
+    Icon::myCursor(Icon::cursor::hand);
     int index = (x - ToolRect.left()) / ToolBtn::width;
     if (index != IndexHovered)
     {
@@ -38,5 +39,5 @@ bool ToolBase::OnMouseMove(const int& x, const int& y)
         IndexHovered = index;
         winMain->Refresh();
     }
-    return false;
+    return true;
 }

@@ -29,6 +29,7 @@ namespace Icon
     static const char *uncheck{(const char *)u8"\ue61d"};
     static const char *check{(const char *)u8"\ue721"};
 
+
     enum class cursor
     {
         all,
@@ -37,7 +38,8 @@ namespace Icon
         nesw,
         we,
         arrow,
-        input
+        input,
+        hand,
     };
 
     static void myCursor(cursor cursorType = cursor::arrow) {
@@ -60,6 +62,9 @@ namespace Icon
             break;
         case Icon::cursor::input:
             SetCursor(LoadCursor(nullptr, IDC_IBEAM));
+            break;
+        case Icon::cursor::hand:
+            SetCursor(LoadCursor(nullptr, IDC_HAND));
             break;
         default:
             SetCursor(LoadCursor(nullptr, IDC_ARROW));

@@ -10,6 +10,7 @@
  - timer recorder这类东西有必要早早的就初始化吗？Get的时候判断，没有再初始化不就完了
  - WindowMain::get有点问题，应该时WindowBase::get，这样对于钉住着的窗口更友好
  - 修改CutBox时，不能显示tool
+ - 为SetCursor写的那个类，多此一举
 - GPU SUPPORT
 - 工具栏取消选中之后再拖动元素，是有问题的
 - 在制品元素未Drag时要删除

@@ -5,6 +5,7 @@
 #include "Icon.h"
 #include "AppFont.h"
 #include "Screen.h"
+#include "Cursor.h"
 #include <format>
 
 CutMask* cutMask;
@@ -41,59 +42,54 @@ CutMask* CutMask::get()
 bool CutMask::OnMouseDown(const int& x, const int& y)
 {    
     auto win = WindowMain::get();
-    if (win->state > State::tool)
+    if (win->state == State::start)
     {
+        win->surfaceFront->getCanvas()->clear(SK_ColorTRANSPARENT);
+        start.set(x, y);
+        win->state = State::mask;
+        return true;
+    }
+    if (hoverIndex == 0) {
+        CutRect = SkRect::MakeLTRB(x, y, CutRect.fRight, CutRect.fBottom);
+        start.set(CutRect.fRight, CutRect.fBottom); 
+    }
+    else if (hoverIndex == 1) {
+        CutRect = SkRect::MakeLTRB(CutRect.fLeft, y, CutRect.fRight, CutRect.fBottom); 
+        start.set(0, CutRect.fBottom);
+    }
+    else if (hoverIndex == 2) {
+        CutRect = SkRect::MakeLTRB(CutRect.fLeft, y, x, CutRect.fBottom); 
+        start.set(CutRect.fLeft, CutRect.fBottom);
+    }
+    else if (hoverIndex == 3) {
+        CutRect = SkRect::MakeLTRB(CutRect.fLeft, CutRect.fTop, x, CutRect.fBottom);
+        start.set(CutRect.fLeft, 0);
+    }
+    else if (hoverIndex == 4) {
+        CutRect = SkRect::MakeLTRB(CutRect.fLeft, CutRect.fTop, x, y);
+        start.set(CutRect.fLeft, CutRect.fTop);
+    }
+    else if (hoverIndex == 5) {
+        CutRect = SkRect::MakeLTRB(CutRect.fLeft, CutRect.fTop, CutRect.fRight, y);
+        start.set(0, CutRect.fTop);
+    }
+    else if (hoverIndex == 6) {
+        CutRect = SkRect::MakeLTRB(x, CutRect.fTop, CutRect.fRight, y); 
+        start.set(CutRect.fRight, CutRect.fTop);
+    }
+    else if (hoverIndex == 7) {
+        CutRect = SkRect::MakeLTRB(x, CutRect.fTop, CutRect.fRight, CutRect.fBottom);
+        start.set(CutRect.fRight, 0);
+    }
+    else if (hoverIndex == 8) {
+        start.set(x - CutRect.fLeft, y - CutRect.fTop);
+    }
+    else {
         return false;
     }
     win->surfaceFront->getCanvas()->clear(SK_ColorTRANSPARENT);
-    if (win->state == State::tool) {
-        if (hoverIndex == 0) {
-            CutRect = SkRect::MakeLTRB(x, y, CutRect.fRight, CutRect.fBottom);
-            start.set(CutRect.fRight, CutRect.fBottom); 
-        }
-        else if (hoverIndex == 1) {
-            CutRect = SkRect::MakeLTRB(CutRect.fLeft, y, CutRect.fRight, CutRect.fBottom); 
-            start.set(0, CutRect.fBottom);
-        }
-        else if (hoverIndex == 2) {
-            CutRect = SkRect::MakeLTRB(CutRect.fLeft, y, x, CutRect.fBottom); 
-            start.set(CutRect.fLeft, CutRect.fBottom);
-        }
-        else if (hoverIndex == 3) {
-            CutRect = SkRect::MakeLTRB(CutRect.fLeft, CutRect.fTop, x, CutRect.fBottom);
-            start.set(CutRect.fLeft, 0);
-        }
-        else if (hoverIndex == 4) {
-            CutRect = SkRect::MakeLTRB(CutRect.fLeft, CutRect.fTop, x, y);
-            start.set(CutRect.fLeft, CutRect.fTop);
-        }
-        else if (hoverIndex == 5) {
-            CutRect = SkRect::MakeLTRB(CutRect.fLeft, CutRect.fTop, CutRect.fRight, y);
-            start.set(0, CutRect.fTop);
-        }
-        else if (hoverIndex == 6) {
-            CutRect = SkRect::MakeLTRB(x, CutRect.fTop, CutRect.fRight, y); 
-            start.set(CutRect.fRight, CutRect.fTop);
-        }
-        else if (hoverIndex == 7) {
-            CutRect = SkRect::MakeLTRB(x, CutRect.fTop, CutRect.fRight, CutRect.fBottom);
-            start.set(CutRect.fRight, 0);
-        }
-        else if (hoverIndex == 8) {
-            start.set(x - CutRect.fLeft, y - CutRect.fTop);
-        }
-        setPath();
-    }
-    else if (win->state == State::mask)
-    {
-         
-    }
-    else if (win->state == State::start)
-    {
-        start.set(x, y);
-        win->state = State::mask;
-    }
-    return false;
+    setPath();
+    return true;
 }
 bool CutMask::OnMouseMove(const int& x, const int& y)
 {
@@ -102,55 +98,99 @@ bool CutMask::OnMouseMove(const int& x, const int& y)
     {
         return false;
     }
-    if (x < CutRect.fLeft && y < CutRect.fTop) {
-        hoverIndex = 0;
-        Icon::myCursor(Icon::cursor::wnse);
-    }
-    else if (x > CutRect.fLeft && x < CutRect.fRight && y < CutRect.fTop) {
-        hoverIndex = 1;
-        Icon::myCursor(Icon::cursor::ns);
-    }
-    else if (x > CutRect.fRight && y < CutRect.fTop) {
-        hoverIndex = 2;
-        Icon::myCursor(Icon::cursor::nesw);
-    }
-    else if (x > CutRect.fRight && y > CutRect.fTop && y < CutRect.fBottom) {
-        hoverIndex = 3;
-        Icon::myCursor(Icon::cursor::we);
-    }
-    else if (x > CutRect.fRight && y > CutRect.fBottom) {
-        hoverIndex = 4;
-        Icon::myCursor(Icon::cursor::wnse);
-    }
-    else if (x > CutRect.fLeft && x < CutRect.fRight && y > CutRect.fBottom) {
-        hoverIndex = 5;
-        Icon::myCursor(Icon::cursor::ns);
-    }
-    else if (x < CutRect.fLeft && y > CutRect.fBottom) {
-        hoverIndex = 6;
-        Icon::myCursor(Icon::cursor::nesw);
-    }
-    else if (x < CutRect.fLeft && y < CutRect.fBottom && y > CutRect.fTop) {
-        hoverIndex = 7;
-        Icon::myCursor(Icon::cursor::we);
+    if (win->state == State::tool) {
+        if (x < CutRect.fLeft && y < CutRect.fTop) {
+            hoverIndex = 0;
+            Icon::myCursor(Icon::cursor::wnse);
+        }
+        else if (x > CutRect.fLeft && x < CutRect.fRight && y < CutRect.fTop) {
+            hoverIndex = 1;
+            Icon::myCursor(Icon::cursor::ns);
+        }
+        else if (x > CutRect.fRight && y < CutRect.fTop) {
+            hoverIndex = 2;
+            Icon::myCursor(Icon::cursor::nesw);
+        }
+        else if (x > CutRect.fRight && y > CutRect.fTop && y < CutRect.fBottom) {
+            hoverIndex = 3;
+            Icon::myCursor(Icon::cursor::we);
+        }
+        else if (x > CutRect.fRight && y > CutRect.fBottom) {
+            hoverIndex = 4;
+            Icon::myCursor(Icon::cursor::wnse);
+        }
+        else if (x > CutRect.fLeft && x < CutRect.fRight && y > CutRect.fBottom) {
+            hoverIndex = 5;
+            Icon::myCursor(Icon::cursor::ns);
+        }
+        else if (x < CutRect.fLeft && y > CutRect.fBottom) {
+            hoverIndex = 6;
+            Icon::myCursor(Icon::cursor::nesw);
+        }
+        else if (x < CutRect.fLeft && y < CutRect.fBottom && y > CutRect.fTop) {
+            hoverIndex = 7;
+            Icon::myCursor(Icon::cursor::we);
+        }
+        else {
+            hoverIndex = 8;
+            Icon::myCursor(Icon::cursor::all);
+        }
+        return true;
     }
     else {
-        hoverIndex = 8;
-        Icon::myCursor(Icon::cursor::all);
-    }
-    return true;
+        if (x > CutRect.fLeft - 5 &&x < CutRect.fLeft+5 && y < CutRect.fTop+5 && y > CutRect.fTop - 5) {
+            hoverIndex = 0;
+            Cursor::LeftTopRightBottom();
+            return true;
+        }
+        else if (x > CutRect.fLeft + 5 && x < CutRect.fRight - 5 && y < CutRect.fTop + 5 && y > CutRect.fTop - 5) {
+            hoverIndex = 1;
+            Cursor::TopBottom();
+            return true;
+        }
+        else if (x > CutRect.fRight - 5 && x < CutRect.fRight + 5 && y < CutRect.fTop + 5 && y > CutRect.fTop - 5) {
+            hoverIndex = 2;
+            Cursor::LeftBottomRightTop();
+            return true;
+        }
+        else if (x > CutRect.fRight - 5 && x < CutRect.fRight + 5 && y > CutRect.fTop + 5 && y < CutRect.fBottom - 5) {
+            hoverIndex = 3;
+            Cursor::LeftRight();
+            return true;
+        }
+        else if (x > CutRect.fRight - 5 && x < CutRect.fRight + 5 && y > CutRect.fBottom - 5 && y < CutRect.fBottom + 5) {
+            hoverIndex = 4;
+            Cursor::LeftTopRightBottom();
+            return true;
+        }
+        else if (x > CutRect.fLeft + 5 && x < CutRect.fRight - 5 && y < CutRect.fBottom + 5 && y > CutRect.fBottom - 5) {
+            hoverIndex = 5;
+            Cursor::TopBottom();
+            return true;
+        }
+        else if (x > CutRect.fLeft - 5 && x < CutRect.fLeft + 5 && y < CutRect.fBottom + 5 && y > CutRect.fBottom - 5) {
+            hoverIndex = 6;
+            Cursor::LeftBottomRightTop();
+            return true;
+        }
+        else if (x > CutRect.fLeft - 5 && x < CutRect.fLeft + 5 && y > CutRect.fTop + 5 && y < CutRect.fBottom - 5) {
+            hoverIndex = 7;
+            Cursor::LeftRight();
+            return true;
+        }
+        else {
+            hoverIndex = -1;
+            return false;
+        }
+    }    
 }
 bool CutMask::OnMouseDrag(const int& x, const int& y)
 {
     auto win = WindowMain::get();
-    if (win->state > State::tool)
-    {
-        return false;
-    }
     if (win->state == State::mask) {
         CutRect.setLTRB(start.fX, start.fY, x, y);
     }
-    else if (win->state == State::tool) {
+    else{
         if (hoverIndex == 0) {
             CutRect.setLTRB(x, y,start.fX, start.fY);
         }
@@ -194,6 +234,9 @@ bool CutMask::OnMouseDrag(const int& x, const int& y)
             setPath();
             start.set(x - CutRect.fLeft, y - CutRect.fTop);
             return true;
+        }
+        else {
+            return false;
         }
     }
     CutRect.sort();
