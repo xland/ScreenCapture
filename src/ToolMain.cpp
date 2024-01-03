@@ -7,6 +7,7 @@
 #include "Icon.h"
 #include "ToolSub.h"
 #include "Recorder.h"
+#include "Screen.h"
 
 ToolMain *toolMain;
 
@@ -29,6 +30,68 @@ ToolMain::ToolMain()
     btns.push_back(std::make_shared<ToolBtn>(Icon::close, L"退出", false, false));
 }
 
+void ToolMain::setPosition()
+{
+    auto mask = CutMask::get();
+    float left{ mask->CutRect.fRight - btns.size() * ToolBtn::width };
+    float top{ mask->CutRect.fBottom + MarginTop };
+    //三个缝隙高度和两个工具条高度
+    auto heightSpan = MarginTop * 3 + ToolBtn::height * 2;    
+    auto screen = Screen::GetScreen(mask->CutRect.fRight, mask->CutRect.fBottom + heightSpan);
+    if (screen) { //工具条右下角在屏幕内
+        //工具条左上角不在屏幕内
+        if (!Screen::GetScreen(left, top)) {
+            left = screen->fLeft;
+        }
+    }
+    else { //工具条右下角不在屏幕内
+        //判断屏幕顶部是否有足够的空间，工具条是否可以在CutRect右上角
+        screen = Screen::GetScreen(mask->CutRect.fRight, mask->CutRect.fTop - heightSpan);
+        if (screen) { //工具条右上角在屏幕内  
+            if (Screen::GetScreen(left, mask->CutRect.fTop - heightSpan)) { //工具条左上角在屏幕内
+                if (IndexSelected == -1) { //不需要显示子工具条，主工具条贴着截图区                    
+                    top = mask->CutRect.fTop - MarginTop - ToolBtn::height;
+                }
+                else { //需要显示子工具条，要为子工具条留出区域
+                    top = mask->CutRect.fTop - MarginTop * 2 - ToolBtn::height * 2;
+                }
+            }
+            else { //工具条左上角不在屏幕中
+                left = screen->fLeft;
+                if (IndexSelected == -1) { //不需要显示子工具条，主工具条贴着截图区
+                    top = mask->CutRect.fTop - MarginTop - ToolBtn::height;
+                }
+                else { //需要显示子工具条，要为子工具条留出区域
+                    top = mask->CutRect.fTop - MarginTop * 2 - ToolBtn::height * 2;
+                }
+            }
+        }
+        else { //工具条右上角不在屏幕内，此时屏幕顶部和屏幕底部都没有足够的空间，工具条只能显示在截图区域内            
+            if (Screen::GetScreen(left, mask->CutRect.fBottom - heightSpan)) { //工具条左上角在屏幕内
+                if (IndexSelected == -1) { //不需要显示子工具条，主工具条贴着截图区
+                    top = mask->CutRect.fBottom - MarginTop - ToolBtn::height;
+                }
+                else { //需要显示子工具条，要为子工具条留出区域
+                    top = mask->CutRect.fBottom - MarginTop * 2 - ToolBtn::height * 2;
+                }
+            }
+            else { //工具条左上角不在屏幕中，得到截图区域所在屏幕
+                screen = Screen::GetScreen(mask->CutRect.fRight, mask->CutRect.fBottom);
+                if (screen) {
+                    left = screen->fLeft;
+                    if (IndexSelected == -1) { //不需要显示子工具条，主工具条贴着截图区
+                        top = mask->CutRect.fBottom - MarginTop - ToolBtn::height;
+                    }
+                    else { //需要显示子工具条，要为子工具条留出区域
+                        top = mask->CutRect.fBottom - MarginTop * 2 - ToolBtn::height * 2;
+                    }
+                }
+            }
+        }
+    }
+    ToolRect.setXYWH(left,top, btns.size() * ToolBtn::width, ToolBtn::height);
+}
+
 ToolMain::~ToolMain()
 {
 }
@@ -48,8 +111,8 @@ ToolMain *ToolMain::get()
 
 bool ToolMain::OnMouseDown(const int& x, const int& y)
 {
-    auto winMain = WindowMain::get();
-    if (winMain->state < State::tool)
+    auto win = WindowMain::get();
+    if (win->state < State::tool)
     {
         return false;
     }
@@ -61,8 +124,8 @@ bool ToolMain::OnMouseDown(const int& x, const int& y)
     {
         btns[IndexHovered]->isSelected = false;
         IndexSelected = -1;
-        winMain->state = State::tool;
-        winMain->Refresh();
+        win->state = State::tool;
+        win->Refresh();
     }
     else
     {
@@ -73,8 +136,8 @@ bool ToolMain::OnMouseDown(const int& x, const int& y)
             }
             IndexSelected = IndexHovered;
             ToolSub::get()->InitBtns(IndexSelected);
-            winMain->state = (State)(IndexSelected + 3);
-            winMain->Refresh();
+            win->state = (State)(IndexSelected + 3);
+            win->Refresh();
         }
         else {
             if (btns[IndexHovered]->isDisable) {
@@ -106,11 +169,7 @@ bool ToolMain::OnPaint(SkCanvas *canvas)
     {
         return false;
     }
-    auto mask = CutMask::get();
-    ToolRect.setLTRB(mask->CutRect.right() - btns.size()*ToolBtn::width, 
-        mask->CutRect.bottom() + MarginTop, 
-        mask->CutRect.right(), 
-        mask->CutRect.bottom() + MarginTop + ToolBtn::height);
+    setPosition();
     SkPaint paint;
     paint.setAntiAlias(true);
     paint.setColor(SK_ColorWHITE);

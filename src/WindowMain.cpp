@@ -130,10 +130,13 @@ LRESULT WindowMain::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam
 
 bool WindowMain::onMouseDown(const int& x, const int& y)
 {
-    auto cmFlag = CutMask::get()->OnMouseDown(x, y);
     auto tmFlag = ToolMain::get()->OnMouseDown(x, y);
-    auto tsFlag =  ToolSub::get()->OnMouseDown(x, y);
-    if (cmFlag || tmFlag || tsFlag) {
+    auto tsFlag = ToolSub::get()->OnMouseDown(x, y);
+    if (tmFlag || tsFlag) {
+        return true;
+    }
+    auto cmFlag = CutMask::get()->OnMouseDown(x, y);
+    if (cmFlag) {
         return true;
     }
     Recorder::get()->OnMouseDown(x, y);

@@ -28,8 +28,6 @@ protected:
     virtual LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) = 0;
     void initWindow();
     void initCanvas();
-    //virtual void paint(SkCanvas *canvas) = 0;
-    //virtual void paintFinish(SkCanvas* canvas) = 0;
 
 private:
     void refresh();

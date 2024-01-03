@@ -4,6 +4,7 @@
 #include "State.h"
 #include "Icon.h"
 #include "AppFont.h"
+#include "Screen.h"
 #include <format>
 
 CutMask* cutMask;
@@ -190,10 +191,13 @@ bool CutMask::OnMouseDrag(const int& x, const int& y)
                 top = win->h - CutRect.height();
             }
             CutRect.setLTRB(left, top, right, bottom);
+            setPath();
+            start.set(x - CutRect.fLeft, y - CutRect.fTop);
+            return true;
         }
     }
     CutRect.sort();
-    setPath();
+    setPath();    
     return true;
 }
 bool CutMask::OnPaint(SkCanvas *canvas)
@@ -238,5 +242,6 @@ bool CutMask::OnMouseUp(const int& x, const int& y)
     winMain->state = State::tool;
     winMain->Refresh();
     Icon::myCursor();
+    Screen::Init();
     return true;
 }
