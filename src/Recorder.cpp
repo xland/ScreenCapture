@@ -145,8 +145,13 @@ bool Recorder::OnMouseUp(const int &x, const int &y)
 }
 bool Recorder::OnMouseMove(const int &x, const int &y)
 {
-    SetCursor(LoadCursor(nullptr, IDC_CROSS));
     auto win = WindowMain::get();
+    if (win->state == State::text) {
+        Cursor::Text();
+    }
+    else {
+        Cursor::Cross();
+    }
     if (win->state <= State::tool || shapes.size() == 0) {
         return false;
     }
@@ -178,8 +183,7 @@ bool Recorder::OnMouseMove(const int &x, const int &y)
         shapeDragger->showDragger(canvas);
         win->Refresh();
     }
-    else {
-        Cursor::Cross();
+    else {       
         Timer::get()->Start(0, 800, []() {
             return ShapeDragger::get()->hideDragger();
             });

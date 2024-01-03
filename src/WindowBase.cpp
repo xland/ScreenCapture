@@ -66,6 +66,7 @@ void WindowBase::refresh()
         CutMask::get()->OnPaint(canvas);
         ToolMain::get()->OnPaint(canvas);
         ToolSub::get()->OnPaint(canvas);
+        SkDebugf("refresh\n");
     }
     //auto back = surfaceBack->getCanvas();
     //auto front = surfaceFront->getCanvas();
