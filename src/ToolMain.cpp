@@ -153,6 +153,10 @@ bool ToolMain::OnMouseDown(const int& x, const int& y)
                 Recorder::get()->redo();
                 break;
             }
+            case 11: {
+                int a = 0;
+                break;
+            }
             default:
                 break;
             }
