@@ -2,6 +2,7 @@
 #include "../WindowMain.h"
 #include "../ToolSub.h"
 #include "../Timer.h"
+#include "../Cursor.h"
 #include "ShapeDragger.h"
 
 ShapeRect::ShapeRect(const int& x, const int& y):ShapeBase(x,y), rect{SkRect::MakeXYWH(x,y,0,0)}
@@ -47,7 +48,7 @@ bool ShapeRect::OnMouseMove(const int& x, const int& y)
     }
     if (flag) {
         setDragger();
-        Icon::myCursor(Icon::cursor::all);
+        Cursor::All();
         HoverIndex = 8;
         WindowMain::get()->Refresh();
         return true;
@@ -139,14 +140,14 @@ void ShapeRect::setDragger()
     shapeDragger->setDragger(5, wCenter, b);
     shapeDragger->setDragger(6, l, b);
     shapeDragger->setDragger(7, l, hCenter);
-    shapeDragger->cursors[0] = Icon::cursor::wnse;
-    shapeDragger->cursors[4] = Icon::cursor::wnse;
-    shapeDragger->cursors[1] = Icon::cursor::ns;
-    shapeDragger->cursors[5] = Icon::cursor::ns;
-    shapeDragger->cursors[2] = Icon::cursor::nesw;
-    shapeDragger->cursors[6] = Icon::cursor::nesw;
-    shapeDragger->cursors[3] = Icon::cursor::we;
-    shapeDragger->cursors[7] = Icon::cursor::we;
+    shapeDragger->cursors[0] = Cursor::cursor::wnse;
+    shapeDragger->cursors[4] = Cursor::cursor::wnse;
+    shapeDragger->cursors[1] = Cursor::cursor::ns;
+    shapeDragger->cursors[5] = Cursor::cursor::ns;
+    shapeDragger->cursors[2] = Cursor::cursor::nesw;
+    shapeDragger->cursors[6] = Cursor::cursor::nesw;
+    shapeDragger->cursors[3] = Cursor::cursor::we;
+    shapeDragger->cursors[7] = Cursor::cursor::we;
     shapeDragger->curShape = this;
 }
 

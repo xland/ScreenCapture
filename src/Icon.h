@@ -27,48 +27,5 @@ namespace Icon
     static const char *transparent{(const char *)u8"\ue607"};
     static const char *dot{(const char *)u8"\ue608"};
     static const char *uncheck{(const char *)u8"\ue61d"};
-    static const char *check{(const char *)u8"\ue721"};
-
-
-    enum class cursor
-    {
-        all,
-        wnse,
-        ns,
-        nesw,
-        we,
-        arrow,
-        input,
-        hand,
-    };
-
-    static void myCursor(cursor cursorType = cursor::arrow) {
-        switch (cursorType)
-        {
-        case Icon::cursor::all:
-            SetCursor(LoadCursor(nullptr, IDC_SIZEALL));
-            break;
-        case Icon::cursor::wnse:
-            SetCursor(LoadCursor(nullptr, IDC_SIZENWSE));            
-            break;
-        case Icon::cursor::ns:
-            SetCursor(LoadCursor(nullptr, IDC_SIZENS));            
-            break;
-        case Icon::cursor::nesw:
-            SetCursor(LoadCursor(nullptr, IDC_SIZENESW));            
-            break;
-        case Icon::cursor::we:
-            SetCursor(LoadCursor(nullptr, IDC_SIZEWE));
-            break;
-        case Icon::cursor::input:
-            SetCursor(LoadCursor(nullptr, IDC_IBEAM));
-            break;
-        case Icon::cursor::hand:
-            SetCursor(LoadCursor(nullptr, IDC_HAND));
-            break;
-        default:
-            SetCursor(LoadCursor(nullptr, IDC_ARROW));
-            break;
-        }
-    }
+    static const char *check{(const char *)u8"\ue721"};    
 };

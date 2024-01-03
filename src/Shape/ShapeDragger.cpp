@@ -10,7 +10,7 @@ ShapeDragger::ShapeDragger()
     for (size_t i = 0; i < 8; i++)
     {
         draggers.push_back(SkRect::MakeEmpty());
-        cursors.push_back(Icon::cursor::all);
+        cursors.push_back(Cursor::cursor::all);
     }
 }
 
@@ -77,7 +77,7 @@ int ShapeDragger::indexMouseAt(const int& x, const int& y)
     for (size_t i = 0; i < draggers.size(); i++)
     {
         if (draggers[i].contains(x, y)) {
-            Icon::myCursor(cursors[i]);
+            Cursor::myCursor(cursors[i]);
             curShape->HoverIndex = i;
             return i;
         }

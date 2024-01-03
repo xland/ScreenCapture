@@ -1,6 +1,6 @@
 ﻿#include "Recorder.h"
 #include "WindowMain.h"
-#include "Icon.h"
+#include "Cursor.h"
 #include "Shape/ShapeBase.h"
 #include "Shape/ShapeRect.h"
 #include "Shape/ShapeEllipse.h"
@@ -179,7 +179,7 @@ bool Recorder::OnMouseMove(const int &x, const int &y)
         win->Refresh();
     }
     else {
-        Icon::myCursor(Icon::cursor::arrow);
+        Cursor::Arrow();
         Timer::get()->Start(0, 800, []() {
             return ShapeDragger::get()->hideDragger();
             });

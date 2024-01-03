@@ -2,6 +2,7 @@
 #include "../WindowMain.h"
 #include "../ToolSub.h"
 #include "ShapeDragger.h"
+#include "../Cursor.h"
 
 ShapeLine::ShapeLine(const int &x, const int &y) : ShapeBase(x, y)
 {
@@ -25,7 +26,7 @@ bool ShapeLine::OnMouseMove(const int &x, const int &y)
     if (flag)
     {
         setDragger();
-        Icon::myCursor(Icon::cursor::all);
+        Cursor::All();
         HoverIndex = 8;
         WindowMain::get()->Refresh();
         return true;
@@ -130,8 +131,8 @@ void ShapeLine::setDragger()
     shapeDragger->setDragger(0, startX - half, startY - half);
     shapeDragger->setDragger(1, endPoint.fX - half, endPoint.fY - half);
     shapeDragger->disableDragger(2);
-    shapeDragger->cursors[0] = Icon::cursor::all;
-    shapeDragger->cursors[1] = Icon::cursor::all;
+    shapeDragger->cursors[0] = Cursor::cursor::all;
+    shapeDragger->cursors[1] = Cursor::cursor::all;
     shapeDragger->curShape = this;
 }
 

@@ -3,7 +3,7 @@
 #include "../ToolSub.h"
 #include "../AppFont.h"
 #include "../Timer.h"
-#include "../Icon.h"
+#include "../Cursor.h"
 #include "ShapeDragger.h"
 #include "include/core/SkCanvas.h"
 #include "include/core/SkPaint.h"
@@ -97,12 +97,12 @@ bool ShapeText::OnMouseDown(const int &x, const int &y)
 bool ShapeText::OnMouseMove(const int &x, const int &y)
 {
     if (rect.contains(x, y)) {
-        Icon::myCursor(Icon::cursor::input);
+        Cursor::Text();
         HoverIndex = 8;
         return true;
     }
     else {
-        Icon::myCursor(Icon::cursor::arrow);
+        Cursor::Arrow();
         return false;
     }
 }

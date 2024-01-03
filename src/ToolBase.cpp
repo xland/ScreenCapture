@@ -1,5 +1,5 @@
 #include "ToolBase.h"
-#include "Icon.h"
+#include "Cursor.h"
 #include "WindowMain.h"
 
 ToolBase::ToolBase() :IndexHovered{ -1 }, IndexSelected{ -1 }
@@ -28,7 +28,7 @@ bool ToolBase::OnMouseMove(const int& x, const int& y)
         }
         return false;
     }
-    Icon::myCursor(Icon::cursor::hand);
+    Cursor::Hand();
     int index = (x - ToolRect.left()) / ToolBtn::width;
     if (index != IndexHovered)
     {

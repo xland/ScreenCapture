@@ -2,7 +2,7 @@
 #include <vector>
 #include "include/core/SkRect.h"
 #include "include/core/SkCanvas.h"
-#include "../Icon.h"
+#include "../Cursor.h"
 
 class ShapeBase;
 class ShapeDragger
@@ -19,7 +19,7 @@ public:
     ShapeBase* curShape;
     float size{ 10 };
     std::vector<SkRect> draggers;
-    std::vector<Icon::cursor> cursors;
+    std::vector<Cursor::cursor> cursors;
     bool visible{ false };
 private:
     ShapeDragger();

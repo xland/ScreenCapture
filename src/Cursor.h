@@ -28,4 +28,45 @@ namespace Cursor
     static inline void Arrow() {
         SetCursor(LoadCursor(nullptr, IDC_ARROW));
     }
+    enum class cursor
+    {
+        all,
+        wnse,
+        ns,
+        nesw,
+        we,
+        arrow,
+        input,
+        hand,
+    };
+
+    static void myCursor(cursor cursorType = cursor::arrow) {
+        switch (cursorType)
+        {
+        case cursor::all:
+            SetCursor(LoadCursor(nullptr, IDC_SIZEALL));
+            break;
+        case cursor::wnse:
+            SetCursor(LoadCursor(nullptr, IDC_SIZENWSE));
+            break;
+        case cursor::ns:
+            SetCursor(LoadCursor(nullptr, IDC_SIZENS));
+            break;
+        case cursor::nesw:
+            SetCursor(LoadCursor(nullptr, IDC_SIZENESW));
+            break;
+        case cursor::we:
+            SetCursor(LoadCursor(nullptr, IDC_SIZEWE));
+            break;
+        case cursor::input:
+            SetCursor(LoadCursor(nullptr, IDC_IBEAM));
+            break;
+        case cursor::hand:
+            SetCursor(LoadCursor(nullptr, IDC_HAND));
+            break;
+        default:
+            SetCursor(LoadCursor(nullptr, IDC_ARROW));
+            break;
+        }
+    }
 }

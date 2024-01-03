@@ -2,6 +2,7 @@
 #include "../WindowMain.h"
 #include "../ToolSub.h"
 #include "../AppFont.h"
+#include "../Cursor.h"
 #include "ShapeDragger.h"
 #include "numbers"
 static int num = 1;
@@ -36,8 +37,8 @@ bool ShapeNumber::OnMouseMove(const int &x, const int &y)
 {
     if (path.contains(x, y))
     {
-        setDragger();
-        Icon::myCursor(Icon::cursor::all);
+        setDragger(); 
+        Cursor::All();
         HoverIndex = 8;
         WindowMain::get()->Refresh();
         return true;
@@ -156,7 +157,7 @@ void ShapeNumber::setDragger()
     auto shapeDragger = ShapeDragger::get();
     unsigned half = shapeDragger->size / 2;
     shapeDragger->setDragger(0, endX - half, endY - half);
-    shapeDragger->cursors[0] = Icon::cursor::all;
+    shapeDragger->cursors[0] = Cursor::cursor::all;
     shapeDragger->disableDragger(1);
     shapeDragger->curShape = this;
 }

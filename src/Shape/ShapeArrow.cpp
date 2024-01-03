@@ -2,6 +2,7 @@
 #include "../WindowMain.h"
 #include "../ToolSub.h"
 #include "ShapeDragger.h"
+#include "../Cursor.h"
 
 ShapeArrow::ShapeArrow(const int &x, const int &y) : ShapeBase(x, y)
 {
@@ -32,7 +33,7 @@ bool ShapeArrow::OnMouseMove(const int &x, const int &y)
     if (flag)
     {
         setDragger();
-        Icon::myCursor(Icon::cursor::all);
+        Cursor::All();
         HoverIndex = 8;
         return true;
     }
@@ -153,7 +154,7 @@ void ShapeArrow::setDragger()
     shapeDragger->setDragger(0, startX - half, startY - half);
     shapeDragger->setDragger(1, endX - half, endY - half);
     shapeDragger->disableDragger(2);
-    shapeDragger->cursors[0] = Icon::cursor::all;
-    shapeDragger->cursors[1] = Icon::cursor::all;
+    shapeDragger->cursors[0] = Cursor::cursor::all;
+    shapeDragger->cursors[1] = Cursor::cursor::all;
     shapeDragger->curShape = this;
 }

@@ -1,7 +1,7 @@
 #include "ShapeEllipse.h"
 #include "../WindowMain.h"
 #include "../ToolSub.h"
-#include "../Icon.h"
+#include "../Cursor.h"
 
 ShapeEllipse::ShapeEllipse(const int &x, const int &y) : ShapeRect(x, y)
 {
@@ -45,7 +45,7 @@ bool ShapeEllipse::OnMouseMove(const int& x, const int& y)
     }
     if (flag) {
         setDragger();
-        Icon::myCursor(Icon::cursor::all);
+        Cursor::All();
         HoverIndex = 8;
         WindowMain::get()->Refresh();
         return true;

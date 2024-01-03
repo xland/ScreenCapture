@@ -101,39 +101,39 @@ bool CutMask::OnMouseMove(const int& x, const int& y)
     if (win->state == State::tool) {
         if (x < CutRect.fLeft && y < CutRect.fTop) {
             hoverIndex = 0;
-            Icon::myCursor(Icon::cursor::wnse);
+            Cursor::LeftTopRightBottom();
         }
         else if (x > CutRect.fLeft && x < CutRect.fRight && y < CutRect.fTop) {
             hoverIndex = 1;
-            Icon::myCursor(Icon::cursor::ns);
+            Cursor::TopBottom();
         }
         else if (x > CutRect.fRight && y < CutRect.fTop) {
             hoverIndex = 2;
-            Icon::myCursor(Icon::cursor::nesw);
+            Cursor::LeftBottomRightTop();
         }
         else if (x > CutRect.fRight && y > CutRect.fTop && y < CutRect.fBottom) {
             hoverIndex = 3;
-            Icon::myCursor(Icon::cursor::we);
+            Cursor::LeftRight();
         }
         else if (x > CutRect.fRight && y > CutRect.fBottom) {
             hoverIndex = 4;
-            Icon::myCursor(Icon::cursor::wnse);
+            Cursor::LeftTopRightBottom();
         }
         else if (x > CutRect.fLeft && x < CutRect.fRight && y > CutRect.fBottom) {
             hoverIndex = 5;
-            Icon::myCursor(Icon::cursor::ns);
+            Cursor::TopBottom();
         }
         else if (x < CutRect.fLeft && y > CutRect.fBottom) {
             hoverIndex = 6;
-            Icon::myCursor(Icon::cursor::nesw);
+            Cursor::LeftBottomRightTop();
         }
         else if (x < CutRect.fLeft && y < CutRect.fBottom && y > CutRect.fTop) {
             hoverIndex = 7;
-            Icon::myCursor(Icon::cursor::we);
+            Cursor::LeftRight();
         }
         else {
             hoverIndex = 8;
-            Icon::myCursor(Icon::cursor::all);
+            Cursor::All();
         }
         return true;
     }
@@ -284,7 +284,7 @@ bool CutMask::OnMouseUp(const int& x, const int& y)
     }
     winMain->state = State::tool;
     winMain->Refresh();
-    Icon::myCursor();
+    Cursor::Arrow();
     Screen::Init();
     return true;
 }
