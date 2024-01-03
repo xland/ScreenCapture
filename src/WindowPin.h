@@ -8,12 +8,12 @@
 class WindowPin : public WindowBase
 {
 public:
+    WindowPin();
     ~WindowPin();
     static void init();
     static WindowPin* get();
     State state = State::start;
 private:
-    WindowPin();
     LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) override;
     void shotScreen();
     void initSize();

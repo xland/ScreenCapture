@@ -1,4 +1,11 @@
 #include "WindowPin.h"
+#include "WindowMain.h"
+
+WindowPin* windowPin;
+
+WindowPin::WindowPin()
+{
+}
 
 WindowPin::~WindowPin()
 {
@@ -6,11 +13,13 @@ WindowPin::~WindowPin()
 
 void WindowPin::init()
 {
+	windowPin = new WindowPin();
+	delete WindowMain::get();
 }
 
 WindowPin* WindowPin::get()
 {
-	return nullptr;
+	return windowPin;
 }
 
 LRESULT WindowPin::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)

@@ -8,6 +8,7 @@
 #include "ToolSub.h"
 #include "Recorder.h"
 #include "Screen.h"
+#include "WindowPin.h"
 
 ToolMain *toolMain;
 
@@ -154,7 +155,7 @@ bool ToolMain::OnMouseDown(const int& x, const int& y)
                 break;
             }
             case 11: {
-                int a = 0;
+                WindowPin::init();
                 break;
             }
             default:
