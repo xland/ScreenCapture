@@ -28,6 +28,9 @@ namespace Cursor
     static inline void Arrow() {
         SetCursor(LoadCursor(nullptr, IDC_ARROW));
     }
+    static inline void Cross() {
+        SetCursor(LoadCursor(nullptr, IDC_CROSS));
+    }
     enum class cursor
     {
         all,

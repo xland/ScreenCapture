@@ -78,7 +78,9 @@ void Timer::asyncTask()
             });
         if (it != tasks.end()) {
             std::lock_guard<std::mutex> lock(mutex);
-            tasks.erase(it, tasks.end());
+            if (!shouldTerminate) {
+                tasks.erase(it, tasks.end());
+            }            
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }

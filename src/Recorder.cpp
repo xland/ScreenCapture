@@ -179,7 +179,7 @@ bool Recorder::OnMouseMove(const int &x, const int &y)
         win->Refresh();
     }
     else {
-        Cursor::Arrow();
+        Cursor::Cross();
         Timer::get()->Start(0, 800, []() {
             return ShapeDragger::get()->hideDragger();
             });

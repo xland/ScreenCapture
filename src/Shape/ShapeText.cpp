@@ -268,8 +268,7 @@ void ShapeText::Paint(SkCanvas *canvas)
         }
         showCursor = !showCursor;
         activeKeyboard(getCursorX(), startY + lineIndex * lineHeight);
-    }
-    
+    }    
     auto font = AppFont::Get()->fontText;
     SkPaint paint;
     paint.setStroke(false);
@@ -335,6 +334,7 @@ void ShapeText::activeKeyboard(long x, long y)
 void ShapeText::setRect(SkCanvas* canvas)
 {
     auto font = AppFont::Get()->fontText;
+    font->setSize(fontSize);
     float left{ (float)startX - 10 }, top{ (float)startY - 10 }, width{ 20 }, height{ 0 };
     SkRect lineRect;
     if (lines.size() == 0) {
