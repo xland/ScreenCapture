@@ -6,7 +6,7 @@ Timer* timer;
 
 Timer::Timer()
 {
-    
+    t = new std::thread(&Timer::asyncTask, this);
 }
 
 Timer::~Timer()
@@ -17,7 +17,6 @@ Timer::~Timer()
         t->join();
     }
     delete t;
-    delete timer;
 }
 
 void Timer::init()
@@ -32,9 +31,6 @@ Timer* Timer::get()
 
 void Timer::Start(const int id, const int& timeSpan, std::function<bool()> taskFunc)
 {
-    if (t == nullptr) {
-        t = new std::thread(&Timer::asyncTask, this);
-    }
     auto it = std::find_if(tasks.begin(), tasks.end(), [id](auto& task) {
         return task->id == id;
         });

@@ -16,7 +16,6 @@ ShapeDragger::ShapeDragger()
 
 ShapeDragger::~ShapeDragger()
 {
-    delete shapeDragger;
 }
 
 void ShapeDragger::init()

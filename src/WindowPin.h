@@ -15,8 +15,7 @@ public:
     State state = State::start;
 private:
     LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) override;
-    void shotScreen();
-    void initSize();
+    void paintTool(SkCanvas* canvas) override;
     bool onMouseDown(const int& x, const int& y);
     bool onMouseDownRight(const int& x, const int& y);
     bool onMouseUp(const int& x, const int& y);

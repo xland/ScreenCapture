@@ -12,6 +12,7 @@ public:
     ~CutMask();
     static void init();
     static CutMask* get();
+    static SkRect GetCutRect();
     bool OnMouseDown(const int& x, const int& y);
     bool OnMouseUp(const int& x, const int& y);
     bool OnMouseMove(const int& x, const int& y);

@@ -39,6 +39,13 @@ CutMask* CutMask::get()
     return cutMask;
 }
 
+SkRect CutMask::GetCutRect()
+{
+    auto rect = cutMask->CutRect;
+    rect.inset(1.5, 1.5);
+    return rect;
+}
+
 bool CutMask::OnMouseDown(const int& x, const int& y)
 {    
     auto win = WindowMain::get();

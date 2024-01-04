@@ -5,6 +5,11 @@
 #include "ToolMain.h"
 #include "ToolSub.h"
 #include "CutMask.h"
+#include "Timer.h"
+#include "WindowMain.h"
+#include "WindowPin.h"
+#include "include/core/SkStream.h"
+#include "include/encode/SkPngEncoder.h"
 
 WindowBase::WindowBase()
 {
@@ -49,8 +54,7 @@ void WindowBase::initCanvas()
 
 void WindowBase::Close(const int &exitCode)
 {
-    SendMessage(hwnd, WM_CLOSE, NULL, NULL);
-    PostQuitMessage(0);
+    SendMessage(hwnd, WM_CLOSE, NULL, NULL);    
 }
 
 void WindowBase::refresh()
@@ -62,34 +66,8 @@ void WindowBase::refresh()
         canvas->drawImage(img, 0.f, 0.f);
         img = surfaceFront->makeImageSnapshot();
         canvas->drawImage(img, 0.f, 0.f);
-        //todo get到的可能是空
-        CutMask::get()->OnPaint(canvas);
-        ToolMain::get()->OnPaint(canvas);
-        ToolSub::get()->OnPaint(canvas);
-        SkDebugf("refresh\n");
+        paintTool(canvas);
     }
-    //auto back = surfaceBack->getCanvas();
-    //auto front = surfaceFront->getCanvas();
-    //front->clear(SK_ColorTRANSPARENT);
-    //paint(front);
-    //sk_sp<SkImage> img = surfaceFront->makeImageSnapshot();
-    //back->drawImage(img,0,0);
-    //paintFinish(back);
-
-    //back->saveLayer(nullptr, nullptr);
-    //SkPaint paint;
-    //paint.setColor(SK_ColorBLUE);
-    //back->drawRect(SkRect::MakeXYWH(0, 0, 800, 600),paint);
-    //SkPath path;
-    //path.moveTo(0, 0);
-    //path.lineTo(400, 300);
-    //path.setFillType(SkPathFillType::kInverseWinding);
-    //paint.setStroke(true);
-    //paint.setStrokeWidth(60);
-    //paint.setBlendMode(SkBlendMode::kClear);
-    //back->drawPath(path, paint);
-    //back->restore();
-
     HDC hdc = GetDC(hwnd);
     static BITMAPINFO info = { sizeof(BITMAPINFOHEADER), w, 0 - h, 1, 32, BI_RGB, w * 4 * h, 0, 0, 0, 0 };
     SetDIBits(hdc, bottomHbitmap, 0, h, pixBase->addr(), &info, DIB_RGB_COLORS);
@@ -129,6 +107,14 @@ LRESULT CALLBACK WindowBase::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wPar
         {
             return true;
         }
+        case WM_NCDESTROY:
+        {
+            delete obj;
+            if (!WindowMain::get() && !WindowPin::get()) {
+                PostQuitMessage(0);
+            }
+            return true;
+        }
         case WM_KEYUP:
         {
             return false;
@@ -160,8 +146,12 @@ void WindowBase::initWindow()
     {
         return;
     }
-    auto exStyle = WS_EX_LAYERED;
-    this->hwnd = CreateWindowEx(exStyle, wcx.lpszClassName, wcx.lpszClassName, WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_POPUP,
+#ifdef _DEBUG
+    auto exStyle = className.ends_with(L"0") ? WS_EX_LAYERED : WS_EX_LAYERED | WS_EX_TOPMOST;
+#else
+    auto exStyle = WS_EX_LAYERED | WS_EX_TOPMOST;
+#endif
+    this->hwnd = CreateWindowEx(exStyle, className.c_str(), className.c_str(), WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_POPUP,
                                 x, y, w, h, NULL, NULL, hinstance, static_cast<LPVOID>(this));
     BOOL attrib = TRUE;
     DwmSetWindowAttribute(hwnd, DWMWA_TRANSITIONS_FORCEDISABLED, &attrib, sizeof(attrib));

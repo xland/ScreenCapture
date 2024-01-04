@@ -32,11 +32,14 @@ WindowMain::WindowMain()
 
 WindowMain::~WindowMain()
 {
+    //delete PixelInfo::get();
+    delete Timer::get();
+    delete ShapeDragger::get();
     delete Recorder::get();
-    delete ToolSub::get();
-    delete ToolMain::get();
+    //delete ToolSub::get();
+    //delete ToolMain::get();
     delete CutMask::get();
-    delete AppFont::Get();
+    //delete AppFont::Get();
     windowMain = nullptr;
 }
 
@@ -92,12 +95,6 @@ LRESULT WindowMain::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam
         onMouseDownRight(x, y);
         return true;
     }
-    case WM_NCDESTROY:
-    {
-        delete this;
-        exit(0);
-        return true;
-    }
     case WM_KEYDOWN:
     {
         switch (wparam)
@@ -128,11 +125,24 @@ LRESULT WindowMain::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam
     return DefWindowProc(hwnd, msg, wparam, lparam);
 }
 
+void WindowMain::paintTool(SkCanvas* canvas)
+{
+    //todo get到的可能是空
+    CutMask::get()->OnPaint(canvas);
+    //auto tm = ToolMain::get();
+    //if (tm) {
+    ToolMain::get()->OnPaint(canvas);
+    ToolSub::get()->OnPaint(canvas);
+    //}
+    //SkDebugf("refresh\n");
+}
+
 bool WindowMain::onMouseDown(const int& x, const int& y)
 {
-    auto tmFlag = ToolMain::get()->OnMouseDown(x, y);
-    auto tsFlag = ToolSub::get()->OnMouseDown(x, y);
-    if (tmFlag || tsFlag) {
+    if (ToolMain::get()->OnMouseDown(x, y)) {
+        return true;
+    }
+    if (ToolSub::get()->OnMouseDown(x, y)) {
         return true;
     }
     auto cmFlag = CutMask::get()->OnMouseDown(x, y);

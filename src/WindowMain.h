@@ -16,6 +16,7 @@ public:
 private:
     WindowMain();
     LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) override;
+    void paintTool(SkCanvas* canvas) override;
     void shotScreen();
     void initSize();
     bool onMouseDown(const int& x, const int& y);

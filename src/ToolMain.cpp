@@ -12,6 +12,12 @@
 
 ToolMain *toolMain;
 
+
+ToolMain::~ToolMain()
+{
+    toolMain = nullptr;
+}
+
 ToolMain::ToolMain()
 {
     btns.push_back(std::make_shared<ToolBtn>(Icon::rect, L"矩形"));
@@ -93,9 +99,6 @@ void ToolMain::setPosition()
     ToolRect.setXYWH(left,top, btns.size() * ToolBtn::width, ToolBtn::height);
 }
 
-ToolMain::~ToolMain()
-{
-}
 
 void ToolMain::init()
 {
