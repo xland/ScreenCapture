@@ -69,11 +69,11 @@ void WindowBase::refresh()
         paintTool(canvas);
     }
     HDC hdc = GetDC(hwnd);
-    static BITMAPINFO info = { sizeof(BITMAPINFOHEADER), w, 0 - h, 1, 32, BI_RGB, w * 4 * h, 0, 0, 0, 0 };
+    BITMAPINFO info = { sizeof(BITMAPINFOHEADER), w, 0 - h, 1, 32, BI_RGB, w * 4 * h, 0, 0, 0, 0 };
     SetDIBits(hdc, bottomHbitmap, 0, h, pixBase->addr(), &info, DIB_RGB_COLORS);
-    static BLENDFUNCTION blend = { .BlendOp{AC_SRC_OVER}, .SourceConstantAlpha{255}, .AlphaFormat{AC_SRC_ALPHA} };
-    static POINT pSrc = { 0, 0 };
-    static SIZE sizeWnd = { w, h };
+    BLENDFUNCTION blend = { .BlendOp{AC_SRC_OVER}, .SourceConstantAlpha{255}, .AlphaFormat{AC_SRC_ALPHA} };
+    POINT pSrc = { 0, 0 };
+    SIZE sizeWnd = { w, h };
     UpdateLayeredWindow(hwnd, hdc, NULL, &sizeWnd, hCompatibleDC, &pSrc, NULL, &blend, ULW_ALPHA);
     ReleaseDC(hwnd, hdc);
 }
@@ -105,6 +105,10 @@ LRESULT CALLBACK WindowBase::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wPar
         }
         case WM_SETCURSOR:
         {
+            return true;
+        }
+
+        if (msg == WM_CLOSE) {
             return true;
         }
         case WM_NCDESTROY:
@@ -147,7 +151,7 @@ void WindowBase::initWindow()
         return;
     }
 #ifdef _DEBUG
-    auto exStyle = className.ends_with(L"0") ? WS_EX_LAYERED : WS_EX_LAYERED | WS_EX_TOPMOST;
+    auto exStyle = className.ends_with(L'0') ? WS_EX_LAYERED : WS_EX_LAYERED | WS_EX_TOPMOST;
 #else
     auto exStyle = WS_EX_LAYERED | WS_EX_TOPMOST;
 #endif

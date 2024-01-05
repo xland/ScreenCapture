@@ -42,7 +42,7 @@ CutMask* CutMask::get()
 SkRect CutMask::GetCutRect()
 {
     auto rect = cutMask->CutRect;
-    rect.inset(1.5, 1.5);
+    rect.inset(2, 2);
     return rect;
 }
 

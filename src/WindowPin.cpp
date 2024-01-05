@@ -17,9 +17,8 @@ WindowPin* windowPin;
 
 WindowPin::WindowPin()
 {
-	float shadowSize = 20.0f;
-	//auto rect = CutMask::GetCutRect();
-    auto rect = SkRect::MakeLTRB(200, 200, 600, 600);
+	float shadowSize = 8.0f;
+	auto rect = CutMask::GetCutRect();
 	x = rect.fLeft - shadowSize;
 	y = rect.fTop - shadowSize;
 	w = rect.width() + shadowSize * 2;
@@ -30,20 +29,24 @@ WindowPin::WindowPin()
 	auto pixArr = new unsigned char[dataSize];
     pixSrc = new SkPixmap(imgInfo, pixArr, rowBytes);
 
-    //auto canvas = SkCanvas::MakeRasterDirect(imgInfo, pixArr, rowBytes);
-	//auto windowMain = WindowMain::get();
-	//auto img = windowMain->surfaceBase->makeImageSnapshot(SkIRect::MakeLTRB(rect.fLeft, rect.fTop, rect.fRight, rect.fBottom));
-	//canvas->drawImage(img, shadowSize, shadowSize);
-	//SkPaint paint;
-	//SkPath path;
-	//path.addRRect(SkRRect::MakeRectXY(SkRect::MakeXYWH(shadowSize, shadowSize, rect.width(),rect.height()), 6, 6));
-	//// 定义阴影与 z 平面的关系
-	//SkPoint3 zPlaneParams = SkPoint3::Make(0, 0, 20);
-	//// 定义光源的位置和半径
-	//SkPoint3 lightPos = SkPoint3::Make(0, 0, 0);
-	//SkScalar lightRadius = 20;
-	//// 绘制阴影
-	//SkShadowUtils::DrawShadow(canvas.get(), path, zPlaneParams, lightPos, lightRadius, SkColorSetARGB(130, 0, 0, 0), SK_ColorTRANSPARENT, 0);
+    auto canvas = SkCanvas::MakeRasterDirect(imgInfo, pixArr, rowBytes);
+    canvas->clear(SK_ColorTRANSPARENT); 
+
+
+	auto windowMain = WindowMain::get();
+	auto img = windowMain->surfaceBase->makeImageSnapshot(SkIRect::MakeLTRB(rect.fLeft, rect.fTop, rect.fRight, rect.fBottom));
+	canvas->drawImage(img, shadowSize, shadowSize);
+	
+    SkPaint paint;
+    SkPath path;
+    path.addRRect(SkRRect::MakeRectXY(SkRect::MakeXYWH(shadowSize-2, shadowSize-2, rect.width()+4, rect.height()+4), 6, 6));
+    // 定义阴影与 z 平面的关系
+    SkPoint3 zPlaneParams = SkPoint3::Make(0, 0, 20);
+    // 定义光源的位置和半径
+    SkPoint3 lightPos = SkPoint3::Make(0, 0, 0);
+    SkScalar lightRadius = 20;
+    // 绘制阴影
+    SkShadowUtils::DrawShadow(canvas.get(), path, zPlaneParams, lightPos, lightRadius, SkColorSetARGB(60, 0, 0, 0), SK_ColorTRANSPARENT, 0);
 
     initWindow();
     initCanvas();
@@ -59,7 +62,7 @@ void WindowPin::init()
 	if (!windowPin) {
 		windowPin = new WindowPin();
 		windowPin->Show();
-		//WindowMain::get()->Close(0);
+		WindowMain::get()->Close(0);
 	}
 }
 
@@ -72,6 +75,10 @@ LRESULT WindowPin::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
     switch (msg)
     {
+    case WM_NCHITTEST: {
+        return HTCAPTION;
+        break;
+    }
     case WM_LBUTTONDOWN:
     {
         IsMouseDown = true;
@@ -138,14 +145,6 @@ LRESULT WindowPin::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 
 void WindowPin::paintTool(SkCanvas* canvas)
 {
-    SkPaint paint;
-    paint.setColor(SK_ColorBLUE);
-    canvas->drawRect(SkRect::MakeLTRB(0, 0, w, h), paint);
-
-    SkFILEWStream stream("output123.bmp");
-    SkPngEncoder::Options option;
-    SkPngEncoder::Encode(&stream, *pixBase, option);
-    stream.flush();
 }
 
 bool WindowPin::onMouseDown(const int& x, const int& y)
