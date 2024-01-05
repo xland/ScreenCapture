@@ -29,7 +29,6 @@ void WindowBase::Show()
     ShowWindow(hwnd, SW_SHOW);
     UpdateWindow(hwnd);
     Refresh();
-    SetCursor(LoadCursor(nullptr, IDC_CROSS));
 }
 
 void WindowBase::Refresh()

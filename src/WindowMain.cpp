@@ -49,6 +49,7 @@ void WindowMain::init()
     {
         windowMain = new WindowMain();
         windowMain->Show();
+        Cursor::Cross();
     }
 }
 
@@ -127,14 +128,9 @@ LRESULT WindowMain::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam
 
 void WindowMain::paintTool(SkCanvas* canvas)
 {
-    //todo get到的可能是空
     CutMask::get()->OnPaint(canvas);
-    //auto tm = ToolMain::get();
-    //if (tm) {
     ToolMain::get()->OnPaint(canvas);
     ToolSub::get()->OnPaint(canvas);
-    //}
-    //SkDebugf("refresh\n");
 }
 
 bool WindowMain::onMouseDown(const int& x, const int& y)
@@ -202,17 +198,6 @@ bool WindowMain::onMouseWheel(const int& delta)
     Recorder::get()->onMouseWheel(delta);
     return false;
 }
-//void WindowMain::paint(SkCanvas* canvas)
-//{
-//    Recorder::get()->OnPaint(canvas);
-//    CutMask::get()->OnPaint(canvas);
-//    ToolMain::get()->OnPaint(canvas);
-//    ToolSub::get()->OnPaint(canvas);
-//}
-//void WindowMain::paintFinish(SkCanvas* canvas)
-//{
-//    Recorder::get()->OnPaintFinish(canvas);
-//}
 void WindowMain::shotScreen()
 {
     HDC hScreen = GetDC(NULL);

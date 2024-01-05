@@ -1,5 +1,7 @@
 set(SRC
     main.cpp
+    App.cpp
+    App.h
     Icon.h
     Cursor.h
     AppFont.cpp

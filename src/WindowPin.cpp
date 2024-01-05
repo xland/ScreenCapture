@@ -2,6 +2,8 @@
 #include "WindowPin.h"
 #include "WindowMain.h"
 #include "CutMask.h"
+#include "ToolMain.h"
+#include "ToolSub.h"
 #include "include/core/SkPath.h"
 #include "include/core/SkRect.h"
 #include "include/core/SkSurface.h"
@@ -23,6 +25,14 @@ WindowPin::WindowPin()
 	y = rect.fTop - shadowSize;
 	w = rect.width() + shadowSize * 2;
 	h = rect.height() + shadowSize * 2;
+    auto tm = ToolMain::get();
+    auto tempWidth = tm->ToolRect.width() + shadowSize*2;
+    if (w < tempWidth) {
+        this->w = tempWidth;
+    }
+    h += tm->ToolRect.height() * 2 + tm->MarginTop * 2;
+
+
 	SkImageInfo imgInfo = SkImageInfo::MakeN32Premul(w, h);
 	long long rowBytes = w * 4;
 	long long dataSize = rowBytes * h;
@@ -133,6 +143,18 @@ LRESULT WindowPin::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
         onMouseWheel(delta);
         return false;
     }
+    case WM_COMMAND: {
+        switch (LOWORD(wparam))
+        {
+        case 1001:
+            SkDebugf("1001");
+            break;
+        case 1002:
+            SkDebugf("1002");
+            break;
+        }
+        break;
+    }
     default:
         break;
     }
@@ -141,6 +163,8 @@ LRESULT WindowPin::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 
 void WindowPin::paintTool(SkCanvas* canvas)
 {
+    ToolMain::get()->OnPaint(canvas);
+    ToolSub::get()->OnPaint(canvas);
 }
 
 bool WindowPin::onMouseDown(const int& x, const int& y)
@@ -152,6 +176,12 @@ bool WindowPin::onMouseDown(const int& x, const int& y)
 
 bool WindowPin::onMouseDownRight(const int& x, const int& y)
 {
+    HMENU hMenu = CreatePopupMenu();
+    AppendMenu(hMenu, MF_STRING, 1001, L"¹¤¾ßÀ¸");
+    AppendMenu(hMenu, MF_STRING, 1002, L"ÍË³ö(Esc)");
+    POINT point;
+    GetCursorPos(&point);
+    TrackPopupMenu(hMenu, TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, 0, hwnd, NULL);
 	return false;
 }
 

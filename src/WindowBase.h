@@ -5,6 +5,8 @@
 #include "include/core/SkSurface.h"
 #include "include/core/SkCanvas.h"
 #include "include/core/SkPictureRecorder.h"
+#include "State.h"
+
 #define WM_REFRESH (WM_APP+1)
 class WindowBase
 {
@@ -15,6 +17,7 @@ public:
     void Refresh();
     void Close(const int &exitCode);
     HWND hwnd;
+    State state = State::start;
     int x, y, w, h;
     bool IsMouseDown{false};
     bool IsMouseDragging{ false };
