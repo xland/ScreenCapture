@@ -75,10 +75,6 @@ LRESULT WindowPin::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
     switch (msg)
     {
-    case WM_NCHITTEST: {
-        return HTCAPTION;
-        break;
-    }
     case WM_LBUTTONDOWN:
     {
         IsMouseDown = true;
@@ -149,6 +145,8 @@ void WindowPin::paintTool(SkCanvas* canvas)
 
 bool WindowPin::onMouseDown(const int& x, const int& y)
 {
+    GetCursorPos(&startPos);
+    SetCapture(hwnd);
 	return false;
 }
 
@@ -159,6 +157,7 @@ bool WindowPin::onMouseDownRight(const int& x, const int& y)
 
 bool WindowPin::onMouseUp(const int& x, const int& y)
 {
+    ReleaseCapture();
 	return false;
 }
 
@@ -167,8 +166,16 @@ bool WindowPin::onMouseMove(const int& x, const int& y)
 	return false;
 }
 
-bool WindowPin::onMouseDrag(const int& x, const int& y)
+bool WindowPin::onMouseDrag(const int& x1, const int& y1)
 {
+    POINT point;
+    GetCursorPos(&point);
+    int dx = point.x - startPos.x;
+    int dy = point.y - startPos.y;
+    x += dx;
+    y += dy;
+    SetWindowPos(hwnd, nullptr, x, y, 0, 0, SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_NOSIZE);
+    startPos = point;
 	return false;
 }
 
