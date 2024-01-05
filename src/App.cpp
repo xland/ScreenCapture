@@ -20,16 +20,23 @@ App::~App()
 
 void App::Init()
 {
+    winMain = new WindowMain();
+}
+
+void App::Dispose()
+{
+    delete fontIcon;
+    delete fontText;
 }
 
 WindowBase* App::GetWinMain()
 {
-	return nullptr;
+	return winMain;
 }
 
 WindowBase* App::GetWinPin()
 {
-	return nullptr;
+	return winPin;
 }
 
 SkFont* App::GetFontIcon()

@@ -6,6 +6,7 @@ class App
 public:
     ~App();
     static void Init();
+    static void Dispose();
     static WindowBase* GetWinMain();
     static WindowBase* GetWinPin();
     static SkFont* GetFontIcon();

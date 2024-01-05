@@ -8,11 +8,11 @@ class CutMask;
 class WindowMain : public WindowBase
 {
 public:
+    WindowMain();
     ~WindowMain();
     static void init();
     static WindowMain *get();
 private:
-    WindowMain();
     LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) override;
     void paintTool(SkCanvas* canvas) override;
     void shotScreen();
