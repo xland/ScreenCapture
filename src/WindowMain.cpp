@@ -1,6 +1,7 @@
 ﻿#include <Windows.h>
 #include <windowsx.h>
 #include "WindowMain.h"
+#include "App.h"
 #include "include/core/SkBitmap.h"
 #include "include/core/SkCanvas.h"
 #include "CutMask.h"
@@ -69,7 +70,7 @@ LRESULT WindowMain::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam
         {
         case VK_ESCAPE:
         {
-            this->Close(3);
+            App::Quit();
             return false;
         }
         default:

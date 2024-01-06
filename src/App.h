@@ -7,6 +7,7 @@ public:
     ~App();
     static void Init();
     static void Dispose();
+    static void Quit();
     static WindowBase* GetWin();
     static SkFont* GetFontIcon();
     static SkFont* GetFontText();

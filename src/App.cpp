@@ -62,9 +62,16 @@ void App::Pin()
 {
     auto pinWin = new WindowPin();
     pinWin->Show();
+    Cursor::Arrow();
     win->Close(0);
     delete win;
     win = pinWin;
+}
+
+void App::Quit() {
+    win->Close(0);
+    delete win;
+    PostQuitMessage(0);
 }
 
 void App::initFontIcon()

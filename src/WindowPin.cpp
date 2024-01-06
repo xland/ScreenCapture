@@ -141,7 +141,7 @@ LRESULT WindowPin::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
         {
         case VK_ESCAPE:
         {
-            this->Close(3);
+            App::Quit();
             return false;
         }
         default:
@@ -235,6 +235,9 @@ bool WindowPin::onMouseUp(const int& x, const int& y)
 
 bool WindowPin::onMouseMove(const int& x, const int& y)
 {
+    if (state == State::start) {
+        return false;
+    }
     auto tm = ToolMain::get()->OnMouseMove(x, y);
     auto ts = ToolSub::get()->OnMouseMove(x, y);
     if (tm || ts) {
