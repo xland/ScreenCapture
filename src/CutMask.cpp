@@ -7,6 +7,7 @@
 #include "Screen.h"
 #include "Cursor.h"
 #include <format>
+#include "ToolMain.h"
 
 CutMask* cutMask;
 
@@ -285,12 +286,13 @@ bool CutMask::OnPaint(SkCanvas *canvas)
 }
 bool CutMask::OnMouseUp(const int& x, const int& y)
 {
-    auto winMain = App::GetWin();
-    if (winMain->state != State::mask) {
+    auto win = App::GetWin();
+    if (win->state != State::mask) {
         return false;
     }
-    winMain->state = State::tool;
-    winMain->Refresh();
+    win->state = State::tool;
+    ToolMain::get()->SetPositionByCutMask();
+    win->Refresh();
     Cursor::Arrow();
     Screen::Init();
     return true;

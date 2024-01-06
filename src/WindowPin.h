@@ -10,10 +10,12 @@ class WindowPin : public WindowBase
 public:
     WindowPin();
     ~WindowPin();
-    State state = State::start;
 private:
+    virtual void initCanvas();
+    void initSize();
+    void showMenu();
     LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) override;
-    void paintTool(SkCanvas* canvas) override;
+    void paintCanvas() override;
     bool onMouseDown(const int& x, const int& y);
     bool onMouseDownRight(const int& x, const int& y);
     bool onMouseUp(const int& x, const int& y);
@@ -23,4 +25,5 @@ private:
     bool onKeyDown(const unsigned int& val);
     bool onMouseWheel(const int& delta);
     POINT startPos;
+    float shadowSize{ 8.0f };
 };

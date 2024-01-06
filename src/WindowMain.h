@@ -4,7 +4,6 @@
 #include <format>
 #include "WindowBase.h"
 
-class CutMask;
 class WindowMain : public WindowBase
 {
 public:
@@ -12,7 +11,7 @@ public:
     ~WindowMain();
 private:
     LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) override;
-    void paintTool(SkCanvas* canvas) override;
+    void paintCanvas() override;
     void shotScreen();
     void initSize();
     bool onMouseDown(const int& x, const int& y);

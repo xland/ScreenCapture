@@ -1,4 +1,5 @@
-﻿#include <windowsx.h>
+﻿#include <Windows.h>
+#include <windowsx.h>
 #include "WindowMain.h"
 #include "include/core/SkBitmap.h"
 #include "include/core/SkCanvas.h"
@@ -6,18 +7,12 @@
 #include "ToolMain.h"
 #include "ToolSub.h"
 #include "Recorder.h"
-#include "Timer.h"
 #include "PixelInfo.h"
 #include "Shape/ShapeDragger.h"
 
 WindowMain::WindowMain()
 {
     CutMask::init();
-    ToolMain::init();
-    ToolSub::init();
-    Recorder::init();
-    ShapeDragger::init();
-    Timer::init();
     PixelInfo::init();
     initSize();
     shotScreen();
@@ -28,14 +23,8 @@ WindowMain::WindowMain()
 
 WindowMain::~WindowMain()
 {
-    //delete PixelInfo::get();
-    delete Timer::get();
-    delete ShapeDragger::get();
-    delete Recorder::get();
-    //delete ToolSub::get();
-    //delete ToolMain::get();
+    delete PixelInfo::get();
     delete CutMask::get();
-    //delete AppFont::Get();
 }
 
 LRESULT WindowMain::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
@@ -52,7 +41,6 @@ LRESULT WindowMain::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam
     case WM_LBUTTONUP:
     {
         IsMouseDown = false;
-        IsMouseDragging = false;
         auto x = GET_X_LPARAM(lparam);
         auto y = GET_Y_LPARAM(lparam);
         return onMouseUp(x, y);
@@ -62,7 +50,6 @@ LRESULT WindowMain::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam
         auto x = GET_X_LPARAM(lparam);
         auto y = GET_Y_LPARAM(lparam);
         if (IsMouseDown) {
-            IsMouseDragging = true;
             return onMouseDrag(x, y);
         }
         else {
@@ -106,8 +93,14 @@ LRESULT WindowMain::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam
     return DefWindowProc(hwnd, msg, wparam, lparam);
 }
 
-void WindowMain::paintTool(SkCanvas* canvas)
+void WindowMain::paintCanvas()
 {
+    surfaceBase->writePixels(*pixSrc, 0, 0);
+    auto canvas = surfaceBase->getCanvas();
+    auto img = surfaceBack->makeImageSnapshot();
+    canvas->drawImage(img, 0.f, 0.f);
+    img = surfaceFront->makeImageSnapshot();
+    canvas->drawImage(img, 0.f, 0.f);
     CutMask::get()->OnPaint(canvas);
     ToolMain::get()->OnPaint(canvas);
     ToolSub::get()->OnPaint(canvas);

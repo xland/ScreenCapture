@@ -20,7 +20,6 @@ public:
     State state = State::start;
     int x, y, w, h;
     bool IsMouseDown{false};
-    bool IsMouseDragging{ false };
     sk_sp<SkSurface> surfaceBase;
     sk_sp<SkSurface> surfaceBack;
     sk_sp<SkSurface> surfaceFront;
@@ -31,11 +30,11 @@ protected:
     virtual LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) = 0;
     void initWindow();
     void initCanvas();
-    virtual void paintTool(SkCanvas* canvas) = 0;
+    virtual void paintCanvas() = 0;
+    HDC hCompatibleDC = NULL;
+    HBITMAP bottomHbitmap;
 
 private:
     void refresh();
     static LRESULT CALLBACK RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-    HDC hCompatibleDC = NULL;
-    HBITMAP bottomHbitmap;
 };

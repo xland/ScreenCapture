@@ -58,15 +58,7 @@ void WindowBase::Close(const int &exitCode)
 
 void WindowBase::refresh()
 {
-    {
-        surfaceBase->writePixels(*pixSrc, 0, 0);
-        auto canvas = surfaceBase->getCanvas();
-        auto img = surfaceBack->makeImageSnapshot();
-        canvas->drawImage(img, 0.f, 0.f);
-        img = surfaceFront->makeImageSnapshot();
-        canvas->drawImage(img, 0.f, 0.f);
-        paintTool(canvas);
-    }
+    paintCanvas();
     HDC hdc = GetDC(hwnd);
     BITMAPINFO info = { sizeof(BITMAPINFOHEADER), w, 0 - h, 1, 32, BI_RGB, w * 4 * h, 0, 0, 0, 0 };
     SetDIBits(hdc, bottomHbitmap, 0, h, pixBase->addr(), &info, DIB_RGB_COLORS);
@@ -112,7 +104,6 @@ LRESULT CALLBACK WindowBase::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wPar
         }
         case WM_NCDESTROY:
         {
-            //todo
             return true;
         }
         case WM_KEYUP:

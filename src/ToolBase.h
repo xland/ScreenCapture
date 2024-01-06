@@ -15,7 +15,7 @@ public:
     virtual bool OnMouseDown(const int& x, const int& y)=0;
     virtual bool OnPaint(SkCanvas* canvas)=0;
     SkRect ToolRect;
-    int MarginTop{8};
+    float MarginTop{8.0f};
     int IndexHovered;
     int IndexSelected;
 

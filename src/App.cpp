@@ -7,6 +7,10 @@
 #include "WindowMain.h"
 #include "WindowPin.h"
 #include "Cursor.h"
+#include "ToolMain.h"
+#include "ToolSub.h"
+#include "Recorder.h"
+#include "Shape/ShapeDragger.h"
 
 
 SkFont* fontIcon{ nullptr };
@@ -23,6 +27,11 @@ void App::Init()
 {
     initFontText();
     initFontIcon();
+    ToolMain::init();
+    ToolSub::init();
+    Recorder::init();
+    ShapeDragger::init();
+    Timer::init();
     win = new WindowMain();
     win->Show();
     Cursor::Cross();

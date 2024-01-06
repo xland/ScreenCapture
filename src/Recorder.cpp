@@ -99,6 +99,7 @@ bool Recorder::OnMouseDownRight(const int& x, const int& y)
         curShape = nullptr;
         auto toolMain = ToolMain::get();
         toolMain->setUndoDisable(false);
+        return true;
     }
     return false;
 }

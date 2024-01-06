@@ -57,8 +57,8 @@ ToolSub *ToolSub::get()
 
 bool ToolSub::OnMouseDown(const int& x, const int& y)
 {
-    auto winMain = App::GetWin();
-    if (winMain->state < State::tool)
+    auto win = App::GetWin();
+    if (win->state < State::tool)
     {
         return false;
     }
@@ -80,7 +80,7 @@ bool ToolSub::OnMouseDown(const int& x, const int& y)
             }
         }
         btns[index]->isSelected = true;
-        winMain->Refresh();
+        win->Refresh();
         return true;
     }
     else if (btns[index]->icon == Icon::uncheck) {
@@ -95,7 +95,7 @@ bool ToolSub::OnMouseDown(const int& x, const int& y)
         }
         btns[index]->icon = Icon::check;
         btns[index]->isSelected = true;
-        winMain->Refresh();
+        win->Refresh();
         return true;
     }
     if (index == 0) {
@@ -111,7 +111,7 @@ bool ToolSub::OnMouseDown(const int& x, const int& y)
                 btns.erase(btns.begin() + 1, btns.begin() + 4);
             }
         }
-        winMain->Refresh();
+        win->Refresh();
     }
     return true;
 }
@@ -175,8 +175,8 @@ void ToolSub::InitBtns(int mainToolSelectedIndex)
 
 bool ToolSub::OnPaint(SkCanvas *canvas)
 {
-    auto winMain = App::GetWin();
-    if (winMain->state < State::tool)
+    auto win = App::GetWin();
+    if (win->state < State::tool)
     {
         return false;
     }
@@ -187,27 +187,33 @@ bool ToolSub::OnPaint(SkCanvas *canvas)
     }
     auto width = btns.size() * ToolBtn::width;
     auto left = toolMain->ToolRect.left();
+    auto top = toolMain->ToolRect.bottom() + MarginTop;
     auto mainToolBtnCenterPointX = left + toolMain->IndexSelected * ToolBtn::width + ToolBtn::width / 2;
     if (toolMain->IndexSelected > 5) {
         left = mainToolBtnCenterPointX - width / 2;
     }
-    auto top = toolMain->ToolRect.bottom() + MarginTop;
-    ToolRect.setXYWH(left, top, width, ToolBtn::height);
+    SkPath p;
+    p.moveTo(mainToolBtnCenterPointX, top - MarginTop / 3 * 2);  // ¶¥µã
+    p.lineTo(mainToolBtnCenterPointX - MarginTop, top);  // ×óÏÂ½Ç
+    p.lineTo(left, top);
+    p.lineTo(left, top + ToolBtn::height);
+    p.lineTo(left + width, top + ToolBtn::height);
+    p.lineTo(left + width, top);
+    p.lineTo(mainToolBtnCenterPointX + MarginTop, top);  // ÓÒÏÂ½Ç
+    p.close();
     SkPaint paint;
     paint.setColor(SK_ColorWHITE);
     paint.setAntiAlias(true);
-    canvas->drawRoundRect(ToolRect, 3, 3, paint);
-    SkPath trianglePath;
-    trianglePath.moveTo(mainToolBtnCenterPointX, top - MarginTop/3*2);  // ¶¥µã
-    trianglePath.lineTo(mainToolBtnCenterPointX - MarginTop, top);  // ×óÏÂ½Ç
-    trianglePath.lineTo(mainToolBtnCenterPointX + MarginTop, top);  // ÓÒÏÂ½Ç
-    trianglePath.close();
-    canvas->drawPath(trianglePath, paint);
+    canvas->drawPath(p, paint);
     for (auto& btn : btns)
     {
         btn->Paint(canvas, paint, left, top);
         left += ToolBtn::width;
     }
+    paint.setStroke(true);
+    paint.setStrokeWidth(0.6f);
+    paint.setColor(SkColorSetARGB(255, 22, 118, 255));
+    canvas->drawPath(p, paint);
     return false;
 }
 

@@ -31,12 +31,12 @@ ToolMain::ToolMain()
     btns.push_back(std::make_shared<ToolBtn>(Icon::eraser, L"橡皮擦"));
     btns.push_back(std::make_shared<ToolBtn>(Icon::undo, L"上一步",true,false)); //9
     btns.push_back(std::make_shared<ToolBtn>(Icon::redo, L"下一步",true,false)); //10
-    btns.push_back(std::make_shared<ToolBtn>(Icon::pin, L"钉住截图区",false,false));
+    btns.push_back(std::make_shared<ToolBtn>(Icon::pin, L"钉住截图区",false,false));//11
     btns.push_back(std::make_shared<ToolBtn>(Icon::save, L"保存", false, false));
     btns.push_back(std::make_shared<ToolBtn>(Icon::close, L"退出", false, false));
 }
 
-void ToolMain::setPosition()
+void ToolMain::SetPositionByCutMask()
 {
     auto mask = CutMask::get();
     float left{ mask->CutRect.fRight - btns.size() * ToolBtn::width };
@@ -98,6 +98,11 @@ void ToolMain::setPosition()
     ToolRect.setXYWH(left,top, btns.size() * ToolBtn::width, ToolBtn::height);
 }
 
+void ToolMain::SetPosition(const float& x, const float& y)
+{
+    ToolRect.setXYWH(x, y, btns.size() * ToolBtn::width, ToolBtn::height);
+}
+
 
 void ToolMain::init()
 {
@@ -157,6 +162,8 @@ bool ToolMain::OnMouseDown(const int& x, const int& y)
                 break;
             }
             case 11: {
+                btns[11]->isHover = false;
+                btns[11]->isDisable = true;
                 App::Pin();
                 break;
             }
@@ -167,20 +174,17 @@ bool ToolMain::OnMouseDown(const int& x, const int& y)
     }
     return true;
 }
-
-
 bool ToolMain::OnPaint(SkCanvas *canvas)
 {
-    auto winMain = App::GetWin();
-    if (winMain->state < State::tool)
+    auto win = App::GetWin();
+    if (win->state < State::tool)
     {
         return false;
     }
-    setPosition();
     SkPaint paint;
     paint.setAntiAlias(true);
     paint.setColor(SK_ColorWHITE);
-    canvas->drawRoundRect(ToolRect, 3, 3, paint);
+    canvas->drawRect(ToolRect,paint);
     auto x = ToolRect.left();
     auto y = ToolRect.top();
     for (auto& btn : btns)
@@ -191,11 +195,13 @@ bool ToolMain::OnPaint(SkCanvas *canvas)
     paint.setColor(SkColorSetARGB(255, 180, 180, 180));
     x = ToolRect.left()+ToolBtn::width*9;
     paint.setStroke(true);
-    paint.setStrokeWidth(1);
+    paint.setStrokeWidth(0.6f);
     paint.setStrokeCap(SkPaint::Cap::kRound_Cap);
     canvas->drawLine(SkPoint::Make(x, y + 12), SkPoint::Make(x, ToolRect.bottom()-12), paint);
     x += ToolBtn::width * 2;
     canvas->drawLine(SkPoint::Make(x, y + 12), SkPoint::Make(x, ToolRect.bottom() - 12), paint);    
+    paint.setColor(SkColorSetARGB(255, 22, 118, 255));
+    canvas->drawRect(ToolRect,paint);
     return false;
 }
 

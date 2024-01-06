@@ -1,4 +1,4 @@
-#include <windowsx.h>
+ï»¿#include <windowsx.h>
 #include "WindowPin.h"
 #include "App.h"
 #include "CutMask.h"
@@ -13,55 +13,90 @@
 #include "include/core/SkRRect.h"
 #include "include/core/SkStream.h"
 #include "include/encode/SkPngEncoder.h"
+#include "Recorder.h"
 
 
 WindowPin::WindowPin()
 {
-	float shadowSize = 8.0f;
-	auto rect = CutMask::GetCutRect();
-	x = rect.fLeft - shadowSize;
-	y = rect.fTop - shadowSize;
-	w = rect.width() + shadowSize * 2;
-	h = rect.height() + shadowSize * 2;
-    auto tm = ToolMain::get();
-    auto tempWidth = tm->ToolRect.width() + shadowSize*2;
-    if (w < tempWidth) {
-        this->w = tempWidth;
-    }
-    h += tm->ToolRect.height() * 2 + tm->MarginTop * 2;
-
-
-	SkImageInfo imgInfo = SkImageInfo::MakeN32Premul(w, h);
-	long long rowBytes = w * 4;
-	long long dataSize = rowBytes * h;
-	auto pixArr = new unsigned char[dataSize];
-    pixSrc = new SkPixmap(imgInfo, pixArr, rowBytes);
-
-    auto canvas = SkCanvas::MakeRasterDirect(imgInfo, pixArr, rowBytes);
-    canvas->clear(SK_ColorTRANSPARENT); 
-
-
-	auto windowMain = App::GetWin();
-	auto img = windowMain->surfaceBase->makeImageSnapshot(SkIRect::MakeLTRB(rect.fLeft, rect.fTop, rect.fRight, rect.fBottom));
-	canvas->drawImage(img, shadowSize, shadowSize);
-	
-    SkPaint paint;
-    SkPath path;
-    path.addRRect(SkRRect::MakeRectXY(SkRect::MakeXYWH(shadowSize-2, shadowSize-2, rect.width()+4, rect.height()+4), 6, 6));
-    // ¶¨ÒåÒõÓ°Óë z Æ½ÃæµÄ¹ØÏµ
-    SkPoint3 zPlaneParams = SkPoint3::Make(0, 0, 20);
-    // ¶¨Òå¹âÔ´µÄÎ»ÖÃºÍ°ë¾¶
-    SkPoint3 lightPos = SkPoint3::Make(0, 0, 0);
-    SkScalar lightRadius = 20;
-    // »æÖÆÒõÓ°
-    SkShadowUtils::DrawShadow(canvas.get(), path, zPlaneParams, lightPos, lightRadius, SkColorSetARGB(60, 0, 0, 0), SK_ColorTRANSPARENT, 0);
-
+    initSize();
     initWindow();
     initCanvas();
 }
 
 WindowPin::~WindowPin()
 {
+
+}
+
+void WindowPin::initCanvas()
+{
+    auto rect = CutMask::GetCutRect();
+    SkImageInfo imgInfo = SkImageInfo::MakeN32Premul(w, h);
+    long long rowBytes = w * 4;
+    long long dataSize = rowBytes * h;
+    auto pixArr = new unsigned char[dataSize];
+    pixSrc = new SkPixmap(imgInfo, pixArr, rowBytes);
+    auto canvas = SkCanvas::MakeRasterDirect(imgInfo, pixArr, rowBytes);
+    canvas->clear(SK_ColorTRANSPARENT);
+    auto windowMain = App::GetWin();
+    auto img = windowMain->surfaceBase->makeImageSnapshot(SkIRect::MakeLTRB(rect.fLeft, rect.fTop, rect.fRight, rect.fBottom));
+    canvas->drawImage(img, shadowSize, shadowSize);
+
+    SkPaint paint;
+    SkPath path;
+    path.addRRect(SkRRect::MakeRectXY(SkRect::MakeXYWH(shadowSize - 2, shadowSize - 2, rect.width() + 4, rect.height() + 4), 6, 6));    
+    SkPoint3 zPlaneParams = SkPoint3::Make(0, 0, 20);// å®šä¹‰é˜´å½±ä¸Ž z å¹³é¢çš„å…³ç³»    
+    SkPoint3 lightPos = SkPoint3::Make(0, 0, 0);// å®šä¹‰å…‰æºçš„ä½ç½®å’ŒåŠå¾„
+    SkShadowUtils::DrawShadow(canvas.get(), path, zPlaneParams, lightPos, 20.f, SkColorSetARGB(60, 0, 0, 0), SK_ColorTRANSPARENT, 0);
+
+    HDC hdc = GetDC(hwnd);
+    hCompatibleDC = CreateCompatibleDC(NULL);
+    bottomHbitmap = CreateCompatibleBitmap(hdc, w, h);
+    DeleteObject(SelectObject(hCompatibleDC, bottomHbitmap));
+    ReleaseDC(hwnd, hdc);
+    surfaceBase = SkSurfaces::Raster(SkImageInfo::MakeN32Premul(w, h));
+    pixBase = new SkPixmap();
+    surfaceBase->peekPixels(pixBase);
+    SkImageInfo info = SkImageInfo::MakeN32Premul(rect.width(), rect.height());
+    surfaceBack = SkSurfaces::Raster(info);
+    surfaceFront = SkSurfaces::Raster(info);
+}
+
+void WindowPin::initSize()
+{
+    auto rect = CutMask::GetCutRect();
+    x = rect.fLeft - shadowSize;
+    y = rect.fTop - shadowSize;
+    w = rect.width() + shadowSize * 2;
+    h = rect.height() + shadowSize * 2;
+    auto tm = ToolMain::get();
+    auto tempWidth = tm->ToolRect.width() + shadowSize * 2;
+    if (w < tempWidth) {
+        this->w = tempWidth;
+    }
+    h += tm->ToolRect.height() * 2 + tm->MarginTop * 2;
+}
+
+void WindowPin::showMenu()
+{
+    HMENU hMenu = CreatePopupMenu();
+    AppendMenu(hMenu, state == State::start ? MF_UNCHECKED : MF_CHECKED, 1001, L"Tool");
+    AppendMenu(hMenu, MF_STRING, 1002, L"Exit(Esc)");
+    POINT point;
+    GetCursorPos(&point);
+    TrackPopupMenu(hMenu, TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, 0, hwnd, NULL);
+}
+
+void WindowPin::paintCanvas()
+{
+    surfaceBase->writePixels(*pixSrc, 0, 0);
+    auto canvas = surfaceBase->getCanvas();
+    auto img = surfaceBack->makeImageSnapshot();
+    canvas->drawImage(img, shadowSize,shadowSize);
+    img = surfaceFront->makeImageSnapshot();
+    canvas->drawImage(img, shadowSize, shadowSize);
+    ToolMain::get()->OnPaint(canvas);
+    ToolSub::get()->OnPaint(canvas);
 }
 
 LRESULT WindowPin::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
@@ -78,7 +113,6 @@ LRESULT WindowPin::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
     case WM_LBUTTONUP:
     {
         IsMouseDown = false;
-        IsMouseDragging = false;
         auto x = GET_X_LPARAM(lparam);
         auto y = GET_Y_LPARAM(lparam);
         return onMouseUp(x, y);
@@ -88,7 +122,6 @@ LRESULT WindowPin::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
         auto x = GET_X_LPARAM(lparam);
         auto y = GET_Y_LPARAM(lparam);
         if (IsMouseDown) {
-            IsMouseDragging = true;
             return onMouseDrag(x, y);
         }
         else {
@@ -130,8 +163,21 @@ LRESULT WindowPin::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
         switch (LOWORD(wparam))
         {
         case 1001:
-            SkDebugf("1001");
+        {
+            if (state == State::start) {
+                state = State::tool;
+                auto tm = ToolMain::get();
+                tm->SetPosition(8.0f, h - tm->ToolRect.height() * 2 - tm->MarginTop * 2);
+                tm->IndexSelected = -1;
+                tm->IndexHovered = -1;
+            }
+            else
+            {
+                state = State::start;
+            }
+            Refresh();
             break;
+        }
         case 1002:
             SkDebugf("1002");
             break;
@@ -144,65 +190,92 @@ LRESULT WindowPin::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
     return DefWindowProc(hwnd, msg, wparam, lparam);
 }
 
-void WindowPin::paintTool(SkCanvas* canvas)
-{
-    ToolMain::get()->OnPaint(canvas);
-    ToolSub::get()->OnPaint(canvas);
-}
-
 bool WindowPin::onMouseDown(const int& x, const int& y)
 {
-    GetCursorPos(&startPos);
-    SetCapture(hwnd);
+    if (state == State::start) {
+        GetCursorPos(&startPos);
+        SetCapture(hwnd);
+    }
+    else {
+        if (ToolMain::get()->OnMouseDown(x, y)) {
+            return true;
+        }
+        if (ToolSub::get()->OnMouseDown(x, y)) {
+            return true;
+        }
+        Recorder::get()->OnMouseDown(x - shadowSize, y - shadowSize);
+    }
 	return false;
 }
 
 bool WindowPin::onMouseDownRight(const int& x, const int& y)
 {
-    HMENU hMenu = CreatePopupMenu();
-    AppendMenu(hMenu, MF_STRING, 1001, L"¹¤¾ßÀ¸");
-    AppendMenu(hMenu, MF_STRING, 1002, L"ÍË³ö(Esc)");
-    POINT point;
-    GetCursorPos(&point);
-    TrackPopupMenu(hMenu, TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, 0, hwnd, NULL);
+    if (state == State::start) {
+        showMenu();
+    }
+    else {
+        auto flag = Recorder::get()->OnMouseDownRight(x - shadowSize, y - shadowSize);
+        if (!flag) {
+            showMenu();
+        }
+    }    
 	return false;
 }
 
 bool WindowPin::onMouseUp(const int& x, const int& y)
 {
-    ReleaseCapture();
+    if (state == State::start) {
+        ReleaseCapture();
+    }
+    else {
+        Recorder::get()->OnMouseUp(x-shadowSize, y - shadowSize);
+    }
 	return false;
 }
 
 bool WindowPin::onMouseMove(const int& x, const int& y)
 {
-	return false;
+    auto tm = ToolMain::get()->OnMouseMove(x, y);
+    auto ts = ToolSub::get()->OnMouseMove(x, y);
+    if (tm || ts) {
+        return false;
+    }
+    Recorder::get()->OnMouseMove(x - shadowSize, y - shadowSize);
+    return false;
 }
 
 bool WindowPin::onMouseDrag(const int& x1, const int& y1)
 {
-    POINT point;
-    GetCursorPos(&point);
-    int dx = point.x - startPos.x;
-    int dy = point.y - startPos.y;
-    x += dx;
-    y += dy;
-    SetWindowPos(hwnd, nullptr, x, y, 0, 0, SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_NOSIZE);
-    startPos = point;
+    if (state == State::start) {
+        POINT point;
+        GetCursorPos(&point);
+        int dx = point.x - startPos.x;
+        int dy = point.y - startPos.y;
+        x += dx;
+        y += dy;
+        SetWindowPos(hwnd, nullptr, x, y, 0, 0, SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_NOSIZE);
+        startPos = point;
+    }
+    else {
+        Recorder::get()->OnMouseDrag(x1 - shadowSize, y1 - shadowSize);
+    }
 	return false;
 }
 
 bool WindowPin::onChar(const unsigned int& val)
 {
+    Recorder::get()->onChar(val);
 	return false;
 }
 
 bool WindowPin::onKeyDown(const unsigned int& val)
 {
+    Recorder::get()->onKeyDown(val);
 	return false;
 }
 
 bool WindowPin::onMouseWheel(const int& delta)
 {
+    Recorder::get()->onMouseWheel(delta);
 	return false;
 }

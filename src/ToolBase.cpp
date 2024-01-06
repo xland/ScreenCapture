@@ -14,8 +14,8 @@ ToolBase::~ToolBase()
 
 bool ToolBase::OnMouseMove(const int& x, const int& y)
 {
-    auto winMain = App::GetWin();
-    if (winMain->state < State::tool)
+    auto win = App::GetWin();
+    if (win->state < State::tool)
     {
         return false;
     }
@@ -25,7 +25,7 @@ bool ToolBase::OnMouseMove(const int& x, const int& y)
         {
             btns[IndexHovered]->isHover = false;
             IndexHovered = -1;
-            winMain->Refresh();
+            win->Refresh();
         }
         return false;
     }
@@ -38,7 +38,7 @@ bool ToolBase::OnMouseMove(const int& x, const int& y)
             btns[IndexHovered]->isHover = false;
         }
         IndexHovered = index;
-        winMain->Refresh();
+        win->Refresh();
     }
     return true;
 }
