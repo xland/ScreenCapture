@@ -1,6 +1,6 @@
 #include <windowsx.h>
 #include "WindowPin.h"
-#include "WindowMain.h"
+#include "App.h"
 #include "CutMask.h"
 #include "ToolMain.h"
 #include "ToolSub.h"
@@ -43,7 +43,7 @@ WindowPin::WindowPin()
     canvas->clear(SK_ColorTRANSPARENT); 
 
 
-	auto windowMain = WindowMain::get();
+	auto windowMain = App::GetWin();
 	auto img = windowMain->surfaceBase->makeImageSnapshot(SkIRect::MakeLTRB(rect.fLeft, rect.fTop, rect.fRight, rect.fBottom));
 	canvas->drawImage(img, shadowSize, shadowSize);
 	
@@ -72,7 +72,7 @@ void WindowPin::init()
 	if (!windowPin) {
 		windowPin = new WindowPin();
 		windowPin->Show();
-		WindowMain::get()->Close(0);
+        App::GetWin()->Close(0);
 	}
 }
 

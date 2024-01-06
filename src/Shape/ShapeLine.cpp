@@ -1,5 +1,6 @@
 #include "ShapeLine.h"
-#include "../WindowMain.h"
+#include "../App.h"
+#include "../WindowBase.h"
 #include "../ToolSub.h"
 #include "ShapeDragger.h"
 #include "../Cursor.h"
@@ -28,7 +29,7 @@ bool ShapeLine::OnMouseMove(const int &x, const int &y)
         setDragger();
         Cursor::All();
         HoverIndex = 8;
-        WindowMain::get()->Refresh();
+        App::GetWin()->Refresh();
         return true;
     }
     return false;
@@ -37,7 +38,7 @@ bool ShapeLine::OnMouseMove(const int &x, const int &y)
 bool ShapeLine::OnMouseUp(const int &x, const int &y)
 {
     setDragger();
-    auto win = WindowMain::get();
+    auto win = App::GetWin();
     auto canvasBack = win->surfaceBack->getCanvas();
     Paint(canvasBack);
     isWip = false;
@@ -95,11 +96,11 @@ bool ShapeLine::OnMoseDrag(const int &x, const int &y)
         hoverX = x;
         hoverY = y;
     }
-    auto win = WindowMain::get();
+    auto win = App::GetWin();
     auto canvas = win->surfaceFront->getCanvas();
     canvas->clear(SK_ColorTRANSPARENT);
     Paint(canvas);
-    WindowMain::get()->Refresh();
+    App::GetWin()->Refresh();
     return false;
 }
 

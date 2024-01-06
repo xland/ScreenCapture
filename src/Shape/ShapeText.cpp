@@ -1,5 +1,6 @@
 ﻿#include "ShapeText.h"
-#include "../WindowMain.h"
+#include "../App.h"
+#include "../WindowBase.h"
 #include "../ToolSub.h"
 #include "../AppFont.h"
 #include "../Timer.h"
@@ -224,7 +225,7 @@ bool ShapeText::OnKeyDown(const unsigned int& val)
             }
             lineIndex -= 1;
             wordIndex = lines[lineIndex].length();
-            WindowMain::get()->Refresh();
+            App::GetWin()->Refresh();
             return false;
         }
         wordIndex -= 1;
@@ -256,7 +257,7 @@ void ShapeText::Paint(SkCanvas *canvas)
 {
     bool refreshFlag = false;
     if (!canvas) {
-        auto win = WindowMain::get();
+        auto win = App::GetWin();
         canvas = win->surfaceFront->getCanvas();
         canvas->clear(SK_ColorTRANSPARENT);
         refreshFlag = true;
@@ -283,7 +284,7 @@ void ShapeText::Paint(SkCanvas *canvas)
         y += lineHeight;
     }      
     if (refreshFlag) {
-        WindowMain::get()->Refresh();
+        App::GetWin()->Refresh();
     }
     
     //font->measureText(str.c_str(), str.size(), SkTextEncoding::kUTF8, &textBounds);
@@ -315,7 +316,7 @@ void ShapeText::Paint(SkCanvas *canvas)
 
 void ShapeText::activeKeyboard(long x, long y)
 {
-    auto win = WindowMain::get();
+    auto win = App::GetWin();
     if (HIMC himc = ImmGetContext(win->hwnd))
     {
         COMPOSITIONFORM comp = {};

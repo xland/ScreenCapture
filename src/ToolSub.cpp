@@ -1,6 +1,7 @@
 #include "ToolSub.h"
 #include "State.h"
-#include "WindowMain.h"
+#include "App.h"
+#include "WindowBase.h"
 #include "ToolMain.h"
 #include "ToolBtn.h"
 #include "Icon.h"
@@ -56,7 +57,7 @@ ToolSub *ToolSub::get()
 
 bool ToolSub::OnMouseDown(const int& x, const int& y)
 {
-    auto winMain = WindowMain::get();
+    auto winMain = App::GetWin();
     if (winMain->state < State::tool)
     {
         return false;
@@ -174,7 +175,7 @@ void ToolSub::InitBtns(int mainToolSelectedIndex)
 
 bool ToolSub::OnPaint(SkCanvas *canvas)
 {
-    auto winMain = WindowMain::get();
+    auto winMain = App::GetWin();
     if (winMain->state < State::tool)
     {
         return false;

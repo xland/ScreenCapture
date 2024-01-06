@@ -1,5 +1,6 @@
 #include "PixelInfo.h"
-#include "WindowMain.h"
+#include "App.h"
+#include "WindowBase.h"
 #include "include/core/SkRegion.h"
 #include "include/core/SkColor.h"
 #include "AppFont.h"
@@ -29,7 +30,7 @@ PixelInfo* PixelInfo::get()
 
 bool PixelInfo::OnMouseMove(const int& x, const int& y)
 {
-    auto win = WindowMain::get();
+    auto win = App::GetWin();
     if (win->state >= State::mask)
     {
         return false;

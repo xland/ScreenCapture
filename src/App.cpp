@@ -5,11 +5,12 @@
 #include "include/core/SkFontStyle.h"
 #include "include/core/SkData.h"
 #include "WindowMain.h"
+#include "Cursor.h"
 
 
 SkFont* fontIcon{ nullptr };
 SkFont* fontText{ nullptr };
-WindowBase* winMain{ nullptr };
+WindowBase* win { nullptr };
 WindowBase* winPin{ nullptr };
 int exitCode{ -1 };//todo
 
@@ -20,7 +21,11 @@ App::~App()
 
 void App::Init()
 {
-    winMain = new WindowMain();
+    initFontText();
+    initFontIcon();
+    win = new WindowMain();
+    win->Show();
+    Cursor::Cross();
 }
 
 void App::Dispose()
@@ -29,14 +34,9 @@ void App::Dispose()
     delete fontText;
 }
 
-WindowBase* App::GetWinMain()
+WindowBase* App::GetWin()
 {
-	return winMain;
-}
-
-WindowBase* App::GetWinPin()
-{
-	return winPin;
+	return win;
 }
 
 SkFont* App::GetFontIcon()

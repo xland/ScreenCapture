@@ -1,5 +1,6 @@
 #include "ShapeDragger.h"
-#include "../WindowMain.h"
+#include "../App.h"
+#include "../WindowBase.h"
 #include "../Timer.h"
 #include "../Recorder.h"
 #include "ShapeBase.h"
@@ -51,7 +52,7 @@ bool ShapeDragger::hideDragger()
     if (recorder->curShape) {
         return false;
     }
-    auto win = WindowMain::get();
+    auto win = App::GetWin();
     auto canvas = win->surfaceFront->getCanvas();
     canvas->clear(SK_ColorTRANSPARENT);
     win->Refresh();

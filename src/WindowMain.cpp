@@ -11,8 +11,6 @@
 #include "PixelInfo.h"
 #include "Shape/ShapeDragger.h"
 
-WindowMain *windowMain;
-
 WindowMain::WindowMain()
 {
     AppFont::Init();
@@ -40,22 +38,6 @@ WindowMain::~WindowMain()
     //delete ToolMain::get();
     delete CutMask::get();
     //delete AppFont::Get();
-    windowMain = nullptr;
-}
-
-void WindowMain::init()
-{
-    if (!windowMain)
-    {
-        windowMain = new WindowMain();
-        windowMain->Show();
-        Cursor::Cross();
-    }
-}
-
-WindowMain *WindowMain::get()
-{
-    return windowMain;
 }
 
 LRESULT WindowMain::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)

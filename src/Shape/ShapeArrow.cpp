@@ -1,5 +1,6 @@
 ﻿#include "ShapeArrow.h"
-#include "../WindowMain.h"
+#include "../App.h"
+#include "../WindowBase.h"
 #include "../ToolSub.h"
 #include "ShapeDragger.h"
 #include "../Cursor.h"
@@ -63,11 +64,11 @@ bool ShapeArrow::OnMoseDrag(const int &x, const int &y)
         hoverX = x;
         hoverY = y;
     }
-    auto win = WindowMain::get();
+    auto win = App::GetWin();
     auto canvas = win->surfaceFront->getCanvas();
     canvas->clear(SK_ColorTRANSPARENT);
     Paint(canvas);
-    WindowMain::get()->Refresh();
+    App::GetWin()->Refresh();
     return false;
 }
 

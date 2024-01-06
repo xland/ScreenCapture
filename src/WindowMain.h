@@ -10,8 +10,6 @@ class WindowMain : public WindowBase
 public:
     WindowMain();
     ~WindowMain();
-    static void init();
-    static WindowMain *get();
 private:
     LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) override;
     void paintTool(SkCanvas* canvas) override;

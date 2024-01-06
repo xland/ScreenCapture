@@ -1,5 +1,6 @@
 #include "ShapeEraser.h"
-#include "../WindowMain.h"
+#include "../App.h"
+#include "../WindowBase.h"
 #include "../ToolSub.h"
 #include "ShapeDragger.h"
 
@@ -45,10 +46,10 @@ bool ShapeEraser::OnMouseMove(const int& x, const int& y)
 bool ShapeEraser::OnMoseDrag(const int& x, const int& y)
 {
     path.lineTo(x, y);
-    auto win = WindowMain::get();
+    auto win = App::GetWin();
     auto canvas = win->surfaceBack->getCanvas();
     Paint(canvas);
-    WindowMain::get()->Refresh();
+    App::GetWin()->Refresh();
     return false;
 }
 

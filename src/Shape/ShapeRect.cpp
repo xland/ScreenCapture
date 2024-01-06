@@ -1,5 +1,6 @@
 #include "ShapeRect.h"
-#include "../WindowMain.h"
+#include "../App.h"
+#include "../WindowBase.h"
 #include "../ToolSub.h"
 #include "../Timer.h"
 #include "../Cursor.h"
@@ -50,7 +51,7 @@ bool ShapeRect::OnMouseMove(const int& x, const int& y)
         setDragger();
         Cursor::All();
         HoverIndex = 8;
-        WindowMain::get()->Refresh();
+        App::GetWin()->Refresh();
         return true;
     }
     return false;
@@ -113,11 +114,11 @@ bool ShapeRect::OnMoseDrag(const int& x, const int& y)
     default:
         break;
     }
-    auto win = WindowMain::get();
+    auto win = App::GetWin();
     auto canvas = win->surfaceFront->getCanvas();
     canvas->clear(SK_ColorTRANSPARENT);
     Paint(canvas);
-    WindowMain::get()->Refresh();
+    App::GetWin()->Refresh();
     return false;
 }
 

@@ -113,9 +113,7 @@ LRESULT CALLBACK WindowBase::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wPar
         case WM_NCDESTROY:
         {
             delete obj;
-            if (!WindowMain::get() && !WindowPin::get()) {
-                PostQuitMessage(0);
-            }
+            //todo
             return true;
         }
         case WM_KEYUP:

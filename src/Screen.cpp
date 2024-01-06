@@ -1,6 +1,7 @@
 #include "Screen.h"
 #include "Windows.h"
-#include "WindowMain.h"
+#include "App.h"
+#include "WindowBase.h"
 
 static std::vector<std::shared_ptr<SkRect>> screens;
 
@@ -30,7 +31,7 @@ void Screen::Init()
             GetMonitorInfo(hMonitor, &info);
             POINT leftTop{ .x{info.rcMonitor.left},.y{info.rcMonitor.top} };
             POINT rightBottom{ .x{info.rcMonitor.right},.y{info.rcMonitor.bottom} };
-            auto hwnd = WindowMain::get()->hwnd;
+            auto hwnd = App::GetWin()->hwnd;
             ScreenToClient(hwnd, &leftTop);
             ScreenToClient(hwnd, &rightBottom);
             auto ptr = std::make_shared<SkRect>(SkRect::MakeLTRB(leftTop.x, leftTop.y, rightBottom.x+1, rightBottom.y+1));

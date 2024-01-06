@@ -1,6 +1,7 @@
 #include "ShapeMosaic.h"
 #include <memory>
-#include "../WindowMain.h"
+#include "../App.h"
+#include "../WindowBase.h"
 #include "../ToolSub.h"
 #include "ShapeDragger.h"
 #include "include/effects/Sk2DPathEffect.h"
@@ -36,7 +37,7 @@ void ShapeMosaic::Paint(SkCanvas *canvas)
     }
     else {
         canvas->saveLayer(nullptr, nullptr);
-        auto win = WindowMain::get();
+        auto win = App::GetWin();
         int rowNum = std::ceil((float)win->w / size);
         for (const auto& kv : colorCache)
         {
@@ -62,7 +63,7 @@ void ShapeMosaic::Paint(SkCanvas *canvas)
 
 bool ShapeMosaic::OnMouseDown(const int &x, const int &y)
 {
-    auto win = WindowMain::get();
+    auto win = App::GetWin();
     auto surfaceFront = win->surfaceFront;
     surfaceFront->writePixels(*win->pixSrc, 0, 0);
     auto canvas = win->surfaceFront->getCanvas();
@@ -93,7 +94,7 @@ bool ShapeMosaic::OnMouseMove(const int &x, const int &y)
 bool ShapeMosaic::OnMoseDrag(const int &x, const int &y)
 {
     path.lineTo(x, y);
-    auto win = WindowMain::get();
+    auto win = App::GetWin();
     auto canvas = win->surfaceFront->getCanvas();
     canvas->clear(SK_ColorTRANSPARENT);
     Paint(canvas);
@@ -103,7 +104,7 @@ bool ShapeMosaic::OnMoseDrag(const int &x, const int &y)
 
 void ShapeMosaic::drawRectsByPoints(const SkPoint& point, SkCanvas* canvas)
 {
-    auto win = WindowMain::get();
+    auto win = App::GetWin();
     int rowNum = std::ceil((float)win->w / size);
     int rectNum = std::ceil(strokeWidth*2 / size);
     int xIndex = (point.fX - strokeWidth) / size;

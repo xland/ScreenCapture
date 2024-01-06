@@ -1,7 +1,7 @@
 ﻿#include "ToolMain.h"
 #include "State.h"
 #include "CutMask.h"
-#include "WindowMain.h"
+#include "App.h"
 #include "AppFont.h"
 #include "include/core/SkTextBlob.h"
 #include "Icon.h"
@@ -115,7 +115,7 @@ ToolMain *ToolMain::get()
 
 bool ToolMain::OnMouseDown(const int& x, const int& y)
 {
-    auto win = WindowMain::get();
+    auto win = App::GetWin();
     if (win->state < State::tool)
     {
         return false;
@@ -172,7 +172,7 @@ bool ToolMain::OnMouseDown(const int& x, const int& y)
 
 bool ToolMain::OnPaint(SkCanvas *canvas)
 {
-    auto winMain = WindowMain::get();
+    auto winMain = App::GetWin();
     if (winMain->state < State::tool)
     {
         return false;

@@ -1,5 +1,6 @@
 #include "ShapeEllipse.h"
-#include "../WindowMain.h"
+#include "../App.h"
+#include "../WindowBase.h"
 #include "../ToolSub.h"
 #include "../Cursor.h"
 
@@ -47,7 +48,7 @@ bool ShapeEllipse::OnMouseMove(const int& x, const int& y)
         setDragger();
         Cursor::All();
         HoverIndex = 8;
-        WindowMain::get()->Refresh();
+        App::GetWin()->Refresh();
         return true;
     }
     return false;

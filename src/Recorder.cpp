@@ -1,5 +1,6 @@
 ﻿#include "Recorder.h"
-#include "WindowMain.h"
+#include "App.h"
+#include "WindowBase.h"
 #include "Cursor.h"
 #include "Shape/ShapeBase.h"
 #include "Shape/ShapeRect.h"
@@ -39,7 +40,7 @@ Recorder *Recorder::get()
 
 bool Recorder::OnMouseDown(const int &x, const int &y)
 {
-    auto win = WindowMain::get();
+    auto win = App::GetWin();
     if (win->state < State::rect)
     {
         return false;
@@ -89,7 +90,7 @@ bool Recorder::OnMouseDownRight(const int& x, const int& y)
     if (curShape && curShape->isWip && typeid(*curShape) == typeid(ShapeText) ) {
         curShape->isWip = false;
         Timer::get()->Remove(1);
-        auto win = WindowMain::get();
+        auto win = App::GetWin();
         auto canvasFront = win->surfaceFront->getCanvas();
         canvasFront->clear(SK_ColorTRANSPARENT);
         auto canvasBack = win->surfaceBack->getCanvas();
@@ -118,7 +119,7 @@ bool Recorder::OnMouseUp(const int &x, const int &y)
     // 
     curShape->OnMouseUp(x, y);
 
-    auto win = WindowMain::get();
+    auto win = App::GetWin();
     auto canvasBack = win->surfaceBack->getCanvas();
     auto canvasFront = win->surfaceFront->getCanvas();
     canvasBack->clear(SK_ColorTRANSPARENT);
@@ -145,7 +146,7 @@ bool Recorder::OnMouseUp(const int &x, const int &y)
 }
 bool Recorder::OnMouseMove(const int &x, const int &y)
 {
-    auto win = WindowMain::get();
+    auto win = App::GetWin();
     if (win->state == State::text) {
         Cursor::Text();
     }
@@ -228,7 +229,7 @@ void Recorder::undo()
 {
     bool undoDisable = true;
     bool redoDisable = true;
-    auto win = WindowMain::get();
+    auto win = App::GetWin();
     auto canvasBack = win->surfaceBack->getCanvas();
     auto canvasFront = win->surfaceFront->getCanvas();
     canvasBack->clear(SK_ColorTRANSPARENT);
@@ -263,7 +264,7 @@ void Recorder::redo()
 {
     bool undoDisable = true;
     bool redoDisable = true;
-    auto win = WindowMain::get();
+    auto win = App::GetWin();
     auto canvasBack = win->surfaceBack->getCanvas();
     auto canvasFront = win->surfaceFront->getCanvas();
     canvasBack->clear(SK_ColorTRANSPARENT);

@@ -1,5 +1,6 @@
 ﻿#include "CutMask.h"
-#include "WindowMain.h"
+#include "WindowBase.h"
+#include "App.h"
 #include "include/core/SkColor.h"
 #include "State.h"
 #include "Icon.h"
@@ -19,7 +20,7 @@ void CutMask::setPath()
     path.reset();
     path.addRect(CutRect);
     path.setFillType(SkPathFillType::kInverseWinding);
-    WindowMain::get()->Refresh();
+    App::GetWin()->Refresh();
 }
 
 CutMask::~CutMask()
@@ -48,7 +49,7 @@ SkRect CutMask::GetCutRect()
 
 bool CutMask::OnMouseDown(const int& x, const int& y)
 {    
-    auto win = WindowMain::get();
+    auto win = App::GetWin();
     if (win->state == State::start)
     {
         win->surfaceFront->getCanvas()->clear(SK_ColorTRANSPARENT);
@@ -100,7 +101,7 @@ bool CutMask::OnMouseDown(const int& x, const int& y)
 }
 bool CutMask::OnMouseMove(const int& x, const int& y)
 {
-    auto win = WindowMain::get();
+    auto win = App::GetWin();
     if (win->state < State::mask)
     {
         return false;
@@ -193,7 +194,7 @@ bool CutMask::OnMouseMove(const int& x, const int& y)
 }
 bool CutMask::OnMouseDrag(const int& x, const int& y)
 {
-    auto win = WindowMain::get();
+    auto win = App::GetWin();
     if (win->state == State::mask) {
         CutRect.setLTRB(start.fX, start.fY, x, y);
     }
@@ -252,7 +253,7 @@ bool CutMask::OnMouseDrag(const int& x, const int& y)
 }
 bool CutMask::OnPaint(SkCanvas *canvas)
 {
-    auto win = WindowMain::get();
+    auto win = App::GetWin();
     if (win->state < State::mask)
     {
         return false;
@@ -285,7 +286,7 @@ bool CutMask::OnPaint(SkCanvas *canvas)
 }
 bool CutMask::OnMouseUp(const int& x, const int& y)
 {
-    auto winMain = WindowMain::get();
+    auto winMain = App::GetWin();
     if (winMain->state != State::mask) {
         return false;
     }

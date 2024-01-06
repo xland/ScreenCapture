@@ -1,6 +1,7 @@
 #include "ToolBase.h"
 #include "Cursor.h"
-#include "WindowMain.h"
+#include "App.h"
+#include "WindowBase.h"
 
 ToolBase::ToolBase() :IndexHovered{ -1 }, IndexSelected{ -1 }
 {
@@ -13,7 +14,7 @@ ToolBase::~ToolBase()
 
 bool ToolBase::OnMouseMove(const int& x, const int& y)
 {
-    auto winMain = WindowMain::get();
+    auto winMain = App::GetWin();
     if (winMain->state < State::tool)
     {
         return false;
