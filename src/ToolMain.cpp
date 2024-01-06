@@ -32,8 +32,8 @@ ToolMain::ToolMain()
     btns.push_back(std::make_shared<ToolBtn>(Icon::undo, L"上一步",true,false)); //9
     btns.push_back(std::make_shared<ToolBtn>(Icon::redo, L"下一步",true,false)); //10
     btns.push_back(std::make_shared<ToolBtn>(Icon::pin, L"钉住截图区",false,false));//11
-    btns.push_back(std::make_shared<ToolBtn>(Icon::save, L"保存", false, false));
-    btns.push_back(std::make_shared<ToolBtn>(Icon::close, L"退出", false, false));
+    btns.push_back(std::make_shared<ToolBtn>(Icon::save, L"保存", false, false));//12
+    btns.push_back(std::make_shared<ToolBtn>(Icon::close, L"退出", false, false));//13
 }
 
 void ToolMain::SetPositionByCutMask()
@@ -165,6 +165,13 @@ bool ToolMain::OnMouseDown(const int& x, const int& y)
                 btns[11]->isHover = false;
                 btns[11]->isDisable = true;
                 App::Pin();
+                break;
+            }
+            case 12: {
+                break;
+            }
+            case 13: {
+                App::Quit();
                 break;
             }
             default:
