@@ -112,7 +112,6 @@ LRESULT CALLBACK WindowBase::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wPar
         }
         case WM_NCDESTROY:
         {
-            delete obj;
             //todo
             return true;
         }

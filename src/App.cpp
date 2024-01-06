@@ -5,13 +5,13 @@
 #include "include/core/SkFontStyle.h"
 #include "include/core/SkData.h"
 #include "WindowMain.h"
+#include "WindowPin.h"
 #include "Cursor.h"
 
 
 SkFont* fontIcon{ nullptr };
 SkFont* fontText{ nullptr };
 WindowBase* win { nullptr };
-WindowBase* winPin{ nullptr };
 int exitCode{ -1 };//todo
 
 
@@ -47,6 +47,15 @@ SkFont* App::GetFontIcon()
 SkFont* App::GetFontText()
 {
 	return fontText;
+}
+
+void App::Pin()
+{
+    auto pinWin = new WindowPin();
+    pinWin->Show();
+    win->Close(0);
+    delete win;
+    win = pinWin;
 }
 
 void App::initFontIcon()

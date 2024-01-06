@@ -157,7 +157,7 @@ bool ToolMain::OnMouseDown(const int& x, const int& y)
                 break;
             }
             case 11: {
-                WindowPin::init();
+                App::Pin();
                 break;
             }
             default:

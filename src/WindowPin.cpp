@@ -15,8 +15,6 @@
 #include "include/encode/SkPngEncoder.h"
 
 
-WindowPin* windowPin;
-
 WindowPin::WindowPin()
 {
 	float shadowSize = 8.0f;
@@ -64,21 +62,6 @@ WindowPin::WindowPin()
 
 WindowPin::~WindowPin()
 {
-    windowPin = nullptr;
-}
-
-void WindowPin::init()
-{
-	if (!windowPin) {
-		windowPin = new WindowPin();
-		windowPin->Show();
-        App::GetWin()->Close(0);
-	}
-}
-
-WindowPin* WindowPin::get()
-{
-	return windowPin;
 }
 
 LRESULT WindowPin::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)

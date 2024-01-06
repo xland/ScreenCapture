@@ -10,7 +10,7 @@ public:
     static WindowBase* GetWin();
     static SkFont* GetFontIcon();
     static SkFont* GetFontText();
-
+    static void Pin();
 private:
     App() {};
     static void initFontIcon();
