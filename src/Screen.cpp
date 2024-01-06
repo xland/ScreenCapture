@@ -39,3 +39,8 @@ void Screen::Init()
             return TRUE;
         }, NULL);
 }
+
+void Screen::Dispose()
+{
+    screens.clear();
+}

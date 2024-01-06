@@ -2,7 +2,6 @@
 #include "../App.h"
 #include "../WindowBase.h"
 #include "../ToolSub.h"
-#include "../AppFont.h"
 #include "../Timer.h"
 #include "../Cursor.h"
 #include "ShapeDragger.h"
@@ -19,7 +18,7 @@ ShapeText::ShapeText(const int &x, const int &y) : ShapeBase(x, y)
 {
     auto tool = ToolSub::get();
     color = tool->getColor();
-    auto font = AppFont::Get()->fontText;
+    auto font = App::GetFontText();
     font->setSize(fontSize);
     float left{ (float)startX - 10 }, top{ (float)startY - 10 }, width{ 20 }, height{ 0 };
     SkRect lineRect;
@@ -63,7 +62,7 @@ bool ShapeText::OnMouseDown(const int &x, const int &y)
     }
     int index = 0;
     float width = x - rect.left() - 10;
-    auto font = AppFont::Get()->fontText;
+    auto font = App::GetFontText();
     SkRect rect;
     float right{ 0 };
     bool flag = false;
@@ -136,7 +135,7 @@ bool ShapeText::onMouseWheel(const int& delta)
     if (fontSize < 28) {
         fontSize = 28;
     }
-    auto font = AppFont::Get()->fontText;
+    auto font = App::GetFontText();
     font->setSize(fontSize);    
     showCursor = true;
     Paint(nullptr);
@@ -270,7 +269,7 @@ void ShapeText::Paint(SkCanvas *canvas)
         showCursor = !showCursor;
         activeKeyboard(getCursorX(), startY + lineIndex * lineHeight);
     }    
-    auto font = AppFont::Get()->fontText;
+    auto font = App::GetFontText();
     SkPaint paint;
     paint.setStroke(false);
     paint.setColor(color);
@@ -334,7 +333,7 @@ void ShapeText::activeKeyboard(long x, long y)
 }
 void ShapeText::setRect(SkCanvas* canvas)
 {
-    auto font = AppFont::Get()->fontText;
+    auto font = App::GetFontText();
     font->setSize(fontSize);
     float left{ (float)startX - 10 }, top{ (float)startY - 10 }, width{ 20 }, height{ 0 };
     SkRect lineRect;
@@ -374,7 +373,7 @@ void ShapeText::setCursor(SkCanvas* canvas)
     paint.setStroke(true);
     paint.setStrokeWidth(1);
     paint.setColor(color);
-    auto font = AppFont::Get()->fontText;
+    auto font = App::GetFontText();
     float inputCursorTop{ rect.top() + lineHeight * lineIndex + lineHeight / 6 };
     float inputCursorBottom{ rect.top() + lineHeight * (lineIndex + 1) - lineHeight / 6 };
     float inputCursorX{ getCursorX() };
@@ -382,7 +381,7 @@ void ShapeText::setCursor(SkCanvas* canvas)
 }
 float ShapeText::getCursorX()
 {
-    auto font = AppFont::Get()->fontText;
+    auto font = App::GetFontText();
     float inputCursorX{ rect.left() + 10 };
     if (wordIndex > 0) {
         SkRect lineRect;

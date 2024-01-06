@@ -2,7 +2,6 @@
 #include "../App.h"
 #include "../WindowBase.h"
 #include "../ToolSub.h"
-#include "../AppFont.h"
 #include "../Cursor.h"
 #include "ShapeDragger.h"
 #include "numbers"
@@ -88,7 +87,7 @@ void ShapeNumber::Paint(SkCanvas *canvas)
     paint.setColor(color);
     canvas->drawPath(path, paint);
     auto str = std::to_string(number);
-    auto font = AppFont::Get()->fontText;
+    auto font = App::GetFontText();
     font->setSize(r);
     if (stroke) {
         paint.setStroke(false);

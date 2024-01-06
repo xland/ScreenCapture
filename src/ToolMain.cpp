@@ -2,7 +2,6 @@
 #include "State.h"
 #include "CutMask.h"
 #include "App.h"
-#include "AppFont.h"
 #include "include/core/SkTextBlob.h"
 #include "Icon.h"
 #include "ToolSub.h"

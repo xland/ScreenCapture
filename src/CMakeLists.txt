@@ -4,8 +4,6 @@ set(SRC
     App.h
     Icon.h
     Cursor.h
-    AppFont.cpp
-    AppFont.h
     WindowBase.cpp
     WindowBase.h
     WindowMain.cpp

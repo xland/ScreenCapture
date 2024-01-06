@@ -3,7 +3,6 @@
 #include "WindowBase.h"
 #include "include/core/SkRegion.h"
 #include "include/core/SkColor.h"
-#include "AppFont.h"
 #include "string"
 #include "format"
 #include <sstream>
@@ -83,7 +82,7 @@ bool PixelInfo::OnMouseMove(const int& x, const int& y)
     canvas->drawRect(rect, paint);
     paint.setColor(SK_ColorWHITE);
     paint.setStroke(false);
-    auto font = AppFont::Get()->fontText;
+    auto font = App::GetFontText();
     font->setSize(14);
 
     std::string str = std::format("Position: X:{}  Y:{}", x, y);

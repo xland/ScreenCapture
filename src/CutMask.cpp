@@ -4,7 +4,6 @@
 #include "include/core/SkColor.h"
 #include "State.h"
 #include "Icon.h"
-#include "AppFont.h"
 #include "Screen.h"
 #include "Cursor.h"
 #include <format>
@@ -265,7 +264,7 @@ bool CutMask::OnPaint(SkCanvas *canvas)
     paint.setStrokeWidth(3);
     paint.setStyle(SkPaint::Style::kStroke_Style);
     canvas->drawRect(CutRect, paint);
-    auto font = AppFont::Get()->fontText;
+    auto font = App::GetFontText();
     auto str = std::format("Left:{}  Top:{}  Right:{}  Bottom:{}  Width:{}  Height:{}", CutRect.fLeft, CutRect.fTop, CutRect.fRight,
         CutRect.fBottom, CutRect.width(), CutRect.height());
     font->setSize(14);

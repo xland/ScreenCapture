@@ -5,7 +5,6 @@
 #include "CutMask.h"
 #include "ToolMain.h"
 #include "ToolSub.h"
-#include "AppFont.h"
 #include "Recorder.h"
 #include "Timer.h"
 #include "PixelInfo.h"
@@ -13,7 +12,6 @@
 
 WindowMain::WindowMain()
 {
-    AppFont::Init();
     CutMask::init();
     ToolMain::init();
     ToolSub::init();
