@@ -1,3 +1,4 @@
+- 像ToolMain这种单例对象，是否用share_ptr更好
 - right click app exit
 - end text inpu before exit
 - 键盘控制截图区域位置
