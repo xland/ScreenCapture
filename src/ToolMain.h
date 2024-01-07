@@ -21,4 +21,5 @@ public:
     void setRedoDisable(bool flag);
 private:
     ToolMain();
+    void saveFile();
 };

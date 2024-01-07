@@ -10,6 +10,7 @@ class WindowPin : public WindowBase
 public:
     WindowPin();
     ~WindowPin();
+    void Save(const std::string& filePath) override;
 private:
     void initCanvas() override;
     void initSize() override;

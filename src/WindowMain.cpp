@@ -10,6 +10,8 @@
 #include "Recorder.h"
 #include "PixelInfo.h"
 #include "Shape/ShapeDragger.h"
+#include "include/core/SkStream.h"
+#include "include/encode/SkPngEncoder.h"
 
 WindowMain::WindowMain()
 {
@@ -25,6 +27,18 @@ WindowMain::~WindowMain()
 {
     delete PixelInfo::get();
     delete CutMask::get();
+}
+
+void WindowMain::Save(const std::string& filePath)
+{
+    auto rect = CutMask::GetCutRect();
+    auto img = surfaceBase->makeImageSnapshot(SkIRect::MakeLTRB(rect.fLeft, rect.fTop, rect.fRight, rect.fBottom));
+    SkFILEWStream stream(filePath.data());
+    SkPixmap pixmap;
+    img->peekPixels(&pixmap);
+    SkPngEncoder::Options option;
+    SkPngEncoder::Encode(&stream, pixmap, option);
+    stream.flush();
 }
 
 void WindowMain::initCanvas()

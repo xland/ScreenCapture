@@ -27,9 +27,12 @@ WindowPin::~WindowPin()
 
 }
 
-void WindowPin::initCanvas()
+void WindowPin::Save(const std::string& filePath)
 {
-    auto rect = CutMask::GetCutRect();
+}
+
+void WindowPin::initCanvas()
+{    
     SkImageInfo imgInfo = SkImageInfo::MakeN32Premul(w, h);
     long long rowBytes = w * 4;
     long long dataSize = rowBytes * h;
@@ -38,6 +41,7 @@ void WindowPin::initCanvas()
     auto canvas = SkCanvas::MakeRasterDirect(imgInfo, pixArr, rowBytes);
     canvas->clear(SK_ColorTRANSPARENT);
     auto windowMain = App::GetWin();
+    auto rect = CutMask::GetCutRect();
     auto img = windowMain->surfaceBase->makeImageSnapshot(SkIRect::MakeLTRB(rect.fLeft, rect.fTop, rect.fRight, rect.fBottom));
     canvas->drawImage(img, shadowSize, shadowSize);
 
