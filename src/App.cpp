@@ -16,7 +16,7 @@
 SkFont* fontIcon{ nullptr };
 SkFont* fontText{ nullptr };
 WindowBase* win { nullptr };
-int exitCode{ -1 };//todo
+static int exitCode{ 0 };
 
 
 App::~App()
@@ -58,6 +58,10 @@ SkFont* App::GetFontText()
 	return fontText;
 }
 
+int App::GetExitCode() {
+    return exitCode;
+}
+
 void App::Pin()
 {
     auto pinWin = new WindowPin();
@@ -68,7 +72,8 @@ void App::Pin()
     win = pinWin;
 }
 
-void App::Quit() {
+void App::Quit(const int& code) {
+    exitCode = code;
     win->Close(0);
     delete win;
     PostQuitMessage(0);

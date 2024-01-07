@@ -36,6 +36,7 @@ void WindowPin::Save(const std::string& filePath)
     SkPngEncoder::Options option;
     SkPngEncoder::Encode(&stream, pixmap, option);
     stream.flush();
+    App::Quit(9);
 }
 
 void WindowPin::initCanvas()
@@ -142,18 +143,7 @@ LRESULT WindowPin::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
     }
     case WM_KEYDOWN:
     {
-        switch (wparam)
-        {
-        case VK_ESCAPE:
-        {
-            App::Quit();
-            return false;
-        }
-        default:
-        {
-            onKeyDown(wparam);
-        }
-        }
+        onKeyDown(wparam);
         return false;
     }
     case WM_CHAR: {

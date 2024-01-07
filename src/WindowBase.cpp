@@ -1,5 +1,6 @@
 #include "WindowBase.h"
 #include <dwmapi.h>
+#include "App.h"
 #include "Util.h"
 #include "include/core/SkPath.h"
 #include "ToolMain.h"
@@ -83,17 +84,35 @@ LRESULT CALLBACK WindowBase::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wPar
         {
             return true;
         }
-
-        if (msg == WM_CLOSE) {
-            return true;
-        }
-        case WM_NCDESTROY:
+        case WM_KEYDOWN:
         {
-            return true;
-        }
-        case WM_KEYUP:
-        {
-            return false;
+            switch (wParam)
+            {
+            case VK_ESCAPE:
+            {
+                App::Quit(3);
+                return false;
+            }
+            case 82: { //R
+                if (GetKeyState(VK_CONTROL) < 0)
+                {
+                    obj->setClipboardText(obj->getPixelRgb());
+                    App::Quit(4);
+                    return false;
+                }
+                [[fallthrough]];
+            }
+            case 72: { //H
+                if (GetKeyState(VK_CONTROL) < 0)
+                {
+                    obj->setClipboardText(obj->getPixelHex());
+                    App::Quit(5);
+                    return false;
+                }
+                [[fallthrough]];
+            }
+            }
+            [[fallthrough]];
         }
         default:
         {
@@ -140,4 +159,55 @@ void WindowBase::initWindow()
     ReleaseDC(hwnd, hdc);
 
     initCanvas();
+}
+
+void WindowBase::setClipboardText(const std::wstring& text) {
+    if (!OpenClipboard(hwnd)) {
+        MessageBox(NULL, L"Failed to open clipboard.", L"Error", MB_OK | MB_ICONERROR);
+        return;
+    }
+    EmptyClipboard();
+    size_t len = (text.size() + 1) * sizeof(wchar_t);
+    HANDLE copyHandle = GlobalAlloc(GMEM_MOVEABLE | GMEM_DDESHARE, len);
+    if (copyHandle == NULL)
+    {
+        MessageBox(NULL, L"Failed to alloc clipboard memory.", L"Error", MB_OK | MB_ICONERROR);
+        CloseClipboard();
+        return; // ¥¶¿Ì¥ÌŒÛ
+    }
+    byte* copyData = reinterpret_cast<byte*>(GlobalLock(copyHandle));
+    if (copyData) {
+        memcpy(copyData, text.data(), len);
+    }
+    GlobalUnlock(copyHandle);
+    HANDLE h = SetClipboardData(CF_UNICODETEXT, copyHandle);
+    if (!h) {
+        GlobalFree(copyHandle);
+    }
+    CloseClipboard();
+}
+
+std::wstring WindowBase::getPixelRgb()
+{
+    POINT pos;
+    GetCursorPos(&pos);
+    auto color = pixBase->getColor4f(pos.x, pos.y);
+    int R{ (int)(color.fR * 255) }, G{ (int)(color.fG * 255) }, B{ (int)(color.fB * 255) };
+    return std::format(L"{},{},{}", std::to_wstring(R), std::to_wstring(G), std::to_wstring(B));
+}
+std::wstring WindowBase::getPixelHex()
+{
+    POINT pos;
+    GetCursorPos(&pos);
+    auto color = pixBase->getColor4f(pos.x, pos.y);
+    int R{ (int)(color.fR * 255) }, G{ (int)(color.fG * 255) }, B{ (int)(color.fB * 255) };
+    std::wstringstream ss;
+    ss << std::hex << (R << 16 | G << 8 | B);
+    std::wstring hex = ss.str();
+    size_t str_length = hex.length();
+    for (size_t i = 0; i < 6 - str_length; i++) {
+        hex = L"0" + hex;
+    }
+    std::transform(hex.begin(), hex.end(), hex.begin(), toupper);
+    return std::format(L"#{}", hex);
 }

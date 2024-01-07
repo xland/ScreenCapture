@@ -21,5 +21,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
     }
     App::Dispose();
     CoUninitialize();
-    return 0;
+    auto code = App::GetExitCode();
+    return code;
 }

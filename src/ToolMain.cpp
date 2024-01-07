@@ -228,7 +228,7 @@ bool ToolMain::OnMouseDown(const int& x, const int& y)
                 break;
             }
             case 13: {
-                App::Quit();
+                App::Quit(1);
                 break;
             }
             default:

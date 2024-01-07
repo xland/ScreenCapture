@@ -38,5 +38,8 @@ protected:
 
 private:
     void refresh();
+    void setClipboardText(const std::wstring& text);
+    std::wstring getPixelRgb();
+    std::wstring getPixelHex();
     static LRESULT CALLBACK RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 };
