@@ -1,7 +1,6 @@
 #include "WindowBase.h"
 #include <dwmapi.h>
 #include "App.h"
-#include "Util.h"
 #include "include/core/SkPath.h"
 #include "ToolMain.h"
 #include "ToolSub.h"
@@ -110,6 +109,9 @@ LRESULT CALLBACK WindowBase::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wPar
                     return false;
                 }
                 [[fallthrough]];
+            }
+            default: {
+                break;
             }
             }
             [[fallthrough]];
