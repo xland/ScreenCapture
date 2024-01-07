@@ -60,11 +60,6 @@ void ToolMain::saveFile()
     dialog->SetDefaultExtension(L"png");
     dialog->SetOptions(FOS_FORCEFILESYSTEM | FOS_PATHMUSTEXIST | FOS_OVERWRITEPROMPT);
     hr = dialog->Show(App::GetWin()->hwnd);
-    if (FAILED(hr))
-    {
-        MessageBox(NULL, L"Failed to show file save dialog.", L"Error", MB_OK | MB_ICONERROR);
-        return;
-    }
     if (hr == HRESULT_FROM_WIN32(ERROR_CANCELLED)) { //用户取消
         dialog->Release();
         return;

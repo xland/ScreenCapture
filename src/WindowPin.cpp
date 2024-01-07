@@ -29,6 +29,13 @@ WindowPin::~WindowPin()
 
 void WindowPin::Save(const std::string& filePath)
 {
+    auto img = surfaceBase->makeImageSnapshot(SkIRect::MakeXYWH(shadowSize, shadowSize, surfaceFront->width(), surfaceFront->height()));
+    SkFILEWStream stream(filePath.data());
+    SkPixmap pixmap;
+    img->peekPixels(&pixmap);
+    SkPngEncoder::Options option;
+    SkPngEncoder::Encode(&stream, pixmap, option);
+    stream.flush();
 }
 
 void WindowPin::initCanvas()
