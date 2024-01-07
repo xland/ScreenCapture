@@ -18,8 +18,6 @@ set(SRC
     CutMask.h
     Recorder.cpp
     Recorder.h
-    Util.cpp
-    Util.h
     TimerTask.cpp
     TimerTask.h
     Timer.cpp
