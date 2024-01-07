@@ -18,7 +18,6 @@ WindowMain::WindowMain()
     initSize();
     shotScreen();
     initWindow();
-    initCanvas();
     state = State::start;
 }
 
@@ -26,6 +25,16 @@ WindowMain::~WindowMain()
 {
     delete PixelInfo::get();
     delete CutMask::get();
+}
+
+void WindowMain::initCanvas()
+{
+    SkImageInfo info = SkImageInfo::MakeN32Premul(w, h);
+    surfaceBase = SkSurfaces::Raster(info);
+    surfaceBack = SkSurfaces::Raster(info);
+    surfaceFront = SkSurfaces::Raster(info);
+    pixBase = new SkPixmap();
+    surfaceBase->peekPixels(pixBase);
 }
 
 LRESULT WindowMain::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)

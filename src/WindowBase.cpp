@@ -36,21 +36,6 @@ void WindowBase::Refresh()
     PostMessage(hwnd, WM_REFRESH, NULL, NULL);
 }
 
-void WindowBase::initCanvas()
-{
-    HDC hdc = GetDC(hwnd);
-    hCompatibleDC = CreateCompatibleDC(NULL);
-    bottomHbitmap = CreateCompatibleBitmap(hdc, w, h);
-    DeleteObject(SelectObject(hCompatibleDC, bottomHbitmap));
-    ReleaseDC(hwnd, hdc);
-    SkImageInfo info = SkImageInfo::MakeN32Premul(w, h);
-    surfaceBase = SkSurfaces::Raster(info);
-    surfaceBack = SkSurfaces::Raster(info);
-    surfaceFront = SkSurfaces::Raster(info);
-    pixBase = new SkPixmap();
-    surfaceBase->peekPixels(pixBase);
-}
-
 void WindowBase::Close(const int &exitCode)
 {
     SendMessage(hwnd, WM_CLOSE, NULL, NULL);    
@@ -147,4 +132,12 @@ void WindowBase::initWindow()
     BOOL attrib = TRUE;
     DwmSetWindowAttribute(hwnd, DWMWA_TRANSITIONS_FORCEDISABLED, &attrib, sizeof(attrib));
     SetWindowPos(hwnd, nullptr, 0, 0, 0, 0, SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_NOMOVE | SWP_NOSIZE | SWP_FRAMECHANGED);
+
+    HDC hdc = GetDC(hwnd);
+    hCompatibleDC = CreateCompatibleDC(NULL);
+    bottomHbitmap = CreateCompatibleBitmap(hdc, w, h);
+    DeleteObject(SelectObject(hCompatibleDC, bottomHbitmap));
+    ReleaseDC(hwnd, hdc);
+
+    initCanvas();
 }

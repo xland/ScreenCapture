@@ -11,8 +11,8 @@ public:
     WindowPin();
     ~WindowPin();
 private:
-    virtual void initCanvas();
-    void initSize();
+    void initCanvas() override;
+    void initSize() override;
     void showMenu();
     LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) override;
     void paintCanvas() override;

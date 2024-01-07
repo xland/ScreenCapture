@@ -20,7 +20,6 @@ WindowPin::WindowPin()
 {
     initSize();
     initWindow();
-    initCanvas();
 }
 
 WindowPin::~WindowPin()
@@ -49,11 +48,6 @@ void WindowPin::initCanvas()
     SkPoint3 lightPos = SkPoint3::Make(0, 0, 0);// 定义光源的位置和半径
     SkShadowUtils::DrawShadow(canvas.get(), path, zPlaneParams, lightPos, 20.f, SkColorSetARGB(60, 0, 0, 0), SK_ColorTRANSPARENT, 0);
 
-    HDC hdc = GetDC(hwnd);
-    hCompatibleDC = CreateCompatibleDC(NULL);
-    bottomHbitmap = CreateCompatibleBitmap(hdc, w, h);
-    DeleteObject(SelectObject(hCompatibleDC, bottomHbitmap));
-    ReleaseDC(hwnd, hdc);
     surfaceBase = SkSurfaces::Raster(SkImageInfo::MakeN32Premul(w, h));
     pixBase = new SkPixmap();
     surfaceBase->peekPixels(pixBase);
