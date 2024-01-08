@@ -200,7 +200,7 @@ bool Recorder::OnMouseDrag(const int &x, const int &y)
     }
     return false;
 }
-bool Recorder::onChar(const unsigned int& val)
+bool Recorder::OnChar(const unsigned int& val)
 {
     if (curShape)
     {
@@ -208,16 +208,16 @@ bool Recorder::onChar(const unsigned int& val)
     }
     return false;    
 }
-bool Recorder::onKeyDown(const unsigned int& val)
+bool Recorder::OnKeyDown(const unsigned int& val)
 {
     if (curShape)
     {
-        curShape->OnKeyDown(val);
+        return curShape->OnKeyDown(val);
     }
     return false;
 }
 
-bool Recorder::onMouseWheel(const int& delta)
+bool Recorder::OnMouseWheel(const int& delta)
 {
     if (curShape)
     {
@@ -226,7 +226,7 @@ bool Recorder::onMouseWheel(const int& delta)
     return false;
 }
 
-void Recorder::undo()
+void Recorder::Undo()
 {
     bool undoDisable = true;
     bool redoDisable = true;
@@ -261,7 +261,7 @@ void Recorder::undo()
     win->Refresh();
 }
 
-void Recorder::redo()
+void Recorder::Redo()
 {
     bool undoDisable = true;
     bool redoDisable = true;

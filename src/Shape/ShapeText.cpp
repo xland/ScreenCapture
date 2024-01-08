@@ -196,7 +196,6 @@ bool ShapeText::OnChar(const unsigned int& val)
 
 bool ShapeText::OnKeyDown(const unsigned int& val)
 {
-    bool needRefresh = false;
     if (val == VK_UP) {
         if (lineIndex <= 0) {
             return false;
@@ -205,17 +204,21 @@ bool ShapeText::OnKeyDown(const unsigned int& val)
         if (wordIndex > lines[lineIndex].length()) {
             wordIndex = lines[lineIndex].length();
         }
-        needRefresh = true;
+        showCursor = true;
+        Paint(nullptr);
+        return true;
     }
     else if (val == VK_DOWN) {
-        if (lineIndex > lines.size()-1) {
+        if (lineIndex >= lines.size()-1) {
             return false;
         }
         lineIndex += 1;
         if (wordIndex > lines[lineIndex].length()) {
             wordIndex = lines[lineIndex].length();
         }
-        needRefresh = true;
+        showCursor = true;
+        Paint(nullptr);
+        return true;
     }
     else if (val == VK_LEFT) {
         if (wordIndex == 0) {
@@ -224,12 +227,14 @@ bool ShapeText::OnKeyDown(const unsigned int& val)
             }
             lineIndex -= 1;
             wordIndex = lines[lineIndex].length();
-            App::GetWin()->Refresh();
-            return false;
+            showCursor = true;
+            Paint(nullptr);
+            return true;
         }
         wordIndex -= 1;
-        needRefresh = true;
-        return false;        
+        showCursor = true;
+        Paint(nullptr);
+        return true;        
     }
     else if (val == VK_RIGHT) {
         if (wordIndex == lines[lineIndex].length()) {
@@ -238,16 +243,14 @@ bool ShapeText::OnKeyDown(const unsigned int& val)
             }
             lineIndex += 1;
             wordIndex = 0;
-            needRefresh = true;
-            return false;
+            showCursor = true;
+            Paint(nullptr);
+            return true;
         }
         wordIndex += 1;
-        needRefresh = true;
-        return false;
-    }
-    if (needRefresh) {
         showCursor = true;
         Paint(nullptr);
+        return true;
     }
     return false;
 }

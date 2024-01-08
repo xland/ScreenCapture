@@ -1,12 +1,6 @@
-- 像ToolMain这种单例对象，是否用share_ptr更好
-- right click app exit
-- end text inpu before exit
-- 键盘控制截图区域位置
 - 高亮系统中的窗口区域
-- Win Pin exit delete pixel arr
-- win main close delete obj
 - 橡皮擦画在front上和画在back上表现不一样，鼠标up事件仔细观察一下
-- timer recorder这类东西有必要早早的就初始化吗？Get的时候判断，没有再初始化不就完了
+- ShapeDragger Recorder Timer这类东西有必要早早的就初始化吗？Get的时候判断，没有再初始化不就完了
 - 工具栏取消选中之后再拖动元素，是有问题的
 - 在制品元素未Drag时要删除
 - timer有问题，进程结束，还在调用异步方法

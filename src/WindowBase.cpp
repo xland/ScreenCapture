@@ -83,6 +83,13 @@ LRESULT CALLBACK WindowBase::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wPar
         {
             return true;
         }
+        case WM_LBUTTONDBLCLK:
+        {
+            if (obj->state >= State::tool) {
+                obj->SaveToClipboard();
+            }
+            return true;
+        }
         case WM_KEYDOWN:
         {
             switch (wParam)
@@ -131,7 +138,7 @@ void WindowBase::initWindow()
     auto hinstance = GetModuleHandle(NULL);
     WNDCLASSEX wcx{};
     wcx.cbSize = sizeof(wcx);
-    wcx.style = CS_HREDRAW | CS_VREDRAW;
+    wcx.style = CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
     wcx.lpfnWndProc = &WindowBase::RouteWindowMessage;
     wcx.cbWndExtra = sizeof(WindowBase *);
     wcx.hInstance = hinstance;

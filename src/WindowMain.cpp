@@ -1,5 +1,6 @@
 ﻿#include <Windows.h>
 #include <windowsx.h>
+#include <dwmapi.h>
 #include "WindowMain.h"
 #include "App.h"
 #include "include/core/SkBitmap.h"
@@ -159,7 +160,7 @@ bool WindowMain::onMouseDown(const int& x, const int& y)
         return true;
     }
     Recorder::get()->OnMouseDown(x, y);
-    return false;
+    return true;
 }
 bool WindowMain::onMouseDownRight(const int& x, const int& y)
 {
@@ -201,17 +202,38 @@ bool WindowMain::onMouseDrag(const int& x, const int& y)
 }
 bool WindowMain::onChar(const unsigned int& val)
 {
-    Recorder::get()->onChar(val);
+    Recorder::get()->OnChar(val);
     return false;
 }
 bool WindowMain::onKeyDown(const unsigned int& val)
 {
-    Recorder::get()->onKeyDown(val);
+    bool flag = Recorder::get()->OnKeyDown(val);
+    if (flag) {
+        return true;
+    }
+    flag = CutMask::get()->OnKeyDown(val);
+    if (flag) {
+        return true;
+    }
+    POINT pos;
+    GetCursorPos(&pos);
+    if (val == VK_UP) {
+        SetCursorPos(pos.x, --pos.y);
+    }
+    else if (val == VK_DOWN) {
+        SetCursorPos(pos.x, ++pos.y);
+    }
+    else if (val == VK_LEFT) {
+        SetCursorPos(--pos.x, pos.y);
+    }
+    else if (val == VK_RIGHT) {
+        SetCursorPos(++pos.x, pos.y);
+    }
     return false;
 }
 bool WindowMain::onMouseWheel(const int& delta)
 {
-    Recorder::get()->onMouseWheel(delta);
+    Recorder::get()->OnMouseWheel(delta);
     return false;
 }
 void WindowMain::shotScreen()

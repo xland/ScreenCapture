@@ -3,6 +3,8 @@
 #include <string>
 #include <format>
 #include "WindowBase.h"
+#include <vector>
+#include "include/core/SkRect.h"
 
 class WindowMain : public WindowBase
 {

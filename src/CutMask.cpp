@@ -1,4 +1,7 @@
-﻿#include "CutMask.h"
+﻿#include <Windows.h>
+#include <windowsx.h>
+#include <dwmapi.h>
+#include "CutMask.h"
 #include "WindowBase.h"
 #include "App.h"
 #include "include/core/SkColor.h"
@@ -13,6 +16,7 @@ CutMask* cutMask;
 
 CutMask::CutMask()
 {
+    
 }
 
 void CutMask::setPath()
@@ -104,6 +108,14 @@ bool CutMask::OnMouseMove(const int& x, const int& y)
     auto win = App::GetWin();
     if (win->state < State::mask)
     {
+        for (size_t i = 0; i < winRects.size(); i++)
+        {
+            if (winRects[i].contains(x, y)) {
+                CutRect = winRects[i];
+                setPath();
+                return false;
+            }
+        }
         return false;
     }
     if (win->state == State::tool) {
@@ -254,10 +266,6 @@ bool CutMask::OnMouseDrag(const int& x, const int& y)
 bool CutMask::OnPaint(SkCanvas *canvas)
 {
     auto win = App::GetWin();
-    if (win->state < State::mask)
-    {
-        return false;
-    }
     SkPaint paint;
     paint.setColor(SkColorSetARGB(160, 0, 0, 0));
     canvas->drawPath(path, paint);
@@ -284,6 +292,44 @@ bool CutMask::OnPaint(SkCanvas *canvas)
     canvas->drawSimpleText(data, str.size(), SkTextEncoding::kUTF8, rectInfo.fLeft + 8, rectInfo.fTop + 21, *font, paint);
     return false;
 }
+bool CutMask::OnKeyDown(const unsigned int& val)
+{
+    auto win = App::GetWin();
+    if (win->state < State::mask)
+    {
+        return false;
+    }
+    auto left{ CutRect.fLeft }, top{ CutRect.fTop }, right{ CutRect.fRight }, bottom{ CutRect.fBottom };    
+    if (val == VK_UP) {
+        if (top <= 0) {
+            return false;
+        }
+        top -= 1;
+        bottom -= 1;
+    }
+    else if (val == VK_DOWN) {
+        if (bottom >= win->h) {
+            return false;
+        }
+        top += 1;
+        bottom += 1;
+    }
+    else if (val == VK_LEFT) {
+        if (left <= 0) {
+            return false;
+        }
+        left -= 1;
+        right -= 1;
+    }
+    else if (val == VK_RIGHT) {
+        if (right >= win->w) {
+            return false;
+        }
+        left += 1;
+        right += 1;
+    }
+    return false;
+}
 bool CutMask::OnMouseUp(const int& x, const int& y)
 {
     auto win = App::GetWin();
@@ -296,4 +342,29 @@ bool CutMask::OnMouseUp(const int& x, const int& y)
     Cursor::Arrow();
     Screen::Init();
     return true;
+}
+
+void CutMask::EnumWinRects()
+{
+    EnumWindows([](HWND hwnd, LPARAM lparam)
+        {
+            if (!hwnd) return TRUE;
+            if (!IsWindowVisible(hwnd)) return TRUE;
+            if (IsIconic(hwnd)) return TRUE;
+            if (GetWindowTextLength(hwnd) < 1) return TRUE;
+            
+            RECT rect;
+            DwmGetWindowAttribute(hwnd, DWMWA_EXTENDED_FRAME_BOUNDS, &rect, sizeof(RECT));
+            if (rect.right - rect.left <= 6 || rect.bottom - rect.top <= 6) {
+                return TRUE;
+            }
+            auto self = (CutMask*)lparam;
+            auto win = App::GetWin();
+            if (rect.left < win->x) rect.left = win->x;
+            if (rect.right > win->x + win->w) rect.right = win->x + win->w;
+            if (rect.top < win->y) rect.top = win->y;
+            if (rect.bottom > win->y + win->h) rect.bottom = win->y + win->h;
+            self->winRects.push_back(SkRect::MakeLTRB(rect.left - win->x, rect.top - win->y, rect.right - win->x, rect.bottom - win->y));
+            return TRUE;
+        }, (LPARAM)this);
 }

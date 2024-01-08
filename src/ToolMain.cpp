@@ -211,11 +211,11 @@ bool ToolMain::OnMouseDown(const int& x, const int& y)
             switch (IndexHovered)
             {
             case 9: {
-                Recorder::get()->undo();
+                Recorder::get()->Undo();
                 break;
             }
             case 10: {
-                Recorder::get()->redo();
+                Recorder::get()->Redo();
                 break;
             }
             case 11: {

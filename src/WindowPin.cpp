@@ -286,18 +286,18 @@ bool WindowPin::onMouseDrag(const int& x1, const int& y1)
 
 bool WindowPin::onChar(const unsigned int& val)
 {
-    Recorder::get()->onChar(val);
+    Recorder::get()->OnChar(val);
 	return false;
 }
 
 bool WindowPin::onKeyDown(const unsigned int& val)
 {
-    Recorder::get()->onKeyDown(val);
+    Recorder::get()->OnKeyDown(val);
 	return false;
 }
 
 bool WindowPin::onMouseWheel(const int& delta)
 {
-    Recorder::get()->onMouseWheel(delta);
+    Recorder::get()->OnMouseWheel(delta);
 	return false;
 }

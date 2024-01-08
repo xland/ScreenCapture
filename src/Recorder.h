@@ -20,11 +20,11 @@ public:
     bool OnMouseUp(const int &x, const int &y);
     bool OnMouseMove(const int &x, const int &y);
     bool OnMouseDrag(const int& x, const int& y);
-    bool onChar(const unsigned int& val);
-    bool onKeyDown(const unsigned int& val);
-    bool onMouseWheel(const int& delta);
-    void undo();
-    void redo();
+    bool OnChar(const unsigned int& val);
+    bool OnKeyDown(const unsigned int& val);
+    bool OnMouseWheel(const int& delta);
+    void Undo();
+    void Redo();
     void FinishPaint();
     std::vector<std::shared_ptr<ShapeBase>> shapes;
     ShapeBase* curShape{ nullptr };

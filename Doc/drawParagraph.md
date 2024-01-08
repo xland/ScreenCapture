@@ -48,3 +48,25 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
     return 0;
 }
 ```
+
+在资源里嵌入icudtl.dat
+```c++
+HRSRC hRes = FindResource(NULL, MAKEINTRESOURCE(IDR_ICUDTL_DAT), RT_RCDATA);
+if (hRes != NULL) {
+    HGLOBAL hGlobal = LoadResource(NULL, hRes);
+    if (hGlobal != NULL) {
+        void* dataPtr = LockResource(hGlobal);
+        if (dataPtr != NULL) {
+            DWORD dataSize = SizeofResource(NULL, hRes);
+            std::vector<char> icuData(static_cast<size_t>(dataSize));
+            memcpy(icuData.data(), dataPtr, dataSize);
+
+            // 现在你可以将icuData传递给Skia初始化函数或设置环境变量
+            // 例如：如果SkParagraph有对应的设置方法
+            // sk_sp<SkParagraphStyle> style = ...;
+            InitializeSkiaWithIcuData(icuData.data(), icuData.size());
+            // ...
+        }
+    }
+}
+```

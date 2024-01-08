@@ -10,6 +10,7 @@
 #include "ToolMain.h"
 #include "ToolSub.h"
 #include "Recorder.h"
+#include "CutMask.h"
 #include "Shape/ShapeDragger.h"
 
 
@@ -33,6 +34,7 @@ void App::Init()
     ShapeDragger::init();
     Timer::init();
     win = new WindowMain();
+    CutMask::get()->EnumWinRects();
     win->Show();
     Cursor::Cross();
 }
