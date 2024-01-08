@@ -32,14 +32,37 @@ WindowMain::~WindowMain()
 void WindowMain::Save(const std::string& filePath)
 {
     auto rect = CutMask::GetCutRect();
-    auto img = surfaceBase->makeImageSnapshot(SkIRect::MakeLTRB(rect.fLeft, rect.fTop, rect.fRight, rect.fBottom));
-    SkFILEWStream stream(filePath.data());
+    auto img = surfaceBase->makeImageSnapshot(SkIRect::MakeLTRB(rect.fLeft, rect.fTop, rect.fRight, rect.fBottom));    
     SkPixmap pixmap;
     img->peekPixels(&pixmap);
     SkPngEncoder::Options option;
+    SkFILEWStream stream(filePath.data());
     SkPngEncoder::Encode(&stream, pixmap, option);
     stream.flush();
     App::Quit(6);
+}
+
+void WindowMain::SaveToClipboard()
+{
+    auto rect = CutMask::GetCutRect();
+    HDC ScreenDC = GetDC(NULL);
+    HDC hMemDC = CreateCompatibleDC(ScreenDC);
+    HBITMAP hBitmap = CreateCompatibleBitmap(ScreenDC, rect.width(), rect.height());
+    HBITMAP hOldBitmap = (HBITMAP)SelectObject(hMemDC, hBitmap);
+    auto w{ rect.width() }, h{ rect.height() };
+    StretchBlt(hMemDC, 0, 0, w, h, ScreenDC, rect.fLeft, rect.fTop, w, h, SRCCOPY);
+    hBitmap = (HBITMAP)SelectObject(hMemDC, hOldBitmap);
+    DeleteDC(hMemDC);
+    DeleteObject(hOldBitmap);
+    if (!OpenClipboard(hwnd)) {
+        MessageBox(NULL, L"Failed to open clipboard when save to clipboard.", L"Error", MB_OK | MB_ICONERROR);
+        return;
+    }
+    EmptyClipboard();
+    SetClipboardData(CF_BITMAP, hBitmap);
+    CloseClipboard();
+    ReleaseDC(NULL, ScreenDC);
+    App::Quit(7);
 }
 
 void WindowMain::initCanvas()
@@ -138,7 +161,10 @@ bool WindowMain::onMouseDown(const int& x, const int& y)
 }
 bool WindowMain::onMouseDownRight(const int& x, const int& y)
 {
-    Recorder::get()->OnMouseDownRight(x, y);
+    bool flag = Recorder::get()->OnMouseDownRight(x, y);
+    if (!flag) {
+        App::Quit(2);
+    }
     return false;
 }
 bool WindowMain::onMouseUp(const int& x, const int& y)

@@ -39,6 +39,11 @@ void App::Init()
 
 void App::Dispose()
 {
+    delete Timer::get();
+    delete ShapeDragger::get();
+    delete Recorder::get();
+    delete ToolSub::get();
+    delete ToolMain::get();
     delete fontIcon;
     delete fontText;
 }

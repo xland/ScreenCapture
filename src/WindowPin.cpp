@@ -29,14 +29,36 @@ WindowPin::~WindowPin()
 
 void WindowPin::Save(const std::string& filePath)
 {
-    auto img = surfaceBase->makeImageSnapshot(SkIRect::MakeXYWH(shadowSize, shadowSize, surfaceFront->width(), surfaceFront->height()));
-    SkFILEWStream stream(filePath.data());
+    auto img = surfaceBase->makeImageSnapshot(SkIRect::MakeXYWH(shadowSize, shadowSize, surfaceFront->width(), surfaceFront->height()));    
     SkPixmap pixmap;
     img->peekPixels(&pixmap);
     SkPngEncoder::Options option;
+    SkFILEWStream stream(filePath.data());
     SkPngEncoder::Encode(&stream, pixmap, option);
     stream.flush();
-    App::Quit(9);
+    App::Quit(6);
+}
+
+void WindowPin::SaveToClipboard()
+{
+    HDC ScreenDC = GetDC(NULL);
+    HDC hMemDC = CreateCompatibleDC(ScreenDC);
+    auto w{ surfaceFront->width() }, h{ surfaceFront->height() };
+    HBITMAP hBitmap = CreateCompatibleBitmap(ScreenDC, w, h);
+    HBITMAP hOldBitmap = (HBITMAP)SelectObject(hMemDC, hBitmap);
+    StretchBlt(hMemDC, 0, 0, w, h, ScreenDC, x+shadowSize, y+shadowSize, w, h, SRCCOPY);
+    hBitmap = (HBITMAP)SelectObject(hMemDC, hOldBitmap);
+    DeleteDC(hMemDC);
+    DeleteObject(hOldBitmap);
+    if (!OpenClipboard(hwnd)) {
+        MessageBox(NULL, L"Failed to open clipboard when save to clipboard.", L"Error", MB_OK | MB_ICONERROR);
+        return;
+    }
+    EmptyClipboard();
+    SetClipboardData(CF_BITMAP, hBitmap);
+    CloseClipboard();
+    ReleaseDC(NULL, ScreenDC);
+    App::Quit(7);
 }
 
 void WindowPin::initCanvas()

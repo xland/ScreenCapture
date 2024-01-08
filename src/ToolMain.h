@@ -22,4 +22,5 @@ public:
 private:
     ToolMain();
     void saveFile();
+    void saveClipboard();
 };

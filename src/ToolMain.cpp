@@ -35,8 +35,9 @@ ToolMain::ToolMain()
     btns.push_back(std::make_shared<ToolBtn>(Icon::undo, L"上一步",true,false)); //9
     btns.push_back(std::make_shared<ToolBtn>(Icon::redo, L"下一步",true,false)); //10
     btns.push_back(std::make_shared<ToolBtn>(Icon::pin, L"钉住截图区",false,false));//11
-    btns.push_back(std::make_shared<ToolBtn>(Icon::save, L"保存", false, false));//12
-    btns.push_back(std::make_shared<ToolBtn>(Icon::close, L"退出", false, false));//13
+    btns.push_back(std::make_shared<ToolBtn>(Icon::save, L"保存为文件", false, false));//12
+    btns.push_back(std::make_shared<ToolBtn>(Icon::copy, L"保存到剪切板", false, false));//13
+    btns.push_back(std::make_shared<ToolBtn>(Icon::close, L"退出", false, false));//14
 }
 
 void ToolMain::saveFile()
@@ -225,9 +226,15 @@ bool ToolMain::OnMouseDown(const int& x, const int& y)
             }
             case 12: {
                 saveFile();
+                btns[12]->isHover = false;
                 break;
             }
             case 13: {
+                App::GetWin()->SaveToClipboard();                
+                btns[13]->isHover = false;
+                break;
+            }
+            case 14: {
                 App::Quit(1);
                 break;
             }

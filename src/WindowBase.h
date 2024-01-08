@@ -17,6 +17,7 @@ public:
     void Refresh();
     void Close(const int &exitCode);
     virtual void Save(const std::string& filePath) = 0;
+    virtual void SaveToClipboard() = 0;
     HWND hwnd;
     State state = State::start;
     int x, y, w, h;
