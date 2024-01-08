@@ -1,6 +1,6 @@
-- tool tip
 - click draw number
 - 在制品元素未Drag时要删除
+- 进程锁
 
 
 
