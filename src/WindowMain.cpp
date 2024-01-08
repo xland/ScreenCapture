@@ -31,6 +31,7 @@ WindowMain::~WindowMain()
 
 void WindowMain::Save(const std::string& filePath)
 {
+    Recorder::get()->FinishPaint();
     auto rect = CutMask::GetCutRect();
     auto img = surfaceBase->makeImageSnapshot(SkIRect::MakeLTRB(rect.fLeft, rect.fTop, rect.fRight, rect.fBottom));    
     SkPixmap pixmap;
@@ -44,6 +45,7 @@ void WindowMain::Save(const std::string& filePath)
 
 void WindowMain::SaveToClipboard()
 {
+    Recorder::get()->FinishPaint();
     auto rect = CutMask::GetCutRect();
     HDC ScreenDC = GetDC(NULL);
     HDC hMemDC = CreateCompatibleDC(ScreenDC);

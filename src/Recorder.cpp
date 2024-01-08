@@ -95,7 +95,7 @@ bool Recorder::OnMouseDownRight(const int& x, const int& y)
         canvasFront->clear(SK_ColorTRANSPARENT);
         auto canvasBack = win->surfaceBack->getCanvas();
         curShape->Paint(canvasBack);
-        win->Refresh();
+        win->refresh();
         curShape = nullptr;
         auto toolMain = ToolMain::get();
         toolMain->setUndoDisable(false);
@@ -291,6 +291,14 @@ void Recorder::redo()
     toolMain->setUndoDisable(undoDisable);
     toolMain->setRedoDisable(redoDisable);
     win->Refresh();
+}
+
+void Recorder::FinishPaint()
+{
+    auto flag = OnMouseDownRight(-1, -1);
+    if (!flag) {
+        ShapeDragger::get()->hideDragger();
+    } 
 }
 
 void Recorder::createShape(const int &x, const int &y, const State &state)

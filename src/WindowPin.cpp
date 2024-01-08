@@ -29,6 +29,7 @@ WindowPin::~WindowPin()
 
 void WindowPin::Save(const std::string& filePath)
 {
+    Recorder::get()->FinishPaint();
     auto img = surfaceBase->makeImageSnapshot(SkIRect::MakeXYWH(shadowSize, shadowSize, surfaceFront->width(), surfaceFront->height()));    
     SkPixmap pixmap;
     img->peekPixels(&pixmap);
@@ -41,6 +42,7 @@ void WindowPin::Save(const std::string& filePath)
 
 void WindowPin::SaveToClipboard()
 {
+    Recorder::get()->FinishPaint();
     HDC ScreenDC = GetDC(NULL);
     HDC hMemDC = CreateCompatibleDC(ScreenDC);
     auto w{ surfaceFront->width() }, h{ surfaceFront->height() };

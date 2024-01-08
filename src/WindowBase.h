@@ -15,6 +15,7 @@ public:
     virtual ~WindowBase();
     void Show();
     void Refresh();
+    void refresh();
     void Close(const int &exitCode);
     virtual void Save(const std::string& filePath) = 0;
     virtual void SaveToClipboard() = 0;
@@ -38,7 +39,6 @@ protected:
     HBITMAP bottomHbitmap;
 
 private:
-    void refresh();
     void setClipboardText(const std::wstring& text);
     std::wstring getPixelRgb();
     std::wstring getPixelHex();

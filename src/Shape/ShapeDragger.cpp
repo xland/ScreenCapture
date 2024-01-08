@@ -55,7 +55,7 @@ bool ShapeDragger::hideDragger()
     auto win = App::GetWin();
     auto canvas = win->surfaceFront->getCanvas();
     canvas->clear(SK_ColorTRANSPARENT);
-    win->Refresh();
+    win->refresh();
     visible = false;
     curShape = nullptr;
     return true;

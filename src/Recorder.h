@@ -25,8 +25,7 @@ public:
     bool onMouseWheel(const int& delta);
     void undo();
     void redo();
-    //bool OnPaint(SkCanvas *canvas);
-    //bool OnPaintFinish(SkCanvas* canvas);
+    void FinishPaint();
     std::vector<std::shared_ptr<ShapeBase>> shapes;
     ShapeBase* curShape{ nullptr };
 private:
