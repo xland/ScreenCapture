@@ -5,7 +5,9 @@
 #include "ToolMain.h"
 #include "ToolBtn.h"
 #include "Icon.h"
-#include "include/core/SkPath.h"
+#include "include/core/SkSurface.h"
+#include "include/core/SkCanvas.h"
+#include "include/core/SkRect.h"
 
 ToolSub *toolSub;
 
@@ -80,6 +82,7 @@ bool ToolSub::OnMouseDown(const int& x, const int& y)
             }
         }
         btns[index]->isSelected = true;
+        setRect();
         win->Refresh();
         return true;
     }
@@ -95,6 +98,7 @@ bool ToolSub::OnMouseDown(const int& x, const int& y)
         }
         btns[index]->icon = Icon::check;
         btns[index]->isSelected = true;
+        setRect();
         win->Refresh();
         return true;
     }
@@ -111,6 +115,7 @@ bool ToolSub::OnMouseDown(const int& x, const int& y)
                 btns.erase(btns.begin() + 1, btns.begin() + 4);
             }
         }
+        setRect();
         win->Refresh();
     }
     return true;
@@ -171,6 +176,7 @@ void ToolSub::InitBtns(int mainToolSelectedIndex)
     default:
         break;
     }
+    setRect();
 }
 
 bool ToolSub::OnPaint(SkCanvas *canvas)
@@ -185,6 +191,27 @@ bool ToolSub::OnPaint(SkCanvas *canvas)
     {
         return false;
     }
+    
+    SkPaint paint;
+    paint.setColor(SK_ColorWHITE);
+    paint.setAntiAlias(true);
+    canvas->drawPath(p, paint);
+    auto left{ ToolRect.fLeft };
+    for (auto& btn : btns)
+    {
+        btn->Paint(canvas, paint, left, ToolRect.fTop);
+        left += ToolBtn::width;
+    }
+    paint.setStroke(true);
+    paint.setStrokeWidth(0.6f);
+    paint.setColor(SkColorSetARGB(255, 22, 118, 255));
+    canvas->drawPath(p, paint);
+    return false;
+}
+
+void ToolSub::setRect()
+{
+    auto toolMain = ToolMain::get();
     auto width = btns.size() * ToolBtn::width;
     auto left = toolMain->ToolRect.left();
     auto top = toolMain->ToolRect.bottom() + MarginTop;
@@ -192,7 +219,8 @@ bool ToolSub::OnPaint(SkCanvas *canvas)
     if (toolMain->IndexSelected > 5) {
         left = mainToolBtnCenterPointX - width / 2;
     }
-    SkPath p;
+    ToolRect.setXYWH(left, top, width, ToolBtn::height);
+    p.reset();
     p.moveTo(mainToolBtnCenterPointX, top - MarginTop / 3 * 2);  // ¶¥µã
     p.lineTo(mainToolBtnCenterPointX - MarginTop, top);  // ×óÏÂ½Ç
     p.lineTo(left, top);
@@ -201,20 +229,6 @@ bool ToolSub::OnPaint(SkCanvas *canvas)
     p.lineTo(left + width, top);
     p.lineTo(mainToolBtnCenterPointX + MarginTop, top);  // ÓÒÏÂ½Ç
     p.close();
-    SkPaint paint;
-    paint.setColor(SK_ColorWHITE);
-    paint.setAntiAlias(true);
-    canvas->drawPath(p, paint);
-    for (auto& btn : btns)
-    {
-        btn->Paint(canvas, paint, left, top);
-        left += ToolBtn::width;
-    }
-    paint.setStroke(true);
-    paint.setStrokeWidth(0.6f);
-    paint.setColor(SkColorSetARGB(255, 22, 118, 255));
-    canvas->drawPath(p, paint);
-    return false;
 }
 
 bool ToolSub::getFill()

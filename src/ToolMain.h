@@ -19,8 +19,8 @@ public:
     bool OnPaint(SkCanvas *canvas) override;
     void setUndoDisable(bool flag);
     void setRedoDisable(bool flag);
+    void InitBtns();
 private:
     ToolMain();
     void saveFile();
-    void saveClipboard();
 };

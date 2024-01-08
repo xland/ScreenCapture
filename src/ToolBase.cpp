@@ -1,3 +1,6 @@
+#include <Windows.h>
+#include <windowsx.h>
+#include <commctrl.h>
 #include "ToolBase.h"
 #include "Cursor.h"
 #include "App.h"
@@ -5,7 +8,6 @@
 
 ToolBase::ToolBase() :IndexHovered{ -1 }, IndexSelected{ -1 }
 {
-
 }
 
 ToolBase::~ToolBase()

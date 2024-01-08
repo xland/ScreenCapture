@@ -90,6 +90,14 @@ LRESULT CALLBACK WindowBase::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wPar
             }
             return true;
         }
+        //case WM_MOUSEMOVE: {
+        //    obj->setTracking(true);
+        //    [[fallthrough]];
+        //}
+        //case WM_MOUSELEAVE: {
+        //    obj->setTracking(false);
+        //    return false;
+        //}
         case WM_KEYDOWN:
         {
             switch (wParam)
@@ -168,6 +176,20 @@ void WindowBase::initWindow()
     ReleaseDC(hwnd, hdc);
 
     initCanvas();
+
+    hwndToolTip = CreateWindowEx(WS_EX_TOPMOST, TOOLTIPS_CLASS, NULL, WS_POPUP | TTS_NOPREFIX | TTS_ALWAYSTIP,
+        CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, hwnd, NULL, hinstance, NULL);
+    //TOOLINFO tipInfo{ 0 };
+    //tipInfo.cbSize = sizeof(TOOLINFO);
+    //tipInfo.uFlags = TTF_SUBCLASS;
+    //tipInfo.hwnd = hwnd;
+    //tipInfo.hinst = GetModuleHandle(NULL);
+    //tipInfo.uId = 0;
+    //RECT rect{ 0,0,200,200 };
+    //tipInfo.rect = rect;
+    //std::wstring str{ L"test" };
+    //tipInfo.lpszText = (LPWSTR)str.c_str();
+    //SendMessage(hwndToolTip, TTM_ADDTOOL, 0, (LPARAM)(LPTOOLINFO)&tipInfo);
 }
 
 void WindowBase::setClipboardText(const std::wstring& text) {

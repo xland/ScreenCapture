@@ -20,6 +20,7 @@ public:
     virtual void Save(const std::string& filePath) = 0;
     virtual void SaveToClipboard() = 0;
     HWND hwnd;
+    HWND hwndToolTip;
     State state = State::start;
     int x, y, w, h;
     bool IsMouseDown{false};

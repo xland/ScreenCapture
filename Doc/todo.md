@@ -1,10 +1,15 @@
-- 高亮系统中的窗口区域
+- tool tip
+- click draw number
+- 在制品元素未Drag时要删除
+
+
+
 - 橡皮擦画在front上和画在back上表现不一样，鼠标up事件仔细观察一下
 - ShapeDragger Recorder Timer这类东西有必要早早的就初始化吗？Get的时候判断，没有再初始化不就完了
 - 工具栏取消选中之后再拖动元素，是有问题的
-- 在制品元素未Drag时要删除
 - timer有问题，进程结束，还在调用异步方法
 - CutBox完成之后，点工具栏会改变CutBox，偶发
+
 
 
  - 用del 删除元素

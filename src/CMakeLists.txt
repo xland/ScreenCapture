@@ -2,6 +2,7 @@ set(SRC
     main.cpp
     App.cpp
     App.h
+    State.h
     Icon.h
     Cursor.h
     WindowBase.cpp
@@ -30,7 +31,6 @@ set(SRC
     ToolMain.h
     ToolSub.cpp
     ToolSub.h
-    State.h
 )
 target_sources(ScreenCapture PRIVATE ${SRC})
 add_subdirectory(Shape)

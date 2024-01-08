@@ -337,7 +337,9 @@ bool CutMask::OnMouseUp(const int& x, const int& y)
         return false;
     }
     win->state = State::tool;
-    ToolMain::get()->SetPositionByCutMask();
+    auto tool = ToolMain::get();
+    tool->InitBtns();
+    tool->SetPositionByCutMask();
     win->Refresh();
     Cursor::Arrow();
     Screen::Init();

@@ -1,4 +1,5 @@
 #pragma once
+#include <Windows.h>
 #include "include/core/SkFont.h"
 class WindowBase;
 class App
