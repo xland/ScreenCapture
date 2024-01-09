@@ -9,7 +9,7 @@ class Timer
 {
 public:
     ~Timer();
-    static void init();
+    static void Init();
     static Timer* get();
     void Start(const int id,const int& timeSpan, std::function<bool()> taskFunc);
     void Remove(const int& id);

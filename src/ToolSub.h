@@ -6,7 +6,7 @@ class ToolSub : public ToolBase
 {
 public:
     ~ToolSub();
-    static void init();
+    static void Init();
     static ToolSub *get();
     bool OnMouseDown(const int& x, const int& y) override;
     void InitBtns(int mainToolSelectedIndex);

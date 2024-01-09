@@ -9,7 +9,7 @@ class ShapeDragger
 {
 public:
     ~ShapeDragger();
-    static void init();
+    static void Init();
     static ShapeDragger* get();
     void setDragger(size_t index, float x, float y);
     void showDragger(SkCanvas* canvas);

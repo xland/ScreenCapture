@@ -21,11 +21,10 @@ public:
     virtual bool OnKeyDown(const unsigned int& val) { return false; };
     virtual bool onMouseWheel(const int& delta) { return false; };
     virtual void Paint(SkCanvas* canvas) { };
-    bool isWip{true};
-    bool isDel{ false };
+    bool IsWip{true}; //在制品
+    bool IsDel{ false }; //Undo品
     int HoverIndex{-1};
-    int startX, startY;
-    int id;
 protected:
+    int startX, startY;
 private:
 };

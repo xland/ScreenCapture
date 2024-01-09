@@ -19,7 +19,7 @@ ShapeDragger::~ShapeDragger()
 {
 }
 
-void ShapeDragger::init()
+void ShapeDragger::Init()
 {
     shapeDragger = new ShapeDragger();
 }

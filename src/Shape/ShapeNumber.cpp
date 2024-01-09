@@ -28,7 +28,7 @@ bool ShapeNumber::OnMouseDown(const int &x, const int &y)
 
 bool ShapeNumber::OnMouseUp(const int &x, const int &y)
 {
-    isWip = false;
+    IsWip = false;
     setDragger();
     return false;
 }

@@ -25,12 +25,9 @@ Recorder::~Recorder()
 {
 }
 
-void Recorder::init()
+void Recorder::Init()
 {
-    if (!recorder)
-    {
-        recorder = new Recorder();
-    }
+    recorder = new Recorder();
 }
 
 Recorder *Recorder::get()
@@ -49,7 +46,7 @@ bool Recorder::OnMouseDown(const int &x, const int &y)
     {
         //正在写字，左键单击无效
         if (curShape && typeid(*curShape) == typeid(ShapeText) ) {
-            if (curShape->isWip) {
+            if (curShape->IsWip) {
                 curShape->OnMouseDown(x, y);
                 return false;
             }
@@ -59,7 +56,7 @@ bool Recorder::OnMouseDown(const int &x, const int &y)
                 temp->showCursor = true;
             }
         }
-        curShape->isWip = true;
+        curShape->IsWip = true;
         curShape->OnMouseDown(x, y);
         auto canvasBack = win->surfaceBack->getCanvas();
         auto canvasFront = win->surfaceFront->getCanvas();
@@ -67,10 +64,10 @@ bool Recorder::OnMouseDown(const int &x, const int &y)
         canvasFront->clear(SK_ColorTRANSPARENT);
         for (auto& shape : shapes)
         {
-            if (shape->isWip) {
+            if (shape->IsWip) {
                 shape->Paint(canvasFront);
             }
-            else if (!shape->isDel) {
+            else if (!shape->IsDel) {
                 shape->Paint(canvasBack);
             }
         }
@@ -87,8 +84,8 @@ bool Recorder::OnMouseDown(const int &x, const int &y)
 bool Recorder::OnMouseDownRight(const int& x, const int& y)
 {
     //正在写字，右键点击 结束写字
-    if (curShape && curShape->isWip && typeid(*curShape) == typeid(ShapeText) ) {
-        curShape->isWip = false;
+    if (curShape && curShape->IsWip && typeid(*curShape) == typeid(ShapeText) ) {
+        curShape->IsWip = false;
         Timer::get()->Remove(1);
         auto win = App::GetWin();
         auto canvasFront = win->surfaceFront->getCanvas();
@@ -109,11 +106,11 @@ bool Recorder::OnMouseUp(const int &x, const int &y)
     {
         return false;
     }
-    if (curShape && curShape->isWip && typeid(*curShape) == typeid(ShapeText)) {
+    if (curShape && curShape->IsWip && typeid(*curShape) == typeid(ShapeText)) {
         return false;
     }
     // todo 
-    //if (shapes[curIndex]->isWip)
+    //if (shapes[curIndex]->IsWip)
     //{
     //    shapes.erase(shapes.begin() + curIndex, shapes.begin() + 1);
     //}
@@ -130,7 +127,7 @@ bool Recorder::OnMouseUp(const int &x, const int &y)
     //必须全部重绘一次，不然修改历史元素时，无法保证元素的绘制顺序
     for (auto& shape : shapes)
     {
-        if (shape->isDel) {
+        if (shape->IsDel) {
             redoDisable = false;
         }
         else{
@@ -158,14 +155,14 @@ bool Recorder::OnMouseMove(const int &x, const int &y)
         return false;
     }
     //写字时，鼠标移动到其他元素上必不能显示dragger，因为dragger会刷新front canvas，就会把字刷掉
-    if (curShape && curShape->isWip && typeid(*curShape) == typeid(ShapeText)) {
+    if (curShape && curShape->IsWip && typeid(*curShape) == typeid(ShapeText)) {
         curShape->OnMouseMove(x, y);
         return false;
     }
     curShape = nullptr;
     for (int i = shapes.size() - 1; i >= 0; i--)
     {
-        if (shapes[i]->isDel) continue;
+        if (shapes[i]->IsDel) continue;
         auto flag = shapes[i]->OnMouseMove(x, y);
         if (flag)
         {
@@ -237,16 +234,16 @@ void Recorder::Undo()
     canvasFront->clear(SK_ColorTRANSPARENT);
     for (int i = shapes.size() - 1; i >= 0; i--)
     {
-        if (!shapes[i]->isDel)
+        if (!shapes[i]->IsDel)
         {
-            shapes[i]->isDel = true;
+            shapes[i]->IsDel = true;
             redoDisable = false;
             break;
         }
     }
     for (int i = 0; i < shapes.size(); i++)
     {
-        if (shapes[i]->isDel)
+        if (shapes[i]->IsDel)
         {
             break;
         }
@@ -272,9 +269,9 @@ void Recorder::Redo()
     canvasFront->clear(SK_ColorTRANSPARENT);
     for (int i = 0; i < shapes.size(); i++)
     {
-        if (shapes[i]->isDel)
+        if (shapes[i]->IsDel)
         {
-            shapes[i]->isDel = false;
+            shapes[i]->IsDel = false;
             shapes[i]->Paint(canvasBack);
             undoDisable = false;
             if (i < shapes.size() - 1) {
@@ -357,7 +354,7 @@ void Recorder::createShape(const int &x, const int &y, const State &state)
     int index = shapes.size();
     for (size_t i = 0; i < shapes.size(); i++)
     {
-        if (shapes[i]->isDel) {
+        if (shapes[i]->IsDel) {
             index = i - 1;
             break;
         }

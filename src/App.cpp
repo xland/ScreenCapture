@@ -28,11 +28,11 @@ void App::Init()
 {
     initFontText();
     initFontIcon();
-    ToolMain::init();
-    ToolSub::init();
-    Recorder::init();
-    ShapeDragger::init();
-    Timer::init();
+    ToolMain::Init();
+    ToolSub::Init();
+    Recorder::Init();
+    ShapeDragger::Init();
+    Timer::Init();
     win = new WindowMain();
     CutMask::get()->EnumWinRects();
     win->Show();

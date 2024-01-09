@@ -146,12 +146,9 @@ void ToolMain::SetPosition(const float& x, const float& y)
 }
 
 
-void ToolMain::init()
+void ToolMain::Init()
 {
-    if (!toolMain)
-    {
-        toolMain = new ToolMain();
-    }
+    toolMain = new ToolMain();
 }
 
 ToolMain *ToolMain::get()

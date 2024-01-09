@@ -264,7 +264,7 @@ void ShapeText::Paint(SkCanvas *canvas)
         canvas->clear(SK_ColorTRANSPARENT);
         refreshFlag = true;
     }
-    if (isWip) {
+    if (IsWip) {
         setRect(canvas);
         if (showCursor) {
             setCursor(canvas);

@@ -44,12 +44,9 @@ void ToolSub::addColorBtns()
 
 
 
-void ToolSub::init()
+void ToolSub::Init()
 {
-    if (!toolSub)
-    {
-        toolSub = new ToolSub();
-    }
+    toolSub = new ToolSub();
 }
 
 ToolSub *ToolSub::get()

@@ -14,7 +14,7 @@
 
 ShapeMosaic::ShapeMosaic(const int &x, const int &y) : ShapeBase(x, y)
 {    
-    isWip = false;
+    IsWip = false;
     initParams();
 }
 

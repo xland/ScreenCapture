@@ -24,7 +24,7 @@ bool ShapeArrow::OnMouseDown(const int &x, const int &y)
 bool ShapeArrow::OnMouseUp(const int &x, const int &y)
 {
     setDragger();
-    isWip = false;
+    IsWip = false;
     return false;
 }
 

@@ -13,7 +13,7 @@ class Recorder
 {
 public:
     ~Recorder();
-    static void init();
+    static void Init();
     static Recorder *get();
     bool OnMouseDown(const int &x, const int &y);
     bool OnMouseDownRight(const int& x, const int& y);
@@ -29,8 +29,6 @@ public:
     std::vector<std::shared_ptr<ShapeBase>> shapes;
     ShapeBase* curShape{ nullptr };
 private:
-    //bool hideDragger(const int& id);
-    //bool flashTextCursor(const int& id);
     Recorder();
     void createShape(const int& x, const int& y,const State& state);
     

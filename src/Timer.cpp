@@ -19,7 +19,7 @@ Timer::~Timer()
     delete t;
 }
 
-void Timer::init()
+void Timer::Init()
 {
     timer = new Timer();
 }

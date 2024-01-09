@@ -41,7 +41,7 @@ bool ShapeLine::OnMouseUp(const int &x, const int &y)
     auto win = App::GetWin();
     auto canvasBack = win->surfaceBack->getCanvas();
     Paint(canvasBack);
-    isWip = false;
+    IsWip = false;
     win->Refresh();
 
     pathAssist.reset();
