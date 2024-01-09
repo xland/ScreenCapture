@@ -56,6 +56,7 @@ ToolSub *ToolSub::get()
 
 bool ToolSub::OnMouseDown(const int& x, const int& y)
 {
+    isMouseDown = true;
     auto win = App::GetWin();
     if (win->state < State::tool)
     {

@@ -44,3 +44,20 @@ bool ToolBase::OnMouseMove(const int& x, const int& y)
     }
     return true;
 }
+
+bool ToolBase::OnMouseUp(const int& x, const int& y)
+{
+    isMouseDown = false;
+    if (ToolRect.contains(x, y)) {
+        return true;
+    }
+    return false;
+}
+
+bool ToolBase::OnMouseDrag(const int& x, const int& y)
+{
+    if (isMouseDown) {
+        return true;
+    }
+    return false;
+}

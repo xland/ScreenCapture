@@ -172,6 +172,12 @@ bool WindowMain::onMouseDownRight(const int& x, const int& y)
 }
 bool WindowMain::onMouseUp(const int& x, const int& y)
 {
+    if (ToolMain::get()->OnMouseUp(x, y)) {
+        return true;
+    }
+    if (ToolSub::get()->OnMouseUp(x, y)) {
+        return true;
+    }
     Recorder::get()->OnMouseUp(x, y);
     CutMask::get()->OnMouseUp(x, y);
     return false;
@@ -193,6 +199,11 @@ bool WindowMain::onMouseMove(const int& x, const int& y)
 }
 bool WindowMain::onMouseDrag(const int& x, const int& y)
 {
+    auto tm = ToolMain::get()->OnMouseMove(x, y);
+    auto ts = ToolSub::get()->OnMouseMove(x, y);
+    if (tm || ts) {
+        return false;
+    }
     auto cm = CutMask::get()->OnMouseDrag(x, y);
     if (cm) {
         return false;
