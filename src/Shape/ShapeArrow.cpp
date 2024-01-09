@@ -152,11 +152,11 @@ void ShapeArrow::makePath(const int& x1, const int& y1, const int& x2, const int
 void ShapeArrow::setDragger()
 {
     auto shapeDragger = ShapeDragger::Get();
-    unsigned half = shapeDragger->size / 2;
+    unsigned half = shapeDragger->Size / 2;
     shapeDragger->SetDragger(0, startX - half, startY - half);
     shapeDragger->SetDragger(1, endX - half, endY - half);
-    shapeDragger->disableDragger(2);
-    shapeDragger->cursors[0] = Cursor::cursor::all;
-    shapeDragger->cursors[1] = Cursor::cursor::all;
+    shapeDragger->DisableDragger(2);
+    shapeDragger->Cursors[0] = Cursor::cursor::all;
+    shapeDragger->Cursors[1] = Cursor::cursor::all;
     shapeDragger->CurShape = this;
 }

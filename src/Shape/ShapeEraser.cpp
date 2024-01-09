@@ -34,7 +34,7 @@ bool ShapeEraser::OnMouseDown(const int& x, const int& y)
 
 bool ShapeEraser::OnMouseUp(const int& x, const int& y)
 {
-    ShapeDragger::Get()->disableDragger();    
+    ShapeDragger::Get()->DisableDragger();    
     return false;
 }
 

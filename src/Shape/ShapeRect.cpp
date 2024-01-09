@@ -127,7 +127,7 @@ void ShapeRect::setDragger()
 {
     rect.sort();
     auto shapeDragger = ShapeDragger::Get();
-    unsigned half = shapeDragger->size/2;
+    unsigned half = shapeDragger->Size/2;
     float l = rect.x() - half;
     float t = rect.y() - half;
     float r = rect.right() - half;
@@ -142,14 +142,14 @@ void ShapeRect::setDragger()
     shapeDragger->SetDragger(5, wCenter, b);
     shapeDragger->SetDragger(6, l, b);
     shapeDragger->SetDragger(7, l, hCenter);
-    shapeDragger->cursors[0] = Cursor::cursor::wnse;
-    shapeDragger->cursors[4] = Cursor::cursor::wnse;
-    shapeDragger->cursors[1] = Cursor::cursor::ns;
-    shapeDragger->cursors[5] = Cursor::cursor::ns;
-    shapeDragger->cursors[2] = Cursor::cursor::nesw;
-    shapeDragger->cursors[6] = Cursor::cursor::nesw;
-    shapeDragger->cursors[3] = Cursor::cursor::we;
-    shapeDragger->cursors[7] = Cursor::cursor::we;
+    shapeDragger->Cursors[0] = Cursor::cursor::wnse;
+    shapeDragger->Cursors[4] = Cursor::cursor::wnse;
+    shapeDragger->Cursors[1] = Cursor::cursor::ns;
+    shapeDragger->Cursors[5] = Cursor::cursor::ns;
+    shapeDragger->Cursors[2] = Cursor::cursor::nesw;
+    shapeDragger->Cursors[6] = Cursor::cursor::nesw;
+    shapeDragger->Cursors[3] = Cursor::cursor::we;
+    shapeDragger->Cursors[7] = Cursor::cursor::we;
     shapeDragger->CurShape = this;
 }
 

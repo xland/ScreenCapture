@@ -7,7 +7,7 @@
 ShapePen::ShapePen(const int &x, const int &y) : ShapeBase(x, y)
 {
     IsWip = false;
-    ShapeDragger::Get()->disableDragger();
+    ShapeDragger::Get()->DisableDragger();
     initParams();
 }
 

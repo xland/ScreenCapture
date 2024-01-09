@@ -130,7 +130,7 @@ bool Recorder::OnMouseUp(const int &x, const int &y)
     auto toolMain = ToolMain::Get();
     toolMain->SetUndoDisable(undoDisable);
     toolMain->SetRedoDisable(redoDisable);
-    ShapeDragger::Get()->showDragger(canvasFront);
+    ShapeDragger::Get()->ShowDragger(canvasFront);
     win->Refresh();
     return false;
 }
@@ -163,7 +163,7 @@ bool Recorder::OnMouseMove(const int &x, const int &y)
         }
     }
     auto shapeDragger = ShapeDragger::Get();
-    int index = shapeDragger->indexMouseAt(x, y);
+    int index = shapeDragger->IndexMouseAt(x, y);
     if (index >= 0) {
         CurShape = shapeDragger->CurShape;
     }
@@ -171,12 +171,12 @@ bool Recorder::OnMouseMove(const int &x, const int &y)
     {
         auto canvas = win->surfaceFront->getCanvas();
         canvas->clear(SK_ColorTRANSPARENT);
-        shapeDragger->showDragger(canvas);
+        shapeDragger->ShowDragger(canvas);
         win->Refresh();
     }
     else {       
         Timer::Get()->Start(0, 800, []() {
-            return ShapeDragger::Get()->hideDragger();
+            return ShapeDragger::Get()->HideDragger();
             });
     }
     return false;
@@ -286,7 +286,7 @@ void Recorder::FinishPaint()
 {
     auto flag = OnMouseDownRight(-1, -1);
     if (!flag) {
-        ShapeDragger::Get()->hideDragger();
+        ShapeDragger::Get()->HideDragger();
     } 
 }
 

@@ -12,15 +12,15 @@ public:
     static void Init();
     static ShapeDragger* Get();
     void SetDragger(size_t index, float x, float y);
-    void showDragger(SkCanvas* canvas);
-    bool hideDragger();
-    void disableDragger(const int& startIndex = 0);
-    int indexMouseAt(const int& x, const int& y);
+    void ShowDragger(SkCanvas* canvas);
+    bool HideDragger();
+    void DisableDragger(const int& startIndex = 0);
+    int IndexMouseAt(const int& x, const int& y);
     ShapeBase* CurShape;
-    float size{ 10 };
-    std::vector<SkRect> draggers;
-    std::vector<Cursor::cursor> cursors;
+    float Size{ 10 };
+    std::vector<Cursor::cursor> Cursors;
     bool visible{ false };
 private:
     ShapeDragger();
+    std::vector<SkRect> draggers;
 };

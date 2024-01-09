@@ -162,9 +162,9 @@ void ShapeNumber::makePath(const int &x1, const int &y1, const int &x2, const in
 void ShapeNumber::setDragger()
 {
     auto shapeDragger = ShapeDragger::Get();
-    unsigned half = shapeDragger->size / 2;
+    unsigned half = shapeDragger->Size / 2;
     shapeDragger->SetDragger(0, endX - half, endY - half);
-    shapeDragger->cursors[0] = Cursor::cursor::all;
-    shapeDragger->disableDragger(1);
+    shapeDragger->Cursors[0] = Cursor::cursor::all;
+    shapeDragger->DisableDragger(1);
     shapeDragger->CurShape = this;
 }

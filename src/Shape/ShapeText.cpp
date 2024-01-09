@@ -29,7 +29,7 @@ ShapeText::ShapeText(const int &x, const int &y) : ShapeBase(x, y)
     top += lineRect.top();
     rect.setXYWH(left, top, width, height);
     activeKeyboard(getCursorX(), startY);
-    ShapeDragger::Get()->disableDragger();
+    ShapeDragger::Get()->DisableDragger();
 }
 
 ShapeText::~ShapeText()

@@ -11,7 +11,7 @@ ShapeDragger::ShapeDragger()
     for (size_t i = 0; i < 8; i++)
     {
         draggers.push_back(SkRect::MakeEmpty());
-        cursors.push_back(Cursor::cursor::all);
+        Cursors.push_back(Cursor::cursor::all);
     }
 }
 
@@ -31,10 +31,10 @@ ShapeDragger* ShapeDragger::Get()
 
 void ShapeDragger::SetDragger(size_t index, float x, float y)
 {
-    draggers[index].setXYWH(x, y, size, size);
+    draggers[index].setXYWH(x, y, Size, Size);
 }
 
-void ShapeDragger::showDragger(SkCanvas* canvas)
+void ShapeDragger::ShowDragger(SkCanvas* canvas)
 {   
     SkPaint paint;
     paint.setStroke(true);
@@ -46,7 +46,7 @@ void ShapeDragger::showDragger(SkCanvas* canvas)
     visible = true;
 }
 
-bool ShapeDragger::hideDragger()
+bool ShapeDragger::HideDragger()
 {
     auto recorder = Recorder::Get();
     if (recorder->CurShape) {
@@ -61,15 +61,15 @@ bool ShapeDragger::hideDragger()
     return true;
 }
 
-void ShapeDragger::disableDragger(const int& startIndex)
+void ShapeDragger::DisableDragger(const int& startIndex)
 {
     for (size_t i = startIndex; i < draggers.size(); i++)
     {
-        draggers[i].setXYWH(-100, -100, size, size);
+        draggers[i].setXYWH(-100, -100, Size, Size);
     }
 }
 
-int ShapeDragger::indexMouseAt(const int& x, const int& y)
+int ShapeDragger::IndexMouseAt(const int& x, const int& y)
 {
     if (!visible) {
         return -1;
@@ -77,7 +77,7 @@ int ShapeDragger::indexMouseAt(const int& x, const int& y)
     for (size_t i = 0; i < draggers.size(); i++)
     {
         if (draggers[i].contains(x, y)) {
-            Cursor::SetCursor(cursors[i]);
+            Cursor::SetCursor(Cursors[i]);
             CurShape->HoverIndex = i;
             return i;
         }

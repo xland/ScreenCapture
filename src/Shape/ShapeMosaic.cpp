@@ -82,7 +82,7 @@ bool ShapeMosaic::OnMouseUp(const int &x, const int &y)
     delete[] pixmap->addr();
     delete pixmap;
     pixmap = nullptr;
-    ShapeDragger::Get()->disableDragger();
+    ShapeDragger::Get()->DisableDragger();
     return false;
 }
 
