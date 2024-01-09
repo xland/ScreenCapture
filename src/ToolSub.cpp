@@ -49,7 +49,7 @@ void ToolSub::Init()
     toolSub = new ToolSub();
 }
 
-ToolSub *ToolSub::get()
+ToolSub *ToolSub::Get()
 {
     return toolSub;
 }
@@ -103,13 +103,13 @@ bool ToolSub::OnMouseDown(const int& x, const int& y)
     if (index == 0) {
         if (btns[0]->isSelected) {
             btns[0]->isSelected = false;
-            if (ToolMain::get()->IndexSelected != 5) { //transparen line
+            if (ToolMain::Get()->IndexSelected != 5) { //transparen line
                 addStrokeWidthBtns(1);
             }            
         }
         else {
             btns[0]->isSelected = true;
-            if (ToolMain::get()->IndexSelected != 5) {
+            if (ToolMain::Get()->IndexSelected != 5) {
                 btns.erase(btns.begin() + 1, btns.begin() + 4);
             }
         }
@@ -184,7 +184,7 @@ bool ToolSub::OnPaint(SkCanvas *canvas)
     {
         return false;
     }
-    auto toolMain = ToolMain::get();
+    auto toolMain = ToolMain::Get();
     if (toolMain->IndexSelected < 0)
     {
         return false;
@@ -209,7 +209,7 @@ bool ToolSub::OnPaint(SkCanvas *canvas)
 
 void ToolSub::setRect()
 {
-    auto toolMain = ToolMain::get();
+    auto toolMain = ToolMain::Get();
     auto width = btns.size() * ToolBtn::width;
     auto left = toolMain->ToolRect.left();
     auto top = toolMain->ToolRect.bottom() + MarginTop;
@@ -229,12 +229,12 @@ void ToolSub::setRect()
     p.close();
 }
 
-bool ToolSub::getFill()
+bool ToolSub::GetFill()
 {
     return btns[0]->isSelected;
 }
 
-int ToolSub::getStroke()
+int ToolSub::GetStroke()
 {
     if (btns[1]->isSelected) {
         return 1;
@@ -247,7 +247,7 @@ int ToolSub::getStroke()
     }
 }
 
-SkColor ToolSub::getColor()
+SkColor ToolSub::GetColor()
 {
     auto it = std::find_if(btns.begin(), btns.end(), [](auto& btn) {
         return btn->icon == Icon::check;

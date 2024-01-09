@@ -82,7 +82,7 @@ bool ShapeMosaic::OnMouseUp(const int &x, const int &y)
     delete[] pixmap->addr();
     delete pixmap;
     pixmap = nullptr;
-    ShapeDragger::get()->disableDragger();
+    ShapeDragger::Get()->disableDragger();
     return false;
 }
 
@@ -154,11 +154,11 @@ void ShapeMosaic::initParams()
 {
     HoverIndex = 4;
     path.moveTo(startX, startY);
-    auto tool = ToolSub::get();
-    stroke = !tool->getFill();
+    auto tool = ToolSub::Get();
+    stroke = !tool->GetFill();
     if (stroke)
     {
-        auto stroke = tool->getStroke();
+        auto stroke = tool->GetStroke();
         if (stroke == 1)
         {
             strokeWidth = 36;

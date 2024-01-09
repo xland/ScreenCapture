@@ -7,7 +7,7 @@
 ShapePen::ShapePen(const int &x, const int &y) : ShapeBase(x, y)
 {
     IsWip = false;
-    ShapeDragger::get()->disableDragger();
+    ShapeDragger::Get()->disableDragger();
     initParams();
 }
 
@@ -57,10 +57,10 @@ void ShapePen::Paint(SkCanvas *canvas)
 void ShapePen::initParams()
 {
     path.moveTo(startX, startY);
-    auto tool = ToolSub::get();
-    stroke = !tool->getFill();
+    auto tool = ToolSub::Get();
+    stroke = !tool->GetFill();
     if (stroke) {
-        auto stroke = tool->getStroke();
+        auto stroke = tool->GetStroke();
         if (stroke == 1) {
             strokeWidth = 4;
         }
@@ -72,5 +72,5 @@ void ShapePen::initParams()
             strokeWidth = 28;
         }
     }
-    color = tool->getColor();
+    color = tool->GetColor();
 }

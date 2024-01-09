@@ -14,7 +14,7 @@ PixelInfo::~PixelInfo()
 {
 }
 
-void PixelInfo::init()
+void PixelInfo::Init()
 {
     if (!pixelInfo)
     {
@@ -22,7 +22,7 @@ void PixelInfo::init()
     }
 }
 
-PixelInfo* PixelInfo::get()
+PixelInfo* PixelInfo::Get()
 {
     return pixelInfo;
 }

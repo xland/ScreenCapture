@@ -34,7 +34,7 @@ void App::Init()
     ShapeDragger::Init();
     Timer::Init();
     win = new WindowMain();
-    CutMask::get()->EnumWinRects();
+    CutMask::Get()->EnumWinRects();
     win->Show();
     Cursor::Cross();
     initScreens();
@@ -43,11 +43,11 @@ void App::Init()
 void App::Dispose()
 {
     screens.clear();
-    delete Timer::get();
-    delete ShapeDragger::get();
-    delete Recorder::get();
-    delete ToolSub::get();
-    delete ToolMain::get();
+    delete Timer::Get();
+    delete ShapeDragger::Get();
+    delete Recorder::Get();
+    delete ToolSub::Get();
+    delete ToolMain::Get();
     delete fontIcon;
     delete fontText;
 }

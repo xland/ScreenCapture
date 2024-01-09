@@ -14,7 +14,7 @@ class Recorder
 public:
     ~Recorder();
     static void Init();
-    static Recorder *get();
+    static Recorder *Get();
     bool OnMouseDown(const int &x, const int &y);
     bool OnMouseDownRight(const int& x, const int& y);
     bool OnMouseUp(const int &x, const int &y);

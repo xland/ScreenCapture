@@ -128,7 +128,7 @@ void ShapeLine::Paint(SkCanvas *canvas)
 void ShapeLine::setDragger()
 {
     auto endPoint = path.getPoint(1);
-    auto shapeDragger = ShapeDragger::get();
+    auto shapeDragger = ShapeDragger::Get();
     unsigned half = shapeDragger->size / 2;
     shapeDragger->setDragger(0, startX - half, startY - half);
     shapeDragger->setDragger(1, endPoint.fX - half, endPoint.fY - half);
@@ -141,9 +141,9 @@ void ShapeLine::setDragger()
 void ShapeLine::initParams()
 {
     HoverIndex = 1;
-    auto tool = ToolSub::get();
-    fill = !tool->getFill();
-    auto stroke = tool->getStroke();
+    auto tool = ToolSub::Get();
+    fill = !tool->GetFill();
+    auto stroke = tool->GetStroke();
     if (stroke == 1)
     {
         strokeWidth = 26;
@@ -156,5 +156,5 @@ void ShapeLine::initParams()
     {
         strokeWidth = 86;
     }
-    color = tool->getColor();
+    color = tool->GetColor();
 }

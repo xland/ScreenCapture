@@ -24,7 +24,7 @@ void ShapeDragger::Init()
     shapeDragger = new ShapeDragger();
 }
 
-ShapeDragger* ShapeDragger::get()
+ShapeDragger* ShapeDragger::Get()
 {
     return shapeDragger;
 }
@@ -48,7 +48,7 @@ void ShapeDragger::showDragger(SkCanvas* canvas)
 
 bool ShapeDragger::hideDragger()
 {
-    auto recorder = Recorder::get();
+    auto recorder = Recorder::Get();
     if (recorder->curShape) {
         return false;
     }
@@ -77,7 +77,7 @@ int ShapeDragger::indexMouseAt(const int& x, const int& y)
     for (size_t i = 0; i < draggers.size(); i++)
     {
         if (draggers[i].contains(x, y)) {
-            Cursor::myCursor(cursors[i]);
+            Cursor::SetCursor(cursors[i]);
             curShape->HoverIndex = i;
             return i;
         }

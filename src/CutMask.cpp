@@ -30,7 +30,7 @@ CutMask::~CutMask()
 {
 }
 
-void CutMask::init()
+void CutMask::Init()
 {
     if (!cutMask)
     {
@@ -38,7 +38,7 @@ void CutMask::init()
     }
 }
 
-CutMask* CutMask::get()
+CutMask* CutMask::Get()
 {
     return cutMask;
 }
@@ -330,7 +330,7 @@ bool CutMask::OnMouseUp(const int& x, const int& y)
         return false;
     }
     win->state = State::tool;
-    auto tool = ToolMain::get();
+    auto tool = ToolMain::Get();
     tool->Reset();
     win->Refresh();
     Cursor::Arrow();

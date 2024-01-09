@@ -29,7 +29,7 @@ WindowPin::~WindowPin()
 
 void WindowPin::Save(const std::string& filePath)
 {
-    Recorder::get()->FinishPaint();
+    Recorder::Get()->FinishPaint();
     auto img = surfaceBase->makeImageSnapshot(SkIRect::MakeXYWH(shadowSize, shadowSize, surfaceFront->width(), surfaceFront->height()));    
     SkPixmap pixmap;
     img->peekPixels(&pixmap);
@@ -42,7 +42,7 @@ void WindowPin::Save(const std::string& filePath)
 
 void WindowPin::SaveToClipboard()
 {
-    Recorder::get()->FinishPaint();
+    Recorder::Get()->FinishPaint();
     HDC ScreenDC = GetDC(NULL);
     HDC hMemDC = CreateCompatibleDC(ScreenDC);
     auto w{ surfaceFront->width() }, h{ surfaceFront->height() };
@@ -99,7 +99,7 @@ void WindowPin::initSize()
     y = rect.fTop - shadowSize;
     w = rect.width() + shadowSize * 2;
     h = rect.height() + shadowSize * 2;
-    auto tm = ToolMain::get();
+    auto tm = ToolMain::Get();
     auto tempWidth = tm->ToolRect.width() + shadowSize * 2;
     if (w < tempWidth) {
         this->w = tempWidth;
@@ -125,8 +125,8 @@ void WindowPin::paintCanvas()
     canvas->drawImage(img, shadowSize,shadowSize);
     img = surfaceFront->makeImageSnapshot();
     canvas->drawImage(img, shadowSize, shadowSize);
-    ToolMain::get()->OnPaint(canvas);
-    ToolSub::get()->OnPaint(canvas);
+    ToolMain::Get()->OnPaint(canvas);
+    ToolSub::Get()->OnPaint(canvas);
 }
 
 LRESULT WindowPin::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
@@ -185,7 +185,7 @@ LRESULT WindowPin::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
         {
             if (state == State::start) {
                 state = State::tool;
-                auto tm = ToolMain::get();
+                auto tm = ToolMain::Get();
                 tm->SetPosition(8.0f, h - tm->ToolRect.height() * 2 - tm->MarginTop * 2);
                 tm->IndexSelected = -1;
                 tm->IndexHovered = -1;
@@ -216,13 +216,13 @@ bool WindowPin::onMouseDown(const int& x, const int& y)
         SetCapture(hwnd);
     }
     else {
-        if (ToolMain::get()->OnMouseDown(x, y)) {
+        if (ToolMain::Get()->OnMouseDown(x, y)) {
             return true;
         }
-        if (ToolSub::get()->OnMouseDown(x, y)) {
+        if (ToolSub::Get()->OnMouseDown(x, y)) {
             return true;
         }
-        Recorder::get()->OnMouseDown(x - shadowSize, y - shadowSize);
+        Recorder::Get()->OnMouseDown(x - shadowSize, y - shadowSize);
     }
 	return false;
 }
@@ -233,7 +233,7 @@ bool WindowPin::onMouseDownRight(const int& x, const int& y)
         showMenu();
     }
     else {
-        auto flag = Recorder::get()->OnMouseDownRight(x - shadowSize, y - shadowSize);
+        auto flag = Recorder::Get()->OnMouseDownRight(x - shadowSize, y - shadowSize);
         if (!flag) {
             showMenu();
         }
@@ -247,7 +247,7 @@ bool WindowPin::onMouseUp(const int& x, const int& y)
         ReleaseCapture();
     }
     else {
-        Recorder::get()->OnMouseUp(x-shadowSize, y - shadowSize);
+        Recorder::Get()->OnMouseUp(x-shadowSize, y - shadowSize);
     }
 	return false;
 }
@@ -257,12 +257,12 @@ bool WindowPin::onMouseMove(const int& x, const int& y)
     if (state == State::start) {
         return false;
     }
-    auto tm = ToolMain::get()->OnMouseMove(x, y);
-    auto ts = ToolSub::get()->OnMouseMove(x, y);
+    auto tm = ToolMain::Get()->OnMouseMove(x, y);
+    auto ts = ToolSub::Get()->OnMouseMove(x, y);
     if (tm || ts) {
         return false;
     }
-    Recorder::get()->OnMouseMove(x - shadowSize, y - shadowSize);
+    Recorder::Get()->OnMouseMove(x - shadowSize, y - shadowSize);
     return false;
 }
 
@@ -279,25 +279,25 @@ bool WindowPin::onMouseDrag(const int& x1, const int& y1)
         startPos = point;
     }
     else {
-        Recorder::get()->OnMouseDrag(x1 - shadowSize, y1 - shadowSize);
+        Recorder::Get()->OnMouseDrag(x1 - shadowSize, y1 - shadowSize);
     }
 	return false;
 }
 
 bool WindowPin::onChar(const unsigned int& val)
 {
-    Recorder::get()->OnChar(val);
+    Recorder::Get()->OnChar(val);
 	return false;
 }
 
 bool WindowPin::onKeyDown(const unsigned int& val)
 {
-    Recorder::get()->OnKeyDown(val);
+    Recorder::Get()->OnKeyDown(val);
 	return false;
 }
 
 bool WindowPin::onMouseWheel(const int& delta)
 {
-    Recorder::get()->OnMouseWheel(delta);
+    Recorder::Get()->OnMouseWheel(delta);
 	return false;
 }

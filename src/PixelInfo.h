@@ -10,8 +10,8 @@ class PixelInfo
 {
 public:
     ~PixelInfo();
-    static void init();
-    static PixelInfo *get();
+    static void Init();
+    static PixelInfo *Get();
     bool OnMouseMove(const int &x, const int &y);
 
 private:

@@ -126,7 +126,7 @@ bool ShapeRect::OnMoseDrag(const int& x, const int& y)
 void ShapeRect::setDragger()
 {
     rect.sort();
-    auto shapeDragger = ShapeDragger::get();
+    auto shapeDragger = ShapeDragger::Get();
     unsigned half = shapeDragger->size/2;
     float l = rect.x() - half;
     float t = rect.y() - half;
@@ -168,10 +168,10 @@ void ShapeRect::Paint(SkCanvas* canvas)
 void ShapeRect::initParams()
 {
     HoverIndex = 4;
-    auto tool = ToolSub::get();
-    stroke = !tool->getFill();
+    auto tool = ToolSub::Get();
+    stroke = !tool->GetFill();
     if (stroke) {
-        auto stroke = tool->getStroke();
+        auto stroke = tool->GetStroke();
         if (stroke == 1) {
             strokeWidth = 4;
         }
@@ -183,5 +183,5 @@ void ShapeRect::initParams()
             strokeWidth = 16;
         }
     }
-    color = tool->getColor();
+    color = tool->GetColor();
 }

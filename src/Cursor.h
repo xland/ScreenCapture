@@ -43,7 +43,7 @@ namespace Cursor
         hand,
     };
 
-    static void myCursor(cursor cursorType = cursor::arrow) {
+    static void SetCursor(cursor cursorType = cursor::arrow) {
         switch (cursorType)
         {
         case cursor::all:

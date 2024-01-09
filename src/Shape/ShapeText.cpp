@@ -17,8 +17,8 @@
 ShapeText::ShapeText(const int &x, const int &y) : ShapeBase(x, y)
 {
     IsTemp = false;
-    auto tool = ToolSub::get();
-    color = tool->getColor();
+    auto tool = ToolSub::Get();
+    color = tool->GetColor();
     auto font = App::GetFontText();
     font->setSize(fontSize);
     float left{ (float)startX - 10 }, top{ (float)startY - 10 }, width{ 20 }, height{ 0 };
@@ -29,7 +29,7 @@ ShapeText::ShapeText(const int &x, const int &y) : ShapeBase(x, y)
     top += lineRect.top();
     rect.setXYWH(left, top, width, height);
     activeKeyboard(getCursorX(), startY);
-    ShapeDragger::get()->disableDragger();
+    ShapeDragger::Get()->disableDragger();
 }
 
 ShapeText::~ShapeText()
@@ -40,7 +40,7 @@ bool ShapeText::FlashCursor()
 {
     Paint(nullptr);
     auto func = std::bind(&ShapeText::FlashCursor, this);
-    Timer::get()->Start(1, 600, func);
+    Timer::Get()->Start(1, 600, func);
     return false;
 }
 
@@ -49,7 +49,7 @@ bool ShapeText::OnMouseDown(const int &x, const int &y)
     if (!rect.contains(x, y)) {
         return false;
     }
-    auto timer = Timer::get();
+    auto timer = Timer::Get();
     timer->Remove(1);
     auto func = std::bind(&ShapeText::FlashCursor, this);
     timer->Start(1, 600, func);

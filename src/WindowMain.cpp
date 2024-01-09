@@ -16,8 +16,8 @@
 
 WindowMain::WindowMain()
 {
-    CutMask::init();
-    PixelInfo::init();
+    CutMask::Init();
+    PixelInfo::Init();
     initSize();
     shotScreen();
     initWindow();
@@ -26,13 +26,13 @@ WindowMain::WindowMain()
 
 WindowMain::~WindowMain()
 {
-    delete PixelInfo::get();
-    delete CutMask::get();
+    delete PixelInfo::Get();
+    delete CutMask::Get();
 }
 
 void WindowMain::Save(const std::string& filePath)
 {
-    Recorder::get()->FinishPaint();
+    Recorder::Get()->FinishPaint();
     auto rect = CutMask::GetCutRect();
     auto img = surfaceBase->makeImageSnapshot(SkIRect::MakeLTRB(rect.fLeft, rect.fTop, rect.fRight, rect.fBottom));    
     SkPixmap pixmap;
@@ -46,7 +46,7 @@ void WindowMain::Save(const std::string& filePath)
 
 void WindowMain::SaveToClipboard()
 {
-    Recorder::get()->FinishPaint();
+    Recorder::Get()->FinishPaint();
     auto rect = CutMask::GetCutRect();
     HDC ScreenDC = GetDC(NULL);
     HDC hMemDC = CreateCompatibleDC(ScreenDC);
@@ -142,29 +142,29 @@ void WindowMain::paintCanvas()
     canvas->drawImage(img, 0.f, 0.f);
     img = surfaceFront->makeImageSnapshot();
     canvas->drawImage(img, 0.f, 0.f);
-    CutMask::get()->OnPaint(canvas);
-    ToolMain::get()->OnPaint(canvas);
-    ToolSub::get()->OnPaint(canvas);
+    CutMask::Get()->OnPaint(canvas);
+    ToolMain::Get()->OnPaint(canvas);
+    ToolSub::Get()->OnPaint(canvas);
 }
 
 bool WindowMain::onMouseDown(const int& x, const int& y)
 {
-    if (ToolMain::get()->OnMouseDown(x, y)) {
+    if (ToolMain::Get()->OnMouseDown(x, y)) {
         return true;
     }
-    if (ToolSub::get()->OnMouseDown(x, y)) {
+    if (ToolSub::Get()->OnMouseDown(x, y)) {
         return true;
     }
-    auto cmFlag = CutMask::get()->OnMouseDown(x, y);
+    auto cmFlag = CutMask::Get()->OnMouseDown(x, y);
     if (cmFlag) {
         return true;
     }
-    Recorder::get()->OnMouseDown(x, y);
+    Recorder::Get()->OnMouseDown(x, y);
     return true;
 }
 bool WindowMain::onMouseDownRight(const int& x, const int& y)
 {
-    bool flag = Recorder::get()->OnMouseDownRight(x, y);
+    bool flag = Recorder::Get()->OnMouseDownRight(x, y);
     if (!flag) {
         App::Quit(2);
     }
@@ -172,57 +172,57 @@ bool WindowMain::onMouseDownRight(const int& x, const int& y)
 }
 bool WindowMain::onMouseUp(const int& x, const int& y)
 {
-    if (ToolMain::get()->OnMouseUp(x, y)) {
+    if (ToolMain::Get()->OnMouseUp(x, y)) {
         return true;
     }
-    if (ToolSub::get()->OnMouseUp(x, y)) {
+    if (ToolSub::Get()->OnMouseUp(x, y)) {
         return true;
     }
-    Recorder::get()->OnMouseUp(x, y);
-    CutMask::get()->OnMouseUp(x, y);
+    Recorder::Get()->OnMouseUp(x, y);
+    CutMask::Get()->OnMouseUp(x, y);
     return false;
 }
 bool WindowMain::onMouseMove(const int& x, const int& y)
 {
-    auto tm = ToolMain::get()->OnMouseMove(x, y);
-    auto ts = ToolSub::get()->OnMouseMove(x, y);
+    auto tm = ToolMain::Get()->OnMouseMove(x, y);
+    auto ts = ToolSub::Get()->OnMouseMove(x, y);
     if (tm || ts) {
         return false;
     }
-    auto cm = CutMask::get()->OnMouseMove(x, y);
+    auto cm = CutMask::Get()->OnMouseMove(x, y);
     if (cm) {
         return false;
     }
-    PixelInfo::get()->OnMouseMove(x, y);
-    Recorder::get()->OnMouseMove(x, y);
+    PixelInfo::Get()->OnMouseMove(x, y);
+    Recorder::Get()->OnMouseMove(x, y);
     return false;
 }
 bool WindowMain::onMouseDrag(const int& x, const int& y)
 {
-    auto tm = ToolMain::get()->OnMouseMove(x, y);
-    auto ts = ToolSub::get()->OnMouseMove(x, y);
+    auto tm = ToolMain::Get()->OnMouseMove(x, y);
+    auto ts = ToolSub::Get()->OnMouseMove(x, y);
     if (tm || ts) {
         return false;
     }
-    auto cm = CutMask::get()->OnMouseDrag(x, y);
+    auto cm = CutMask::Get()->OnMouseDrag(x, y);
     if (cm) {
         return false;
     }
-    Recorder::get()->OnMouseDrag(x, y);    
+    Recorder::Get()->OnMouseDrag(x, y);    
     return false;
 }
 bool WindowMain::onChar(const unsigned int& val)
 {
-    Recorder::get()->OnChar(val);
+    Recorder::Get()->OnChar(val);
     return false;
 }
 bool WindowMain::onKeyDown(const unsigned int& val)
 {
-    bool flag = Recorder::get()->OnKeyDown(val);
+    bool flag = Recorder::Get()->OnKeyDown(val);
     if (flag) {
         return true;
     }
-    flag = CutMask::get()->OnKeyDown(val);
+    flag = CutMask::Get()->OnKeyDown(val);
     if (flag) {
         return true;
     }
@@ -244,7 +244,7 @@ bool WindowMain::onKeyDown(const unsigned int& val)
 }
 bool WindowMain::onMouseWheel(const int& delta)
 {
-    Recorder::get()->OnMouseWheel(delta);
+    Recorder::Get()->OnMouseWheel(delta);
     return false;
 }
 void WindowMain::shotScreen()

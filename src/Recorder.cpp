@@ -30,7 +30,7 @@ void Recorder::Init()
     recorder = new Recorder();
 }
 
-Recorder *Recorder::get()
+Recorder *Recorder::Get()
 {
     return recorder;
 }
@@ -78,7 +78,7 @@ bool Recorder::OnMouseDownRight(const int& x, const int& y)
     //正在写字，右键点击 结束写字
     if (curShape && curShape->IsWip && typeid(*curShape) == typeid(ShapeText) ) {
         curShape->IsWip = false;
-        Timer::get()->Remove(1);
+        Timer::Get()->Remove(1);
         auto win = App::GetWin();
         auto canvasFront = win->surfaceFront->getCanvas();
         canvasFront->clear(SK_ColorTRANSPARENT);
@@ -86,7 +86,7 @@ bool Recorder::OnMouseDownRight(const int& x, const int& y)
         curShape->Paint(canvasBack);
         win->refresh();
         curShape = nullptr;
-        auto toolMain = ToolMain::get();
+        auto toolMain = ToolMain::Get();
         toolMain->SetUndoDisable(false);
         return true;
     }
@@ -127,10 +127,10 @@ bool Recorder::OnMouseUp(const int &x, const int &y)
             undoDisable = false;
         }
     }
-    auto toolMain = ToolMain::get();
+    auto toolMain = ToolMain::Get();
     toolMain->SetUndoDisable(undoDisable);
     toolMain->SetRedoDisable(redoDisable);
-    ShapeDragger::get()->showDragger(canvasFront);
+    ShapeDragger::Get()->showDragger(canvasFront);
     win->Refresh();
     return false;
 }
@@ -162,7 +162,7 @@ bool Recorder::OnMouseMove(const int &x, const int &y)
             break;
         }
     }
-    auto shapeDragger = ShapeDragger::get();
+    auto shapeDragger = ShapeDragger::Get();
     int index = shapeDragger->indexMouseAt(x, y);
     if (index >= 0) {
         curShape = shapeDragger->curShape;
@@ -175,8 +175,8 @@ bool Recorder::OnMouseMove(const int &x, const int &y)
         win->Refresh();
     }
     else {       
-        Timer::get()->Start(0, 800, []() {
-            return ShapeDragger::get()->hideDragger();
+        Timer::Get()->Start(0, 800, []() {
+            return ShapeDragger::Get()->hideDragger();
             });
     }
     return false;
@@ -244,7 +244,7 @@ void Recorder::Undo()
             undoDisable = false;
         }
     }
-    auto toolMain = ToolMain::get();
+    auto toolMain = ToolMain::Get();
     toolMain->SetUndoDisable(undoDisable);
     toolMain->SetRedoDisable(redoDisable);
     win->Refresh();
@@ -276,7 +276,7 @@ void Recorder::Redo()
             undoDisable = false;
         }
     }
-    auto toolMain = ToolMain::get();
+    auto toolMain = ToolMain::Get();
     toolMain->SetUndoDisable(undoDisable);
     toolMain->SetRedoDisable(redoDisable);
     win->Refresh();
@@ -286,7 +286,7 @@ void Recorder::FinishPaint()
 {
     auto flag = OnMouseDownRight(-1, -1);
     if (!flag) {
-        ShapeDragger::get()->hideDragger();
+        ShapeDragger::Get()->hideDragger();
     } 
 }
 

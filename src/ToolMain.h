@@ -12,7 +12,7 @@ class ToolMain : public ToolBase
 public:
     ~ToolMain();
     static void Init();
-    static ToolMain *get();
+    static ToolMain *Get();
     bool OnMouseDown(const int& x, const int& y) override;
     void SetPositionByCutMask();
     void SetPosition(const float& x,const float& y);

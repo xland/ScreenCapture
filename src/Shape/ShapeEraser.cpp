@@ -34,7 +34,7 @@ bool ShapeEraser::OnMouseDown(const int& x, const int& y)
 
 bool ShapeEraser::OnMouseUp(const int& x, const int& y)
 {
-    ShapeDragger::get()->disableDragger();    
+    ShapeDragger::Get()->disableDragger();    
     return false;
 }
 
@@ -58,10 +58,10 @@ void ShapeEraser::initParams()
 {
     HoverIndex = 4;
     path.moveTo(startX, startY);
-    auto tool = ToolSub::get();
-    stroke = !tool->getFill();
+    auto tool = ToolSub::Get();
+    stroke = !tool->GetFill();
     if (stroke) {
-        auto stroke = tool->getStroke();
+        auto stroke = tool->GetStroke();
         if (stroke == 1) {
             strokeWidth = 26;
         }

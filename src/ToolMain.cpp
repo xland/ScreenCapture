@@ -79,7 +79,7 @@ void ToolMain::saveFile()
 
 void ToolMain::SetPositionByCutMask()
 {
-    auto mask = CutMask::get();
+    auto mask = CutMask::Get();
     float left{ mask->CutRect.fRight - btns.size() * ToolBtn::width };
     float top{ mask->CutRect.fBottom + MarginTop };
     //三个缝隙高度和两个工具条高度
@@ -150,7 +150,7 @@ void ToolMain::Init()
     toolMain = new ToolMain();
 }
 
-ToolMain *ToolMain::get()
+ToolMain *ToolMain::Get()
 {
     return toolMain;
 }
@@ -182,7 +182,7 @@ bool ToolMain::OnMouseDown(const int& x, const int& y)
                 btns[IndexSelected]->isSelected = false;
             }
             IndexSelected = IndexHovered;
-            ToolSub::get()->InitBtns(IndexSelected);
+            ToolSub::Get()->InitBtns(IndexSelected);
             win->state = (State)(IndexSelected + 3);
             win->Refresh();
         }
@@ -193,11 +193,11 @@ bool ToolMain::OnMouseDown(const int& x, const int& y)
             switch (IndexHovered)
             {
             case 9: {
-                Recorder::get()->Undo();
+                Recorder::Get()->Undo();
                 break;
             }
             case 10: {
-                Recorder::get()->Redo();
+                Recorder::Get()->Redo();
                 break;
             }
             case 11: {

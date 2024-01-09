@@ -89,11 +89,11 @@ void ShapeArrow::Paint(SkCanvas* canvas)
 void ShapeArrow::initParams()
 {
     HoverIndex = 1;
-    auto tool = ToolSub::get();
-    stroke = !tool->getFill();
+    auto tool = ToolSub::Get();
+    stroke = !tool->GetFill();
     if (stroke)
     {
-        auto stroke = tool->getStroke();
+        auto stroke = tool->GetStroke();
         if (stroke == 1)
         {
             strokeWidth = 4;
@@ -107,7 +107,7 @@ void ShapeArrow::initParams()
             strokeWidth = 16;
         }
     }
-    color = tool->getColor();
+    color = tool->GetColor();
 }
 
 void ShapeArrow::makePath(const int& x1, const int& y1, const int& x2, const int& y2)
@@ -151,7 +151,7 @@ void ShapeArrow::makePath(const int& x1, const int& y1, const int& x2, const int
 
 void ShapeArrow::setDragger()
 {
-    auto shapeDragger = ShapeDragger::get();
+    auto shapeDragger = ShapeDragger::Get();
     unsigned half = shapeDragger->size / 2;
     shapeDragger->setDragger(0, startX - half, startY - half);
     shapeDragger->setDragger(1, endX - half, endY - half);

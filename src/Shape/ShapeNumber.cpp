@@ -114,11 +114,11 @@ void ShapeNumber::initParams()
     number = num;
     num += 1;
     HoverIndex = 0;
-    auto tool = ToolSub::get();
-    stroke = !tool->getFill();
+    auto tool = ToolSub::Get();
+    stroke = !tool->GetFill();
     if (stroke)
     {
-        auto stroke = tool->getStroke();
+        auto stroke = tool->GetStroke();
         if (stroke == 1)
         {
             strokeWidth = 4;
@@ -132,7 +132,7 @@ void ShapeNumber::initParams()
             strokeWidth = 16;
         }
     }
-    color = tool->getColor();
+    color = tool->GetColor();
 }
 
 void ShapeNumber::makePath(const int &x1, const int &y1, const int &x2, const int &y2)
@@ -161,7 +161,7 @@ void ShapeNumber::makePath(const int &x1, const int &y1, const int &x2, const in
 
 void ShapeNumber::setDragger()
 {
-    auto shapeDragger = ShapeDragger::get();
+    auto shapeDragger = ShapeDragger::Get();
     unsigned half = shapeDragger->size / 2;
     shapeDragger->setDragger(0, endX - half, endY - half);
     shapeDragger->cursors[0] = Cursor::cursor::all;

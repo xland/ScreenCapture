@@ -10,8 +10,8 @@ class CutMask
 {
 public:
     ~CutMask();
-    static void init();
-    static CutMask* get();
+    static void Init();
+    static CutMask* Get();
     static SkRect GetCutRect();
     bool OnMouseDown(const int& x, const int& y);
     bool OnMouseUp(const int& x, const int& y);

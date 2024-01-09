@@ -24,7 +24,7 @@ void Timer::Init()
     timer = new Timer();
 }
 
-Timer* Timer::get()
+Timer* Timer::Get()
 {
     return timer;
 }
