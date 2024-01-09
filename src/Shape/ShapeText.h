@@ -19,7 +19,7 @@ public:
     bool OnChar(const unsigned int& val) override;
     bool OnKeyDown(const unsigned int& val) override;
     void Paint(SkCanvas *canvas) override;   
-    bool onMouseWheel(const int& delta) override;
+    bool OnMouseWheel(const int& delta) override;
     bool FlashCursor();
     bool showCursor{ true };
 protected:

@@ -11,7 +11,7 @@ public:
     ~ShapeDragger();
     static void Init();
     static ShapeDragger* Get();
-    void setDragger(size_t index, float x, float y);
+    void SetDragger(size_t index, float x, float y);
     void showDragger(SkCanvas* canvas);
     bool hideDragger();
     void disableDragger(const int& startIndex = 0);

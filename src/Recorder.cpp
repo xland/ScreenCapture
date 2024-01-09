@@ -210,7 +210,7 @@ bool Recorder::OnMouseWheel(const int& delta)
 {
     if (CurShape)
     {
-        CurShape->onMouseWheel(delta);
+        CurShape->OnMouseWheel(delta);
     }
     return false;
 }

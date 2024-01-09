@@ -29,7 +29,7 @@ ShapeDragger* ShapeDragger::Get()
     return shapeDragger;
 }
 
-void ShapeDragger::setDragger(size_t index, float x, float y)
+void ShapeDragger::SetDragger(size_t index, float x, float y)
 {
     draggers[index].setXYWH(x, y, size, size);
 }

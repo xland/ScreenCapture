@@ -153,8 +153,8 @@ void ShapeArrow::setDragger()
 {
     auto shapeDragger = ShapeDragger::Get();
     unsigned half = shapeDragger->size / 2;
-    shapeDragger->setDragger(0, startX - half, startY - half);
-    shapeDragger->setDragger(1, endX - half, endY - half);
+    shapeDragger->SetDragger(0, startX - half, startY - half);
+    shapeDragger->SetDragger(1, endX - half, endY - half);
     shapeDragger->disableDragger(2);
     shapeDragger->cursors[0] = Cursor::cursor::all;
     shapeDragger->cursors[1] = Cursor::cursor::all;

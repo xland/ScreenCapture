@@ -163,7 +163,7 @@ void ShapeNumber::setDragger()
 {
     auto shapeDragger = ShapeDragger::Get();
     unsigned half = shapeDragger->size / 2;
-    shapeDragger->setDragger(0, endX - half, endY - half);
+    shapeDragger->SetDragger(0, endX - half, endY - half);
     shapeDragger->cursors[0] = Cursor::cursor::all;
     shapeDragger->disableDragger(1);
     shapeDragger->CurShape = this;

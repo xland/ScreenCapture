@@ -19,7 +19,7 @@ public:
     virtual bool OnMoseDrag(const int& x, const int& y) { return false; };
     virtual bool OnChar(const unsigned int& val) { return false; };
     virtual bool OnKeyDown(const unsigned int& val) { return false; };
-    virtual bool onMouseWheel(const int& delta) { return false; };
+    virtual bool OnMouseWheel(const int& delta) { return false; };
     virtual void Paint(SkCanvas* canvas) { };
     bool IsWip{true}; //在制品，在FrontCanvas绘制
     bool IsDel{ false }; //Undo品

@@ -125,7 +125,7 @@ bool ShapeText::OnMoseDrag(const int &x, const int &y)
     Paint(nullptr);
     return false;
 }
-bool ShapeText::onMouseWheel(const int& delta)
+bool ShapeText::OnMouseWheel(const int& delta)
 {
     if (delta > 0) {
         fontSize += 3;
