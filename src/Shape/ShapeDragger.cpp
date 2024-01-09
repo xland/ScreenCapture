@@ -49,7 +49,7 @@ void ShapeDragger::showDragger(SkCanvas* canvas)
 bool ShapeDragger::hideDragger()
 {
     auto recorder = Recorder::Get();
-    if (recorder->curShape) {
+    if (recorder->CurShape) {
         return false;
     }
     auto win = App::GetWin();
@@ -57,7 +57,7 @@ bool ShapeDragger::hideDragger()
     canvas->clear(SK_ColorTRANSPARENT);
     win->refresh();
     visible = false;
-    curShape = nullptr;
+    CurShape = nullptr;
     return true;
 }
 
@@ -78,7 +78,7 @@ int ShapeDragger::indexMouseAt(const int& x, const int& y)
     {
         if (draggers[i].contains(x, y)) {
             Cursor::SetCursor(cursors[i]);
-            curShape->HoverIndex = i;
+            CurShape->HoverIndex = i;
             return i;
         }
     }

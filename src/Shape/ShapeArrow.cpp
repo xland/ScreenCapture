@@ -158,5 +158,5 @@ void ShapeArrow::setDragger()
     shapeDragger->disableDragger(2);
     shapeDragger->cursors[0] = Cursor::cursor::all;
     shapeDragger->cursors[1] = Cursor::cursor::all;
-    shapeDragger->curShape = this;
+    shapeDragger->CurShape = this;
 }

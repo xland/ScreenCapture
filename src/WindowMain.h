@@ -14,7 +14,7 @@ public:
     void Save(const std::string& filePath) override;
     void SaveToClipboard() override;
 private:
-    LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) override;
+    LRESULT CALLBACK wndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) override;
     void initCanvas() override;
     void paintCanvas() override;
     void initSize() override;

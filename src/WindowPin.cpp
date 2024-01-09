@@ -129,7 +129,7 @@ void WindowPin::paintCanvas()
     ToolSub::Get()->OnPaint(canvas);
 }
 
-LRESULT WindowPin::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
+LRESULT WindowPin::wndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
     switch (msg)
     {

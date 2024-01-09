@@ -26,10 +26,10 @@ public:
     void Undo();
     void Redo();
     void FinishPaint();
-    std::vector<std::shared_ptr<ShapeBase>> shapes;
-    ShapeBase* curShape{ nullptr };
+    ShapeBase* CurShape{ nullptr };
 private:
     Recorder();
     void createShape(const int& x, const int& y,const State& state);
+    std::vector<std::shared_ptr<ShapeBase>> shapes;
     
 };

@@ -25,19 +25,19 @@ bool ToolBase::OnMouseMove(const int& x, const int& y)
     {
         if (IndexHovered >= 0)
         {
-            btns[IndexHovered]->isHover = false;
+            btns[IndexHovered]->IsHover = false;
             IndexHovered = -1;
             win->Refresh();
         }
         return false;
     }
     Cursor::Hand();
-    int index = (x - ToolRect.left()) / ToolBtn::width;
+    int index = (x - ToolRect.left()) / ToolBtn::Width;
     if (index != IndexHovered)
     {
-        btns[index]->isHover = true;
+        btns[index]->IsHover = true;
         if (IndexHovered >= 0) {
-            btns[IndexHovered]->isHover = false;
+            btns[IndexHovered]->IsHover = false;
         }
         IndexHovered = index;
         win->Refresh();

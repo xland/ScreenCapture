@@ -80,10 +80,10 @@ void ToolMain::saveFile()
 void ToolMain::SetPositionByCutMask()
 {
     auto mask = CutMask::Get();
-    float left{ mask->CutRect.fRight - btns.size() * ToolBtn::width };
+    float left{ mask->CutRect.fRight - btns.size() * ToolBtn::Width };
     float top{ mask->CutRect.fBottom + MarginTop };
     //三个缝隙高度和两个工具条高度
-    auto heightSpan = MarginTop * 3 + ToolBtn::height * 2;    
+    auto heightSpan = MarginTop * 3 + ToolBtn::Height * 2;    
     auto screen = App::GetScreen(mask->CutRect.fRight, mask->CutRect.fBottom + heightSpan);
     if (screen) { //工具条右下角在屏幕内
         //工具条左上角不在屏幕内
@@ -97,29 +97,29 @@ void ToolMain::SetPositionByCutMask()
         if (screen) { //工具条右上角在屏幕内  
             if (App::GetScreen(left, mask->CutRect.fTop - heightSpan)) { //工具条左上角在屏幕内
                 if (IndexSelected == -1) { //不需要显示子工具条，主工具条贴着截图区                    
-                    top = mask->CutRect.fTop - MarginTop - ToolBtn::height;
+                    top = mask->CutRect.fTop - MarginTop - ToolBtn::Height;
                 }
                 else { //需要显示子工具条，要为子工具条留出区域
-                    top = mask->CutRect.fTop - MarginTop * 2 - ToolBtn::height * 2;
+                    top = mask->CutRect.fTop - MarginTop * 2 - ToolBtn::Height * 2;
                 }
             }
             else { //工具条左上角不在屏幕中
                 left = screen->fLeft;
                 if (IndexSelected == -1) { //不需要显示子工具条，主工具条贴着截图区
-                    top = mask->CutRect.fTop - MarginTop - ToolBtn::height;
+                    top = mask->CutRect.fTop - MarginTop - ToolBtn::Height;
                 }
                 else { //需要显示子工具条，要为子工具条留出区域
-                    top = mask->CutRect.fTop - MarginTop * 2 - ToolBtn::height * 2;
+                    top = mask->CutRect.fTop - MarginTop * 2 - ToolBtn::Height * 2;
                 }
             }
         }
         else { //工具条右上角不在屏幕内，此时屏幕顶部和屏幕底部都没有足够的空间，工具条只能显示在截图区域内            
             if (App::GetScreen(left, mask->CutRect.fBottom - heightSpan)) { //工具条左上角在屏幕内
                 if (IndexSelected == -1) { //不需要显示子工具条，主工具条贴着截图区
-                    top = mask->CutRect.fBottom - MarginTop - ToolBtn::height;
+                    top = mask->CutRect.fBottom - MarginTop - ToolBtn::Height;
                 }
                 else { //需要显示子工具条，要为子工具条留出区域
-                    top = mask->CutRect.fBottom - MarginTop * 2 - ToolBtn::height * 2;
+                    top = mask->CutRect.fBottom - MarginTop * 2 - ToolBtn::Height * 2;
                 }
             }
             else { //工具条左上角不在屏幕中，得到截图区域所在屏幕
@@ -127,21 +127,21 @@ void ToolMain::SetPositionByCutMask()
                 if (screen) {
                     left = screen->fLeft;
                     if (IndexSelected == -1) { //不需要显示子工具条，主工具条贴着截图区
-                        top = mask->CutRect.fBottom - MarginTop - ToolBtn::height;
+                        top = mask->CutRect.fBottom - MarginTop - ToolBtn::Height;
                     }
                     else { //需要显示子工具条，要为子工具条留出区域
-                        top = mask->CutRect.fBottom - MarginTop * 2 - ToolBtn::height * 2;
+                        top = mask->CutRect.fBottom - MarginTop * 2 - ToolBtn::Height * 2;
                     }
                 }
             }
         }
     }
-    ToolRect.setXYWH(left,top, btns.size() * ToolBtn::width, ToolBtn::height);
+    ToolRect.setXYWH(left,top, btns.size() * ToolBtn::Width, ToolBtn::Height);
 }
 
 void ToolMain::SetPosition(const float& x, const float& y)
 {
-    ToolRect.setXYWH(x, y, btns.size() * ToolBtn::width, ToolBtn::height);
+    ToolRect.setXYWH(x, y, btns.size() * ToolBtn::Width, ToolBtn::Height);
 }
 
 
@@ -169,17 +169,17 @@ bool ToolMain::OnMouseDown(const int& x, const int& y)
     }
     if (IndexHovered == IndexSelected)
     {
-        btns[IndexHovered]->isSelected = false;
+        btns[IndexHovered]->IsSelected = false;
         IndexSelected = -1;
         win->state = State::tool;
         win->Refresh();
     }
     else
     {
-        if (btns[IndexHovered]->selectable) {
-            btns[IndexHovered]->isSelected = true;
+        if (btns[IndexHovered]->Selectable) {
+            btns[IndexHovered]->IsSelected = true;
             if (IndexSelected >= 0) {
-                btns[IndexSelected]->isSelected = false;
+                btns[IndexSelected]->IsSelected = false;
             }
             IndexSelected = IndexHovered;
             ToolSub::Get()->InitBtns(IndexSelected);
@@ -187,7 +187,7 @@ bool ToolMain::OnMouseDown(const int& x, const int& y)
             win->Refresh();
         }
         else {
-            if (btns[IndexHovered]->isDisable) {
+            if (btns[IndexHovered]->IsDisable) {
                 return true;
             }
             switch (IndexHovered)
@@ -201,19 +201,19 @@ bool ToolMain::OnMouseDown(const int& x, const int& y)
                 break;
             }
             case 11: {
-                btns[11]->isHover = false;
-                btns[11]->isDisable = true;
+                btns[11]->IsHover = false;
+                btns[11]->IsDisable = true;
                 App::Pin();
                 break;
             }
             case 12: {
                 saveFile();
-                btns[12]->isHover = false;
+                btns[12]->IsHover = false;
                 break;
             }
             case 13: {
                 App::GetWin()->SaveToClipboard();                
-                btns[13]->isHover = false;
+                btns[13]->IsHover = false;
                 break;
             }
             case 14: {
@@ -243,15 +243,15 @@ bool ToolMain::OnPaint(SkCanvas *canvas)
     for (auto& btn : btns)
     {
         btn->Paint(canvas, paint, x, y);
-        x += ToolBtn::width;
+        x += ToolBtn::Width;
     }
     paint.setColor(SkColorSetARGB(255, 180, 180, 180));
-    x = ToolRect.left()+ToolBtn::width*9;
+    x = ToolRect.left()+ToolBtn::Width*9;
     paint.setStroke(true);
     paint.setStrokeWidth(0.6f);
     paint.setStrokeCap(SkPaint::Cap::kRound_Cap);
     canvas->drawLine(SkPoint::Make(x, y + 12), SkPoint::Make(x, ToolRect.bottom()-12), paint);
-    x += ToolBtn::width * 2;
+    x += ToolBtn::Width * 2;
     canvas->drawLine(SkPoint::Make(x, y + 12), SkPoint::Make(x, ToolRect.bottom() - 12), paint);    
     paint.setColor(SkColorSetARGB(255, 22, 118, 255));
     canvas->drawRect(ToolRect,paint);
@@ -260,12 +260,12 @@ bool ToolMain::OnPaint(SkCanvas *canvas)
 
 void ToolMain::SetUndoDisable(bool flag)
 {
-    btns[9]->isDisable = flag;
+    btns[9]->IsDisable = flag;
 }
 
 void ToolMain::SetRedoDisable(bool flag)
 {
-    btns[10]->isDisable = flag;
+    btns[10]->IsDisable = flag;
 }
 
 void ToolMain::InitBtns()

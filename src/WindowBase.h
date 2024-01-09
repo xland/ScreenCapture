@@ -31,7 +31,7 @@ public:
     SkPixmap* pixBase;
 
 protected:
-    virtual LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) = 0;
+    virtual LRESULT CALLBACK wndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) = 0;
     virtual void initCanvas() = 0;
     virtual void paintCanvas() = 0;
     virtual void initSize() = 0;

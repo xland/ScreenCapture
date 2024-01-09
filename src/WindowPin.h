@@ -16,7 +16,7 @@ private:
     void initCanvas() override;
     void initSize() override;
     void showMenu();
-    LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) override;
+    LRESULT CALLBACK wndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) override;
     void paintCanvas() override;
     bool onMouseDown(const int& x, const int& y);
     bool onMouseDownRight(const int& x, const int& y);

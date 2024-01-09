@@ -32,19 +32,19 @@ Timer* Timer::Get()
 void Timer::Start(const int id, const int& timeSpan, std::function<bool()> taskFunc)
 {
     auto it = std::find_if(tasks.begin(), tasks.end(), [id](auto& task) {
-        return task->id == id;
+        return task->Id == id;
         });
     auto startTime = std::chrono::steady_clock::now() + std::chrono::milliseconds(timeSpan);
     {
         std::lock_guard<std::mutex> lock(mutex);
         if (it != tasks.end()) {
-            it->get()->startTime = startTime;
+            it->get()->StartTime = startTime;
         }
         else {
             tasks.push_back(std::make_shared<TimerTask>(id, startTime, taskFunc));
         }
         std::sort(tasks.begin(), tasks.end(), [](auto& a, auto& b) {
-            return a->startTime < b->startTime;
+            return a->StartTime < b->StartTime;
             });
     }
 }
@@ -52,7 +52,7 @@ void Timer::Start(const int id, const int& timeSpan, std::function<bool()> taskF
 void Timer::Remove(const int& id)
 {
     auto it = std::find_if(tasks.begin(), tasks.end(), [id](std::shared_ptr<TimerTask> task){
-        return task->id == id;
+        return task->Id == id;
     });
     if (it != tasks.end()) {
         std::lock_guard<std::mutex> lock(mutex);
@@ -67,8 +67,8 @@ void Timer::asyncTask()
         auto now = std::chrono::steady_clock::now();        
         auto currentTime = std::chrono::steady_clock::now();
         auto it = std::remove_if(tasks.begin(), tasks.end(), [currentTime](auto& task) {
-            if (task->startTime <= currentTime) {
-                return task->taskFunc();
+            if (task->StartTime <= currentTime) {
+                return task->TaskFunc();
             }
             return false;
             });

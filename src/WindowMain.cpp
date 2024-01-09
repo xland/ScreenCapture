@@ -78,7 +78,7 @@ void WindowMain::initCanvas()
     surfaceBase->peekPixels(pixBase);
 }
 
-LRESULT WindowMain::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
+LRESULT WindowMain::wndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
     switch (msg)
     {

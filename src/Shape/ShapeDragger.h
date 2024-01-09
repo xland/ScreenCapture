@@ -16,7 +16,7 @@ public:
     bool hideDragger();
     void disableDragger(const int& startIndex = 0);
     int indexMouseAt(const int& x, const int& y);
-    ShapeBase* curShape;
+    ShapeBase* CurShape;
     float size{ 10 };
     std::vector<SkRect> draggers;
     std::vector<Cursor::cursor> cursors;

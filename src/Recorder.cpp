@@ -42,14 +42,14 @@ bool Recorder::OnMouseDown(const int &x, const int &y)
     {
         return false;
     }
-    if (curShape)
+    if (CurShape)
     {        
-        if (curShape && curShape->IsWip && typeid(*curShape) == typeid(ShapeText) ) { //正在写字，左键单击无效
-            curShape->OnMouseDown(x, y);
+        if (CurShape && CurShape->IsWip && typeid(*CurShape) == typeid(ShapeText) ) { //正在写字，左键单击无效
+            CurShape->OnMouseDown(x, y);
             return false;
         }
-        curShape->IsWip = true;
-        curShape->OnMouseDown(x, y);
+        CurShape->IsWip = true;
+        CurShape->OnMouseDown(x, y);
         auto canvasBack = win->surfaceBack->getCanvas();
         auto canvasFront = win->surfaceFront->getCanvas();
         canvasBack->clear(SK_ColorTRANSPARENT);
@@ -68,24 +68,24 @@ bool Recorder::OnMouseDown(const int &x, const int &y)
     else {
         createShape(x, y, win->state);
         auto curIndex = shapes.size() - 1;
-        curShape = shapes[curIndex].get();
-        curShape->OnMouseDown(x, y);
+        CurShape = shapes[curIndex].get();
+        CurShape->OnMouseDown(x, y);
     }
     return false;
 }
 bool Recorder::OnMouseDownRight(const int& x, const int& y)
 {
     //正在写字，右键点击 结束写字
-    if (curShape && curShape->IsWip && typeid(*curShape) == typeid(ShapeText) ) {
-        curShape->IsWip = false;
+    if (CurShape && CurShape->IsWip && typeid(*CurShape) == typeid(ShapeText) ) {
+        CurShape->IsWip = false;
         Timer::Get()->Remove(1);
         auto win = App::GetWin();
         auto canvasFront = win->surfaceFront->getCanvas();
         canvasFront->clear(SK_ColorTRANSPARENT);
         auto canvasBack = win->surfaceBack->getCanvas();
-        curShape->Paint(canvasBack);
+        CurShape->Paint(canvasBack);
         win->refresh();
-        curShape = nullptr;
+        CurShape = nullptr;
         auto toolMain = ToolMain::Get();
         toolMain->SetUndoDisable(false);
         return true;
@@ -94,21 +94,21 @@ bool Recorder::OnMouseDownRight(const int& x, const int& y)
 }
 bool Recorder::OnMouseUp(const int &x, const int &y)
 {
-    if (!curShape)
+    if (!CurShape)
     {
         return false;
     }
-    if (curShape && curShape->IsWip && typeid(*curShape) == typeid(ShapeText)) {
+    if (CurShape && CurShape->IsWip && typeid(*CurShape) == typeid(ShapeText)) {
         return false;
     }
-    if (curShape->IsTemp)
+    if (CurShape->IsTemp)
     {
-        auto iter = std::remove_if(shapes.begin(), shapes.end(), [this](auto item) { return item.get() == curShape; });
+        auto iter = std::remove_if(shapes.begin(), shapes.end(), [this](auto item) { return item.get() == CurShape; });
         shapes.erase(iter, shapes.end());
-        curShape = nullptr;
+        CurShape = nullptr;
         return false;
     }
-    curShape->OnMouseUp(x, y);
+    CurShape->OnMouseUp(x, y);
     auto win = App::GetWin();
     auto canvasBack = win->surfaceBack->getCanvas();
     auto canvasFront = win->surfaceFront->getCanvas();
@@ -147,27 +147,27 @@ bool Recorder::OnMouseMove(const int &x, const int &y)
         return false;
     }
     //写字时，鼠标移动到其他元素上必不能显示dragger，因为dragger会刷新front canvas，就会把字刷掉
-    if (curShape && curShape->IsWip && typeid(*curShape) == typeid(ShapeText)) {
-        curShape->OnMouseMove(x, y);
+    if (CurShape && CurShape->IsWip && typeid(*CurShape) == typeid(ShapeText)) {
+        CurShape->OnMouseMove(x, y);
         return false;
     }
-    curShape = nullptr;
+    CurShape = nullptr;
     for (int i = shapes.size() - 1; i >= 0; i--)
     {
         if (shapes[i]->IsDel) continue;
         auto flag = shapes[i]->OnMouseMove(x, y);
         if (flag)
         {
-            curShape = shapes[i].get();
+            CurShape = shapes[i].get();
             break;
         }
     }
     auto shapeDragger = ShapeDragger::Get();
     int index = shapeDragger->indexMouseAt(x, y);
     if (index >= 0) {
-        curShape = shapeDragger->curShape;
+        CurShape = shapeDragger->CurShape;
     }
-    if (curShape)
+    if (CurShape)
     {
         auto canvas = win->surfaceFront->getCanvas();
         canvas->clear(SK_ColorTRANSPARENT);
@@ -183,34 +183,34 @@ bool Recorder::OnMouseMove(const int &x, const int &y)
 }
 bool Recorder::OnMouseDrag(const int &x, const int &y)
 {
-    if (curShape)
+    if (CurShape)
     {
-        curShape->OnMoseDrag(x, y);
+        CurShape->OnMoseDrag(x, y);
     }
     return false;
 }
 bool Recorder::OnChar(const unsigned int& val)
 {
-    if (curShape)
+    if (CurShape)
     {
-        curShape->OnChar(val);
+        CurShape->OnChar(val);
     }
     return false;    
 }
 bool Recorder::OnKeyDown(const unsigned int& val)
 {
-    if (curShape)
+    if (CurShape)
     {
-        return curShape->OnKeyDown(val);
+        return CurShape->OnKeyDown(val);
     }
     return false;
 }
 
 bool Recorder::OnMouseWheel(const int& delta)
 {
-    if (curShape)
+    if (CurShape)
     {
-        curShape->onMouseWheel(delta);
+        CurShape->onMouseWheel(delta);
     }
     return false;
 }

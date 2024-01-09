@@ -133,7 +133,7 @@ LRESULT CALLBACK WindowBase::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wPar
         }
         default:
         {
-            return obj->WindowProc(hWnd, msg, wParam, lParam);
+            return obj->wndProc(hWnd, msg, wParam, lParam);
         }
         }
     }
@@ -179,17 +179,6 @@ void WindowBase::initWindow()
 
     hwndToolTip = CreateWindowEx(WS_EX_TOPMOST, TOOLTIPS_CLASS, NULL, WS_POPUP | TTS_NOPREFIX | TTS_ALWAYSTIP,
         CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, hwnd, NULL, hinstance, NULL);
-    //TOOLINFO tipInfo{ 0 };
-    //tipInfo.cbSize = sizeof(TOOLINFO);
-    //tipInfo.uFlags = TTF_SUBCLASS;
-    //tipInfo.hwnd = hwnd;
-    //tipInfo.hinst = GetModuleHandle(NULL);
-    //tipInfo.uId = 0;
-    //RECT rect{ 0,0,200,200 };
-    //tipInfo.rect = rect;
-    //std::wstring str{ L"test" };
-    //tipInfo.lpszText = (LPWSTR)str.c_str();
-    //SendMessage(hwndToolTip, TTM_ADDTOOL, 0, (LPARAM)(LPTOOLINFO)&tipInfo);
 }
 
 void WindowBase::setClipboardText(const std::wstring& text) {

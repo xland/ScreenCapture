@@ -66,49 +66,49 @@ bool ToolSub::OnMouseDown(const int& x, const int& y)
     {
         return false;
     }
-    int index = (x - ToolRect.left()) / ToolBtn::width;
-    if (btns[index]->icon == Icon::dot) {
-        if (btns[index]->isSelected) {
+    int index = (x - ToolRect.left()) / ToolBtn::Width;
+    if (btns[index]->Icon == Icon::dot) {
+        if (btns[index]->IsSelected) {
             return true;
         }
         for (auto& btn : btns)
         {
-            if (btn->isSelected && btn->icon == Icon::dot)
+            if (btn->IsSelected && btn->Icon == Icon::dot)
             {
-                btn->isSelected = false;
+                btn->IsSelected = false;
                 break;
             }
         }
-        btns[index]->isSelected = true;
+        btns[index]->IsSelected = true;
         setRect();
         win->Refresh();
         return true;
     }
-    else if (btns[index]->icon == Icon::uncheck) {
+    else if (btns[index]->Icon == Icon::uncheck) {
         for (auto& btn : btns)
         {
-            if (btn->icon == Icon::check)
+            if (btn->Icon == Icon::check)
             {
-                btn->isSelected = false;
-                btn->icon = Icon::uncheck;
+                btn->IsSelected = false;
+                btn->Icon = Icon::uncheck;
                 break;
             }
         }
-        btns[index]->icon = Icon::check;
-        btns[index]->isSelected = true;
+        btns[index]->Icon = Icon::check;
+        btns[index]->IsSelected = true;
         setRect();
         win->Refresh();
         return true;
     }
     if (index == 0) {
-        if (btns[0]->isSelected) {
-            btns[0]->isSelected = false;
+        if (btns[0]->IsSelected) {
+            btns[0]->IsSelected = false;
             if (ToolMain::Get()->IndexSelected != 5) { //transparen line
                 addStrokeWidthBtns(1);
             }            
         }
         else {
-            btns[0]->isSelected = true;
+            btns[0]->IsSelected = true;
             if (ToolMain::Get()->IndexSelected != 5) {
                 btns.erase(btns.begin() + 1, btns.begin() + 4);
             }
@@ -198,7 +198,7 @@ bool ToolSub::OnPaint(SkCanvas *canvas)
     for (auto& btn : btns)
     {
         btn->Paint(canvas, paint, left, ToolRect.fTop);
-        left += ToolBtn::width;
+        left += ToolBtn::Width;
     }
     paint.setStroke(true);
     paint.setStrokeWidth(0.6f);
@@ -210,20 +210,20 @@ bool ToolSub::OnPaint(SkCanvas *canvas)
 void ToolSub::setRect()
 {
     auto toolMain = ToolMain::Get();
-    auto width = btns.size() * ToolBtn::width;
+    auto width = btns.size() * ToolBtn::Width;
     auto left = toolMain->ToolRect.left();
     auto top = toolMain->ToolRect.bottom() + MarginTop;
-    auto mainToolBtnCenterPointX = left + toolMain->IndexSelected * ToolBtn::width + ToolBtn::width / 2;
+    auto mainToolBtnCenterPointX = left + toolMain->IndexSelected * ToolBtn::Width + ToolBtn::Width / 2;
     if (toolMain->IndexSelected > 5) {
         left = mainToolBtnCenterPointX - width / 2;
     }
-    ToolRect.setXYWH(left, top, width, ToolBtn::height);
+    ToolRect.setXYWH(left, top, width, ToolBtn::Height);
     p.reset();
     p.moveTo(mainToolBtnCenterPointX, top - MarginTop / 3 * 2);  // ¶¥µã
     p.lineTo(mainToolBtnCenterPointX - MarginTop, top);  // ×óÏÂ½Ç
     p.lineTo(left, top);
-    p.lineTo(left, top + ToolBtn::height);
-    p.lineTo(left + width, top + ToolBtn::height);
+    p.lineTo(left, top + ToolBtn::Height);
+    p.lineTo(left + width, top + ToolBtn::Height);
     p.lineTo(left + width, top);
     p.lineTo(mainToolBtnCenterPointX + MarginTop, top);  // ÓÒÏÂ½Ç
     p.close();
@@ -231,15 +231,15 @@ void ToolSub::setRect()
 
 bool ToolSub::GetFill()
 {
-    return btns[0]->isSelected;
+    return btns[0]->IsSelected;
 }
 
 int ToolSub::GetStroke()
 {
-    if (btns[1]->isSelected) {
+    if (btns[1]->IsSelected) {
         return 1;
     }
-    else if (btns[2]->isSelected) {
+    else if (btns[2]->IsSelected) {
         return 2;
     }
     else {
@@ -250,7 +250,7 @@ int ToolSub::GetStroke()
 SkColor ToolSub::GetColor()
 {
     auto it = std::find_if(btns.begin(), btns.end(), [](auto& btn) {
-        return btn->icon == Icon::check;
+        return btn->Icon == Icon::check;
         });
-    return it->get()->fontColor;
+    return it->get()->FontColor;
 }

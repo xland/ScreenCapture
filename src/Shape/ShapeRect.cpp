@@ -150,7 +150,7 @@ void ShapeRect::setDragger()
     shapeDragger->cursors[6] = Cursor::cursor::nesw;
     shapeDragger->cursors[3] = Cursor::cursor::we;
     shapeDragger->cursors[7] = Cursor::cursor::we;
-    shapeDragger->curShape = this;
+    shapeDragger->CurShape = this;
 }
 
 void ShapeRect::Paint(SkCanvas* canvas)
