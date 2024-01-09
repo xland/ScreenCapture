@@ -43,18 +43,10 @@ bool Recorder::OnMouseDown(const int &x, const int &y)
         return false;
     }
     if (curShape)
-    {
-        //正在写字，左键单击无效
-        if (curShape && typeid(*curShape) == typeid(ShapeText) ) {
-            if (curShape->IsWip) {
-                curShape->OnMouseDown(x, y);
-                return false;
-            }
-            else
-            {
-                auto temp = dynamic_cast<ShapeText*>(curShape);
-                temp->showCursor = true;
-            }
+    {        
+        if (curShape && curShape->IsWip && typeid(*curShape) == typeid(ShapeText) ) { //正在写字，左键单击无效
+            curShape->OnMouseDown(x, y);
+            return false;
         }
         curShape->IsWip = true;
         curShape->OnMouseDown(x, y);
@@ -109,14 +101,14 @@ bool Recorder::OnMouseUp(const int &x, const int &y)
     if (curShape && curShape->IsWip && typeid(*curShape) == typeid(ShapeText)) {
         return false;
     }
-    // todo 
-    //if (shapes[curIndex]->IsWip)
-    //{
-    //    shapes.erase(shapes.begin() + curIndex, shapes.begin() + 1);
-    //}
-    // 
+    if (curShape->IsTemp)
+    {
+        auto iter = std::remove_if(shapes.begin(), shapes.end(), [this](auto item) { return item.get() == curShape; });
+        shapes.erase(iter, shapes.end());
+        curShape = nullptr;
+        return false;
+    }
     curShape->OnMouseUp(x, y);
-
     auto win = App::GetWin();
     auto canvasBack = win->surfaceBack->getCanvas();
     auto canvasFront = win->surfaceFront->getCanvas();
@@ -320,7 +312,7 @@ void Recorder::createShape(const int &x, const int &y, const State &state)
     }
     case State::number:
     {
-        shape = std::make_shared<ShapeNumber>(x, y);
+        shape = std::make_shared<ShapeNumber>(x-36, y-36);
         break;
     }
     case State::pen:

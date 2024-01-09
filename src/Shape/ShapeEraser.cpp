@@ -45,6 +45,7 @@ bool ShapeEraser::OnMouseMove(const int& x, const int& y)
 
 bool ShapeEraser::OnMoseDrag(const int& x, const int& y)
 {
+    IsTemp = false;
     path.lineTo(x, y);
     auto win = App::GetWin();
     auto canvas = win->surfaceBack->getCanvas();

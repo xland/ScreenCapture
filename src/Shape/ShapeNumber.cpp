@@ -21,8 +21,15 @@ ShapeNumber::~ShapeNumber()
 
 bool ShapeNumber::OnMouseDown(const int &x, const int &y)
 {
+    IsTemp = false;
+    makePath(startX, startY, x, y);
     hoverX = x;
     hoverY = y;
+    auto win = App::GetWin();
+    auto canvas = win->surfaceFront->getCanvas();
+    canvas->clear(SK_ColorTRANSPARENT);
+    Paint(canvas);
+    App::GetWin()->Refresh();
     return false;
 }
 

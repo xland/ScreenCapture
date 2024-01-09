@@ -43,6 +43,7 @@ bool ShapeArrow::OnMouseMove(const int &x, const int &y)
 
 bool ShapeArrow::OnMoseDrag(const int &x, const int &y)
 {
+    IsTemp = false;
     if (HoverIndex == 0) {
         startX = x;
         startY = y;

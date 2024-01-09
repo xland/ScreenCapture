@@ -72,6 +72,7 @@ bool ShapeLine::OnMouseUp(const int &x, const int &y)
 
 bool ShapeLine::OnMoseDrag(const int &x, const int &y)
 {
+    IsTemp = false;
     auto p2 = path.getPoint(1);
     path.reset();
     if (HoverIndex == 0) {

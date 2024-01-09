@@ -59,6 +59,7 @@ bool ShapeRect::OnMouseMove(const int& x, const int& y)
 
 bool ShapeRect::OnMoseDrag(const int& x, const int& y)
 {
+    IsTemp = false;
     switch (HoverIndex)
     {
     case 0:

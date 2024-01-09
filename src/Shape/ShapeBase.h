@@ -21,8 +21,9 @@ public:
     virtual bool OnKeyDown(const unsigned int& val) { return false; };
     virtual bool onMouseWheel(const int& delta) { return false; };
     virtual void Paint(SkCanvas* canvas) { };
-    bool IsWip{true}; //在制品
+    bool IsWip{true}; //在制品，在FrontCanvas绘制
     bool IsDel{ false }; //Undo品
+    bool IsTemp{ true }; //首次创建，极有可能随时被删除
     int HoverIndex{-1};
 protected:
     int startX, startY;

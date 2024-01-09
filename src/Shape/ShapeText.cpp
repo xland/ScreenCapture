@@ -16,6 +16,7 @@
 
 ShapeText::ShapeText(const int &x, const int &y) : ShapeBase(x, y)
 {
+    IsTemp = false;
     auto tool = ToolSub::get();
     color = tool->getColor();
     auto font = App::GetFontText();
@@ -157,7 +158,7 @@ bool ShapeText::OnChar(const unsigned int& val)
         lineIndex += 1;
         wordIndex = 0;
     }
-    else if (val == 8) {
+    else if (val == 8) { //backspace 删除一个字
         if (lines.size() == 0) {
             return false;
         }

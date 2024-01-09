@@ -32,6 +32,7 @@ bool ShapePen::OnMouseUp(const int& x, const int& y)
 
 bool ShapePen::OnMoseDrag(const int& x, const int& y)
 {
+    IsTemp = false;
     path.lineTo(x, y);
     auto win = App::GetWin();
     auto canvas = win->surfaceFront->getCanvas();
