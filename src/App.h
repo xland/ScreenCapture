@@ -14,8 +14,10 @@ public:
     static SkFont* GetFontText();
     static void Pin();
     static int GetExitCode();
+    static std::shared_ptr<SkRect> GetScreen(const float& x, const float& y);
 private:
     App() {};
     static void initFontIcon();
     static void initFontText();
+    static void initScreens();
 };

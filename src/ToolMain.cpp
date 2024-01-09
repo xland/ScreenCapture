@@ -9,7 +9,6 @@
 #include "Icon.h"
 #include "ToolSub.h"
 #include "Recorder.h"
-#include "Screen.h"
 #include "WindowPin.h"
 
 ToolMain *toolMain;
@@ -85,18 +84,18 @@ void ToolMain::SetPositionByCutMask()
     float top{ mask->CutRect.fBottom + MarginTop };
     //三个缝隙高度和两个工具条高度
     auto heightSpan = MarginTop * 3 + ToolBtn::height * 2;    
-    auto screen = Screen::GetScreen(mask->CutRect.fRight, mask->CutRect.fBottom + heightSpan);
+    auto screen = App::GetScreen(mask->CutRect.fRight, mask->CutRect.fBottom + heightSpan);
     if (screen) { //工具条右下角在屏幕内
         //工具条左上角不在屏幕内
-        if (!Screen::GetScreen(left, top)) {
+        if (!App::GetScreen(left, top)) {
             left = screen->fLeft;
         }
     }
     else { //工具条右下角不在屏幕内
         //判断屏幕顶部是否有足够的空间，工具条是否可以在CutRect右上角
-        screen = Screen::GetScreen(mask->CutRect.fRight, mask->CutRect.fTop - heightSpan);
+        screen = App::GetScreen(mask->CutRect.fRight, mask->CutRect.fTop - heightSpan);
         if (screen) { //工具条右上角在屏幕内  
-            if (Screen::GetScreen(left, mask->CutRect.fTop - heightSpan)) { //工具条左上角在屏幕内
+            if (App::GetScreen(left, mask->CutRect.fTop - heightSpan)) { //工具条左上角在屏幕内
                 if (IndexSelected == -1) { //不需要显示子工具条，主工具条贴着截图区                    
                     top = mask->CutRect.fTop - MarginTop - ToolBtn::height;
                 }
@@ -115,7 +114,7 @@ void ToolMain::SetPositionByCutMask()
             }
         }
         else { //工具条右上角不在屏幕内，此时屏幕顶部和屏幕底部都没有足够的空间，工具条只能显示在截图区域内            
-            if (Screen::GetScreen(left, mask->CutRect.fBottom - heightSpan)) { //工具条左上角在屏幕内
+            if (App::GetScreen(left, mask->CutRect.fBottom - heightSpan)) { //工具条左上角在屏幕内
                 if (IndexSelected == -1) { //不需要显示子工具条，主工具条贴着截图区
                     top = mask->CutRect.fBottom - MarginTop - ToolBtn::height;
                 }
@@ -124,7 +123,7 @@ void ToolMain::SetPositionByCutMask()
                 }
             }
             else { //工具条左上角不在屏幕中，得到截图区域所在屏幕
-                screen = Screen::GetScreen(mask->CutRect.fRight, mask->CutRect.fBottom);
+                screen = App::GetScreen(mask->CutRect.fRight, mask->CutRect.fBottom);
                 if (screen) {
                     left = screen->fLeft;
                     if (IndexSelected == -1) { //不需要显示子工具条，主工具条贴着截图区
@@ -259,18 +258,19 @@ bool ToolMain::OnPaint(SkCanvas *canvas)
     return false;
 }
 
-void ToolMain::setUndoDisable(bool flag)
+void ToolMain::SetUndoDisable(bool flag)
 {
     btns[9]->isDisable = flag;
 }
 
-void ToolMain::setRedoDisable(bool flag)
+void ToolMain::SetRedoDisable(bool flag)
 {
     btns[10]->isDisable = flag;
 }
 
 void ToolMain::InitBtns()
 {
+    btns.clear();
     btns.push_back(std::make_shared<ToolBtn>(Icon::rect, L"矩形"));
     btns.push_back(std::make_shared<ToolBtn>(Icon::ellipse, L"圆形"));
     btns.push_back(std::make_shared<ToolBtn>(Icon::arrow, L"箭头"));
@@ -287,6 +287,14 @@ void ToolMain::InitBtns()
     btns.push_back(std::make_shared<ToolBtn>(Icon::save, L"保存为文件", false, false));//12
     btns.push_back(std::make_shared<ToolBtn>(Icon::copy, L"保存到剪切板", false, false));//13
     btns.push_back(std::make_shared<ToolBtn>(Icon::close, L"退出", false, false));//14
+}
+
+void ToolMain::Reset()
+{
+    IndexSelected = -1;
+    IndexHovered = -1;
+    InitBtns();
+    SetPositionByCutMask();
 }
 
 

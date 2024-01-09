@@ -17,9 +17,10 @@ public:
     void SetPositionByCutMask();
     void SetPosition(const float& x,const float& y);
     bool OnPaint(SkCanvas *canvas) override;
-    void setUndoDisable(bool flag);
-    void setRedoDisable(bool flag);
+    void SetUndoDisable(bool flag);
+    void SetRedoDisable(bool flag);
     void InitBtns();
+    void Reset();
 private:
     ToolMain();
     void saveFile();

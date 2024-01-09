@@ -87,7 +87,7 @@ bool Recorder::OnMouseDownRight(const int& x, const int& y)
         win->refresh();
         curShape = nullptr;
         auto toolMain = ToolMain::get();
-        toolMain->setUndoDisable(false);
+        toolMain->SetUndoDisable(false);
         return true;
     }
     return false;
@@ -128,8 +128,8 @@ bool Recorder::OnMouseUp(const int &x, const int &y)
         }
     }
     auto toolMain = ToolMain::get();
-    toolMain->setUndoDisable(undoDisable);
-    toolMain->setRedoDisable(redoDisable);
+    toolMain->SetUndoDisable(undoDisable);
+    toolMain->SetRedoDisable(redoDisable);
     ShapeDragger::get()->showDragger(canvasFront);
     win->Refresh();
     return false;
@@ -245,8 +245,8 @@ void Recorder::Undo()
         }
     }
     auto toolMain = ToolMain::get();
-    toolMain->setUndoDisable(undoDisable);
-    toolMain->setRedoDisable(redoDisable);
+    toolMain->SetUndoDisable(undoDisable);
+    toolMain->SetRedoDisable(redoDisable);
     win->Refresh();
 }
 
@@ -277,8 +277,8 @@ void Recorder::Redo()
         }
     }
     auto toolMain = ToolMain::get();
-    toolMain->setUndoDisable(undoDisable);
-    toolMain->setRedoDisable(redoDisable);
+    toolMain->SetUndoDisable(undoDisable);
+    toolMain->SetRedoDisable(redoDisable);
     win->Refresh();
 }
 

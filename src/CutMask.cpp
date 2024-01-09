@@ -7,7 +7,6 @@
 #include "include/core/SkColor.h"
 #include "State.h"
 #include "Icon.h"
-#include "Screen.h"
 #include "Cursor.h"
 #include <format>
 #include "ToolMain.h"
@@ -54,53 +53,51 @@ SkRect CutMask::GetCutRect()
 bool CutMask::OnMouseDown(const int& x, const int& y)
 {    
     auto win = App::GetWin();
-    if (win->state == State::start)
-    {
-        win->surfaceFront->getCanvas()->clear(SK_ColorTRANSPARENT);
-        start.set(x, y);
-        win->state = State::mask;
-        return true;
+    if (win->state == State::start) {
+        hoverIndex = 4;
+        CutRect.setXYWH(x, y, 0, 0);
     }
     if (hoverIndex == 0) {
-        CutRect = SkRect::MakeLTRB(x, y, CutRect.fRight, CutRect.fBottom);
+        CutRect.setLTRB(x, y, CutRect.fRight, CutRect.fBottom);
         start.set(CutRect.fRight, CutRect.fBottom); 
     }
     else if (hoverIndex == 1) {
-        CutRect = SkRect::MakeLTRB(CutRect.fLeft, y, CutRect.fRight, CutRect.fBottom); 
+        CutRect.setLTRB(CutRect.fLeft, y, CutRect.fRight, CutRect.fBottom); 
         start.set(0, CutRect.fBottom);
     }
     else if (hoverIndex == 2) {
-        CutRect = SkRect::MakeLTRB(CutRect.fLeft, y, x, CutRect.fBottom); 
+        CutRect.setLTRB(CutRect.fLeft, y, x, CutRect.fBottom); 
         start.set(CutRect.fLeft, CutRect.fBottom);
     }
     else if (hoverIndex == 3) {
-        CutRect = SkRect::MakeLTRB(CutRect.fLeft, CutRect.fTop, x, CutRect.fBottom);
+        CutRect.setLTRB(CutRect.fLeft, CutRect.fTop, x, CutRect.fBottom);
         start.set(CutRect.fLeft, 0);
     }
     else if (hoverIndex == 4) {
-        CutRect = SkRect::MakeLTRB(CutRect.fLeft, CutRect.fTop, x, y);
+        CutRect.setLTRB(CutRect.fLeft, CutRect.fTop, x, y);
         start.set(CutRect.fLeft, CutRect.fTop);
     }
     else if (hoverIndex == 5) {
-        CutRect = SkRect::MakeLTRB(CutRect.fLeft, CutRect.fTop, CutRect.fRight, y);
+        CutRect.setLTRB(CutRect.fLeft, CutRect.fTop, CutRect.fRight, y);
         start.set(0, CutRect.fTop);
     }
     else if (hoverIndex == 6) {
-        CutRect = SkRect::MakeLTRB(x, CutRect.fTop, CutRect.fRight, y); 
+        CutRect.setLTRB(x, CutRect.fTop, CutRect.fRight, y); 
         start.set(CutRect.fRight, CutRect.fTop);
     }
     else if (hoverIndex == 7) {
-        CutRect = SkRect::MakeLTRB(x, CutRect.fTop, CutRect.fRight, CutRect.fBottom);
+        CutRect.setLTRB(x, CutRect.fTop, CutRect.fRight, CutRect.fBottom);
         start.set(CutRect.fRight, 0);
     }
     else if (hoverIndex == 8) {
         start.set(x - CutRect.fLeft, y - CutRect.fTop);
+        return true;
     }
     else {
         return false;
     }
     win->surfaceFront->getCanvas()->clear(SK_ColorTRANSPARENT);
-    setPath();
+    win->state = State::mask;
     return true;
 }
 bool CutMask::OnMouseMove(const int& x, const int& y)
@@ -207,57 +204,53 @@ bool CutMask::OnMouseMove(const int& x, const int& y)
 bool CutMask::OnMouseDrag(const int& x, const int& y)
 {
     auto win = App::GetWin();
-    if (win->state == State::mask) {
+    if (hoverIndex < 0) {
+        return false;
+    }
+    win->state = State::mask;
+    if (hoverIndex == 0) {
+        CutRect.setLTRB(x, y, start.fX, start.fY);
+    }
+    else if (hoverIndex == 1) {
+        CutRect.setLTRB(CutRect.fLeft, y, CutRect.fRight, start.y());
+    }
+    else if (hoverIndex == 2) {
+        CutRect.setLTRB(start.fX, y, x, start.fY);
+    }
+    else if (hoverIndex == 3) {
+        CutRect.setLTRB(start.fX, CutRect.fTop, x, CutRect.fBottom);
+    }
+    else if (hoverIndex == 4) {
         CutRect.setLTRB(start.fX, start.fY, x, y);
     }
-    else{
-        if (hoverIndex == 0) {
-            CutRect.setLTRB(x, y,start.fX, start.fY);
+    else if (hoverIndex == 5) {
+        CutRect.setLTRB(CutRect.fLeft, start.fY, CutRect.fRight, y);
+    }
+    else if (hoverIndex == 6) {
+        CutRect.setLTRB(x, start.fY, start.fX, y);
+    }
+    else if (hoverIndex == 7) {
+        CutRect.setLTRB(x, CutRect.fTop, start.fX, CutRect.fBottom);
+    }
+    else if (hoverIndex == 8) {
+        auto left = x - start.fX;
+        auto top = y - start.fY;
+        if (left < 0) left = 0;
+        if (top < 0) top = 0;
+        auto right = left + CutRect.width();
+        auto bottom = top + CutRect.height();
+        if (right > win->w) {
+            right = win->w;
+            left = win->w - CutRect.width();
         }
-        else if (hoverIndex == 1) {
-            CutRect.setLTRB(CutRect.fLeft, y, CutRect.fRight, start.y());
+        if (bottom > win->h) {
+            bottom = win->h;
+            top = win->h - CutRect.height();
         }
-        else if (hoverIndex == 2) {
-            CutRect.setLTRB(start.fX, y, x, start.fY);
-        }
-        else if (hoverIndex == 3) {
-            CutRect.setLTRB(start.fX, CutRect.fTop, x, CutRect.fBottom);
-        }
-        else if (hoverIndex == 4) {
-            CutRect.setLTRB(start.fX, start.fY, x, y);
-        }
-        else if (hoverIndex == 5) {
-            CutRect.setLTRB(CutRect.fLeft, start.fY, CutRect.fRight, y);
-        }
-        else if (hoverIndex == 6) {
-            CutRect.setLTRB(x, start.fY, start.fX, y);
-        }
-        else if (hoverIndex == 7) {
-            CutRect.setLTRB(x, CutRect.fTop, start.fX, CutRect.fBottom);
-        }
-        else if (hoverIndex == 8) {
-            auto left = x - start.fX;
-            auto top = y - start.fY;
-            if (left < 0) left = 0;
-            if (top < 0) top = 0;
-            auto right = left + CutRect.width();
-            auto bottom = top + CutRect.height();
-            if (right > win->w) {
-                right = win->w;
-                left = win->w - CutRect.width();
-            }
-            if (bottom > win->h) {
-                bottom = win->h;
-                top = win->h - CutRect.height();
-            }
-            CutRect.setLTRB(left, top, right, bottom);
-            setPath();
-            start.set(x - CutRect.fLeft, y - CutRect.fTop);
-            return true;
-        }
-        else {
-            return false;
-        }
+        CutRect.setLTRB(left, top, right, bottom);
+        setPath();
+        start.set(x - CutRect.fLeft, y - CutRect.fTop);
+        return true;
     }
     CutRect.sort();
     setPath();    
@@ -338,11 +331,9 @@ bool CutMask::OnMouseUp(const int& x, const int& y)
     }
     win->state = State::tool;
     auto tool = ToolMain::get();
-    tool->InitBtns();
-    tool->SetPositionByCutMask();
+    tool->Reset();
     win->Refresh();
     Cursor::Arrow();
-    Screen::Init();
     return true;
 }
 

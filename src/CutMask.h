@@ -27,5 +27,5 @@ private:
     std::vector<SkRect> winRects;
     SkPoint start{-1,-1};
     SkPath path;
-    int hoverIndex{ -1 };
+    int hoverIndex{ 4 };
 };
