@@ -1,4 +1,5 @@
-The next major version (2.0.0) is developed in the main branch.
+Version [2.x.y](https://github.com/xland/ScreenCapture/tree/1-x-y) which is based on Skia has been released.
+
 The last stable version is available in the [1.x.y](https://github.com/xland/ScreenCapture/tree/1-x-y) branch.
 
 ---
@@ -18,10 +19,11 @@ The last stable version is available in the [1.x.y](https://github.com/xland/Scr
 - Very fast,Small memory footprint,Low CPU useage.
 - Only one small executable file (with out any dll).
 - Can be easily integrated into any program.
+- Powered by Skia.
 
 # Download
 
-[Release](https://github.com/xland/ScreenCapture/releases/) (1.8M)
+[Release](https://github.com/xland/ScreenCapture/releases/) (4.9M)
 
 # Integration
 

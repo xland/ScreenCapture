@@ -46,6 +46,8 @@ void ShapeMosaicRect::drawRectsByPoints(SkCanvas* canvas)
     int rectNum = std::ceil(rect.width() / size) + 1;
     int xIndex = rect.fLeft / size;
     int yIndex = rect.fTop / size;
+    xIndex = xIndex < 0 ? 0 : xIndex;
+    yIndex = yIndex < 0 ? 0 : yIndex;
     SkColor4f colorSum = { 0, 0, 0, 0 };
     SkPaint paint;
     for (size_t i = yIndex; i < yIndex + rectNum; i++)

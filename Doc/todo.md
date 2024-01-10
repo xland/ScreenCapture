@@ -1,4 +1,5 @@
-- 矩形马赛克不能是负值
+- 多个屏幕，马赛克，auto currentColor = pixmap->getColor4f(x1, y1);  x1和y1有可能是负值，这样取到的color有问题
+- 多个屏幕测试，要多测试几轮
 - Eraser和Mosaic 是否应继承自Pen
 - 绘图过程中屏幕会黑以下的问题又来了，应该与Cutmask有关
 
