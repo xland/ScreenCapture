@@ -20,16 +20,13 @@ Recorder *recorder;
 Recorder::Recorder()
 {
 }
-
 Recorder::~Recorder()
 {
 }
-
 void Recorder::Init()
 {
     recorder = new Recorder();
 }
-
 Recorder *Recorder::Get()
 {
     return recorder;
@@ -210,7 +207,6 @@ bool Recorder::OnKeyDown(const unsigned int& val)
     }
     return false;
 }
-
 bool Recorder::OnMouseWheel(const int& delta)
 {
     if (CurShape)
@@ -219,7 +215,6 @@ bool Recorder::OnMouseWheel(const int& delta)
     }
     return false;
 }
-
 void Recorder::Undo()
 {
     bool undoDisable = true;
@@ -254,7 +249,6 @@ void Recorder::Undo()
     toolMain->SetRedoDisable(redoDisable);
     win->Refresh();
 }
-
 void Recorder::Redo()
 {
     bool undoDisable = true;
@@ -286,7 +280,6 @@ void Recorder::Redo()
     toolMain->SetRedoDisable(redoDisable);
     win->Refresh();
 }
-
 void Recorder::FinishPaint()
 {
     auto flag = OnMouseDownRight(-1, -1);
@@ -294,7 +287,6 @@ void Recorder::FinishPaint()
         ShapeDragger::Get()->HideDragger();
     } 
 }
-
 void Recorder::createShape(const int &x, const int &y, const State &state)
 {
     std::shared_ptr<ShapeBase> shape;
