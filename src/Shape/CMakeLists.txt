@@ -19,7 +19,11 @@ set(SHAPE
     ShapeText.h
     ShapeEraser.cpp
     ShapeEraser.h
+    ShapeEraserRect.cpp
+    ShapeEraserRect.h
     ShapeMosaic.cpp
     ShapeMosaic.h
+    ShapeMosaicRect.cpp
+    ShapeMosaicRect.h
 )
 target_sources(ScreenCapture PRIVATE ${SHAPE})

@@ -2,6 +2,7 @@
 #include "App.h"
 #include "WindowBase.h"
 #include "Cursor.h"
+#include "ToolSub.h"
 #include "Shape/ShapeBase.h"
 #include "Shape/ShapeRect.h"
 #include "Shape/ShapeEllipse.h"
@@ -11,7 +12,9 @@
 #include "Shape/ShapeLine.h"
 #include "Shape/ShapeText.h"
 #include "Shape/ShapeEraser.h"
+#include "Shape/ShapeEraserRect.h"
 #include "Shape/ShapeMosaic.h"
+#include "Shape/ShapeMosaicRect.h"
 #include "Shape/ShapeDragger.h"
 #include "ToolMain.h"
 
@@ -331,12 +334,24 @@ void Recorder::createShape(const int &x, const int &y, const State &state)
     }
     case State::mosaic:
     {
-        shape = std::make_shared<ShapeMosaic>(x, y);
+        auto tool = ToolSub::Get();
+        if (tool->GetFill()) {
+            shape = std::make_shared<ShapeMosaicRect>(x, y);
+        }
+        else {
+            shape = std::make_shared<ShapeMosaic>(x, y);
+        }        
         break;
     }
     case State::eraser:
     {
-        shape = std::make_shared<ShapeEraser>(x, y);
+        auto tool = ToolSub::Get();
+        if (tool->GetFill()) {
+            shape = std::make_shared<ShapeEraserRect>(x, y);
+        }
+        else {
+            shape = std::make_shared<ShapeEraser>(x, y);
+        }
         break;
     }
     default:

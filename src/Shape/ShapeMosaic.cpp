@@ -155,21 +155,17 @@ void ShapeMosaic::initParams()
     HoverIndex = 4;
     path.moveTo(startX, startY);
     auto tool = ToolSub::Get();
-    stroke = !tool->GetFill();
-    if (stroke)
+    auto stroke = tool->GetStroke();
+    if (stroke == 1)
     {
-        auto stroke = tool->GetStroke();
-        if (stroke == 1)
-        {
-            strokeWidth = 36;
-        }
-        else if (stroke == 2)
-        {
-            strokeWidth = 66;
-        }
-        else
-        {
-            strokeWidth = 96;
-        }
+        strokeWidth = 36;
+    }
+    else if (stroke == 2)
+    {
+        strokeWidth = 66;
+    }
+    else
+    {
+        strokeWidth = 96;
     }
 }

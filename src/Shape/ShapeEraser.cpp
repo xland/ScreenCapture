@@ -59,18 +59,15 @@ void ShapeEraser::initParams()
     HoverIndex = 4;
     path.moveTo(startX, startY);
     auto tool = ToolSub::Get();
-    stroke = !tool->GetFill();
-    if (stroke) {
-        auto stroke = tool->GetStroke();
-        if (stroke == 1) {
-            strokeWidth = 26;
-        }
-        else if (stroke == 2) {
-            strokeWidth = 56;
-        }
-        else
-        {
-            strokeWidth = 86;
-        }
+    auto stroke = tool->GetStroke();
+    if (stroke == 1) {
+        strokeWidth = 26;
+    }
+    else if (stroke == 2) {
+        strokeWidth = 56;
+    }
+    else
+    {
+        strokeWidth = 86;
     }
 }
