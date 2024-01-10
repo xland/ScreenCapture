@@ -90,23 +90,10 @@ LRESULT CALLBACK WindowBase::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wPar
             }
             return true;
         }
-        //case WM_MOUSEMOVE: {
-        //    obj->setTracking(true);
-        //    [[fallthrough]];
-        //}
-        //case WM_MOUSELEAVE: {
-        //    obj->setTracking(false);
-        //    return false;
-        //}
         case WM_KEYDOWN:
         {
             switch (wParam)
             {
-            case VK_ESCAPE:
-            {
-                App::Quit(3);
-                return false;
-            }
             case 82: { //R
                 if (GetKeyState(VK_CONTROL) < 0)
                 {

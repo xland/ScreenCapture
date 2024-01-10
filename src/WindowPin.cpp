@@ -292,8 +292,15 @@ bool WindowPin::onChar(const unsigned int& val)
 
 bool WindowPin::onKeyDown(const unsigned int& val)
 {
-    Recorder::Get()->OnKeyDown(val);
-	return false;
+    bool flag = Recorder::Get()->OnKeyDown(val);
+    if (flag) {
+        return true;
+    }
+    if (val == VK_ESCAPE)
+    {
+        App::Quit(3);
+    }
+	return true;
 }
 
 bool WindowPin::onMouseWheel(const int& delta)

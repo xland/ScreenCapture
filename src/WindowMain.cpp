@@ -119,8 +119,7 @@ LRESULT WindowMain::wndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
         onKeyDown(wparam);
         return false;
     }
-    case WM_CHAR: {
-        
+    case WM_CHAR: {        
         return onChar(wparam);
     }
     case WM_MOUSEWHEEL: {
@@ -226,21 +225,31 @@ bool WindowMain::onKeyDown(const unsigned int& val)
     if (flag) {
         return true;
     }
-    POINT pos;
-    GetCursorPos(&pos);
     if (val == VK_UP) {
+        POINT pos;
+        GetCursorPos(&pos);
         SetCursorPos(pos.x, --pos.y);
     }
     else if (val == VK_DOWN) {
+        POINT pos;
+        GetCursorPos(&pos);
         SetCursorPos(pos.x, ++pos.y);
     }
     else if (val == VK_LEFT) {
+        POINT pos;
+        GetCursorPos(&pos);
         SetCursorPos(--pos.x, pos.y);
     }
     else if (val == VK_RIGHT) {
+        POINT pos;
+        GetCursorPos(&pos);
         SetCursorPos(++pos.x, pos.y);
     }
-    return false;
+    else if (val == VK_ESCAPE)
+    {
+        App::Quit(3);
+    }
+    return true;
 }
 bool WindowMain::onMouseWheel(const int& delta)
 {

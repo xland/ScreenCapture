@@ -74,22 +74,11 @@ bool Recorder::OnMouseDownRight(const int& x, const int& y)
     //正在写字，右键点击 结束写字
     if (CurShape && typeid(*CurShape) == typeid(ShapeText) ) {
         auto textObj = dynamic_cast<ShapeText*>(CurShape);
-        Timer::Get()->Remove(1);
-        auto win = App::GetWin();
-        if (textObj->HasText()) {
+        auto flag = textObj->EndInput();
+        if (flag) {
             auto iter = std::remove_if(shapes.begin(), shapes.end(), [this](auto item) { return item.get() == CurShape; });
             shapes.erase(iter, shapes.end());
-        }else if (CurShape->IsWip) {
-            CurShape->IsWip = false;            
-            auto canvasBack = win->surfaceBack->getCanvas();
-            CurShape->Paint(canvasBack);
-            auto toolMain = ToolMain::Get();
-            toolMain->SetUndoDisable(false);
         }
-        CurShape = nullptr;
-        auto canvasFront = win->surfaceFront->getCanvas();
-        canvasFront->clear(SK_ColorTRANSPARENT);
-        win->refresh();
         return true;
     }
     return false;
@@ -203,7 +192,20 @@ bool Recorder::OnKeyDown(const unsigned int& val)
 {
     if (CurShape)
     {
-        return CurShape->OnKeyDown(val);
+        if (val == VK_ESCAPE && typeid(*CurShape) == typeid(ShapeText)) {
+            auto textObj = dynamic_cast<ShapeText*>(CurShape);
+            auto flag = textObj->EndInput();
+            if (flag) {
+                auto iter = std::remove_if(shapes.begin(), shapes.end(), [this](auto item) { return item.get() == CurShape; });
+                shapes.erase(iter, shapes.end());
+            }
+            CurShape = nullptr;
+            return true;
+        }
+        else
+        {
+            return CurShape->OnKeyDown(val);
+        }
     }
     return false;
 }

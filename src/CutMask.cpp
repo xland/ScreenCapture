@@ -98,6 +98,7 @@ bool CutMask::OnMouseDown(const int& x, const int& y)
     }
     win->surfaceFront->getCanvas()->clear(SK_ColorTRANSPARENT);
     win->state = State::mask;
+    setPath();
     return true;
 }
 bool CutMask::OnMouseMove(const int& x, const int& y)

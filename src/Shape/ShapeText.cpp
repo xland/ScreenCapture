@@ -13,6 +13,7 @@
 #include "include/utils/SkTextUtils.h"
 #include "include/core/SkFontMetrics.h"
 #include "../Recorder.h"
+#include "../ToolMain.h"
 
 ShapeText::ShapeText(const int &x, const int &y) : ShapeBase(x, y)
 {
@@ -42,11 +43,6 @@ bool ShapeText::FlashCursor()
     auto func = std::bind(&ShapeText::FlashCursor, this);
     Timer::Get()->Start(1, 600, func);
     return false;
-}
-
-bool ShapeText::HasText()
-{
-    return lines.size() == 0 || lines[0].empty();
 }
 bool ShapeText::OnMouseDown(const int &x, const int &y)
 {
@@ -234,12 +230,14 @@ bool ShapeText::OnKeyDown(const unsigned int& val)
                 lines.erase(lines.begin()+ lineIndex+1);
                 showCursor = true;
                 Paint(nullptr);
+                return true;
             }
         }
         else {
             lines[lineIndex] = lines[lineIndex].substr(0, wordIndex) + lines[lineIndex].substr(wordIndex + 1);
             showCursor = true;
             Paint(nullptr);
+            return true;
         }        
         if (lines[lineIndex].empty()) {
             lines.erase(lines.begin() + lineIndex);
@@ -253,6 +251,7 @@ bool ShapeText::OnKeyDown(const unsigned int& val)
             }
             showCursor = true;
             Paint(nullptr);
+            return true;
         }
     }
     else if (val == VK_DOWN) {
@@ -427,6 +426,26 @@ void ShapeText::setCursor(SkCanvas* canvas)
     float inputCursorBottom{ rect.top() + lineHeight * (lineIndex + 1) - lineHeight / 6 };
     float inputCursorX{ getCursorX() };
     canvas->drawLine(inputCursorX, inputCursorTop, inputCursorX, inputCursorBottom, paint);
+}
+bool ShapeText::EndInput()
+{
+    Timer::Get()->Remove(1);
+    auto win = App::GetWin();
+    bool flag{ false };
+    if (lines.size() == 0 || lines[0].empty()) {
+        flag = true;
+    }
+    else if (IsWip) {
+        IsWip = false;
+        auto canvasBack = win->surfaceBack->getCanvas();
+        Paint(canvasBack);
+        auto toolMain = ToolMain::Get();
+        toolMain->SetUndoDisable(false);
+    }
+    auto canvasFront = win->surfaceFront->getCanvas();
+    canvasFront->clear(SK_ColorTRANSPARENT);
+    win->refresh();
+    return flag;
 }
 float ShapeText::getCursorX()
 {
