@@ -144,3 +144,6 @@ std::shared_ptr<SkRect> App::GetScreen(const float& x, const float& y)
     }
     return result;
 }
+void App::Log(std::string&& info) {
+    SkDebugf(info.data());
+}

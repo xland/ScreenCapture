@@ -34,7 +34,6 @@ Recorder *Recorder::Get()
 {
     return recorder;
 }
-
 bool Recorder::OnMouseDown(const int &x, const int &y)
 {
     auto win = App::GetWin();
@@ -76,18 +75,24 @@ bool Recorder::OnMouseDown(const int &x, const int &y)
 bool Recorder::OnMouseDownRight(const int& x, const int& y)
 {
     //正在写字，右键点击 结束写字
-    if (CurShape && CurShape->IsWip && typeid(*CurShape) == typeid(ShapeText) ) {
-        CurShape->IsWip = false;
+    if (CurShape && typeid(*CurShape) == typeid(ShapeText) ) {
+        auto textObj = dynamic_cast<ShapeText*>(CurShape);
         Timer::Get()->Remove(1);
         auto win = App::GetWin();
+        if (textObj->HasText()) {
+            auto iter = std::remove_if(shapes.begin(), shapes.end(), [this](auto item) { return item.get() == CurShape; });
+            shapes.erase(iter, shapes.end());
+        }else if (CurShape->IsWip) {
+            CurShape->IsWip = false;            
+            auto canvasBack = win->surfaceBack->getCanvas();
+            CurShape->Paint(canvasBack);
+            auto toolMain = ToolMain::Get();
+            toolMain->SetUndoDisable(false);
+        }
+        CurShape = nullptr;
         auto canvasFront = win->surfaceFront->getCanvas();
         canvasFront->clear(SK_ColorTRANSPARENT);
-        auto canvasBack = win->surfaceBack->getCanvas();
-        CurShape->Paint(canvasBack);
         win->refresh();
-        CurShape = nullptr;
-        auto toolMain = ToolMain::Get();
-        toolMain->SetUndoDisable(false);
         return true;
     }
     return false;

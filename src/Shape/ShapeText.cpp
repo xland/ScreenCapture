@@ -44,6 +44,11 @@ bool ShapeText::FlashCursor()
     return false;
 }
 
+bool ShapeText::HasText()
+{
+    return lines.size() == 0 || lines[0].empty();
+}
+
 bool ShapeText::OnMouseDown(const int &x, const int &y)
 {
     if (!rect.contains(x, y)) {
@@ -209,6 +214,37 @@ bool ShapeText::OnKeyDown(const unsigned int& val)
         Paint(nullptr);
         return true;
     }
+    else if (val == VK_DELETE) {
+        if (lines.size() == 0) {
+            return false;
+        }
+        if (wordIndex >= lines[lineIndex].length()) {
+            if (lineIndex != lines.size() - 1) {
+                lines[lineIndex] = lines[lineIndex] + lines[lineIndex + 1];
+                lines.erase(lines.begin()+ lineIndex+1);
+                showCursor = true;
+                Paint(nullptr);
+            }
+        }
+        else {
+            lines[lineIndex] = lines[lineIndex].substr(0, wordIndex) + lines[lineIndex].substr(wordIndex + 1);
+            showCursor = true;
+            Paint(nullptr);
+        }        
+        if (lines[lineIndex].empty()) {
+            lines.erase(lines.begin() + lineIndex);
+            lineIndex -= 1;
+            if (lineIndex < 0) {
+                lineIndex = 0;
+                wordIndex = 0;
+            }
+            else {
+                wordIndex = lines[lineIndex].length();
+            }
+            showCursor = true;
+            Paint(nullptr);
+        }
+    }
     else if (val == VK_DOWN) {
         if (lineIndex >= lines.size()-1) {
             return false;
@@ -274,6 +310,7 @@ void ShapeText::Paint(SkCanvas *canvas)
         activeKeyboard(getCursorX(), startY + lineIndex * lineHeight);
     }    
     auto font = App::GetFontText();
+    font->setSize(fontSize);
     SkPaint paint;
     paint.setStroke(false);
     paint.setColor(color);

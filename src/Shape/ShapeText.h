@@ -21,7 +21,7 @@ public:
     void Paint(SkCanvas *canvas) override;   
     bool OnMouseWheel(const int& delta) override;
     bool FlashCursor();
-    bool showCursor{ true };
+    bool HasText();
 protected:
 private:
     SkColor color{ SkColorSetARGB(255, 207, 19, 34) };
@@ -36,4 +36,5 @@ private:
     int lineIndex{ 0 }, wordIndex{0};
     float fontSize{ 60 };
     bool isMouseOver{true};
+    bool showCursor{ true };
 };
