@@ -66,8 +66,7 @@ bool Recorder::OnMouseDown(const int &x, const int &y)
     }
     else {
         createShape(x, y, win->state);
-        auto curIndex = shapes.size() - 1;
-        CurShape = shapes[curIndex].get();
+        CurShape = shapes.back().get();
         CurShape->OnMouseDown(x, y);
     }
     return false;
@@ -76,7 +75,7 @@ bool Recorder::OnMouseDownRight(const int& x, const int& y)
 {
     //正在写字，右键点击 结束写字
     if (CurShape && typeid(*CurShape) == typeid(ShapeText) ) {
-        auto textObj = dynamic_cast<ShapeText*>(CurShape);
+        auto textObj = static_cast<ShapeText*>(CurShape);
         auto flag = textObj->EndInput();
         if (flag) {
             auto iter = std::remove_if(shapes.begin(), shapes.end(), [this](auto item) { return item.get() == CurShape; });
@@ -186,7 +185,7 @@ bool Recorder::OnKeyDown(const unsigned int& val)
     if (CurShape)
     {
         if (val == VK_ESCAPE && typeid(*CurShape) == typeid(ShapeText)) {
-            auto textObj = dynamic_cast<ShapeText*>(CurShape);
+            auto textObj = static_cast<ShapeText*>(CurShape);
             auto flag = textObj->EndInput();
             if (flag) {
                 auto iter = std::remove_if(shapes.begin(), shapes.end(), [this](auto item) { return item.get() == CurShape; });
