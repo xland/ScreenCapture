@@ -1,7 +1,8 @@
 - 点击文字时，Cursor光标定位有问题
 - 矩形马赛克
 - 矩形橡皮擦
-- Del删除一个字 (已经有一个字了backspace) 
+- Backspace删除文字有问题
+- 刚画好CutMask后，点击改变CutMask时，有问题
 - Esc结束文字输入
 
 

@@ -48,30 +48,30 @@ bool ShapeText::HasText()
 {
     return lines.size() == 0 || lines[0].empty();
 }
-
 bool ShapeText::OnMouseDown(const int &x, const int &y)
 {
     if (!rect.contains(x, y)) {
         return false;
-    }
+    }    
     auto timer = Timer::Get();
     timer->Remove(1);
     auto func = std::bind(&ShapeText::FlashCursor, this);
     timer->Start(1, 600, func);
-    hoverX = x;
-    hoverY = y;
-    lineIndex = (y - rect.top()) / lineHeight;
     if (lines.size() == 0) {
         showCursor = true;
         Paint(nullptr);
         return false;
     }
+    hoverX = x;
+    hoverY = y;
+    lineIndex = (y - rect.top()) / lineHeight;
     int index = 0;
-    float width = x - rect.left() - 10;
-    auto font = App::GetFontText();
+    float width = x - rect.left() - 10;    
     SkRect rect;
     float right{ 0 };
     bool flag = false;
+    auto font = App::GetFontText();
+    font->setSize(fontSize);
     for (size_t i = 0; i < lines[lineIndex].length() + 1; i++)
     {
         auto str = lines[lineIndex].substr(0, i);
@@ -99,7 +99,6 @@ bool ShapeText::OnMouseDown(const int &x, const int &y)
     Paint(nullptr);
     return false;
 }
-
 bool ShapeText::OnMouseMove(const int &x, const int &y)
 {
     if (rect.contains(x, y)) {
@@ -112,12 +111,10 @@ bool ShapeText::OnMouseMove(const int &x, const int &y)
         return false;
     }
 }
-
 bool ShapeText::OnMouseUp(const int &x, const int &y)
 {
     return false;
 }
-
 bool ShapeText::OnMoseDrag(const int &x, const int &y)
 {
     auto xSpan = x - hoverX;
@@ -167,6 +164,20 @@ bool ShapeText::OnChar(const unsigned int& val)
         if (lines.size() == 0) {
             return false;
         }
+        if (wordIndex == 0) {
+            if (lineIndex == 0) {
+                return false;
+            }
+            else {
+                wordIndex = lines[lineIndex-1].size();
+                lines[lineIndex-1] = lines[lineIndex-1] + lines[lineIndex];
+                lines.erase(lines.begin() + lineIndex);
+                lineIndex -= 1;
+                showCursor = true;
+                Paint(nullptr);
+                return false;
+            }
+        }
         lines[lineIndex] = lines[lineIndex].substr(0, wordIndex - 1) + lines[lineIndex].substr(wordIndex);
         if (lines[lineIndex].empty()) {
             lines.erase(lines.begin() + lineIndex);
@@ -199,7 +210,6 @@ bool ShapeText::OnChar(const unsigned int& val)
     Paint(nullptr);
     return false;
 }
-
 bool ShapeText::OnKeyDown(const unsigned int& val)
 {
     if (val == VK_UP) {
@@ -291,7 +301,6 @@ bool ShapeText::OnKeyDown(const unsigned int& val)
     }
     return false;
 }
-
 void ShapeText::Paint(SkCanvas *canvas)
 {
     bool refreshFlag = false;
@@ -353,7 +362,6 @@ void ShapeText::Paint(SkCanvas *canvas)
     //    startY += height; // 下一行的位置在当前行下方加上文本大小
     //}
 }
-
 void ShapeText::activeKeyboard(long x, long y)
 {
     auto win = App::GetWin();

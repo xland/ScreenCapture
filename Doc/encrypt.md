@@ -1,3 +1,7 @@
+https://github.com/alex8088/electron-vite/blob/master/src/plugins/bytecode.ts
+
+
+
 在Windows系统中，Data Protection API (DPAPI) 提供了一种便捷的方式加密存储敏感数据，它利用了当前用户的账户信息进行加密和解密，确保只有该用户才能访问这些数据。以下是一个简单的示例，展示如何使用DPAPI对字符串进行加密和解密：
 
 ```Cpp
