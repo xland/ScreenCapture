@@ -3,51 +3,133 @@
 #include "../WindowBase.h"
 #include "../ToolSub.h"
 #include "../Cursor.h"
+#include "ShapeDragger.h"
 
 ShapeMosaicRect::ShapeMosaicRect(const int &x, const int &y) : ShapeRect(x, y)
 {
-    initParams();
 }
 
 ShapeMosaicRect::~ShapeMosaicRect()
 {
 }
 
+bool ShapeMosaicRect::OnMouseDown(const int& x, const int& y)
+{
+    startX = x;
+    startY = y;
+    auto win = App::GetWin();
+    auto surfaceFront = win->surfaceFront;
+    surfaceFront->writePixels(*win->pixSrc, 0, 0);
+    auto canvas = win->surfaceFront->getCanvas();
+    canvas->drawImage(win->surfaceBack->makeImageSnapshot(), 0, 0);
+    SkImageInfo info = SkImageInfo::MakeN32Premul(win->w, win->h);
+    auto addr = new unsigned char[win->w * win->h * 4];
+    pixmap = new SkPixmap(info, addr, win->w * 4);
+    surfaceFront->readPixels(*pixmap, 0, 0);
+    canvas->clear(SK_ColorTRANSPARENT);
+    return false;
+}
+
+bool ShapeMosaicRect::OnMouseUp(const int& x, const int& y)
+{
+    delete[] pixmap->addr();
+    delete pixmap;
+    pixmap = nullptr;
+    setDragger();
+    return false;
+}
+
+void ShapeMosaicRect::drawRectsByPoints(SkCanvas* canvas)
+{
+    auto win = App::GetWin();
+    int rowNum = std::ceil((float)win->w / size);
+    int rectNum = std::ceil(rect.width() / size) + 1;
+    int xIndex = rect.fLeft / size;
+    int yIndex = rect.fTop / size;
+    SkColor4f colorSum = { 0, 0, 0, 0 };
+    SkPaint paint;
+    for (size_t i = yIndex; i < yIndex + rectNum; i++)
+    {
+        for (size_t j = xIndex; j < xIndex + rectNum; j++)
+        {
+            int key = i * rowNum + j;
+            auto x = j * size;
+            auto y = i * size;
+            if (colorCache.contains(key)) {
+                paint.setColor(colorCache[key]);
+                canvas->drawRect(SkRect::MakeXYWH(x, y, size, size), paint);
+            }
+            else {
+                int count{ 0 };
+                for (size_t x1 = x; x1 <= x + size; x1 += 2)
+                {
+                    for (size_t y1 = y; y1 <= y + size; y1 += 2)
+                    {
+                        auto currentColor = pixmap->getColor4f(x1, y1);
+                        colorSum.fR += currentColor.fR;
+                        colorSum.fG += currentColor.fG;
+                        colorSum.fB += currentColor.fB;
+                        count++;
+                    }
+                }
+                colorSum.fR /= count;
+                colorSum.fG /= count;
+                colorSum.fB /= count;
+                colorSum.fA = 255;
+                auto color = colorSum.toSkColor();
+                paint.setColor(color);
+                canvas->drawRect(SkRect::MakeXYWH(x, y, size, size), paint);
+                colorCache.insert({ key, color });
+            }
+        }
+    }
+}
+
 void ShapeMosaicRect::Paint(SkCanvas *canvas)
 {
     SkPaint paint;
-    paint.setAntiAlias(true);
-    if (stroke)
-    {
-        paint.setStroke(true);
-        paint.setStrokeWidth(strokeWidth);
+    if (pixmap) {
+        drawRectsByPoints(canvas);
     }
-    paint.setColor(color);
-    canvas->drawOval(rect, paint);
+    else {
+        canvas->saveLayer(nullptr, nullptr);
+        auto win = App::GetWin();
+        int rowNum = std::ceil((float)win->w / size);
+        for (const auto& kv : colorCache)
+        {
+            paint.setColor(kv.second);
+            int yIndex = (float)kv.first / (float)rowNum;
+            auto xIndex = kv.first % rowNum;
+            canvas->drawRect(SkRect::MakeXYWH(xIndex * size, yIndex * size, size, size), paint);
+        }
+    }
+    paint.setAntiAlias(true);
+    paint.setStroke(false);
+    paint.setBlendMode(SkBlendMode::kClear);
+    SkPath path;
+    path.addRect(rect);
+    path.setFillType(SkPathFillType::kInverseWinding);
+    canvas->drawPath(path, paint);
+    if (!pixmap) {
+        canvas->restore();
+    }
 }
 
 bool ShapeMosaicRect::OnMouseMove(const int& x, const int& y)
 {
-    bool flag = false;
-    if (stroke) {
-        auto halfStroke = strokeWidth / 2 + 2;
-        auto rectOut = rect.makeOutset(halfStroke, halfStroke);
-        auto rectInner = rect.makeInset(halfStroke, halfStroke);
-        SkPath path;
-        path.addOval(rectOut);
-        path.addOval(rectInner);
-        path.setFillType(SkPathFillType::kEvenOdd);
-        flag = path.contains(x, y);
-    }
-    else {
-        SkPath path;
-        path.addOval(rect);
-        flag = path.contains(x, y);
-    }
-    if (flag) {
+    if (rect.contains(x, y)) {
         setDragger();
         Cursor::All();
         HoverIndex = 8;
+        ShapeDragger::Get()->ShowDragger(false);
+        auto win = App::GetWin();
+        auto canvas = win->surfaceFront->getCanvas();
+        SkPaint paint;
+        paint.setStroke(true);
+        paint.setStrokeWidth(1);
+        paint.setColor(SK_ColorBLACK);
+        auto rectTemp = rect.makeOutset(2.f, 2.f);
+        canvas->drawRect(rectTemp, paint);
         App::GetWin()->Refresh();
         return true;
     }

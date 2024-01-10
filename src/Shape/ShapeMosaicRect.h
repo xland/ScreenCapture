@@ -6,6 +6,7 @@
 #include "include/core/SkPath.h"
 #include "ShapeRect.h"
 #include <vector>
+#include <map>
 
 class ShapeMosaicRect : public ShapeRect
 {
@@ -15,5 +16,11 @@ public:
     void Paint(SkCanvas *canvas) override;
 protected:
     bool OnMouseMove(const int& x, const int& y) override;
+    bool OnMouseDown(const int& x, const int& y) override;
+    bool OnMouseUp(const int& x, const int& y) override;
 private:
+    void drawRectsByPoints(SkCanvas* canvas);
+    std::map<int, SkColor> colorCache;
+    float size{ 20 };
+    SkPixmap* pixmap;
 };
