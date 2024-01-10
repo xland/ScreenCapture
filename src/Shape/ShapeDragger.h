@@ -12,7 +12,7 @@ public:
     static void Init();
     static ShapeDragger* Get();
     void SetDragger(size_t index, float x, float y);
-    void ShowDragger(SkCanvas* canvas);
+    void ShowDragger(bool needRefresh=true);
     bool HideDragger();
     void DisableDragger(const int& startIndex = 0);
     int IndexMouseAt(const int& x, const int& y);

@@ -252,5 +252,8 @@ SkColor ToolSub::GetColor()
     auto it = std::find_if(btns.begin(), btns.end(), [](auto& btn) {
         return btn->Icon == Icon::check;
         });
+    if (it == btns.end()) {
+        return SK_ColorBLACK;
+    }
     return it->get()->FontColor;
 }

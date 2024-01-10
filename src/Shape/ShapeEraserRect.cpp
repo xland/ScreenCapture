@@ -3,10 +3,10 @@
 #include "../WindowBase.h"
 #include "../ToolSub.h"
 #include "../Cursor.h"
+#include "ShapeDragger.h"
 
 ShapeEraserRect::ShapeEraserRect(const int &x, const int &y) : ShapeRect(x, y)
 {
-    initParams();
 }
 
 ShapeEraserRect::~ShapeEraserRect()
@@ -15,39 +15,29 @@ ShapeEraserRect::~ShapeEraserRect()
 
 void ShapeEraserRect::Paint(SkCanvas *canvas)
 {
+    auto win = App::GetWin();
+    auto backCanvas = win->surfaceBack->getCanvas();
     SkPaint paint;
-    paint.setAntiAlias(true);
-    if (stroke)
-    {
-        paint.setStroke(true);
-        paint.setStrokeWidth(strokeWidth);
-    }
     paint.setColor(color);
-    canvas->drawOval(rect, paint);
+    paint.setBlendMode(SkBlendMode::kClear);
+    backCanvas->drawRect(rect, paint);
 }
 
 bool ShapeEraserRect::OnMouseMove(const int& x, const int& y)
 {
-    bool flag = false;
-    if (stroke) {
-        auto halfStroke = strokeWidth / 2 + 2;
-        auto rectOut = rect.makeOutset(halfStroke, halfStroke);
-        auto rectInner = rect.makeInset(halfStroke, halfStroke);
-        SkPath path;
-        path.addOval(rectOut);
-        path.addOval(rectInner);
-        path.setFillType(SkPathFillType::kEvenOdd);
-        flag = path.contains(x, y);
-    }
-    else {
-        SkPath path;
-        path.addOval(rect);
-        flag = path.contains(x, y);
-    }
-    if (flag) {
+    if (rect.contains(x,y)) {
         setDragger();
         Cursor::All();
         HoverIndex = 8;
+        ShapeDragger::Get()->ShowDragger(false);
+        auto win = App::GetWin();
+        auto canvas = win->surfaceFront->getCanvas();
+        SkPaint paint;
+        paint.setStroke(true);
+        paint.setStrokeWidth(1);
+        paint.setColor(SK_ColorBLACK);
+        auto rectTemp = rect.makeOutset(2.f, 2.f);
+        canvas->drawRect(rectTemp, paint);
         App::GetWin()->Refresh();
         return true;
     }

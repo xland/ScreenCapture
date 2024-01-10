@@ -3,10 +3,10 @@
 #include "../WindowBase.h"
 #include "../ToolSub.h"
 #include "../Cursor.h"
+#include "ShapeDragger.h"
 
 ShapeEllipse::ShapeEllipse(const int &x, const int &y) : ShapeRect(x, y)
 {
-    initParams();
 }
 
 ShapeEllipse::~ShapeEllipse()
@@ -48,7 +48,7 @@ bool ShapeEllipse::OnMouseMove(const int& x, const int& y)
         setDragger();
         Cursor::All();
         HoverIndex = 8;
-        App::GetWin()->Refresh();
+        ShapeDragger::Get()->ShowDragger();
         return true;
     }
     return false;

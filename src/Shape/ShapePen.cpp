@@ -58,19 +58,17 @@ void ShapePen::initParams()
 {
     path.moveTo(startX, startY);
     auto tool = ToolSub::Get();
-    stroke = !tool->GetFill();
-    if (stroke) {
-        auto stroke = tool->GetStroke();
-        if (stroke == 1) {
-            strokeWidth = 4;
-        }
-        else if (stroke == 2) {
-            strokeWidth = 16;
-        }
-        else
-        {
-            strokeWidth = 28;
-        }
+    stroke = true;
+    auto strokeLine = tool->GetStroke();
+    if (strokeLine == 1) {
+        strokeWidth = 4;
+    }
+    else if (strokeLine == 2) {
+        strokeWidth = 16;
+    }
+    else
+    {
+        strokeWidth = 28;
     }
     color = tool->GetColor();
 }

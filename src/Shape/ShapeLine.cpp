@@ -29,7 +29,7 @@ bool ShapeLine::OnMouseMove(const int &x, const int &y)
         setDragger();
         Cursor::All();
         HoverIndex = 8;
-        App::GetWin()->Refresh();
+        ShapeDragger::Get()->ShowDragger();
         return true;
     }
     return false;

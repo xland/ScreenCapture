@@ -105,9 +105,7 @@ bool Recorder::OnMouseUp(const int &x, const int &y)
     CurShape->OnMouseUp(x, y);
     auto win = App::GetWin();
     auto canvasBack = win->surfaceBack->getCanvas();
-    auto canvasFront = win->surfaceFront->getCanvas();
     canvasBack->clear(SK_ColorTRANSPARENT);
-    canvasFront->clear(SK_ColorTRANSPARENT);
     bool undoDisable = true;
     bool redoDisable = true;
     //必须全部重绘一次，不然修改历史元素时，无法保证元素的绘制顺序
@@ -124,8 +122,7 @@ bool Recorder::OnMouseUp(const int &x, const int &y)
     auto toolMain = ToolMain::Get();
     toolMain->SetUndoDisable(undoDisable);
     toolMain->SetRedoDisable(redoDisable);
-    ShapeDragger::Get()->ShowDragger(canvasFront);
-    win->Refresh();
+    ShapeDragger::Get()->ShowDragger();
     return false;
 }
 bool Recorder::OnMouseMove(const int &x, const int &y)
@@ -161,14 +158,7 @@ bool Recorder::OnMouseMove(const int &x, const int &y)
     if (index >= 0) {
         CurShape = shapeDragger->CurShape;
     }
-    if (CurShape)
-    {
-        auto canvas = win->surfaceFront->getCanvas();
-        canvas->clear(SK_ColorTRANSPARENT);
-        shapeDragger->ShowDragger(canvas);
-        win->Refresh();
-    }
-    else {       
+    if (!CurShape) {     
         Timer::Get()->Start(0, 800, []() {
             return ShapeDragger::Get()->HideDragger();
             });

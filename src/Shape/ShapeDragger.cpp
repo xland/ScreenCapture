@@ -34,8 +34,11 @@ void ShapeDragger::SetDragger(size_t index, float x, float y)
     draggers[index].setXYWH(x, y, Size, Size);
 }
 
-void ShapeDragger::ShowDragger(SkCanvas* canvas)
+void ShapeDragger::ShowDragger(bool needRefresh)
 {   
+    auto win = App::GetWin();
+    auto canvas = win->surfaceFront->getCanvas();
+    canvas->clear(SK_ColorTRANSPARENT);
     SkPaint paint;
     paint.setStroke(true);
     paint.setStrokeWidth(1);
@@ -44,6 +47,7 @@ void ShapeDragger::ShowDragger(SkCanvas* canvas)
         canvas->drawRect(dragger, paint);
     }
     visible = true;
+    win->Refresh();
 }
 
 bool ShapeDragger::HideDragger()
