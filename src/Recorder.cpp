@@ -43,9 +43,16 @@ bool Recorder::OnMouseDown(const int &x, const int &y)
     }
     if (CurShape)
     {        
-        if (CurShape && CurShape->IsWip && typeid(*CurShape) == typeid(ShapeText) ) { //正在写字，左键单击无效
-            CurShape->OnMouseDown(x, y);
-            return false;
+        if (CurShape && CurShape->IsWip && typeid(*CurShape) == typeid(ShapeText) ) { //正在写字，左键单击结束写字
+            bool flag = CurShape->OnMouseDown(x, y);
+            if (flag) { //不在输入框内
+                auto textObj = static_cast<ShapeText*>(CurShape);
+                if (textObj->EndInput()) {
+                    std::erase_if(shapes, [this](auto& item) { return item.get() == CurShape; });
+                }                
+                CurShape = nullptr;
+            }
+            return true;
         }
         CurShape->IsWip = true;
         CurShape->OnMouseDown(x, y);
@@ -68,6 +75,7 @@ bool Recorder::OnMouseDown(const int &x, const int &y)
         createShape(x, y, win->state);
         CurShape = shapes.back().get();
         CurShape->OnMouseDown(x, y);
+        win->IsMouseDown = false; //避免触发drag事件
     }
     return false;
 }
@@ -356,5 +364,5 @@ void Recorder::createShape(const int &x, const int &y, const State &state)
     if (index < shapes.size()) {
         shapes.erase(shapes.begin() + index,shapes.end());
     }
-    shapes.push_back(std::move(shape));
+    shapes.push_back(std::move(shape));    
 }

@@ -47,7 +47,7 @@ bool ShapeText::FlashCursor()
 bool ShapeText::OnMouseDown(const int &x, const int &y)
 {
     if (!rect.contains(x, y)) {
-        return false;
+        return true;
     }    
     auto timer = Timer::Get();
     timer->Remove(1);
@@ -318,20 +318,22 @@ void ShapeText::Paint(SkCanvas *canvas)
         }
         showCursor = !showCursor;
         activeKeyboard(getCursorX(), startY + lineIndex * lineHeight);
-    }    
-    auto font = App::GetFontText();
-    font->setSize(fontSize);
-    SkPaint paint;
-    paint.setStroke(false);
-    paint.setColor(color);
-    SkRect textBounds;
-    paint.setAntiAlias(true);
-    float y{ (float)startY };
-    for (const auto& line : lines) {
-        auto data = line.data();
-        auto length = wcslen(data) * 2;
-        SkTextUtils::Draw(canvas, data, length,SkTextEncoding::kUTF16, startX, y, *font, paint,SkTextUtils::kLeft_Align);
-        y += lineHeight;
+    }
+    if (lines.size() > 0) {
+        auto font = App::GetFontText();
+        font->setSize(fontSize);
+        SkPaint paint;
+        paint.setStroke(false);
+        paint.setColor(color);
+        SkRect textBounds;
+        paint.setAntiAlias(true);
+        float y{ (float)startY };
+        for (const auto& line : lines) {
+            auto data = line.data();
+            auto length = wcslen(data) * 2;
+            SkTextUtils::Draw(canvas, data, length, SkTextEncoding::kUTF16, startX, y, *font, paint, SkTextUtils::kLeft_Align);
+            y += lineHeight;
+        }
     }      
     if (refreshFlag) {
         App::GetWin()->Refresh();

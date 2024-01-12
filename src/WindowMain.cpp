@@ -154,12 +154,13 @@ bool WindowMain::onMouseDown(const int& x, const int& y)
     if (ToolSub::Get()->OnMouseDown(x, y)) {
         return true;
     }
-    auto cmFlag = CutMask::Get()->OnMouseDown(x, y);
-    if (cmFlag) {
+    if (CutMask::Get()->OnMouseDown(x, y)) {
         return true;
     }
-    Recorder::Get()->OnMouseDown(x, y);
-    return true;
+    if (Recorder::Get()->OnMouseDown(x, y)) {
+        return true;
+    }
+    return false;
 }
 bool WindowMain::onMouseDownRight(const int& x, const int& y)
 {
@@ -203,8 +204,7 @@ bool WindowMain::onMouseDrag(const int& x, const int& y)
     if (tm || ts) {
         return false;
     }
-    auto cm = CutMask::Get()->OnMouseDrag(x, y);
-    if (cm) {
+    if (CutMask::Get()->OnMouseDrag(x, y)) {
         return false;
     }
     Recorder::Get()->OnMouseDrag(x, y);    
