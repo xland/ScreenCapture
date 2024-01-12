@@ -100,7 +100,8 @@ bool ShapeText::OnMouseMove(const int &x, const int &y)
     if (rect.contains(x, y)) {
         Cursor::Text();
         HoverIndex = 8;
-        ShapeDragger::Get()->ShowDragger();
+        //写字时，不能显示dragger，因为dragger会刷新front canvas，就会把字刷掉
+        //ShapeDragger::Get()->ShowDragger();
         return true;
     }
     else {

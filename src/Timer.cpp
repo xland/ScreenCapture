@@ -51,13 +51,10 @@ void Timer::Start(const int id, const int& timeSpan, std::function<bool()> taskF
 
 void Timer::Remove(const int& id)
 {
-    auto it = std::find_if(tasks.begin(), tasks.end(), [id](std::shared_ptr<TimerTask> task){
+    std::lock_guard<std::mutex> lock(mutex);
+    std::erase_if(tasks, [&id](std::shared_ptr<TimerTask> task) {
         return task->Id == id;
-    });
-    if (it != tasks.end()) {
-        std::lock_guard<std::mutex> lock(mutex);
-        tasks.erase(it);
-    }
+        });
 }
 
 void Timer::asyncTask()
@@ -76,8 +73,17 @@ void Timer::asyncTask()
             std::lock_guard<std::mutex> lock(mutex);
             if (!shouldTerminate) {
                 tasks.erase(it, tasks.end());
-            }            
+            }
         }
+        //{
+        //    std::lock_guard<std::mutex> lock(mutex);
+        //    std::erase_if(tasks, [&currentTime](auto& task) {
+        //        if (task->StartTime <= currentTime) {
+        //            return task->TaskFunc();
+        //        }
+        //        return false;
+        //        });
+        //}
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 }

@@ -78,8 +78,8 @@ bool Recorder::OnMouseDownRight(const int& x, const int& y)
         auto textObj = static_cast<ShapeText*>(CurShape);
         auto flag = textObj->EndInput();
         if (flag) {
-            auto iter = std::remove_if(shapes.begin(), shapes.end(), [this](auto item) { return item.get() == CurShape; });
-            shapes.erase(iter, shapes.end());
+            std::erase_if(shapes, [this](auto& item) { return item.get() == CurShape; });
+            CurShape = nullptr;
         }
         return true;
     }
@@ -96,8 +96,7 @@ bool Recorder::OnMouseUp(const int &x, const int &y)
     }
     if (CurShape->IsTemp)
     {
-        auto iter = std::remove_if(shapes.begin(), shapes.end(), [this](auto item) { return item.get() == CurShape; });
-        shapes.erase(iter, shapes.end());
+        std::erase_if(shapes, [this](auto& item) { return item.get() == CurShape; });
         CurShape = nullptr;
         return false;
     }
@@ -188,8 +187,7 @@ bool Recorder::OnKeyDown(const unsigned int& val)
             auto textObj = static_cast<ShapeText*>(CurShape);
             auto flag = textObj->EndInput();
             if (flag) {
-                auto iter = std::remove_if(shapes.begin(), shapes.end(), [this](auto item) { return item.get() == CurShape; });
-                shapes.erase(iter, shapes.end());
+                std::erase_if(shapes, [this](auto& item) { return item.get() == CurShape; });
             }
             CurShape = nullptr;
             return true;
