@@ -87,8 +87,8 @@ bool Recorder::OnMouseDownRight(const int& x, const int& y)
         auto flag = textObj->EndInput();
         if (flag) {
             std::erase_if(shapes, [this](auto& item) { return item.get() == CurShape; });
-            CurShape = nullptr;
         }
+        CurShape = nullptr;
         return true;
     }
     return false;
