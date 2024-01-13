@@ -17,7 +17,6 @@ public:
 protected:
     bool OnMouseDown(const int &x, const int &y) override;
     bool OnMouseUp(const int &x, const int &y) override;
-    bool OnMouseMove(const int &x, const int &y) override;
     bool OnMoseDrag(const int &x, const int &y) override;
 
 private:

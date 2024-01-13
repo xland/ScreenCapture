@@ -86,53 +86,34 @@ void ToolMain::SetPositionByCutMask()
     auto heightSpan = MarginTop * 3 + ToolBtn::Height * 2;    
     auto screen = App::GetScreen(mask->CutRect.fRight, mask->CutRect.fBottom + heightSpan);
     if (screen) { //工具条右下角在屏幕内
+        topFlag = false;
         //工具条左上角不在屏幕内
         if (!App::GetScreen(left, top)) {
             left = screen->fLeft;
         }
     }
     else { //工具条右下角不在屏幕内
+        topFlag = true;
         //判断屏幕顶部是否有足够的空间，工具条是否可以在CutRect右上角
         screen = App::GetScreen(mask->CutRect.fRight, mask->CutRect.fTop - heightSpan);
         if (screen) { //工具条右上角在屏幕内  
             if (App::GetScreen(left, mask->CutRect.fTop - heightSpan)) { //工具条左上角在屏幕内
-                if (IndexSelected == -1) { //不需要显示子工具条，主工具条贴着截图区                    
-                    top = mask->CutRect.fTop - MarginTop - ToolBtn::Height;
-                    topFlag = 1;
-                }
-                else { //需要显示子工具条，要为子工具条留出区域
-                    top = mask->CutRect.fTop - MarginTop * 2 - ToolBtn::Height * 2;
-                }
+                top = mask->CutRect.fTop - MarginTop - ToolBtn::Height;
             }
             else { //工具条左上角不在屏幕中
                 left = screen->fLeft;
-                if (IndexSelected == -1) { //不需要显示子工具条，主工具条贴着截图区
-                    top = mask->CutRect.fTop - MarginTop - ToolBtn::Height;
-                }
-                else { //需要显示子工具条，要为子工具条留出区域
-                    top = mask->CutRect.fTop - MarginTop * 2 - ToolBtn::Height * 2;
-                }
+                top = mask->CutRect.fTop - MarginTop - ToolBtn::Height;
             }
         }
         else { //工具条右上角不在屏幕内，此时屏幕顶部和屏幕底部都没有足够的空间，工具条只能显示在截图区域内            
             if (App::GetScreen(left, mask->CutRect.fBottom - heightSpan)) { //工具条左上角在屏幕内
-                if (IndexSelected == -1) { //不需要显示子工具条，主工具条贴着截图区
-                    top = mask->CutRect.fBottom - MarginTop - ToolBtn::Height;
-                }
-                else { //需要显示子工具条，要为子工具条留出区域
-                    top = mask->CutRect.fBottom - MarginTop * 2 - ToolBtn::Height * 2;
-                }
+                top = mask->CutRect.fBottom - MarginTop - ToolBtn::Height;
             }
             else { //工具条左上角不在屏幕中，得到截图区域所在屏幕
                 screen = App::GetScreen(mask->CutRect.fRight, mask->CutRect.fBottom);
                 if (screen) {
                     left = screen->fLeft;
-                    if (IndexSelected == -1) { //不需要显示子工具条，主工具条贴着截图区
-                        top = mask->CutRect.fBottom - MarginTop - ToolBtn::Height;
-                    }
-                    else { //需要显示子工具条，要为子工具条留出区域
-                        top = mask->CutRect.fBottom - MarginTop * 2 - ToolBtn::Height * 2;
-                    }
+                    top = mask->CutRect.fBottom - MarginTop - ToolBtn::Height;
                 }
             }
         }
@@ -173,6 +154,9 @@ bool ToolMain::OnMouseDown(const int& x, const int& y)
         btns[IndexHovered]->IsSelected = false;
         IndexSelected = -1;
         win->state = State::tool;
+        if (topFlag) {
+            ToolRect.offset(0, MarginTop + ToolBtn::Height);
+        }
         win->Refresh();
     }
     else
@@ -181,6 +165,11 @@ bool ToolMain::OnMouseDown(const int& x, const int& y)
             btns[IndexHovered]->IsSelected = true;
             if (IndexSelected >= 0) {
                 btns[IndexSelected]->IsSelected = false;
+            }
+            else {
+                if (topFlag) {
+                    ToolRect.offset(0, 0 - MarginTop - ToolBtn::Height);
+                }
             }
             IndexSelected = IndexHovered;
             ToolSub::Get()->InitBtns(IndexSelected);

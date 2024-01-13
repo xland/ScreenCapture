@@ -27,19 +27,9 @@ void ShapeEraser::Paint(SkCanvas *canvas)
     canvas->drawPath(path, paint);
 }
 
-bool ShapeEraser::OnMouseDown(const int& x, const int& y)
-{
-    return false;
-}
-
 bool ShapeEraser::OnMouseUp(const int& x, const int& y)
 {
     ShapeDragger::Get()->DisableDragger();    
-    return false;
-}
-
-bool ShapeEraser::OnMouseMove(const int& x, const int& y)
-{
     return false;
 }
 

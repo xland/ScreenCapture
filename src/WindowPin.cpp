@@ -95,11 +95,13 @@ void WindowPin::initCanvas()
 void WindowPin::initSize()
 {
     auto rect = CutMask::GetCutRect();
-    x = rect.fLeft - shadowSize;
-    y = rect.fTop - shadowSize;
+    auto mainWin = App::GetWin();
+    x = mainWin->x + rect.fLeft - shadowSize;
+    y = mainWin->y + rect.fTop - shadowSize;
     w = rect.width() + shadowSize * 2;
     h = rect.height() + shadowSize * 2;
     auto tm = ToolMain::Get();
+    tm->Reset();
     auto tempWidth = tm->ToolRect.width() + shadowSize * 2;
     if (w < tempWidth) {
         this->w = tempWidth;
@@ -198,7 +200,7 @@ LRESULT WindowPin::wndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
             break;
         }
         case 1002:
-            SkDebugf("1002");
+            App::Quit(1);
             break;
         }
         break;

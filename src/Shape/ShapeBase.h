@@ -14,8 +14,8 @@ public:
     ShapeBase(const int& x, const int& y);
     ~ShapeBase();
     virtual bool OnMouseDown(const int& x, const int& y) { return false; };
-    virtual bool OnMouseMove(const int& x, const int& y) = 0;
-    virtual bool OnMouseUp(const int& x, const int& y) = 0;
+    virtual bool OnMouseMove(const int& x, const int& y) { return false; };
+    virtual bool OnMouseUp(const int& x, const int& y) { return false; };
     virtual bool OnMoseDrag(const int& x, const int& y) { return false; };
     virtual bool OnChar(const unsigned int& val) { return false; };
     virtual bool OnKeyDown(const unsigned int& val) { return false; };

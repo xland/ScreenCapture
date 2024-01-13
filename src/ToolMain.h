@@ -29,5 +29,5 @@ private:
     /// 1选中某个按钮时，位置上移
     /// 2取消选中某个按钮时，位置下移
     /// </summary>
-    int topFlag{ 0 };
+    bool topFlag{ false };
 };

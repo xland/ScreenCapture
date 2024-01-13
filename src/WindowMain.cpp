@@ -90,6 +90,12 @@ LRESULT WindowMain::wndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
         auto y = GET_Y_LPARAM(lparam);
         return onMouseDown(x, y);
     }
+    case WM_LBUTTONDBLCLK:
+    {
+        auto x = GET_X_LPARAM(lparam);
+        auto y = GET_Y_LPARAM(lparam);
+        return onDoubleClick(x,y);
+    }
     case WM_LBUTTONUP:
     {
         IsMouseDown = false;
@@ -255,6 +261,13 @@ bool WindowMain::onKeyDown(const unsigned int& val)
 bool WindowMain::onMouseWheel(const int& delta)
 {
     Recorder::Get()->OnMouseWheel(delta);
+    return false;
+}
+bool WindowMain::onDoubleClick(const int& x, const int& y)
+{
+    if (state >= State::tool && CutMask::GetCutRect().contains(x,y)) {
+        SaveToClipboard();
+    }
     return false;
 }
 void WindowMain::shotScreen()

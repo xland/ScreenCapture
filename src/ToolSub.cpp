@@ -234,12 +234,12 @@ bool ToolSub::GetFill()
     return btns[0]->IsSelected;
 }
 
-int ToolSub::GetStroke()
+int ToolSub::GetStroke(int index)
 {
-    if (btns[1]->IsSelected) {
+    if (btns[index]->IsSelected) {
         return 1;
     }
-    else if (btns[2]->IsSelected) {
+    else if (btns[index+1]->IsSelected) {
         return 2;
     }
     else {

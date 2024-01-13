@@ -15,21 +15,6 @@ ShapePen::~ShapePen()
 {
 }
 
-bool ShapePen::OnMouseDown(const int& x, const int& y)
-{
-    return false;
-}
-
-bool ShapePen::OnMouseMove(const int& x, const int& y)
-{
-    return false;
-}
-
-bool ShapePen::OnMouseUp(const int& x, const int& y)
-{
-    return false;
-}
-
 bool ShapePen::OnMoseDrag(const int& x, const int& y)
 {
     IsTemp = false;
@@ -59,7 +44,7 @@ void ShapePen::initParams()
     path.moveTo(startX, startY);
     auto tool = ToolSub::Get();
     stroke = true;
-    auto strokeLine = tool->GetStroke();
+    auto strokeLine = tool->GetStroke(0);
     if (strokeLine == 1) {
         strokeWidth = 4;
     }

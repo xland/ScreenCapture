@@ -1,11 +1,17 @@
-- Bug fix: Write cross-screen screenshots to the clipboard
-- Bug fix: Remove single instance control
-- Bug fix: Rect mosaic area reach screen edge crash
+- Bug fix: Cann't write cross-screen shot to the clipboard.
+- Bug fix: Remove single instance control.
+- Bug fix: Rect mosaic area reach screen edge crash.
+- Bug fix: Sub tool bar obscure the cut area when main tool bar is above the cut area.
+- Bug fix: Quick click toolbar button trigger double-click event.
+- Bug fix: Draw by pen with wrong stroke width.
+- Bug fix: Pin window can not exit by context menu.
+- Bug fix: Pin window position error when user have more than one screen.
+- Bug fix: Reset main tool when pin window.
+- Some code optimization.
 
 - 绘图过程中屏幕会黑一下的问题又来了，应该是重绘并发导致的
-- 工具栏被挤到顶部时，显示子工具栏会遮住截图区域
 - 绘制马赛克后，马赛克以前的历史元素变更位置，马赛克遮不住他们
-- 点返回，点的太快，当作双击了
+- 钉住窗口再画Rect会多一个上一次画的东西
 
 - 多个屏幕，马赛克，auto currentColor = pixmap->getColor4f(x1, y1);  x1和y1有可能是负值，这样取到的color有问题
 - 多个屏幕测试，要多测试几轮

@@ -12,9 +12,6 @@ class ShapePen : public ShapeBase
 public:
     ShapePen(const int &x, const int &y);
     ~ShapePen();
-    bool OnMouseDown(const int& x, const int& y) override;
-    bool OnMouseMove(const int& x, const int& y) override;
-    bool OnMouseUp(const int& x, const int& y) override;
     bool OnMoseDrag(const int& x, const int& y) override;
     void Paint(SkCanvas *canvas) override;
 

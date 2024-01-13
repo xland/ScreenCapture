@@ -12,7 +12,7 @@ public:
     void InitBtns(int mainToolSelectedIndex);
     bool OnPaint(SkCanvas* canvas) override;
     bool GetFill();
-    int GetStroke();
+    int GetStroke(int index = 1);
     SkColor GetColor();
 
 private:

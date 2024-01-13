@@ -86,11 +86,6 @@ bool ShapeMosaic::OnMouseUp(const int &x, const int &y)
     return false;
 }
 
-bool ShapeMosaic::OnMouseMove(const int &x, const int &y)
-{
-    return false;
-}
-
 bool ShapeMosaic::OnMoseDrag(const int &x, const int &y)
 {
     IsTemp = false;

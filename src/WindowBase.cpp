@@ -86,13 +86,6 @@ LRESULT CALLBACK WindowBase::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wPar
         {
             return true;
         }
-        case WM_LBUTTONDBLCLK:
-        {
-            if (obj->state >= State::tool) {
-                obj->SaveToClipboard();
-            }
-            return true;
-        }
         case WM_KEYDOWN:
         {
             switch (wParam)
