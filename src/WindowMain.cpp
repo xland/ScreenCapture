@@ -52,8 +52,9 @@ void WindowMain::SaveToClipboard()
     HDC hMemDC = CreateCompatibleDC(ScreenDC);
     HBITMAP hBitmap = CreateCompatibleBitmap(ScreenDC, rect.width(), rect.height());
     HBITMAP hOldBitmap = (HBITMAP)SelectObject(hMemDC, hBitmap);
+    float x{ this->x + rect.fLeft }, y{ this->y + rect.fTop };
     auto w{ rect.width() }, h{ rect.height() };
-    StretchBlt(hMemDC, 0, 0, w, h, ScreenDC, rect.fLeft, rect.fTop, w, h, SRCCOPY);
+    StretchBlt(hMemDC, 0, 0, w, h, ScreenDC, x, y, w, h, SRCCOPY);
     hBitmap = (HBITMAP)SelectObject(hMemDC, hOldBitmap);
     DeleteDC(hMemDC);
     DeleteObject(hOldBitmap);

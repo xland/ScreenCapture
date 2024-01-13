@@ -98,6 +98,7 @@ void ToolMain::SetPositionByCutMask()
             if (App::GetScreen(left, mask->CutRect.fTop - heightSpan)) { //工具条左上角在屏幕内
                 if (IndexSelected == -1) { //不需要显示子工具条，主工具条贴着截图区                    
                     top = mask->CutRect.fTop - MarginTop - ToolBtn::Height;
+                    topFlag = 1;
                 }
                 else { //需要显示子工具条，要为子工具条留出区域
                     top = mask->CutRect.fTop - MarginTop * 2 - ToolBtn::Height * 2;

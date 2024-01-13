@@ -1,7 +1,20 @@
+- Bug fix: Write cross-screen screenshots to the clipboard
+- Bug fix: Remove single instance control
+- Bug fix: Rect mosaic area reach screen edge crash
+
+- 绘图过程中屏幕会黑一下的问题又来了，应该是重绘并发导致的
+- 工具栏被挤到顶部时，显示子工具栏会遮住截图区域
+- 绘制马赛克后，马赛克以前的历史元素变更位置，马赛克遮不住他们
+- 点返回，点的太快，当作双击了
+
 - 多个屏幕，马赛克，auto currentColor = pixmap->getColor4f(x1, y1);  x1和y1有可能是负值，这样取到的color有问题
 - 多个屏幕测试，要多测试几轮
+
+
+
+
 - Eraser和Mosaic 是否应继承自Pen
-- 绘图过程中屏幕会黑以下的问题又来了，应该与Cutmask有关
+
 
 
 

@@ -75,7 +75,6 @@ bool Recorder::OnMouseDown(const int &x, const int &y)
         createShape(x, y, win->state);
         CurShape = shapes.back().get();
         CurShape->OnMouseDown(x, y);
-        win->IsMouseDown = false; //避免触发drag事件
     }
     return false;
 }

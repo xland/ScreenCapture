@@ -42,19 +42,20 @@ bool ShapeMosaicRect::OnMouseUp(const int& x, const int& y)
 void ShapeMosaicRect::drawRectsByPoints(SkCanvas* canvas)
 {
     auto win = App::GetWin();
-    int rowNum = std::ceil((float)win->w / size);
-    int rectNum = std::ceil(rect.width() / size) + 1;
-    int xIndex = rect.fLeft / size;
-    int yIndex = rect.fTop / size;
+    int columnNum = std::ceil((float)win->w / size); //整个屏幕马赛克的列数
+    int rectColumnNum = std::ceil(rect.width() / size) + 1; //绘制区马赛克列数
+    int rectRowNum = std::ceil(rect.height() / size) + 1; //绘制区马赛克行数
+    int xIndex = rect.fLeft / size; //绘制区左侧第一个马赛克在屏幕中属于第几列
+    int yIndex = rect.fTop / size; //绘制区顶部第一个马赛克在屏幕中属于第几行
     xIndex = xIndex < 0 ? 0 : xIndex;
     yIndex = yIndex < 0 ? 0 : yIndex;
     SkColor4f colorSum = { 0, 0, 0, 0 };
     SkPaint paint;
-    for (size_t i = yIndex; i < yIndex + rectNum; i++)
+    for (size_t i = yIndex; i < yIndex + rectRowNum; i++)
     {
-        for (size_t j = xIndex; j < xIndex + rectNum; j++)
+        for (size_t j = xIndex; j < xIndex + rectColumnNum; j++)
         {
-            int key = i * rowNum + j;
+            int key = i * columnNum + j;
             auto x = j * size;
             auto y = i * size;
             if (colorCache.contains(key)) {
@@ -67,7 +68,13 @@ void ShapeMosaicRect::drawRectsByPoints(SkCanvas* canvas)
                 {
                     for (size_t y1 = y; y1 <= y + size; y1 += 2)
                     {
-                        auto currentColor = pixmap->getColor4f(x1, y1);
+                        SkColor4f currentColor;
+                        if (x1 >= win->w || y1 >= win->h) {
+                            currentColor = SkColor4f::FromColor(SK_ColorBLACK);
+                        }
+                        else {
+                            currentColor = pixmap->getColor4f(x1, y1);
+                        }
                         colorSum.fR += currentColor.fR;
                         colorSum.fG += currentColor.fG;
                         colorSum.fB += currentColor.fB;
