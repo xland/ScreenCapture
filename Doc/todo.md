@@ -1,14 +1,9 @@
-- Bug fix: Cann't write cross-screen shot to the clipboard.
-- Bug fix: Remove single instance control.
-- Bug fix: Rect mosaic area reach screen edge crash.
-- Bug fix: Sub tool bar obscure the cut area when main tool bar is above the cut area.
-- Bug fix: Quick click toolbar button trigger double-click event.
-- Bug fix: Draw by pen with wrong stroke width.
-- Bug fix: Pin window can not exit by context menu.
-- Bug fix: Pin window position error when user have more than one screen.
-- Bug fix: Reset main tool when pin window.
-- Some code optimization.
-
+- 点工具条的时候会导致Crash
+- 主工具栏没选中任何一个按钮的时候，在工具栏上拖拽，Cutbox变化后，不再显示工具栏
+- 按下标号的时候就应该马上绘制到Front中，不然会闪以下
+- CutMask点击改变大小的时候，就没必要隐藏toolbar不然会闪以下
+- 画完一个新元素，有的时候会把一个老元素干掉
+- 按住Shift画正圆，按住Shift画正方
 - 绘图过程中屏幕会黑一下的问题又来了，应该是重绘并发导致的
 - 绘制马赛克后，马赛克以前的历史元素变更位置，马赛克遮不住他们
 - 钉住窗口再画Rect会多一个上一次画的东西

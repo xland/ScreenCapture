@@ -11,8 +11,6 @@
 #include "include/core/SkStream.h"
 #include "include/encode/SkPngEncoder.h"
 
-std::mutex mutexObj;
-
 WindowBase::WindowBase()
 {
 }
@@ -22,6 +20,8 @@ WindowBase::~WindowBase()
     delete[] pixSrc->addr();
     delete pixSrc;
     delete pixBase;
+    delete pixBack;
+    delete pixFront;
     DeleteDC(hCompatibleDC);
     DeleteObject(bottomHbitmap);
 }
@@ -78,7 +78,6 @@ LRESULT CALLBACK WindowBase::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wPar
             break;
         }
         case WM_REFRESH: {
-            std::lock_guard<std::mutex> lock(mutexObj);
             obj->refresh();
             return true;
         }
