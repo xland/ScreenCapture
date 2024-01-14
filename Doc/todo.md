@@ -1,8 +1,12 @@
-- 点工具条的时候会导致Crash
-- 主工具栏没选中任何一个按钮的时候，在工具栏上拖拽，Cutbox变化后，不再显示工具栏
-- 按下标号的时候就应该马上绘制到Front中，不然会闪以下
-- CutMask点击改变大小的时候，就没必要隐藏toolbar不然会闪以下
-- 画完一个新元素，有的时候会把一个老元素干掉
+- Bug fix: Disable drag event on tool bar
+- Bug fix: When drag Number shape, it flashes.
+- Bug fix: When a new element is drawn after undo, the last historical element is removed.
+- Enhancement: Use eraser rect to draw cut box instead of path `kInverseWinding`
+- Enhancement: Initialize CutBox as window size to avoid blinking at startup
+
+
+- 鼠标移到历史元素上过一会儿再允许它修改
+- 点工具条的时候会导致Crash？？？应该已经修复了
 - 按住Shift画正圆，按住Shift画正方
 - 绘图过程中屏幕会黑一下的问题又来了，应该是重绘并发导致的
 - 绘制马赛克后，马赛克以前的历史元素变更位置，马赛克遮不住他们

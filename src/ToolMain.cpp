@@ -76,7 +76,6 @@ void ToolMain::saveFile()
     WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), -1, &str[0], count, NULL, NULL);
     App::GetWin()->Save(str);
 }
-
 void ToolMain::SetPositionByCutMask()
 {
     auto mask = CutMask::Get();
@@ -120,18 +119,14 @@ void ToolMain::SetPositionByCutMask()
     }
     ToolRect.setXYWH(left,top, btns.size() * ToolBtn::Width, ToolBtn::Height);
 }
-
 void ToolMain::SetPosition(const float& x, const float& y)
 {
     ToolRect.setXYWH(x, y, btns.size() * ToolBtn::Width, ToolBtn::Height);
 }
-
-
 void ToolMain::Init()
 {
     toolMain = new ToolMain();
 }
-
 ToolMain *ToolMain::Get()
 {
     return toolMain;
@@ -149,6 +144,7 @@ bool ToolMain::OnMouseDown(const int& x, const int& y)
     {
         return false;
     }
+    win->IsMouseDown = false; //不然在主工具栏上拖拽的时候，会改变CutBox，而且改变完CutBox后不会在显示工具栏
     if (IndexHovered == IndexSelected)
     {
         btns[IndexHovered]->IsSelected = false;
@@ -182,11 +178,11 @@ bool ToolMain::OnMouseDown(const int& x, const int& y)
             }
             switch (IndexHovered)
             {
-            case 9: {
+            case 9: { //上一步
                 Recorder::Get()->Undo();
                 break;
             }
-            case 10: {
+            case 10: { //下一步
                 Recorder::Get()->Redo();
                 break;
             }

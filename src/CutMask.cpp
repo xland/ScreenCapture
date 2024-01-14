@@ -18,24 +18,14 @@ CutMask::CutMask()
     
 }
 
-void CutMask::setPath()
-{
-    path.reset();
-    path.addRect(CutRect);
-    path.setFillType(SkPathFillType::kInverseWinding);
-    App::GetWin()->Refresh();
-}
-
 CutMask::~CutMask()
 {
 }
 
-void CutMask::Init()
+void CutMask::Init(int w, int h)
 {
-    if (!cutMask)
-    {
-        cutMask = new CutMask();
-    }
+    cutMask = new CutMask();
+    cutMask->CutRect.setXYWH(0, 0, w, h); //不然会闪一下
 }
 
 CutMask* CutMask::Get()
@@ -96,9 +86,9 @@ bool CutMask::OnMouseDown(const int& x, const int& y)
     else {
         return false;
     }
-    win->surfaceFront->getCanvas()->clear(SK_ColorTRANSPARENT);
     win->state = State::mask;
-    setPath();
+    win->surfaceFront->getCanvas()->clear(SK_ColorTRANSPARENT);
+    win->Refresh();
     return true;
 }
 bool CutMask::OnMouseMove(const int& x, const int& y)
@@ -110,7 +100,6 @@ bool CutMask::OnMouseMove(const int& x, const int& y)
         {
             if (winRects[i].contains(x, y)) {
                 CutRect = winRects[i];
-                setPath();
                 return false;
             }
         }
@@ -204,10 +193,10 @@ bool CutMask::OnMouseMove(const int& x, const int& y)
 }
 bool CutMask::OnMouseDrag(const int& x, const int& y)
 {
-    auto win = App::GetWin();
     if (hoverIndex < 0) {
         return false;
     }
+    auto win = App::GetWin();
     win->state = State::mask;
     if (hoverIndex == 0) {
         CutRect.setLTRB(x, y, start.fX, start.fY);
@@ -249,20 +238,30 @@ bool CutMask::OnMouseDrag(const int& x, const int& y)
             top = win->h - CutRect.height();
         }
         CutRect.setLTRB(left, top, right, bottom);
-        setPath();
         start.set(x - CutRect.fLeft, y - CutRect.fTop);
+        win->Refresh();
         return true;
     }
     CutRect.sort();
-    setPath();    
+    win->Refresh();
     return true;
 }
 bool CutMask::OnPaint(SkCanvas *canvas)
 {
     auto win = App::GetWin();
+    {
+        canvas->saveLayer(nullptr,nullptr);
+        canvas->drawColor(SkColorSetARGB(160, 0, 0, 0));
+        SkPaint paint;
+        paint.setBlendMode(SkBlendMode::kClear);
+        canvas->drawRect(CutRect, paint);
+        canvas->restore();
+
+        //path.reset();
+        //path.addRect(CutRect);
+        //path.setFillType(SkPathFillType::kInverseWinding);
+    }
     SkPaint paint;
-    paint.setColor(SkColorSetARGB(160, 0, 0, 0));
-    canvas->drawPath(path, paint);
     paint.setColor(SkColorSetARGB(255, 22, 118, 255));
     paint.setStrokeWidth(3);
     paint.setStyle(SkPaint::Style::kStroke_Style);

@@ -10,7 +10,7 @@ class CutMask
 {
 public:
     ~CutMask();
-    static void Init();
+    static void Init(int w,int h);
     static CutMask* Get();
     static SkRect GetCutRect();
     bool OnMouseDown(const int& x, const int& y);
@@ -23,9 +23,7 @@ public:
     SkRect CutRect;
 private:
     CutMask();
-    void setPath();
     std::vector<SkRect> winRects;
     SkPoint start{-1,-1};
-    SkPath path;
     int hoverIndex{ 4 };
 };

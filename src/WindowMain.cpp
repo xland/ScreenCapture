@@ -18,9 +18,9 @@ std::mutex mutexObj;
 
 WindowMain::WindowMain()
 {
-    CutMask::Init();
-    PixelInfo::Init();
     initSize();
+    CutMask::Init(w,h);
+    PixelInfo::Init();
     shotScreen();
     initWindow();
     state = State::start;
@@ -163,7 +163,7 @@ void WindowMain::paintCanvas()
     //App::Log(std::format("pixFront:rgba:{},{},{},{}\n", cBase.fR, cBase.fG, cBase.fB, cBase.fA));
     
 
-
+    
     canvas->drawImage(img, 0.f, 0.f);
     CutMask::Get()->OnPaint(canvas);
     ToolMain::Get()->OnPaint(canvas);

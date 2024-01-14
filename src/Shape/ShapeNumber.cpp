@@ -9,6 +9,7 @@ static int num = 1;
 
 ShapeNumber::ShapeNumber(const int &x, const int &y) : ShapeBase(x, y)
 {
+    IsTemp = false;
     initParams();
 }
 
@@ -21,15 +22,18 @@ ShapeNumber::~ShapeNumber()
 
 bool ShapeNumber::OnMouseDown(const int &x, const int &y)
 {
-    IsTemp = false;
-    makePath(startX, startY, x, y);
     hoverX = x;
     hoverY = y;
-    auto win = App::GetWin();
-    auto canvas = win->surfaceFront->getCanvas();
-    canvas->clear(SK_ColorTRANSPARENT);
-    Paint(canvas);
-    App::GetWin()->Refresh();
+    if (path.isEmpty()) {
+        endX = x;
+        endY = y;
+        makePath(startX, startY, x, y);
+        auto win = App::GetWin();
+        auto canvas = win->surfaceFront->getCanvas();
+        canvas->clear(SK_ColorTRANSPARENT);
+        Paint(canvas);
+        App::GetWin()->Refresh();
+    }
     return false;
 }
 
@@ -108,7 +112,38 @@ void ShapeNumber::Paint(SkCanvas *canvas)
     SkScalar y = startY + textBounds.height() / 2 - textBounds.bottom();    
     canvas->drawSimpleText(str.c_str(), str.size(), SkTextEncoding::kUTF8, x, y, *font, paint);
 }
-
+void ShapeNumber::makePath(const int &x1, const int &y1, const int &x2, const int &y2)
+{
+    //x1,y1圆心；x2,y2箭头顶点
+    auto x = x2 - x1;
+    auto y = y1 - y2;
+    r = std::sqrt(x * x + y * y);//圆心到箭头顶点的长度
+    auto height = r / 3.0f; //箭头高度
+    r = r - height; //半径
+    auto radint = std::atan2(y, x); //反正切
+    auto angle = radint * 180 / std::numbers::pi; //角度
+    auto angleSpan = 16.f; //半角
+    auto angle1 = (angle + angleSpan) * std::numbers::pi / 180;//弧度
+    auto angle2 = (angle - angleSpan) * std::numbers::pi / 180;//弧度
+    auto X1 = x1 + r * cos(angle1);//箭头与圆的交接点1
+    auto Y1 = y1 - r * sin(angle1);
+    auto X2 = x1 + r * cos(angle2);//箭头与圆的交接点2
+    auto Y2 = y1 - r * sin(angle2);    
+    path.reset(); 
+    path.moveTo(X1, Y1);
+    path.arcTo(r, r, 30, SkPath::kLarge_ArcSize, SkPathDirection::kCCW, X2, Y2);
+    path.lineTo(x2, y2);
+    path.close();
+}
+void ShapeNumber::setDragger()
+{
+    auto shapeDragger = ShapeDragger::Get();
+    unsigned half = shapeDragger->Size / 2;
+    shapeDragger->SetDragger(0, endX - half, endY - half);
+    shapeDragger->Cursors[0] = Cursor::cursor::all;
+    shapeDragger->DisableDragger(1);
+    shapeDragger->CurShape = this;
+}
 void ShapeNumber::initParams()
 {
     number = num;
@@ -133,38 +168,4 @@ void ShapeNumber::initParams()
         }
     }
     color = tool->GetColor();
-}
-
-void ShapeNumber::makePath(const int &x1, const int &y1, const int &x2, const int &y2)
-{
-    //x1,y1圆心；x2,y2箭头顶点
-    auto x = x2 - x1;
-    auto y = y1 - y2;
-    r = std::sqrt(x * x + y * y);//圆心到箭头顶点的长度
-    auto height = r / 3.0f; //箭头高度
-    r = r - height; //半径
-    auto radint = std::atan2(y, x); //反正切
-    auto angle = radint * 180 / std::numbers::pi; //角度
-    auto angleSpan = 16.f; //半角
-    auto angle1 = (angle + angleSpan) * std::numbers::pi / 180;//弧度
-    auto angle2 = (angle - angleSpan) * std::numbers::pi / 180;//弧度
-    auto X1 = x1 + r * cos(angle1);//箭头与圆的交接点1
-    auto Y1 = y1 - r * sin(angle1);
-    auto X2 = x1 + r * cos(angle2);//箭头与圆的交接点2
-    auto Y2 = y1 - r * sin(angle2);    
-    path.reset(); 
-    path.moveTo(X1, Y1);
-    path.arcTo(r, r, 30, SkPath::kLarge_ArcSize, SkPathDirection::kCCW, X2, Y2);
-    path.lineTo(x2, y2);
-    path.close();
-}
-
-void ShapeNumber::setDragger()
-{
-    auto shapeDragger = ShapeDragger::Get();
-    unsigned half = shapeDragger->Size / 2;
-    shapeDragger->SetDragger(0, endX - half, endY - half);
-    shapeDragger->Cursors[0] = Cursor::cursor::all;
-    shapeDragger->DisableDragger(1);
-    shapeDragger->CurShape = this;
 }

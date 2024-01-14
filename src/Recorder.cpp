@@ -351,17 +351,6 @@ void Recorder::createShape(const int &x, const int &y, const State &state)
     default:
         break;
     }
-    int index = shapes.size();
-    for (size_t i = 0; i < shapes.size(); i++)
-    {
-        if (shapes[i]->IsDel) {
-            index = i - 1;
-            break;
-        }
-    }
-    if (index < 0) index = 0;
-    if (index < shapes.size()) {
-        shapes.erase(shapes.begin() + index,shapes.end());
-    }
+    std::erase_if(shapes, [](auto& item) {return item->IsDel; });
     shapes.push_back(std::move(shape));    
 }
