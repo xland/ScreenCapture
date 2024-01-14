@@ -127,7 +127,7 @@ bool Recorder::OnMouseUp(const int &x, const int &y)
     auto toolMain = ToolMain::Get();
     toolMain->SetUndoDisable(undoDisable);
     toolMain->SetRedoDisable(redoDisable);
-    ShapeDragger::Get()->ShowDragger();
+    CurShape = nullptr;
     return false;
 }
 bool Recorder::OnMouseMove(const int &x, const int &y)
@@ -137,7 +137,9 @@ bool Recorder::OnMouseMove(const int &x, const int &y)
         Cursor::Text();
     }
     else {
-        Cursor::Cross();
+        if (!CurShape) {
+            Cursor::Cross();
+        }
     }
     if (win->state <= State::tool || shapes.size() == 0) {
         return false;
@@ -147,26 +149,26 @@ bool Recorder::OnMouseMove(const int &x, const int &y)
         CurShape->OnMouseMove(x, y);
         return false;
     }
-    CurShape = nullptr;
+    bool isHover = false;
     for (int i = shapes.size() - 1; i >= 0; i--)
     {
         if (shapes[i]->IsDel) continue;
-        auto flag = shapes[i]->OnMouseMove(x, y);
-        if (flag)
+        isHover = shapes[i]->OnMouseMove(x, y);
+        if (isHover)
         {
-            CurShape = shapes[i].get();
             break;
         }
     }
-    auto shapeDragger = ShapeDragger::Get();
-    int index = shapeDragger->IndexMouseAt(x, y);
-    if (index >= 0) {
-        CurShape = shapeDragger->CurShape;
-    }
-    if (!CurShape) {     
-        Timer::Get()->Start(0, 800, []() {
-            return ShapeDragger::Get()->HideDragger();
-            });
+    if (!isHover && !CurShape) {
+        if (CurShape) {
+            if (CurShape->MouseInDragger(x, y)) {
+                return false;
+            }
+            else {
+                CurShape->HideDragger();
+            }
+        }
+        Timer::Get()->Remove(0);        
     }
     return false;
 }

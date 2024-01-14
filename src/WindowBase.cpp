@@ -6,6 +6,7 @@
 #include "ToolSub.h"
 #include "CutMask.h"
 #include "Timer.h"
+#include "Cursor.h"
 #include "WindowMain.h"
 #include "WindowPin.h"
 #include "include/core/SkStream.h"
@@ -77,6 +78,10 @@ LRESULT CALLBACK WindowBase::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wPar
         }
         case WM_REFRESH: {
             obj->refresh();
+            return true;
+        }
+        case WM_MYCURSOR: {
+            Cursor::All();
             return true;
         }
         case WM_SETCURSOR:

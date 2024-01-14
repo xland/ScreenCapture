@@ -14,15 +14,21 @@
 - 绘图过程中屏幕会黑一下的问题又来了，应该是重绘并发导致的
 - 绘制马赛克后，马赛克以前的历史元素变更位置，马赛克遮不住他们
 - 钉住窗口再画Rect会多一个上一次画的东西
-
+- 感觉DisableDragger没用了
 - 多个屏幕测试，要多测试几轮
 
+Recorder定时器
+每100毫秒执行一次CurShape的timeout事件
+
+鼠标移到某个元素上时，创建一个id为0，2秒的Timer，
+2秒到期时，把Recorder的CurShpe设置成此元素
+然后设置好此元素的dragger和hoverIndex然后显示Dragger
+
+鼠标不在任何一个元素上时，
+删除id为0的timer，马上隐藏Dragger
 
 
-鼠标移到某个元素上时，创建一个id为3，x秒的Timer，x秒到期时再检查鼠标是否仍旧在此元素上，
-如果是，则显示dragger
-如果不是，则什么也不做
-鼠标移出某个元素时，删除id为3的timer，马上隐藏Dragger
+
 
 
 - Eraser和Mosaic 是否应继承自Pen

@@ -8,6 +8,7 @@
 #include "State.h"
 
 #define WM_REFRESH (WM_APP+1)
+#define WM_MYCURSOR (WM_APP+2)
 class WindowBase
 {
 public:

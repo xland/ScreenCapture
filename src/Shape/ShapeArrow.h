@@ -28,5 +28,4 @@ protected:
     int endX, endY;
     int hoverX, hoverY;
 private:
-    void setDragger();
 };

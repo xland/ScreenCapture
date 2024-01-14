@@ -6,7 +6,9 @@
 #include "include/core/SkRect.h"
 #include "include/core/SkPoint.h"
 #include "include/core/SkPath.h"
+#include "../Timer.h"
 #include <vector>
+#include "../Cursor.h"
 
 class ShapeBase
 {
@@ -20,12 +22,19 @@ public:
     virtual bool OnChar(const unsigned int& val) { return false; };
     virtual bool OnKeyDown(const unsigned int& val) { return false; };
     virtual bool OnMouseWheel(const int& delta) { return false; };
+    virtual void OnTimeout() {};
     virtual void Paint(SkCanvas* canvas) { };
+    bool MouseInDragger(const int& x, const int& y);
+    void ShowDragger();
+    void HideDragger();
     bool IsWip{true}; //在制品，在FrontCanvas绘制
     bool IsDel{ false }; //Undo品
     bool IsTemp{ true }; //首次创建，极有可能随时被删除
     int HoverIndex{-1};
+    std::vector<SkRect> Draggers;
+    std::vector<Cursor::cursor> DraggerCursors;
 protected:
     int startX, startY;
+    int draggerSize{ 10 };
 private:
 };

@@ -42,7 +42,7 @@ namespace Cursor
         input,
         hand,
     };
-
+    //HCURSOR cursor = LoadCursor(NULL, IDC_ARROW);
     static void SetCursor(cursor cursorType = cursor::arrow) {
         switch (cursorType)
         {

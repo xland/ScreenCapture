@@ -4,9 +4,15 @@
 #include "../ToolSub.h"
 #include "ShapeDragger.h"
 #include "../Cursor.h"
+#include "../Recorder.h"
 
 ShapeArrow::ShapeArrow(const int &x, const int &y) : ShapeBase(x, y)
 {
+    for (size_t i = 0; i < 8; i++)
+    {
+        Draggers.push_back(SkRect::MakeEmpty());
+        DraggerCursors.push_back(Cursor::cursor::all);
+    }
     initParams();
 }
 
@@ -23,20 +29,20 @@ bool ShapeArrow::OnMouseDown(const int &x, const int &y)
 
 bool ShapeArrow::OnMouseUp(const int &x, const int &y)
 {
-    setDragger();
+    unsigned half = draggerSize / 2;
+    Draggers[0].setXYWH(startX - half, startY - half, draggerSize, draggerSize);
+    Draggers[1].setXYWH(endX - half, endY - half, draggerSize, draggerSize);
+    DraggerCursors[0] = Cursor::cursor::all;
+    DraggerCursors[1] = Cursor::cursor::all;
     IsWip = false;
     return false;
 }
 
 bool ShapeArrow::OnMouseMove(const int &x, const int &y)
 {
-    auto flag = path.contains(x, y);
-    if (flag)
+    if (path.contains(x, y))
     {
-        setDragger();
-        Cursor::All();
-        HoverIndex = 8;
-        ShapeDragger::Get()->ShowDragger();
+        ShowDragger();
         return true;
     }
     return false;
@@ -44,6 +50,9 @@ bool ShapeArrow::OnMouseMove(const int &x, const int &y)
 
 bool ShapeArrow::OnMoseDrag(const int &x, const int &y)
 {
+    if (HoverIndex < 0) {
+        return false;
+    }
     IsTemp = false;
     if (HoverIndex == 0) {
         startX = x;
@@ -148,16 +157,4 @@ void ShapeArrow::makePath(const int& x1, const int& y1, const int& x2, const int
     double Y4 = centerY + tempB / 2;
     path.lineTo(X4, Y4);
     path.lineTo(x1, y1);
-}
-
-void ShapeArrow::setDragger()
-{
-    auto shapeDragger = ShapeDragger::Get();
-    unsigned half = shapeDragger->Size / 2;
-    shapeDragger->SetDragger(0, startX - half, startY - half);
-    shapeDragger->SetDragger(1, endX - half, endY - half);
-    shapeDragger->DisableDragger(2);
-    shapeDragger->Cursors[0] = Cursor::cursor::all;
-    shapeDragger->Cursors[1] = Cursor::cursor::all;
-    shapeDragger->CurShape = this;
 }

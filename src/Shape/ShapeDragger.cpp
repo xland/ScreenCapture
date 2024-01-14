@@ -52,8 +52,7 @@ void ShapeDragger::ShowDragger(bool needRefresh)
 
 bool ShapeDragger::HideDragger()
 {
-    auto recorder = Recorder::Get();
-    if (recorder->CurShape) {
+    if (!visible) {
         return false;
     }
     auto win = App::GetWin();
