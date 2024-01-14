@@ -102,6 +102,7 @@ void WindowPin::initSize()
     h = rect.height() + shadowSize * 2;
     auto tm = ToolMain::Get();
     tm->Reset();
+    
     auto tempWidth = tm->ToolRect.width() + shadowSize * 2;
     if (w < tempWidth) {
         this->w = tempWidth;

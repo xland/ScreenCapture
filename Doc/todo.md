@@ -1,10 +1,13 @@
 - Bug fix: Disable drag event on tool bar
 - Bug fix: When drag Number shape, it flashes.
 - Bug fix: When a new element is drawn after undo, the last historical element is removed.
+- Bug fix: Disable the pin button in the pin window's toolbar.
 - Enhancement: Use eraser rect to draw cut box instead of path `kInverseWinding`
 - Enhancement: Initialize CutBox as window size to avoid blinking at startup
 
 
+- 别忘记删除那两个多出来的pixFront pixBack
+- 英文文字的测量是由问题的
 - 鼠标移到历史元素上过一会儿再允许它修改
 - 点工具条的时候会导致Crash？？？应该已经修复了
 - 按住Shift画正圆，按住Shift画正方
@@ -12,10 +15,14 @@
 - 绘制马赛克后，马赛克以前的历史元素变更位置，马赛克遮不住他们
 - 钉住窗口再画Rect会多一个上一次画的东西
 
-- 多个屏幕，马赛克，auto currentColor = pixmap->getColor4f(x1, y1);  x1和y1有可能是负值，这样取到的color有问题
 - 多个屏幕测试，要多测试几轮
 
 
+
+鼠标移到某个元素上时，创建一个id为3，x秒的Timer，x秒到期时再检查鼠标是否仍旧在此元素上，
+如果是，则显示dragger
+如果不是，则什么也不做
+鼠标移出某个元素时，删除id为3的timer，马上隐藏Dragger
 
 
 - Eraser和Mosaic 是否应继承自Pen

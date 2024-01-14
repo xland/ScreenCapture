@@ -19,7 +19,6 @@ ToolSub::~ToolSub()
 {
 
 }
-
 void ToolSub::addStrokeWidthBtns(int index)
 {
     auto temp = {
@@ -29,7 +28,6 @@ void ToolSub::addStrokeWidthBtns(int index)
     };
     btns.insert(btns.begin() + index, temp);
 }
-
 void ToolSub::addColorBtns()
 {
     btns.push_back(std::make_shared<ToolBtn>(Icon::check, L"红", false, true, 22, SkColorSetARGB(255, 207, 19, 34), true));
@@ -41,19 +39,14 @@ void ToolSub::addColorBtns()
     btns.push_back(std::make_shared<ToolBtn>(Icon::uncheck, L"粉", false, true, 22, SkColorSetARGB(255, 235, 47, 150)));
     btns.push_back(std::make_shared<ToolBtn>(Icon::uncheck, L"黑", false, true, 22, SkColorSetARGB(255, 0, 0, 0)));
 }
-
-
-
 void ToolSub::Init()
 {
     toolSub = new ToolSub();
 }
-
 ToolSub *ToolSub::Get()
 {
     return toolSub;
 }
-
 bool ToolSub::OnMouseDown(const int& x, const int& y)
 {
     isMouseDown = true;
@@ -118,7 +111,6 @@ bool ToolSub::OnMouseDown(const int& x, const int& y)
     }
     return true;
 }
-
 void ToolSub::InitBtns(int mainToolSelectedIndex)
 {
     btns.clear();
@@ -162,12 +154,12 @@ void ToolSub::InitBtns(int mainToolSelectedIndex)
         break;
     }
     case 7: {
-        btns.push_back(std::make_shared<ToolBtn>(Icon::rectFill, L"矩形马赛克区域"));
+        btns.push_back(std::make_shared<ToolBtn>(Icon::rectFill, L"矩形马赛克"));
         addStrokeWidthBtns(1);
         break;
     }
     case 8: {
-        btns.push_back(std::make_shared<ToolBtn>(Icon::rectFill, L"矩形橡皮擦区域"));
+        btns.push_back(std::make_shared<ToolBtn>(Icon::rectFill, L"矩形橡皮擦"));
         addStrokeWidthBtns(1);
         break;
     }
@@ -176,7 +168,6 @@ void ToolSub::InitBtns(int mainToolSelectedIndex)
     }
     setRect();
 }
-
 bool ToolSub::OnPaint(SkCanvas *canvas)
 {
     auto win = App::GetWin();
@@ -188,8 +179,7 @@ bool ToolSub::OnPaint(SkCanvas *canvas)
     if (toolMain->IndexSelected < 0)
     {
         return false;
-    }
-    
+    }    
     SkPaint paint;
     paint.setColor(SK_ColorWHITE);
     paint.setAntiAlias(true);
@@ -206,7 +196,6 @@ bool ToolSub::OnPaint(SkCanvas *canvas)
     canvas->drawPath(p, paint);
     return false;
 }
-
 void ToolSub::setRect()
 {
     auto toolMain = ToolMain::Get();
@@ -228,12 +217,10 @@ void ToolSub::setRect()
     p.lineTo(mainToolBtnCenterPointX + MarginTop, top);  // 右下角
     p.close();
 }
-
 bool ToolSub::GetFill()
 {
     return btns[0]->IsSelected;
 }
-
 int ToolSub::GetStroke(int index)
 {
     if (btns[index]->IsSelected) {
@@ -246,7 +233,6 @@ int ToolSub::GetStroke(int index)
         return 3;
     }
 }
-
 SkColor ToolSub::GetColor()
 {
     auto it = std::find_if(btns.begin(), btns.end(), [](auto& btn) {

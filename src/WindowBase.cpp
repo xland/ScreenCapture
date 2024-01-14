@@ -20,8 +20,6 @@ WindowBase::~WindowBase()
     delete[] pixSrc->addr();
     delete pixSrc;
     delete pixBase;
-    delete pixBack;
-    delete pixFront;
     DeleteDC(hCompatibleDC);
     DeleteObject(bottomHbitmap);
 }

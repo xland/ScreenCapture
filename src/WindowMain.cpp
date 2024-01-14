@@ -79,10 +79,6 @@ void WindowMain::initCanvas()
     surfaceFront = SkSurfaces::Raster(info);
     pixBase = new SkPixmap();
     surfaceBase->peekPixels(pixBase);
-    pixBack = new SkPixmap();
-    surfaceBack->peekPixels(pixBack);
-    pixFront = new SkPixmap();
-    surfaceFront->peekPixels(pixFront);
 }
 
 LRESULT WindowMain::wndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)

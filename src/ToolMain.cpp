@@ -23,7 +23,6 @@ ToolMain::ToolMain()
 {
 
 }
-
 void ToolMain::saveFile()
 {
     IFileOpenDialog* dialog;
@@ -187,8 +186,6 @@ bool ToolMain::OnMouseDown(const int& x, const int& y)
                 break;
             }
             case 11: {
-                btns[11]->IsHover = false;
-                btns[11]->IsDisable = true;
                 App::Pin();
                 break;
             }
@@ -256,6 +253,7 @@ void ToolMain::SetRedoDisable(bool flag)
 
 void ToolMain::InitBtns()
 {
+    bool flag = btns.size() > 0; //不是第一次
     btns.clear();
     btns.push_back(std::make_shared<ToolBtn>(Icon::rect, L"矩形"));
     btns.push_back(std::make_shared<ToolBtn>(Icon::ellipse, L"圆形"));
@@ -269,7 +267,7 @@ void ToolMain::InitBtns()
     btns.push_back(std::make_shared<ToolBtn>(Icon::eraser, L"橡皮擦"));
     btns.push_back(std::make_shared<ToolBtn>(Icon::undo, L"上一步", true, false)); //9
     btns.push_back(std::make_shared<ToolBtn>(Icon::redo, L"下一步", true, false)); //10
-    btns.push_back(std::make_shared<ToolBtn>(Icon::pin, L"钉住截图区", false, false));//11
+    btns.push_back(std::make_shared<ToolBtn>(Icon::pin, L"钉住截图区", flag, false));//11
     btns.push_back(std::make_shared<ToolBtn>(Icon::save, L"保存为文件", false, false));//12
     btns.push_back(std::make_shared<ToolBtn>(Icon::copy, L"保存到剪切板", false, false));//13
     btns.push_back(std::make_shared<ToolBtn>(Icon::close, L"退出", false, false));//14
