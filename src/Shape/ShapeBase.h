@@ -22,6 +22,7 @@ public:
     virtual bool OnKeyDown(const unsigned int& val) { return false; };
     virtual bool OnMouseWheel(const int& delta) { return false; };
     virtual void OnTimeout() {};
+    virtual void OnShowDragger(SkCanvas* canvas) {};
     virtual void Paint(SkCanvas* canvas) { };
     bool MouseInDragger(const int& x, const int& y);
     void ShowDragger();

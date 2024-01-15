@@ -48,6 +48,7 @@ void ShapeBase::ShowDragger()
     for (auto& dragger : Draggers) {
         canvas->drawRect(dragger, paint);
     }
+    OnShowDragger(canvas);
     win->Refresh();
     Cursor::SetCursor(DraggerCursors[HoverIndex]);
 }

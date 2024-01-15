@@ -78,6 +78,7 @@ bool ShapeMosaic::OnMouseDown(const int &x, const int &y)
 
 bool ShapeMosaic::OnMouseUp(const int &x, const int &y)
 {
+    IsWip = false;
     delete[] pixmap->addr();
     delete pixmap;
     pixmap = nullptr;
@@ -145,7 +146,6 @@ void ShapeMosaic::drawRectsByPoints(const SkPoint& point, SkCanvas* canvas)
 
 void ShapeMosaic::initParams()
 {
-    HoverIndex = 4;
     path.moveTo(startX, startY);
     auto tool = ToolSub::Get();
     auto stroke = tool->GetStroke();

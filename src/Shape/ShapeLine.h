@@ -20,7 +20,6 @@ public:
 
 protected:
 private:
-    void setDragger();
     void initParams();
     SkPath path;
     SkPath pathAssist;

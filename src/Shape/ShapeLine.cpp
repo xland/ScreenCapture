@@ -6,6 +6,12 @@
 
 ShapeLine::ShapeLine(const int &x, const int &y) : ShapeBase(x, y)
 {
+    for (size_t i = 0; i < 2; i++)
+    {
+        Draggers.push_back(SkRect::MakeEmpty());
+        DraggerCursors.push_back(Cursor::cursor::all);
+    }
+    DraggerCursors.push_back(Cursor::cursor::all);
     initParams();
 }
 
@@ -22,10 +28,11 @@ bool ShapeLine::OnMouseDown(const int &x, const int &y)
 
 bool ShapeLine::OnMouseMove(const int &x, const int &y)
 {
-    auto flag = pathAssist.contains(x, y);
-    if (flag)
-    {
-        setDragger();
+    if (MouseInDragger(x, y)) {
+        return true;
+    }
+    if (pathAssist.contains(x, y)) {
+        HoverIndex = 2;
         return true;
     }
     return false;
@@ -33,17 +40,16 @@ bool ShapeLine::OnMouseMove(const int &x, const int &y)
 
 bool ShapeLine::OnMouseUp(const int &x, const int &y)
 {
-    setDragger();
-    auto win = App::GetWin();
-    auto canvasBack = win->surfaceBack->getCanvas();
-    Paint(canvasBack);
     IsWip = false;
-    win->Refresh();
+
+    auto p2 = path.getPoint(1);
+    unsigned half = draggerSize / 2;
+    Draggers[0].setXYWH(startX - half, startY - half, draggerSize, draggerSize);
+    Draggers[1].setXYWH(p2.fX - half, p2.fY - half, draggerSize, draggerSize);
 
     pathAssist.reset();
-    auto half = strokeWidth / 2 + 2;
+    half = strokeWidth / 2 + 2;
     SkPoint p1(startX, startY);
-    auto p2 = path.getPoint(1);
     auto xSpan = std::abs(p2.fX - p1.fX);
     auto ySpan = std::abs(p2.fY - p1.fY);
     auto lineLength = std::sqrt(xSpan * xSpan + ySpan * ySpan);
@@ -119,19 +125,6 @@ void ShapeLine::Paint(SkCanvas *canvas)
     paint.setStroke(true);
     paint.setStrokeWidth(strokeWidth);
     canvas->drawPath(path, paint);
-}
-
-void ShapeLine::setDragger()
-{
-    //auto endPoint = path.getPoint(1);
-    //auto shapeDragger = ShapeDragger::Get();
-    //unsigned half = shapeDragger->Size / 2;
-    //shapeDragger->SetDragger(0, startX - half, startY - half);
-    //shapeDragger->SetDragger(1, endPoint.fX - half, endPoint.fY - half);
-    //shapeDragger->DisableDragger(2);
-    //shapeDragger->Cursors[0] = Cursor::cursor::all;
-    //shapeDragger->Cursors[1] = Cursor::cursor::all;
-    //shapeDragger->CurShape = this;
 }
 
 void ShapeLine::initParams()

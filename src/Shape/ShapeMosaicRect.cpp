@@ -31,11 +31,21 @@ bool ShapeMosaicRect::OnMouseDown(const int& x, const int& y)
 
 bool ShapeMosaicRect::OnMouseUp(const int& x, const int& y)
 {
+    IsWip = false;
     delete[] pixmap->addr();
     delete pixmap;
     pixmap = nullptr;
     setDragger();
     return false;
+}
+
+void ShapeMosaicRect::OnShowDragger(SkCanvas* canvas)
+{
+    SkPaint paint;
+    paint.setStroke(true);
+    paint.setStrokeWidth(1);
+    paint.setColor(SK_ColorBLACK);
+    canvas->drawRect(rect, paint);
 }
 
 void ShapeMosaicRect::drawRectsByPoints(SkCanvas* canvas)
@@ -125,17 +135,11 @@ void ShapeMosaicRect::Paint(SkCanvas *canvas)
 
 bool ShapeMosaicRect::OnMouseMove(const int& x, const int& y)
 {
+    if (MouseInDragger(x, y)) {
+        return true;
+    }
     if (rect.contains(x, y)) {
-        setDragger();
-        auto win = App::GetWin();
-        auto canvas = win->surfaceFront->getCanvas();
-        SkPaint paint;
-        paint.setStroke(true);
-        paint.setStrokeWidth(1);
-        paint.setColor(SK_ColorBLACK);
-        auto rectTemp = rect.makeOutset(2.f, 2.f);
-        canvas->drawRect(rectTemp, paint);
-        App::GetWin()->Refresh();
+        HoverIndex = 8;
         return true;
     }
     return false;

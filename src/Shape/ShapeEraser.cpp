@@ -6,6 +6,7 @@
 ShapeEraser::ShapeEraser(const int &x, const int &y) : ShapeBase(x, y)
 {
     IsWip = false;
+    path.moveTo(startX, startY);
     initParams();
 }
 
@@ -41,8 +42,6 @@ bool ShapeEraser::OnMoseDrag(const int& x, const int& y)
 }
 void ShapeEraser::initParams()
 {
-    HoverIndex = 4;
-    path.moveTo(startX, startY);
     auto tool = ToolSub::Get();
     auto stroke = tool->GetStroke();
     if (stroke == 1) {
