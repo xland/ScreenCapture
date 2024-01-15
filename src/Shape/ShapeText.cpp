@@ -16,6 +16,7 @@
 ShapeText::ShapeText(const int &x, const int &y) : ShapeBase(x, y)
 {
     IsTemp = false;
+    DraggerCursors.push_back(Cursor::cursor::input);
     auto tool = ToolSub::Get();
     color = tool->GetColor();
     auto font = App::GetFontText();
@@ -29,30 +30,19 @@ ShapeText::ShapeText(const int &x, const int &y) : ShapeBase(x, y)
     rect.setXYWH(left, top, width, height);
     activeKeyboard(getCursorX(), startY);
 }
-
 ShapeText::~ShapeText()
 {
-}
-
-bool ShapeText::FlashCursor()
-{
-    Paint(nullptr);
-    //auto func = std::bind(&ShapeText::FlashCursor, this);
-    //Timer::Get()->Start(1, 600, func);
-    return false;
 }
 bool ShapeText::OnMouseDown(const int &x, const int &y)
 {
     if (!rect.contains(x, y)) {
         return true;
-    }    
-    //auto timer = Timer::Get();
-    //timer->Remove(1);
-    //auto func = std::bind(&ShapeText::FlashCursor, this);
-    //timer->Start(1, 600, func);
+    }
+    App::GetWin()->ClearTimeout(WM_FLASH_CURSOR);
+    App::GetWin()->SetTimeout(WM_FLASH_CURSOR, 600);
     if (lines.size() == 0) {
         showCursor = true;
-        Paint(nullptr);
+        Paint(nullptr);//对象刚刚被创建，需要渲染方框和光标
         return false;
     }
     hoverX = x;
@@ -89,22 +79,15 @@ bool ShapeText::OnMouseDown(const int &x, const int &y)
         wordIndex = lines[lineIndex].length();
     }
     showCursor = true;
-    Paint(nullptr);
     return false;
 }
 bool ShapeText::OnMouseMove(const int &x, const int &y)
 {
     if (rect.contains(x, y)) {
-        Cursor::Text();
-        HoverIndex = 8;
-        //写字时，不能显示dragger，因为dragger会刷新front canvas，就会把字刷掉
-        //ShapeDragger::Get()->ShowDragger();
+        HoverIndex = 0;
         return true;
     }
-    else {
-        Cursor::Arrow();
-        return false;
-    }
+    return false;
 }
 bool ShapeText::OnMouseUp(const int &x, const int &y)
 {
@@ -138,6 +121,10 @@ bool ShapeText::OnMouseWheel(const int& delta)
     showCursor = true;
     Paint(nullptr);
     return false;
+}
+void ShapeText::OnShowDragger(SkCanvas* canvas)
+{
+    setRect(canvas);
 }
 bool ShapeText::OnChar(const unsigned int& val)
 {
@@ -430,8 +417,8 @@ void ShapeText::setCursor(SkCanvas* canvas)
 }
 bool ShapeText::EndInput()
 {
-    //Timer::Get()->Remove(1);
     auto win = App::GetWin();
+    win->ClearTimeout(WM_FLASH_CURSOR);
     bool flag{ false };
     if (lines.size() == 0 || lines[0].empty()) {
         flag = true;

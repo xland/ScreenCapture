@@ -7,6 +7,7 @@
 - Cursor的枚举类值得优化，提前Load：HCURSOR hCursor = LoadCursor(nullptr, IDC_ARROW); // 或加载自定义光标资源
 - draggerSize设置成静态变量
 - Eraser Rect 拖动会擦掉所有内容，mouseup之后才会显示出来
+- 移出没用的Log
 - 别忘记删除那两个多出来的pixFront pixBack
 - 英文文字的测量是由问题的
 - 鼠标移到历史元素上过一会儿再允许它修改

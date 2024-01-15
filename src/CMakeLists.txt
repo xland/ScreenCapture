@@ -17,10 +17,6 @@ set(SRC
     CutMask.h
     Recorder.cpp
     Recorder.h
-    TimerTask.cpp
-    TimerTask.h
-    Timer.cpp
-    Timer.h
     ToolBase.cpp
     ToolBase.h
     ToolBtn.cpp

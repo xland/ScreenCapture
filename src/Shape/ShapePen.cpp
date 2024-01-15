@@ -2,12 +2,12 @@
 #include "../App.h"
 #include "../WindowBase.h"
 #include "../ToolSub.h"
-#include "ShapeDragger.h"
 
 ShapePen::ShapePen(const int &x, const int &y) : ShapeBase(x, y)
 {
+    path.moveTo(startX, startY);
     IsWip = false;
-    ShapeDragger::Get()->DisableDragger();
+    stroke = true;
     initParams();
 }
 
@@ -41,9 +41,7 @@ void ShapePen::Paint(SkCanvas *canvas)
 
 void ShapePen::initParams()
 {
-    path.moveTo(startX, startY);
     auto tool = ToolSub::Get();
-    stroke = true;
     auto strokeLine = tool->GetStroke(0);
     if (strokeLine == 1) {
         strokeWidth = 4;

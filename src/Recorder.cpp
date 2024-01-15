@@ -41,18 +41,26 @@ bool Recorder::OnMouseDown(const int &x, const int &y)
         return false;
     }
     HoverShape = nullptr;
-    if (CurShape)
-    {        
-        if (CurShape && CurShape->IsWip && typeid(*CurShape) == typeid(ShapeText) ) { //正在写字，左键单击结束写字
-            bool flag = CurShape->OnMouseDown(x, y);
-            if (flag) { //不在输入框内
-                auto textObj = static_cast<ShapeText*>(CurShape);
-                if (textObj->EndInput()) {
-                    std::erase_if(shapes, [this](auto& item) { return item.get() == CurShape; });
-                }                
-                CurShape = nullptr;
+    if (CurShape) {        
+        if (typeid(*CurShape) == typeid(ShapeText)) {
+            if (CurShape->IsWip) { //正在写字
+                bool flag = CurShape->OnMouseDown(x, y);
+                if (flag) { //不在输入框内，结束写字
+                    auto textObj = static_cast<ShapeText*>(CurShape);
+                    if (textObj->EndInput()) { //还没输入，则删除此对象
+                        std::erase_if(shapes, [this](auto& item) { return item.get() == CurShape; });
+                        App::GetWin()->ClearTimeout(WM_FLASH_CURSOR);
+                    }
+                    CurShape = nullptr;
+                }
+                return true;
             }
-            return true;
+            else { //没在写字
+                bool flag = CurShape->OnMouseDown(x, y);
+                if (flag) { //不在输入框内
+                    return false;
+                }
+            }
         }
         CurShape->IsWip = true;
         CurShape->OnMouseDown(x, y);
@@ -65,8 +73,13 @@ bool Recorder::OnMouseDown(const int &x, const int &y)
             if (shape->IsWip) {
                 shape->Paint(canvasFront);
             }
-            else if (!shape->IsDel) {
-                shape->Paint(canvasBack);
+            else {
+                if (shape->IsDel) {
+                    break;
+                }
+                else {
+                    shape->Paint(canvasBack);
+                }                
             }
         }
         win->Refresh();        
@@ -99,7 +112,7 @@ bool Recorder::OnMouseUp(const int &x, const int &y)
     {
         return false;
     }
-    if (CurShape && CurShape->IsWip && typeid(*CurShape) == typeid(ShapeText)) {
+    if (CurShape->IsWip && typeid(*CurShape) == typeid(ShapeText)) {
         return false;
     }
     if (CurShape->IsTemp)
@@ -134,20 +147,20 @@ bool Recorder::OnMouseUp(const int &x, const int &y)
 bool Recorder::OnMouseMove(const int &x, const int &y)
 {
     auto win = App::GetWin();
+    if (win->state <= State::tool) {
+        return false;
+    }
     if (win->state == State::text) {
         Cursor::Text();
     }
     else {
-        if (!CurShape) {
-            Cursor::Cross();
-        }
+        Cursor::Cross();
     }
-    if (win->state <= State::tool || shapes.size() == 0) {
+    if (shapes.size() == 0) {
         return false;
     }
     //写字时，鼠标移动到其他元素上必不能显示dragger，因为dragger会刷新front canvas，就会把字刷掉
     if (CurShape && CurShape->IsWip && typeid(*CurShape) == typeid(ShapeText)) {
-        CurShape->OnMouseMove(x, y);
         return false;
     }
     bool isHover = false;
@@ -170,7 +183,6 @@ bool Recorder::OnMouseMove(const int &x, const int &y)
     if (!isHover) {
         HoverShape = nullptr;
         win->ClearTimeout(WM_SHOW_DRAGGER);
-        Cursor::Cross();
     }
     return false;
 }
@@ -199,7 +211,8 @@ bool Recorder::OnKeyDown(const unsigned int& val)
             auto textObj = static_cast<ShapeText*>(CurShape);
             auto flag = textObj->EndInput();
             if (flag) {
-                std::erase_if(shapes, [this](auto& item) { return item.get() == CurShape; });
+                std::erase_if(shapes, [this](auto& item) { return item.get() == CurShape; }); 
+                App::GetWin()->ClearTimeout(WM_FLASH_CURSOR);
             }
             CurShape = nullptr;
             return true;
@@ -246,7 +259,10 @@ bool Recorder::OnTimeout(const unsigned int& id)
         break;
     }
     case WM_FLASH_CURSOR: {
-
+        if (CurShape) {
+            CurShape->Paint(nullptr);
+        }
+        break;
     }
     default:
         break;

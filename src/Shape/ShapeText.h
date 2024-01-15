@@ -20,7 +20,7 @@ public:
     bool OnKeyDown(const unsigned int& val) override;
     void Paint(SkCanvas *canvas) override;   
     bool OnMouseWheel(const int& delta) override;
-    bool FlashCursor();
+    void OnShowDragger(SkCanvas* canvas) override;
     bool EndInput();
 protected:
 private:
