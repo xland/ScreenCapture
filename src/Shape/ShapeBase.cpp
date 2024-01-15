@@ -16,6 +16,9 @@ bool ShapeBase::MouseInDragger(const int& x, const int& y)
     for (size_t i = 0; i < Draggers.size(); i++)
     {
         if (Draggers[i].contains(x, y)) {
+            if (HoverIndex > -1) {
+                Cursor::SetCursor(DraggerCursors[HoverIndex]); //Dragger已经显示，但Cursor是错误的，这里纠正
+            }
             HoverIndex = i;
             return true;
         }

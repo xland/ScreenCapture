@@ -9,7 +9,6 @@ ShapeRect::ShapeRect(const int& x, const int& y):ShapeBase(x,y), rect{SkRect::Ma
     for (size_t i = 0; i < 8; i++)
     {
         Draggers.push_back(SkRect::MakeEmpty());
-        DraggerCursors.push_back(Cursor::cursor::all);
     }
     DraggerCursors.push_back(Cursor::cursor::wnse);
     DraggerCursors.push_back(Cursor::cursor::ns);
@@ -19,6 +18,7 @@ ShapeRect::ShapeRect(const int& x, const int& y):ShapeBase(x,y), rect{SkRect::Ma
     DraggerCursors.push_back(Cursor::cursor::ns);
     DraggerCursors.push_back(Cursor::cursor::nesw);
     DraggerCursors.push_back(Cursor::cursor::we);
+    DraggerCursors.push_back(Cursor::cursor::all);
     initParams();
 }
 
@@ -42,6 +42,9 @@ bool ShapeRect::OnMouseUp(const int& x, const int& y)
 
 bool ShapeRect::OnMouseMove(const int& x, const int& y)
 {
+    if (MouseInDragger(x, y)) {
+        return true;
+    }
     bool flag = false;
     if (stroke) {
         auto halfStroke = strokeWidth / 2 + 2;
@@ -58,7 +61,8 @@ bool ShapeRect::OnMouseMove(const int& x, const int& y)
     else {
         flag = rect.contains(x, y);
     }
-    if (flag || MouseInDragger(x, y)) {
+    if (flag) {
+        HoverIndex = 8;
         return true;
     }
     return false;

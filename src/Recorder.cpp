@@ -170,6 +170,7 @@ bool Recorder::OnMouseMove(const int &x, const int &y)
     if (!isHover) {
         HoverShape = nullptr;
         win->ClearTimeout(WM_SHOW_DRAGGER);
+        Cursor::Cross();
     }
     return false;
 }

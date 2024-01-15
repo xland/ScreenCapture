@@ -38,11 +38,11 @@ bool ShapeArrow::OnMouseUp(const int &x, const int &y)
 
 bool ShapeArrow::OnMouseMove(const int &x, const int &y)
 {
-    if (path.contains(x, y)){
-        HoverIndex = 2;
+    if (MouseInDragger(x, y)) {
         return true;
     }
-    if (MouseInDragger(x, y)) {
+    if (path.contains(x, y)){
+        HoverIndex = 2;
         return true;
     }
     return false;

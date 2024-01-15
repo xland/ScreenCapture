@@ -27,6 +27,9 @@ void ShapeEllipse::Paint(SkCanvas *canvas)
 
 bool ShapeEllipse::OnMouseMove(const int& x, const int& y)
 {
+    if (MouseInDragger(x, y)) {
+        return true;
+    }
     bool flag = false;
     if (stroke) {
         auto halfStroke = strokeWidth / 2 + 2;
@@ -43,7 +46,8 @@ bool ShapeEllipse::OnMouseMove(const int& x, const int& y)
         path.addOval(rect);
         flag = path.contains(x, y);
     }
-    if (flag||MouseInDragger(x,y)) {
+    if (flag) {
+        HoverIndex = 8;
         return true;
     }
     return false;
