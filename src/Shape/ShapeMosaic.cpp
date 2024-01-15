@@ -12,7 +12,8 @@
 #include "include/encode/SkPngEncoder.h"
 
 ShapeMosaic::ShapeMosaic(const int &x, const int &y) : ShapeBase(x, y)
-{    
+{
+    path.moveTo(startX, startY);
     IsWip = false;
     initParams();
 }
@@ -146,7 +147,6 @@ void ShapeMosaic::drawRectsByPoints(const SkPoint& point, SkCanvas* canvas)
 
 void ShapeMosaic::initParams()
 {
-    path.moveTo(startX, startY);
     auto tool = ToolSub::Get();
     auto stroke = tool->GetStroke();
     if (stroke == 1)

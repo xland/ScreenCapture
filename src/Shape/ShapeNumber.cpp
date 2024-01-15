@@ -8,7 +8,13 @@ static int num = 1;
 
 ShapeNumber::ShapeNumber(const int &x, const int &y) : ShapeBase(x, y)
 {
+    number = num;
+    num += 1;
+    HoverIndex = 0;
     IsTemp = false;
+    Draggers.push_back(SkRect::MakeEmpty());
+    DraggerCursors.push_back(Cursor::cursor::all);
+    DraggerCursors.push_back(Cursor::cursor::all);
     initParams();
 }
 
@@ -39,17 +45,19 @@ bool ShapeNumber::OnMouseDown(const int &x, const int &y)
 bool ShapeNumber::OnMouseUp(const int &x, const int &y)
 {
     IsWip = false;
-    setDragger();
+    unsigned half = draggerSize / 2;
+    Draggers[0].setXYWH(endX - half, endY - half, draggerSize, draggerSize);
     return false;
 }
 
 bool ShapeNumber::OnMouseMove(const int &x, const int &y)
 {
+    if (MouseInDragger(x, y)) {
+        return true;
+    }
     if (path.contains(x, y))
     {
-        setDragger(); 
-        Cursor::All();
-        HoverIndex = 8;
+        HoverIndex = 1;
         return true;
     }
     return false;
@@ -133,20 +141,8 @@ void ShapeNumber::makePath(const int &x1, const int &y1, const int &x2, const in
     path.lineTo(x2, y2);
     path.close();
 }
-void ShapeNumber::setDragger()
-{
-    //auto shapeDragger = ShapeDragger::Get();
-    //unsigned half = shapeDragger->Size / 2;
-    //shapeDragger->SetDragger(0, endX - half, endY - half);
-    //shapeDragger->Cursors[0] = Cursor::cursor::all;
-    //shapeDragger->DisableDragger(1);
-    //shapeDragger->CurShape = this;
-}
 void ShapeNumber::initParams()
 {
-    number = num;
-    num += 1;
-    HoverIndex = 0;
     auto tool = ToolSub::Get();
     stroke = !tool->GetFill();
     if (stroke)

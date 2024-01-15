@@ -7,6 +7,7 @@
 
 ShapeArrow::ShapeArrow(const int &x, const int &y) : ShapeBase(x, y)
 {
+    HoverIndex = 1;
     for (size_t i = 0; i < 2; i++)
     {
         Draggers.push_back(SkRect::MakeEmpty());
@@ -98,7 +99,6 @@ void ShapeArrow::Paint(SkCanvas* canvas)
 
 void ShapeArrow::initParams()
 {
-    HoverIndex = 1;
     auto tool = ToolSub::Get();
     stroke = !tool->GetFill();
     if (stroke)

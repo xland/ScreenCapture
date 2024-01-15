@@ -6,6 +6,7 @@
 
 ShapeLine::ShapeLine(const int &x, const int &y) : ShapeBase(x, y)
 {
+    HoverIndex = 1;
     for (size_t i = 0; i < 2; i++)
     {
         Draggers.push_back(SkRect::MakeEmpty());
@@ -129,7 +130,6 @@ void ShapeLine::Paint(SkCanvas *canvas)
 
 void ShapeLine::initParams()
 {
-    HoverIndex = 1;
     auto tool = ToolSub::Get();
     fill = !tool->GetFill();
     auto stroke = tool->GetStroke();
