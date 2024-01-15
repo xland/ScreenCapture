@@ -3,7 +3,6 @@
 #include "../WindowBase.h"
 #include "../ToolSub.h"
 #include "../Cursor.h"
-#include "ShapeDragger.h"
 
 ShapeEllipse::ShapeEllipse(const int &x, const int &y) : ShapeRect(x, y)
 {

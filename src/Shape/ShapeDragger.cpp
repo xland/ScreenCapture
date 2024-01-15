@@ -1,7 +1,6 @@
 #include "ShapeDragger.h"
 #include "../App.h"
 #include "../WindowBase.h"
-#include "../Timer.h"
 #include "../Recorder.h"
 #include "ShapeBase.h"
 

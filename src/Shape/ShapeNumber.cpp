@@ -3,7 +3,6 @@
 #include "../WindowBase.h"
 #include "../ToolSub.h"
 #include "../Cursor.h"
-#include "ShapeDragger.h"
 #include "numbers"
 static int num = 1;
 

@@ -10,7 +10,6 @@
 #include "ToolSub.h"
 #include "Recorder.h"
 #include "PixelInfo.h"
-#include "Shape/ShapeDragger.h"
 #include "include/core/SkStream.h"
 #include "include/encode/SkPngEncoder.h"
 
@@ -135,6 +134,9 @@ LRESULT WindowMain::wndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
         int delta = GET_WHEEL_DELTA_WPARAM(wparam);
         onMouseWheel(delta);
         return false;
+    }
+    case WM_TIMER: {
+        return onTimeout(wparam);
     }
     default:
         break;
@@ -285,6 +287,11 @@ bool WindowMain::onDoubleClick(const int& x, const int& y)
     if (state >= State::tool && CutMask::GetCutRect().contains(x,y)) {
         SaveToClipboard();
     }
+    return false;
+}
+bool WindowMain::onTimeout(const unsigned int& id)
+{
+    Recorder::Get()->OnTimeout(id);
     return false;
 }
 void WindowMain::shotScreen()

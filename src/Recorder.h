@@ -23,10 +23,12 @@ public:
     bool OnChar(const unsigned int& val);
     bool OnKeyDown(const unsigned int& val);
     bool OnMouseWheel(const int& delta);
+    bool OnTimeout(const unsigned int& id);
     void Undo();
     void Redo();
     void FinishPaint();
     ShapeBase* CurShape{ nullptr };
+    ShapeBase* HoverShape{ nullptr };
 private:
     Recorder();
     void createShape(const int& x, const int& y,const State& state);

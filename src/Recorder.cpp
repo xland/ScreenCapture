@@ -15,7 +15,6 @@
 #include "Shape/ShapeEraserRect.h"
 #include "Shape/ShapeMosaic.h"
 #include "Shape/ShapeMosaicRect.h"
-#include "Shape/ShapeDragger.h"
 #include "ToolMain.h"
 
 Recorder *recorder;
@@ -75,6 +74,7 @@ bool Recorder::OnMouseDown(const int &x, const int &y)
         createShape(x, y, win->state);
         CurShape = shapes.back().get();
         CurShape->OnMouseDown(x, y);
+        HoverShape = nullptr;
     }
     return false;
 }
@@ -152,23 +152,23 @@ bool Recorder::OnMouseMove(const int &x, const int &y)
     bool isHover = false;
     for (int i = shapes.size() - 1; i >= 0; i--)
     {
-        if (shapes[i]->IsDel) continue;
+        if (shapes[i]->IsDel) {
+            break;
+        }
         isHover = shapes[i]->OnMouseMove(x, y);
         if (isHover)
-        {
+        {            
+            if (HoverShape != shapes[i].get()) {
+                HoverShape = shapes[i].get();
+                win->ClearTimeout(WM_SHOW_DRAGGER);
+                win->SetTimeout(WM_SHOW_DRAGGER, 1000);
+            }
             break;
         }
     }
-    if (!isHover && !CurShape) {
-        if (CurShape) {
-            if (CurShape->MouseInDragger(x, y)) {
-                return false;
-            }
-            else {
-                CurShape->HideDragger();
-            }
-        }
-        Timer::Get()->Remove(0);        
+    if (!isHover) {
+        HoverShape = nullptr;
+        win->ClearTimeout(WM_SHOW_DRAGGER);
     }
     return false;
 }
@@ -213,6 +213,39 @@ bool Recorder::OnMouseWheel(const int& delta)
     if (CurShape)
     {
         CurShape->OnMouseWheel(delta);
+    }
+    return false;
+}
+bool Recorder::OnTimeout(const unsigned int& id)
+{
+    switch (id)
+    {
+    case WM_SHOW_DRAGGER: {
+        auto win = App::GetWin();
+        win->ClearTimeout(WM_SHOW_DRAGGER);
+        if (HoverShape) {
+            HoverShape->ShowDragger();
+            CurShape = HoverShape;
+            win->SetTimeout(WM_HIDE_DRAGGER, 600);
+        }
+        break;
+    }
+    case WM_HIDE_DRAGGER: {        
+        if (HoverShape != CurShape) {
+            auto win = App::GetWin();
+            win->ClearTimeout(WM_HIDE_DRAGGER);
+            if (CurShape) {
+                CurShape->HideDragger();
+                CurShape = nullptr;
+            }
+        }
+        break;
+    }
+    case WM_FLASH_CURSOR: {
+
+    }
+    default:
+        break;
     }
     return false;
 }
@@ -284,8 +317,8 @@ void Recorder::Redo()
 void Recorder::FinishPaint()
 {
     auto flag = OnMouseDownRight(-1, -1);
-    if (!flag) {
-        ShapeDragger::Get()->HideDragger();
+    if (!flag && CurShape) {
+        CurShape->HideDragger();
     } 
 }
 void Recorder::createShape(const int &x, const int &y, const State &state)

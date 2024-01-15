@@ -28,4 +28,5 @@ private:
     bool onKeyDown(const unsigned int& val);
     bool onMouseWheel(const int& delta);
     bool onDoubleClick(const int& x, const int& y);
+    bool onTimeout(const unsigned int& id);
 };

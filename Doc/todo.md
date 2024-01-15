@@ -1,11 +1,7 @@
-- Bug fix: Disable drag event on tool bar
-- Bug fix: When drag Number shape, it flashes.
-- Bug fix: When a new element is drawn after undo, the last historical element is removed.
-- Bug fix: Disable the pin button in the pin window's toolbar.
-- Enhancement: Use eraser rect to draw cut box instead of path `kInverseWinding`
-- Enhancement: Initialize CutBox as window size to avoid blinking at startup
 
 
+
+- pinwindow 也要处理Timer
 - 别忘记删除那两个多出来的pixFront pixBack
 - 英文文字的测量是由问题的
 - 鼠标移到历史元素上过一会儿再允许它修改

@@ -2,7 +2,6 @@
 #include "../App.h"
 #include "../WindowBase.h"
 #include "../ToolSub.h"
-#include "ShapeDragger.h"
 #include "../Cursor.h"
 #include "../Recorder.h"
 
@@ -41,8 +40,7 @@ bool ShapeArrow::OnMouseUp(const int &x, const int &y)
 bool ShapeArrow::OnMouseMove(const int &x, const int &y)
 {
     if (path.contains(x, y))
-    {
-        ShowDragger();
+    {        
         return true;
     }
     return false;

@@ -6,7 +6,6 @@
 #include "include/core/SkRect.h"
 #include "include/core/SkPoint.h"
 #include "include/core/SkPath.h"
-#include "../Timer.h"
 #include <vector>
 #include "../Cursor.h"
 

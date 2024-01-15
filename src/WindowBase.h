@@ -8,7 +8,10 @@
 #include "State.h"
 
 #define WM_REFRESH (WM_APP+1)
-#define WM_MYCURSOR (WM_APP+2)
+#define WM_SHOW_DRAGGER (WM_APP+2)
+#define WM_HIDE_DRAGGER (WM_APP+3)
+#define WM_FLASH_CURSOR (WM_APP+4)
+
 class WindowBase
 {
 public:
@@ -17,6 +20,8 @@ public:
     void Show();
     void Refresh();
     void refresh();
+    void SetTimeout(const unsigned int& id,const unsigned int& ms);
+    void ClearTimeout(const unsigned int& id);
     void Close(const int &exitCode);
     virtual void Save(const std::string& filePath) = 0;
     virtual void SaveToClipboard() = 0;

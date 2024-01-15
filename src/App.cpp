@@ -11,7 +11,6 @@
 #include "ToolSub.h"
 #include "Recorder.h"
 #include "CutMask.h"
-#include "Shape/ShapeDragger.h"
 
 
 SkFont* fontIcon{ nullptr };
@@ -31,8 +30,6 @@ void App::Init()
     ToolMain::Init();
     ToolSub::Init();
     Recorder::Init();
-    ShapeDragger::Init();
-    Timer::Init();
     win = new WindowMain();
     CutMask::Get()->EnumWinRects();
     win->Show();
@@ -43,8 +40,6 @@ void App::Init()
 void App::Dispose()
 {
     screens.clear();
-    delete Timer::Get();
-    delete ShapeDragger::Get();
     delete Recorder::Get();
     delete ToolSub::Get();
     delete ToolMain::Get();

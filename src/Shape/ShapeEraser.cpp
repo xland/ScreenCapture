@@ -2,7 +2,6 @@
 #include "../App.h"
 #include "../WindowBase.h"
 #include "../ToolSub.h"
-#include "ShapeDragger.h"
 
 ShapeEraser::ShapeEraser(const int &x, const int &y) : ShapeBase(x, y)
 {

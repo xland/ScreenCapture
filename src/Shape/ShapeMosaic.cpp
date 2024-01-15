@@ -3,7 +3,6 @@
 #include "../App.h"
 #include "../WindowBase.h"
 #include "../ToolSub.h"
-#include "ShapeDragger.h"
 #include "include/effects/Sk2DPathEffect.h"
 #include "include/core/SkBlurTypes.h"
 #include "include/effects/SkBlurMaskFilter.h"

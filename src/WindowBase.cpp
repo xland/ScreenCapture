@@ -5,7 +5,6 @@
 #include "ToolMain.h"
 #include "ToolSub.h"
 #include "CutMask.h"
-#include "Timer.h"
 #include "Cursor.h"
 #include "WindowMain.h"
 #include "WindowPin.h"
@@ -55,6 +54,16 @@ void WindowBase::refresh()
     ReleaseDC(hwnd, hdc);
 }
 
+void WindowBase::SetTimeout(const unsigned int& id,const unsigned int& ms)
+{
+    SetTimer(hwnd, id, ms, (TIMERPROC)NULL);
+}
+
+void WindowBase::ClearTimeout(const unsigned int& id)
+{
+    KillTimer(hwnd, id);
+}
+
 LRESULT CALLBACK WindowBase::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     if (msg == WM_NCCREATE)
@@ -78,10 +87,6 @@ LRESULT CALLBACK WindowBase::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wPar
         }
         case WM_REFRESH: {
             obj->refresh();
-            return true;
-        }
-        case WM_MYCURSOR: {
-            Cursor::All();
             return true;
         }
         case WM_SETCURSOR:

@@ -4,7 +4,6 @@
 #include "../ToolSub.h"
 #include "../Timer.h"
 #include "../Cursor.h"
-#include "ShapeDragger.h"
 
 ShapeRect::ShapeRect(const int& x, const int& y):ShapeBase(x,y), rect{SkRect::MakeXYWH(x,y,0,0)}
 {
