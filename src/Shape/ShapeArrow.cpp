@@ -7,11 +7,12 @@
 
 ShapeArrow::ShapeArrow(const int &x, const int &y) : ShapeBase(x, y)
 {
-    for (size_t i = 0; i < 8; i++)
+    for (size_t i = 0; i < 2; i++)
     {
         Draggers.push_back(SkRect::MakeEmpty());
         DraggerCursors.push_back(Cursor::cursor::all);
     }
+    DraggerCursors.push_back(Cursor::cursor::all);
     initParams();
 }
 
@@ -31,16 +32,17 @@ bool ShapeArrow::OnMouseUp(const int &x, const int &y)
     unsigned half = draggerSize / 2;
     Draggers[0].setXYWH(startX - half, startY - half, draggerSize, draggerSize);
     Draggers[1].setXYWH(endX - half, endY - half, draggerSize, draggerSize);
-    DraggerCursors[0] = Cursor::cursor::all;
-    DraggerCursors[1] = Cursor::cursor::all;
     IsWip = false;
     return false;
 }
 
 bool ShapeArrow::OnMouseMove(const int &x, const int &y)
 {
-    if (path.contains(x, y))
-    {        
+    if (path.contains(x, y)){
+        HoverIndex = 2;
+        return true;
+    }
+    if (MouseInDragger(x, y)) {
         return true;
     }
     return false;

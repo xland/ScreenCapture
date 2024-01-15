@@ -1,5 +1,7 @@
 #include "WindowBase.h"
 #include <dwmapi.h>
+#include <sstream>
+#include <string>
 #include "App.h"
 #include "include/core/SkPath.h"
 #include "ToolMain.h"

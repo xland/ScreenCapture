@@ -34,6 +34,6 @@ public:
     std::vector<Cursor::cursor> DraggerCursors;
 protected:
     int startX, startY;
-    int draggerSize{ 10 };
+    int draggerSize{ 12 };
 private:
 };

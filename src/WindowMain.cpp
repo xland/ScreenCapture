@@ -13,8 +13,6 @@
 #include "include/core/SkStream.h"
 #include "include/encode/SkPngEncoder.h"
 
-std::mutex mutexObj;
-
 WindowMain::WindowMain()
 {
     initSize();

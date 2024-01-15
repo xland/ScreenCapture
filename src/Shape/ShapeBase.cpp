@@ -16,7 +16,6 @@ bool ShapeBase::MouseInDragger(const int& x, const int& y)
     for (size_t i = 0; i < Draggers.size(); i++)
     {
         if (Draggers[i].contains(x, y)) {
-            Cursor::SetCursor(DraggerCursors[i]);
             HoverIndex = i;
             return true;
         }
@@ -36,7 +35,6 @@ void ShapeBase::HideDragger()
 
 void ShapeBase::ShowDragger()
 {
-    HoverIndex = 8;
     auto win = App::GetWin();
     auto canvas = win->surfaceFront->getCanvas();
     canvas->clear(SK_ColorTRANSPARENT);
@@ -48,5 +46,5 @@ void ShapeBase::ShowDragger()
         canvas->drawRect(dragger, paint);
     }
     win->Refresh();
-    Cursor::All();
+    Cursor::SetCursor(DraggerCursors[HoverIndex]);
 }

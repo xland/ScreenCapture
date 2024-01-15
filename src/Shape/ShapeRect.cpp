@@ -6,6 +6,19 @@
 
 ShapeRect::ShapeRect(const int& x, const int& y):ShapeBase(x,y), rect{SkRect::MakeXYWH(x,y,0,0)}
 {
+    for (size_t i = 0; i < 8; i++)
+    {
+        Draggers.push_back(SkRect::MakeEmpty());
+        DraggerCursors.push_back(Cursor::cursor::all);
+    }
+    DraggerCursors.push_back(Cursor::cursor::wnse);
+    DraggerCursors.push_back(Cursor::cursor::ns);
+    DraggerCursors.push_back(Cursor::cursor::nesw);
+    DraggerCursors.push_back(Cursor::cursor::we);
+    DraggerCursors.push_back(Cursor::cursor::wnse);
+    DraggerCursors.push_back(Cursor::cursor::ns);
+    DraggerCursors.push_back(Cursor::cursor::nesw);
+    DraggerCursors.push_back(Cursor::cursor::we);
     initParams();
 }
 
@@ -45,13 +58,11 @@ bool ShapeRect::OnMouseMove(const int& x, const int& y)
     else {
         flag = rect.contains(x, y);
     }
-    if (flag) {
-        setDragger();
+    if (flag || MouseInDragger(x, y)) {
         return true;
     }
     return false;
 }
-
 bool ShapeRect::OnMoseDrag(const int& x, const int& y)
 {
     IsTemp = false;
@@ -117,35 +128,24 @@ bool ShapeRect::OnMoseDrag(const int& x, const int& y)
     App::GetWin()->Refresh();
     return false;
 }
-
 void ShapeRect::setDragger()
 {
     rect.sort();
-    //auto shapeDragger = ShapeDragger::Get();
-    //unsigned half = shapeDragger->Size/2;
-    //float l = rect.x() - half;
-    //float t = rect.y() - half;
-    //float r = rect.right() - half;
-    //float b = rect.bottom() - half;
-    //float wCenter = l + rect.width() / 2;
-    //float hCenter = t + rect.height() / 2;
-    //shapeDragger->SetDragger(0, l, t);
-    //shapeDragger->SetDragger(1, wCenter, t);
-    //shapeDragger->SetDragger(2, r, t);
-    //shapeDragger->SetDragger(3, r, hCenter);
-    //shapeDragger->SetDragger(4, r, b);
-    //shapeDragger->SetDragger(5, wCenter, b);
-    //shapeDragger->SetDragger(6, l, b);
-    //shapeDragger->SetDragger(7, l, hCenter);
-    //shapeDragger->Cursors[0] = Cursor::cursor::wnse;
-    //shapeDragger->Cursors[4] = Cursor::cursor::wnse;
-    //shapeDragger->Cursors[1] = Cursor::cursor::ns;
-    //shapeDragger->Cursors[5] = Cursor::cursor::ns;
-    //shapeDragger->Cursors[2] = Cursor::cursor::nesw;
-    //shapeDragger->Cursors[6] = Cursor::cursor::nesw;
-    //shapeDragger->Cursors[3] = Cursor::cursor::we;
-    //shapeDragger->Cursors[7] = Cursor::cursor::we;
-    //shapeDragger->CurShape = this;
+    unsigned half = draggerSize/2;
+    float l = rect.x() - half;
+    float t = rect.y() - half;
+    float r = rect.right() - half;
+    float b = rect.bottom() - half;
+    float wCenter = l + rect.width() / 2;
+    float hCenter = t + rect.height() / 2;
+    Draggers[0].setXYWH(l, t,draggerSize,draggerSize);
+    Draggers[1].setXYWH(wCenter, t, draggerSize, draggerSize);
+    Draggers[2].setXYWH(r, t, draggerSize, draggerSize);
+    Draggers[3].setXYWH(r, hCenter, draggerSize, draggerSize);
+    Draggers[4].setXYWH(r, b, draggerSize, draggerSize);
+    Draggers[5].setXYWH(wCenter, b, draggerSize, draggerSize);
+    Draggers[6].setXYWH(l, b, draggerSize, draggerSize);
+    Draggers[7].setXYWH(l, hCenter, draggerSize, draggerSize);
 }
 
 void ShapeRect::Paint(SkCanvas* canvas)

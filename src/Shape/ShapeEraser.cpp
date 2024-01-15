@@ -25,12 +25,10 @@ void ShapeEraser::Paint(SkCanvas *canvas)
     paint.setBlendMode(SkBlendMode::kClear);
     canvas->drawPath(path, paint);
 }
-
 bool ShapeEraser::OnMouseUp(const int& x, const int& y)
 {
     return false;
 }
-
 bool ShapeEraser::OnMoseDrag(const int& x, const int& y)
 {
     IsTemp = false;
@@ -41,7 +39,6 @@ bool ShapeEraser::OnMoseDrag(const int& x, const int& y)
     App::GetWin()->Refresh();
     return false;
 }
-
 void ShapeEraser::initParams()
 {
     HoverIndex = 4;

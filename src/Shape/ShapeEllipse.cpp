@@ -43,7 +43,7 @@ bool ShapeEllipse::OnMouseMove(const int& x, const int& y)
         path.addOval(rect);
         flag = path.contains(x, y);
     }
-    if (flag) {
+    if (flag||MouseInDragger(x,y)) {
         return true;
     }
     return false;

@@ -40,6 +40,7 @@ bool Recorder::OnMouseDown(const int &x, const int &y)
     {
         return false;
     }
+    HoverShape = nullptr;
     if (CurShape)
     {        
         if (CurShape && CurShape->IsWip && typeid(*CurShape) == typeid(ShapeText) ) { //正在写字，左键单击结束写字
@@ -73,8 +74,7 @@ bool Recorder::OnMouseDown(const int &x, const int &y)
     else {
         createShape(x, y, win->state);
         CurShape = shapes.back().get();
-        CurShape->OnMouseDown(x, y);
-        HoverShape = nullptr;
+        CurShape->OnMouseDown(x, y);        
     }
     return false;
 }
@@ -94,6 +94,7 @@ bool Recorder::OnMouseDownRight(const int& x, const int& y)
 }
 bool Recorder::OnMouseUp(const int &x, const int &y)
 {
+    HoverShape = nullptr;
     if (!CurShape)
     {
         return false;
@@ -161,7 +162,7 @@ bool Recorder::OnMouseMove(const int &x, const int &y)
             if (HoverShape != shapes[i].get()) {
                 HoverShape = shapes[i].get();
                 win->ClearTimeout(WM_SHOW_DRAGGER);
-                win->SetTimeout(WM_SHOW_DRAGGER, 1000);
+                win->SetTimeout(WM_SHOW_DRAGGER, 1600);
             }
             break;
         }
@@ -174,6 +175,7 @@ bool Recorder::OnMouseMove(const int &x, const int &y)
 }
 bool Recorder::OnMouseDrag(const int &x, const int &y)
 {
+    HoverShape = nullptr;
     if (CurShape)
     {
         CurShape->OnMoseDrag(x, y);
@@ -226,18 +228,19 @@ bool Recorder::OnTimeout(const unsigned int& id)
         if (HoverShape) {
             HoverShape->ShowDragger();
             CurShape = HoverShape;
-            win->SetTimeout(WM_HIDE_DRAGGER, 600);
+            win->SetTimeout(WM_HIDE_DRAGGER, 1600);
         }
         break;
     }
-    case WM_HIDE_DRAGGER: {        
-        if (HoverShape != CurShape) {
-            auto win = App::GetWin();
+    case WM_HIDE_DRAGGER: {
+        auto win = App::GetWin();
+        if (!CurShape) {
             win->ClearTimeout(WM_HIDE_DRAGGER);
-            if (CurShape) {
-                CurShape->HideDragger();
-                CurShape = nullptr;
-            }
+        }
+        else if (HoverShape != CurShape && !win->IsMouseDown) {
+            win->ClearTimeout(WM_HIDE_DRAGGER);
+            CurShape->HideDragger();
+            CurShape = nullptr;
         }
         break;
     }

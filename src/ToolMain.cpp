@@ -1,6 +1,8 @@
 ﻿#include <Windows.h>
 #include <shobjidl.h>
 #include <format>
+#include <sstream>
+#include <string>
 #include "ToolMain.h"
 #include "State.h"
 #include "CutMask.h"
