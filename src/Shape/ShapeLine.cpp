@@ -26,9 +26,6 @@ bool ShapeLine::OnMouseMove(const int &x, const int &y)
     if (flag)
     {
         setDragger();
-        Cursor::All();
-        HoverIndex = 8;
-        ShapeDragger::Get()->ShowDragger();
         return true;
     }
     return false;
@@ -126,15 +123,15 @@ void ShapeLine::Paint(SkCanvas *canvas)
 
 void ShapeLine::setDragger()
 {
-    auto endPoint = path.getPoint(1);
-    auto shapeDragger = ShapeDragger::Get();
-    unsigned half = shapeDragger->Size / 2;
-    shapeDragger->SetDragger(0, startX - half, startY - half);
-    shapeDragger->SetDragger(1, endPoint.fX - half, endPoint.fY - half);
-    shapeDragger->DisableDragger(2);
-    shapeDragger->Cursors[0] = Cursor::cursor::all;
-    shapeDragger->Cursors[1] = Cursor::cursor::all;
-    shapeDragger->CurShape = this;
+    //auto endPoint = path.getPoint(1);
+    //auto shapeDragger = ShapeDragger::Get();
+    //unsigned half = shapeDragger->Size / 2;
+    //shapeDragger->SetDragger(0, startX - half, startY - half);
+    //shapeDragger->SetDragger(1, endPoint.fX - half, endPoint.fY - half);
+    //shapeDragger->DisableDragger(2);
+    //shapeDragger->Cursors[0] = Cursor::cursor::all;
+    //shapeDragger->Cursors[1] = Cursor::cursor::all;
+    //shapeDragger->CurShape = this;
 }
 
 void ShapeLine::initParams()

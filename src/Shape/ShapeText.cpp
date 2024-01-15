@@ -28,7 +28,6 @@ ShapeText::ShapeText(const int &x, const int &y) : ShapeBase(x, y)
     top += lineRect.top();
     rect.setXYWH(left, top, width, height);
     activeKeyboard(getCursorX(), startY);
-    ShapeDragger::Get()->DisableDragger();
 }
 
 ShapeText::~ShapeText()
@@ -38,8 +37,8 @@ ShapeText::~ShapeText()
 bool ShapeText::FlashCursor()
 {
     Paint(nullptr);
-    auto func = std::bind(&ShapeText::FlashCursor, this);
-    Timer::Get()->Start(1, 600, func);
+    //auto func = std::bind(&ShapeText::FlashCursor, this);
+    //Timer::Get()->Start(1, 600, func);
     return false;
 }
 bool ShapeText::OnMouseDown(const int &x, const int &y)
@@ -47,10 +46,10 @@ bool ShapeText::OnMouseDown(const int &x, const int &y)
     if (!rect.contains(x, y)) {
         return true;
     }    
-    auto timer = Timer::Get();
-    timer->Remove(1);
-    auto func = std::bind(&ShapeText::FlashCursor, this);
-    timer->Start(1, 600, func);
+    //auto timer = Timer::Get();
+    //timer->Remove(1);
+    //auto func = std::bind(&ShapeText::FlashCursor, this);
+    //timer->Start(1, 600, func);
     if (lines.size() == 0) {
         showCursor = true;
         Paint(nullptr);
@@ -431,7 +430,7 @@ void ShapeText::setCursor(SkCanvas* canvas)
 }
 bool ShapeText::EndInput()
 {
-    Timer::Get()->Remove(1);
+    //Timer::Get()->Remove(1);
     auto win = App::GetWin();
     bool flag{ false };
     if (lines.size() == 0 || lines[0].empty()) {

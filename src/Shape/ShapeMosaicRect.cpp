@@ -127,9 +127,6 @@ bool ShapeMosaicRect::OnMouseMove(const int& x, const int& y)
 {
     if (rect.contains(x, y)) {
         setDragger();
-        Cursor::All();
-        HoverIndex = 8;
-        ShapeDragger::Get()->ShowDragger(false);
         auto win = App::GetWin();
         auto canvas = win->surfaceFront->getCanvas();
         SkPaint paint;

@@ -28,7 +28,6 @@ void ShapeEraser::Paint(SkCanvas *canvas)
 
 bool ShapeEraser::OnMouseUp(const int& x, const int& y)
 {
-    ShapeDragger::Get()->DisableDragger();    
     return false;
 }
 

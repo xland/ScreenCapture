@@ -6,7 +6,6 @@
 #include "include/core/SkPath.h"
 #include "State.h"
 #include <vector>
-#include "Timer.h"
 
 class ShapeBase;
 class Recorder

@@ -44,10 +44,6 @@ bool ShapeEllipse::OnMouseMove(const int& x, const int& y)
         flag = path.contains(x, y);
     }
     if (flag) {
-        setDragger();
-        Cursor::All();
-        HoverIndex = 8;
-        ShapeDragger::Get()->ShowDragger();
         return true;
     }
     return false;

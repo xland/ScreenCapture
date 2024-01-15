@@ -26,18 +26,15 @@ bool ShapeEraserRect::OnMouseMove(const int& x, const int& y)
 {
     if (rect.contains(x,y)) {
         setDragger();
-        Cursor::All();
-        HoverIndex = 8;
-        ShapeDragger::Get()->ShowDragger(false);
-        auto win = App::GetWin();
-        auto canvas = win->surfaceFront->getCanvas();
-        SkPaint paint;
-        paint.setStroke(true);
-        paint.setStrokeWidth(1);
-        paint.setColor(SK_ColorBLACK);
-        auto rectTemp = rect.makeOutset(2.f, 2.f);
-        canvas->drawRect(rectTemp, paint);
-        App::GetWin()->Refresh();
+        //auto win = App::GetWin();
+        //auto canvas = win->surfaceFront->getCanvas();
+        //SkPaint paint;
+        //paint.setStroke(true);
+        //paint.setStrokeWidth(1);
+        //paint.setColor(SK_ColorBLACK);
+        //auto rectTemp = rect.makeOutset(2.f, 2.f);
+        //canvas->drawRect(rectTemp, paint);
+        //App::GetWin()->Refresh();
         return true;
     }
     return false;

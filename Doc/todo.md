@@ -2,6 +2,7 @@
 
 
 - pinwindow 也要处理Timer
+- Visual Studio分析和代码清理
 - 别忘记删除那两个多出来的pixFront pixBack
 - 英文文字的测量是由问题的
 - 鼠标移到历史元素上过一会儿再允许它修改

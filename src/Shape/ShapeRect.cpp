@@ -2,7 +2,6 @@
 #include "../App.h"
 #include "../WindowBase.h"
 #include "../ToolSub.h"
-#include "../Timer.h"
 #include "../Cursor.h"
 
 ShapeRect::ShapeRect(const int& x, const int& y):ShapeBase(x,y), rect{SkRect::MakeXYWH(x,y,0,0)}
@@ -48,9 +47,6 @@ bool ShapeRect::OnMouseMove(const int& x, const int& y)
     }
     if (flag) {
         setDragger();
-        Cursor::All();
-        HoverIndex = 8;
-        ShapeDragger::Get()->ShowDragger();
         return true;
     }
     return false;
@@ -125,31 +121,31 @@ bool ShapeRect::OnMoseDrag(const int& x, const int& y)
 void ShapeRect::setDragger()
 {
     rect.sort();
-    auto shapeDragger = ShapeDragger::Get();
-    unsigned half = shapeDragger->Size/2;
-    float l = rect.x() - half;
-    float t = rect.y() - half;
-    float r = rect.right() - half;
-    float b = rect.bottom() - half;
-    float wCenter = l + rect.width() / 2;
-    float hCenter = t + rect.height() / 2;
-    shapeDragger->SetDragger(0, l, t);
-    shapeDragger->SetDragger(1, wCenter, t);
-    shapeDragger->SetDragger(2, r, t);
-    shapeDragger->SetDragger(3, r, hCenter);
-    shapeDragger->SetDragger(4, r, b);
-    shapeDragger->SetDragger(5, wCenter, b);
-    shapeDragger->SetDragger(6, l, b);
-    shapeDragger->SetDragger(7, l, hCenter);
-    shapeDragger->Cursors[0] = Cursor::cursor::wnse;
-    shapeDragger->Cursors[4] = Cursor::cursor::wnse;
-    shapeDragger->Cursors[1] = Cursor::cursor::ns;
-    shapeDragger->Cursors[5] = Cursor::cursor::ns;
-    shapeDragger->Cursors[2] = Cursor::cursor::nesw;
-    shapeDragger->Cursors[6] = Cursor::cursor::nesw;
-    shapeDragger->Cursors[3] = Cursor::cursor::we;
-    shapeDragger->Cursors[7] = Cursor::cursor::we;
-    shapeDragger->CurShape = this;
+    //auto shapeDragger = ShapeDragger::Get();
+    //unsigned half = shapeDragger->Size/2;
+    //float l = rect.x() - half;
+    //float t = rect.y() - half;
+    //float r = rect.right() - half;
+    //float b = rect.bottom() - half;
+    //float wCenter = l + rect.width() / 2;
+    //float hCenter = t + rect.height() / 2;
+    //shapeDragger->SetDragger(0, l, t);
+    //shapeDragger->SetDragger(1, wCenter, t);
+    //shapeDragger->SetDragger(2, r, t);
+    //shapeDragger->SetDragger(3, r, hCenter);
+    //shapeDragger->SetDragger(4, r, b);
+    //shapeDragger->SetDragger(5, wCenter, b);
+    //shapeDragger->SetDragger(6, l, b);
+    //shapeDragger->SetDragger(7, l, hCenter);
+    //shapeDragger->Cursors[0] = Cursor::cursor::wnse;
+    //shapeDragger->Cursors[4] = Cursor::cursor::wnse;
+    //shapeDragger->Cursors[1] = Cursor::cursor::ns;
+    //shapeDragger->Cursors[5] = Cursor::cursor::ns;
+    //shapeDragger->Cursors[2] = Cursor::cursor::nesw;
+    //shapeDragger->Cursors[6] = Cursor::cursor::nesw;
+    //shapeDragger->Cursors[3] = Cursor::cursor::we;
+    //shapeDragger->Cursors[7] = Cursor::cursor::we;
+    //shapeDragger->CurShape = this;
 }
 
 void ShapeRect::Paint(SkCanvas* canvas)
