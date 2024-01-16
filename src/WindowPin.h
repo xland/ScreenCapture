@@ -26,6 +26,7 @@ private:
     bool onChar(const unsigned int& val);
     bool onKeyDown(const unsigned int& val);
     bool onMouseWheel(const int& delta);
+    bool onTimeout(const unsigned int& id);
     POINT startPos;
     float shadowSize{ 8.0f };
 };

@@ -206,6 +206,9 @@ LRESULT WindowPin::wndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
         }
         break;
     }
+    case WM_TIMER: {
+        return onTimeout(wparam);
+    }
     default:
         break;
     }
@@ -310,4 +313,9 @@ bool WindowPin::onMouseWheel(const int& delta)
 {
     Recorder::Get()->OnMouseWheel(delta);
 	return false;
+}
+bool WindowPin::onTimeout(const unsigned int& id)
+{
+    Recorder::Get()->OnTimeout(id);
+    return false;
 }

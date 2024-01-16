@@ -169,19 +169,15 @@ void WindowMain::paintCanvas()
 bool WindowMain::onMouseDown(const int& x, const int& y)
 {
     if (ToolMain::Get()->OnMouseDown(x, y)) {
-        App::Log("tool main click\n");
         return true;
     }
     if (ToolSub::Get()->OnMouseDown(x, y)) {
-        App::Log("tool sub click\n");
         return true;
     }
     if (CutMask::Get()->OnMouseDown(x, y)) {
-        App::Log("CutMask click\n");
         return true;
     }
     if (Recorder::Get()->OnMouseDown(x, y)) {
-        App::Log("Recorder click\n");
         return true;
     }
     return false;

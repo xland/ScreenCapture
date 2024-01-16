@@ -242,7 +242,9 @@ bool Recorder::OnTimeout(const unsigned int& id)
         if (HoverShape) {
             HoverShape->ShowDragger();
             CurShape = HoverShape;
-            win->SetTimeout(WM_HIDE_DRAGGER, 1600);
+            if (typeid(*CurShape) != typeid(ShapeText)) {
+                win->SetTimeout(WM_HIDE_DRAGGER, 1600);
+            }            
         }
         break;
     }
