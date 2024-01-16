@@ -3,6 +3,8 @@
 - Remove `ShapeDragger` that is no longer in use.
 
 
+- 修改马赛克之后，马赛克变成最上册的元素了
+- 
 - Visual Studio分析和代码清理
 - ShapeEllipse ShapeRect判断鼠标坐标是否移动到元素内，这里可以优化，提前把Path缓存起来
 - Cursor的枚举类值得优化，提前Load：HCURSOR hCursor = LoadCursor(nullptr, IDC_ARROW); // 或加载自定义光标资源
