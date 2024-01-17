@@ -35,6 +35,7 @@ public:
     sk_sp<SkSurface> surfaceFront;
     SkPixmap* pixSrc;
     SkPixmap* pixBase;
+    SkPixmap* pixBack;
 
 protected:
     virtual LRESULT CALLBACK wndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) = 0;

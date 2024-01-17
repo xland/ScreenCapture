@@ -76,6 +76,8 @@ void WindowMain::initCanvas()
     surfaceFront = SkSurfaces::Raster(info);
     pixBase = new SkPixmap();
     surfaceBase->peekPixels(pixBase);
+    pixBack = new SkPixmap();
+    surfaceBack->peekPixels(pixBack);
 }
 
 LRESULT WindowMain::wndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
@@ -144,35 +146,16 @@ LRESULT WindowMain::wndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 
 void WindowMain::paintCanvas()
 {
-    //std::lock_guard<std::mutex> lock(mutexObj);
     surfaceBase->writePixels(*pixSrc, 0, 0);
     auto canvas = surfaceBase->getCanvas();
     auto img = surfaceBack->makeImageSnapshot();
     canvas->drawImage(img, 0.f, 0.f);
     img = surfaceFront->makeImageSnapshot();
 
-
-    //auto cBase = pixBack->getColor4f(1, 1);
-    //App::Log(std::format("pixBack:rgba:{},{},{},{}\n", cBase.fR, cBase.fG, cBase.fB, cBase.fA));
-
-    //cBase = pixFront->getColor4f(1, 1);
-    //App::Log(std::format("pixFront:rgba:{},{},{},{}\n", cBase.fR, cBase.fG, cBase.fB, cBase.fA));
-    
-
-    
     canvas->drawImage(img, 0.f, 0.f);
     CutMask::Get()->OnPaint(canvas);
     ToolMain::Get()->OnPaint(canvas);
     ToolSub::Get()->OnPaint(canvas);
-
-    //SkPaint paint;
-    //paint.setColor(SK_ColorBLACK);
-    //canvas->drawRect(SkRect::MakeXYWH(0, 0, 200, 200),paint);
-    //canvas->saveLayer(nullptr, nullptr);
-    //canvas->clear(SK_ColorTRANSPARENT);
-    //paint.setColor(SK_ColorCYAN);
-    //canvas->drawRect(SkRect::MakeXYWH(100, 100, 200, 200), paint);
-    //canvas->restore();
 }
 
 bool WindowMain::onMouseDown(const int& x, const int& y)

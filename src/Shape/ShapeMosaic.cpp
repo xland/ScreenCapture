@@ -3,13 +3,8 @@
 #include "../App.h"
 #include "../WindowBase.h"
 #include "../ToolSub.h"
-#include "include/effects/Sk2DPathEffect.h"
-#include "include/core/SkBlurTypes.h"
-#include "include/effects/SkBlurMaskFilter.h"
 #include "include/core/SkPathMeasure.h"
 #include "include/core/SkColor.h"
-#include "include/core/SkStream.h"
-#include "include/encode/SkPngEncoder.h"
 
 ShapeMosaic::ShapeMosaic(const int &x, const int &y) : ShapeBase(x, y)
 {
@@ -25,26 +20,12 @@ ShapeMosaic::~ShapeMosaic()
 void ShapeMosaic::Paint(SkCanvas *canvas)
 {
     SkPaint paint;
-    if (pixmap) {        
-        SkPathMeasure pathMeasure(path, false);
-        float length = pathMeasure.getLength();
-        SkPoint point;
-        for (float distance = 0; distance < length; distance += size) {
-            if (pathMeasure.getPosTan(distance, &point, nullptr)) {
-                drawRectsByPoints(point, canvas);
-            }
-        }
-    }
-    else {
-        canvas->saveLayer(nullptr, nullptr);
-        auto win = App::GetWin();
-        int rowNum = std::ceil((float)win->w / size);
-        for (const auto& kv : colorCache)
-        {
-            paint.setColor(kv.second);
-            int yIndex = (float)kv.first / (float)rowNum;
-            auto xIndex = kv.first % rowNum;
-            canvas->drawRect(SkRect::MakeXYWH(xIndex * size, yIndex * size, size, size), paint);
+    SkPathMeasure pathMeasure(path, false);
+    float length = pathMeasure.getLength();
+    SkPoint point;
+    for (float distance = 0; distance < length; distance += size) {
+        if (pathMeasure.getPosTan(distance, &point, nullptr)) {
+            drawRectsByPoints(point, canvas);
         }
     }
     paint.setAntiAlias(true);
@@ -56,33 +37,20 @@ void ShapeMosaic::Paint(SkCanvas *canvas)
     paint.setBlendMode(SkBlendMode::kClear);
     path.setFillType(SkPathFillType::kInverseWinding);
     canvas->drawPath(path, paint);
-    if (!pixmap) {
-        canvas->restore();
-    }
 }
 
 bool ShapeMosaic::OnMouseDown(const int &x, const int &y)
 {
-    auto win = App::GetWin();
-    auto surfaceFront = win->surfaceFront;
-    surfaceFront->writePixels(*win->pixSrc, 0, 0);
-    auto canvas = win->surfaceFront->getCanvas();
-    canvas->drawImage(win->surfaceBack->makeImageSnapshot(), 0, 0);
-    SkImageInfo info = SkImageInfo::MakeN32Premul(win->w, win->h);
-    auto addr = new unsigned char[win->w * win->h * 4];
-    pixmap = new SkPixmap(info, addr, win->w * 4);
-    surfaceFront->readPixels(*pixmap,0,0);
-    canvas->clear(SK_ColorTRANSPARENT);
     path.moveTo(x, y);
+    temp = new SkBitmap();
+    temp->allocN32Pixels(1, 1); //todo
     return false;
 }
 
 bool ShapeMosaic::OnMouseUp(const int &x, const int &y)
 {
     IsWip = false;
-    delete[] pixmap->addr();
-    delete pixmap;
-    pixmap = nullptr;
+    colorCache.clear();
     return false;
 }
 
@@ -100,6 +68,7 @@ bool ShapeMosaic::OnMoseDrag(const int &x, const int &y)
 
 void ShapeMosaic::drawRectsByPoints(const SkPoint& point, SkCanvas* canvas)
 {
+    SkCanvas colorCanvas(*temp);
     auto win = App::GetWin();
     int rowNum = std::ceil((float)win->w / size);
     int rectNum = std::ceil(strokeWidth*2 / size);
@@ -124,7 +93,13 @@ void ShapeMosaic::drawRectsByPoints(const SkPoint& point, SkCanvas* canvas)
                 {
                     for (size_t y1 = y; y1 <= y+size; y1 += 2)
                     {
-                        auto currentColor = pixmap->getColor4f(x1, y1);
+                        auto colorSrc = win->pixSrc->getColor(x1, y1);
+                        auto colorBack = win->pixBack->getColor(x1, y1);
+                        colorCanvas.drawColor(colorSrc);
+                        colorCanvas.drawColor(colorBack);
+                        void* pixels = temp->getPixels();
+                        auto colorTarget = *(SkColor*)pixels;
+                        auto currentColor = SkColor4f::FromColor(colorTarget);
                         colorSum.fR += currentColor.fR;
                         colorSum.fG += currentColor.fG;
                         colorSum.fB += currentColor.fB;

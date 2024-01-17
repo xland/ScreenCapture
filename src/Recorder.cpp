@@ -16,6 +16,8 @@
 #include "Shape/ShapeMosaic.h"
 #include "Shape/ShapeMosaicRect.h"
 #include "ToolMain.h"
+#include "include/core/SkStream.h"
+#include "include/encode/SkPngEncoder.h"
 
 Recorder *recorder;
 
@@ -136,7 +138,9 @@ bool Recorder::OnMouseUp(const int &x, const int &y)
             redoDisable = false;
         }
         else{
+            canvasBack->saveLayer(nullptr, nullptr);
             shape->Paint(canvasBack); 
+            canvasBack->restore();
             undoDisable = false;
         }
     }
@@ -207,6 +211,25 @@ bool Recorder::OnChar(const unsigned int& val)
 }
 bool Recorder::OnKeyDown(const unsigned int& val)
 {
+    //if (val == VK_ESCAPE) {
+    //    auto win = App::GetWin();
+    //    auto img = win->surfaceBack->makeImageSnapshot();
+    //    SkPixmap pixmap;
+    //    img->peekPixels(&pixmap);
+    //    SkPngEncoder::Options option;
+    //    SkFILEWStream stream("allen.png");
+    //    SkPngEncoder::Encode(&stream, pixmap, option);
+    //    stream.flush();
+    //    auto img1 = win->surfaceFront->makeImageSnapshot();
+    //    SkPixmap pixmap1;
+    //    img1->peekPixels(&pixmap1);
+    //    SkPngEncoder::Options option1;
+    //    SkFILEWStream stream1("allen1.png");
+    //    SkPngEncoder::Encode(&stream1, pixmap1, option1);
+    //    stream1.flush();
+    //    win->Refresh();
+    //    return true;
+    //}
     if (CurShape)
     {
         if (val == VK_ESCAPE && typeid(*CurShape) == typeid(ShapeText)) {

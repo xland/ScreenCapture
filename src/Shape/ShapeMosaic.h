@@ -5,6 +5,7 @@
 #include "include/core/SkPoint.h"
 #include "include/core/SkPath.h"
 #include "ShapeBase.h"
+#include "include/core/SkBitmap.h"
 #include <map>
 
 class ShapeMosaic : public ShapeBase
@@ -26,7 +27,6 @@ private:
     bool stroke{true};
     int strokeWidth{26};
     float size{ 20 };
-    SkColor color{SkColorSetARGB(255, 207, 19, 34)};
     std::map<int, SkColor> colorCache;
-    SkPixmap* pixmap;
+    SkBitmap* temp;
 };

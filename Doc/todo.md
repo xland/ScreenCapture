@@ -1,11 +1,18 @@
-- 橡皮擦擦不掉最后一个元素
-- 马赛克位置改变，重新计算
+- 修改元素，元素应该变到最上面，位马赛克服务
+- 马赛克位置改变，重新计算，直接用两个画布的像素值
 
+```c++
+//两个颜色的混合
+SkBitmap temp;
+temp.allocN32Pixels(1, 1);
+SkCanvas canvas(temp);
+canvas.drawColor(one);
+canvas.drawColor(two);
+void* pixels = temp.getPixels();
+return *(SkColor*) pixels;
+```
 
-- 修改马赛克之后，马赛克变成最上册的元素了
 - InitScreen不应该再App中，或者主窗口关闭后应该释放它
-- 画Line会在Back和Front都画，出现重叠的现象
-- 橡皮擦擦不掉刚画的马赛克
 - 当截图区宽度等于屏幕宽度，或高度等于屏幕高度时，没办法再调整截图区域的宽高
 
 - 感觉有点卡，尤其在虚拟机里，恼火
