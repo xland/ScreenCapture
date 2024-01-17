@@ -24,6 +24,6 @@ public:
 private:
     CutMask();
     std::vector<SkRect> winRects;
-    SkPoint start{-1,-1};
+    SkPoint start{-10,-10};
     int hoverIndex{ 4 };
 };

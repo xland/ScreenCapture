@@ -1,10 +1,16 @@
-- Hover over the area of the history element and wait for a moment before entering modify mode.
-- Use Windows `SetTimer`` and `KillTimer`` instead of std::thread
-- Remove `ShapeDragger` that is no longer in use.
+
 
 
 - 修改马赛克之后，马赛克变成最上册的元素了
-- 
+- 点击高亮的窗口区域，无法选中该区域
+- InitScreen不应该再App中，或者主窗口关闭后应该释放它
+- 画Line会在Back和Front都画，出现重叠的现象
+- 橡皮擦擦不掉刚画的马赛克
+- 当截图区宽度等于屏幕宽度，或高度等于屏幕高度时，没办法再调整截图区域的宽高
+- 橡皮擦擦不掉最后一个元素
+- 马赛克位置改变，重新计算
+
+- 感觉有点卡，尤其在虚拟机里，恼火
 - Visual Studio分析和代码清理
 - ShapeEllipse ShapeRect判断鼠标坐标是否移动到元素内，这里可以优化，提前把Path缓存起来
 - Cursor的枚举类值得优化，提前Load：HCURSOR hCursor = LoadCursor(nullptr, IDC_ARROW); // 或加载自定义光标资源
@@ -30,3 +36,36 @@
 - SK_ENABLE_SKSL 是 Skia 中的一个宏，用于启用或禁用 Skia Shader Language（SKSL）编译器。SKSL 是 Skia 的着色器语言，用于编写图形渲染时使用的着色器代码。
   - 看SkiaGUI有使用这玩意儿的示例
  - track mouse out window IsMouseDragging IsMouseDown to false
+
+
+
+- 整个应用只搞一个Surface，一个Canvas
+- 屏幕拍照完成后，就把屏幕照片画在这个Surface上
+- 然后saveLayer①，
+- 接着在这个layer上绘制mask,toolbar之类得东西
+- 动态绘制这些东西时，就执行clear操作，不会影响最底层得屏幕照片
+- 完成之后restore，（完蛋，污染了surface了）
+- 如果restore了之后，还要改变mask或toolbar，那就重新画一遍屏幕底部得照片
+- 然后再saveLayer①，再改变mask或toolbar，
+- 动态改变就执行clear操作，同样不会影响最底层得屏幕照片
+- 完成之后restore
+
+- 在①完成之后，你可能要绘制历史元素
+- 此时没必要再saveLayer
+- 只要直接遍历历史元素，直接并把非IsDel的元素都绘制到①创建的layer上即可
+- 画完了之后restore
+- 当用户点了上一步或者下一步，那么整个surface都要重绘一遍
+
+- 当用户要拖拽绘制一个新元素时
+- 不断的saveLayer,clear,draw,restore
+- 一旦restore，就会污染surface了
+- 然而如果不restore，用户又看不到拖拽绘制的过程
+
+
+
+toolbar可以搞一个单独的surface
+
+- 用SaveLayer代替SurfaceFront
+  - 当开始绘图时，不断的saveLayer,clear,draw,restore
+  - 实际上始终是画在SurfaceBack上
+  - 

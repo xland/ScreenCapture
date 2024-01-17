@@ -164,6 +164,15 @@ void WindowMain::paintCanvas()
     CutMask::Get()->OnPaint(canvas);
     ToolMain::Get()->OnPaint(canvas);
     ToolSub::Get()->OnPaint(canvas);
+
+    //SkPaint paint;
+    //paint.setColor(SK_ColorBLACK);
+    //canvas->drawRect(SkRect::MakeXYWH(0, 0, 200, 200),paint);
+    //canvas->saveLayer(nullptr, nullptr);
+    //canvas->clear(SK_ColorTRANSPARENT);
+    //paint.setColor(SK_ColorCYAN);
+    //canvas->drawRect(SkRect::MakeXYWH(100, 100, 200, 200), paint);
+    //canvas->restore();
 }
 
 bool WindowMain::onMouseDown(const int& x, const int& y)

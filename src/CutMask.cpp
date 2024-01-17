@@ -44,8 +44,11 @@ bool CutMask::OnMouseDown(const int& x, const int& y)
 {    
     auto win = App::GetWin();
     if (win->state == State::start) {
+        CutRect.setLTRB(x, y, x, y);
         hoverIndex = 4;
-        CutRect.setXYWH(x, y, 0, 0);
+        win->state = State::mask;
+        win->surfaceFront->getCanvas()->clear(SK_ColorTRANSPARENT);
+        return true;
     }
     if (hoverIndex == 0) {
         CutRect.setLTRB(x, y, CutRect.fRight, CutRect.fBottom);
@@ -86,7 +89,6 @@ bool CutMask::OnMouseDown(const int& x, const int& y)
     else {
         return false;
     }
-    win->state = State::mask;
     win->surfaceFront->getCanvas()->clear(SK_ColorTRANSPARENT);
     win->Refresh();
     return true;
@@ -196,6 +198,10 @@ bool CutMask::OnMouseDrag(const int& x, const int& y)
     if (hoverIndex < 0) {
         return false;
     }
+    if (start.fX == -10 && start.fY == -10) {
+        start.fX = CutRect.fLeft;
+        start.fY = CutRect.fTop;
+    }
     auto win = App::GetWin();
     win->state = State::mask;
     if (hoverIndex == 0) {
@@ -243,7 +249,9 @@ bool CutMask::OnMouseDrag(const int& x, const int& y)
         return true;
     }
     CutRect.sort();
-    win->Refresh();
+    if (!(CutRect.width() <= 1 && CutRect.height() <= 1)) {
+        win->Refresh();
+    }    
     return true;
 }
 bool CutMask::OnPaint(SkCanvas *canvas)
@@ -328,6 +336,15 @@ bool CutMask::OnMouseUp(const int& x, const int& y)
     auto win = App::GetWin();
     if (win->state != State::mask) {
         return false;
+    }
+    if ((start.fX == -10 && start.fY == -10) || (CutRect.width() <= 1 && CutRect.height() <= 1)) {
+        for (size_t i = 0; i < winRects.size(); i++)
+        {
+            if (winRects[i].contains(x, y)) {
+                CutRect = winRects[i];
+                break;
+            }
+        }
     }
     win->state = State::tool;
     auto tool = ToolMain::Get();

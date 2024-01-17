@@ -30,7 +30,7 @@ PixelInfo* PixelInfo::Get()
 bool PixelInfo::OnMouseMove(const int& x, const int& y)
 {
     auto win = App::GetWin();
-    if (win->state >= State::mask)
+    if (win->IsMouseDown || win->state >= State::mask)
     {
         return false;
     }
