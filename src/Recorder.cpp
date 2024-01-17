@@ -125,6 +125,8 @@ bool Recorder::OnMouseUp(const int &x, const int &y)
     auto win = App::GetWin();
     auto canvasBack = win->surfaceBack->getCanvas();
     canvasBack->clear(SK_ColorTRANSPARENT);
+    auto canvasFront = win->surfaceFront->getCanvas();
+    canvasFront->clear(SK_ColorTRANSPARENT);
     bool undoDisable = true;
     bool redoDisable = true;
     //必须全部重绘一次，不然修改历史元素时，无法保证元素的绘制顺序
