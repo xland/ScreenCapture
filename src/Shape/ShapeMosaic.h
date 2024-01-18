@@ -4,8 +4,8 @@
 #include "include/core/SkRect.h"
 #include "include/core/SkPoint.h"
 #include "include/core/SkPath.h"
-#include "ShapeBase.h"
 #include "include/core/SkBitmap.h"
+#include "ShapeBase.h"
 #include <map>
 
 class ShapeMosaic : public ShapeBase
@@ -22,11 +22,10 @@ protected:
 
 private:
     void initParams();
-    void drawRectsByPoints(const SkPoint& point, SkCanvas* canvas);
+    void drawRectsByPoints(const SkPoint &point, SkCanvas *canvas);
     SkPath path;
     bool stroke{true};
     int strokeWidth{26};
-    float size{ 20 };
-    std::map<int, SkColor> colorCache;
-    SkBitmap* temp;
+    float size{20};
+    std::unique_ptr<SkBitmap> bitmapForColor;
 };

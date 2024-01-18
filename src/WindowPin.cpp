@@ -1,9 +1,5 @@
-﻿#include <windowsx.h>
-#include "WindowPin.h"
-#include "App.h"
-#include "CutMask.h"
-#include "ToolMain.h"
-#include "ToolSub.h"
+﻿#include "WindowPin.h"
+#include <windowsx.h>
 #include "include/core/SkPath.h"
 #include "include/core/SkRect.h"
 #include "include/core/SkSurface.h"
@@ -13,7 +9,12 @@
 #include "include/core/SkRRect.h"
 #include "include/core/SkStream.h"
 #include "include/encode/SkPngEncoder.h"
+#include "App.h"
+#include "CutMask.h"
+#include "ToolMain.h"
+#include "ToolSub.h"
 #include "Recorder.h"
+#include "ColorBlender.h"
 
 
 WindowPin::WindowPin()
@@ -24,7 +25,7 @@ WindowPin::WindowPin()
 
 WindowPin::~WindowPin()
 {
-
+    ColorBlender::Reset();
 }
 
 void WindowPin::Save(const std::string& filePath)

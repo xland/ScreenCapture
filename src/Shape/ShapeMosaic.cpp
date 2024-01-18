@@ -1,10 +1,11 @@
 #include "ShapeMosaic.h"
 #include <memory>
+#include "include/core/SkPathMeasure.h"
+#include "include/core/SkColor.h"
 #include "../App.h"
 #include "../WindowBase.h"
 #include "../ToolSub.h"
-#include "include/core/SkPathMeasure.h"
-#include "include/core/SkColor.h"
+#include "../ColorBlender.h"
 
 ShapeMosaic::ShapeMosaic(const int &x, const int &y) : ShapeBase(x, y)
 {
@@ -19,6 +20,7 @@ ShapeMosaic::~ShapeMosaic()
 
 void ShapeMosaic::Paint(SkCanvas *canvas)
 {
+    canvas->saveLayer(nullptr,nullptr);
     SkPaint paint;
     SkPathMeasure pathMeasure(path, false);
     float length = pathMeasure.getLength();
@@ -37,20 +39,18 @@ void ShapeMosaic::Paint(SkCanvas *canvas)
     paint.setBlendMode(SkBlendMode::kClear);
     path.setFillType(SkPathFillType::kInverseWinding);
     canvas->drawPath(path, paint);
+    canvas->restore();
 }
 
 bool ShapeMosaic::OnMouseDown(const int &x, const int &y)
 {
     path.moveTo(x, y);
-    temp = new SkBitmap();
-    temp->allocN32Pixels(1, 1); //todo
     return false;
 }
 
 bool ShapeMosaic::OnMouseUp(const int &x, const int &y)
 {
     IsWip = false;
-    colorCache.clear();
     return false;
 }
 
@@ -68,7 +68,6 @@ bool ShapeMosaic::OnMoseDrag(const int &x, const int &y)
 
 void ShapeMosaic::drawRectsByPoints(const SkPoint& point, SkCanvas* canvas)
 {
-    SkCanvas colorCanvas(*temp);
     auto win = App::GetWin();
     int rowNum = std::ceil((float)win->w / size);
     int rectNum = std::ceil(strokeWidth*2 / size);
@@ -83,38 +82,33 @@ void ShapeMosaic::drawRectsByPoints(const SkPoint& point, SkCanvas* canvas)
             int key = i*rowNum+j;
             auto x = j * size;
             auto y = i * size;
-            if (colorCache.contains(key)) {
-                paint.setColor(colorCache[key]);
-                canvas->drawRect(SkRect::MakeXYWH(x, y, size, size),paint);
-            }
-            else {
-                int count{ 0 };
-                for (size_t x1 = x; x1 <= x+size; x1 += 2)
+            int count{ 0 };
+            for (size_t x1 = x; x1 <= x+size; x1 += 2)
+            {
+                for (size_t y1 = y; y1 <= y+size; y1 += 2)
                 {
-                    for (size_t y1 = y; y1 <= y+size; y1 += 2)
-                    {
-                        auto colorSrc = win->pixSrc->getColor(x1, y1);
-                        auto colorBack = win->pixBack->getColor(x1, y1);
-                        colorCanvas.drawColor(colorSrc);
-                        colorCanvas.drawColor(colorBack);
-                        void* pixels = temp->getPixels();
-                        auto colorTarget = *(SkColor*)pixels;
-                        auto currentColor = SkColor4f::FromColor(colorTarget);
-                        colorSum.fR += currentColor.fR;
-                        colorSum.fG += currentColor.fG;
-                        colorSum.fB += currentColor.fB;
-                        count++;
+                    auto colorSrc = win->pixSrc->getColor(x1, y1);
+                    auto colorBack = win->pixBack->getColor(x1, y1);
+                    SkColor4f currentColor;
+                    if (colorBack == SK_ColorTRANSPARENT) {
+                        currentColor = SkColor4f::FromColor(colorSrc);
                     }
+                    else {
+                        currentColor = ColorBlender::Blend(colorSrc, colorBack);
+                    }
+                    colorSum.fR += currentColor.fR;
+                    colorSum.fG += currentColor.fG;
+                    colorSum.fB += currentColor.fB;
+                    count++;
                 }
-                colorSum.fR /= count;
-                colorSum.fG /= count;
-                colorSum.fB /= count;
-                colorSum.fA = 255;
-                auto color = colorSum.toSkColor();
-                paint.setColor(color);
-                canvas->drawRect(SkRect::MakeXYWH(x, y, size, size), paint);
-                colorCache.insert({ key, color });
             }
+            colorSum.fR /= count;
+            colorSum.fG /= count;
+            colorSum.fB /= count;
+            colorSum.fA = 255;
+            auto color = colorSum.toSkColor();
+            paint.setColor(color);
+            canvas->drawRect(SkRect::MakeXYWH(x, y, size, size), paint);
         }
     }
 

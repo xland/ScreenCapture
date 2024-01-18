@@ -1,17 +1,19 @@
-﻿#include <Windows.h>
+﻿#include "WindowMain.h"
+#include <Windows.h>
 #include <windowsx.h>
 #include <dwmapi.h>
-#include "WindowMain.h"
-#include "App.h"
 #include "include/core/SkBitmap.h"
 #include "include/core/SkCanvas.h"
+#include "include/core/SkStream.h"
+#include "include/encode/SkPngEncoder.h"
+
+#include "App.h"
 #include "CutMask.h"
 #include "ToolMain.h"
 #include "ToolSub.h"
 #include "Recorder.h"
 #include "PixelInfo.h"
-#include "include/core/SkStream.h"
-#include "include/encode/SkPngEncoder.h"
+#include "ColorBlender.h"
 
 WindowMain::WindowMain()
 {
@@ -27,6 +29,7 @@ WindowMain::~WindowMain()
 {
     delete PixelInfo::Get();
     delete CutMask::Get();
+    ColorBlender::Reset();
 }
 
 void WindowMain::Save(const std::string& filePath)

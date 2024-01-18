@@ -138,9 +138,7 @@ bool Recorder::OnMouseUp(const int &x, const int &y)
             redoDisable = false;
         }
         else{
-            canvasBack->saveLayer(nullptr, nullptr);
-            shape->Paint(canvasBack); 
-            canvasBack->restore();
+            shape->Paint(canvasBack);
             undoDisable = false;
         }
     }
@@ -148,6 +146,7 @@ bool Recorder::OnMouseUp(const int &x, const int &y)
     toolMain->SetUndoDisable(undoDisable);
     toolMain->SetRedoDisable(redoDisable);
     CurShape = nullptr;
+    win->Refresh();
     return false;
 }
 bool Recorder::OnMouseMove(const int &x, const int &y)

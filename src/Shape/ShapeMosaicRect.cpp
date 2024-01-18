@@ -3,6 +3,7 @@
 #include "../WindowBase.h"
 #include "../ToolSub.h"
 #include "../Cursor.h"
+#include "../ColorBlender.h"
 
 ShapeMosaicRect::ShapeMosaicRect(const int &x, const int &y) : ShapeRect(x, y)
 {
@@ -16,25 +17,12 @@ bool ShapeMosaicRect::OnMouseDown(const int& x, const int& y)
 {
     startX = x;
     startY = y;
-    auto win = App::GetWin();
-    auto surfaceFront = win->surfaceFront;
-    surfaceFront->writePixels(*win->pixSrc, 0, 0);
-    auto canvas = win->surfaceFront->getCanvas();
-    canvas->drawImage(win->surfaceBack->makeImageSnapshot(), 0, 0);
-    SkImageInfo info = SkImageInfo::MakeN32Premul(win->w, win->h);
-    auto addr = new unsigned char[win->w * win->h * 4];
-    pixmap = new SkPixmap(info, addr, win->w * 4);
-    surfaceFront->readPixels(*pixmap, 0, 0);
-    canvas->clear(SK_ColorTRANSPARENT);
     return false;
 }
 
 bool ShapeMosaicRect::OnMouseUp(const int& x, const int& y)
 {
     IsWip = false;
-    delete[] pixmap->addr();
-    delete pixmap;
-    pixmap = nullptr;
     setDragger();
     return false;
 }
@@ -67,60 +55,43 @@ void ShapeMosaicRect::drawRectsByPoints(SkCanvas* canvas)
             int key = i * columnNum + j;
             auto x = j * size;
             auto y = i * size;
-            if (colorCache.contains(key)) {
-                paint.setColor(colorCache[key]);
-                canvas->drawRect(SkRect::MakeXYWH(x, y, size, size), paint);
-            }
-            else {
-                int count{ 0 };
-                for (size_t x1 = x; x1 <= x + size; x1 += 2)
+            int count{ 0 };
+            for (size_t x1 = x; x1 <= x + size; x1 += 2)
+            {
+                for (size_t y1 = y; y1 <= y + size; y1 += 2)
                 {
-                    for (size_t y1 = y; y1 <= y + size; y1 += 2)
-                    {
-                        SkColor4f currentColor;
-                        if (x1 >= win->w || y1 >= win->h) {
-                            currentColor = SkColor4f::FromColor(SK_ColorBLACK);
-                        }
-                        else {
-                            currentColor = pixmap->getColor4f(x1, y1);
-                        }
-                        colorSum.fR += currentColor.fR;
-                        colorSum.fG += currentColor.fG;
-                        colorSum.fB += currentColor.fB;
-                        count++;
+                    SkColor4f currentColor;
+                    if (x1 >= win->w || y1 >= win->h) {
+                        currentColor = SkColor4f::FromColor(SK_ColorBLACK);
                     }
+                    else {
+                        auto colorSrc = win->pixSrc->getColor(x1, y1);
+                        auto colorBack = win->pixBack->getColor(x1, y1);
+                        currentColor = ColorBlender::Blend(colorSrc, colorBack);
+                    }
+                    colorSum.fR += currentColor.fR;
+                    colorSum.fG += currentColor.fG;
+                    colorSum.fB += currentColor.fB;
+                    count++;
                 }
-                colorSum.fR /= count;
-                colorSum.fG /= count;
-                colorSum.fB /= count;
-                colorSum.fA = 255;
-                auto color = colorSum.toSkColor();
-                paint.setColor(color);
-                canvas->drawRect(SkRect::MakeXYWH(x, y, size, size), paint);
-                colorCache.insert({ key, color });
             }
+            colorSum.fR /= count;
+            colorSum.fG /= count;
+            colorSum.fB /= count;
+            colorSum.fA = 255;
+            auto color = colorSum.toSkColor();
+            paint.setColor(color);
+            canvas->drawRect(SkRect::MakeXYWH(x, y, size, size), paint);
+            colorCache.insert({ key, color });
         }
     }
 }
 
 void ShapeMosaicRect::Paint(SkCanvas *canvas)
 {
+    canvas->saveLayer(nullptr, nullptr);
     SkPaint paint;
-    if (pixmap) {
-        drawRectsByPoints(canvas);
-    }
-    else {
-        canvas->saveLayer(nullptr, nullptr);
-        auto win = App::GetWin();
-        int rowNum = std::ceil((float)win->w / size);
-        for (const auto& kv : colorCache)
-        {
-            paint.setColor(kv.second);
-            int yIndex = (float)kv.first / (float)rowNum;
-            auto xIndex = kv.first % rowNum;
-            canvas->drawRect(SkRect::MakeXYWH(xIndex * size, yIndex * size, size, size), paint);
-        }
-    }
+    drawRectsByPoints(canvas);
     paint.setAntiAlias(true);
     paint.setStroke(false);
     paint.setBlendMode(SkBlendMode::kClear);
@@ -128,9 +99,7 @@ void ShapeMosaicRect::Paint(SkCanvas *canvas)
     path.addRect(rect);
     path.setFillType(SkPathFillType::kInverseWinding);
     canvas->drawPath(path, paint);
-    if (!pixmap) {
-        canvas->restore();
-    }
+    canvas->restore();
 }
 
 bool ShapeMosaicRect::OnMouseMove(const int& x, const int& y)

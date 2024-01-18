@@ -23,5 +23,4 @@ private:
     void drawRectsByPoints(SkCanvas* canvas);
     std::map<int, SkColor> colorCache;
     float size{ 20 };
-    SkPixmap* pixmap;
 };
