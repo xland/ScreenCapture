@@ -1,3 +1,11 @@
+- Bug fix : Crash when mosaic line hit the edge of the screen
+- Bug fix : Mouse cursor change early when mouse over the shape
+- 
+
+
+- 画个矩形，鼠标移动到dragger位置，cursor变了
+- 马赛克线条，应该统一计算
+
 - InitScreen不应该再App中，或者主窗口关闭后应该释放它
 - 当截图区宽度等于屏幕宽度，或高度等于屏幕高度时，没办法再调整截图区域的宽高
 

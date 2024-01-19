@@ -67,7 +67,12 @@ void ShapeMosaicRect::drawRectsByPoints(SkCanvas* canvas)
                     else {
                         auto colorSrc = win->pixSrc->getColor(x1, y1);
                         auto colorBack = win->pixBack->getColor(x1, y1);
-                        currentColor = ColorBlender::Blend(colorSrc, colorBack);
+                        if (colorBack == SK_ColorTRANSPARENT) {
+                            currentColor = SkColor4f::FromColor(colorSrc);
+                        }
+                        else {
+                            currentColor = ColorBlender::Blend(colorSrc, colorBack);
+                        }
                     }
                     colorSum.fR += currentColor.fR;
                     colorSum.fG += currentColor.fG;

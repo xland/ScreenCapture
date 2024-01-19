@@ -97,29 +97,6 @@ void ShapeArrow::Paint(SkCanvas* canvas)
     canvas->drawPath(path, paint);
 }
 
-void ShapeArrow::initParams()
-{
-    auto tool = ToolSub::Get();
-    stroke = !tool->GetFill();
-    if (stroke)
-    {
-        auto stroke = tool->GetStroke();
-        if (stroke == 1)
-        {
-            strokeWidth = 4;
-        }
-        else if (stroke == 2)
-        {
-            strokeWidth = 8;
-        }
-        else
-        {
-            strokeWidth = 16;
-        }
-    }
-    color = tool->GetColor();
-}
-
 void ShapeArrow::makePath(const int& x1, const int& y1, const int& x2, const int& y2)
 {
     path.reset();
@@ -157,4 +134,27 @@ void ShapeArrow::makePath(const int& x1, const int& y1, const int& x2, const int
     double Y4 = centerY + tempB / 2;
     path.lineTo(X4, Y4);
     path.lineTo(x1, y1);
+}
+
+void ShapeArrow::initParams()
+{
+    auto tool = ToolSub::Get();
+    stroke = !tool->GetFill();
+    if (stroke)
+    {
+        auto stroke = tool->GetStroke();
+        if (stroke == 1)
+        {
+            strokeWidth = 4;
+        }
+        else if (stroke == 2)
+        {
+            strokeWidth = 8;
+        }
+        else
+        {
+            strokeWidth = 16;
+        }
+    }
+    color = tool->GetColor();
 }

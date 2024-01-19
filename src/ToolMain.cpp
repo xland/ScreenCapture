@@ -1,7 +1,4 @@
-﻿#include <Windows.h>
-#include <shobjidl.h>
-#include <format>
-#include <sstream>
+﻿#include <format>
 #include <string>
 #include "ToolMain.h"
 #include "State.h"
@@ -24,58 +21,6 @@ ToolMain::~ToolMain()
 ToolMain::ToolMain()
 {
 
-}
-void ToolMain::saveFile()
-{
-    IFileOpenDialog* dialog;
-    CLSID param1 = CLSID_FileSaveDialog, param2 = IID_IFileSaveDialog;
-    auto hr = CoCreateInstance(param1, NULL, CLSCTX_ALL, param2, reinterpret_cast<void**>(&dialog));
-    if (FAILED(hr))
-    {
-        MessageBox(NULL, L"Failed to create COM FileSaveDialog object.", L"Error", MB_OK | MB_ICONERROR);
-        return;
-    }
-    COMDLG_FILTERSPEC FileTypes[] = {{ L"All Pictures", L"*.png;" },{ L"All files", L"*.*" }};
-    SYSTEMTIME localTime;
-    GetLocalTime(&localTime);
-    std::wstring name = std::format(L"{}{}{}{}{}{}{}", localTime.wYear, localTime.wMonth, localTime.wDay,
-        localTime.wHour, localTime.wMinute, localTime.wSecond, localTime.wMilliseconds);
-    dialog->SetFileName(name.c_str());
-    dialog->SetFileTypes(2, FileTypes);
-    dialog->SetTitle(L"Save File");
-    dialog->SetDefaultExtension(L"png");
-    dialog->SetOptions(FOS_FORCEFILESYSTEM | FOS_PATHMUSTEXIST | FOS_OVERWRITEPROMPT);
-    hr = dialog->Show(App::GetWin()->hwnd);
-    if (hr == HRESULT_FROM_WIN32(ERROR_CANCELLED)) { //用户取消
-        dialog->Release();
-        return;
-    }
-    IShellItem* pItem;
-    hr = dialog->GetResult(&pItem);
-    if (FAILED(hr))
-    {
-        dialog->Release();
-        MessageBox(NULL, L"Failed to get file path from save dialog.", L"Error", MB_OK | MB_ICONERROR);
-        return;
-    }
-    PWSTR filePath;
-    hr = pItem->GetDisplayName(SIGDN_FILESYSPATH, &filePath);
-    if (FAILED(hr))
-    {
-        CoTaskMemFree(filePath);
-        dialog->Release();
-        MessageBox(NULL, L"Failed to get file name from save dialog.", L"Error", MB_OK | MB_ICONERROR);
-        return;
-    }
-    std::wstringstream ss;
-    ss << filePath;
-    CoTaskMemFree(filePath);
-    dialog->Release();
-    std::wstring wstr = ss.str();
-    int count = WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), wstr.length(), NULL, 0, NULL, NULL);
-    std::string str(count, 0);
-    WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), -1, &str[0], count, NULL, NULL);
-    App::GetWin()->Save(str);
 }
 void ToolMain::SetPositionByCutMask()
 {
@@ -192,7 +137,7 @@ bool ToolMain::OnMouseDown(const int& x, const int& y)
                 break;
             }
             case 12: {
-                saveFile();
+                App::SaveFile();
                 btns[12]->IsHover = false;
                 break;
             }

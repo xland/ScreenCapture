@@ -22,7 +22,7 @@ protected:
 
 private:
     void initParams();
-    void drawRectsByPoints(const SkPoint &point, SkCanvas *canvas);
+    void drawRectsByPoints(const std::vector<SkPoint>& points, SkCanvas *canvas);
     SkPath path;
     bool stroke{true};
     int strokeWidth{26};

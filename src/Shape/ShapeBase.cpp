@@ -1,4 +1,4 @@
-#include "ShapeBase.h"
+ï»¿#include "ShapeBase.h"
 #include "../App.h"
 #include "../WindowBase.h"
 #include "../Recorder.h"
@@ -16,10 +16,10 @@ bool ShapeBase::MouseInDragger(const int& x, const int& y)
     for (size_t i = 0; i < Draggers.size(); i++)
     {
         if (Draggers[i].contains(x, y)) {
-            if (HoverIndex > -1) {
-                Cursor::SetCursor(DraggerCursors[HoverIndex]); //DraggerÒÑ¾­ÏÔÊ¾£¬µ«CursorÊÇ´íÎóµÄ£¬ÕâÀï¾ÀÕý
-            }
             HoverIndex = i;
+            if (IsDraggerVisible) {
+                Cursor::SetCursor(DraggerCursors[HoverIndex]);
+            }
             return true;
         }
     }
@@ -34,6 +34,7 @@ void ShapeBase::HideDragger()
     canvas->clear(SK_ColorTRANSPARENT);
     win->Refresh();
     Cursor::Cross();
+    IsDraggerVisible = false;
 }
 
 void ShapeBase::ShowDragger()
@@ -51,4 +52,5 @@ void ShapeBase::ShowDragger()
     OnShowDragger(canvas);
     win->Refresh();
     Cursor::SetCursor(DraggerCursors[HoverIndex]);
+    IsDraggerVisible = true;
 }

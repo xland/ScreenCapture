@@ -36,6 +36,7 @@ bool ShapeRect::OnMouseDown(const int& x, const int& y)
 bool ShapeRect::OnMouseUp(const int& x, const int& y)
 {
     IsWip = false;
+    HoverIndex = -1;
     setDragger();
     return false;
 }

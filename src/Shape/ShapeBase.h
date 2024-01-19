@@ -30,6 +30,7 @@ public:
     bool IsWip{true}; //在制品，在FrontCanvas绘制
     bool IsDel{ false }; //Undo品
     bool IsTemp{ true }; //首次创建，极有可能随时被删除
+    bool IsDraggerVisible{ false };
     int HoverIndex{-1};
     std::vector<SkRect> Draggers;
     std::vector<Cursor::cursor> DraggerCursors;

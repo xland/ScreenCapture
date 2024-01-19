@@ -16,6 +16,7 @@ public:
     static int GetExitCode();
     static std::shared_ptr<SkRect> GetScreen(const float& x, const float& y);
     static void Log(std::string&& info);
+    static void SaveFile();
 private:
     App() {};
     static void initFontIcon();

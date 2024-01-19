@@ -23,7 +23,6 @@ public:
     void Reset();
 private:
     ToolMain();
-    void saveFile();
     /// <summary>
     /// 0主工具条在选中或取消选中某个按钮时不需要改变位置
     /// 1选中某个按钮时，位置上移
