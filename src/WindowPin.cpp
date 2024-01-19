@@ -307,11 +307,13 @@ bool WindowPin::onKeyDown(const unsigned int& val)
     {
         App::Quit(3);
     }
-    else if (val == 83 && GetKeyState(VK_CONTROL) < 0) { //Ctrl+S
-        App::SaveFile();
-    }
-    else if (val == 67 && GetKeyState(VK_CONTROL) < 0) { //Ctrl+C
-        SaveToClipboard();
+    else if (GetKeyState(VK_CONTROL) < 0) {
+        if (val == 83) {//Ctrl+S
+            App::SaveFile();
+        }
+        else if (val == 67) {//Ctrl+C
+            SaveToClipboard();
+        }
     }
 	return true;
 }

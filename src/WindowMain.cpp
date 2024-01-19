@@ -264,11 +264,16 @@ bool WindowMain::onKeyDown(const unsigned int& val)
     {
         App::Quit(3);
     }
-    else if (state > State::mask && val == 83 && GetKeyState(VK_CONTROL) < 0) { //Ctrl+S
-        App::SaveFile();
-    }
-    else if (state > State::mask && val == 67 && GetKeyState(VK_CONTROL) < 0) { //Ctrl+C
-        SaveToClipboard();
+    else if (state > State::mask && GetKeyState(VK_CONTROL) < 0) { 
+        if (val == 83) {//Ctrl+S
+            App::SaveFile();
+        }
+        else if (val == 67) {//Ctrl+C
+            SaveToClipboard();
+        }
+        else if (val == 80) { //Ctrl+P
+            App::Pin();
+        }
     }
     return true;
 }

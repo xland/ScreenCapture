@@ -1,11 +1,3 @@
-- Bug fix : Crash when mosaic line hit the edge of the screen
-- Bug fix : Mouse cursor change early when mouse over the shape
-- 
-
-
-- 画个矩形，鼠标移动到dragger位置，cursor变了
-- 马赛克线条，应该统一计算
-
 - InitScreen不应该再App中，或者主窗口关闭后应该释放它
 - 当截图区宽度等于屏幕宽度，或高度等于屏幕高度时，没办法再调整截图区域的宽高
 
@@ -16,14 +8,13 @@
 - draggerSize设置成静态变量
 - Eraser Rect 拖动会擦掉所有内容，mouseup之后才会显示出来
 - 英文文字的测量是由问题的
-- 点工具条的时候会导致Crash？？？应该已经修复了
-- 按住Shift画正圆，按住Shift画正方
 - 绘制马赛克后，马赛克以前的历史元素变更位置，马赛克遮不住他们
 - 钉住窗口再画Rect会多一个上一次画的东西
 - 多个屏幕测试，要多测试几轮
 - Eraser和Mosaic 是否应继承自Pen
 
 
+- 别的程序调用，截图后好像获取不到文件保存路径
 - 橡皮擦画在front上和画在back上表现不一样，鼠标up事件仔细观察一下
 - Recorder有必要早早的就初始化吗？Get的时候判断，没有再初始化不就完了
 - 工具栏取消选中之后再拖动元素，是有问题的

@@ -126,6 +126,12 @@ bool ShapeRect::OnMoseDrag(const int& x, const int& y)
     default:
         break;
     }
+    
+    if (GetKeyState(VK_SHIFT) < 0) {
+        SkScalar side = std::max(rect.width(), rect.height());
+        rect.setXYWH(rect.fLeft, rect.fTop, side, side);
+    }
+    
     auto win = App::GetWin();
     auto canvas = win->surfaceFront->getCanvas();
     canvas->clear(SK_ColorTRANSPARENT);

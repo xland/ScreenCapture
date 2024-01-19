@@ -94,6 +94,7 @@ void ShapeMosaicRect::drawRectsByPoints(SkCanvas* canvas)
 
 void ShapeMosaicRect::Paint(SkCanvas *canvas)
 {
+    rect.sort();
     canvas->saveLayer(nullptr, nullptr);
     SkPaint paint;
     drawRectsByPoints(canvas);
