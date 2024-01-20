@@ -212,9 +212,9 @@ void ToolMain::InitBtns()
     //btns.push_back(std::make_shared<ToolBtn>(Icon::image, L"图片"));
     btns.push_back(std::make_shared<ToolBtn>(Icon::mosaic, L"马赛克"));
     btns.push_back(std::make_shared<ToolBtn>(Icon::eraser, L"橡皮擦"));
-    btns.push_back(std::make_shared<ToolBtn>(Icon::undo, L"上一步", true, false)); //9
-    btns.push_back(std::make_shared<ToolBtn>(Icon::redo, L"下一步", true, false)); //10
-    btns.push_back(std::make_shared<ToolBtn>(Icon::pin, L"钉住截图区", flag, false));//11
+    btns.push_back(std::make_shared<ToolBtn>(Icon::undo, L"上一步(Ctrl+Z)", true, false)); //9
+    btns.push_back(std::make_shared<ToolBtn>(Icon::redo, L"下一步(Ctrl+Y)", true, false)); //10
+    btns.push_back(std::make_shared<ToolBtn>(Icon::pin, L"钉住截图区(Ctrl+P)", flag, false));//11
     btns.push_back(std::make_shared<ToolBtn>(Icon::save, L"保存为文件", false, false));//12
     btns.push_back(std::make_shared<ToolBtn>(Icon::copy, L"保存到剪切板", false, false));//13
     btns.push_back(std::make_shared<ToolBtn>(Icon::close, L"退出", false, false));//14

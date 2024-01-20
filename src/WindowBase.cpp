@@ -19,7 +19,6 @@ WindowBase::WindowBase()
 
 WindowBase::~WindowBase()
 {
-    delete[] pixSrc->addr();
     delete pixSrc;
     delete pixBase;
     DeleteDC(hCompatibleDC);

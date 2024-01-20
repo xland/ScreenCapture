@@ -6,6 +6,7 @@
 #include "include/core/SkCanvas.h"
 #include "include/core/SkPictureRecorder.h"
 #include "State.h"
+#include <vector>
 
 #define WM_REFRESH (WM_APP+1)
 #define WM_SHOW_DRAGGER (WM_APP+2)
@@ -33,6 +34,7 @@ public:
     sk_sp<SkSurface> surfaceBase;
     sk_sp<SkSurface> surfaceBack;
     sk_sp<SkSurface> surfaceFront;
+    std::vector<int32_t> pixSrcData;
     SkPixmap* pixSrc;
     SkPixmap* pixBase;
     SkPixmap* pixBack;

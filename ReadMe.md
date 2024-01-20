@@ -19,6 +19,8 @@ The last stable version is available in the [1.x.y](https://github.com/xland/Scr
 - Very fast,Small memory footprint,Low CPU useage.
 - Only one small executable file (with out any dll).
 - Can be easily integrated into any program.
+- Modify the drawn elements at any time.
+- Pin the cut area on desktop.
 - Powered by Skia.
 
 # Download

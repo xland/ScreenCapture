@@ -4,6 +4,8 @@
 #include <format>
 #include "WindowBase.h"
 #include "State.h"
+#include "include/core/SkImage.h"
+#include "include/core/SkPixmap.h"
 
 class WindowPin : public WindowBase
 {
@@ -29,4 +31,8 @@ private:
     bool onTimeout(const unsigned int& id);
     POINT startPos;
     float shadowSize{ 8.0f };
+    int hoverIndex{ -1 };
+    sk_sp<SkImage> img;
+    SkRect imgRect;
+    float imgW, imgH;
 };

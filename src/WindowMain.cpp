@@ -274,6 +274,12 @@ bool WindowMain::onKeyDown(const unsigned int& val)
         else if (val == 80) { //Ctrl+P
             App::Pin();
         }
+        else if (val == 89) { //Ctrl+Y
+            Recorder::Get()->Redo();
+        }
+        else if (val == 90) { //Ctrl+Z
+            Recorder::Get()->Undo();
+        }
     }
     return true;
 }
@@ -303,14 +309,14 @@ void WindowMain::shotScreen()
     BOOL bRet = BitBlt(hDC, 0, 0, w, h, hScreen, x, y, SRCCOPY);
     long long rowBytes = w * 4;
     long long dataSize = rowBytes * h;
-    auto desktop = new unsigned char[dataSize];
+    pixSrcData.resize(dataSize);
     BITMAPINFO info = {sizeof(BITMAPINFOHEADER), (long)w, 0 - (long)h, 1, 32, BI_RGB, (DWORD)dataSize, 0, 0, 0, 0};
-    GetDIBits(hDC, hBitmap, 0, h, desktop, &info, DIB_RGB_COLORS);
+    GetDIBits(hDC, hBitmap, 0, h, &pixSrcData.front(), &info, DIB_RGB_COLORS);
     DeleteDC(hDC);
     DeleteObject(hBitmap);
     ReleaseDC(NULL, hScreen);
     SkImageInfo imgInfo = SkImageInfo::MakeN32Premul(w, h);
-    pixSrc = new SkPixmap(imgInfo, desktop, rowBytes);
+    pixSrc = new SkPixmap(imgInfo, &pixSrcData.front(), rowBytes);
 }
 
 void WindowMain::initSize()
