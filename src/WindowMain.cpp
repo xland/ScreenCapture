@@ -292,6 +292,12 @@ bool WindowMain::onDoubleClick(const int& x, const int& y)
 {
     if (state >= State::tool && CutMask::GetCutRect().contains(x,y)) {
         SaveToClipboard();
+        return false;
+    }
+    auto tm = ToolMain::Get();
+    if (tm->ToolRect.contains(x, y)) {
+        tm->OnMouseDown(x, y);
+        return false;
     }
     return false;
 }
