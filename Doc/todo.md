@@ -6,7 +6,6 @@
 - 保存到剪切板tip快捷键
 - Redo btn disable
 - 
-- 多按几次Ctrl+z  上一步按钮就置灰了，不对
 - 钉图Ctrl+R/Ctrl+H虽然可以取到颜色值，但取得值不对，应该时坐标没搞好
 
 - InitScreen不应该再App中，或者主窗口关闭后应该释放它

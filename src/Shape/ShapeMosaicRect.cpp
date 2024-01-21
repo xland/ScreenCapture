@@ -7,6 +7,8 @@
 
 ShapeMosaicRect::ShapeMosaicRect(const int &x, const int &y) : ShapeRect(x, y)
 {
+    rect = SkRect::MakeXYWH(x, y, 0, 0);
+    HoverIndex = 4;
 }
 
 ShapeMosaicRect::~ShapeMosaicRect()
@@ -23,6 +25,7 @@ bool ShapeMosaicRect::OnMouseDown(const int& x, const int& y)
 bool ShapeMosaicRect::OnMouseUp(const int& x, const int& y)
 {
     IsWip = false;
+    HoverIndex = -1;
     setDragger();
     return false;
 }
@@ -38,6 +41,8 @@ void ShapeMosaicRect::OnShowDragger(SkCanvas* canvas)
 
 void ShapeMosaicRect::drawRectsByPoints(SkCanvas* canvas)
 {
+    auto rect = this->rect;
+    rect.sort();
     auto win = App::GetWin();
     int columnNum = std::ceil((float)win->w / size); //整个屏幕马赛克的列数
     int rectColumnNum = std::ceil(rect.width() / size) + 1; //绘制区马赛克列数
@@ -94,17 +99,18 @@ void ShapeMosaicRect::drawRectsByPoints(SkCanvas* canvas)
 
 void ShapeMosaicRect::Paint(SkCanvas *canvas)
 {
-    rect.sort();
     canvas->saveLayer(nullptr, nullptr);
-    SkPaint paint;
     drawRectsByPoints(canvas);
+    SkPaint paint;
     paint.setAntiAlias(true);
     paint.setStroke(false);
     paint.setBlendMode(SkBlendMode::kClear);
-    SkPath path;
-    path.addRect(rect);
-    path.setFillType(SkPathFillType::kInverseWinding);
-    canvas->drawPath(path, paint);
+    auto rect = this->rect;
+    rect.sort();
+    canvas->drawRect(SkRect::MakeXYWH(rect.fLeft - size, rect.fTop - size, size, rect.height() + size), paint);
+    canvas->drawRect(SkRect::MakeXYWH(rect.fLeft, rect.fTop - size, rect.width()+size, size), paint);
+    canvas->drawRect(SkRect::MakeXYWH(rect.fRight, rect.fTop, size*2, rect.height() + size), paint);
+    canvas->drawRect(SkRect::MakeXYWH(rect.fLeft-size, rect.fBottom, rect.width() + size, size*2), paint);
     canvas->restore();
 }
 

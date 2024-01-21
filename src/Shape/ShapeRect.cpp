@@ -4,8 +4,10 @@
 #include "../ToolSub.h"
 #include "../Cursor.h"
 
-ShapeRect::ShapeRect(const int& x, const int& y):ShapeBase(x,y), rect{SkRect::MakeXYWH(x,y,0,0)}
+ShapeRect::ShapeRect(const int& x, const int& y):ShapeBase(x,y)
 {
+    rect = SkRect::MakeXYWH(x, y, 0, 0);
+    HoverIndex = 4;
     for (size_t i = 0; i < 8; i++)
     {
         Draggers.push_back(SkRect::MakeEmpty());
@@ -130,8 +132,7 @@ bool ShapeRect::OnMoseDrag(const int& x, const int& y)
     if (GetKeyState(VK_SHIFT) < 0) {
         SkScalar side = std::max(rect.width(), rect.height());
         rect.setXYWH(rect.fLeft, rect.fTop, side, side);
-    }
-    
+    }    
     auto win = App::GetWin();
     auto canvas = win->surfaceFront->getCanvas();
     canvas->clear(SK_ColorTRANSPARENT);
@@ -173,7 +174,6 @@ void ShapeRect::Paint(SkCanvas* canvas)
 
 void ShapeRect::initParams()
 {
-    HoverIndex = 4;
     auto tool = ToolSub::Get();
     stroke = !tool->GetFill();
     if (stroke) {
