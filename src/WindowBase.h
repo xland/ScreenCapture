@@ -35,9 +35,9 @@ public:
     sk_sp<SkSurface> surfaceBack;
     sk_sp<SkSurface> surfaceFront;
     std::vector<int32_t> pixSrcData;
-    SkPixmap* pixSrc;
-    SkPixmap* pixBase;
-    SkPixmap* pixBack;
+    SkPixmap* pixSrc{ nullptr };
+    SkPixmap* pixBase{nullptr};
+    SkPixmap* pixBack{ nullptr };
 
 protected:
     virtual LRESULT CALLBACK wndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) = 0;

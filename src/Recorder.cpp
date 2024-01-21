@@ -327,6 +327,7 @@ void Recorder::Undo()
     {
         if (shapes[i]->IsDel)
         {
+            redoDisable = false;
             break;
         }
         else {

@@ -22,8 +22,6 @@
 WindowPin::WindowPin()
 {
     imgRect = CutMask::GetCutRect();
-    imgW = imgRect.width();
-    imgH = imgRect.height();
     auto windowMain = App::GetWin();
     auto iRect = SkIRect::MakeLTRB(imgRect.fLeft, imgRect.fTop, imgRect.fRight, imgRect.fBottom);
     img = windowMain->surfaceBase->makeImageSnapshot(iRect);
@@ -73,33 +71,39 @@ void WindowPin::SaveToClipboard()
 }
 
 void WindowPin::initCanvas()
-{    
+{
+    surfaceBase.reset();
+    surfaceBack.reset();
+    surfaceFront.reset();
+    if (pixBase) {
+        delete pixBase;
+    }
+    if (pixSrc) {
+        delete pixSrc;
+    }
+
     SkImageInfo imgInfo = SkImageInfo::MakeN32Premul(w, h);
     long long rowBytes = w * 4;
     long long dataSize = rowBytes * h;
-    pixSrcData.resize(dataSize);
+    pixSrcData.resize(dataSize);    
     pixSrc = new SkPixmap(imgInfo, &pixSrcData.front(), rowBytes);
-    auto canvas = SkCanvas::MakeRasterDirect(imgInfo, &pixSrcData.front(), rowBytes);
-    canvas->clear(SK_ColorTRANSPARENT); 
-    auto srcRect = SkRect::MakeWH(imgW, imgH);
-    App::Log(std::format("---{},{},{},{}\n", imgRect.fLeft, imgRect.fTop, imgRect.width(), imgRect.height()));
-    canvas->drawImageRect(img, srcRect,imgRect, SkSamplingOptions(SkFilterMode::kNearest,
-        SkMipmapMode::kNearest),nullptr,SkCanvas::SrcRectConstraint::kFast_SrcRectConstraint);
+    auto canvas = SkCanvas::MakeRasterDirect(imgInfo, (void*)pixSrc->addr(), rowBytes);
+    canvas->clear(SK_ColorTRANSPARENT);
+    canvas->drawImageRect(img, imgRect, SkSamplingOptions(SkFilterMode::kNearest, SkMipmapMode::kNearest));
 
     SkPaint paint;
     SkPath path;
     path.addRRect(SkRRect::MakeRectXY(SkRect::MakeXYWH(shadowSize - 2, shadowSize - 2, imgRect.width() + 4, imgRect.height() + 4), 6, 6));
     SkPoint3 zPlaneParams = SkPoint3::Make(0, 0, 20);// 定义阴影与 z 平面的关系    
     SkPoint3 lightPos = SkPoint3::Make(0, 0, 0);// 定义光源的位置和半径
-    SkShadowUtils::DrawShadow(canvas.get(), path, zPlaneParams, lightPos, 20.f, SkColorSetARGB(60, 0, 0, 0), SK_ColorTRANSPARENT, 0);
+    SkShadowUtils::DrawShadow(canvas.get(), path, zPlaneParams, lightPos, 20.f, SkColorSetARGB(60, 0, 0, 0), SK_ColorTRANSPARENT, 0);    
 
-
-    surfaceBase = SkSurfaces::Raster(SkImageInfo::MakeN32Premul(w, h));
+    surfaceBase = SkSurfaces::Raster(imgInfo);
     pixBase = new SkPixmap();
     surfaceBase->peekPixels(pixBase);
-    SkImageInfo info = SkImageInfo::MakeN32Premul(imgRect.width(), imgRect.height());
-    surfaceBack = SkSurfaces::Raster(info);
-    surfaceFront = SkSurfaces::Raster(info);
+    SkImageInfo info1 = SkImageInfo::MakeN32Premul(imgRect.width(), imgRect.height());
+    surfaceBack = SkSurfaces::Raster(info1);
+    surfaceFront = SkSurfaces::Raster(info1);
 }
 
 void WindowPin::initSize()
@@ -110,8 +114,7 @@ void WindowPin::initSize()
     w = imgRect.width() + shadowSize * 2;
     h = imgRect.height() + shadowSize * 2;
     auto tm = ToolMain::Get();
-    tm->Reset();
-    
+    tm->Reset();    
     auto tempWidth = tm->ToolRect.width() + shadowSize * 2;
     if (w < tempWidth) {
         this->w = tempWidth;
@@ -133,13 +136,14 @@ void WindowPin::showMenu()
 void WindowPin::paintCanvas()
 {
     surfaceBase->writePixels(*pixSrc, 0, 0);
-    //auto canvas = surfaceBase->getCanvas();
-    //auto img = surfaceBack->makeImageSnapshot();
-    //canvas->drawImage(img, shadowSize,shadowSize);
-    //img = surfaceFront->makeImageSnapshot();
-    //canvas->drawImage(img, shadowSize, shadowSize);
-    //ToolMain::Get()->OnPaint(canvas);
-    //ToolSub::Get()->OnPaint(canvas);
+    auto canvas = surfaceBase->getCanvas();
+    
+    auto imgTemp = surfaceBack->makeImageSnapshot();
+    canvas->drawImage(imgTemp, shadowSize,shadowSize);
+    imgTemp = surfaceFront->makeImageSnapshot();
+    canvas->drawImage(imgTemp, shadowSize, shadowSize);
+    ToolMain::Get()->OnPaint(canvas);
+    ToolSub::Get()->OnPaint(canvas);
 }
 
 LRESULT WindowPin::wndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
@@ -191,16 +195,6 @@ LRESULT WindowPin::wndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
         onMouseWheel(delta);
         return false;
     }
-    case WM_SIZE: {
-        if (hoverIndex == -1) {
-            return false;
-        }
-        delete pixSrc;
-        delete pixBase;
-        initCanvas();
-        Refresh();
-        break;
-    }
     case WM_COMMAND: {
         switch (LOWORD(wparam))
         {
@@ -209,7 +203,7 @@ LRESULT WindowPin::wndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
             if (state == State::start) {
                 state = State::tool;
                 auto tm = ToolMain::Get();
-                tm->SetPosition(8.0f, h - tm->ToolRect.height() * 2 - tm->MarginTop * 2);
+                tm->SetPosition(shadowSize, h - tm->ToolRect.height() * 2 - tm->MarginTop * 2);
                 tm->IndexSelected = -1;
                 tm->IndexHovered = -1;
             }
@@ -281,17 +275,7 @@ bool WindowPin::onMouseUp(const int& x, const int& y)
 bool WindowPin::onMouseMove(const int& x, const int& y)
 {
     if (state == State::start) {
-        if (x >= 0 && x <= shadowSize && y>=0 && y <= shadowSize) {
-            hoverIndex = 0;
-            Cursor::LeftTopRightBottom();
-        }
-        else if (x>shadowSize && x<w-shadowSize && y>=0 &&y<=shadowSize) {
-            hoverIndex = 1;
-            Cursor::TopBottom();
-        }
-        else {
-            Cursor::All();
-        }
+        Cursor::Arrow();
         return false;
     }
     auto tm = ToolMain::Get()->OnMouseMove(x, y);
@@ -306,38 +290,14 @@ bool WindowPin::onMouseMove(const int& x, const int& y)
 bool WindowPin::onMouseDrag(const int& x1, const int& y1)
 {
     if (state == State::start) {
-        if (hoverIndex == 0) {
-            POINT point;
-            GetCursorPos(&point);
-            int dx = point.x - startPos.x;
-            int dy = point.y - startPos.y;
-            x += dx;
-            y += dy;
-            w -= dx;
-            h -= dy;
-            App::Log(std::format("win{},{},{},{}\n", x, y, w, h));
-            App::Log(std::format("-{},{},{},{}\n", imgRect.fLeft, imgRect.fTop, imgRect.width(), imgRect.height()));
-            imgW = imgRect.width();
-            imgH = imgRect.height();
-            imgRect.setLTRB(shadowSize, shadowSize, imgRect.fRight-dx, imgRect.fBottom-dy);
-            App::Log(std::format("--{},{},{},{}\n", imgRect.fLeft, imgRect.fTop, imgRect.width(), imgRect.height()));
-            SetWindowPos(hwnd, nullptr, x, y, w, h, SWP_NOZORDER | SWP_NOOWNERZORDER);
-            startPos = point;
-        }
-        else if (hoverIndex == 1) {
-
-        }
-        else{
-            POINT point;
-            GetCursorPos(&point);
-            int dx = point.x - startPos.x;
-            int dy = point.y - startPos.y;
-            x += dx;
-            y += dy;
-            SetWindowPos(hwnd, nullptr, x, y, 0, 0, SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_NOSIZE);
-            startPos = point;
-        }
-        
+        POINT point;
+        GetCursorPos(&point);
+        int dx = point.x - startPos.x;
+        int dy = point.y - startPos.y;
+        x += dx;
+        y += dy;
+        SetWindowPos(hwnd, nullptr, x, y, 0, 0, SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_NOSIZE);
+        startPos = point;
     }
     else {
         Recorder::Get()->OnMouseDrag(x1 - shadowSize, y1 - shadowSize);
@@ -380,6 +340,41 @@ bool WindowPin::onKeyDown(const unsigned int& val)
 
 bool WindowPin::onMouseWheel(const int& delta)
 {
+    if (state == State::start) {
+        float scale;
+        if (delta > 0) {
+            scale = 1.1;
+        }
+        else {
+            scale = 0.9;
+        }
+        imgRect.setXYWH(shadowSize, shadowSize, imgRect.width() * scale, imgRect.height() * scale);
+        auto tm = ToolMain::Get();
+        float w1, h1;
+        if (imgRect.width() < tm->ToolRect.width()) {
+            w1 = tm->ToolRect.width() + shadowSize * 2;
+        }
+        else {
+            w1 = imgRect.width() + shadowSize * 2;
+        }
+        h1 = imgRect.height() + shadowSize*2 + tm->ToolRect.height() * 2 + tm->MarginTop * 2;
+        x = x - (w1 - w) / 2;
+        y = y - (h1 - h) / 2;
+        w = w1;
+        h = h1;
+
+        SetWindowPos(hwnd, nullptr, x, y, w, h, SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_FRAMECHANGED);
+        DeleteDC(hCompatibleDC);
+        DeleteObject(bottomHbitmap);
+        HDC hdc = GetDC(hwnd);
+        hCompatibleDC = CreateCompatibleDC(NULL);
+        bottomHbitmap = CreateCompatibleBitmap(hdc, w, h);
+        DeleteObject(SelectObject(hCompatibleDC, bottomHbitmap));
+        ReleaseDC(hwnd, hdc);
+        initCanvas();
+        Refresh();
+        return false;
+    }
     Recorder::Get()->OnMouseWheel(delta);
 	return false;
 }

@@ -1,12 +1,13 @@
 - Ctrl+Z上一步
 - Ctrl+Y下一步
-- Ctrl+Wheel缩小/放大钉图
+- Wheel缩小/放大钉图
+- 钉图tip显示快捷键
+- 保存成文件tip快捷键
+- 保存到剪切板tip快捷键
+- Redo btn disable
+- 
 - 多按几次Ctrl+z  上一步按钮就置灰了，不对
 - 钉图Ctrl+R/Ctrl+H虽然可以取到颜色值，但取得值不对，应该时坐标没搞好
-- 钉图tip显示快捷键
-- 钉图窗口默认Cursor Dragger
-- 不应该用new unsigned char[dataSize]创建pixSrc
-- WinPin initCanvas时，数据创建了，但并没有释放
 
 - InitScreen不应该再App中，或者主窗口关闭后应该释放它
 - 当截图区宽度等于屏幕宽度，或高度等于屏幕高度时，没办法再调整截图区域的宽高
