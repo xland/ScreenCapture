@@ -28,7 +28,7 @@ BEGIN
             VALUE "FileDescription", "ScreenCapture"
             VALUE "FileVersion", "2.0.1.2"
             VALUE "InternalName", "ScreenCapture.exe"
-            VALUE "LegalCopyright", "Copyright (C) LiuXiaolun 2023-2004"
+            VALUE "LegalCopyright", "Copyright (C) LiuXiaolun 2023-2024"
             VALUE "OriginalFilename", "ScreenCapture.exe"
             VALUE "ProductName", "ScreenCapture"
             VALUE "ProductVersion", "2.0.1.2"
