@@ -217,7 +217,7 @@ void ToolMain::InitBtns()
     btns.push_back(std::make_shared<ToolBtn>(Icon::pin, L"钉住截图区(Ctrl+P)", flag, false));//11
     btns.push_back(std::make_shared<ToolBtn>(Icon::save, L"保存为文件(Ctrl+S)", false, false));//12
     btns.push_back(std::make_shared<ToolBtn>(Icon::copy, L"保存到剪切板(Ctrl+C)", false, false));//13
-    btns.push_back(std::make_shared<ToolBtn>(Icon::close, L"退出", false, false));//14
+    btns.push_back(std::make_shared<ToolBtn>(Icon::close, L"退出(Esc)", false, false));//14
 }
 
 void ToolMain::Reset()
