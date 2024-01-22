@@ -89,6 +89,7 @@ bool CutMask::OnMouseDown(const int& x, const int& y)
     else {
         return false;
     }
+    win->state = State::mask;
     win->surfaceFront->getCanvas()->clear(SK_ColorTRANSPARENT);
     win->Refresh();
     return true;

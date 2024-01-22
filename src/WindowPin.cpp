@@ -126,7 +126,7 @@ void WindowPin::initSize()
 void WindowPin::showMenu()
 {
     HMENU hMenu = CreatePopupMenu();
-    AppendMenu(hMenu, state == State::start ? MF_UNCHECKED : MF_CHECKED, 1001, L"Tool");
+    AppendMenu(hMenu, state == State::start ? MF_UNCHECKED : MF_CHECKED, 1001, L"Tool(Ctrl+T)");
     AppendMenu(hMenu, MF_STRING, 1002, L"Exit(Esc)");
     POINT point;
     GetCursorPos(&point);
@@ -200,18 +200,7 @@ LRESULT WindowPin::wndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
         {
         case 1001:
         {
-            if (state == State::start) {
-                state = State::tool;
-                auto tm = ToolMain::Get();
-                tm->SetPosition(shadowSize, h - tm->ToolRect.height() * 2 - tm->MarginTop * 2);
-                tm->IndexSelected = -1;
-                tm->IndexHovered = -1;
-            }
-            else
-            {
-                state = State::start;
-            }
-            Refresh();
+            switchToolBar();
             break;
         }
         case 1002:
@@ -322,16 +311,19 @@ bool WindowPin::onKeyDown(const unsigned int& val)
         App::Quit(3);
     }
     else if (GetKeyState(VK_CONTROL) < 0) {
-        if (val == 83) {//Ctrl+S
-            App::SaveFile();
-        }
-        else if (val == 67) {//Ctrl+C
+        if (val == 'C') {
             SaveToClipboard();
         }
-        else if (val == 89) { //Ctrl+Y
+        else if (val == 'S') {
+            App::SaveFile();
+        }
+        else if (val == 'T') {
+            switchToolBar();
+        }
+        else if (val == 'Y') {
             Recorder::Get()->Redo();
         }
-        else if (val == 90) { //Ctrl+Z
+        else if (val == 'Z') {
             Recorder::Get()->Undo();
         }
     }
@@ -382,4 +374,20 @@ bool WindowPin::onTimeout(const unsigned int& id)
 {
     Recorder::Get()->OnTimeout(id);
     return false;
+}
+
+void WindowPin::switchToolBar()
+{
+    if (state == State::start) {
+        state = State::tool;
+        auto tm = ToolMain::Get();
+        tm->SetPosition(shadowSize, h - tm->ToolRect.height() * 2 - tm->MarginTop * 2);
+        tm->IndexSelected = -1;
+        tm->IndexHovered = -1;
+    }
+    else
+    {
+        state = State::start;
+    }
+    Refresh();
 }

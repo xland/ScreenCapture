@@ -265,19 +265,19 @@ bool WindowMain::onKeyDown(const unsigned int& val)
         App::Quit(3);
     }
     else if (state > State::mask && GetKeyState(VK_CONTROL) < 0) { 
-        if (val == 83) {//Ctrl+S
+        if (val == 'S') {//Ctrl+S
             App::SaveFile();
         }
-        else if (val == 67) {//Ctrl+C
+        else if (val == 'C') {//Ctrl+C
             SaveToClipboard();
         }
-        else if (val == 80) { //Ctrl+P
+        else if (val == 'P') { //Ctrl+P
             App::Pin();
         }
-        else if (val == 89) { //Ctrl+Y
+        else if (val == 'Y') { //Ctrl+Y
             Recorder::Get()->Redo();
         }
-        else if (val == 90) { //Ctrl+Z
+        else if (val == 'Z') { //Ctrl+Z
             Recorder::Get()->Undo();
         }
     }
