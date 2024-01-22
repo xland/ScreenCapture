@@ -22,7 +22,7 @@ public:
     void Undo();
     void Redo();
     void FinishPaint();
-    void ProcessText(int x, int y);
+    bool ProcessText(int x, int y);
     void ProcessText();
     void Reset();
     ShapeBase* CurShape{ nullptr };

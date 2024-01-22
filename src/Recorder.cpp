@@ -56,7 +56,7 @@ bool Recorder::OnMouseDown(const int &x, const int &y)
     return false;
 }
 
-void Recorder::ProcessText(int x, int y)
+bool Recorder::ProcessText(int x, int y)
 {
     if (CurShape && typeid(*CurShape) == typeid(ShapeText)) {
         auto textObj = static_cast<ShapeText*>(CurShape);
@@ -66,7 +66,9 @@ void Recorder::ProcessText(int x, int y)
             }
             CurShape = nullptr;
         }
+        return true;
     }
+    return false;
 }
 
 void Recorder::ProcessText()
@@ -233,8 +235,7 @@ bool Recorder::OnChar(const unsigned int& val)
 }
 bool Recorder::OnKeyDown(const unsigned int& val)
 {
-    if (val == VK_ESCAPE) {
-        ProcessText(-1, -1);
+    if (val == VK_ESCAPE && ProcessText(-1, -1)) {
         return true;
     }
     if (CurShape)
