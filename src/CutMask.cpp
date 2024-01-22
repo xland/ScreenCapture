@@ -258,19 +258,13 @@ bool CutMask::OnMouseDrag(const int& x, const int& y)
 bool CutMask::OnPaint(SkCanvas *canvas)
 {
     auto win = App::GetWin();
-    {
-        canvas->saveLayer(nullptr,nullptr);
-        canvas->drawColor(SkColorSetARGB(160, 0, 0, 0));
-        SkPaint paint;
-        paint.setBlendMode(SkBlendMode::kClear);
-        canvas->drawRect(CutRect, paint);
-        canvas->restore();
-
-        //path.reset();
-        //path.addRect(CutRect);
-        //path.setFillType(SkPathFillType::kInverseWinding);
-    }
     SkPaint paint;
+    canvas->saveLayer(nullptr,nullptr);
+    canvas->drawColor(SkColorSetARGB(160, 0, 0, 0));        
+    paint.setBlendMode(SkBlendMode::kClear);
+    canvas->drawRect(CutRect, paint);
+    canvas->restore();
+    paint.setBlendMode(SkBlendMode::kSrcOver);
     paint.setColor(SkColorSetARGB(255, 22, 118, 255));
     paint.setStrokeWidth(3);
     paint.setStyle(SkPaint::Style::kStroke_Style);
