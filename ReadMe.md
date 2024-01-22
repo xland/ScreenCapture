@@ -1,9 +1,3 @@
-Version [2.x.y](https://github.com/xland/ScreenCapture/releases) which is based on Skia has been released.
-
-The last stable version is available in the [1.x.y](https://github.com/xland/ScreenCapture/tree/1-x-y) branch.
-
----
-
 ![](./Doc/banner.png)
 
 
