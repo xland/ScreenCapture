@@ -81,6 +81,9 @@ void WindowPin::initCanvas()
     if (pixSrc) {
         delete pixSrc;
     }
+    if (pixBack) {
+        delete pixBack;
+    }
 
     SkImageInfo imgInfo = SkImageInfo::MakeN32Premul(w, h);
     long long rowBytes = w * 4;
@@ -102,7 +105,9 @@ void WindowPin::initCanvas()
     pixBase = new SkPixmap();
     surfaceBase->peekPixels(pixBase);
     SkImageInfo info1 = SkImageInfo::MakeN32Premul(imgRect.width(), imgRect.height());
+    pixBack = new SkPixmap();
     surfaceBack = SkSurfaces::Raster(info1);
+    surfaceBack->peekPixels(pixBack);
     surfaceFront = SkSurfaces::Raster(info1);
 }
 
@@ -114,7 +119,7 @@ void WindowPin::initSize()
     w = imgRect.width() + shadowSize * 2;
     h = imgRect.height() + shadowSize * 2;
     auto tm = ToolMain::Get();
-    tm->Reset();    
+    tm->Btns[11]->IsDisable = true;
     auto tempWidth = tm->ToolRect.width() + shadowSize * 2;
     if (w < tempWidth) {
         this->w = tempWidth;
@@ -382,8 +387,7 @@ void WindowPin::switchToolBar()
         state = State::tool;
         auto tm = ToolMain::Get();
         tm->SetPosition(shadowSize, h - tm->ToolRect.height() * 2 - tm->MarginTop * 2);
-        tm->IndexSelected = -1;
-        tm->IndexHovered = -1;
+        tm->UnSelectAndHoverAll();
     }
     else
     {

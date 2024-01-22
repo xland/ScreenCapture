@@ -28,10 +28,10 @@ void App::Init()
 {
     initFontText();
     initFontIcon();
+    win = new WindowMain();
     ToolMain::Init();
     ToolSub::Init();
     Recorder::Init();
-    win = new WindowMain();
     CutMask::Get()->EnumWinRects();
     win->Show();
     Cursor::Cross();
@@ -75,6 +75,8 @@ void App::Pin()
     win->Close(0);
     delete win;
     win = pinWin;
+    Recorder::Get()->Reset();
+    screens.clear();
 }
 
 void App::Quit(const int& code) {

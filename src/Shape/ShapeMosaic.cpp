@@ -98,7 +98,7 @@ void ShapeMosaic::drawRectsByPoints(const std::vector<SkPoint>& points, SkCanvas
                         for (size_t y1 = y; y1 <= y + size; y1 += 2)
                         {
                             SkColor4f currentColor;
-                            if (x1 >= win->w || y1 >= win->h) {
+                            if (x1 >= canvas->getSurface()->width() || y1 >= canvas->getSurface()->height()) {
                                 currentColor = SkColor4f::FromColor(SK_ColorBLACK);
                             }
                             else {

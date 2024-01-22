@@ -378,6 +378,12 @@ void Recorder::FinishPaint()
         CurShape->HideDragger();
     } 
 }
+void Recorder::Reset()
+{
+    CurShape = nullptr;
+    HoverShape = nullptr;
+    shapes.clear();
+}
 void Recorder::createShape(const int &x, const int &y, const State &state)
 {
     std::shared_ptr<ShapeBase> shape;

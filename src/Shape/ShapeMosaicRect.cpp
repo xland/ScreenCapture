@@ -66,7 +66,7 @@ void ShapeMosaicRect::drawRectsByPoints(SkCanvas* canvas)
                 for (size_t y1 = y; y1 <= y + size; y1 += 2)
                 {
                     SkColor4f currentColor;
-                    if (x1 >= win->w || y1 >= win->h) {
+                    if (x1 >= canvas->getSurface()->width() || y1 >= canvas->getSurface()->height()) {
                         currentColor = SkColor4f::FromColor(SK_ColorBLACK);
                     }
                     else {
@@ -107,10 +107,11 @@ void ShapeMosaicRect::Paint(SkCanvas *canvas)
     paint.setBlendMode(SkBlendMode::kClear);
     auto rect = this->rect;
     rect.sort();
-    canvas->drawRect(SkRect::MakeXYWH(rect.fLeft - size, rect.fTop - size, size, rect.height() + size), paint);
-    canvas->drawRect(SkRect::MakeXYWH(rect.fLeft, rect.fTop - size, rect.width()+size, size), paint);
-    canvas->drawRect(SkRect::MakeXYWH(rect.fRight, rect.fTop, size*2, rect.height() + size), paint);
-    canvas->drawRect(SkRect::MakeXYWH(rect.fLeft-size, rect.fBottom, rect.width() + size, size*2), paint);
+    auto s = canvas->getSurface();
+    canvas->drawRect(SkRect::MakeLTRB(rect.fLeft, rect.fTop, s->width(), 0), paint);
+    canvas->drawRect(SkRect::MakeLTRB(rect.fRight, rect.fTop, s->width(), s->height()), paint);
+    canvas->drawRect(SkRect::MakeLTRB(rect.fRight, rect.fBottom, 0, s->height()), paint);
+    canvas->drawRect(SkRect::MakeLTRB(rect.fLeft, rect.fBottom, 0, 0), paint);
     canvas->restore();
 }
 

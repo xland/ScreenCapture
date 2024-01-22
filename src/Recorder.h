@@ -26,6 +26,7 @@ public:
     void Undo();
     void Redo();
     void FinishPaint();
+    void Reset();
     ShapeBase* CurShape{ nullptr };
     ShapeBase* HoverShape{ nullptr };
 private:

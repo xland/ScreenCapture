@@ -343,7 +343,8 @@ bool CutMask::OnMouseUp(const int& x, const int& y)
     }
     win->state = State::tool;
     auto tool = ToolMain::Get();
-    tool->Reset();
+    tool->UnSelectAndHoverAll();
+    tool->SetPositionByCutMask();
     win->Refresh();
     Cursor::Arrow();
     return true;

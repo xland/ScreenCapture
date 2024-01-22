@@ -26,18 +26,18 @@ void ToolSub::addStrokeWidthBtns(int index)
         std::make_shared<ToolBtn>(Icon::dot, L"ÏßÌõ´Ö", false, true, 52),
         std::make_shared<ToolBtn>(Icon::dot, L"ÏßÌõ´Ö+", false, true, 82)
     };
-    btns.insert(btns.begin() + index, temp);
+    Btns.insert(Btns.begin() + index, temp);
 }
 void ToolSub::addColorBtns()
 {
-    btns.push_back(std::make_shared<ToolBtn>(Icon::check, L"ºì", false, true, 22, SkColorSetARGB(255, 207, 19, 34), true));
-    btns.push_back(std::make_shared<ToolBtn>(Icon::uncheck, L"»Æ", false, true, 22, SkColorSetARGB(255, 212, 136, 6)));
-    btns.push_back(std::make_shared<ToolBtn>(Icon::uncheck, L"ÂÌ", false, true, 22, SkColorSetARGB(255, 56, 158, 13)));
-    btns.push_back(std::make_shared<ToolBtn>(Icon::uncheck, L"Çà", false, true, 22, SkColorSetARGB(255, 19, 194, 194)));
-    btns.push_back(std::make_shared<ToolBtn>(Icon::uncheck, L"À¶", false, true, 22, SkColorSetARGB(255, 9, 88, 217)));
-    btns.push_back(std::make_shared<ToolBtn>(Icon::uncheck, L"×Ï", false, true, 22, SkColorSetARGB(255, 114, 46, 209)));
-    btns.push_back(std::make_shared<ToolBtn>(Icon::uncheck, L"·Û", false, true, 22, SkColorSetARGB(255, 235, 47, 150)));
-    btns.push_back(std::make_shared<ToolBtn>(Icon::uncheck, L"ºÚ", false, true, 22, SkColorSetARGB(255, 0, 0, 0)));
+    Btns.push_back(std::make_shared<ToolBtn>(Icon::check, L"ºì", false, true, 22, SkColorSetARGB(255, 207, 19, 34), true));
+    Btns.push_back(std::make_shared<ToolBtn>(Icon::uncheck, L"»Æ", false, true, 22, SkColorSetARGB(255, 212, 136, 6)));
+    Btns.push_back(std::make_shared<ToolBtn>(Icon::uncheck, L"ÂÌ", false, true, 22, SkColorSetARGB(255, 56, 158, 13)));
+    Btns.push_back(std::make_shared<ToolBtn>(Icon::uncheck, L"Çà", false, true, 22, SkColorSetARGB(255, 19, 194, 194)));
+    Btns.push_back(std::make_shared<ToolBtn>(Icon::uncheck, L"À¶", false, true, 22, SkColorSetARGB(255, 9, 88, 217)));
+    Btns.push_back(std::make_shared<ToolBtn>(Icon::uncheck, L"×Ï", false, true, 22, SkColorSetARGB(255, 114, 46, 209)));
+    Btns.push_back(std::make_shared<ToolBtn>(Icon::uncheck, L"·Û", false, true, 22, SkColorSetARGB(255, 235, 47, 150)));
+    Btns.push_back(std::make_shared<ToolBtn>(Icon::uncheck, L"ºÚ", false, true, 22, SkColorSetARGB(255, 0, 0, 0)));
 }
 void ToolSub::Init()
 {
@@ -60,11 +60,11 @@ bool ToolSub::OnMouseDown(const int& x, const int& y)
         return false;
     }
     int index = (x - ToolRect.left()) / ToolBtn::Width;
-    if (btns[index]->Icon == Icon::dot) {
-        if (btns[index]->IsSelected) {
+    if (Btns[index]->Icon == Icon::dot) {
+        if (Btns[index]->IsSelected) {
             return true;
         }
-        for (auto& btn : btns)
+        for (auto& btn : Btns)
         {
             if (btn->IsSelected && btn->Icon == Icon::dot)
             {
@@ -72,13 +72,13 @@ bool ToolSub::OnMouseDown(const int& x, const int& y)
                 break;
             }
         }
-        btns[index]->IsSelected = true;
+        Btns[index]->IsSelected = true;
         setRect();
         win->Refresh();
         return true;
     }
-    else if (btns[index]->Icon == Icon::uncheck) {
-        for (auto& btn : btns)
+    else if (Btns[index]->Icon == Icon::uncheck) {
+        for (auto& btn : Btns)
         {
             if (btn->Icon == Icon::check)
             {
@@ -87,23 +87,23 @@ bool ToolSub::OnMouseDown(const int& x, const int& y)
                 break;
             }
         }
-        btns[index]->Icon = Icon::check;
-        btns[index]->IsSelected = true;
+        Btns[index]->Icon = Icon::check;
+        Btns[index]->IsSelected = true;
         setRect();
         win->Refresh();
         return true;
     }
     if (index == 0) {
-        if (btns[0]->IsSelected) {
-            btns[0]->IsSelected = false;
+        if (Btns[0]->IsSelected) {
+            Btns[0]->IsSelected = false;
             if (ToolMain::Get()->IndexSelected != 5) { //transparen line
                 addStrokeWidthBtns(1);
             }            
         }
         else {
-            btns[0]->IsSelected = true;
+            Btns[0]->IsSelected = true;
             if (ToolMain::Get()->IndexSelected != 5) {
-                btns.erase(btns.begin() + 1, btns.begin() + 4);
+                Btns.erase(Btns.begin() + 1, Btns.begin() + 4);
             }
         }
         setRect();
@@ -113,28 +113,28 @@ bool ToolSub::OnMouseDown(const int& x, const int& y)
 }
 void ToolSub::InitBtns(int mainToolSelectedIndex)
 {
-    btns.clear();
+    Btns.clear();
     switch (mainToolSelectedIndex)
     {
     case 0: {
-        btns.push_back(std::make_shared<ToolBtn>(Icon::rectFill, L"¾ØÐÎÌî³ä"));
+        Btns.push_back(std::make_shared<ToolBtn>(Icon::rectFill, L"¾ØÐÎÌî³ä"));
         addStrokeWidthBtns(1);
         addColorBtns();
         break;
     }
     case 1: {
-        btns.push_back(std::make_shared<ToolBtn>(Icon::ellipseFill, L"ÍÖÔ²Ìî³ä"));
+        Btns.push_back(std::make_shared<ToolBtn>(Icon::ellipseFill, L"ÍÖÔ²Ìî³ä"));
         addStrokeWidthBtns(1);
         addColorBtns();
         break;
     }
     case 2: {
-        btns.push_back(std::make_shared<ToolBtn>(Icon::arrowFill, L"¼ýÍ·Ìî³ä", false, true, 22, SK_ColorTRANSPARENT, true));
+        Btns.push_back(std::make_shared<ToolBtn>(Icon::arrowFill, L"¼ýÍ·Ìî³ä", false, true, 22, SK_ColorTRANSPARENT, true));
         addColorBtns();
         break;
     }
     case 3: {
-        btns.push_back(std::make_shared<ToolBtn>(Icon::numberFill, L"±êºÅÌî³ä", false, true, 22, SK_ColorTRANSPARENT, true));
+        Btns.push_back(std::make_shared<ToolBtn>(Icon::numberFill, L"±êºÅÌî³ä", false, true, 22, SK_ColorTRANSPARENT, true));
         addColorBtns();
         break;
     }
@@ -144,7 +144,7 @@ void ToolSub::InitBtns(int mainToolSelectedIndex)
         break;
     }
     case 5: {
-        btns.push_back(std::make_shared<ToolBtn>(Icon::transparent, L"ÊÇ·ñÍ¸Ã÷", false, true, 22, SK_ColorTRANSPARENT, true));
+        Btns.push_back(std::make_shared<ToolBtn>(Icon::transparent, L"ÊÇ·ñÍ¸Ã÷", false, true, 22, SK_ColorTRANSPARENT, true));
         addStrokeWidthBtns(1);
         addColorBtns();
         break;
@@ -154,12 +154,12 @@ void ToolSub::InitBtns(int mainToolSelectedIndex)
         break;
     }
     case 7: {
-        btns.push_back(std::make_shared<ToolBtn>(Icon::rectFill, L"¾ØÐÎÂíÈü¿Ë"));
+        Btns.push_back(std::make_shared<ToolBtn>(Icon::rectFill, L"¾ØÐÎÂíÈü¿Ë"));
         addStrokeWidthBtns(1);
         break;
     }
     case 8: {
-        btns.push_back(std::make_shared<ToolBtn>(Icon::rectFill, L"¾ØÐÎÏðÆ¤²Á"));
+        Btns.push_back(std::make_shared<ToolBtn>(Icon::rectFill, L"¾ØÐÎÏðÆ¤²Á"));
         addStrokeWidthBtns(1);
         break;
     }
@@ -185,7 +185,7 @@ bool ToolSub::OnPaint(SkCanvas *canvas)
     paint.setAntiAlias(true);
     canvas->drawPath(p, paint);
     auto left{ ToolRect.fLeft };
-    for (auto& btn : btns)
+    for (auto& btn : Btns)
     {
         btn->Paint(canvas, paint, left, ToolRect.fTop);
         left += ToolBtn::Width;
@@ -199,7 +199,7 @@ bool ToolSub::OnPaint(SkCanvas *canvas)
 void ToolSub::setRect()
 {
     auto toolMain = ToolMain::Get();
-    auto width = btns.size() * ToolBtn::Width;
+    auto width = Btns.size() * ToolBtn::Width;
     auto left = toolMain->ToolRect.left();
     auto top = toolMain->ToolRect.bottom() + MarginTop;
     auto mainToolBtnCenterPointX = left + toolMain->IndexSelected * ToolBtn::Width + ToolBtn::Width / 2;
@@ -219,14 +219,14 @@ void ToolSub::setRect()
 }
 bool ToolSub::GetFill()
 {
-    return btns[0]->IsSelected;
+    return Btns[0]->IsSelected;
 }
 int ToolSub::GetStroke(int index)
 {
-    if (btns[index]->IsSelected) {
+    if (Btns[index]->IsSelected) {
         return 1;
     }
-    else if (btns[index+1]->IsSelected) {
+    else if (Btns[index+1]->IsSelected) {
         return 2;
     }
     else {
@@ -235,10 +235,10 @@ int ToolSub::GetStroke(int index)
 }
 SkColor ToolSub::GetColor()
 {
-    auto it = std::find_if(btns.begin(), btns.end(), [](auto& btn) {
+    auto it = std::find_if(Btns.begin(), Btns.end(), [](auto& btn) {
         return btn->Icon == Icon::check;
         });
-    if (it == btns.end()) {
+    if (it == Btns.end()) {
         return SK_ColorBLACK;
     }
     return it->get()->FontColor;

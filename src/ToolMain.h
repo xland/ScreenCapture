@@ -20,7 +20,7 @@ public:
     void SetUndoDisable(bool flag);
     void SetRedoDisable(bool flag);
     void InitBtns();
-    void Reset();
+    void UnSelectAndHoverAll();
 private:
     ToolMain();
     /// <summary>
