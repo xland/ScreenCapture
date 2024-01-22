@@ -1,13 +1,12 @@
 #include "ToolSub.h"
+#include "include/core/SkCanvas.h"
 #include "State.h"
 #include "App.h"
 #include "WindowBase.h"
 #include "ToolMain.h"
 #include "ToolBtn.h"
 #include "Icon.h"
-#include "include/core/SkSurface.h"
-#include "include/core/SkCanvas.h"
-#include "include/core/SkRect.h"
+#include "Recorder.h"
 
 ToolSub *toolSub;
 
@@ -59,6 +58,8 @@ bool ToolSub::OnMouseDown(const int& x, const int& y)
     {
         return false;
     }
+    Recorder::Get()->ProcessText();
+    win->IsMouseDown = false;
     int index = (x - ToolRect.left()) / ToolBtn::Width;
     if (Btns[index]->Icon == Icon::dot) {
         if (Btns[index]->IsSelected) {

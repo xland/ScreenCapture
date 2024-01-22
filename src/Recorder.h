@@ -1,11 +1,7 @@
 #pragma once
-#include "include/core/SkSurface.h"
-#include "include/core/SkCanvas.h"
-#include "include/core/SkRect.h"
-#include "include/core/SkPoint.h"
-#include "include/core/SkPath.h"
-#include "State.h"
 #include <vector>
+#include <memory>
+#include "State.h"
 
 class ShapeBase;
 class Recorder
@@ -26,12 +22,15 @@ public:
     void Undo();
     void Redo();
     void FinishPaint();
+    void ProcessText(int x, int y);
+    void ProcessText();
     void Reset();
     ShapeBase* CurShape{ nullptr };
     ShapeBase* HoverShape{ nullptr };
 private:
     Recorder();
     void createShape(const int& x, const int& y,const State& state);
+    void clickShape(ShapeBase* shape,int x, int y);
     std::vector<std::shared_ptr<ShapeBase>> shapes;
     
 };

@@ -90,6 +90,7 @@ bool ToolMain::OnMouseDown(const int& x, const int& y)
     {
         return false;
     }
+    Recorder::Get()->ProcessText();
     win->IsMouseDown = false; //不然在主工具栏上拖拽的时候，会改变CutBox，而且改变完CutBox后不会在显示工具栏
     if (IndexHovered == IndexSelected)
     {

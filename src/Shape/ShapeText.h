@@ -18,7 +18,10 @@ public:
     void Paint(SkCanvas *canvas) override;   
     bool OnMouseWheel(const int& delta) override;
     void OnShowDragger(SkCanvas* canvas) override;
+    void ShowDragger() override {};
+    void HideDragger() override {};
     bool EndInput();
+    SkRect Rect;
 protected:
 private:
     SkColor color{ SkColorSetARGB(255, 207, 19, 34) };
@@ -27,7 +30,6 @@ private:
     void setCursor(SkCanvas* canvas);
     float getCursorX();
     int hoverX, hoverY;
-    SkRect rect;
     std::vector<std::wstring> lines;
     float lineHeight;
     int lineIndex{ 0 }, wordIndex{0};

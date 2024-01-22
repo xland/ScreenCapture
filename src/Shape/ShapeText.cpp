@@ -22,7 +22,7 @@ ShapeText::ShapeText(const int &x, const int &y) : ShapeBase(x, y)
     lineHeight = lineRect.height() + lineRect.bottom() + 10;
     height = lineHeight;
     top += lineRect.top();
-    rect.setXYWH(left, top, width, height);
+    Rect.setXYWH(left, top, width, height);
     activeKeyboard(getCursorX(), startY);
 }
 ShapeText::~ShapeText()
@@ -30,7 +30,7 @@ ShapeText::~ShapeText()
 }
 bool ShapeText::OnMouseDown(const int &x, const int &y)
 {
-    if (!rect.contains(x, y)) {
+    if (!Rect.contains(x, y)) {
         return true;
     }
     App::GetWin()->ClearTimeout(WM_FLASH_CURSOR);
@@ -42,10 +42,10 @@ bool ShapeText::OnMouseDown(const int &x, const int &y)
     }
     hoverX = x;
     hoverY = y;
-    lineIndex = (y - rect.top()) / lineHeight;
+    lineIndex = (y - Rect.top()) / lineHeight;
     int index = 0;
-    float width = x - rect.left() - 10;    
-    SkRect rect;
+    float width = x - Rect.left() - 10;    
+    SkRect Rect;
     float right{ 0 };
     bool flag = false;
     auto font = App::GetFontText();
@@ -55,9 +55,9 @@ bool ShapeText::OnMouseDown(const int &x, const int &y)
         auto str = lines[lineIndex].substr(0, i);
         auto data = str.data();
         auto length = wcslen(data) * 2;
-        font->measureText(data, length, SkTextEncoding::kUTF16, &rect);
-        if (rect.right() > width) {
-            float half = (rect.right() - right) / 2 + right;
+        font->measureText(data, length, SkTextEncoding::kUTF16, &Rect);
+        if (Rect.right() > width) {
+            float half = (Rect.right() - right) / 2 + right;
             if (half > width) {
                 wordIndex = i - 1;
             }
@@ -68,7 +68,7 @@ bool ShapeText::OnMouseDown(const int &x, const int &y)
             flag = true;
             break;
         }
-        right = rect.right();
+        right = Rect.right();
     }
     if (!flag) {
         wordIndex = lines[lineIndex].length();
@@ -78,7 +78,7 @@ bool ShapeText::OnMouseDown(const int &x, const int &y)
 }
 bool ShapeText::OnMouseMove(const int &x, const int &y)
 {
-    if (rect.contains(x, y)) {
+    if (Rect.contains(x, y)) {
         HoverIndex = 0;
         return true;
     }
@@ -391,12 +391,12 @@ void ShapeText::setRect(SkCanvas* canvas)
             width += 20;
         }
     }
-    rect.setXYWH(left, top, width, height);
+    Rect.setXYWH(left, top, width, height);
     SkPaint paint;
     paint.setColor(color);
     paint.setStroke(true);
     paint.setStrokeWidth(2);
-    canvas->drawRect(rect, paint);
+    canvas->drawRect(Rect, paint);
 }
 void ShapeText::setCursor(SkCanvas* canvas)
 {
@@ -405,8 +405,8 @@ void ShapeText::setCursor(SkCanvas* canvas)
     paint.setStrokeWidth(1);
     paint.setColor(color);
     auto font = App::GetFontText();
-    float inputCursorTop{ rect.top() + lineHeight * lineIndex + lineHeight / 6 };
-    float inputCursorBottom{ rect.top() + lineHeight * (lineIndex + 1) - lineHeight / 6 };
+    float inputCursorTop{ Rect.top() + lineHeight * lineIndex + lineHeight / 6 };
+    float inputCursorBottom{ Rect.top() + lineHeight * (lineIndex + 1) - lineHeight / 6 };
     float inputCursorX{ getCursorX() };
     canvas->drawLine(inputCursorX, inputCursorTop, inputCursorX, inputCursorBottom, paint);
 }
@@ -433,7 +433,7 @@ bool ShapeText::EndInput()
 float ShapeText::getCursorX()
 {
     auto font = App::GetFontText();
-    float inputCursorX{ rect.left() + 10 };
+    float inputCursorX{ Rect.left() + 10 };
     if (wordIndex > 0) {
         SkRect lineRect;
         auto subStr = lines[lineIndex].substr(0, wordIndex);
