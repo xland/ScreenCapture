@@ -1,4 +1,5 @@
 #include "ShapeMosaic.h"
+#include <map>
 #include <memory>
 #include "include/core/SkPathMeasure.h"
 #include "include/core/SkColor.h"

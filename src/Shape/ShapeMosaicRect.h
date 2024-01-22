@@ -1,12 +1,6 @@
 #pragma once
-#include "include/core/SkSurface.h"
 #include "include/core/SkCanvas.h"
-#include "include/core/SkRect.h"
-#include "include/core/SkPoint.h"
-#include "include/core/SkPath.h"
 #include "ShapeRect.h"
-#include <vector>
-#include <map>
 
 class ShapeMosaicRect : public ShapeRect
 {
@@ -21,6 +15,5 @@ protected:
     void OnShowDragger(SkCanvas* canvas) override;
 private:
     void drawRectsByPoints(SkCanvas* canvas);
-    std::map<int, SkColor> colorCache;
     float size{ 20 };
 };

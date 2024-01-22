@@ -1,9 +1,9 @@
 ﻿#include "ShapeNumber.h"
+#include <numbers>
 #include "../App.h"
 #include "../WindowBase.h"
 #include "../ToolSub.h"
 #include "../Cursor.h"
-#include "numbers"
 static int num = 1;
 
 ShapeNumber::ShapeNumber(const int &x, const int &y) : ShapeBase(x, y)

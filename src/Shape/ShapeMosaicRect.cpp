@@ -92,7 +92,6 @@ void ShapeMosaicRect::drawRectsByPoints(SkCanvas* canvas)
             auto color = colorSum.toSkColor();
             paint.setColor(color);
             canvas->drawRect(SkRect::MakeXYWH(x, y, size, size), paint);
-            colorCache.insert({ key, color });
         }
     }
 }
