@@ -37,7 +37,7 @@ bool ShapeEraser::OnMoseDrag(const int& x, const int& y)
     auto win = App::GetWin();
     auto canvas = win->surfaceBack->getCanvas();
     Paint(canvas);
-    App::GetWin()->Refresh();
+    win->Refresh();
     return false;
 }
 void ShapeEraser::initParams()

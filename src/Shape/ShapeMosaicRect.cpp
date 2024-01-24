@@ -1,9 +1,12 @@
 #include "ShapeMosaicRect.h"
+#include "include/core/SkPathEffect.h"
+#include "include/effects/SkDashPathEffect.h"
 #include "../App.h"
 #include "../WindowBase.h"
 #include "../ToolSub.h"
 #include "../Cursor.h"
 #include "../ColorBlender.h"
+#include "../Recorder.h"
 
 ShapeMosaicRect::ShapeMosaicRect(const int &x, const int &y) : ShapeRect(x, y)
 {
@@ -24,17 +27,23 @@ bool ShapeMosaicRect::OnMouseDown(const int& x, const int& y)
 
 bool ShapeMosaicRect::OnMouseUp(const int& x, const int& y)
 {
-    IsWip = false;
-    HoverIndex = -1;
-    setDragger();
+    ShapeRect::OnMouseUp(x, y);
+    //auto win = App::GetWin();
+    //auto canvas = win->surfaceFront->getCanvas();
+    //canvas->clear(SK_ColorTRANSPARENT);
     return false;
 }
 
 void ShapeMosaicRect::OnShowDragger(SkCanvas* canvas)
 {
     SkPaint paint;
+    paint.setAntiAlias(true);
+    paint.setStyle(SkPaint::kStroke_Style);
     paint.setStroke(true);
     paint.setStrokeWidth(1);
+    SkScalar intvls[] = { 6, 6 };
+    auto effect = SkDashPathEffect::Make(intvls, 2, 0);
+    paint.setPathEffect(effect);
     paint.setColor(SK_ColorBLACK);
     canvas->drawRect(rect, paint);
 }
@@ -98,6 +107,20 @@ void ShapeMosaicRect::drawRectsByPoints(SkCanvas* canvas)
 
 void ShapeMosaicRect::Paint(SkCanvas *canvas)
 {
+    auto win = App::GetWin();
+    if (win->IsMouseDown && Recorder::Get()->CurShape == this) {
+        SkPaint paint;
+        paint.setAntiAlias(true);
+        paint.setStyle(SkPaint::kStroke_Style);
+        paint.setStroke(true);
+        paint.setStrokeWidth(1);
+        SkScalar intvls[] = { 6, 6 };
+        auto effect = SkDashPathEffect::Make(intvls, 2, 0);
+        paint.setPathEffect(effect);
+        paint.setColor(SK_ColorBLACK);
+        canvas->drawRect(rect, paint);
+    }
+
     canvas->saveLayer(nullptr, nullptr);
     drawRectsByPoints(canvas);
     SkPaint paint;
