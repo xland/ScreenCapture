@@ -1,6 +1,8 @@
 - 空白的文字框要拖拽，怎么办
 - Eraser Rect 拖动时最好显示个框
 - 保存成bmp不好吗
+- 每次渲染时临时创建bixmap内存也不迟
+- 参考modules\skplaintexteditor\app\editor_application.cpp
   
  
 
