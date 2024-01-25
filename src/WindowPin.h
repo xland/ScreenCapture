@@ -15,7 +15,7 @@ public:
     void SaveToClipboard() override;
 private:
     void initCanvas() override;
-    void initSize() override;
+    void initSize();
     void showMenu();
     LRESULT CALLBACK wndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) override;
     void paintCanvas() override;

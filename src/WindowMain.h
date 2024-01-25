@@ -16,7 +16,7 @@ private:
     LRESULT CALLBACK wndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) override;
     void initCanvas() override;
     void paintCanvas() override;
-    void initSize() override;
+    void initSize();
     void shotScreen();
     bool onMouseDown(const int& x, const int& y);
     bool onMouseDownRight(const int& x, const int& y);
