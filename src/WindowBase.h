@@ -2,11 +2,9 @@
 #include <Windows.h>
 #include <string>
 #include <format>
-#include "include/core/SkSurface.h"
-#include "include/core/SkCanvas.h"
-#include "include/core/SkPictureRecorder.h"
-#include "State.h"
 #include <vector>
+#include "include/core/SkSurface.h"
+#include "State.h"
 
 #define WM_REFRESH (WM_APP+1)
 #define WM_SHOW_DRAGGER (WM_APP+2)

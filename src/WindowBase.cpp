@@ -3,15 +3,12 @@
 #include <sstream>
 #include <string>
 #include "App.h"
-#include "include/core/SkPath.h"
 #include "ToolMain.h"
 #include "ToolSub.h"
 #include "CutMask.h"
 #include "Cursor.h"
 #include "WindowMain.h"
 #include "WindowPin.h"
-#include "include/core/SkStream.h"
-#include "include/encode/SkPngEncoder.h"
 
 WindowBase::WindowBase()
 {
