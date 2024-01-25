@@ -87,7 +87,7 @@ child.on("close", (code) => {
 # Sponsorship（赞助）
 
 
-<div>
+<figure class="half">
     <div style="float:left;text-align:center;">
         <img src="./Doc/alipay.jpg" style="width:160px;height:160px;" /><br />
         alipay(支付宝支付)
@@ -96,7 +96,7 @@ child.on("close", (code) => {
         <img src="./Doc/wechat.png" style="width:160px;height:160px;" /><br />
         wechat(微信支付)
     </div>
-</div>
+</figure>
 
 
 # Author（作者）
