@@ -87,16 +87,12 @@ child.on("close", (code) => {
 # Sponsorship（赞助）
 
 
-<figure class="half">
-    <div style="float:left;text-align:center;">
-        <img src="./Doc/alipay.jpg" style="width:160px;height:160px;" /><br />
-        alipay(支付宝支付)
-    </div>
-    <div style="float:left;text-align:center;margin-left:80px;">
-        <img src="./Doc/wechat.png" style="width:160px;height:160px;" /><br />
-        wechat(微信支付)
-    </div>
-</figure>
+<img src="./Doc/alipay.jpg" style="width:160px;height:160px;" /><br />
+alipay(支付宝支付)
+
+
+<img src="./Doc/wechat.png" style="width:160px;height:160px;" /><br />
+wechat(微信支付)
 
 
 # Author（作者）
