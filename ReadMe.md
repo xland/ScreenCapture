@@ -65,7 +65,7 @@ child.on("close", (code) => {
 
 - Windows 10 1607 or Later
 
-# HotKey
+# HotKey（快捷键）
 
 - Download [AutoHotKey](https://www.autohotkey.com/) and install it.
 - Create a `.ahk` script file in `Startup` folder and set the file's content:
@@ -82,6 +82,32 @@ child.on("close", (code) => {
 ```
 - Double Click the `.ahk` file,then you can start the `ScreenCapture.exe` by press `Ctrl+Alt+A`.
 - The `.ahk` script will be executed when the system startup.
+
+
+# Sponsorship（赞助）
+
+
+<div>
+    <div style="display:inline-block;text-align:center;">
+        <img src="./doc/alipay.jpg" style="width:160px;height:160px;" /><br />
+        alipay(支付宝支付)
+    </div>
+    <div style="display:inline-block;text-align:center;margin-left:80px;">
+        <img src="./doc/wechat.png" style="width:160px;height:160px;" /><br />
+        wechat(微信支付)
+    </div>
+</div>
+
+
+# Author（作者）
+
+<img src="./doc/author.jpg" style="width:160px;height:160px;" />
+
+Author's Wechat QR code（作者微信）
+
+Whether there is any topic to talk about, whether it is related to this product or not, I am very happy to meet you.
+
+无论有没有要聊的话题，无论是不是与此产品有关的话题，都很开心能认识你。
 
 # Licenses
 
