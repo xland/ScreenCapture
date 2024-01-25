@@ -1,7 +1,7 @@
 ![](./Doc/banner.png)
 
 
-# Features
+## Features（特性）
 
 English:
 
@@ -36,11 +36,11 @@ Chinese:
 - 基于Skia。
 
 
-# Download（下载）
+## Download（下载）
 
 [Release](https://github.com/xland/ScreenCapture/releases/) (4.9M)
 
-# Integration（集成）
+## Integration（集成）
 
 (With Node.js Or Electron)
 
@@ -61,11 +61,11 @@ child.on("close", (code) => {
 });
 ```
 
-# Support OS（支持的操作系统）
+## Support OS（支持的操作系统）
 
 - Windows 10 1607 or Later
 
-# HotKey（快捷键）
+## HotKey（快捷键）
 
 - Download [AutoHotKey](https://www.autohotkey.com/) and install it.
 - Create a `.ahk` script file in `Startup` folder and set the file's content:
@@ -84,7 +84,7 @@ The hotkey is Ctrl+Alt+A
 - The `.ahk` script will be executed when the system startup.
 
 
-# Sponsorship（赞助）
+## Sponsorship（赞助）
 
 
 <img src="./Doc/alipay.jpg" style="width:160px;height:160px;" /><br />
