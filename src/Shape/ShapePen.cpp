@@ -18,6 +18,11 @@ ShapePen::~ShapePen()
 bool ShapePen::OnMoseDrag(const int& x, const int& y)
 {
     IsTemp = false;
+    if (GetKeyState(VK_SHIFT) < 0) {
+        path.reset();
+        path.moveTo(startX, startY);
+
+    }
     path.lineTo(x, y);
     auto win = App::GetWin();
     auto canvas = win->surfaceFront->getCanvas();
