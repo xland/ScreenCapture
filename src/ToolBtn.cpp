@@ -1,7 +1,6 @@
 #include "ToolBtn.h"
 #include "App.h"
 #include "WindowBase.h"
-#include <commctrl.h>
 
 static int id{ 0 };
 

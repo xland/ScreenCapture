@@ -1,8 +1,7 @@
 #pragma once
 #include "include/core/SkCanvas.h"
 #include "include/core/SkPath.h"
-#include "ShapeRect.h"
-#include <vector>
+#include "ShapeBase.h"
 
 class ShapeLine : public ShapeBase
 {

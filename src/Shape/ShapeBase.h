@@ -1,9 +1,7 @@
 #pragma once
-
-#pragma once
+#include <vector>
 #include "include/core/SkCanvas.h"
 #include "include/core/SkRect.h"
-#include <vector>
 #include "../Cursor.h"
 
 class ShapeBase

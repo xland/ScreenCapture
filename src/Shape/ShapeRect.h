@@ -2,7 +2,6 @@
 #include "include/core/SkCanvas.h"
 #include "include/core/SkRect.h"
 #include "ShapeBase.h"
-#include <vector>
 
 class ShapeRect : public ShapeBase
 {

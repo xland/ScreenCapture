@@ -1,10 +1,10 @@
-﻿#include <format>
+﻿#include "ToolMain.h"
+#include <format>
 #include <string>
-#include "ToolMain.h"
+#include "include/core/SkTextBlob.h"
 #include "State.h"
 #include "CutMask.h"
 #include "App.h"
-#include "include/core/SkTextBlob.h"
 #include "Icon.h"
 #include "ToolSub.h"
 #include "Recorder.h"

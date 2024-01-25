@@ -4,8 +4,6 @@
 #include "include/core/SkRect.h"
 #include "include/core/SkPoint.h"
 #include "ToolBase.h"
-#include "ToolBtn.h"
-#include <vector>
 
 class ToolMain : public ToolBase
 {

@@ -1,7 +1,6 @@
 #pragma once
 #include "include/core/SkCanvas.h"
 #include "ShapeRect.h"
-#include <vector>
 
 class ShapeEraserRect : public ShapeRect
 {

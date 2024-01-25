@@ -2,7 +2,6 @@
 #include "include/core/SkCanvas.h"
 #include "include/core/SkPoint.h"
 #include "include/core/SkPath.h"
-#include "include/core/SkBitmap.h"
 #include "ShapeBase.h"
 
 class ShapeMosaic : public ShapeBase
@@ -24,5 +23,4 @@ private:
     bool stroke{true};
     int strokeWidth{26};
     float size{20};
-    std::unique_ptr<SkBitmap> bitmapForColor;
 };

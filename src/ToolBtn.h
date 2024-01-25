@@ -1,12 +1,8 @@
 #pragma once
-#include "include/core/SkSurface.h"
-#include "include/core/SkCanvas.h"
-#include "include/core/SkRect.h"
-#include "include/core/SkPoint.h"
-#include <vector>
 #include <Windows.h>
 #include <windowsx.h>
 #include <commctrl.h>
+#include "include/core/SkCanvas.h"
 
 class ToolBtn
 {
