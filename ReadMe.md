@@ -95,7 +95,7 @@ alipay(支付宝支付)
 wechat(微信支付)
 
 
-# Author（作者）
+## Author（作者）
 
 <img src="./Doc/author.jpg" style="width:160px;height:160px;" />
 
@@ -105,7 +105,7 @@ Whether there is any topic to talk about, whether it is related to this product 
 
 无论有没有要聊的话题，无论是不是与此产品有关的话题，都很开心能认识你。
 
-# Licenses（版权）
+## Licenses（版权）
 
 This project is under the [MIT license](./licence).
 
