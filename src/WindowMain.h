@@ -2,9 +2,8 @@
 #include <Windows.h>
 #include <string>
 #include <format>
-#include "WindowBase.h"
 #include <vector>
-#include "include/core/SkRect.h"
+#include "WindowBase.h"
 
 class WindowMain : public WindowBase
 {

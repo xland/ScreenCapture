@@ -2,10 +2,9 @@
 #include <Windows.h>
 #include <string>
 #include <format>
+#include "include/core/SkImage.h"
 #include "WindowBase.h"
 #include "State.h"
-#include "include/core/SkImage.h"
-#include "include/core/SkPixmap.h"
 
 class WindowPin : public WindowBase
 {
