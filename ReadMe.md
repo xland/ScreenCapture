@@ -12,7 +12,7 @@ English:
 - Draw curve,straight line(`Shift` down),opacity line,mosaic,eraser,text(`Mouse Wheel` to change font size).
 - Modify the drawn elements at any time(`Mouse Over` the element and wait `1.6` second).
 - Undo(`Ctrl+Z`) Redo(`Ctrl+Y`) support.
-- Pin the cut area on desktop(`Ctrl+P`).
+- Pin the cut area on desktop(`Ctrl+P`), resize pin window by `Mouse Wheel`.
 - Save to file(`Ctrl+S`) or clipboard(`Ctrl+C`).
 - Very fast,Small memory footprint,Low CPU useage.
 - Only one small executable file (with out any dll).
@@ -28,7 +28,7 @@ Chinese:
 - 画曲线、直线（`Shift`按下）、半透明直线、马赛克、橡皮擦、文本（`滚轮`调整文字大小）。
 - 可以随时修改已绘制的元素（鼠标移到元素上等待 `1.6` 秒）。
 - 上一步（`Ctrl+Z`）、下一步（`Ctrl+Y`）。
-- 在新窗口中钉住截图区域（`Ctrl+P`）。
+- 在新窗口中钉住截图区域（`Ctrl+P`）,鼠标`滚轮`改变钉图窗口大小。
 - 保存成文件（`Ctrl+S`）、保存到剪切板（`Ctrl+C`）。
 - 非常快、低内存消耗、低 CPU 使用率。
 - 非常小、仅一个可执行文件（4.9M），无需安装，不依赖任何动态链接库。
