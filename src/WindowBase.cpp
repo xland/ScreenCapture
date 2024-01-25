@@ -1,4 +1,4 @@
-#include "WindowBase.h"
+ï»¿#include "WindowBase.h"
 #include <dwmapi.h>
 #include <sstream>
 #include <string>
@@ -181,7 +181,7 @@ void WindowBase::setClipboardText(const std::wstring& text) {
     {
         MessageBox(NULL, L"Failed to alloc clipboard memory.", L"Error", MB_OK | MB_ICONERROR);
         CloseClipboard();
-        return; // ´¦Àí´íÎó
+        return; // å¤„ç†é”™è¯¯
     }
     byte* copyData = reinterpret_cast<byte*>(GlobalLock(copyHandle));
     if (copyData) {
@@ -199,7 +199,7 @@ std::wstring WindowBase::getPixelRgb()
 {
     POINT pos;
     GetCursorPos(&pos);
-    ScreenToClient(hwnd, &pos); //¶¤Í¼
+    ScreenToClient(hwnd, &pos); //é’‰å›¾
     auto color = pixBase->getColor4f(pos.x, pos.y);
     int R{ (int)(color.fR * 255) }, G{ (int)(color.fG * 255) }, B{ (int)(color.fB * 255) };
     return std::format(L"{},{},{}", std::to_wstring(R), std::to_wstring(G), std::to_wstring(B));
@@ -208,7 +208,7 @@ std::wstring WindowBase::getPixelHex()
 {
     POINT pos;
     GetCursorPos(&pos);
-    ScreenToClient(hwnd, &pos); //¶¤Í¼
+    ScreenToClient(hwnd, &pos); //é’‰å›¾
     auto color = pixBase->getColor4f(pos.x, pos.y);
     int R{ (int)(color.fR * 255) }, G{ (int)(color.fG * 255) }, B{ (int)(color.fB * 255) };
     std::wstringstream ss;
