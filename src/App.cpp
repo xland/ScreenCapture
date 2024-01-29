@@ -2,9 +2,12 @@
 #include <Windows.h>
 #include <shlobj.h>
 #include <sstream>
-#include "../res/res.h"
+#include "include/core/SkFont.h"
+#include "include/core//SkFontMgr.h"
 #include "include/core/SkFontStyle.h"
 #include "include/core/SkData.h"
+#include "include/ports/SkTypeface_win.h"
+#include "../res/res.h"
 #include "WindowMain.h"
 #include "WindowPin.h"
 #include "Cursor.h"
@@ -19,6 +22,7 @@ SkFont* fontText{ nullptr };
 WindowBase* win { nullptr };
 static int exitCode{ 0 };
 static std::vector<std::shared_ptr<SkRect>> screens;
+sk_sp<SkFontMgr> fontMgr;
 
 App::~App()
 {
@@ -26,6 +30,7 @@ App::~App()
 
 void App::Init()
 {
+    fontMgr = SkFontMgr_New_GDI();
     initFontText();
     initFontIcon();
     win = new WindowMain();
@@ -104,14 +109,12 @@ void App::initFontIcon()
     }
     LPVOID resData = LockResource(res);
     auto fontData = SkData::MakeWithoutCopy(resData, resSize);
-    auto iconFace = SkTypeface::MakeFromData(fontData);
-    fontIcon = new SkFont(iconFace);
+    fontIcon = new SkFont(fontMgr->makeFromData(fontData));
 }
 
 void App::initFontText()
 {
-	auto fontFace = SkTypeface::MakeFromName("Microsoft YaHei", SkFontStyle::Normal());
-	fontText = new SkFont(fontFace);
+    fontText = new SkFont(fontMgr->matchFamilyStyle("Microsoft YaHei", {}));
 }
 void App::initScreens() {
     EnumDisplayMonitors(NULL, NULL, [](HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMonitor, LPARAM lParam)
