@@ -25,15 +25,6 @@ bool ShapeMosaicRect::OnMouseDown(const int& x, const int& y)
     return false;
 }
 
-bool ShapeMosaicRect::OnMouseUp(const int& x, const int& y)
-{
-    ShapeRect::OnMouseUp(x, y);
-    //auto win = App::GetWin();
-    //auto canvas = win->surfaceFront->getCanvas();
-    //canvas->clear(SK_ColorTRANSPARENT);
-    return false;
-}
-
 void ShapeMosaicRect::OnShowDragger(SkCanvas* canvas)
 {
     SkPaint paint;

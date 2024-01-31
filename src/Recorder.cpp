@@ -211,16 +211,16 @@ bool Recorder::OnMouseDrag(const int &x, const int &y)
     HoverShape = nullptr;
     if (CurShape)
     {
-        if (typeid(*CurShape) == typeid(ShapeEraserRect)) {
-            auto win = App::GetWin();
-            auto backCanvas = win->surfaceBack->getCanvas();
-            for (auto& shape : shapes)
-            {
-                if (!shape->IsDel && shape.get() != CurShape) {
-                    shape->Paint(backCanvas);
-                }
-            }
-        }
+        //if (typeid(*CurShape) == typeid(ShapeEraserRect)) {
+        //    auto win = App::GetWin();
+        //    auto backCanvas = win->surfaceBack->getCanvas();
+        //    for (auto& shape : shapes)
+        //    {
+        //        if (!shape->IsDel && shape.get() != CurShape) {
+        //            shape->Paint(backCanvas);
+        //        }
+        //    }
+        //}
         CurShape->OnMoseDrag(x, y);
     }
     return false;

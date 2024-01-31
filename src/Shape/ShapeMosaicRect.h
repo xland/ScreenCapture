@@ -11,7 +11,6 @@ public:
 protected:
     bool OnMouseMove(const int& x, const int& y) override;
     bool OnMouseDown(const int& x, const int& y) override;
-    bool OnMouseUp(const int& x, const int& y) override;
     void OnShowDragger(SkCanvas* canvas) override;
 private:
     void drawRectsByPoints(SkCanvas* canvas);

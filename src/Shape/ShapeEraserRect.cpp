@@ -17,7 +17,7 @@ ShapeEraserRect::~ShapeEraserRect()
 void ShapeEraserRect::Paint(SkCanvas *canvas)
 {
     auto win = App::GetWin();
-    if (Recorder::Get()->CurShape == this) {
+    if (win->IsMouseDown && Recorder::Get()->CurShape == this) {
         SkPaint paint;
         paint.setAntiAlias(true);
         paint.setStyle(SkPaint::kStroke_Style);
