@@ -145,15 +145,15 @@ void ShapeArrow::initParams()
         auto stroke = tool->GetStroke();
         if (stroke == 1)
         {
-            strokeWidth = 4;
+            strokeWidth = 2;
         }
         else if (stroke == 2)
         {
-            strokeWidth = 8;
+            strokeWidth = 5;
         }
         else
         {
-            strokeWidth = 16;
+            strokeWidth = 8;
         }
     }
     color = tool->GetColor();
