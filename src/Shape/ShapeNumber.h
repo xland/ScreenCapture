@@ -13,7 +13,7 @@ public:
     bool OnMouseMove(const int &x, const int &y) override;
     void Paint(SkCanvas *canvas) override;
     bool OnMoseDrag(const int &x, const int &y) override;
-
+    bool OnMouseWheel(const int& delta) override;
 protected:
     void initParams();
     void makePath(const int &x1, const int &y1, const int &x2, const int &y2);
