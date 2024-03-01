@@ -14,8 +14,6 @@
 #include "Recorder.h"
 #include "PixelInfo.h"
 #include "ColorBlender.h"
-#include <Gdiplus.h>
-#pragma comment(lib, "gdiplus.lib")
 
 WindowMain::WindowMain()
 {
