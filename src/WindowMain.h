@@ -12,6 +12,7 @@ public:
     ~WindowMain();
     void Save(const std::string& filePath) override;
     void SaveToClipboard() override;
+    void paintToDie();
 private:
     LRESULT CALLBACK wndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) override;
     void initCanvas() override;

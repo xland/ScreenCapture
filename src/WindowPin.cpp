@@ -17,12 +17,14 @@
 #include "ToolSub.h"
 #include "Recorder.h"
 #include "ColorBlender.h"
+#include "WindowMain.h"
 
 
 WindowPin::WindowPin()
 {
     imgRect = CutMask::GetCutRect();
-    auto windowMain = App::GetWin();
+    auto windowMain = (WindowMain*)App::GetWin();
+    windowMain->paintToDie();
     auto iRect = SkIRect::MakeLTRB(imgRect.fLeft, imgRect.fTop, imgRect.fRight, imgRect.fBottom);
     img = windowMain->surfaceBase->makeImageSnapshot(iRect);
     initSize();
@@ -50,24 +52,53 @@ void WindowPin::Save(const std::string& filePath)
 void WindowPin::SaveToClipboard()
 {
     Recorder::Get()->FinishPaint();
-    HDC ScreenDC = GetDC(NULL);
-    HDC hMemDC = CreateCompatibleDC(ScreenDC);
-    auto w{ surfaceFront->width() }, h{ surfaceFront->height() };
-    HBITMAP hBitmap = CreateCompatibleBitmap(ScreenDC, w, h);
-    HBITMAP hOldBitmap = (HBITMAP)SelectObject(hMemDC, hBitmap);
-    StretchBlt(hMemDC, 0, 0, w, h, ScreenDC, x+shadowSize, y+shadowSize, w, h, SRCCOPY);
-    hBitmap = (HBITMAP)SelectObject(hMemDC, hOldBitmap);
-    DeleteDC(hMemDC);
-    DeleteObject(hOldBitmap);
-    if (!OpenClipboard(hwnd)) {
+
+    auto img = surfaceBase->makeImageSnapshot(SkIRect::MakeXYWH(shadowSize, shadowSize, surfaceFront->width(), surfaceFront->height()));
+    int width{ (int)img->width() }, height{ (int)img->height() };
+    SkPixmap pixmap;
+    img->peekPixels(&pixmap);
+    HDC screenDC = GetDC(nullptr);
+    HDC memoryDC = CreateCompatibleDC(screenDC);
+    HBITMAP hBitmap = CreateCompatibleBitmap(screenDC, width, height);
+    DeleteObject(SelectObject(memoryDC, hBitmap));
+    BITMAPINFO bitmapInfo = { 0 };
+    bitmapInfo.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+    bitmapInfo.bmiHeader.biWidth = width;
+    bitmapInfo.bmiHeader.biHeight = -height;
+    bitmapInfo.bmiHeader.biPlanes = 1;
+    bitmapInfo.bmiHeader.biBitCount = 32;
+    SetDIBitsToDevice(memoryDC, 0, 0, width, height, 0, 0, 0, height, pixmap.addr(), &bitmapInfo, DIB_RGB_COLORS);
+    if (!OpenClipboard(nullptr)) {
         MessageBox(NULL, L"Failed to open clipboard when save to clipboard.", L"Error", MB_OK | MB_ICONERROR);
         return;
     }
     EmptyClipboard();
     SetClipboardData(CF_BITMAP, hBitmap);
     CloseClipboard();
-    ReleaseDC(NULL, ScreenDC);
+    ReleaseDC(nullptr, screenDC);
+    DeleteDC(memoryDC);
+    DeleteObject(hBitmap);
     App::Quit(7);
+
+
+    //HDC ScreenDC = GetDC(NULL);
+    //HDC hMemDC = CreateCompatibleDC(ScreenDC);
+    //auto w{ surfaceFront->width() }, h{ surfaceFront->height() };
+    //HBITMAP hBitmap = CreateCompatibleBitmap(ScreenDC, w, h);
+    //HBITMAP hOldBitmap = (HBITMAP)SelectObject(hMemDC, hBitmap);
+    //StretchBlt(hMemDC, 0, 0, w, h, ScreenDC, x+shadowSize, y+shadowSize, w, h, SRCCOPY);
+    //hBitmap = (HBITMAP)SelectObject(hMemDC, hOldBitmap);
+    //DeleteDC(hMemDC);
+    //DeleteObject(hOldBitmap);
+    //if (!OpenClipboard(hwnd)) {
+    //    MessageBox(NULL, L"Failed to open clipboard when save to clipboard.", L"Error", MB_OK | MB_ICONERROR);
+    //    return;
+    //}
+    //EmptyClipboard();
+    //SetClipboardData(CF_BITMAP, hBitmap);
+    //CloseClipboard();
+    //ReleaseDC(NULL, ScreenDC);
+    //App::Quit(7);
 }
 
 void WindowPin::initCanvas()

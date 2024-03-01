@@ -14,6 +14,8 @@
 #include "Recorder.h"
 #include "PixelInfo.h"
 #include "ColorBlender.h"
+#include <Gdiplus.h>
+#pragma comment(lib, "gdiplus.lib")
 
 WindowMain::WindowMain()
 {
@@ -35,6 +37,7 @@ WindowMain::~WindowMain()
 void WindowMain::Save(const std::string& filePath)
 {
     Recorder::Get()->FinishPaint();
+    paintToDie();
     auto rect = CutMask::GetCutRect();
     auto img = surfaceBase->makeImageSnapshot(SkIRect::MakeLTRB(rect.fLeft, rect.fTop, rect.fRight, rect.fBottom));    
     SkPixmap pixmap;
@@ -49,26 +52,45 @@ void WindowMain::Save(const std::string& filePath)
 void WindowMain::SaveToClipboard()
 {
     Recorder::Get()->FinishPaint();
+    paintToDie();
     auto rect = CutMask::GetCutRect();
-    HDC ScreenDC = GetDC(NULL);
-    HDC hMemDC = CreateCompatibleDC(ScreenDC);
-    HBITMAP hBitmap = CreateCompatibleBitmap(ScreenDC, rect.width(), rect.height());
-    HBITMAP hOldBitmap = (HBITMAP)SelectObject(hMemDC, hBitmap);
-    float x{ this->x + rect.fLeft }, y{ this->y + rect.fTop };
-    auto w{ rect.width() }, h{ rect.height() };
-    StretchBlt(hMemDC, 0, 0, w, h, ScreenDC, x, y, w, h, SRCCOPY);
-    hBitmap = (HBITMAP)SelectObject(hMemDC, hOldBitmap);
-    DeleteDC(hMemDC);
-    DeleteObject(hOldBitmap);
-    if (!OpenClipboard(hwnd)) {
+    auto img = surfaceBase->makeImageSnapshot(SkIRect::MakeLTRB(rect.fLeft, rect.fTop, rect.fRight, rect.fBottom));
+    int width{ (int)rect.width() }, height{ (int)rect.height() };
+    SkPixmap pixmap;
+    img->peekPixels(&pixmap);
+    HDC screenDC = GetDC(nullptr);
+    HDC memoryDC = CreateCompatibleDC(screenDC);
+    HBITMAP hBitmap = CreateCompatibleBitmap(screenDC, width, height);
+    DeleteObject(SelectObject(memoryDC, hBitmap));
+    BITMAPINFO bitmapInfo = { 0 };
+    bitmapInfo.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+    bitmapInfo.bmiHeader.biWidth = width;
+    bitmapInfo.bmiHeader.biHeight = -height;
+    bitmapInfo.bmiHeader.biPlanes = 1;
+    bitmapInfo.bmiHeader.biBitCount = 32;
+    //pixmap.addr() 像素数据的地址
+    SetDIBitsToDevice(memoryDC, 0, 0, width, height, 0, 0, 0, height, pixmap.addr(), &bitmapInfo, DIB_RGB_COLORS);
+    if (!OpenClipboard(nullptr)) {
         MessageBox(NULL, L"Failed to open clipboard when save to clipboard.", L"Error", MB_OK | MB_ICONERROR);
         return;
     }
     EmptyClipboard();
     SetClipboardData(CF_BITMAP, hBitmap);
     CloseClipboard();
-    ReleaseDC(NULL, ScreenDC);
+    ReleaseDC(nullptr, screenDC);
+    DeleteDC(memoryDC);
+    DeleteObject(hBitmap);
     App::Quit(7);
+}
+
+void WindowMain::paintToDie()
+{
+    surfaceBase->writePixels(*pixSrc, 0, 0);
+    auto canvas = surfaceBase->getCanvas();
+    auto img = surfaceBack->makeImageSnapshot();
+    canvas->drawImage(img, 0.f, 0.f);
+    img = surfaceFront->makeImageSnapshot();
+    canvas->drawImage(img, 0.f, 0.f);
 }
 
 void WindowMain::initCanvas()
@@ -154,8 +176,8 @@ void WindowMain::paintCanvas()
     auto img = surfaceBack->makeImageSnapshot();
     canvas->drawImage(img, 0.f, 0.f);
     img = surfaceFront->makeImageSnapshot();
-
     canvas->drawImage(img, 0.f, 0.f);
+
     CutMask::Get()->OnPaint(canvas);
     ToolMain::Get()->OnPaint(canvas);
     ToolSub::Get()->OnPaint(canvas);
