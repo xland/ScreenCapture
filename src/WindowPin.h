@@ -10,6 +10,7 @@ class WindowPin : public WindowBase
 {
 public:
     WindowPin();
+    WindowPin(bool clipbord);
     ~WindowPin();
     void Save(const std::string& filePath) override;
     void SaveToClipboard() override;

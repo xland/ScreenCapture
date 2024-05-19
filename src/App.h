@@ -6,7 +6,7 @@ class App
 {
 public:
     ~App();
-    static void Init();
+    static void Init(std::wstring&& cmd);
     static void Dispose();
     static void Quit(const int& code);
     static WindowBase* GetWin();
@@ -22,4 +22,6 @@ private:
     static void initFontIcon();
     static void initFontText();
     static void initScreens();
+    static void createWindow();
+    static void pinClipboard();
 };

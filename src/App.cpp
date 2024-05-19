@@ -28,19 +28,18 @@ App::~App()
 {
 }
 
-void App::Init()
+void App::Init(std::wstring&& cmd)
 {
     fontMgr = SkFontMgr_New_GDI();
     initFontText();
     initFontIcon();
-    win = new WindowMain();
-    ToolMain::Init();
-    ToolSub::Init();
-    Recorder::Init();
-    CutMask::Get()->EnumWinRects();
-    win->Show();
-    Cursor::Cross();
-    initScreens();
+    auto foundPos = cmd.find(L"--pin:clipboard");
+    if (foundPos != std::wstring::npos) {
+        pinClipboard();
+    }
+    else {
+        createWindow();
+    }
 }
 
 void App::Dispose()
@@ -52,6 +51,37 @@ void App::Dispose()
     delete fontIcon;
     delete fontText;
 }
+
+void App::createWindow() {
+    win = new WindowMain();
+    ToolMain::Init();
+    ToolSub::Init();
+    Recorder::Init();
+    CutMask::Get()->EnumWinRects();
+    win->Show();
+    Cursor::Cross();
+    initScreens();
+}
+void App::pinClipboard() {
+    if (IsClipboardFormatAvailable(CF_BITMAP) || IsClipboardFormatAvailable(CF_DIB) || IsClipboardFormatAvailable(CF_DIBV5))
+    {
+        win = new WindowPin(true);
+        ToolMain::Init();
+        auto tm = ToolMain::Get();
+        tm->Btns[11]->IsDisable = true;
+        auto tmW = tm->ToolRect.width();
+        tm->ToolRect.setXYWH(win->w - tmW, win->h - ToolBtn::Height - ToolBase::MarginTop, tmW, ToolBtn::Height);
+        ToolSub::Init();
+        Recorder::Init();        
+        win->Show();
+        Cursor::Arrow();
+    }
+    else
+    {
+        createWindow();
+    }
+}
+
 
 WindowBase* App::GetWin()
 {

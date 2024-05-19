@@ -15,7 +15,7 @@ public:
     virtual bool OnMouseDown(const int& x, const int& y)=0;
     virtual bool OnPaint(SkCanvas* canvas)=0;
     SkRect ToolRect;
-    float MarginTop{8.0f};
+    const static int MarginTop{8};
     int IndexHovered;
     int IndexSelected;
     std::vector<std::shared_ptr<ToolBtn>> Btns;

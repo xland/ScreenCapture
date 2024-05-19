@@ -31,6 +31,57 @@ WindowPin::WindowPin()
     initWindow();
 }
 
+WindowPin::WindowPin(bool clipboard)
+{
+    OpenClipboard(NULL);
+    HANDLE hData = GetClipboardData(CF_BITMAP);
+    if (hData == NULL)
+    {
+        hData = GetClipboardData(CF_DIB);
+        if (hData == NULL)
+        {
+            hData = GetClipboardData(CF_DIBV5);
+        }
+    }
+    if (hData != NULL)
+    {
+        HBITMAP hBitmap = (HBITMAP)hData;
+        BITMAP bitmap;
+        GetObject(hBitmap, sizeof(BITMAP), &bitmap);
+        long long rowBytes = bitmap.bmWidth * 4;
+        long long dataSize = rowBytes * bitmap.bmHeight;
+        std::vector<int32_t> buffer;
+        buffer.resize(dataSize);
+        HDC hScreen = GetDC(NULL);
+        BITMAPINFO info = { sizeof(BITMAPINFOHEADER), (long)bitmap.bmWidth, 0 - (long)bitmap.bmHeight, 1, 32, BI_RGB, (DWORD)dataSize, 0, 0, 0, 0 };
+        GetDIBits(hScreen, hBitmap, 0, bitmap.bmHeight, &buffer.front(), &info, DIB_RGB_COLORS);
+        DeleteDC(hScreen);
+        DeleteObject(hBitmap);
+        ReleaseDC(NULL, hScreen);
+        SkImageInfo imgInfo = SkImageInfo::MakeN32Premul(bitmap.bmWidth, bitmap.bmHeight);
+        SkBitmap bm;
+        bm.setInfo(imgInfo);
+        bm.setPixels(&buffer.front());
+        img = bm.asImage();
+    }
+    CloseClipboard();
+
+    w = img->width() + shadowSize * 2;
+    h = img->height() + shadowSize * 2 + ToolBtn::Height * 2 + ToolBase::MarginTop * 2;
+    auto tmW = 15 * ToolBtn::Width;
+    auto tempWidth = tmW + shadowSize * 2;
+    if (w < tempWidth) {
+        this->w = tempWidth;
+    }
+
+    RECT screenRect;
+    SystemParametersInfo(SPI_GETWORKAREA, 0, &screenRect, 0);
+    x = (screenRect.right - w) / 2;
+    y = (screenRect.bottom - h) / 2;    
+    imgRect.setXYWH(shadowSize, shadowSize, img->width(), img->height());
+    initWindow();
+}
+
 WindowPin::~WindowPin()
 {
     ColorBlender::Reset();
@@ -122,6 +173,7 @@ void WindowPin::initCanvas()
     pixSrcData.resize(dataSize);    
     pixSrc = new SkPixmap(imgInfo, &pixSrcData.front(), rowBytes);
     auto canvas = SkCanvas::MakeRasterDirect(imgInfo, (void*)pixSrc->addr(), rowBytes);
+
     canvas->clear(SK_ColorTRANSPARENT);
     canvas->drawImageRect(img, imgRect, SkSamplingOptions(SkFilterMode::kNearest, SkMipmapMode::kNearest));
 
@@ -155,7 +207,7 @@ void WindowPin::initSize()
     if (w < tempWidth) {
         this->w = tempWidth;
     }
-    h += tm->ToolRect.height() * 2 + tm->MarginTop * 2;
+    h += ToolBtn::Height * 2 + ToolBase::MarginTop * 2;
     imgRect.setXYWH(shadowSize, shadowSize, imgRect.width(), imgRect.height());
 }
 
