@@ -9,6 +9,7 @@
 #include "ToolSub.h"
 #include "Recorder.h"
 #include "WindowPin.h"
+#include "Lang.h"
 
 ToolMain *toolMain;
 
@@ -201,22 +202,22 @@ void ToolMain::SetRedoDisable(bool flag)
 
 void ToolMain::InitBtns()
 {
-    Btns.push_back(std::make_shared<ToolBtn>(Icon::rect, L"矩形"));
-    Btns.push_back(std::make_shared<ToolBtn>(Icon::ellipse, L"圆形"));
-    Btns.push_back(std::make_shared<ToolBtn>(Icon::arrow, L"箭头"));
-    Btns.push_back(std::make_shared<ToolBtn>(Icon::number, L"标号"));
-    Btns.push_back(std::make_shared<ToolBtn>(Icon::pen, L"画笔"));
-    Btns.push_back(std::make_shared<ToolBtn>(Icon::line, L"直线"));
-    Btns.push_back(std::make_shared<ToolBtn>(Icon::text, L"文本"));
+    Btns.push_back(std::make_shared<ToolBtn>(Icon::rect, Lang::Get(Lang::Key::BtnRect)));
+    Btns.push_back(std::make_shared<ToolBtn>(Icon::ellipse, Lang::Get(Lang::Key::BtnEllipse)));
+    Btns.push_back(std::make_shared<ToolBtn>(Icon::arrow, Lang::Get(Lang::Key::BtnArrow)));
+    Btns.push_back(std::make_shared<ToolBtn>(Icon::number, Lang::Get(Lang::Key::BtnNumber)));
+    Btns.push_back(std::make_shared<ToolBtn>(Icon::pen, Lang::Get(Lang::Key::BtnPen)));
+    Btns.push_back(std::make_shared<ToolBtn>(Icon::line, Lang::Get(Lang::Key::BtnLine)));
+    Btns.push_back(std::make_shared<ToolBtn>(Icon::text, Lang::Get(Lang::Key::BtnText)));
     //Btns.push_back(std::make_shared<ToolBtn>(Icon::image, L"图片"));
-    Btns.push_back(std::make_shared<ToolBtn>(Icon::mosaic, L"马赛克"));
-    Btns.push_back(std::make_shared<ToolBtn>(Icon::eraser, L"橡皮擦"));
-    Btns.push_back(std::make_shared<ToolBtn>(Icon::undo, L"上一步(Ctrl+Z)", true, false)); //9
-    Btns.push_back(std::make_shared<ToolBtn>(Icon::redo, L"下一步(Ctrl+Y)", true, false)); //10
-    Btns.push_back(std::make_shared<ToolBtn>(Icon::pin, L"钉住截图区(Ctrl+P)", false, false));//11
-    Btns.push_back(std::make_shared<ToolBtn>(Icon::save, L"保存为文件(Ctrl+S)", false, false));//12
-    Btns.push_back(std::make_shared<ToolBtn>(Icon::copy, L"保存到剪切板(Ctrl+C)", false, false));//13
-    Btns.push_back(std::make_shared<ToolBtn>(Icon::close, L"退出(Esc)", false, false));//14
+    Btns.push_back(std::make_shared<ToolBtn>(Icon::mosaic, Lang::Get(Lang::Key::BtnMosaic)));
+    Btns.push_back(std::make_shared<ToolBtn>(Icon::eraser, Lang::Get(Lang::Key::BtnEraser)));
+    Btns.push_back(std::make_shared<ToolBtn>(Icon::undo, Lang::Get(Lang::Key::BtnUndo), true, false)); //9
+    Btns.push_back(std::make_shared<ToolBtn>(Icon::redo, Lang::Get(Lang::Key::BtnRedo), true, false)); //10
+    Btns.push_back(std::make_shared<ToolBtn>(Icon::pin, Lang::Get(Lang::Key::BtnPin), false, false));//11
+    Btns.push_back(std::make_shared<ToolBtn>(Icon::save, Lang::Get(Lang::Key::BtnSave), false, false));//12
+    Btns.push_back(std::make_shared<ToolBtn>(Icon::copy, Lang::Get(Lang::Key::BtnCopy), false, false));//13
+    Btns.push_back(std::make_shared<ToolBtn>(Icon::close, Lang::Get(Lang::Key::BtnClose), false, false));//14
 }
 
 void ToolMain::UnSelectAndHoverAll()

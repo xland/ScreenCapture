@@ -10,6 +10,7 @@
 #include "Cursor.h"
 #include <format>
 #include "ToolMain.h"
+#include "Lang.h"
 
 CutMask* cutMask;
 
@@ -270,12 +271,18 @@ bool CutMask::OnPaint(SkCanvas *canvas)
     paint.setStyle(SkPaint::Style::kStroke_Style);
     canvas->drawRect(CutRect, paint);
     auto font = App::GetFontText();
-    auto str = std::format("Left:{}  Top:{}  Right:{}  Bottom:{}  Width:{}  Height:{}", CutRect.fLeft, CutRect.fTop, CutRect.fRight,
-        CutRect.fBottom, CutRect.width(), CutRect.height());
+    auto str = std::format(L"{}:{}  {}:{}  {}:{}  {}:{}  {}:{}  {}:{}", 
+        Lang::Get(Lang::Key::Left), CutRect.fLeft, 
+        Lang::Get(Lang::Key::Top), CutRect.fTop, 
+        Lang::Get(Lang::Key::Right), CutRect.fRight,
+        Lang::Get(Lang::Key::Bottom), CutRect.fBottom,
+        Lang::Get(Lang::Key::Width), CutRect.width(),
+        Lang::Get(Lang::Key::Height), CutRect.height());
     font->setSize(14);
     auto data = str.data();
+    auto len = str.size() * 2;
     SkRect rectTemp;
-    font->measureText(data, str.size(), SkTextEncoding::kUTF8, &rectTemp);
+    font->measureText(data, len, SkTextEncoding::kUTF16, &rectTemp);
     SkRect rectInfo = SkRect::MakeXYWH(CutRect.fLeft, CutRect.fTop - 36, rectTemp.width()+16, 32);
     if (CutRect.fTop < 38) {
         rectInfo.offset(6, 42);
@@ -285,7 +292,7 @@ bool CutMask::OnPaint(SkCanvas *canvas)
     paint.setColor(SkColorSetARGB(130, 0, 0, 0));
     canvas->drawRoundRect(rectInfo,3,3,paint);
     paint.setColor(SkColorSetARGB(255, 220, 220, 220));
-    canvas->drawSimpleText(data, str.size(), SkTextEncoding::kUTF8, rectInfo.fLeft + 8, rectInfo.fTop + 21, *font, paint);
+    canvas->drawSimpleText(data, len, SkTextEncoding::kUTF16, rectInfo.fLeft + 8, rectInfo.fTop + 21, *font, paint);
     return false;
 }
 bool CutMask::OnKeyDown(const unsigned int& val)

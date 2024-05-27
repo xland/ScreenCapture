@@ -7,6 +7,7 @@
 #include "format"
 #include <sstream>
 #include <algorithm>
+#include "Lang.h"
 
 PixelInfo* pixelInfo;
 
@@ -85,29 +86,29 @@ bool PixelInfo::OnMouseMove(const int& x, const int& y)
     auto font = App::GetFontText();
     font->setSize(14);
 
-    std::string str = std::format("Position: X:{}  Y:{}", x, y);
+    auto str = std::format(L"{}: X:{}  Y:{}", Lang::Get(Lang::Key::Position), x, y);
     auto data = str.data();
-    canvas->drawSimpleText(data, str.size(), SkTextEncoding::kUTF8, rect.fLeft + 8, rect.fTop + 128, *font, paint);
+    canvas->drawSimpleText(data, str.size()*2, SkTextEncoding::kUTF16, rect.fLeft + 8, rect.fTop + 128, *font, paint);
 
     auto color = win->pixSrc->getColor4f(x, y);
     int R{ (int)(color.fR * 255) }, G{ (int)(color.fG * 255) }, B{ (int)(color.fB * 255) };
-    str = std::format("RGB(Ctrl+R): {},{},{}", R, G, B);
+    str = std::format(L"RGB(Ctrl+R): {},{},{}", R, G, B);
     data = str.data();
-    canvas->drawSimpleText(data, str.size(), SkTextEncoding::kUTF8, rect.fLeft + 8, rect.fTop + 157, *font, paint);
+    canvas->drawSimpleText(data, str.size()*2, SkTextEncoding::kUTF16, rect.fLeft + 8, rect.fTop + 157, *font, paint);
 
 
-    std::stringstream ss;
+    std::wstringstream ss;
     ss << std::hex << (R << 16 | G << 8 | B);
-    std::string hex = ss.str();
+    std::wstring hex = ss.str();
     size_t str_length = hex.length();
     for (size_t i = 0; i < 6 - str_length; i++) {
-        hex = "0" + hex;
+        hex = L"0" + hex;
     }
     std::transform(hex.begin(), hex.end(), hex.begin(), toupper);
-    str = std::format("HEX(Ctrl+H): #{}", hex);
+    str = std::format(L"HEX(Ctrl+H): #{}", hex);
     
     data = str.data();
-    canvas->drawSimpleText(data, str.size(), SkTextEncoding::kUTF8, rect.fLeft + 8, rect.fTop + 186, *font, paint);
+    canvas->drawSimpleText(data, str.size()*2, SkTextEncoding::kUTF16, rect.fLeft + 8, rect.fTop + 186, *font, paint);
 
     win->Refresh();
     return false;

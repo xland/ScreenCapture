@@ -15,6 +15,7 @@
 #include "ToolSub.h"
 #include "Recorder.h"
 #include "CutMask.h"
+#include "Lang.h"
 
 
 SkFont* fontIcon{ nullptr };
@@ -33,8 +34,19 @@ void App::Init(std::wstring&& cmd)
     fontMgr = SkFontMgr_New_GDI();
     initFontText();
     initFontIcon();
-    auto foundPos = cmd.find(L"--pin:clipboard");
-    if (foundPos != std::wstring::npos) {
+    auto pos = cmd.find(L"--lang:");
+    if (pos != std::wstring::npos) {
+        pos += 7; //'--lang:' 7
+        size_t endPos = cmd.find(L' ', pos);
+        std::wstring lang = cmd.substr(pos, endPos - pos);
+        Lang::Init(lang);
+    }
+    else {
+        std::wstring lang = L"zh_cn";
+        Lang::Init(lang);
+    }
+    pos = cmd.find(L"--pin:clipboard");
+    if (pos != std::wstring::npos) {
         pinClipboard();
     }
     else {
@@ -125,18 +137,10 @@ void App::initFontIcon()
 {
     HMODULE instance = GetModuleHandle(NULL);
     HRSRC resID = FindResource(instance, MAKEINTRESOURCE(IDR_ICON_FONT), L"ICON_FONT");
-    if (resID == 0)
-    {
-        MessageBox(NULL, L"查找字体图标资源失败", L"系统提示", NULL);
-        return;
-    }
+    if (resID == 0) return;
     size_t resSize = SizeofResource(instance, resID);
     HGLOBAL res = LoadResource(instance, resID);
-    if (res == 0)
-    {
-        MessageBox(NULL, L"加载字体图标资源失败", L"系统提示", NULL);
-        return;
-    }
+    if (res == 0) return;
     LPVOID resData = LockResource(res);
     auto fontData = SkData::MakeWithoutCopy(resData, resSize);
     fontIcon = new SkFont(fontMgr->makeFromData(fontData));

@@ -27,6 +27,8 @@ set(SRC
     ToolSub.h
     ColorBlender.h
     ColorBlender.cpp
+    Lang.h
+    Lang.cpp
 )
 target_sources(ScreenCapture PRIVATE ${SRC})
 add_subdirectory(Shape)

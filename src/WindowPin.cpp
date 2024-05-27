@@ -18,6 +18,7 @@
 #include "Recorder.h"
 #include "ColorBlender.h"
 #include "WindowMain.h"
+#include "Lang.h"
 
 
 WindowPin::WindowPin()
@@ -214,8 +215,8 @@ void WindowPin::initSize()
 void WindowPin::showMenu()
 {
     HMENU hMenu = CreatePopupMenu();
-    AppendMenu(hMenu, state == State::start ? MF_UNCHECKED : MF_CHECKED, 1001, L"Tool(Ctrl+T)");
-    AppendMenu(hMenu, MF_STRING, 1002, L"Exit(Esc)");
+    AppendMenu(hMenu, state == State::start ? MF_UNCHECKED : MF_CHECKED, 1001, Lang::Get(Lang::Key::BtnTool).data());
+    AppendMenu(hMenu, MF_STRING, 1002, Lang::Get(Lang::Key::BtnClose).data());
     POINT point;
     GetCursorPos(&point);
     TrackPopupMenu(hMenu, TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, 0, hwnd, NULL);
