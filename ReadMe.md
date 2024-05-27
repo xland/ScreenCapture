@@ -14,6 +14,7 @@ English:
 - Undo(`Ctrl+Z`) Redo(`Ctrl+Y`) support.
 - Pin the cut area on desktop(`Ctrl+P`), resize pin window by `Mouse Wheel`.
 - Save to file(`Ctrl+S`) or clipboard(`Ctrl+C`).
+- Multi-language support(`SC.exe --lang:en_us`).
 - Very fast,Small memory footprint,Low CPU useage.
 - Only one small executable file (with out any dll).
 - Can be easily integrated into any program.
@@ -29,6 +30,7 @@ Chinese:
 - 上一步（`Ctrl+Z`）、下一步（`Ctrl+Y`）。
 - 在新窗口中钉住截图区域（`Ctrl+P`）,鼠标`滚轮`改变钉图窗口大小。
 - 保存成文件（`Ctrl+S`）、保存到剪切板（`Ctrl+C`）。
+- 多语言支持（`SC.exe --lang:en_us`）.
 - 非常快、低内存消耗、低 CPU 使用率。
 - 非常小、仅一个可执行文件（4.9M），无需安装，不依赖任何动态链接库。
 - 可以非常容易的集成到其他应用中。
