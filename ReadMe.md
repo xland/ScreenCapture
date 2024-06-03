@@ -39,7 +39,7 @@ Chinese:
 
 ## Download（下载）
 
-[Release](https://github.com/xland/ScreenCapture/releases/) (4.9M)
+[Release](https://github.com/xland/ScreenCapture/releases/) (3.8M)
 
 ## Integration（集成）
 
