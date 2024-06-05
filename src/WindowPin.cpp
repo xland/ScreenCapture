@@ -178,7 +178,6 @@ void WindowPin::initCanvas()
     canvas->clear(SK_ColorTRANSPARENT);
     canvas->drawImageRect(img, imgRect, SkSamplingOptions(SkFilterMode::kNearest, SkMipmapMode::kNearest));
 
-    SkPaint paint;
     SkPath path;
     path.addRRect(SkRRect::MakeRectXY(SkRect::MakeXYWH(shadowSize - 2, shadowSize - 2, imgRect.width() + 4, imgRect.height() + 4), 6, 6));
     SkPoint3 zPlaneParams = SkPoint3::Make(0, 0, 20);// 定义阴影与 z 平面的关系    
