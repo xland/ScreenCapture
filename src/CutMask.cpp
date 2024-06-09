@@ -114,7 +114,7 @@ bool CutMask::OnMouseMove(const int& x, const int& y)
             hoverIndex = 0;
             Cursor::LeftTopRightBottom();
         }
-        else if (x > CutRect.fLeft && x < CutRect.fRight && y < CutRect.fTop) {
+        else if (x > CutRect.fLeft && x < CutRect.fRight && y <= CutRect.fTop+1) {
             hoverIndex = 1;
             Cursor::TopBottom();
         }
@@ -122,7 +122,7 @@ bool CutMask::OnMouseMove(const int& x, const int& y)
             hoverIndex = 2;
             Cursor::LeftBottomRightTop();
         }
-        else if (x > CutRect.fRight && y > CutRect.fTop && y < CutRect.fBottom) {
+        else if (x >= CutRect.fRight-1 && y > CutRect.fTop && y < CutRect.fBottom) {
             hoverIndex = 3;
             Cursor::LeftRight();
         }
@@ -130,7 +130,7 @@ bool CutMask::OnMouseMove(const int& x, const int& y)
             hoverIndex = 4;
             Cursor::LeftTopRightBottom();
         }
-        else if (x > CutRect.fLeft && x < CutRect.fRight && y > CutRect.fBottom) {
+        else if (x > CutRect.fLeft && x < CutRect.fRight && y >= CutRect.fBottom-1) {
             hoverIndex = 5;
             Cursor::TopBottom();
         }
@@ -138,7 +138,7 @@ bool CutMask::OnMouseMove(const int& x, const int& y)
             hoverIndex = 6;
             Cursor::LeftBottomRightTop();
         }
-        else if (x < CutRect.fLeft && y < CutRect.fBottom && y > CutRect.fTop) {
+        else if (x <= CutRect.fLeft+1 && y < CutRect.fBottom && y > CutRect.fTop) {
             hoverIndex = 7;
             Cursor::LeftRight();
         }
