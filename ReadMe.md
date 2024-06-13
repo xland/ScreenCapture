@@ -16,7 +16,7 @@ English:
 - Save to file(`Ctrl+S`) or clipboard(`Ctrl+C`).
 - Multi-language support(`ScreenCapture.exe --lang:en_us`).
 - Pin the clipboard image to the desktop(`ScreenCapture.exe --pin:clipboard`).
-- set default save path(`ScreenCapture.exe --dir:"D:\doc\测试目录"`).
+- set default save path(`ScreenCapture.exe --dir:"D:\doc"`).
 - Very fast,Small memory footprint,Low CPU useage.
 - Only one small executable file (3.8M，with out any dll).
 - Can be easily integrated into any program.
