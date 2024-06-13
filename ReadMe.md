@@ -15,7 +15,8 @@ English:
 - Pin the cut area on desktop(`Ctrl+P`), resize pin window by `Mouse Wheel`.
 - Save to file(`Ctrl+S`) or clipboard(`Ctrl+C`).
 - Multi-language support(`ScreenCapture.exe --lang:en_us`).
-- Pin the clipboard image to the desktop(`ScreenCapture.exe --pin:clipboard`)
+- Pin the clipboard image to the desktop(`ScreenCapture.exe --pin:clipboard`).
+- set default save path(`ScreenCapture.exe --dir:"D:\doc\测试目录"`).
 - Very fast,Small memory footprint,Low CPU useage.
 - Only one small executable file (3.8M，with out any dll).
 - Can be easily integrated into any program.
@@ -32,7 +33,8 @@ Chinese:
 - 在新窗口中钉住截图区域（`Ctrl+P`）,鼠标`滚轮`改变钉图窗口大小。
 - 保存成文件（`Ctrl+S`）、保存到剪切板（`Ctrl+C`）。
 - 多语言支持（`ScreenCapture.exe --lang:en_us`）。
-- 直接把剪切板图片钉在桌面上（`ScreenCapture.exe --pin:clipboard`）。
+- 直接把剪切板内的图片钉在桌面上（`ScreenCapture.exe --pin:clipboard`）。
+- 设置默认保存目录（`ScreenCapture.exe --dir:"D:\doc\测试目录"`）。
 - 非常快、低内存消耗、低 CPU 使用率。
 - 非常小、仅一个可执行文件（3.8M），无需安装，不依赖任何动态链接库。
 - 可以非常容易的集成到其他应用中。
