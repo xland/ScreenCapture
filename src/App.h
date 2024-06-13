@@ -24,4 +24,6 @@ private:
     static void initScreens();
     static void createWindow();
     static void pinClipboard();
+    static std::wstring createFileName();
+    static std::string toStdString(std::wstring&& wstr);
 };

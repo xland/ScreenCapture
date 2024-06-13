@@ -2,6 +2,7 @@
 #include <Windows.h>
 #include <shlobj.h>
 #include <sstream>
+#include <filesystem>
 #include "include/core/SkFont.h"
 #include "include/core//SkFontMgr.h"
 #include "include/core/SkFontStyle.h"
@@ -24,6 +25,7 @@ WindowBase* win { nullptr };
 static int exitCode{ 0 };
 static std::vector<std::shared_ptr<SkRect>> screens;
 sk_sp<SkFontMgr> fontMgr;
+std::wstring savePath;
 
 App::~App()
 {
@@ -51,6 +53,12 @@ void App::Init(std::wstring&& cmd)
     }
     else {
         createWindow();
+    }
+    pos = cmd.find(L"--dir:\"");
+    if (pos != std::wstring::npos) {
+        pos += 7; //'--dir:' 6
+        size_t endPos = cmd.find(L'\"', pos);
+        savePath = cmd.substr(pos, endPos - pos);
     }
 }
 
@@ -167,7 +175,28 @@ void App::initScreens() {
         }, NULL);
 }
 
+std::wstring App::createFileName() {
+    SYSTEMTIME localTime;
+    GetLocalTime(&localTime);
+    std::wstring name = std::format(L"{}{}{}{}{}{}{}.png", localTime.wYear, localTime.wMonth, localTime.wDay,
+        localTime.wHour, localTime.wMinute, localTime.wSecond, localTime.wMilliseconds);
+    return name;
+}
+
+std::string App::toStdString(std::wstring&& wstr) {
+    int count = WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), wstr.length(), NULL, 0, NULL, NULL);
+    std::string str(count, 0);
+    WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), -1, &str[0], count, NULL, NULL);
+    return str;
+}
+
 void App::SaveFile() {
+    if (!savePath.empty() && std::filesystem::exists(savePath) && std::filesystem::is_directory(savePath)) {        
+        auto filePath = std::filesystem::path{ savePath } / App::createFileName();
+        auto filePathStr = App::toStdString(filePath.wstring());
+        win->Save(filePathStr);
+        return;
+    }
     IFileOpenDialog* dialog;
     CLSID param1 = CLSID_FileSaveDialog, param2 = IID_IFileSaveDialog;
     auto hr = CoCreateInstance(param1, NULL, CLSCTX_ALL, param2, reinterpret_cast<void**>(&dialog));
@@ -177,10 +206,7 @@ void App::SaveFile() {
         return;
     }
     COMDLG_FILTERSPEC FileTypes[] = { { L"All Pictures", L"*.png;" },{ L"All files", L"*.*" } };
-    SYSTEMTIME localTime;
-    GetLocalTime(&localTime);
-    std::wstring name = std::format(L"{}{}{}{}{}{}{}", localTime.wYear, localTime.wMonth, localTime.wDay,
-        localTime.wHour, localTime.wMinute, localTime.wSecond, localTime.wMilliseconds);
+    std::wstring name = App::createFileName();
     dialog->SetFileName(name.c_str());
     dialog->SetFileTypes(2, FileTypes);
     dialog->SetTitle(L"Save File");
@@ -212,11 +238,8 @@ void App::SaveFile() {
     ss << filePath;
     CoTaskMemFree(filePath);
     dialog->Release();
-    std::wstring wstr = ss.str();
-    int count = WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), wstr.length(), NULL, 0, NULL, NULL);
-    std::string str(count, 0);
-    WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), -1, &str[0], count, NULL, NULL);
-    win->Save(str);
+    auto filePathStr = App::toStdString(ss.str());
+    win->Save(filePathStr);
 }
 
 std::shared_ptr<SkRect> App::GetScreen(const float& x, const float& y)

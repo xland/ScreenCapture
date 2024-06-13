@@ -112,3 +112,6 @@ Whether there is any topic to talk about, whether it is related to this product 
 
 This project is under the [MIT license](./licence).
 
+
+## Stargazers over time
+[![Stargazers over time](https://starchart.cc/xland/ScreenCapture.svg?variant=adaptive)](https://starchart.cc/xland/ScreenCapture)
