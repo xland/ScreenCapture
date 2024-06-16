@@ -198,7 +198,7 @@ void App::SaveFile() {
         return;
     }
     IFileOpenDialog* dialog;
-    CLSID param1 = CLSID_FileSaveDialog, param2 = IID_IFileSaveDialog;
+    CLSID param1{ CLSID_FileSaveDialog }, param2{ IID_IFileSaveDialog };
     auto hr = CoCreateInstance(param1, NULL, CLSCTX_ALL, param2, reinterpret_cast<void**>(&dialog));
     if (FAILED(hr))
     {
