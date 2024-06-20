@@ -197,9 +197,8 @@ void App::SaveFile() {
         win->Save(filePathStr);
         return;
     }
-    IFileOpenDialog* dialog;
-    CLSID param1{ CLSID_FileSaveDialog }, param2{ IID_IFileSaveDialog };
-    auto hr = CoCreateInstance(param1, NULL, CLSCTX_ALL, param2, reinterpret_cast<void**>(&dialog));
+    IFileSaveDialog* dialog;    
+    auto hr = CoCreateInstance(CLSID_FileSaveDialog, NULL, CLSCTX_ALL, IID_PPV_ARGS(&dialog));
     if (FAILED(hr))
     {
         MessageBox(NULL, L"Failed to create COM FileSaveDialog object.", L"Error", MB_OK | MB_ICONERROR);
