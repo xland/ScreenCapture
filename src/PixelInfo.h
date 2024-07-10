@@ -16,6 +16,7 @@ public:
     bool OnMouseMove(const int& x, const int& y);
 
 private:
+    bool needPaint{ false };
     PixelInfo();
     SkRect rect;
 };
