@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "include/core/SkSurface.h"
 #include "include/core/SkCanvas.h"
 #include "include/core/SkRect.h"
@@ -12,7 +12,8 @@ public:
     ~PixelInfo();
     static void Init();
     static PixelInfo *Get();
-    bool OnMouseMove(const int &x, const int &y);
+    bool OnPaint(SkCanvas* canvas);
+    bool OnMouseMove(const int& x, const int& y);
 
 private:
     PixelInfo();

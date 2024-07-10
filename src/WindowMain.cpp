@@ -175,8 +175,8 @@ void WindowMain::paintCanvas()
     canvas->drawImage(img, 0.f, 0.f);
     img = surfaceFront->makeImageSnapshot();
     canvas->drawImage(img, 0.f, 0.f);
-
     CutMask::Get()->OnPaint(canvas);
+    PixelInfo::Get()->OnPaint(canvas);
     ToolMain::Get()->OnPaint(canvas);
     ToolSub::Get()->OnPaint(canvas);
 }

@@ -1,4 +1,4 @@
-#include "PixelInfo.h"
+﻿#include "PixelInfo.h"
 #include "App.h"
 #include "WindowBase.h"
 #include "include/core/SkRegion.h"
@@ -28,15 +28,29 @@ PixelInfo* PixelInfo::Get()
     return pixelInfo;
 }
 
-bool PixelInfo::OnMouseMove(const int& x, const int& y)
+bool PixelInfo::OnMouseMove(const int& x, const int& y) {
+    auto win = App::GetWin();
+    if (win->IsMouseDown || win->state >= State::mask)
+    {
+        return false;
+    }
+    win->Refresh();
+}
+
+bool PixelInfo::OnPaint(SkCanvas* canvas)
 {
     auto win = App::GetWin();
     if (win->IsMouseDown || win->state >= State::mask)
     {
         return false;
     }
-    float width = 200.0f;
-    float height = 200.0f;
+    float width{ 200.0f },height{ 200.0f },x,y;
+    {
+        POINT mousePos;
+        GetCursorPos(&mousePos);
+        x = (float)mousePos.x;
+        y = (float)mousePos.y;
+    }
     rect.setXYWH(x + 10, y + 10, width, height);    
     if (rect.fLeft + width > win->w) {
         rect.offset(0 - width - 20, 0);
@@ -44,8 +58,6 @@ bool PixelInfo::OnMouseMove(const int& x, const int& y)
     if (rect.fTop + height > win->h) {
         rect.offset(0, 0 - height - 20);
     }
-    auto canvas = win->surfaceFront->getCanvas();
-    canvas->clear(SK_ColorTRANSPARENT);
     SkPaint paint;
     paint.setColor(SkColorSetARGB(168, 0, 0, 0));
     canvas->drawRect(rect, paint);
@@ -109,8 +121,6 @@ bool PixelInfo::OnMouseMove(const int& x, const int& y)
     
     data = str.data();
     canvas->drawSimpleText(data, str.size()*2, SkTextEncoding::kUTF16, rect.fLeft + 8, rect.fTop + 186, *font, paint);
-
-    win->Refresh();
     return false;
 }
 
