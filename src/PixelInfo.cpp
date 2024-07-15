@@ -32,16 +32,15 @@ bool PixelInfo::OnMouseMove(const int& x, const int& y) {
     auto win = App::GetWin();
     if (win->IsMouseDown || win->state >= State::mask)
     {
-        needPaint = false;
         return false;
     }
-    needPaint = true;
     win->Refresh();
 }
 
 bool PixelInfo::OnPaint(SkCanvas* canvas)
 {
-    if (!needPaint)
+    auto win = App::GetWin();
+    if (win->IsMouseDown || win->state >= State::mask)
     {
         return false;
     }
@@ -53,7 +52,6 @@ bool PixelInfo::OnPaint(SkCanvas* canvas)
         y = (float)mousePos.y;
     }
     rect.setXYWH(x + 10, y + 10, width, height);
-    auto win = App::GetWin();
     if (rect.fLeft + width > win->w) {
         rect.offset(0 - width - 20, 0);
     }
