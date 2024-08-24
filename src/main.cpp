@@ -10,7 +10,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
         MessageBox(NULL, L"Failed to initialize COM library.", L"Error", MB_OK | MB_ICONERROR);
         return -1;
     }
-    SkGraphics::Init();
     App::Init(std::wstring(lpCmdLine));
     MSG msg;
     while (GetMessage(&msg, NULL, 0, 0))
