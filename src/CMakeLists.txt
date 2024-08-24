@@ -9,4 +9,4 @@ target_sources(${PROJECT_NAME} PRIVATE
  "WinBase.h" 
  "WinBase.cpp" 
  "Font.h" 
- "Font.cpp" "File.h" "File.cpp" "Tray.h" "Tray.cpp")
+ "Font.cpp" "File.h" "File.cpp" "Tray.h" "Tray.cpp" "WinMax.cpp" "WinMax.h" "WinPin.cpp" "WinPin.h" "WinBaseMsg.cpp")

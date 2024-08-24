@@ -1,7 +1,6 @@
 #pragma once
 #include <Windows.h>
-#include "include/core/SkFont.h"
-class WindowBase;
+#include <string>
 class App
 {
 public:
@@ -11,5 +10,5 @@ public:
     static int GetExitCode();
     HINSTANCE instance;
 private:
-    App() {};
+    App();
 };
