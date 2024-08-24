@@ -7,6 +7,7 @@ public:
 	WinMax();
 	~WinMax();
 	void initSize();
+	static WinMax* Get();
 	static void Init();
 private:
 	LRESULT CALLBACK wndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) override;

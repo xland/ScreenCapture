@@ -23,9 +23,10 @@ void WinBase::paint()
     paint.setColor(SK_ColorRED);
     SkRect rect = SkRect::MakeXYWH(w - 150, h - 150, 140, 140);
     canvas->drawRect(rect, paint);
+
     PAINTSTRUCT ps;
     auto dc = BeginPaint(hwnd, &ps);
-    BITMAPINFO bmpInfo = { sizeof(BITMAPINFOHEADER), w, 0 - h, 1, 32, BI_RGB, h * 4 * w, 0, 0, 0, 0 };
+    BITMAPINFO bmpInfo = { sizeof(BITMAPINFOHEADER), w, -h, 1, 32, BI_RGB, h * 4 * w, 0, 0, 0, 0 };
     StretchDIBits(dc, 0, 0, w, h, 0, 0, w, h, surfaceMemory, &bmpInfo, DIB_RGB_COLORS, SRCCOPY);
     ReleaseDC(hwnd, dc);
     EndPaint(hwnd, &ps);

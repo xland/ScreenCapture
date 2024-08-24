@@ -25,6 +25,11 @@ void WinMax::initSize()
     h = GetSystemMetrics(SM_CYVIRTUALSCREEN);
 }
 
+WinMax* WinMax::Get()
+{
+    return winMax.get();
+}
+
 void WinMax::Init()
 {
 	auto ptr = new WinMax();
