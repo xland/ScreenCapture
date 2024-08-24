@@ -20,8 +20,19 @@ void Cmd::Init(const std::wstring& cmdLine) {
     std::wistringstream stream(cmdLine);
     std::wstring arg;
     while (stream >> std::quoted(arg)) {
-        cmd->args.push_back(arg);
+        auto pos = arg.find(L":");
+        if (pos == std::wstring::npos) {
+            cmd->args.insert({ arg ,L""});
+        }
+        else
+        {
+            cmd->args.insert({ arg.substr(0,pos) ,arg.substr(pos+1) });
+        }        
     }
+}
+
+std::wstring Cmd::GetVal(const std::wstring& key) {
+    return args[key];
 }
 
 Cmd* Cmd::Get()
