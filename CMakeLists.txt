@@ -2,24 +2,13 @@ cmake_minimum_required(VERSION 3.18)
 set(PROJECT_NAME "ScreenCapture")
 project(${PROJECT_NAME})
 
-set(SKIA_INCLUDE_PATH "D:\\sdk\\skia" CACHE PATH "Skia include path,default:D:/sdk/skia" FORCE)
-set(SKIA_LIB_PATH "D:\\sdk\\skia\\out" CACHE PATH "Skia lib path,default:D:/sdk/skia/out" FORCE)
-
-if(NOT IS_DIRECTORY "${SKIA_INCLUDE_PATH}")
-    message(FATAL_ERROR "The path ${SKIA_INCLUDE_PATH} does not exist.")
-endif()
-
-if(NOT IS_DIRECTORY "${SKIA_LIB_PATH}")
-    message(FATAL_ERROR "The path ${SKIA_LIB_PATH} does not exist.")
-endif()
-
 
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
-link_directories("${SKIA_LIB_PATH}")
-include_directories("${SKIA_INCLUDE_PATH}")
+link_directories("D:\\sdk\\skia\\out")
+include_directories("D:\\sdk\\skia")
 add_executable(${PROJECT_NAME})
 add_subdirectory(src)
 add_subdirectory(res)
