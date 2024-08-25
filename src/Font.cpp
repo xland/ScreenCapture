@@ -43,9 +43,13 @@ void Font::initFontIcon(SkFontMgr* fontMgr)
     LPVOID resData = LockResource(res);
     auto fontData = SkData::MakeWithoutCopy(resData, resSize);
     icon = std::make_shared<SkFont>(fontMgr->makeFromData(fontData));
+    icon->setEdging(SkFont::Edging::kSubpixelAntiAlias);
+    icon->setSubpixel(true);
 }
 
 void Font::initFontText(SkFontMgr* fontMgr)
 {
-    text = std::make_shared<SkFont>(fontMgr->matchFamilyStyle("Microsoft YaHei", {}));
+    text = std::make_shared<SkFont>(fontMgr->matchFamilyStyle("NSimSun", {}));
+    text->setEdging(SkFont::Edging::kSubpixelAntiAlias);
+    text->setSubpixel(true);
 }

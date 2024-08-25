@@ -6,16 +6,20 @@
 #include <include/core/SkBitmap.h>
 #include "Screen.h"
 #include "CutMask.h"
-
+#include "Tool/ToolMain.h"
+#include "Tool/ToolSub.h"
 
 namespace {
 	std::shared_ptr<WinMax> winMax;
 }
 
-WinMax::WinMax():cutMask{new CutMask()}
+WinMax::WinMax():cutMask{new CutMask()},
+    toolMain{ new ToolMain() }, 
+    toolSub{ new ToolSub() }
 {
     auto screen = Screen::Get();
     screen->Prepare(this);
+    cutMask->EnumWinRects();
     initSurface();
     initWindow();
 }
@@ -42,7 +46,11 @@ void WinMax::onPaint()
     auto info = winCanvas->imageInfo();
     winCanvas->writePixels(info, &screen->screenPix.front(), rowSize, 0, 0);
     canvas->clear(0x00000000);
-    cutMask->Paint(canvas.get());
+    auto c = canvas.get();
+    cutMask->Paint(c);
+    ToolMain::Get()->OnPaint(canvas);
+    ToolSub::Get()->OnPaint(canvas);
+
     SkPixmap pixmap(info, &canvasPix.front(), rowSize);
     SkBitmap bitmap;
     bitmap.installPixels(pixmap);

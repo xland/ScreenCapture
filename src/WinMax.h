@@ -4,6 +4,8 @@
 #include "State.h"
 
 class CutMask;
+class ToolMain;
+class ToolSub;
 class WinMax:public WinBase
 {
 public:
@@ -19,4 +21,6 @@ private:
 	void onMouseMove(const int& x, const int& y) override;
 	void onMouseDrag(const int& x, const int& y) override;
 	std::shared_ptr<CutMask> cutMask;
+	std::shared_ptr<ToolMain> toolMain;
+	std::shared_ptr<ToolSub> toolSub;
 };

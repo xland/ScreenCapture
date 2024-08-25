@@ -25,7 +25,8 @@ void Lang::Init()
 		init_en_us();
 	}
 	else {
-		init_en_us(); //todo
+		init_en_us();
+		//init_zh_cn();
 	}
 }
 

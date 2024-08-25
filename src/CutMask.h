@@ -11,6 +11,7 @@ public:
 	void Paint(SkCanvas* canvas);
 	void PaintRect(SkCanvas* canvas);
 	void PaintInfo(SkCanvas* canvas);
+	void EnumWinRects();
 	bool onLeftBtnDown(const int& x, const int& y);
 	bool onLeftBtnUp(const int& x, const int& y);
 	bool onMouseMove(const int& x, const int& y);
