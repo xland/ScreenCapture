@@ -14,60 +14,66 @@ LRESULT CALLBACK WinBase::routeWinMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM
     {
         switch (msg)
         {
-        case WM_SETCURSOR:
-        {
-            return true;
-        }
-        case WM_PAINT:
-        {
-            obj->paint();
-            break;
-        }
-        case WM_LBUTTONDOWN:
-        {
-            obj->isMouseDown = true;
-            obj->onLeftBtnDown(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-            break;
-        }
-        case WM_LBUTTONUP:
-        {
-            obj->isMouseDown = false;
-            obj->onLeftBtnUp(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-            break;
-        }
-        case WM_MOUSEMOVE:
-        {
-            obj->onMouseMove(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)); 
-            break;
-        }
-        case WM_KEYDOWN:
-        {
-            switch (wParam)
+            case WM_SETCURSOR:
             {
-            case 82: { //R
-                if (GetKeyState(VK_CONTROL) < 0)
-                {
-                    return false;
-                }
-                [[fallthrough]];
+                return true;
             }
-            case 72: { //H
-                if (GetKeyState(VK_CONTROL) < 0)
-                {
-                    return false;
-                }
-                [[fallthrough]];
-            }
-            default: {
+            case WM_PAINT:
+            {
+                obj->paint();
                 break;
             }
+            case WM_LBUTTONDOWN:
+            {
+                obj->isMouseDown = true;
+                obj->onLeftBtnDown(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+                break;
             }
-            [[fallthrough]];
-        }
-        default:
-        {
-            return obj->wndProc(hWnd, msg, wParam, lParam);
-        }
+            case WM_LBUTTONUP:
+            {
+                obj->isMouseDown = false;
+                obj->onLeftBtnUp(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+                break;
+            }
+            case WM_MOUSEMOVE:
+            {
+                if (obj->isMouseDown) {
+                    obj->onMouseDrag(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+                }
+                else
+                {
+                    obj->onMouseMove(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+                }                
+                break;
+            }
+            case WM_KEYDOWN:
+            {
+                switch (wParam)
+                {
+                case 82: { //R
+                    if (GetKeyState(VK_CONTROL) < 0)
+                    {
+                        return false;
+                    }
+                    [[fallthrough]];
+                }
+                case 72: { //H
+                    if (GetKeyState(VK_CONTROL) < 0)
+                    {
+                        return false;
+                    }
+                    [[fallthrough]];
+                }
+                default: {
+                    break;
+                }
+                }
+                [[fallthrough]];
+            }
+            default:
+            {
+                break;
+            }
         }
     }
     return DefWindowProc(hWnd, msg, wParam, lParam);

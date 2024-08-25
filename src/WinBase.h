@@ -20,11 +20,11 @@ public:
     HWND hwnd;
     HWND hwndToolTip;
 protected:
-    virtual LRESULT CALLBACK wndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) = 0;
     virtual void onPaint() = 0;
-    void onLeftBtnDown(const int& x, const int& y) {};
-    void onLeftBtnUp(const int& x, const int& y) {};
-    void onMouseMove(const int& x, const int& y) {};
+    virtual void onLeftBtnDown(const int& x, const int& y) {};
+    virtual void onLeftBtnUp(const int& x, const int& y) {};
+    virtual void onMouseMove(const int& x, const int& y) {};
+    virtual void onMouseDrag(const int& x, const int& y) {};
 private:
     static LRESULT CALLBACK routeWinMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
     void paint();

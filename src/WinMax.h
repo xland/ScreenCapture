@@ -1,6 +1,9 @@
 #pragma once
 #include "WinBase.h"
+#include <memory>
+#include "State.h"
 
+class CutMask;
 class WinMax:public WinBase
 {
 public:
@@ -8,7 +11,12 @@ public:
 	~WinMax();
 	static WinMax* Get();
 	static void Init();
+	State state{State::start};
 private:
-	LRESULT CALLBACK wndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) override;
 	void onPaint() override;
+	void onLeftBtnDown(const int& x, const int& y) override;
+	void onLeftBtnUp(const int& x, const int& y) override;
+	void onMouseMove(const int& x, const int& y) override;
+	void onMouseDrag(const int& x, const int& y) override;
+	std::shared_ptr<CutMask> cutMask;
 };
