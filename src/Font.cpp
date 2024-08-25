@@ -1,5 +1,4 @@
 #include "Font.h"
-#include "include/core/SkFont.h"
 #include "include/core/SkFontStyle.h"
 #include "include/core/SkData.h"
 #include "include/ports/SkTypeface_win.h"
@@ -9,12 +8,14 @@
 #include "App.h"
 
 namespace {
-    std::shared_ptr<SkFont> fontIcon;
-    std::shared_ptr<SkFont> fontText;
+    std::shared_ptr<Font> font;
 }
 
 Font::Font()
 {
+    auto fontMgr = SkFontMgr_New_GDI();
+    initFontText(fontMgr.get());
+    initFontIcon(fontMgr.get());
 }
 
 Font::~Font()
@@ -23,9 +24,12 @@ Font::~Font()
 
 void Font::Init()
 {
-    auto fontMgr = SkFontMgr_New_GDI();
-    initFontText(fontMgr.get());
-    initFontIcon(fontMgr.get());
+    font = std::shared_ptr<Font>{ new Font() };
+}
+
+Font* Font::Get()
+{
+    return font.get();
 }
 
 void Font::initFontIcon(SkFontMgr* fontMgr)
@@ -38,10 +42,10 @@ void Font::initFontIcon(SkFontMgr* fontMgr)
     if (res == 0) return;
     LPVOID resData = LockResource(res);
     auto fontData = SkData::MakeWithoutCopy(resData, resSize);
-    fontIcon = std::make_shared<SkFont>(fontMgr->makeFromData(fontData));
+    icon = std::make_shared<SkFont>(fontMgr->makeFromData(fontData));
 }
 
 void Font::initFontText(SkFontMgr* fontMgr)
 {
-    fontText = std::make_shared<SkFont>(fontMgr->matchFamilyStyle("Microsoft YaHei", {}));
+    text = std::make_shared<SkFont>(fontMgr->matchFamilyStyle("Microsoft YaHei", {}));
 }

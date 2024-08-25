@@ -11,12 +11,14 @@ public:
     ~WinBase();
     void initWindow();
     void initSurface();
+    void refresh();
     std::vector<SkColor> winPix;
     std::vector<SkColor> canvasPix;
     std::unique_ptr<SkCanvas> winCanvas;
     std::unique_ptr<SkCanvas> canvas;
     int x, y, w, h;
-    bool isMouseDown;
+    bool isMouseDown{false};
+    float scaleFactor{ 1.0 };
     HWND hwnd;
     HWND hwndToolTip;
 protected:

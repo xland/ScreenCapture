@@ -42,10 +42,14 @@ void WinBase::initWindow()
     wcx.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
     wcx.lpszClassName = clsName.c_str();
     RegisterClassEx(&wcx);
-    this->hwnd = CreateWindowEx(0, clsName.c_str(), clsName.c_str(),
+    hwnd = CreateWindowEx(0, clsName.c_str(), clsName.c_str(),
         WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_POPUP, 
         x, y, w, h, NULL, NULL, hinstance, static_cast<LPVOID>(this));    
     ShowWindow(hwnd, SW_SHOW);
+    SetCursor(LoadCursor(nullptr, IDC_ARROW));
+
+    UINT dpi = GetDpiForWindow(hwnd);
+    scaleFactor = dpi / 96.0f;
 }
 
 void WinBase::initSurface()
@@ -57,5 +61,10 @@ void WinBase::initSurface()
     auto rowSize = w * sizeof(SkColor);
     winCanvas = SkCanvas::MakeRasterDirect(info, &winPix.front(), rowSize);
     canvas = SkCanvas::MakeRasterDirect(info, &canvasPix.front(), rowSize);
+}
+
+void WinBase::refresh()
+{
+    InvalidateRect(hwnd, nullptr, false);
 }
 

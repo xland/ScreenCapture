@@ -6,6 +6,7 @@
 #include "Tray.h"
 #include "WinMax.h"
 #include "WinPin.h"
+#include "Lang.h"
 
 namespace {
 	std::shared_ptr<App> app;
@@ -21,6 +22,7 @@ void App::Init(HINSTANCE instance, std::wstring&& cmd)
 	app = std::shared_ptr<App>{new App()};
 	app->instance = instance;
 	Cmd::Init(cmd);
+	Lang::Init();
 	Tray::Init();
 	Font::Init();
 	Screen::Init();

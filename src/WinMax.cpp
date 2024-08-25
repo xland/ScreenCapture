@@ -41,7 +41,8 @@ void WinMax::onPaint()
     auto rowSize = w * sizeof(SkColor);
     auto info = winCanvas->imageInfo();
     winCanvas->writePixels(info, &screen->screenPix.front(), rowSize, 0, 0);
-
+    canvas->clear(0x00000000);
+    cutMask->Paint(canvas.get());
     SkPixmap pixmap(info, &canvasPix.front(), rowSize);
     SkBitmap bitmap;
     bitmap.installPixels(pixmap);
