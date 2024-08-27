@@ -77,3 +77,43 @@ void WinBase::Emit(const EventType& et, const uint32_t& msg) {
     PostMessage(hwnd, WM_APP + 1, (UINT)et, msg);
 }
 
+void WinBase::onLeftBtnDown(const int& x, const int& y)
+{
+    for (size_t i = 0; i < leftBtnDownHandlers.size(); i++)
+    {
+        leftBtnDownHandlers[i](x, y);
+    }
+}
+
+void WinBase::onLeftBtnUp(const int& x, const int& y)
+{
+    for (size_t i = 0; i < leftBtnUpHandlers.size(); i++)
+    {
+        leftBtnUpHandlers[i](x, y);
+    }
+}
+
+void WinBase::onMouseMove(const int& x, const int& y)
+{
+    for (size_t i = 0; i < mouseMoveHandlers.size(); i++)
+    {
+        mouseMoveHandlers[i](x, y);
+    }
+}
+
+void WinBase::onMouseDrag(const int& x, const int& y)
+{
+    for (size_t i = 0; i < mouseDragHandlers.size(); i++)
+    {
+        mouseDragHandlers[i](x, y);
+    }
+}
+
+void WinBase::onCustomMsg(const EventType& type, const uint32_t& msg)
+{
+    for (size_t i = 0; i < customEventHandlers.size(); i++)
+    {
+        customEventHandlers[i](type,msg);
+    }
+}
+

@@ -1,4 +1,5 @@
 #include "CutMask.h"
+#include "App.h"
 #include "WinMax.h"
 #include <dwmapi.h>
 #include <include/core/SkPath.h>
@@ -7,7 +8,7 @@
 #include <format>
 #include <string>
 #include "Lang.h"
-#include "Screen.h"
+#include "TypeDefine.h"
 
 
 CutMask::CutMask()
@@ -18,15 +19,25 @@ CutMask::~CutMask()
 {
 }
 
-void CutMask::Paint(SkCanvas* canvas)
+void CutMask::Init()
+{
+    enumWinRects();
+    listenMouseMove(std::bind(&CutMask::onMouseMove, this, std::placeholders::_1, std::placeholders::_2));
+    listenMouseDrag(std::bind(&CutMask::onMouseDrag, this, std::placeholders::_1, std::placeholders::_2));
+    listenLeftBtnDown(std::bind(&CutMask::onLeftBtnDown, this, std::placeholders::_1, std::placeholders::_2));
+    listenLeftBtnUp(std::bind(&CutMask::onLeftBtnUp, this, std::placeholders::_1, std::placeholders::_2));
+    listenPaint(std::bind(&CutMask::onPaint, this, std::placeholders::_1));
+}
+
+void CutMask::onPaint(SkCanvas* canvas)
 {
     if (cutRect.isEmpty()) {
         return;
     }
-    PaintRect(canvas);
-    PaintInfo(canvas);
+    paintRect(canvas);
+    paintInfo(canvas);
 }
-void CutMask::PaintRect(SkCanvas* canvas)
+void CutMask::paintRect(SkCanvas* canvas)
 {
     SkPaint paint;
     paint.setAntiAlias(true);
@@ -40,7 +51,7 @@ void CutMask::PaintRect(SkCanvas* canvas)
     paint.setStyle(SkPaint::Style::kStroke_Style);
     canvas->drawRect(cutRect, paint);
 }
-void CutMask::PaintInfo(SkCanvas* canvas)
+void CutMask::paintInfo(SkCanvas* canvas)
 {
     auto font = Font::Get()->text.get();
     auto str = std::format(L"{}:{} {}:{} {}:{} {}:{} {}:{} {}:{}",
@@ -50,7 +61,7 @@ void CutMask::PaintInfo(SkCanvas* canvas)
         Lang::Get(Lang::Key::Bottom), cutRect.fBottom,
         Lang::Get(Lang::Key::Width), cutRect.width(),
         Lang::Get(Lang::Key::Height), cutRect.height());
-    auto win = WinMax::Get();
+    auto win = App::GetWin();
     font->setSize(12*win->scaleFactor);
     auto data = str.data();
     auto len = str.size() * 2;
@@ -74,7 +85,7 @@ void CutMask::PaintInfo(SkCanvas* canvas)
 }
 void CutMask::onLeftBtnDown(const int& x, const int& y)
 {
-    auto win = WinMax::Get();
+    auto win = App::GetWin();
     if (win->state == State::start) {
         cutRect.setLTRB(x, y, x, y);
         hoverIndex = 4;
@@ -126,7 +137,7 @@ void CutMask::onLeftBtnDown(const int& x, const int& y)
 }
 void CutMask::onLeftBtnUp(const int& x, const int& y)
 {
-    auto win = WinMax::Get();
+    auto win = App::GetWin();
     if (win->state != State::mask) {
         return;
     }
@@ -135,7 +146,7 @@ void CutMask::onLeftBtnUp(const int& x, const int& y)
 }
 void CutMask::onMouseMove(const int& x, const int& y)
 {
-    auto win = WinMax::Get();
+    auto win = App::GetWin();
     if (win->state < State::mask)
     {
         highLightWinRect(x, y);
@@ -162,7 +173,7 @@ void CutMask::onMouseDrag(const int& x, const int& y)
         start.fX = cutRect.fLeft;
         start.fY = cutRect.fTop;
     }
-    auto win = WinMax::Get();
+    auto win = App::GetWin();
     if (hoverIndex == 0) {
         cutRect.setLTRB(x, y, start.fX, start.fY);
     }
@@ -223,7 +234,7 @@ void CutMask::highLightWinRect(const int& x, const int& y)
                 cutRect.right() != winRects[i].right() ||
                 cutRect.bottom() != winRects[i].bottom()) {
                 cutRect = winRects[i];
-                auto win = WinMax::Get();
+                auto win = App::GetWin();
                 win->Refresh();
             }
             break;
@@ -307,7 +318,7 @@ void CutMask::hoverBorder(const int& x, const int& y)
         hoverIndex = -1;
     }
 }
-void CutMask::EnumWinRects()
+void CutMask::enumWinRects()
 {
     EnumWindows([](HWND hwnd, LPARAM lparam)
         {
@@ -327,12 +338,12 @@ void CutMask::EnumWinRects()
             std::wstring windowTitle(length, '\0');
             GetWindowText(hwnd, &windowTitle[0], length + 1);
             auto self = (CutMask*)lparam;
-            auto screen = Screen::Get();
-            if (rect.left < screen->x) rect.left = screen->x;
-            if (rect.right > screen->x + screen->w) rect.right = screen->x + screen->w;
-            if (rect.top < screen->y) rect.top = screen->y;
-            if (rect.bottom > screen->y + screen->h) rect.bottom = screen->y + screen->h;
-            self->winRects.push_back(SkRect::MakeLTRB(rect.left - screen->x, rect.top - screen->y, rect.right - screen->x, rect.bottom - screen->y));
+            auto win = App::GetWin();
+            if (rect.left < win->x) rect.left = win->x;
+            if (rect.right > win->x + win->w) rect.right = win->x + win->w;
+            if (rect.top < win->y) rect.top = win->y;
+            if (rect.bottom > win->y + win->h) rect.bottom = win->y + win->h;
+            self->winRects.push_back(SkRect::MakeLTRB(rect.left - win->x, rect.top - win->y, rect.right - win->x, rect.bottom - win->y));
             return TRUE;
         }, (LPARAM)this);
 }

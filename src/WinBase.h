@@ -12,8 +12,7 @@ class WinBase
 public:
     WinBase();
     ~WinBase();
-    void InitWindow();
-    void InitSurface();
+    virtual void Init()=0;
     void Refresh();
     void UpdateState(const State& state);
     void Emit(const EventType& et,const uint32_t& msg=0);
@@ -23,6 +22,7 @@ public:
     std::vector<MouseEventCB> leftBtnDownHandlers;
     std::vector<MouseEventCB> leftBtnUpHandlers;
     std::vector<CustomEventCB> customEventHandlers;
+    std::vector<PaintEventCB> paintHandlers;
 
     State state{ State::start };
     State statePre{ State::start };
@@ -36,12 +36,14 @@ public:
     HWND hwnd;
     HWND hwndToolTip;
 protected:
+    void InitWindow();
+    void InitSurface();
     virtual void onPaint() = 0;
-    virtual void onLeftBtnDown(const int& x, const int& y) {};
-    virtual void onLeftBtnUp(const int& x, const int& y) {};
-    virtual void onMouseMove(const int& x, const int& y) {};
-    virtual void onMouseDrag(const int& x, const int& y) {};
-    virtual void onCustomMsg(const EventType& type, const uint32_t& msg) {};
+    void onLeftBtnDown(const int& x, const int& y);
+    void onLeftBtnUp(const int& x, const int& y);
+    void onMouseMove(const int& x, const int& y);
+    void onMouseDrag(const int& x, const int& y);
+    void onCustomMsg(const EventType& type, const uint32_t& msg);
 private:
     static LRESULT CALLBACK routeWinMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
     void paint();

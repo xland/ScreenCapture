@@ -2,22 +2,24 @@
 #include "include/core/SkCanvas.h"
 #include "include/core/SkRect.h"
 #include <vector>
+#include "EventHandler.h"
 
-class CutMask
+class CutMask:public EventHandler
 {
 public:
 	CutMask();
 	~CutMask();
-	void Paint(SkCanvas* canvas);
-	void PaintRect(SkCanvas* canvas);
-	void PaintInfo(SkCanvas* canvas);
-	void EnumWinRects();
+	void Init();
+	void onPaint(SkCanvas* canvas);
 	void onLeftBtnDown(const int& x, const int& y);
 	void onLeftBtnUp(const int& x, const int& y);
 	void onMouseMove(const int& x, const int& y);
 	void onMouseDrag(const int& x, const int& y);
 	SkRect cutRect;
 private:
+	void paintRect(SkCanvas* canvas);
+	void paintInfo(SkCanvas* canvas);
+	void enumWinRects();
 	SkPoint start{ -10,-10 };
 	int hoverIndex{ 4 };
 	std::vector<SkRect> winRects;

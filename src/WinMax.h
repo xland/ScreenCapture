@@ -5,19 +5,17 @@
 class CutMask;
 class ToolMain;
 class ToolSub;
+class Screen;
 class WinMax:public WinBase
 {
 public:
 	WinMax();
 	~WinMax();
+	void Init() override;
 private:
 	void onPaint() override;
-	void onLeftBtnDown(const int& x, const int& y) override;
-	void onLeftBtnUp(const int& x, const int& y) override;
-	void onMouseMove(const int& x, const int& y) override;
-	void onMouseDrag(const int& x, const int& y) override;
-	void onCustomMsg(const EventType& type, const uint32_t& msg) override;
-	std::shared_ptr<CutMask> cutMask;
-	std::shared_ptr<ToolMain> toolMain;
-	std::shared_ptr<ToolSub> toolSub;
+	std::unique_ptr<Screen> screen;
+	std::unique_ptr<CutMask> cutMask;
+	std::unique_ptr<ToolMain> toolMain;
+	std::unique_ptr<ToolSub> toolSub;
 };

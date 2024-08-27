@@ -15,5 +15,5 @@ public:
     HINSTANCE instance;
 private:
     App();
-    std::shared_ptr<WinBase> win;
+    std::unique_ptr<WinBase> win;
 };

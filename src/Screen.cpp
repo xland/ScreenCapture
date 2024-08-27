@@ -3,24 +3,11 @@
 #include <memory>
 #include "WinMax.h"
 
-namespace {
-    std::shared_ptr<Screen> screen;
-}
-
-Screen* Screen::Get()
-{
-    return screen.get();
-}
-
-void Screen::Prepare(WinMax* win)
+void Screen::Init()
 {
     initPosSize();
     getScreenRects();
     shotScreen();
-    win->x = screen->x;
-    win->y = screen->y;
-    win->w = screen->w;
-    win->h = screen->h;
 }
 
 Screen::Screen()
@@ -31,10 +18,6 @@ Screen::~Screen()
 {
 }
 
-void Screen::Init()
-{
-    screen = std::shared_ptr<Screen>(new Screen());
-}
 void Screen::shotScreen()
 {
     HDC hScreen = GetDC(NULL); // 获取整个屏幕的设备上下文
@@ -53,15 +36,15 @@ void Screen::shotScreen()
 
 void Screen::getScreenRects()
 {
-    MONITORINFO info;
-    info.cbSize = sizeof(MONITORINFO);
     EnumDisplayMonitors(NULL, NULL, [](HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMonitor, LPARAM lParam)
         {
-            MONITORINFO* pInfo = reinterpret_cast<MONITORINFO*>(lParam);
-            GetMonitorInfo(hMonitor, pInfo);
-            screen->screenRects.push_back(pInfo->rcMonitor);
+            Screen* self = reinterpret_cast<Screen*>(lParam);
+            MONITORINFO info;
+            info.cbSize = sizeof(MONITORINFO);
+            GetMonitorInfo(hMonitor, &info);
+            self->screenRects.push_back(info.rcMonitor);
             return TRUE;
-        }, reinterpret_cast<LPARAM>(&info));
+        }, reinterpret_cast<LPARAM>(this));
 }
 
 void Screen::initPosSize()

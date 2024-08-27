@@ -25,8 +25,8 @@ void App::Init(HINSTANCE instance, std::wstring&& cmd)
 	Lang::Init();
 	Tray::Init();
 	Font::Init();
-	Screen::Init();
-	app->win = std::make_shared<WinMax>();
+	app->win = std::make_unique<WinMax>();
+	app->win->Init();
 }
 
 App* App::Get()

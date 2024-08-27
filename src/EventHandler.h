@@ -8,11 +8,12 @@ public:
 	EventHandler();
 	~EventHandler();
 protected:
-	void onMouseMove(const MouseEventCB& func);
-	void onMouseDrag(const MouseEventCB& func);
-	void onLeftBtnDown(const MouseEventCB& func);
-	void onLeftBtnUp(const MouseEventCB& func);
-	void onCustomMsg(const CustomEventCB& func);
+	void listenMouseMove(const MouseEventCB&& func);
+	void listenMouseDrag(const MouseEventCB&& func);
+	void listenLeftBtnDown(const MouseEventCB&& func);
+	void listenLeftBtnUp(const MouseEventCB&& func);
+	void listenCustomMsg(const CustomEventCB&& func);
+	void listenPaint(const PaintEventCB&& func);
 private:
 
 };

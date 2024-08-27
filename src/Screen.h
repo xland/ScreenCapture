@@ -7,16 +7,13 @@ class WinMax;
 class Screen
 {
 public:
+	Screen();
 	~Screen();
-	static void Init();
-	static Screen* Get();
-	void Prepare(WinMax* win);
-
+	void Init();
 	std::vector<SkColor> screenPix;
 	std::vector<RECT> screenRects;
-	int x, y, w, h;
+	int x{0}, y{ 0 }, w{ 0 }, h{ 0 };
 private:
-	Screen();
 	void shotScreen();
 	void getScreenRects();
 	void initPosSize();
