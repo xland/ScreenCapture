@@ -9,7 +9,7 @@ public:
     ~ToolSub();
     static void Init();
     static ToolSub* Get();
-    bool OnMouseDown(const int& x, const int& y) override;
+    void onLeftBtnDown(const int& x, const int& y) override;
     void InitBtns(int mainToolSelectedIndex);
     bool Paint(SkCanvas* canvas) override;
     bool GetFill();

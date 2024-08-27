@@ -21,6 +21,7 @@ public:
 		BtnSave,
 		BtnCopy,
 		BtnClose,
+
 		BtnTool,
 
 		Left,

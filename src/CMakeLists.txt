@@ -23,7 +23,7 @@ target_sources(${PROJECT_NAME} PRIVATE
 "CutMask.cpp" 
 "Lang.h" 
 "Lang.cpp"
-"State.h" 
+ 
 "Tool/ToolBase.h" 
 "Tool/ToolBase.cpp" 
 "Tool/ToolMain.h" 
@@ -31,4 +31,4 @@ target_sources(${PROJECT_NAME} PRIVATE
 "Tool/ToolSub.h" 
 "Tool/ToolSub.cpp" 
 "Tool/ToolBtn.h" 
-"Tool/ToolBtn.cpp")
+"Tool/ToolBtn.cpp"    "EventHandler.h" "EventHandler.cpp" "TypeDefine.h")

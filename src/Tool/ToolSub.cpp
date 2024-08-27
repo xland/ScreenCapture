@@ -21,22 +21,22 @@ ToolSub::~ToolSub()
 void ToolSub::addStrokeWidthBtns(int index)
 {
     auto temp = {
-        std::make_shared<ToolBtn>(Icon::dot, L"ÏßÌõÏ¸", false, true, 22, SK_ColorTRANSPARENT, true),
-        std::make_shared<ToolBtn>(Icon::dot, L"ÏßÌõ´Ö", false, true, 52),
-        std::make_shared<ToolBtn>(Icon::dot, L"ÏßÌõ´Ö+", false, true, 82)
+        std::make_shared<ToolBtn>(Icon::dot, L"çº¿æ¡ç»†", false, true, 22, SK_ColorTRANSPARENT, true),
+        std::make_shared<ToolBtn>(Icon::dot, L"çº¿æ¡ç²—", false, true, 52),
+        std::make_shared<ToolBtn>(Icon::dot, L"çº¿æ¡ç²—+", false, true, 82)
     };
     Btns.insert(Btns.begin() + index, temp);
 }
 void ToolSub::addColorBtns()
 {
-    Btns.push_back(std::make_shared<ToolBtn>(Icon::check, L"ºì", false, true, 22, SkColorSetARGB(255, 207, 19, 34), true));
-    Btns.push_back(std::make_shared<ToolBtn>(Icon::uncheck, L"»Æ", false, true, 22, SkColorSetARGB(255, 212, 136, 6)));
-    Btns.push_back(std::make_shared<ToolBtn>(Icon::uncheck, L"ÂÌ", false, true, 22, SkColorSetARGB(255, 56, 158, 13)));
-    Btns.push_back(std::make_shared<ToolBtn>(Icon::uncheck, L"Çà", false, true, 22, SkColorSetARGB(255, 19, 194, 194)));
-    Btns.push_back(std::make_shared<ToolBtn>(Icon::uncheck, L"À¶", false, true, 22, SkColorSetARGB(255, 9, 88, 217)));
-    Btns.push_back(std::make_shared<ToolBtn>(Icon::uncheck, L"×Ï", false, true, 22, SkColorSetARGB(255, 114, 46, 209)));
-    Btns.push_back(std::make_shared<ToolBtn>(Icon::uncheck, L"·Û", false, true, 22, SkColorSetARGB(255, 235, 47, 150)));
-    Btns.push_back(std::make_shared<ToolBtn>(Icon::uncheck, L"ºÚ", false, true, 22, SkColorSetARGB(255, 0, 0, 0)));
+    Btns.push_back(std::make_shared<ToolBtn>(Icon::check, L"çº¢", false, true, 22, SkColorSetARGB(255, 207, 19, 34), true));
+    Btns.push_back(std::make_shared<ToolBtn>(Icon::uncheck, L"é»„", false, true, 22, SkColorSetARGB(255, 212, 136, 6)));
+    Btns.push_back(std::make_shared<ToolBtn>(Icon::uncheck, L"ç»¿", false, true, 22, SkColorSetARGB(255, 56, 158, 13)));
+    Btns.push_back(std::make_shared<ToolBtn>(Icon::uncheck, L"é’", false, true, 22, SkColorSetARGB(255, 19, 194, 194)));
+    Btns.push_back(std::make_shared<ToolBtn>(Icon::uncheck, L"è“", false, true, 22, SkColorSetARGB(255, 9, 88, 217)));
+    Btns.push_back(std::make_shared<ToolBtn>(Icon::uncheck, L"ç´«", false, true, 22, SkColorSetARGB(255, 114, 46, 209)));
+    Btns.push_back(std::make_shared<ToolBtn>(Icon::uncheck, L"ç²‰", false, true, 22, SkColorSetARGB(255, 235, 47, 150)));
+    Btns.push_back(std::make_shared<ToolBtn>(Icon::uncheck, L"é»‘", false, true, 22, SkColorSetARGB(255, 0, 0, 0)));
 }
 void ToolSub::Init()
 {
@@ -46,7 +46,7 @@ ToolSub* ToolSub::Get()
 {
     return toolSub;
 }
-bool ToolSub::OnMouseDown(const int& x, const int& y)
+bool ToolSub::onLeftBtnDown(const int& x, const int& y)
 {
     isMouseDown = true;
     auto win = App::GetWin();
@@ -118,24 +118,24 @@ void ToolSub::InitBtns(int mainToolSelectedIndex)
     switch (mainToolSelectedIndex)
     {
     case 0: {
-        Btns.push_back(std::make_shared<ToolBtn>(Icon::rectFill, L"¾ØĞÎÌî³ä"));
+        Btns.push_back(std::make_shared<ToolBtn>(Icon::rectFill, L"çŸ©å½¢å¡«å……"));
         addStrokeWidthBtns(1);
         addColorBtns();
         break;
     }
     case 1: {
-        Btns.push_back(std::make_shared<ToolBtn>(Icon::ellipseFill, L"ÍÖÔ²Ìî³ä"));
+        Btns.push_back(std::make_shared<ToolBtn>(Icon::ellipseFill, L"æ¤­åœ†å¡«å……"));
         addStrokeWidthBtns(1);
         addColorBtns();
         break;
     }
     case 2: {
-        Btns.push_back(std::make_shared<ToolBtn>(Icon::arrowFill, L"¼ıÍ·Ìî³ä", false, true, 22, SK_ColorTRANSPARENT, true));
+        Btns.push_back(std::make_shared<ToolBtn>(Icon::arrowFill, L"ç®­å¤´å¡«å……", false, true, 22, SK_ColorTRANSPARENT, true));
         addColorBtns();
         break;
     }
     case 3: {
-        Btns.push_back(std::make_shared<ToolBtn>(Icon::numberFill, L"±êºÅÌî³ä", false, true, 22, SK_ColorTRANSPARENT, true));
+        Btns.push_back(std::make_shared<ToolBtn>(Icon::numberFill, L"æ ‡å·å¡«å……", false, true, 22, SK_ColorTRANSPARENT, true));
         addColorBtns();
         break;
     }
@@ -145,7 +145,7 @@ void ToolSub::InitBtns(int mainToolSelectedIndex)
         break;
     }
     case 5: {
-        Btns.push_back(std::make_shared<ToolBtn>(Icon::transparent, L"ÊÇ·ñÍ¸Ã÷", false, true, 22, SK_ColorTRANSPARENT, true));
+        Btns.push_back(std::make_shared<ToolBtn>(Icon::transparent, L"æ˜¯å¦é€æ˜", false, true, 22, SK_ColorTRANSPARENT, true));
         addStrokeWidthBtns(1);
         addColorBtns();
         break;
@@ -155,12 +155,12 @@ void ToolSub::InitBtns(int mainToolSelectedIndex)
         break;
     }
     case 7: {
-        Btns.push_back(std::make_shared<ToolBtn>(Icon::rectFill, L"¾ØĞÎÂíÈü¿Ë"));
+        Btns.push_back(std::make_shared<ToolBtn>(Icon::rectFill, L"çŸ©å½¢é©¬èµ›å…‹"));
         addStrokeWidthBtns(1);
         break;
     }
     case 8: {
-        Btns.push_back(std::make_shared<ToolBtn>(Icon::rectFill, L"¾ØĞÎÏğÆ¤²Á"));
+        Btns.push_back(std::make_shared<ToolBtn>(Icon::rectFill, L"çŸ©å½¢æ©¡çš®æ“¦"));
         addStrokeWidthBtns(1);
         break;
     }
@@ -169,7 +169,7 @@ void ToolSub::InitBtns(int mainToolSelectedIndex)
     }
     setRect();
 }
-bool ToolSub::OnPaint(SkCanvas* canvas)
+bool ToolSub::Paint(SkCanvas* canvas)
 {
     auto win = App::GetWin();
     if (win->state < State::tool)
@@ -209,13 +209,13 @@ void ToolSub::setRect()
     }
     ToolRect.setXYWH(left, top, width, ToolBtn::Height);
     p.reset();
-    p.moveTo(mainToolBtnCenterPointX, top - MarginTop / 3 * 2);  // ¶¥µã
-    p.lineTo(mainToolBtnCenterPointX - MarginTop, top);  // ×óÏÂ½Ç
+    p.moveTo(mainToolBtnCenterPointX, top - MarginTop / 3 * 2);  // é¡¶ç‚¹
+    p.lineTo(mainToolBtnCenterPointX - MarginTop, top);  // å·¦ä¸‹è§’
     p.lineTo(left, top);
     p.lineTo(left, top + ToolBtn::Height);
     p.lineTo(left + width, top + ToolBtn::Height);
     p.lineTo(left + width, top);
-    p.lineTo(mainToolBtnCenterPointX + MarginTop, top);  // ÓÒÏÂ½Ç
+    p.lineTo(mainToolBtnCenterPointX + MarginTop, top);  // å³ä¸‹è§’
     p.close();
 }
 bool ToolSub::GetFill()

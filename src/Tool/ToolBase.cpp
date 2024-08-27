@@ -2,9 +2,7 @@
 #include <windowsx.h>
 #include <commctrl.h>
 #include "ToolBase.h"
-#include "Cursor.h"
-#include "App.h"
-#include "WindowBase.h"
+#include "../WinMax.h"
 
 ToolBase::ToolBase() :IndexHovered{ -1 }, IndexSelected{ -1 }
 {
@@ -14,9 +12,9 @@ ToolBase::~ToolBase()
 {
 }
 
-bool ToolBase::OnMouseMove(const int& x, const int& y)
+bool ToolBase::onMouseMove(const int& x, const int& y)
 {
-    auto win = App::GetWin();
+    auto win = WinMax::Get();
     if (win->state < State::tool)
     {
         return false;
@@ -31,7 +29,7 @@ bool ToolBase::OnMouseMove(const int& x, const int& y)
         }
         return false;
     }
-    Cursor::Hand();
+    SetCursor(LoadCursor(nullptr, IDC_HAND));
     int index = (x - ToolRect.left()) / ToolBtn::Width;
     if (index != IndexHovered)
     {
@@ -45,7 +43,7 @@ bool ToolBase::OnMouseMove(const int& x, const int& y)
     return true;
 }
 
-bool ToolBase::OnMouseUp(const int& x, const int& y)
+bool ToolBase::onLeftBtnUp(const int& x, const int& y)
 {
     isMouseDown = false;
     if (ToolRect.contains(x, y)) {
@@ -54,7 +52,7 @@ bool ToolBase::OnMouseUp(const int& x, const int& y)
     return false;
 }
 
-bool ToolBase::OnMouseDrag(const int& x, const int& y)
+bool ToolBase::onMouseDrag(const int& x, const int& y)
 {
     if (isMouseDown) {
         return true;

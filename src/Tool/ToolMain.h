@@ -10,17 +10,17 @@ class ToolMain : public ToolBase
 public:
     ToolMain();
     ~ToolMain();
-    static void Init();
-    static ToolMain* Get();
-    bool OnMouseDown(const int& x, const int& y) override;
+    void onLeftBtnDown(const int& x, const int& y) override;
+    void onCustomMsg(const EventType& type, const uint32_t& msg) override;
     void SetPositionByCutMask();
     void SetPosition(const float& x, const float& y);
-    bool Paint(SkCanvas* canvas) override;
+    void Paint(SkCanvas* canvas) override;
     void SetUndoDisable(bool flag);
     void SetRedoDisable(bool flag);
     void InitBtns();
     void UnSelectAndHoverAll();
 private:
+    void InitBtns(std::vector<int> btnIds);
     /// <summary>
     /// 0主工具条在选中或取消选中某个按钮时不需要改变位置
     /// 1选中某个按钮时，位置上移

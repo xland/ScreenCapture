@@ -26,7 +26,7 @@ void WinBase::paint()
     EndPaint(hwnd, &ps);
 }
 
-void WinBase::initWindow()
+void WinBase::InitWindow()
 {
     static int num = 0;
     std::wstring clsName = std::format(L"ScreenCapture{}", num++);
@@ -52,7 +52,7 @@ void WinBase::initWindow()
     scaleFactor = dpi / 96.0f;
 }
 
-void WinBase::initSurface()
+void WinBase::InitSurface()
 {
     auto dataSize = h * w;
     winPix.resize(dataSize);
@@ -63,8 +63,17 @@ void WinBase::initSurface()
     canvas = SkCanvas::MakeRasterDirect(info, &canvasPix.front(), rowSize);
 }
 
-void WinBase::refresh()
+void WinBase::Refresh()
 {
     InvalidateRect(hwnd, nullptr, false);
+}
+
+void WinBase::UpdateState(const State& _state)
+{
+    statePre = state;
+    state = _state;
+}
+void WinBase::Emit(const EventType& et, const uint32_t& msg) {
+    PostMessage(hwnd, WM_APP + 1, (UINT)et, msg);
 }
 

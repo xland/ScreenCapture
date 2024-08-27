@@ -46,6 +46,10 @@ LRESULT CALLBACK WinBase::routeWinMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM
                 }                
                 break;
             }
+            case (WM_APP + 1): {
+                obj->onCustomMsg((EventType)wParam,(uint32_t)lParam);
+                break;
+            }
             case WM_KEYDOWN:
             {
                 switch (wParam)

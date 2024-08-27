@@ -20,6 +20,10 @@ ToolBtn::ToolBtn(const char* icon, std::wstring&& tip, bool isDisable, bool sele
     id += 1;
 }
 
+ToolBtn::ToolBtn(const int& id)
+{
+}
+
 ToolBtn::~ToolBtn()
 {
     SendMessage(App::GetWin()->hwndToolTip, TTM_DELTOOL, 0, (LPARAM)(LPTOOLINFO)&tipInfo);

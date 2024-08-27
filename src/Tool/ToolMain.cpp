@@ -1,22 +1,18 @@
 #include "ToolMain.h"
 #include <format>
 #include <string>
+#include <ranges>
+#include <vector>
 #include "include/core/SkTextBlob.h"
-#include "State.h"
-#include "CutMask.h"
-#include "App.h"
-#include "Icon.h"
+#include "../CutMask.h"
+#include "../WinMax.h"
 #include "ToolSub.h"
-#include "Recorder.h"
-#include "WindowPin.h"
-#include "Lang.h"
-
-ToolMain* toolMain;
-
+#include "../Lang.h"
+#include "../Screen.h"
+#include "../Cmd.h"
 
 ToolMain::~ToolMain()
 {
-    toolMain = nullptr;
 }
 
 ToolMain::ToolMain()
@@ -28,34 +24,34 @@ void ToolMain::SetPositionByCutMask()
     auto mask = CutMask::Get();
     float left{ mask->CutRect.fRight - Btns.size() * ToolBtn::Width };
     float top{ mask->CutRect.fBottom + MarginTop };
-    //Èý¸ö·ìÏ¶¸ß¶ÈºÍÁ½¸ö¹¤¾ßÌõ¸ß¶È
+    //ä¸‰ä¸ªç¼éš™é«˜åº¦å’Œä¸¤ä¸ªå·¥å…·æ¡é«˜åº¦
     auto heightSpan = MarginTop * 3 + ToolBtn::Height * 2;
     auto screen = App::GetScreen(mask->CutRect.fRight, mask->CutRect.fBottom + heightSpan);
-    if (screen) { //¹¤¾ßÌõÓÒÏÂ½ÇÔÚÆÁÄ»ÄÚ
+    if (screen) { //å·¥å…·æ¡å³ä¸‹è§’åœ¨å±å¹•å†…
         topFlag = false;
-        //¹¤¾ßÌõ×óÉÏ½Ç²»ÔÚÆÁÄ»ÄÚ
+        //å·¥å…·æ¡å·¦ä¸Šè§’ä¸åœ¨å±å¹•å†…
         if (!App::GetScreen(left, top)) {
             left = screen->fLeft;
         }
     }
-    else { //¹¤¾ßÌõÓÒÏÂ½Ç²»ÔÚÆÁÄ»ÄÚ
+    else { //å·¥å…·æ¡å³ä¸‹è§’ä¸åœ¨å±å¹•å†…
         topFlag = true;
-        //ÅÐ¶ÏÆÁÄ»¶¥²¿ÊÇ·ñÓÐ×ã¹»µÄ¿Õ¼ä£¬¹¤¾ßÌõÊÇ·ñ¿ÉÒÔÔÚCutRectÓÒÉÏ½Ç
+        //åˆ¤æ–­å±å¹•é¡¶éƒ¨æ˜¯å¦æœ‰è¶³å¤Ÿçš„ç©ºé—´ï¼Œå·¥å…·æ¡æ˜¯å¦å¯ä»¥åœ¨CutRectå³ä¸Šè§’
         screen = App::GetScreen(mask->CutRect.fRight, mask->CutRect.fTop - heightSpan);
-        if (screen) { //¹¤¾ßÌõÓÒÉÏ½ÇÔÚÆÁÄ»ÄÚ  
-            if (App::GetScreen(left, mask->CutRect.fTop - heightSpan)) { //¹¤¾ßÌõ×óÉÏ½ÇÔÚÆÁÄ»ÄÚ
+        if (screen) { //å·¥å…·æ¡å³ä¸Šè§’åœ¨å±å¹•å†…  
+            if (App::GetScreen(left, mask->CutRect.fTop - heightSpan)) { //å·¥å…·æ¡å·¦ä¸Šè§’åœ¨å±å¹•å†…
                 top = mask->CutRect.fTop - MarginTop - ToolBtn::Height;
             }
-            else { //¹¤¾ßÌõ×óÉÏ½Ç²»ÔÚÆÁÄ»ÖÐ
+            else { //å·¥å…·æ¡å·¦ä¸Šè§’ä¸åœ¨å±å¹•ä¸­
                 left = screen->fLeft;
                 top = mask->CutRect.fTop - MarginTop - ToolBtn::Height;
             }
         }
-        else { //¹¤¾ßÌõÓÒÉÏ½Ç²»ÔÚÆÁÄ»ÄÚ£¬´ËÊ±ÆÁÄ»¶¥²¿ºÍÆÁÄ»µ×²¿¶¼Ã»ÓÐ×ã¹»µÄ¿Õ¼ä£¬¹¤¾ßÌõÖ»ÄÜÏÔÊ¾ÔÚ½ØÍ¼ÇøÓòÄÚ            
-            if (App::GetScreen(left, mask->CutRect.fBottom - heightSpan)) { //¹¤¾ßÌõ×óÉÏ½ÇÔÚÆÁÄ»ÄÚ
+        else { //å·¥å…·æ¡å³ä¸Šè§’ä¸åœ¨å±å¹•å†…ï¼Œæ­¤æ—¶å±å¹•é¡¶éƒ¨å’Œå±å¹•åº•éƒ¨éƒ½æ²¡æœ‰è¶³å¤Ÿçš„ç©ºé—´ï¼Œå·¥å…·æ¡åªèƒ½æ˜¾ç¤ºåœ¨æˆªå›¾åŒºåŸŸå†…            
+            if (App::GetScreen(left, mask->CutRect.fBottom - heightSpan)) { //å·¥å…·æ¡å·¦ä¸Šè§’åœ¨å±å¹•å†…
                 top = mask->CutRect.fBottom - MarginTop - ToolBtn::Height;
             }
-            else { //¹¤¾ßÌõ×óÉÏ½Ç²»ÔÚÆÁÄ»ÖÐ£¬µÃµ½½ØÍ¼ÇøÓòËùÔÚÆÁÄ»
+            else { //å·¥å…·æ¡å·¦ä¸Šè§’ä¸åœ¨å±å¹•ä¸­ï¼Œå¾—åˆ°æˆªå›¾åŒºåŸŸæ‰€åœ¨å±å¹•
                 screen = App::GetScreen(mask->CutRect.fRight, mask->CutRect.fBottom);
                 if (screen) {
                     left = screen->fLeft;
@@ -70,16 +66,7 @@ void ToolMain::SetPosition(const float& x, const float& y)
 {
     ToolRect.setXYWH(x, y, Btns.size() * ToolBtn::Width, ToolBtn::Height);
 }
-void ToolMain::Init()
-{
-    toolMain = new ToolMain();
-}
-ToolMain* ToolMain::Get()
-{
-    return toolMain;
-}
-
-bool ToolMain::OnMouseDown(const int& x, const int& y)
+void ToolMain::onLeftBtnDown(const int& x, const int& y)
 {
     isMouseDown = true;
     auto win = App::GetWin();
@@ -92,7 +79,7 @@ bool ToolMain::OnMouseDown(const int& x, const int& y)
         return false;
     }
     Recorder::Get()->ProcessText();
-    win->IsMouseDown = false; //²»È»ÔÚÖ÷¹¤¾ßÀ¸ÉÏÍÏ×§µÄÊ±ºò£¬»á¸Ä±äCutBox£¬¶øÇÒ¸Ä±äÍêCutBoxºó²»»áÔÚÏÔÊ¾¹¤¾ßÀ¸
+    win->IsMouseDown = false; //ä¸ç„¶åœ¨ä¸»å·¥å…·æ ä¸Šæ‹–æ‹½çš„æ—¶å€™ï¼Œä¼šæ”¹å˜CutBoxï¼Œè€Œä¸”æ”¹å˜å®ŒCutBoxåŽä¸ä¼šåœ¨æ˜¾ç¤ºå·¥å…·æ 
     if (IndexHovered == IndexSelected)
     {
         Btns[IndexHovered]->IsSelected = false;
@@ -126,11 +113,11 @@ bool ToolMain::OnMouseDown(const int& x, const int& y)
             }
             switch (IndexHovered)
             {
-            case 9: { //ÉÏÒ»²½
+            case 9: { //ä¸Šä¸€æ­¥
                 Recorder::Get()->Undo();
                 break;
             }
-            case 10: { //ÏÂÒ»²½
+            case 10: { //ä¸‹ä¸€æ­¥
                 Recorder::Get()->Redo();
                 break;
             }
@@ -159,12 +146,19 @@ bool ToolMain::OnMouseDown(const int& x, const int& y)
     }
     return true;
 }
-bool ToolMain::OnPaint(SkCanvas* canvas)
+void ToolMain::onCustomMsg(const EventType& type, const uint32_t& msg)
 {
-    auto win = App::GetWin();
+    if (type != EventType::maskReady) {
+        return;
+    }
+
+}
+void ToolMain::Paint(SkCanvas* canvas)
+{
+    auto win = WinMax::Get();
     if (win->state < State::tool)
     {
-        return false;
+        return;
     }
     SkPaint paint;
     paint.setAntiAlias(true);
@@ -187,7 +181,7 @@ bool ToolMain::OnPaint(SkCanvas* canvas)
     canvas->drawLine(SkPoint::Make(x, y + 12), SkPoint::Make(x, ToolRect.bottom() - 12), paint);
     paint.setColor(SkColorSetARGB(255, 22, 118, 255));
     canvas->drawRect(ToolRect, paint);
-    return false;
+    return;
 }
 
 void ToolMain::SetUndoDisable(bool flag)
@@ -202,22 +196,24 @@ void ToolMain::SetRedoDisable(bool flag)
 
 void ToolMain::InitBtns()
 {
-    Btns.push_back(std::make_shared<ToolBtn>(Icon::rect, Lang::Get(Lang::Key::BtnRect)));
-    Btns.push_back(std::make_shared<ToolBtn>(Icon::ellipse, Lang::Get(Lang::Key::BtnEllipse)));
-    Btns.push_back(std::make_shared<ToolBtn>(Icon::arrow, Lang::Get(Lang::Key::BtnArrow)));
-    Btns.push_back(std::make_shared<ToolBtn>(Icon::number, Lang::Get(Lang::Key::BtnNumber)));
-    Btns.push_back(std::make_shared<ToolBtn>(Icon::pen, Lang::Get(Lang::Key::BtnPen)));
-    Btns.push_back(std::make_shared<ToolBtn>(Icon::line, Lang::Get(Lang::Key::BtnLine)));
-    Btns.push_back(std::make_shared<ToolBtn>(Icon::text, Lang::Get(Lang::Key::BtnText)));
-    //Btns.push_back(std::make_shared<ToolBtn>(Icon::image, L"Í¼Æ¬"));
-    Btns.push_back(std::make_shared<ToolBtn>(Icon::mosaic, Lang::Get(Lang::Key::BtnMosaic)));
-    Btns.push_back(std::make_shared<ToolBtn>(Icon::eraser, Lang::Get(Lang::Key::BtnEraser)));
-    Btns.push_back(std::make_shared<ToolBtn>(Icon::undo, Lang::Get(Lang::Key::BtnUndo), true, false)); //9
-    Btns.push_back(std::make_shared<ToolBtn>(Icon::redo, Lang::Get(Lang::Key::BtnRedo), true, false)); //10
-    Btns.push_back(std::make_shared<ToolBtn>(Icon::pin, Lang::Get(Lang::Key::BtnPin), false, false));//11
-    Btns.push_back(std::make_shared<ToolBtn>(Icon::save, Lang::Get(Lang::Key::BtnSave), false, false));//12
-    Btns.push_back(std::make_shared<ToolBtn>(Icon::copy, Lang::Get(Lang::Key::BtnCopy), false, false));//13
-    Btns.push_back(std::make_shared<ToolBtn>(Icon::close, Lang::Get(Lang::Key::BtnClose), false, false));//14
+    auto cmd = Cmd::Get();
+    auto val = cmd->GetVal(L"tool");
+    if (val.empty()) {
+        InitBtns({ 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14 });
+        for (size_t i = 0; i < 14; i++)
+        {
+            Btns.push_back(ToolBtn(i));
+        }
+    }
+    else {
+        auto splitView = std::ranges::views::split(val, ',');
+        std::vector<int> result;
+        for (auto part : splitView) {
+            std::wstring_view partStr(part.begin(), part.end());
+            auto i = std::stoi(std::wstring(partStr));
+            Btns.push_back(ToolBtn(i));
+        }
+    }
 }
 
 void ToolMain::UnSelectAndHoverAll()
@@ -228,6 +224,31 @@ void ToolMain::UnSelectAndHoverAll()
         btn->IsHover = false;
         btn->IsSelected = false;
     }
+}
+
+void ToolMain::InitBtns(std::vector<int> btnIds)
+{
+    for (size_t i = 0; i < btnIds.size(); i++)
+    {
+        Btns.push_back(ToolBtn(btnIds[i]));
+    }
+
+    Btns.push_back(std::make_shared<ToolBtn>(Icon::rect, Lang::Get(Lang::Key::BtnRect)));
+    Btns.push_back(std::make_shared<ToolBtn>(Icon::ellipse, Lang::Get(Lang::Key::BtnEllipse)));
+    Btns.push_back(std::make_shared<ToolBtn>(Icon::arrow, Lang::Get(Lang::Key::BtnArrow)));
+    Btns.push_back(std::make_shared<ToolBtn>(Icon::number, Lang::Get(Lang::Key::BtnNumber)));
+    Btns.push_back(std::make_shared<ToolBtn>(Icon::pen, Lang::Get(Lang::Key::BtnPen)));
+    Btns.push_back(std::make_shared<ToolBtn>(Icon::line, Lang::Get(Lang::Key::BtnLine)));
+    Btns.push_back(std::make_shared<ToolBtn>(Icon::text, Lang::Get(Lang::Key::BtnText)));
+    //Btns.push_back(std::make_shared<ToolBtn>(Icon::image, L"å›¾ç‰‡"));
+    Btns.push_back(std::make_shared<ToolBtn>(Icon::mosaic, Lang::Get(Lang::Key::BtnMosaic)));
+    Btns.push_back(std::make_shared<ToolBtn>(Icon::eraser, Lang::Get(Lang::Key::BtnEraser)));
+    Btns.push_back(std::make_shared<ToolBtn>(Icon::undo, Lang::Get(Lang::Key::BtnUndo), true, false)); //9
+    Btns.push_back(std::make_shared<ToolBtn>(Icon::redo, Lang::Get(Lang::Key::BtnRedo), true, false)); //10
+    Btns.push_back(std::make_shared<ToolBtn>(Icon::pin, Lang::Get(Lang::Key::BtnPin), false, false));//11
+    Btns.push_back(std::make_shared<ToolBtn>(Icon::save, Lang::Get(Lang::Key::BtnSave), false, false));//12
+    Btns.push_back(std::make_shared<ToolBtn>(Icon::copy, Lang::Get(Lang::Key::BtnCopy), false, false));//13
+    Btns.push_back(std::make_shared<ToolBtn>(Icon::close, Lang::Get(Lang::Key::BtnClose), false, false));//14
 }
 
 

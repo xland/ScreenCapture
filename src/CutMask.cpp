@@ -72,15 +72,14 @@ void CutMask::PaintInfo(SkCanvas* canvas)
     auto y = rectInfo.centerY() - rectTemp.height() / 2 - rectTemp.fTop;
     canvas->drawSimpleText(data, len, SkTextEncoding::kUTF16, x, y+1, *font, paint);
 }
-bool CutMask::onLeftBtnDown(const int& x, const int& y)
+void CutMask::onLeftBtnDown(const int& x, const int& y)
 {
     auto win = WinMax::Get();
     if (win->state == State::start) {
         cutRect.setLTRB(x, y, x, y);
         hoverIndex = 4;
-        win->state = State::mask;
-        win->canvas->clear(SK_ColorTRANSPARENT);
-        return true;
+        win->UpdateState(State::mask);
+        return;
     }
     if (hoverIndex == 0) {
         cutRect.setLTRB(x, y, cutRect.fRight, cutRect.fBottom);
@@ -116,55 +115,54 @@ bool CutMask::onLeftBtnDown(const int& x, const int& y)
     }
     else if (hoverIndex == 8) {
         start.set(x - cutRect.fLeft, y - cutRect.fTop);
-        return true;
+        return;
     }
     else {
-        return false;
+        return;
     }
-    win->state = State::mask;
-    win->refresh();
-    return true;
+    win->UpdateState(State::mask);
+    win->Refresh();
+    return;
 }
-bool CutMask::onLeftBtnUp(const int& x, const int& y)
+void CutMask::onLeftBtnUp(const int& x, const int& y)
 {
     auto win = WinMax::Get();
     if (win->state != State::mask) {
-        return false;
+        return;
     }
-    win->state = State::tool;
-    return true;
+    win->UpdateState(State::tool);
+    return;
 }
-bool CutMask::onMouseMove(const int& x, const int& y)
+void CutMask::onMouseMove(const int& x, const int& y)
 {
     auto win = WinMax::Get();
     if (win->state < State::mask)
     {
         highLightWinRect(x, y);
-        return true;
+        return;
     }
     if (win->state == State::tool) {
         hoverMask(x, y);
-        return true;
+        return;
     }
     else {
         hoverBorder(x, y);
         if (hoverIndex != -1) {
-            return true;
+            return;
         }
     }
-    return false;
+    return;
 }
-bool CutMask::onMouseDrag(const int& x, const int& y)
+void CutMask::onMouseDrag(const int& x, const int& y)
 {
     if (hoverIndex < 0) {
-        return false;
+        return;
     }
     if (start.fX == -10 && start.fY == -10) {
         start.fX = cutRect.fLeft;
         start.fY = cutRect.fTop;
     }
     auto win = WinMax::Get();
-    win->state = State::mask;
     if (hoverIndex == 0) {
         cutRect.setLTRB(x, y, start.fX, start.fY);
     }
@@ -206,14 +204,14 @@ bool CutMask::onMouseDrag(const int& x, const int& y)
         }
         cutRect.setLTRB(left, top, right, bottom);
         start.set(x - cutRect.fLeft, y - cutRect.fTop);
-        win->refresh();
-        return true;
+        win->Refresh();
+        return;
     }
     cutRect.sort();
     if (!(cutRect.width() <= 1 && cutRect.height() <= 1)) {
-        win->refresh();
+        win->Refresh();
     }
-    return true;
+    return;
 }
 void CutMask::highLightWinRect(const int& x, const int& y)
 {
@@ -226,7 +224,7 @@ void CutMask::highLightWinRect(const int& x, const int& y)
                 cutRect.bottom() != winRects[i].bottom()) {
                 cutRect = winRects[i];
                 auto win = WinMax::Get();
-                win->refresh();
+                win->Refresh();
             }
             break;
         }
