@@ -7,11 +7,11 @@ class ToolSub : public ToolBase
 public:
     ToolSub();
     ~ToolSub();
-    static void Init();
+    void Init() override;
     static ToolSub* Get();
-    void onLeftBtnDown(const int& x, const int& y) override;
+    void OnLeftBtnDown(const int& x, const int& y) override;
+    void OnPaint(SkCanvas* canvas) override;
     void InitBtns(int mainToolSelectedIndex);
-    bool Paint(SkCanvas* canvas) override;
     bool GetFill();
     int GetStroke(int index = 1);
     SkColor GetColor();

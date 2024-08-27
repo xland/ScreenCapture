@@ -6,6 +6,8 @@
 #include "include/core/SkImageInfo.h"
 #include "include/core/SkCanvas.h"
 #include "include/core/SkSurface.h"
+#include "Tool/ToolMain.h"
+#include "Tool/ToolSub.h"
 
 WinBase::WinBase()
 {
@@ -13,6 +15,13 @@ WinBase::WinBase()
 
 WinBase::~WinBase()
 {
+}
+
+void WinBase::Init()
+{
+    initTool();
+    initSurface();
+    initWindow();
 }
 
 void WinBase::paint()
@@ -26,7 +35,14 @@ void WinBase::paint()
     EndPaint(hwnd, &ps);
 }
 
-void WinBase::InitWindow()
+void WinBase::initTool() {
+    toolMain = std::make_unique<ToolMain>();
+    toolMain->Init();
+    toolSub = std::make_unique<ToolSub>();
+    toolSub->Init();
+}
+
+void WinBase::initWindow()
 {
     static int num = 0;
     std::wstring clsName = std::format(L"ScreenCapture{}", num++);
@@ -52,7 +68,7 @@ void WinBase::InitWindow()
     scaleFactor = dpi / 96.0f;
 }
 
-void WinBase::InitSurface()
+void WinBase::initSurface()
 {
     auto dataSize = h * w;
     winPix.resize(dataSize);
@@ -65,6 +81,7 @@ void WinBase::InitSurface()
 
 void WinBase::Refresh()
 {
+    //todo 开线程，每隔20毫秒判断一次是否需要刷新？
     InvalidateRect(hwnd, nullptr, false);
 }
 

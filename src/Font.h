@@ -6,13 +6,14 @@
 class Font
 {
 public:
+	Font();
 	~Font();
 	static void Init();
-	static Font* Get();
-	std::shared_ptr<SkFont> icon;
-	std::shared_ptr<SkFont> text;
+	static SkFont* GetIcon();
+	static SkFont* GetText();
 private:
-	Font();
 	void initFontIcon(SkFontMgr* fontMgr);
 	void initFontText(SkFontMgr* fontMgr);
+	std::unique_ptr<SkFont> icon;
+	std::unique_ptr<SkFont> text;	
 };

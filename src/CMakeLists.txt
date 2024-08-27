@@ -31,4 +31,8 @@ target_sources(${PROJECT_NAME} PRIVATE
 "Tool/ToolSub.h" 
 "Tool/ToolSub.cpp" 
 "Tool/ToolBtn.h" 
-"Tool/ToolBtn.cpp"    "EventHandler.h" "EventHandler.cpp" "TypeDefine.h")
+"Tool/ToolBtn.cpp"    
+
+"EventHandler.h" 
+"EventHandler.cpp" 
+"TypeDefine.h")

@@ -9,7 +9,7 @@
 #include "Lang.h"
 
 namespace {
-	std::shared_ptr<App> app;
+	std::unique_ptr<App> app;
 }
 App::~App()
 {
@@ -19,7 +19,7 @@ App::App()
 }
 void App::Init(HINSTANCE instance, std::wstring&& cmd)
 {
-	app = std::shared_ptr<App>{new App()};
+	app = std::make_unique<App>();
 	app->instance = instance;
 	Cmd::Init(cmd);
 	Lang::Init();

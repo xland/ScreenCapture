@@ -10,11 +10,11 @@ public:
 	CutMask();
 	~CutMask();
 	void Init();
-	void onPaint(SkCanvas* canvas);
-	void onLeftBtnDown(const int& x, const int& y);
-	void onLeftBtnUp(const int& x, const int& y);
-	void onMouseMove(const int& x, const int& y);
-	void onMouseDrag(const int& x, const int& y);
+	void OnPaint(SkCanvas* canvas);
+	void OnLeftBtnDown(const int& x, const int& y);
+	void OnLeftBtnUp(const int& x, const int& y);
+	void OnMouseMove(const int& x, const int& y);
+	void OnMouseDrag(const int& x, const int& y);
 	SkRect cutRect;
 private:
 	void paintRect(SkCanvas* canvas);

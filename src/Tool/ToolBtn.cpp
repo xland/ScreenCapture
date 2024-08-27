@@ -1,12 +1,9 @@
 #include "ToolBtn.h"
-#include "App.h"
-#include "WindowBase.h"
+#include "../Font.h"
 
 static int id{ 0 };
 
-ToolBtn::ToolBtn(const char* icon, std::wstring&& tip, bool isDisable, bool selectable, int fontSize, SkColor fontColor, bool isSelected) :
-    Icon{ icon }, IsHover{ false }, IsSelected{ isSelected }, IsDisable{ isDisable },
-    Selectable{ selectable }, fontSize{ fontSize }, FontColor{ fontColor }
+ToolBtn::ToolBtn(const char* icon, std::wstring&& tip, bool isDisable, bool selectable, int fontSize, SkColor fontColor, bool isSelected)
 {
     tipInfo.cbSize = sizeof(TOOLINFO);
     tipInfo.uFlags = TTF_SUBCLASS;
@@ -20,25 +17,35 @@ ToolBtn::ToolBtn(const char* icon, std::wstring&& tip, bool isDisable, bool sele
     id += 1;
 }
 
-ToolBtn::ToolBtn(const int& id)
+ToolBtn::ToolBtn(const int& _id)
 {
+    id = _id;
+    initIconCode(id);
+    if (id == 9 || id == 10) {
+        isDisable = true;
+    }
+    if (id >= 9 && id <= 14) {
+        selectable = false;
+    }
+    listenLeftBtnDown(std::bind(&ToolBtn::OnLeftBtnDown, this, std::placeholders::_1, std::placeholders::_2));
+    listenLeftBtnUp(std::bind(&ToolBtn::OnLeftBtnUp, this, std::placeholders::_1, std::placeholders::_2));
+    listenMouseMove(std::bind(&ToolBtn::OnMouseMove, this, std::placeholders::_1, std::placeholders::_2));
 }
+ToolBtn::~ToolBtn() {
 
-ToolBtn::~ToolBtn()
-{
-    SendMessage(App::GetWin()->hwndToolTip, TTM_DELTOOL, 0, (LPARAM)(LPTOOLINFO)&tipInfo);
 }
 
 void ToolBtn::Paint(SkCanvas* canvas, SkPaint& paint, float& x, float& y)
 {
-    if (IsSelected && Selectable)
+    SkPaint paint;
+    if (isSelected && selectable)
     {
         SkRect bgRect = SkRect::MakeXYWH(x + 6, y + 6, ToolBtn::Width - 12, ToolBtn::Height - 12);
-        paint.setColor(SkColorSetARGB(255, 228, 238, 255));
+        paint.setColor(0xFFE4EEFF);
         canvas->drawRoundRect(bgRect, 6, 6, paint);
-        paint.setColor(SkColorSetARGB(255, 9, 88, 217));
+        paint.setColor(0xFF0958D9);
     }
-    else if (IsHover && !IsDisable)
+    else if (isHover && !isDisable)
     {
         SkRect bgRect = SkRect::MakeXYWH(x + 6, y + 6, ToolBtn::Width - 12, ToolBtn::Height - 12);
         paint.setColor(SkColorSetARGB(255, 238, 238, 238));
@@ -47,7 +54,7 @@ void ToolBtn::Paint(SkCanvas* canvas, SkPaint& paint, float& x, float& y)
     }
     else
     {
-        if (IsDisable) {
+        if (isDisable) {
             paint.setColor(SkColorSetARGB(255, 160, 160, 160));
         }
         else
@@ -55,21 +62,103 @@ void ToolBtn::Paint(SkCanvas* canvas, SkPaint& paint, float& x, float& y)
             paint.setColor(SkColorSetARGB(255, 30, 30, 30));
         }
     }
-    auto font = App::GetFontIcon();
+    auto font = Font::GetIcon();
     font->setSize(fontSize);
     if (FontColor != SK_ColorTRANSPARENT) {
         paint.setColor(FontColor);
     }
     if (fontSize == 22) {
-        canvas->drawString(Icon, x + 14, y + ToolBtn::Height / 2 + 8, *font, paint);
+        canvas->drawString(iconCode, x + 14, y + ToolBtn::Height / 2 + 8, *font, paint);
     }
     else if (fontSize == 52) {
-        canvas->drawString(Icon, x - 1, y + ToolBtn::Height / 2 + 19, *font, paint);
+        canvas->drawString(iconCode, x - 1, y + ToolBtn::Height / 2 + 19, *font, paint);
     }
     else if (fontSize == 82) {
-        canvas->drawString(Icon, x - 16, y + ToolBtn::Height / 2 + 29.5, *font, paint);
+        canvas->drawString(iconCode, x - 16, y + ToolBtn::Height / 2 + 29.5, *font, paint);
     }
     setToolTip(x, y);
+}
+
+void ToolBtn::OnLeftBtnDown(const int& x, const int& y)
+{
+}
+
+void ToolBtn::OnLeftBtnUp(const int& x, const int& y)
+{
+}
+
+void ToolBtn::OnMouseMove(const int& x, const int& y)
+{
+}
+
+
+void ToolBtn::initIconCode(const int& id)
+{
+    switch (id)
+    {
+    case 0: {
+        iconCode = (const char*)u8"\ue8e8"; //rect
+        break;
+    }
+    case 1: {
+        iconCode = (const char*)u8"\ue6bc"; //ellipse
+        break;
+    }
+    case 2: {
+        iconCode = (const char*)u8"\ue603"; //arrow
+        break;
+    }
+    case 3: {
+        iconCode = (const char*)u8"\ue776"; //number
+        break;
+    }
+    case 4: {
+        iconCode = (const char*)u8"\ue601"; //pen
+        break;
+    }
+    case 5: {
+        iconCode = (const char*)u8"\ue69b"; //line
+        break;
+    }
+    case 6: {
+        iconCode = (const char*)u8"\ue6ec"; //text
+        break;
+    }
+    case 7: {
+        iconCode = (const char*)u8"\ue82e"; //mosaic
+        break;
+    }
+    case 8: {
+        iconCode = (const char*)u8"\ue6be"; //eraser
+        break;
+    }
+    case 9: {
+        iconCode = (const char*)u8"\ued85"; //undo
+        break;
+    }
+    case 10: {
+        iconCode = (const char*)u8"\ued8a"; //redo
+        break;
+    }
+    case 11: {
+        iconCode = (const char*)u8"\ue6a3"; //pin
+        break;
+    }
+    case 12: {
+        iconCode = (const char*)u8"\ue62f"; //save
+        break;
+    }
+    case 13: {
+        iconCode = (const char*)u8"\ue87f"; //copy
+        break;
+    }
+    case 14: {
+        iconCode = (const char*)u8"\ue6e7"; //close
+        break;
+    }
+    default:
+        break;
+    }
 }
 
 void ToolBtn::setToolTip(const int& x, const int& y)

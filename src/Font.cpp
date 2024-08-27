@@ -6,9 +6,15 @@
 #include <shlobj.h>
 #include "../res/res.h"
 #include "App.h"
+#include <memory>
 
 namespace {
-    std::shared_ptr<Font> font;
+    std::unique_ptr<Font> font;
+}
+
+void Font::Init()
+{
+    font = std::make_unique<Font>();
 }
 
 Font::Font()
@@ -22,14 +28,14 @@ Font::~Font()
 {
 }
 
-void Font::Init()
+SkFont* Font::GetIcon()
 {
-    font = std::shared_ptr<Font>{ new Font() };
+    return font->icon.get();
 }
 
-Font* Font::Get()
+SkFont* Font::GetText()
 {
-    return font.get();
+    return font->text.get();
 }
 
 void Font::initFontIcon(SkFontMgr* fontMgr)
@@ -42,14 +48,14 @@ void Font::initFontIcon(SkFontMgr* fontMgr)
     if (res == 0) return;
     LPVOID resData = LockResource(res);
     auto fontData = SkData::MakeWithoutCopy(resData, resSize);
-    icon = std::make_shared<SkFont>(fontMgr->makeFromData(fontData));
+    icon = std::make_unique<SkFont>(fontMgr->makeFromData(fontData));
     icon->setEdging(SkFont::Edging::kSubpixelAntiAlias);
     icon->setSubpixel(true);
 }
 
 void Font::initFontText(SkFontMgr* fontMgr)
 {
-    text = std::make_shared<SkFont>(fontMgr->matchFamilyStyle("NSimSun", {}));
+    text = std::make_unique<SkFont>(fontMgr->matchFamilyStyle("NSimSun", {}));
     text->setEdging(SkFont::Edging::kSubpixelAntiAlias);
     text->setSubpixel(true);
 }

@@ -5,6 +5,8 @@
 
 enum class EventType {
 	maskReady = 0,
+    undoDisable,
+    redoDisable
 };
 
 enum class State

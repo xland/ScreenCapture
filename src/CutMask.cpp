@@ -22,14 +22,14 @@ CutMask::~CutMask()
 void CutMask::Init()
 {
     enumWinRects();
-    listenMouseMove(std::bind(&CutMask::onMouseMove, this, std::placeholders::_1, std::placeholders::_2));
-    listenMouseDrag(std::bind(&CutMask::onMouseDrag, this, std::placeholders::_1, std::placeholders::_2));
-    listenLeftBtnDown(std::bind(&CutMask::onLeftBtnDown, this, std::placeholders::_1, std::placeholders::_2));
-    listenLeftBtnUp(std::bind(&CutMask::onLeftBtnUp, this, std::placeholders::_1, std::placeholders::_2));
-    listenPaint(std::bind(&CutMask::onPaint, this, std::placeholders::_1));
+    listenMouseMove(std::bind(&CutMask::OnMouseMove, this, std::placeholders::_1, std::placeholders::_2));
+    listenMouseDrag(std::bind(&CutMask::OnMouseDrag, this, std::placeholders::_1, std::placeholders::_2));
+    listenLeftBtnDown(std::bind(&CutMask::OnLeftBtnDown, this, std::placeholders::_1, std::placeholders::_2));
+    listenLeftBtnUp(std::bind(&CutMask::OnLeftBtnUp, this, std::placeholders::_1, std::placeholders::_2));
+    listenPaint(std::bind(&CutMask::OnPaint, this, std::placeholders::_1));
 }
 
-void CutMask::onPaint(SkCanvas* canvas)
+void CutMask::OnPaint(SkCanvas* canvas)
 {
     if (cutRect.isEmpty()) {
         return;
@@ -53,7 +53,7 @@ void CutMask::paintRect(SkCanvas* canvas)
 }
 void CutMask::paintInfo(SkCanvas* canvas)
 {
-    auto font = Font::Get()->text.get();
+    auto font = Font::GetText();
     auto str = std::format(L"{}:{} {}:{} {}:{} {}:{} {}:{} {}:{}",
         Lang::Get(Lang::Key::Left), cutRect.fLeft,
         Lang::Get(Lang::Key::Top), cutRect.fTop,
@@ -83,7 +83,7 @@ void CutMask::paintInfo(SkCanvas* canvas)
     auto y = rectInfo.centerY() - rectTemp.height() / 2 - rectTemp.fTop;
     canvas->drawSimpleText(data, len, SkTextEncoding::kUTF16, x, y+1, *font, paint);
 }
-void CutMask::onLeftBtnDown(const int& x, const int& y)
+void CutMask::OnLeftBtnDown(const int& x, const int& y)
 {
     auto win = App::GetWin();
     if (win->state == State::start) {
@@ -135,16 +135,17 @@ void CutMask::onLeftBtnDown(const int& x, const int& y)
     win->Refresh();
     return;
 }
-void CutMask::onLeftBtnUp(const int& x, const int& y)
+void CutMask::OnLeftBtnUp(const int& x, const int& y)
 {
     auto win = App::GetWin();
     if (win->state != State::mask) {
         return;
     }
     win->UpdateState(State::tool);
+    win->Emit(EventType::maskReady);
     return;
 }
-void CutMask::onMouseMove(const int& x, const int& y)
+void CutMask::OnMouseMove(const int& x, const int& y)
 {
     auto win = App::GetWin();
     if (win->state < State::mask)
@@ -164,7 +165,7 @@ void CutMask::onMouseMove(const int& x, const int& y)
     }
     return;
 }
-void CutMask::onMouseDrag(const int& x, const int& y)
+void CutMask::OnMouseDrag(const int& x, const int& y)
 {
     if (hoverIndex < 0) {
         return;

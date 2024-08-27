@@ -6,13 +6,10 @@
 #include <include/core/SkBitmap.h>
 #include "Screen.h"
 #include "CutMask.h"
-#include "Tool/ToolMain.h"
-#include "Tool/ToolSub.h"
 
 
 WinMax::WinMax()
 {
-
 }
 
 WinMax::~WinMax()
@@ -29,10 +26,7 @@ void WinMax::Init()
     h = screen->h;
     cutMask = std::make_unique<CutMask>();
     cutMask->Init();
-    toolMain = std::make_unique<ToolMain>();
-    toolSub = std::make_unique<ToolSub>();
-    InitSurface();
-    InitWindow();
+    WinBase::Init();
 }
 
 void WinMax::onPaint()

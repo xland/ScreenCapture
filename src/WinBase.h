@@ -6,13 +6,14 @@
 #include "include/core/SkCanvas.h"
 #include "TypeDefine.h"
 
-
+class ToolMain;
+class ToolSub;
 class WinBase
 {
 public:
     WinBase();
     ~WinBase();
-    virtual void Init()=0;
+    virtual void Init();
     void Refresh();
     void UpdateState(const State& state);
     void Emit(const EventType& et,const uint32_t& msg=0);
@@ -24,6 +25,8 @@ public:
     std::vector<CustomEventCB> customEventHandlers;
     std::vector<PaintEventCB> paintHandlers;
 
+    std::unique_ptr<ToolMain> toolMain;
+    std::unique_ptr<ToolSub> toolSub;
     State state{ State::start };
     State statePre{ State::start };
     std::vector<SkColor> winPix;
@@ -36,8 +39,9 @@ public:
     HWND hwnd;
     HWND hwndToolTip;
 protected:
-    void InitWindow();
-    void InitSurface();
+    void initTool();
+    void initWindow();
+    void initSurface();
     virtual void onPaint() = 0;
     void onLeftBtnDown(const int& x, const int& y);
     void onLeftBtnUp(const int& x, const int& y);

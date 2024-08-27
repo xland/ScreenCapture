@@ -18,6 +18,13 @@ ToolSub::~ToolSub()
 {
 
 }
+void ToolSub::Init()
+{
+    listenLeftBtnDown(std::bind(&ToolSub::OnLeftBtnDown, this, std::placeholders::_1, std::placeholders::_2));
+    listenLeftBtnUp(std::bind(&ToolSub::OnLeftBtnUp, this, std::placeholders::_1, std::placeholders::_2));
+    listenMouseMove(std::bind(&ToolSub::OnMouseMove, this, std::placeholders::_1, std::placeholders::_2));
+    listenMouseDrag(std::bind(&ToolSub::OnMouseDrag, this, std::placeholders::_1, std::placeholders::_2));
+}
 void ToolSub::addStrokeWidthBtns(int index)
 {
     auto temp = {
@@ -38,15 +45,11 @@ void ToolSub::addColorBtns()
     Btns.push_back(std::make_shared<ToolBtn>(Icon::uncheck, L"粉", false, true, 22, SkColorSetARGB(255, 235, 47, 150)));
     Btns.push_back(std::make_shared<ToolBtn>(Icon::uncheck, L"黑", false, true, 22, SkColorSetARGB(255, 0, 0, 0)));
 }
-void ToolSub::Init()
-{
-    toolSub = new ToolSub();
-}
 ToolSub* ToolSub::Get()
 {
     return toolSub;
 }
-bool ToolSub::onLeftBtnDown(const int& x, const int& y)
+bool ToolSub::OnLeftBtnDown(const int& x, const int& y)
 {
     isMouseDown = true;
     auto win = App::GetWin();
@@ -169,17 +172,17 @@ void ToolSub::InitBtns(int mainToolSelectedIndex)
     }
     setRect();
 }
-bool ToolSub::Paint(SkCanvas* canvas)
+void ToolSub::OnPaint(SkCanvas* canvas)
 {
     auto win = App::GetWin();
     if (win->state < State::tool)
     {
-        return false;
+        return;
     }
     auto toolMain = ToolMain::Get();
     if (toolMain->IndexSelected < 0)
     {
-        return false;
+        return;
     }
     SkPaint paint;
     paint.setColor(SK_ColorWHITE);
@@ -195,7 +198,7 @@ bool ToolSub::Paint(SkCanvas* canvas)
     paint.setStrokeWidth(0.6f);
     paint.setColor(SkColorSetARGB(255, 22, 118, 255));
     canvas->drawPath(p, paint);
-    return false;
+    return;
 }
 void ToolSub::setRect()
 {

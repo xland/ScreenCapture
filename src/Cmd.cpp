@@ -4,7 +4,7 @@
 #include <memory>
 
 namespace {
-    std::shared_ptr<Cmd> cmd;
+    std::unique_ptr<Cmd> cmd;
 }
 
 Cmd::Cmd()
@@ -16,7 +16,7 @@ Cmd::~Cmd()
 }
 
 void Cmd::Init(const std::wstring& cmdLine) {
-    cmd = std::shared_ptr<Cmd>{new Cmd()};
+    cmd = std::make_unique<Cmd>();
     std::wistringstream stream(cmdLine);
     std::wstring arg;
     while (stream >> std::quoted(arg)) {

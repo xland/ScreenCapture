@@ -10,23 +10,53 @@
 #include "../Lang.h"
 #include "../Screen.h"
 #include "../Cmd.h"
+#include "../App.h"
 
+ToolMain::ToolMain()
+{
+}
 ToolMain::~ToolMain()
 {
 }
 
-ToolMain::ToolMain()
+void ToolMain::Init()
 {
-    InitBtns();
+    for (size_t i = 0; i <= 14; i++)
+    {
+        Btns.push_back(ToolBtn(i));
+    }
+    listenLeftBtnDown(std::bind(&ToolMain::OnLeftBtnDown, this, std::placeholders::_1, std::placeholders::_2));
+    listenLeftBtnUp(std::bind(&ToolMain::OnLeftBtnUp, this, std::placeholders::_1, std::placeholders::_2));
+    listenMouseMove(std::bind(&ToolMain::OnMouseMove, this, std::placeholders::_1, std::placeholders::_2));
+    listenMouseDrag(std::bind(&ToolMain::OnMouseDrag, this, std::placeholders::_1, std::placeholders::_2));
+    listenCustomMsg(std::bind(&ToolMain::OnCustomMsg, this, std::placeholders::_1, std::placeholders::_2));
+    listenPaint(std::bind(&ToolMain::OnPaint, this, std::placeholders::_1));
 }
-void ToolMain::SetPositionByCutMask()
+
+void ToolMain::OnCustomMsg(const EventType& type, const uint32_t& msg)
 {
-    auto mask = CutMask::Get();
-    float left{ mask->CutRect.fRight - Btns.size() * ToolBtn::Width };
-    float top{ mask->CutRect.fBottom + MarginTop };
+    if (type == EventType::maskReady) {
+        setPositionByCutMask();
+    }
+    else if (type == EventType::undoDisable) {
+        Btns[9].isDisable = msg;
+    }
+    else if (type == EventType::redoDisable) {
+        Btns[10].isDisable = msg;
+    }
+}
+
+
+
+void ToolMain::setPositionByCutMask()
+{
+    auto win = static_cast<WinMax*>(App::GetWin());
+    auto mask = win->cutMask.get();
+    float left{ mask->cutRect.fRight - Btns.size() * ToolBtn::Width };
+    float top{ mask->cutRect.fBottom + MarginTop };
     //三个缝隙高度和两个工具条高度
     auto heightSpan = MarginTop * 3 + ToolBtn::Height * 2;
-    auto screen = App::GetScreen(mask->CutRect.fRight, mask->CutRect.fBottom + heightSpan);
+    auto screen = App::GetScreen(mask->cutRect.fRight, mask->cutRect.fBottom + heightSpan);
     if (screen) { //工具条右下角在屏幕内
         topFlag = false;
         //工具条左上角不在屏幕内
@@ -36,26 +66,26 @@ void ToolMain::SetPositionByCutMask()
     }
     else { //工具条右下角不在屏幕内
         topFlag = true;
-        //判断屏幕顶部是否有足够的空间，工具条是否可以在CutRect右上角
-        screen = App::GetScreen(mask->CutRect.fRight, mask->CutRect.fTop - heightSpan);
+        //判断屏幕顶部是否有足够的空间，工具条是否可以在cutRect右上角
+        screen = App::GetScreen(mask->cutRect.fRight, mask->cutRect.fTop - heightSpan);
         if (screen) { //工具条右上角在屏幕内  
-            if (App::GetScreen(left, mask->CutRect.fTop - heightSpan)) { //工具条左上角在屏幕内
-                top = mask->CutRect.fTop - MarginTop - ToolBtn::Height;
+            if (App::GetScreen(left, mask->cutRect.fTop - heightSpan)) { //工具条左上角在屏幕内
+                top = mask->cutRect.fTop - MarginTop - ToolBtn::Height;
             }
             else { //工具条左上角不在屏幕中
                 left = screen->fLeft;
-                top = mask->CutRect.fTop - MarginTop - ToolBtn::Height;
+                top = mask->cutRect.fTop - MarginTop - ToolBtn::Height;
             }
         }
         else { //工具条右上角不在屏幕内，此时屏幕顶部和屏幕底部都没有足够的空间，工具条只能显示在截图区域内            
-            if (App::GetScreen(left, mask->CutRect.fBottom - heightSpan)) { //工具条左上角在屏幕内
-                top = mask->CutRect.fBottom - MarginTop - ToolBtn::Height;
+            if (App::GetScreen(left, mask->cutRect.fBottom - heightSpan)) { //工具条左上角在屏幕内
+                top = mask->cutRect.fBottom - MarginTop - ToolBtn::Height;
             }
             else { //工具条左上角不在屏幕中，得到截图区域所在屏幕
-                screen = App::GetScreen(mask->CutRect.fRight, mask->CutRect.fBottom);
+                screen = App::GetScreen(mask->cutRect.fRight, mask->cutRect.fBottom);
                 if (screen) {
                     left = screen->fLeft;
-                    top = mask->CutRect.fBottom - MarginTop - ToolBtn::Height;
+                    top = mask->cutRect.fBottom - MarginTop - ToolBtn::Height;
                 }
             }
         }
@@ -66,7 +96,7 @@ void ToolMain::SetPosition(const float& x, const float& y)
 {
     ToolRect.setXYWH(x, y, Btns.size() * ToolBtn::Width, ToolBtn::Height);
 }
-void ToolMain::onLeftBtnDown(const int& x, const int& y)
+void ToolMain::OnLeftBtnDown(const int& x, const int& y)
 {
     isMouseDown = true;
     auto win = App::GetWin();
@@ -146,16 +176,10 @@ void ToolMain::onLeftBtnDown(const int& x, const int& y)
     }
     return true;
 }
-void ToolMain::onCustomMsg(const EventType& type, const uint32_t& msg)
-{
-    if (type != EventType::maskReady) {
-        return;
-    }
 
-}
-void ToolMain::Paint(SkCanvas* canvas)
+void ToolMain::OnPaint(SkCanvas* canvas)
 {
-    auto win = WinMax::Get();
+    auto win = App::GetWin();
     if (win->state < State::tool)
     {
         return;
@@ -168,20 +192,21 @@ void ToolMain::Paint(SkCanvas* canvas)
     auto y = ToolRect.top();
     for (auto& btn : Btns)
     {
-        btn->Paint(canvas, paint, x, y);
+        btn.Paint(canvas, paint, x, y);
         x += ToolBtn::Width;
     }
-    paint.setColor(SkColorSetARGB(255, 180, 180, 180));
+
+    paint.setColor(0xFFB4B4B4);
     x = ToolRect.left() + ToolBtn::Width * 9;
     paint.setStroke(true);
     paint.setStrokeWidth(0.6f);
     paint.setStrokeCap(SkPaint::Cap::kRound_Cap);
-    canvas->drawLine(SkPoint::Make(x, y + 12), SkPoint::Make(x, ToolRect.bottom() - 12), paint);
+    canvas->drawLine(SkPoint::Make(x, y + 12), SkPoint::Make(x, ToolRect.bottom() - 12), paint); //undo spliter
+
     x += ToolBtn::Width * 2;
-    canvas->drawLine(SkPoint::Make(x, y + 12), SkPoint::Make(x, ToolRect.bottom() - 12), paint);
+    canvas->drawLine(SkPoint::Make(x, y + 12), SkPoint::Make(x, ToolRect.bottom() - 12), paint); //redo spliter
     paint.setColor(SkColorSetARGB(255, 22, 118, 255));
     canvas->drawRect(ToolRect, paint);
-    return;
 }
 
 void ToolMain::SetUndoDisable(bool flag)
@@ -194,27 +219,6 @@ void ToolMain::SetRedoDisable(bool flag)
     Btns[10]->IsDisable = flag;
 }
 
-void ToolMain::InitBtns()
-{
-    auto cmd = Cmd::Get();
-    auto val = cmd->GetVal(L"tool");
-    if (val.empty()) {
-        InitBtns({ 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14 });
-        for (size_t i = 0; i < 14; i++)
-        {
-            Btns.push_back(ToolBtn(i));
-        }
-    }
-    else {
-        auto splitView = std::ranges::views::split(val, ',');
-        std::vector<int> result;
-        for (auto part : splitView) {
-            std::wstring_view partStr(part.begin(), part.end());
-            auto i = std::stoi(std::wstring(partStr));
-            Btns.push_back(ToolBtn(i));
-        }
-    }
-}
 
 void ToolMain::UnSelectAndHoverAll()
 {
@@ -224,31 +228,6 @@ void ToolMain::UnSelectAndHoverAll()
         btn->IsHover = false;
         btn->IsSelected = false;
     }
-}
-
-void ToolMain::InitBtns(std::vector<int> btnIds)
-{
-    for (size_t i = 0; i < btnIds.size(); i++)
-    {
-        Btns.push_back(ToolBtn(btnIds[i]));
-    }
-
-    Btns.push_back(std::make_shared<ToolBtn>(Icon::rect, Lang::Get(Lang::Key::BtnRect)));
-    Btns.push_back(std::make_shared<ToolBtn>(Icon::ellipse, Lang::Get(Lang::Key::BtnEllipse)));
-    Btns.push_back(std::make_shared<ToolBtn>(Icon::arrow, Lang::Get(Lang::Key::BtnArrow)));
-    Btns.push_back(std::make_shared<ToolBtn>(Icon::number, Lang::Get(Lang::Key::BtnNumber)));
-    Btns.push_back(std::make_shared<ToolBtn>(Icon::pen, Lang::Get(Lang::Key::BtnPen)));
-    Btns.push_back(std::make_shared<ToolBtn>(Icon::line, Lang::Get(Lang::Key::BtnLine)));
-    Btns.push_back(std::make_shared<ToolBtn>(Icon::text, Lang::Get(Lang::Key::BtnText)));
-    //Btns.push_back(std::make_shared<ToolBtn>(Icon::image, L"图片"));
-    Btns.push_back(std::make_shared<ToolBtn>(Icon::mosaic, Lang::Get(Lang::Key::BtnMosaic)));
-    Btns.push_back(std::make_shared<ToolBtn>(Icon::eraser, Lang::Get(Lang::Key::BtnEraser)));
-    Btns.push_back(std::make_shared<ToolBtn>(Icon::undo, Lang::Get(Lang::Key::BtnUndo), true, false)); //9
-    Btns.push_back(std::make_shared<ToolBtn>(Icon::redo, Lang::Get(Lang::Key::BtnRedo), true, false)); //10
-    Btns.push_back(std::make_shared<ToolBtn>(Icon::pin, Lang::Get(Lang::Key::BtnPin), false, false));//11
-    Btns.push_back(std::make_shared<ToolBtn>(Icon::save, Lang::Get(Lang::Key::BtnSave), false, false));//12
-    Btns.push_back(std::make_shared<ToolBtn>(Icon::copy, Lang::Get(Lang::Key::BtnCopy), false, false));//13
-    Btns.push_back(std::make_shared<ToolBtn>(Icon::close, Lang::Get(Lang::Key::BtnClose), false, false));//14
 }
 
 
