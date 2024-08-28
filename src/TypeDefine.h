@@ -11,7 +11,8 @@ enum class EventType {
 	maskReady = 0,
     undoDisable,
     redoDisable,
-    unselectAllTool
+    unselectAllTool,
+    showHideSubTool
 };
 
 enum class State

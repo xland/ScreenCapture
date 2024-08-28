@@ -43,20 +43,3 @@ void ToolBase::OnMouseMove(const int& x, const int& y)
     }
     return;
 }
-
-void ToolBase::OnLeftBtnUp(const int& x, const int& y)
-{
-    isMouseDown = false;
-    if (toolRect.contains(x, y)) {
-        return;
-    }
-    return;
-}
-
-void ToolBase::OnMouseDrag(const int& x, const int& y)
-{
-    if (isMouseDown) {
-        return;
-    }
-    return;
-}

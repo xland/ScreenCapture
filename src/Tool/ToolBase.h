@@ -12,8 +12,6 @@ public:
     ~ToolBase();
     virtual void Init() = 0;
     void OnMouseMove(const int& x, const int& y);
-    void OnLeftBtnUp(const int& x, const int& y);
-    void OnMouseDrag(const int& x, const int& y);
     virtual void OnLeftBtnDown(const int& x, const int& y) = 0;
     virtual void OnPaint(SkCanvas* canvas) = 0;
     SkRect toolRect;
@@ -23,6 +21,6 @@ public:
     std::vector<ToolBtn> Btns;
 
 protected:
-    bool isMouseDown{ false };
+
 private:
 };

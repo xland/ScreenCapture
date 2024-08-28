@@ -3,6 +3,14 @@
 #include <memory>
 #include "WinMax.h"
 
+Screen::Screen()
+{
+}
+
+Screen::~Screen()
+{
+}
+
 void Screen::Init()
 {
     initPosSize();
@@ -14,22 +22,14 @@ float Screen::GetScreenLeftByPos(const float& x, const float& y)
 {
     for (size_t i = 0; i < screenRects.size(); i++)
     {
-        if (screenRects[i].left <= x && 
+        if (screenRects[i].left <= x &&
             screenRects[i].right >= x &&
-            screenRects[i].top <= y && 
+            screenRects[i].top <= y &&
             screenRects[i].bottom >= y) {
             return screenRects[i].left;
         }
     }
     return std::numeric_limits<float>::quiet_NaN();
-}
-
-Screen::Screen()
-{
-}
-
-Screen::~Screen()
-{
 }
 
 void Screen::shotScreen()

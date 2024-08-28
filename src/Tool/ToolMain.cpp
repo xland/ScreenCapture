@@ -24,9 +24,7 @@ void ToolMain::Init()
 {
     initBtns();
     listenLeftBtnDown(std::bind(&ToolMain::OnLeftBtnDown, this, std::placeholders::_1, std::placeholders::_2));
-    listenLeftBtnUp(std::bind(&ToolMain::OnLeftBtnUp, this, std::placeholders::_1, std::placeholders::_2));
     listenMouseMove(std::bind(&ToolMain::OnMouseMove, this, std::placeholders::_1, std::placeholders::_2));
-    listenMouseDrag(std::bind(&ToolMain::OnMouseDrag, this, std::placeholders::_1, std::placeholders::_2));
     listenCustomMsg(std::bind(&ToolMain::OnCustomMsg, this, std::placeholders::_1, std::placeholders::_2));
     listenPaint(std::bind(&ToolMain::OnPaint, this, std::placeholders::_1));
 }
@@ -132,15 +130,10 @@ void ToolMain::SetPosition(const float& x, const float& y)
 }
 void ToolMain::OnLeftBtnDown(const int& x, const int& y)
 {
-    isMouseDown = true;
     auto win = App::GetWin();
-    if (win->state < State::tool)
+    if (win->state < State::tool || !toolRect.contains(x, y))
     {
         return; 
-    }
-    if (!toolRect.contains(x, y))
-    {
-        return;  
     }
     //Recorder::Get()->ProcessText();
     //win->IsMouseDown = false; //不然在主工具栏上拖拽的时候，会改变CutBox，而且改变完CutBox后不会在显示工具栏
@@ -168,7 +161,7 @@ void ToolMain::OnLeftBtnDown(const int& x, const int& y)
             }
             indexSelected = indexHovered;
             //ToolSub::Get()->InitBtns(indexSelected);
-            win->state = (State)(indexSelected + 3);
+            win->state = (State)(Btns[indexSelected].id + 3);
             win->Refresh();
         }
         else {

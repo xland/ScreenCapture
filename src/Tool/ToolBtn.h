@@ -22,7 +22,7 @@ public:
     bool isSelected{ false };
     bool isHover{ false };
     bool isDisable{ false };
-    bool selectable{ false };
+    bool selectable{ true };
     int x;
     int y;
     int id;

@@ -4,8 +4,6 @@
 #include "ToolMain.h"
 #include "ToolBtn.h"
 
-ToolSub* toolSub;
-
 ToolSub::ToolSub()
 {
 
@@ -17,9 +15,8 @@ ToolSub::~ToolSub()
 void ToolSub::Init()
 {
     listenLeftBtnDown(std::bind(&ToolSub::OnLeftBtnDown, this, std::placeholders::_1, std::placeholders::_2));
-    listenLeftBtnUp(std::bind(&ToolSub::OnLeftBtnUp, this, std::placeholders::_1, std::placeholders::_2));
     listenMouseMove(std::bind(&ToolSub::OnMouseMove, this, std::placeholders::_1, std::placeholders::_2));
-    listenMouseDrag(std::bind(&ToolSub::OnMouseDrag, this, std::placeholders::_1, std::placeholders::_2));
+    listenPaint(std::bind(&ToolSub::OnPaint, this, std::placeholders::_1));
 }
 void ToolSub::addStrokeWidthBtns(int index)
 {

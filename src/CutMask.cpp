@@ -9,6 +9,8 @@
 #include <string>
 #include "Lang.h"
 #include "TypeDefine.h"
+#include "Tool/ToolMain.h"
+#include "Tool/ToolSub.h"
 
 
 CutMask::CutMask()
@@ -91,6 +93,16 @@ void CutMask::OnLeftBtnDown(const int& x, const int& y)
         hoverIndex = 4;
         win->UpdateState(State::mask);
         return;
+    }
+    if (win->state > State::mask) {
+        auto flag = win->toolMain->toolRect.contains(x, y);
+        if (flag) {
+            return;
+        }
+        flag = win->toolSub->toolRect.contains(x, y);
+        if (flag) {
+            return;
+        }
     }
     if (hoverIndex == 0) {
         cutRect.setLTRB(x, y, cutRect.fRight, cutRect.fBottom);
@@ -245,6 +257,7 @@ void CutMask::highLightWinRect(const int& x, const int& y)
 }
 void CutMask::hoverMask(const int& x, const int& y)
 {
+
     if (x < cutRect.fLeft+5 && y < cutRect.fTop+5) {
         hoverIndex = 0;
         App::Cursor(IDC_SIZENWSE);
