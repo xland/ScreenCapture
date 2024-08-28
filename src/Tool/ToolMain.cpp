@@ -1,7 +1,8 @@
-#include "ToolMain.h"
+﻿#include "ToolMain.h"
 #include <format>
 #include <string>
 #include <ranges>
+#include <cmath>
 #include <vector>
 #include "include/core/SkTextBlob.h"
 #include "../CutMask.h"
@@ -25,6 +26,27 @@ void ToolMain::Init()
     {
         Btns.push_back(ToolBtn(i));
     }
+
+    //auto cmd = Cmd::Get();
+    //auto val = cmd->GetVal(L"tool");
+    //if (val.empty()) {
+    //    InitBtns({ 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14 });
+    //    for (size_t i = 0; i < 14; i++)
+    //    {
+    //        Btns.push_back(ToolBtn(i));
+    //    }
+    //}
+    //else {
+    //    auto splitView = std::ranges::views::split(val, ',');
+    //    std::vector<int> result;
+    //    for (auto part : splitView) {
+    //        std::wstring_view partStr(part.begin(), part.end());
+    //        auto i = std::stoi(std::wstring(partStr));
+    //        Btns.push_back(ToolBtn(i));
+    //    }
+    //}
+
+
     listenLeftBtnDown(std::bind(&ToolMain::OnLeftBtnDown, this, std::placeholders::_1, std::placeholders::_2));
     listenLeftBtnUp(std::bind(&ToolMain::OnLeftBtnUp, this, std::placeholders::_1, std::placeholders::_2));
     listenMouseMove(std::bind(&ToolMain::OnMouseMove, this, std::placeholders::_1, std::placeholders::_2));
@@ -37,6 +59,7 @@ void ToolMain::OnCustomMsg(const EventType& type, const uint32_t& msg)
 {
     if (type == EventType::maskReady) {
         setPositionByCutMask();
+        
     }
     else if (type == EventType::undoDisable) {
         Btns[9].isDisable = msg;
@@ -44,53 +67,61 @@ void ToolMain::OnCustomMsg(const EventType& type, const uint32_t& msg)
     else if (type == EventType::redoDisable) {
         Btns[10].isDisable = msg;
     }
+    else if (type == EventType::unselectAllTool) {
+        indexSelected = -1;
+        indexHovered = -1;
+        for (auto& btn : Btns) {
+            btn.isHover = false;
+            btn.isSelected = false;
+        }
+    }
 }
-
-
 
 void ToolMain::setPositionByCutMask()
 {
     auto win = static_cast<WinMax*>(App::GetWin());
     auto mask = win->cutMask.get();
+    auto screen = win->screen.get();
     float left{ mask->cutRect.fRight - Btns.size() * ToolBtn::Width };
     float top{ mask->cutRect.fBottom + MarginTop };
     //三个缝隙高度和两个工具条高度
     auto heightSpan = MarginTop * 3 + ToolBtn::Height * 2;
-    auto screen = App::GetScreen(mask->cutRect.fRight, mask->cutRect.fBottom + heightSpan);
-    if (screen) { //工具条右下角在屏幕内
+    auto screenLeft = screen->GetScreenLeftByPos(mask->cutRect.fRight, mask->cutRect.fBottom + heightSpan);
+    if (!std::isnan(screenLeft)) { //工具条右下角在屏幕内，不是NAN
         topFlag = false;
-        //工具条左上角不在屏幕内
-        if (!App::GetScreen(left, top)) {
-            left = screen->fLeft;
+        //工具条左上角不在屏幕内，是NAN
+        if (std::isnan(screen->GetScreenLeftByPos(left, top))) {
+            left = screenLeft;
         }
     }
     else { //工具条右下角不在屏幕内
         topFlag = true;
         //判断屏幕顶部是否有足够的空间，工具条是否可以在cutRect右上角
-        screen = App::GetScreen(mask->cutRect.fRight, mask->cutRect.fTop - heightSpan);
-        if (screen) { //工具条右上角在屏幕内  
-            if (App::GetScreen(left, mask->cutRect.fTop - heightSpan)) { //工具条左上角在屏幕内
+        screenLeft = screen->GetScreenLeftByPos(mask->cutRect.fRight, mask->cutRect.fTop - heightSpan);
+        if (!std::isnan(screenLeft)) { //工具条右上角在屏幕内  
+            if (!std::isnan(screen->GetScreenLeftByPos(left, mask->cutRect.fTop - heightSpan))) { //工具条左上角在屏幕内
                 top = mask->cutRect.fTop - MarginTop - ToolBtn::Height;
             }
             else { //工具条左上角不在屏幕中
-                left = screen->fLeft;
+                left = screenLeft;
                 top = mask->cutRect.fTop - MarginTop - ToolBtn::Height;
             }
         }
         else { //工具条右上角不在屏幕内，此时屏幕顶部和屏幕底部都没有足够的空间，工具条只能显示在截图区域内            
-            if (App::GetScreen(left, mask->cutRect.fBottom - heightSpan)) { //工具条左上角在屏幕内
+            if (!std::isnan(screen->GetScreenLeftByPos(left, mask->cutRect.fBottom - heightSpan))) { //工具条左上角在屏幕内
                 top = mask->cutRect.fBottom - MarginTop - ToolBtn::Height;
             }
             else { //工具条左上角不在屏幕中，得到截图区域所在屏幕
-                screen = App::GetScreen(mask->cutRect.fRight, mask->cutRect.fBottom);
+                screenLeft = screen->GetScreenLeftByPos(mask->cutRect.fRight, mask->cutRect.fBottom);
                 if (screen) {
-                    left = screen->fLeft;
+                    left = screenLeft;
                     top = mask->cutRect.fBottom - MarginTop - ToolBtn::Height;
                 }
             }
         }
     }
     ToolRect.setXYWH(left, top, Btns.size() * ToolBtn::Width, ToolBtn::Height);
+    win->Refresh();
 }
 void ToolMain::SetPosition(const float& x, const float& y)
 {
@@ -102,18 +133,18 @@ void ToolMain::OnLeftBtnDown(const int& x, const int& y)
     auto win = App::GetWin();
     if (win->state < State::tool)
     {
-        return false;
+        return; 
     }
     if (!ToolRect.contains(x, y))
     {
-        return false;
+        return;  
     }
-    Recorder::Get()->ProcessText();
-    win->IsMouseDown = false; //不然在主工具栏上拖拽的时候，会改变CutBox，而且改变完CutBox后不会在显示工具栏
-    if (IndexHovered == IndexSelected)
+    //Recorder::Get()->ProcessText();
+    //win->IsMouseDown = false; //不然在主工具栏上拖拽的时候，会改变CutBox，而且改变完CutBox后不会在显示工具栏
+    if (indexHovered == indexSelected)
     {
-        Btns[IndexHovered]->IsSelected = false;
-        IndexSelected = -1;
+        Btns[indexHovered].isSelected = false;
+        indexSelected = -1;
         win->state = State::tool;
         if (topFlag) {
             ToolRect.offset(0, MarginTop + ToolBtn::Height);
@@ -122,51 +153,51 @@ void ToolMain::OnLeftBtnDown(const int& x, const int& y)
     }
     else
     {
-        if (Btns[IndexHovered]->Selectable) {
-            Btns[IndexHovered]->IsSelected = true;
-            if (IndexSelected >= 0) {
-                Btns[IndexSelected]->IsSelected = false;
+        if (Btns[indexHovered].selectable) {
+            Btns[indexHovered].isSelected = true;
+            if (indexSelected >= 0) {
+                Btns[indexSelected].isSelected = false;
             }
             else {
                 if (topFlag) {
                     ToolRect.offset(0, 0 - MarginTop - ToolBtn::Height);
                 }
             }
-            IndexSelected = IndexHovered;
-            ToolSub::Get()->InitBtns(IndexSelected);
-            win->state = (State)(IndexSelected + 3);
+            indexSelected = indexHovered;
+            //ToolSub::Get()->InitBtns(indexSelected);
+            win->state = (State)(indexSelected + 3);
             win->Refresh();
         }
         else {
-            if (Btns[IndexHovered]->IsDisable) {
-                return true;
+            if (Btns[indexHovered].isDisable) {
+                return;
             }
-            switch (IndexHovered)
+            switch (indexHovered)
             {
             case 9: { //上一步
-                Recorder::Get()->Undo();
+                //Recorder::Get()->Undo();
                 break;
             }
             case 10: { //下一步
-                Recorder::Get()->Redo();
+                //Recorder::Get()->Redo();
                 break;
             }
             case 11: {
-                App::Pin();
+                //App::Pin();
                 break;
             }
             case 12: {
-                App::SaveFile();
-                Btns[12]->IsHover = false;
+                //App::SaveFile();
+                Btns[12].isHover = false;
                 break;
             }
             case 13: {
-                App::GetWin()->SaveToClipboard();
-                Btns[13]->IsHover = false;
+                //App::GetWin()->SaveToClipboard();
+                Btns[13].isHover = false;
                 break;
             }
             case 14: {
-                App::Quit(1);
+                //App::Quit(1);
                 break;
             }
             default:
@@ -174,9 +205,8 @@ void ToolMain::OnLeftBtnDown(const int& x, const int& y)
             }
         }
     }
-    return true;
+    return;
 }
-
 void ToolMain::OnPaint(SkCanvas* canvas)
 {
     auto win = App::GetWin();
@@ -207,27 +237,6 @@ void ToolMain::OnPaint(SkCanvas* canvas)
     canvas->drawLine(SkPoint::Make(x, y + 12), SkPoint::Make(x, ToolRect.bottom() - 12), paint); //redo spliter
     paint.setColor(SkColorSetARGB(255, 22, 118, 255));
     canvas->drawRect(ToolRect, paint);
-}
-
-void ToolMain::SetUndoDisable(bool flag)
-{
-    Btns[9]->IsDisable = flag;
-}
-
-void ToolMain::SetRedoDisable(bool flag)
-{
-    Btns[10]->IsDisable = flag;
-}
-
-
-void ToolMain::UnSelectAndHoverAll()
-{
-    IndexSelected = -1;
-    IndexHovered = -1;
-    for (auto& btn : Btns) {
-        btn->IsHover = false;
-        btn->IsSelected = false;
-    }
 }
 
 

@@ -5,16 +5,16 @@ static int id{ 0 };
 
 ToolBtn::ToolBtn(const char* icon, std::wstring&& tip, bool isDisable, bool selectable, int fontSize, SkColor fontColor, bool isSelected)
 {
-    tipInfo.cbSize = sizeof(TOOLINFO);
-    tipInfo.uFlags = TTF_SUBCLASS;
-    tipInfo.hwnd = App::GetWin()->hwnd;
-    tipInfo.hinst = GetModuleHandle(NULL);
-    tipInfo.uId = id;
-    RECT rect{ 0,0,0,0 };
-    tipInfo.rect = rect;
-    tipInfo.lpszText = (LPWSTR)tip.c_str();
-    SendMessage(App::GetWin()->hwndToolTip, TTM_ADDTOOL, 0, (LPARAM)(LPTOOLINFO)&tipInfo);
-    id += 1;
+    //tipInfo.cbSize = sizeof(TOOLINFO);
+    //tipInfo.uFlags = TTF_SUBCLASS;
+    //tipInfo.hwnd = App::GetWin()->hwnd;
+    //tipInfo.hinst = GetModuleHandle(NULL);
+    //tipInfo.uId = id;
+    //RECT rect{ 0,0,0,0 };
+    //tipInfo.rect = rect;
+    //tipInfo.lpszText = (LPWSTR)tip.c_str();
+    //SendMessage(App::GetWin()->hwndToolTip, TTM_ADDTOOL, 0, (LPARAM)(LPTOOLINFO)&tipInfo);
+    //id += 1;
 }
 
 ToolBtn::ToolBtn(const int& _id)
@@ -37,7 +37,6 @@ ToolBtn::~ToolBtn() {
 
 void ToolBtn::Paint(SkCanvas* canvas, SkPaint& paint, float& x, float& y)
 {
-    SkPaint paint;
     if (isSelected && selectable)
     {
         SkRect bgRect = SkRect::MakeXYWH(x + 6, y + 6, ToolBtn::Width - 12, ToolBtn::Height - 12);
@@ -64,8 +63,8 @@ void ToolBtn::Paint(SkCanvas* canvas, SkPaint& paint, float& x, float& y)
     }
     auto font = Font::GetIcon();
     font->setSize(fontSize);
-    if (FontColor != SK_ColorTRANSPARENT) {
-        paint.setColor(FontColor);
+    if (fontColor != SK_ColorTRANSPARENT) {
+        paint.setColor(fontColor);
     }
     if (fontSize == 22) {
         canvas->drawString(iconCode, x + 14, y + ToolBtn::Height / 2 + 8, *font, paint);
@@ -165,5 +164,5 @@ void ToolBtn::setToolTip(const int& x, const int& y)
 {
     RECT rect{ .left{x},.top{y},.right{x + (int)ToolBtn::Width},.bottom{y + (int)ToolBtn::Height} };
     tipInfo.rect = rect;
-    SendMessage(App::GetWin()->hwndToolTip, TTM_NEWTOOLRECT, 0, (LPARAM)(LPTOOLINFO)&tipInfo);
+    //SendMessage(App::GetWin()->hwndToolTip, TTM_NEWTOOLRECT, 0, (LPARAM)(LPTOOLINFO)&tipInfo);
 }

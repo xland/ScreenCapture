@@ -12,12 +12,9 @@ public:
     ~ToolMain();
     void Init() override;
     void OnLeftBtnDown(const int& x, const int& y) override;
-    void OnCustomMsg(const EventType& type, const uint32_t& msg) override;
-    void SetPosition(const float& x, const float& y);
+    void OnCustomMsg(const EventType& type, const uint32_t& msg);
     void OnPaint(SkCanvas* canvas) override;
-    void SetUndoDisable(bool flag);
-    void SetRedoDisable(bool flag);
-    void UnSelectAndHoverAll();
+    void SetPosition(const float& x, const float& y);
 private:
     void setPositionByCutMask();
     /// <summary>

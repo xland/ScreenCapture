@@ -1,6 +1,8 @@
 #pragma once
 #include <Windows.h>
 #include <vector>
+#include <thread>
+#include <mutex>
 #include <functional>
 #include "include/core/SkColor.h"
 #include "include/core/SkCanvas.h"
@@ -51,4 +53,5 @@ protected:
 private:
     static LRESULT CALLBACK routeWinMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
     void paint();
+    std::atomic<bool> refreshFlag{ false };
 };

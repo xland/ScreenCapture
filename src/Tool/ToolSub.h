@@ -8,7 +8,6 @@ public:
     ToolSub();
     ~ToolSub();
     void Init() override;
-    static ToolSub* Get();
     void OnLeftBtnDown(const int& x, const int& y) override;
     void OnPaint(SkCanvas* canvas) override;
     void InitBtns(int mainToolSelectedIndex);

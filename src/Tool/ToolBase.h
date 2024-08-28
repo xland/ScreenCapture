@@ -14,13 +14,12 @@ public:
     void OnMouseMove(const int& x, const int& y);
     void OnLeftBtnUp(const int& x, const int& y);
     void OnMouseDrag(const int& x, const int& y);
-    virtual void OnCustomMsg(const EventType& type, const uint32_t& msg) = 0;
     virtual void OnLeftBtnDown(const int& x, const int& y) = 0;
     virtual void OnPaint(SkCanvas* canvas) = 0;
     SkRect ToolRect;
     const static int MarginTop{ 8 };
-    int IndexHovered;
-    int IndexSelected;
+    int indexHovered;
+    int indexSelected;
     std::vector<ToolBtn> Btns;
 
 protected:

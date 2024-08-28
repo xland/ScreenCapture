@@ -7,6 +7,7 @@ class WinBase;
 class App
 {
 public:
+    App();
     ~App();
     static void Init(HINSTANCE instance, std::wstring&& cmd);
     static App* Get();
@@ -14,6 +15,5 @@ public:
     static int GetExitCode();
     HINSTANCE instance;
 private:
-    App();
     std::unique_ptr<WinBase> win;
 };

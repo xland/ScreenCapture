@@ -81,8 +81,19 @@ void WinBase::initSurface()
 
 void WinBase::Refresh()
 {
-    //todo 开线程，每隔20毫秒判断一次是否需要刷新？
-    InvalidateRect(hwnd, nullptr, false);
+    if (refreshFlag.load()) {
+        return;
+    }
+    else {
+        refreshFlag.store(true);
+        std::jthread t([this]() {
+            auto duration = std::chrono::milliseconds(15);
+            std::this_thread::sleep_for(duration);
+            InvalidateRect(hwnd, nullptr, false);
+            refreshFlag.store(false);
+            });    
+        t.detach();
+    }
 }
 
 void WinBase::UpdateState(const State& _state)

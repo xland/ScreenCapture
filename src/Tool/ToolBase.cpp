@@ -5,7 +5,7 @@
 #include "../WinMax.h"
 #include "../App.h"
 
-ToolBase::ToolBase() :IndexHovered{ -1 }, IndexSelected{ -1 }
+ToolBase::ToolBase() :indexHovered{ -1 }, indexSelected{ -1 }
 {
 }
 
@@ -22,23 +22,23 @@ void ToolBase::OnMouseMove(const int& x, const int& y)
     }
     if (!ToolRect.contains(x, y))
     {
-        if (IndexHovered >= 0)
+        if (indexHovered >= 0)
         {
-            Btns[IndexHovered]->IsHover = false;
-            IndexHovered = -1;
+            Btns[indexHovered].isHover = false;
+            indexHovered = -1;
             win->Refresh();
         }
         return;
     }
     SetCursor(LoadCursor(nullptr, IDC_HAND));
     int index = (x - ToolRect.left()) / ToolBtn::Width;
-    if (index != IndexHovered)
+    if (index != indexHovered)
     {
-        Btns[index]->IsHover = true;
-        if (IndexHovered >= 0) {
-            Btns[IndexHovered]->IsHover = false;
+        Btns[index].isHover = true;
+        if (indexHovered >= 0) {
+            Btns[indexHovered].isHover = false;
         }
-        IndexHovered = index;
+        indexHovered = index;
         win->Refresh();
     }
     return;
