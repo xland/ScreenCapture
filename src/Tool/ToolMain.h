@@ -16,6 +16,7 @@ public:
     void OnPaint(SkCanvas* canvas) override;
     void SetPosition(const float& x, const float& y);
 private:
+    void initBtns();
     void setPositionByCutMask();
     /// <summary>
     /// 0主工具条在选中或取消选中某个按钮时不需要改变位置
@@ -23,4 +24,5 @@ private:
     /// 2取消选中某个按钮时，位置下移
     /// </summary>
     bool topFlag{ false };
+    std::vector<uint32_t> spliters{};
 };

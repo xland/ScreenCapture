@@ -175,6 +175,7 @@ void CutMask::OnMouseDrag(const int& x, const int& y)
         start.fY = cutRect.fTop;
     }
     auto win = App::GetWin();
+    win->state = State::mask;
     if (hoverIndex == 0) {
         cutRect.setLTRB(x, y, start.fX, start.fY);
     }

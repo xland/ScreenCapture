@@ -18,11 +18,11 @@ public:
     const static int Width{ 50 };
     const static int Height{ 46 };
     const char* iconCode;
-    SkColor fontColor;
-    bool isSelected;
-    bool isHover;
-    bool isDisable;
-    bool selectable;
+    SkColor fontColor{ SK_ColorTRANSPARENT };
+    bool isSelected{ false };
+    bool isHover{ false };
+    bool isDisable{ false };
+    bool selectable{ false };
     int x;
     int y;
     int id;
@@ -30,6 +30,6 @@ protected:
 private:
     void initIconCode(const int& id);
     inline void setToolTip(const int& x, const int& y);
-    int fontSize;
+    int fontSize{22};
     TOOLINFO tipInfo{ 0 };
 };

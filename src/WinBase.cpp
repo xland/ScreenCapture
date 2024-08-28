@@ -86,8 +86,8 @@ void WinBase::Refresh()
     }
     else {
         refreshFlag.store(true);
+        static auto duration{ std::chrono::milliseconds(15) };
         std::jthread t([this]() {
-            auto duration = std::chrono::milliseconds(15);
             std::this_thread::sleep_for(duration);
             InvalidateRect(hwnd, nullptr, false);
             refreshFlag.store(false);

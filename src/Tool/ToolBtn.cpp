@@ -75,7 +75,7 @@ void ToolBtn::Paint(SkCanvas* canvas, SkPaint& paint, float& x, float& y)
     else if (fontSize == 82) {
         canvas->drawString(iconCode, x - 16, y + ToolBtn::Height / 2 + 29.5, *font, paint);
     }
-    setToolTip(x, y);
+    //setToolTip(x, y);
 }
 
 void ToolBtn::OnLeftBtnDown(const int& x, const int& y)

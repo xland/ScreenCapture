@@ -22,31 +22,7 @@ ToolMain::~ToolMain()
 
 void ToolMain::Init()
 {
-    for (size_t i = 0; i <= 14; i++)
-    {
-        Btns.push_back(ToolBtn(i));
-    }
-
-    //auto cmd = Cmd::Get();
-    //auto val = cmd->GetVal(L"tool");
-    //if (val.empty()) {
-    //    InitBtns({ 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14 });
-    //    for (size_t i = 0; i < 14; i++)
-    //    {
-    //        Btns.push_back(ToolBtn(i));
-    //    }
-    //}
-    //else {
-    //    auto splitView = std::ranges::views::split(val, ',');
-    //    std::vector<int> result;
-    //    for (auto part : splitView) {
-    //        std::wstring_view partStr(part.begin(), part.end());
-    //        auto i = std::stoi(std::wstring(partStr));
-    //        Btns.push_back(ToolBtn(i));
-    //    }
-    //}
-
-
+    initBtns();
     listenLeftBtnDown(std::bind(&ToolMain::OnLeftBtnDown, this, std::placeholders::_1, std::placeholders::_2));
     listenLeftBtnUp(std::bind(&ToolMain::OnLeftBtnUp, this, std::placeholders::_1, std::placeholders::_2));
     listenMouseMove(std::bind(&ToolMain::OnMouseMove, this, std::placeholders::_1, std::placeholders::_2));
@@ -58,8 +34,7 @@ void ToolMain::Init()
 void ToolMain::OnCustomMsg(const EventType& type, const uint32_t& msg)
 {
     if (type == EventType::maskReady) {
-        setPositionByCutMask();
-        
+        setPositionByCutMask();        
     }
     else if (type == EventType::undoDisable) {
         Btns[9].isDisable = msg;
@@ -73,6 +48,35 @@ void ToolMain::OnCustomMsg(const EventType& type, const uint32_t& msg)
         for (auto& btn : Btns) {
             btn.isHover = false;
             btn.isSelected = false;
+        }
+    }
+}
+
+void ToolMain::initBtns()
+{
+    auto cmd = Cmd::Get();
+    auto val = cmd->GetVal(L"tool");
+    if (val.empty()) {
+        for (size_t i = 0; i < 14; i++)
+        {
+            Btns.push_back(ToolBtn(i));
+            spliters.push_back(9);
+            spliters.push_back(11);
+        }
+    }
+    else {
+        auto splitView = std::ranges::views::split(val, ',');
+        std::vector<int> result;
+        auto spliterIndex{ 0 };
+        for (auto part : splitView) {
+            std::wstring_view partStr(part.begin(), part.end());
+            auto i = std::stoi(std::wstring(partStr));
+            if (i == -1) {
+                spliters.push_back(spliterIndex);
+            }
+            else {
+                Btns.push_back(ToolBtn(i));
+            }            
         }
     }
 }
@@ -205,7 +209,6 @@ void ToolMain::OnLeftBtnDown(const int& x, const int& y)
             }
         }
     }
-    return;
 }
 void ToolMain::OnPaint(SkCanvas* canvas)
 {
@@ -225,18 +228,17 @@ void ToolMain::OnPaint(SkCanvas* canvas)
         btn.Paint(canvas, paint, x, y);
         x += ToolBtn::Width;
     }
-
     paint.setColor(0xFFB4B4B4);
-    x = ToolRect.left() + ToolBtn::Width * 9;
     paint.setStroke(true);
     paint.setStrokeWidth(0.6f);
     paint.setStrokeCap(SkPaint::Cap::kRound_Cap);
-    canvas->drawLine(SkPoint::Make(x, y + 12), SkPoint::Make(x, ToolRect.bottom() - 12), paint); //undo spliter
-
-    x += ToolBtn::Width * 2;
-    canvas->drawLine(SkPoint::Make(x, y + 12), SkPoint::Make(x, ToolRect.bottom() - 12), paint); //redo spliter
-    paint.setColor(SkColorSetARGB(255, 22, 118, 255));
-    canvas->drawRect(ToolRect, paint);
+    for (size_t i = 0; i < spliters.size(); i++)
+    {
+        x = ToolRect.left() + ToolBtn::Width * spliters[i];
+        canvas->drawLine(SkPoint::Make(x, y + 12), SkPoint::Make(x, ToolRect.bottom() - 12), paint);//undo redo spliter
+    }
+    paint.setColor(0xFF1676ff);
+    canvas->drawRect(ToolRect, paint);//绘制边框
 }
 
 
