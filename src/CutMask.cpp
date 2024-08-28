@@ -247,74 +247,74 @@ void CutMask::hoverMask(const int& x, const int& y)
 {
     if (x < cutRect.fLeft+5 && y < cutRect.fTop+5) {
         hoverIndex = 0;
-        SetCursor(LoadCursor(nullptr, IDC_SIZENWSE));
+        App::Cursor(IDC_SIZENWSE);
     }
     else if (x > cutRect.fLeft+5 && x < cutRect.fRight-5 && y <= cutRect.fTop + 5) {
         hoverIndex = 1;
-        SetCursor(LoadCursor(nullptr, IDC_SIZENS));
+        App::Cursor(IDC_SIZENS);
     }
     else if (x > cutRect.fRight-5 && y < cutRect.fTop+5) {
         hoverIndex = 2;
-        SetCursor(LoadCursor(nullptr, IDC_SIZENESW));
+        App::Cursor(IDC_SIZENESW);
     }
     else if (x >= cutRect.fRight - 5 && y > cutRect.fTop+5 && y < cutRect.fBottom-5) {
         hoverIndex = 3;
-        SetCursor(LoadCursor(nullptr, IDC_SIZEWE));
+        App::Cursor(IDC_SIZEWE);
     }
     else if (x > cutRect.fRight-5 && y > cutRect.fBottom-5) {
         hoverIndex = 4;
-        SetCursor(LoadCursor(nullptr, IDC_SIZENWSE));
+        App::Cursor(IDC_SIZENWSE);
     }
     else if (x > cutRect.fLeft+5 && x < cutRect.fRight-5 && y >= cutRect.fBottom - 5) {
         hoverIndex = 5;
-        SetCursor(LoadCursor(nullptr, IDC_SIZENS));
+        App::Cursor(IDC_SIZENS);
     }
     else if (x < cutRect.fLeft+5 && y > cutRect.fBottom-5) {
         hoverIndex = 6;
-        SetCursor(LoadCursor(nullptr, IDC_SIZENESW));
+        App::Cursor(IDC_SIZENESW);
     }
     else if (x <= cutRect.fLeft + 5 && y < cutRect.fBottom-5 && y > cutRect.fTop+5) {
         hoverIndex = 7;
-        SetCursor(LoadCursor(nullptr, IDC_SIZEWE));
+        App::Cursor(IDC_SIZEWE);
     }
     else {
         hoverIndex = 8;
-        SetCursor(LoadCursor(nullptr, IDC_SIZEALL));
+        App::Cursor(IDC_SIZEALL);
     }
 }
 void CutMask::hoverBorder(const int& x, const int& y)
 {
     if (x > cutRect.fLeft - 5 && x < cutRect.fLeft + 5 && y < cutRect.fTop + 5 && y > cutRect.fTop - 5) {
         hoverIndex = 0;
-        SetCursor(LoadCursor(nullptr, IDC_SIZENWSE));
+        App::Cursor(IDC_SIZENWSE);
     }
     else if (x > cutRect.fLeft + 5 && x < cutRect.fRight - 5 && y < cutRect.fTop + 5 && y > cutRect.fTop - 5) {
         hoverIndex = 1;
-        SetCursor(LoadCursor(nullptr, IDC_SIZENS));
+        App::Cursor(IDC_SIZENS);
     }
     else if (x > cutRect.fRight - 5 && x < cutRect.fRight + 5 && y < cutRect.fTop + 5 && y > cutRect.fTop - 5) {
         hoverIndex = 2;
-        SetCursor(LoadCursor(nullptr, IDC_SIZENESW));
+        App::Cursor(IDC_SIZENESW);
     }
     else if (x > cutRect.fRight - 5 && x < cutRect.fRight + 5 && y > cutRect.fTop + 5 && y < cutRect.fBottom - 5) {
         hoverIndex = 3;
-        SetCursor(LoadCursor(nullptr, IDC_SIZEWE));
+        App::Cursor(IDC_SIZEWE);
     }
     else if (x > cutRect.fRight - 5 && x < cutRect.fRight + 5 && y > cutRect.fBottom - 5 && y < cutRect.fBottom + 5) {
         hoverIndex = 4;
-        SetCursor(LoadCursor(nullptr, IDC_SIZENWSE));
+        App::Cursor(IDC_SIZENWSE);
     }
     else if (x > cutRect.fLeft + 5 && x < cutRect.fRight - 5 && y < cutRect.fBottom + 5 && y > cutRect.fBottom - 5) {
         hoverIndex = 5;
-        SetCursor(LoadCursor(nullptr, IDC_SIZENS));
+        App::Cursor(IDC_SIZENS);
     }
     else if (x > cutRect.fLeft - 5 && x < cutRect.fLeft + 5 && y < cutRect.fBottom + 5 && y > cutRect.fBottom - 5) {
         hoverIndex = 6;
-        SetCursor(LoadCursor(nullptr, IDC_SIZENESW));
+        App::Cursor(IDC_SIZENESW);
     }
     else if (x > cutRect.fLeft - 5 && x < cutRect.fLeft + 5 && y > cutRect.fTop + 5 && y < cutRect.fBottom - 5) {
         hoverIndex = 7;
-        SetCursor(LoadCursor(nullptr, IDC_SIZEWE));
+        App::Cursor(IDC_SIZEWE);
     }
     else {
         hoverIndex = -1;

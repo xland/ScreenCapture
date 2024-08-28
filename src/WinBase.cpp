@@ -54,7 +54,7 @@ void WinBase::initWindow()
     wcx.cbWndExtra = sizeof(WinBase*);
     wcx.hInstance = hinstance;
     wcx.hIcon = LoadIcon(hinstance, IDI_APPLICATION);
-    wcx.hCursor = LoadCursor(hinstance, IDC_ARROW);
+    wcx.hCursor = LoadCursor(hinstance, IDC_CROSS);
     wcx.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
     wcx.lpszClassName = clsName.c_str();
     RegisterClassEx(&wcx);
@@ -62,8 +62,7 @@ void WinBase::initWindow()
         WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_POPUP, 
         x, y, w, h, NULL, NULL, hinstance, static_cast<LPVOID>(this));    
     ShowWindow(hwnd, SW_SHOW);
-    SetCursor(LoadCursor(nullptr, IDC_ARROW));
-
+    App::Cursor(IDC_CROSS);
     UINT dpi = GetDpiForWindow(hwnd);
     scaleFactor = dpi / 96.0f;
 }
@@ -104,7 +103,6 @@ void WinBase::UpdateState(const State& _state)
 void WinBase::Emit(const EventType& et, const uint32_t& msg) {
     PostMessage(hwnd, WM_APP + 1, (UINT)et, msg);
 }
-
 void WinBase::onLeftBtnDown(const int& x, const int& y)
 {
     for (size_t i = 0; i < leftBtnDownHandlers.size(); i++)

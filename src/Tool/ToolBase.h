@@ -16,7 +16,7 @@ public:
     void OnMouseDrag(const int& x, const int& y);
     virtual void OnLeftBtnDown(const int& x, const int& y) = 0;
     virtual void OnPaint(SkCanvas* canvas) = 0;
-    SkRect ToolRect;
+    SkRect toolRect;
     const static int MarginTop{ 8 };
     int indexHovered;
     int indexSelected;

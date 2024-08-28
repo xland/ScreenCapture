@@ -49,13 +49,13 @@ void ToolSub::OnLeftBtnDown(const int& x, const int& y)
     //{
     //    return false;
     //}
-    //if (!ToolRect.contains(x, y))
+    //if (!toolRect.contains(x, y))
     //{
     //    return false;
     //}
     //Recorder::Get()->ProcessText();
     //win->IsMouseDown = false;
-    //int index = (x - ToolRect.left()) / ToolBtn::Width;
+    //int index = (x - toolRect.left()) / ToolBtn::Width;
     //if (Btns[index]->Icon == Icon::dot) {
     //    if (Btns[index]->IsSelected) {
     //        return true;
@@ -180,10 +180,10 @@ void ToolSub::OnPaint(SkCanvas* canvas)
     paint.setColor(SK_ColorWHITE);
     paint.setAntiAlias(true);
     canvas->drawPath(p, paint);
-    auto left{ ToolRect.fLeft };
+    auto left{ toolRect.fLeft };
     for (auto& btn : Btns)
     {
-        btn->Paint(canvas, paint, left, ToolRect.fTop);
+        btn->Paint(canvas, paint, left, toolRect.fTop);
         left += ToolBtn::Width;
     }
     paint.setStroke(true);
@@ -196,13 +196,13 @@ void ToolSub::setRect()
 {
     //auto toolMain = ToolMain::Get();
     //auto width = Btns.size() * ToolBtn::Width;
-    //auto left = toolMain->ToolRect.left();
-    //auto top = toolMain->ToolRect.bottom() + MarginTop;
+    //auto left = toolMain->toolRect.left();
+    //auto top = toolMain->toolRect.bottom() + MarginTop;
     //auto mainToolBtnCenterPointX = left + toolMain->IndexSelected * ToolBtn::Width + ToolBtn::Width / 2;
     //if (toolMain->IndexSelected > 5) {
     //    left = mainToolBtnCenterPointX - width / 2;
     //}
-    //ToolRect.setXYWH(left, top, width, ToolBtn::Height);
+    //toolRect.setXYWH(left, top, width, ToolBtn::Height);
     //p.reset();
     //p.moveTo(mainToolBtnCenterPointX, top - MarginTop / 3 * 2);  // 顶点
     //p.lineTo(mainToolBtnCenterPointX - MarginTop, top);  // 左下角

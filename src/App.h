@@ -13,6 +13,7 @@ public:
     static App* Get();
     static WinBase* GetWin();
     static int GetExitCode();
+    static void Cursor(LPWSTR id);
     HINSTANCE instance;
 private:
     std::unique_ptr<WinBase> win;

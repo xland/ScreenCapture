@@ -124,12 +124,12 @@ void ToolMain::setPositionByCutMask()
             }
         }
     }
-    ToolRect.setXYWH(left, top, Btns.size() * ToolBtn::Width, ToolBtn::Height);
+    toolRect.setXYWH(left, top, Btns.size() * ToolBtn::Width, ToolBtn::Height);
     win->Refresh();
 }
 void ToolMain::SetPosition(const float& x, const float& y)
 {
-    ToolRect.setXYWH(x, y, Btns.size() * ToolBtn::Width, ToolBtn::Height);
+    toolRect.setXYWH(x, y, Btns.size() * ToolBtn::Width, ToolBtn::Height);
 }
 void ToolMain::OnLeftBtnDown(const int& x, const int& y)
 {
@@ -139,7 +139,7 @@ void ToolMain::OnLeftBtnDown(const int& x, const int& y)
     {
         return; 
     }
-    if (!ToolRect.contains(x, y))
+    if (!toolRect.contains(x, y))
     {
         return;  
     }
@@ -151,7 +151,7 @@ void ToolMain::OnLeftBtnDown(const int& x, const int& y)
         indexSelected = -1;
         win->state = State::tool;
         if (topFlag) {
-            ToolRect.offset(0, MarginTop + ToolBtn::Height);
+            toolRect.offset(0, MarginTop + ToolBtn::Height);
         }
         win->Refresh();
     }
@@ -164,7 +164,7 @@ void ToolMain::OnLeftBtnDown(const int& x, const int& y)
             }
             else {
                 if (topFlag) {
-                    ToolRect.offset(0, 0 - MarginTop - ToolBtn::Height);
+                    toolRect.offset(0, 0 - MarginTop - ToolBtn::Height);
                 }
             }
             indexSelected = indexHovered;
@@ -220,9 +220,9 @@ void ToolMain::OnPaint(SkCanvas* canvas)
     SkPaint paint;
     paint.setAntiAlias(true);
     paint.setColor(SK_ColorWHITE);
-    canvas->drawRect(ToolRect, paint);
-    auto x = ToolRect.left();
-    auto y = ToolRect.top();
+    canvas->drawRect(toolRect, paint);
+    auto x = toolRect.left();
+    auto y = toolRect.top();
     for (auto& btn : Btns)
     {
         btn.Paint(canvas, paint, x, y);
@@ -234,11 +234,11 @@ void ToolMain::OnPaint(SkCanvas* canvas)
     paint.setStrokeCap(SkPaint::Cap::kRound_Cap);
     for (size_t i = 0; i < spliters.size(); i++)
     {
-        x = ToolRect.left() + ToolBtn::Width * spliters[i];
-        canvas->drawLine(SkPoint::Make(x, y + 12), SkPoint::Make(x, ToolRect.bottom() - 12), paint);//undo redo spliter
+        x = toolRect.left() + ToolBtn::Width * spliters[i];
+        canvas->drawLine(SkPoint::Make(x, y + 12), SkPoint::Make(x, toolRect.bottom() - 12), paint);//undo redo spliter
     }
     paint.setColor(0xFF1676ff);
-    canvas->drawRect(ToolRect, paint);//绘制边框
+    canvas->drawRect(toolRect, paint);//绘制边框
 }
 
 

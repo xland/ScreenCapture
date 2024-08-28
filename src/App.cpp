@@ -1,5 +1,6 @@
 #include "App.h"
 #include <memory>
+#include <Windows.h>
 #include "Cmd.h"
 #include "Font.h"
 #include "Screen.h"
@@ -44,3 +45,13 @@ int App::GetExitCode()
 	return 0;
 }
 
+void App::Cursor(LPWSTR id) {
+	if (!app->win.get()) {
+		return;
+	}
+	static auto _id{ IDC_NO };
+	if (_id != id) {
+		_id = id;
+		SetCursor(LoadCursor(nullptr, id));
+	}
+}

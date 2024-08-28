@@ -20,7 +20,7 @@ void ToolBase::OnMouseMove(const int& x, const int& y)
     {
         return;
     }
-    if (!ToolRect.contains(x, y))
+    if (!toolRect.contains(x, y))
     {
         if (indexHovered >= 0)
         {
@@ -30,8 +30,8 @@ void ToolBase::OnMouseMove(const int& x, const int& y)
         }
         return;
     }
-    SetCursor(LoadCursor(nullptr, IDC_HAND));
-    int index = (x - ToolRect.left()) / ToolBtn::Width;
+    App::Cursor(IDC_HAND);
+    int index = (x - toolRect.left()) / ToolBtn::Width;
     if (index != indexHovered)
     {
         Btns[index].isHover = true;
@@ -47,7 +47,7 @@ void ToolBase::OnMouseMove(const int& x, const int& y)
 void ToolBase::OnLeftBtnUp(const int& x, const int& y)
 {
     isMouseDown = false;
-    if (ToolRect.contains(x, y)) {
+    if (toolRect.contains(x, y)) {
         return;
     }
     return;
