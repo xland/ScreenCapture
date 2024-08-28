@@ -46,8 +46,16 @@ LRESULT CALLBACK WinBase::routeWinMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM
                 }                
                 break;
             }
-            case (WM_APP + 1): {
+            case CustomMsgId: {
                 obj->onCustomMsg((EventType)wParam,(uint32_t)lParam);
+                break;
+            }
+            case WM_TIMER: {
+                if (wParam == RefreshTimerId) {
+                    KillTimer(hWnd, RefreshTimerId);
+                    obj->refreshFlag = false;
+                    InvalidateRect(hWnd, nullptr, false);
+                }
                 break;
             }
             case WM_KEYDOWN:

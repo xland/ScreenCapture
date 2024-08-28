@@ -80,7 +80,6 @@ void ToolMain::initBtns()
         }
     }
 }
-
 void ToolMain::setPositionByCutMask()
 {
     auto win = static_cast<WinMax*>(App::GetWin());

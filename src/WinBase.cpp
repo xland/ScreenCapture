@@ -80,19 +80,11 @@ void WinBase::initSurface()
 
 void WinBase::Refresh()
 {
-    if (refreshFlag.load()) {
+    if (refreshFlag) {
         return;
     }
-    else {
-        refreshFlag.store(true);
-        static auto duration{ std::chrono::milliseconds(15) };
-        std::jthread t([this]() {
-            std::this_thread::sleep_for(duration);
-            InvalidateRect(hwnd, nullptr, false);
-            refreshFlag.store(false);
-            });    
-        t.detach();
-    }
+    refreshFlag = true;
+    SetTimer(hwnd, RefreshTimerId, 15, NULL);
 }
 
 void WinBase::UpdateState(const State& _state)

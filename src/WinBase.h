@@ -53,5 +53,5 @@ protected:
 private:
     static LRESULT CALLBACK routeWinMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
     void paint();
-    std::atomic<bool> refreshFlag{ false };
+    bool refreshFlag{ false };
 };
