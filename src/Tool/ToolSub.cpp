@@ -1,6 +1,7 @@
 #include "ToolSub.h"
 #include "include/core/SkCanvas.h"
 #include "../App.h"
+#include "../WinBase.h"
 #include "ToolMain.h"
 #include "ToolBtn.h"
 
@@ -16,27 +17,70 @@ void ToolSub::Init()
 {
     listenLeftBtnDown(std::bind(&ToolSub::OnLeftBtnDown, this, std::placeholders::_1, std::placeholders::_2));
     listenMouseMove(std::bind(&ToolSub::OnMouseMove, this, std::placeholders::_1, std::placeholders::_2));
+    listenCustomMsg(std::bind(&ToolSub::OnCustomMsg, this, std::placeholders::_1, std::placeholders::_2));
     listenPaint(std::bind(&ToolSub::OnPaint, this, std::placeholders::_1));
 }
 void ToolSub::addStrokeWidthBtns(int index)
 {
-    //auto temp = {
-    //    std::make_shared<ToolBtn>(Icon::dot, L"线条细", false, true, 22, SK_ColorTRANSPARENT, true),
-    //    std::make_shared<ToolBtn>(Icon::dot, L"线条粗", false, true, 52),
-    //    std::make_shared<ToolBtn>(Icon::dot, L"线条粗+", false, true, 82)
-    //};
-    //Btns.insert(Btns.begin() + index, temp);
+    ToolBtn btn1(16);
+    btn1.fontSize = 22;
+    ToolBtn btn2(16);
+    btn2.fontSize = 52;
+    ToolBtn btn3(16);
+    btn3.fontSize = 82;
+    Btns.insert(Btns.begin() + index, {btn1,btn2,btn3});
 }
 void ToolSub::addColorBtns()
 {
-    //Btns.push_back(std::make_shared<ToolBtn>(Icon::check, L"红", false, true, 22, SkColorSetARGB(255, 207, 19, 34), true));
-    //Btns.push_back(std::make_shared<ToolBtn>(Icon::uncheck, L"黄", false, true, 22, SkColorSetARGB(255, 212, 136, 6)));
-    //Btns.push_back(std::make_shared<ToolBtn>(Icon::uncheck, L"绿", false, true, 22, SkColorSetARGB(255, 56, 158, 13)));
-    //Btns.push_back(std::make_shared<ToolBtn>(Icon::uncheck, L"青", false, true, 22, SkColorSetARGB(255, 19, 194, 194)));
-    //Btns.push_back(std::make_shared<ToolBtn>(Icon::uncheck, L"蓝", false, true, 22, SkColorSetARGB(255, 9, 88, 217)));
-    //Btns.push_back(std::make_shared<ToolBtn>(Icon::uncheck, L"紫", false, true, 22, SkColorSetARGB(255, 114, 46, 209)));
-    //Btns.push_back(std::make_shared<ToolBtn>(Icon::uncheck, L"粉", false, true, 22, SkColorSetARGB(255, 235, 47, 150)));
-    //Btns.push_back(std::make_shared<ToolBtn>(Icon::uncheck, L"黑", false, true, 22, SkColorSetARGB(255, 0, 0, 0)));
+    {
+        ToolBtn btn(17);
+        btn.fontColor = 0xFFcf1322;
+        btn.isSelected = true;
+        btn.info = L"红";
+        Btns.push_back(btn);
+    }
+    {
+        ToolBtn btn(18);
+        btn.fontColor = 0xFFd48806;
+        btn.info = L"黄";
+        Btns.push_back(btn);
+    }
+    {
+        ToolBtn btn(18);
+        btn.fontColor = 0xFF389e0d;
+        btn.info = L"绿";
+        Btns.push_back(btn);
+    }
+    {
+        ToolBtn btn(18);
+        btn.fontColor = 0xFF13c2c2;
+        btn.info = L"青";
+        Btns.push_back(btn);
+    }
+    {
+        ToolBtn btn(18);
+        btn.fontColor = 0xFF0958d9;
+        btn.info = L"蓝";
+        Btns.push_back(btn);
+    }
+    {
+        ToolBtn btn(18);
+        btn.fontColor = 0xFF722ed1;
+        btn.info = L"紫";
+        Btns.push_back(btn);
+    }
+    {
+        ToolBtn btn(18);
+        btn.fontColor = 0xFFeb2f96;
+        btn.info = L"粉";
+        Btns.push_back(btn);
+    }
+    {
+        ToolBtn btn(18);
+        btn.fontColor = 0xFF000000;
+        btn.info = L"黑";
+        Btns.push_back(btn);
+    }
 }
 void ToolSub::OnLeftBtnDown(const int& x, const int& y)
 {
@@ -104,30 +148,41 @@ void ToolSub::OnLeftBtnDown(const int& x, const int& y)
     //}
     //return true;
 }
+void ToolSub::OnCustomMsg(const EventType& type, const uint32_t& msg)
+{
+}
 void ToolSub::InitBtns(int mainToolSelectedIndex)
 {
-    /*Btns.clear();
+    Btns.clear();
     switch (mainToolSelectedIndex)
     {
     case 0: {
-        Btns.push_back(std::make_shared<ToolBtn>(Icon::rectFill, L"矩形填充"));
+        ToolBtn btn(15);
+        btn.info = L"矩形填充";
+        Btns.push_back(btn);
         addStrokeWidthBtns(1);
         addColorBtns();
         break;
     }
     case 1: {
-        Btns.push_back(std::make_shared<ToolBtn>(Icon::ellipseFill, L"椭圆填充"));
+        ToolBtn btn(19);
+        btn.info = L"椭圆填充";
+        Btns.push_back(btn);
         addStrokeWidthBtns(1);
         addColorBtns();
         break;
     }
     case 2: {
-        Btns.push_back(std::make_shared<ToolBtn>(Icon::arrowFill, L"箭头填充", false, true, 22, SK_ColorTRANSPARENT, true));
+        ToolBtn btn(20);
+        btn.info = L"箭头填充";
+        Btns.push_back(btn);
         addColorBtns();
         break;
     }
     case 3: {
-        Btns.push_back(std::make_shared<ToolBtn>(Icon::numberFill, L"标号填充", false, true, 22, SK_ColorTRANSPARENT, true));
+        ToolBtn btn(21);
+        btn.info = L"标号填充";
+        Btns.push_back(btn);
         addColorBtns();
         break;
     }
@@ -137,7 +192,9 @@ void ToolSub::InitBtns(int mainToolSelectedIndex)
         break;
     }
     case 5: {
-        Btns.push_back(std::make_shared<ToolBtn>(Icon::transparent, L"是否透明", false, true, 22, SK_ColorTRANSPARENT, true));
+        ToolBtn btn(22);
+        btn.info = L"是否透明";
+        Btns.push_back(btn);
         addStrokeWidthBtns(1);
         addColorBtns();
         break;
@@ -147,19 +204,23 @@ void ToolSub::InitBtns(int mainToolSelectedIndex)
         break;
     }
     case 7: {
-        Btns.push_back(std::make_shared<ToolBtn>(Icon::rectFill, L"矩形马赛克"));
+        ToolBtn btn(15);
+        btn.info = L"矩形马赛克";
+        Btns.push_back(btn);
         addStrokeWidthBtns(1);
         break;
     }
     case 8: {
-        Btns.push_back(std::make_shared<ToolBtn>(Icon::rectFill, L"矩形橡皮擦"));
+        ToolBtn btn(15);
+        btn.info = L"矩形橡皮擦";
+        Btns.push_back(btn);
         addStrokeWidthBtns(1);
         break;
     }
     default:
         break;
     }
-    setRect();*/
+    setRect();
 }
 void ToolSub::OnPaint(SkCanvas* canvas)
 {
@@ -191,24 +252,24 @@ void ToolSub::OnPaint(SkCanvas* canvas)
 }
 void ToolSub::setRect()
 {
-    //auto toolMain = ToolMain::Get();
-    //auto width = Btns.size() * ToolBtn::Width;
-    //auto left = toolMain->toolRect.left();
-    //auto top = toolMain->toolRect.bottom() + MarginTop;
-    //auto mainToolBtnCenterPointX = left + toolMain->IndexSelected * ToolBtn::Width + ToolBtn::Width / 2;
-    //if (toolMain->IndexSelected > 5) {
-    //    left = mainToolBtnCenterPointX - width / 2;
-    //}
-    //toolRect.setXYWH(left, top, width, ToolBtn::Height);
-    //p.reset();
-    //p.moveTo(mainToolBtnCenterPointX, top - MarginTop / 3 * 2);  // 顶点
-    //p.lineTo(mainToolBtnCenterPointX - MarginTop, top);  // 左下角
-    //p.lineTo(left, top);
-    //p.lineTo(left, top + ToolBtn::Height);
-    //p.lineTo(left + width, top + ToolBtn::Height);
-    //p.lineTo(left + width, top);
-    //p.lineTo(mainToolBtnCenterPointX + MarginTop, top);  // 右下角
-    //p.close();
+    auto toolMain = App::GetWin()->toolMain.get();
+    auto width = Btns.size() * ToolBtn::Width;
+    auto left = toolMain->toolRect.left();
+    auto top = toolMain->toolRect.bottom() + MarginTop;
+    auto mainToolBtnCenterPointX = left + toolMain->indexSelected * ToolBtn::Width + ToolBtn::Width / 2;
+    if (toolMain->indexSelected > 5) {
+        left = mainToolBtnCenterPointX - width / 2;
+    }
+    toolRect.setXYWH(left, top, width, ToolBtn::Height);
+    p.reset();
+    p.moveTo(mainToolBtnCenterPointX, top - MarginTop / 3 * 2);  // 顶点
+    p.lineTo(mainToolBtnCenterPointX - MarginTop, top);  // 左下角
+    p.lineTo(left, top);
+    p.lineTo(left, top + ToolBtn::Height);
+    p.lineTo(left + width, top + ToolBtn::Height);
+    p.lineTo(left + width, top);
+    p.lineTo(mainToolBtnCenterPointX + MarginTop, top);  // 右下角
+    p.close();
 }
 bool ToolSub::GetFill()
 {

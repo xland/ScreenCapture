@@ -155,6 +155,38 @@ void ToolBtn::initIconCode(const int& id)
         iconCode = (const char*)u8"\ue6e7"; //close
         break;
     }
+    case 15: {
+        iconCode = (const char*)u8"\ue602"; //rect fill
+        break;
+    }
+    case 16: {
+        iconCode = (const char*)u8"\ue608"; //dot
+        break;
+    }
+    case 17: {
+        iconCode = (const char*)u8"\ue721"; //check
+        break;
+    }
+    case 18: {
+        iconCode = (const char*)u8"\ue61d"; //uncheck
+        break;
+    }
+    case 19: {
+        iconCode = (const char*)u8"\ue600"; //ellipse Fill
+        break;
+    }
+    case 20: {
+        iconCode = (const char*)u8"\ue604"; //arrow Fill
+        break;
+    }
+    case 21: {
+        iconCode = (const char*)u8"\ue605"; //num Fill
+        break;
+    }
+    case 22: {
+        iconCode = (const char*)u8"\ue607"; //transparent
+        break;
+    }
     default:
         break;
     }

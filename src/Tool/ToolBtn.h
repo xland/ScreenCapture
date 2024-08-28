@@ -23,6 +23,8 @@ public:
     bool isHover{ false };
     bool isDisable{ false };
     bool selectable{ true };
+    std::wstring info;
+    int fontSize{ 22 };
     int x;
     int y;
     int id;
@@ -30,6 +32,5 @@ protected:
 private:
     void initIconCode(const int& id);
     inline void setToolTip(const int& x, const int& y);
-    int fontSize{22};
     TOOLINFO tipInfo{ 0 };
 };
