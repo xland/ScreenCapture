@@ -12,9 +12,6 @@ public:
     ToolBtn(const int& id);
     ~ToolBtn();
     void Paint(SkCanvas* canvas, SkPaint& paint, float& x, float& y);
-    void OnLeftBtnDown(const int& x, const int& y);
-    void OnLeftBtnUp(const int& x, const int& y);
-    void OnMouseMove(const int& x, const int& y);
     const static int Width{ 50 };
     const static int Height{ 46 };
     const char* iconCode;

@@ -151,7 +151,7 @@ void ToolMain::OnLeftBtnDown(const int& x, const int& y)
         if (topFlag) {
             toolRect.offset(0, MarginTop + ToolBtn::Height);
         }
-        win->Emit(EventType::showHideSubTool, 0);
+        win->Emit(EventType::showHideSubTool, 999999);
         win->Refresh();
     }
     else
@@ -167,9 +167,8 @@ void ToolMain::OnLeftBtnDown(const int& x, const int& y)
                 }
             }
             indexSelected = indexHovered;
-            //ToolSub::Get()->InitBtns(indexSelected);
             win->state = (State)(Btns[indexSelected].id + 3);
-            win->Emit(EventType::showHideSubTool, 1);
+            win->Emit(EventType::showHideSubTool, Btns[indexSelected].id);
             win->Refresh();
         }
         else {

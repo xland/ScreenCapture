@@ -11,7 +11,7 @@ public:
     void OnLeftBtnDown(const int& x, const int& y) override;
     void OnCustomMsg(const EventType& type, const uint32_t& msg);
     void OnPaint(SkCanvas* canvas) override;
-    void InitBtns(int mainToolSelectedIndex);
+    void InitBtns(const int& mainBtnId);
     bool GetFill();
     int GetStroke(int index = 1);
     SkColor GetColor();

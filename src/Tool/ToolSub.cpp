@@ -1,4 +1,4 @@
-#include "ToolSub.h"
+﻿#include "ToolSub.h"
 #include "include/core/SkCanvas.h"
 #include "../App.h"
 #include "../WinBase.h"
@@ -20,6 +20,19 @@ void ToolSub::Init()
     listenCustomMsg(std::bind(&ToolSub::OnCustomMsg, this, std::placeholders::_1, std::placeholders::_2));
     listenPaint(std::bind(&ToolSub::OnPaint, this, std::placeholders::_1));
 }
+void ToolSub::OnCustomMsg(const EventType& type, const uint32_t& msg)
+{
+    if (type == EventType::showHideSubTool) {
+        if (msg == 999999) {
+            p.reset();
+            Btns.clear();
+        }
+        else {
+            InitBtns(msg);
+            setRect();
+        }
+    }
+}
 void ToolSub::addStrokeWidthBtns(int index)
 {
     ToolBtn btn1(16);
@@ -36,7 +49,7 @@ void ToolSub::addColorBtns()
         ToolBtn btn(17);
         btn.fontColor = 0xFFcf1322;
         btn.isSelected = true;
-        btn.info = L"红";
+        btn.info = L"红"; 
         Btns.push_back(btn);
     }
     {
@@ -148,13 +161,10 @@ void ToolSub::OnLeftBtnDown(const int& x, const int& y)
     //}
     //return true;
 }
-void ToolSub::OnCustomMsg(const EventType& type, const uint32_t& msg)
-{
-}
-void ToolSub::InitBtns(int mainToolSelectedIndex)
+void ToolSub::InitBtns(const int& mainBtnId)
 {
     Btns.clear();
-    switch (mainToolSelectedIndex)
+    switch (mainBtnId)
     {
     case 0: {
         ToolBtn btn(15);
@@ -224,13 +234,8 @@ void ToolSub::InitBtns(int mainToolSelectedIndex)
 }
 void ToolSub::OnPaint(SkCanvas* canvas)
 {
-    /*auto win = App::GetWin();
-    if (win->state < State::tool)
-    {
-        return;
-    }
-    auto toolMain = ToolMain::Get();
-    if (toolMain->IndexSelected < 0)
+    auto win = App::GetWin();
+    if (win->state < State::tool && Btns.size()>0)
     {
         return;
     }
@@ -241,14 +246,13 @@ void ToolSub::OnPaint(SkCanvas* canvas)
     auto left{ toolRect.fLeft };
     for (auto& btn : Btns)
     {
-        btn->Paint(canvas, paint, left, toolRect.fTop);
+        btn.Paint(canvas, paint, left, toolRect.fTop);
         left += ToolBtn::Width;
     }
     paint.setStroke(true);
     paint.setStrokeWidth(0.6f);
     paint.setColor(SkColorSetARGB(255, 22, 118, 255));
     canvas->drawPath(p, paint);
-    return;*/
 }
 void ToolSub::setRect()
 {

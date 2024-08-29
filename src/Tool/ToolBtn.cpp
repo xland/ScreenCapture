@@ -27,9 +27,6 @@ ToolBtn::ToolBtn(const int& _id)
     if (id >= 9 && id <= 14) {
         selectable = false;
     }
-    listenLeftBtnDown(std::bind(&ToolBtn::OnLeftBtnDown, this, std::placeholders::_1, std::placeholders::_2));
-    listenLeftBtnUp(std::bind(&ToolBtn::OnLeftBtnUp, this, std::placeholders::_1, std::placeholders::_2));
-    listenMouseMove(std::bind(&ToolBtn::OnMouseMove, this, std::placeholders::_1, std::placeholders::_2));
 }
 ToolBtn::~ToolBtn() {
 
@@ -47,18 +44,18 @@ void ToolBtn::Paint(SkCanvas* canvas, SkPaint& paint, float& x, float& y)
     else if (isHover && !isDisable)
     {
         SkRect bgRect = SkRect::MakeXYWH(x + 6, y + 6, ToolBtn::Width - 12, ToolBtn::Height - 12);
-        paint.setColor(SkColorSetARGB(255, 238, 238, 238));
+        paint.setColor(0xFFEEEEEE);
         canvas->drawRoundRect(bgRect, 6, 6, paint);
-        paint.setColor(SkColorSetARGB(255, 30, 30, 30));
+        paint.setColor(0xFF1e1e1e);
     }
     else
     {
         if (isDisable) {
-            paint.setColor(SkColorSetARGB(255, 160, 160, 160));
+            paint.setColor(0xFFa0a0a0);
         }
         else
         {
-            paint.setColor(SkColorSetARGB(255, 30, 30, 30));
+            paint.setColor(0xFF1e1e1e);
         }
     }
     auto font = Font::GetIcon();
@@ -76,18 +73,6 @@ void ToolBtn::Paint(SkCanvas* canvas, SkPaint& paint, float& x, float& y)
         canvas->drawString(iconCode, x - 16, y + ToolBtn::Height / 2 + 29.5, *font, paint);
     }
     //setToolTip(x, y);
-}
-
-void ToolBtn::OnLeftBtnDown(const int& x, const int& y)
-{
-}
-
-void ToolBtn::OnLeftBtnUp(const int& x, const int& y)
-{
-}
-
-void ToolBtn::OnMouseMove(const int& x, const int& y)
-{
 }
 
 
