@@ -8,6 +8,7 @@
 #include "include/core/SkSurface.h"
 #include "Tool/ToolMain.h"
 #include "Tool/ToolSub.h"
+#include "Recorder.h"
 
 WinBase::WinBase()
 {
@@ -19,7 +20,7 @@ WinBase::~WinBase()
 
 void WinBase::Init()
 {
-    initTool();
+    initProperty();
     initSurface();
     initWindow();
 }
@@ -35,11 +36,13 @@ void WinBase::paint()
     EndPaint(hwnd, &ps);
 }
 
-void WinBase::initTool() {
+void WinBase::initProperty() {
     toolMain = std::make_unique<ToolMain>();
     toolMain->Init();
     toolSub = std::make_unique<ToolSub>();
     toolSub->Init();
+    recorder = std::make_unique<Recorder>();
+    recorder->Init();
 }
 
 void WinBase::initWindow()

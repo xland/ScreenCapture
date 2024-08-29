@@ -169,7 +169,7 @@ void ToolSub::InitBtns(const int& mainBtnId)
     case 0: {
         ToolBtn btn(15);
         btn.info = L"矩形填充";
-        Btns.push_back(btn);
+        Btns.push_back(std::move(btn));
         addStrokeWidthBtns(1);
         addColorBtns();
         break;
@@ -177,7 +177,7 @@ void ToolSub::InitBtns(const int& mainBtnId)
     case 1: {
         ToolBtn btn(19);
         btn.info = L"椭圆填充";
-        Btns.push_back(btn);
+        Btns.push_back(std::move(btn));
         addStrokeWidthBtns(1);
         addColorBtns();
         break;
@@ -185,7 +185,7 @@ void ToolSub::InitBtns(const int& mainBtnId)
     case 2: {
         ToolBtn btn(20);
         btn.info = L"箭头填充";
-        Btns.push_back(btn);
+        Btns.push_back(std::move(btn));
         addColorBtns();
         break;
     }
@@ -281,25 +281,24 @@ bool ToolSub::GetFill()
 }
 int ToolSub::GetStroke(int index)
 {
-    /*if (Btns[index]->IsSelected) {
+    if (Btns[index].isSelected) {
         return 1;
     }
-    else if (Btns[index + 1]->IsSelected) {
+    else if (Btns[index + 1].isSelected) {
         return 2;
     }
     else {
         return 3;
-    }*/
+    }
     return 0;
 }
 SkColor ToolSub::GetColor()
 {
-    /*auto it = std::find_if(Btns.begin(), Btns.end(), [](auto& btn) {
-        return btn->Icon == Icon::check;
+    auto it = std::find_if(Btns.begin(), Btns.end(), [](auto& btn) {
+        return btn.iconCode == (const char*)u8"\ue721";
         });
     if (it == Btns.end()) {
         return SK_ColorBLACK;
     }
-    return it->get()->FontColor;*/
-    return SK_ColorBLACK;
+    return it->fontColor;
 }

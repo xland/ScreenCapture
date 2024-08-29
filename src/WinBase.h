@@ -10,7 +10,8 @@
 
 class ToolMain;
 class ToolSub;
-class Recorder
+class Recorder;
+
 class WinBase
 {
 public:
@@ -44,7 +45,7 @@ public:
     HWND hwnd;
     HWND hwndToolTip;
 protected:
-    void initTool();
+    void initProperty();
     void initWindow();
     void initSurface();
     virtual void onPaint() = 0;
