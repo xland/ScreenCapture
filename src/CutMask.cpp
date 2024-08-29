@@ -171,9 +171,6 @@ void CutMask::OnMouseMove(const int& x, const int& y)
     }
     else {
         hoverBorder(x, y);
-        if (hoverIndex != -1) {
-            return;
-        }
     }
     return;
 }
@@ -257,7 +254,6 @@ void CutMask::highLightWinRect(const int& x, const int& y)
 }
 void CutMask::hoverMask(const int& x, const int& y)
 {
-
     if (x < cutRect.fLeft+5 && y < cutRect.fTop+5) {
         hoverIndex = 0;
         App::Cursor(IDC_SIZENWSE);
@@ -331,6 +327,12 @@ void CutMask::hoverBorder(const int& x, const int& y)
     }
     else {
         hoverIndex = -1;
+        if (App::GetWin()->state == State::text) {
+            App::Cursor(IDC_IBEAM);
+        }
+        else {
+            App::Cursor(IDC_CROSS);
+        }        
     }
 }
 void CutMask::enumWinRects()

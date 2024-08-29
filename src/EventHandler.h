@@ -13,7 +13,7 @@ protected:
 	void listenLeftBtnDown(const MouseEventCB&& func);
 	void listenLeftBtnUp(const MouseEventCB&& func);
 	void listenCustomMsg(const CustomEventCB&& func);
-	void listenPaint(const PaintEventCB&& func);
+	void listenPaint(const PaintEventCB&& func, const int& index = -1);
 private:
 
 };

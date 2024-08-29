@@ -35,4 +35,4 @@ target_sources(${PROJECT_NAME} PRIVATE
 
 "EventHandler.h" 
 "EventHandler.cpp" 
-"TypeDefine.h")
+"TypeDefine.h" "Recorder.h" "Recorder.cpp")

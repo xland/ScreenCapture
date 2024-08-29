@@ -50,8 +50,9 @@ void App::Cursor(LPWSTR id) {
 		return;
 	}
 	static auto _id{ IDC_NO };
-	if (_id != id) {
-		_id = id;
-		SetCursor(LoadCursor(nullptr, id));
+	if (_id == id) {
+		return;
 	}
+	_id = id;
+	SetCursor(LoadCursor(nullptr, id));
 }

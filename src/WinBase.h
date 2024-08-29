@@ -10,6 +10,7 @@
 
 class ToolMain;
 class ToolSub;
+class Recorder
 class WinBase
 {
 public:
@@ -29,6 +30,8 @@ public:
 
     std::unique_ptr<ToolMain> toolMain;
     std::unique_ptr<ToolSub> toolSub;
+    std::unique_ptr<Recorder> recorder;
+
     State state{ State::start };
     State statePre{ State::start };
     std::vector<SkColor> winPix;

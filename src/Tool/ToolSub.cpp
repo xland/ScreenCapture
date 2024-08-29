@@ -52,7 +52,7 @@ void ToolSub::addColorBtns()
         btn.info = L"红"; 
         Btns.push_back(btn);
     }
-    {
+    { 
         ToolBtn btn(18);
         btn.fontColor = 0xFFd48806;
         btn.info = L"黄";

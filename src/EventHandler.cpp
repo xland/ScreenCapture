@@ -22,10 +22,15 @@ void EventHandler::listenCustomMsg(const CustomEventCB&& func)
 	win->customEventHandlers.push_back(func);
 }
 
-void EventHandler::listenPaint(const PaintEventCB&& func)
+void EventHandler::listenPaint(const PaintEventCB&& func, const int& index)
 {
 	auto win = App::GetWin();
-	win->paintHandlers.push_back(func);
+	if (index == -1) {
+		win->paintHandlers.push_back(func);
+	}
+	else {
+		win->paintHandlers.insert(win->paintHandlers.begin() + index, func);
+	}
 }
 
 void EventHandler::listenLeftBtnDown(const MouseEventCB&& func)
