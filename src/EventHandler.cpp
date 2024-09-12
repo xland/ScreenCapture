@@ -44,9 +44,3 @@ void EventHandler::listenLeftBtnUp(const MouseEventCB&& func)
 	auto win = App::GetWin();
 	win->leftBtnUpHandlers.push_back(func);
 }
-
-void EventHandler::listenMouseDrag(const MouseEventCB&& func)
-{
-	auto win = App::GetWin();
-	win->mouseDragHandlers.push_back(func);
-}

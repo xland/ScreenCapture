@@ -122,14 +122,6 @@ void WinBase::onMouseMove(const int& x, const int& y)
     }
 }
 
-void WinBase::onMouseDrag(const int& x, const int& y)
-{
-    for (size_t i = 0; i < mouseDragHandlers.size(); i++)
-    {
-        mouseDragHandlers[i](x, y);
-    }
-}
-
 void WinBase::onCustomMsg(const EventType& type, const uint32_t& msg)
 {
     for (size_t i = 0; i < customEventHandlers.size(); i++)

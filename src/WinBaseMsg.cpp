@@ -25,25 +25,17 @@ LRESULT CALLBACK WinBase::routeWinMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM
             }
             case WM_LBUTTONDOWN:
             {
-                obj->isMouseDown = true;
                 obj->onLeftBtnDown(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
                 break;
             }
             case WM_LBUTTONUP:
             {
-                obj->isMouseDown = false;
                 obj->onLeftBtnUp(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
                 break;
             }
             case WM_MOUSEMOVE:
             {
-                if (obj->isMouseDown) {
-                    obj->onMouseDrag(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-                }
-                else
-                {
-                    obj->onMouseMove(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-                }                
+                obj->onMouseMove(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
                 break;
             }
             case CustomMsgId: {

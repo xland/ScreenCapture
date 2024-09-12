@@ -23,7 +23,6 @@ public:
     void Emit(const EventType& et,const uint32_t& msg=0);
 
     std::vector<MouseEventCB> mouseMoveHandlers;
-    std::vector<MouseEventCB> mouseDragHandlers;
     std::vector<MouseEventCB> leftBtnDownHandlers;
     std::vector<MouseEventCB> leftBtnUpHandlers;
     std::vector<CustomEventCB> customEventHandlers;
@@ -52,7 +51,6 @@ protected:
     void onLeftBtnDown(const int& x, const int& y);
     void onLeftBtnUp(const int& x, const int& y);
     void onMouseMove(const int& x, const int& y);
-    void onMouseDrag(const int& x, const int& y);
     void onCustomMsg(const EventType& type, const uint32_t& msg);
 private:
     static LRESULT CALLBACK routeWinMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
