@@ -106,13 +106,17 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CanvasWidget.cpp" />
+    <ClCompile Include="ToolMain.cpp" />
     <ClCompile Include="WindowNative.cpp" />
     <QtRcc Include="rc.qrc" />
+    <QtUic Include="ToolMain.ui" />
     <QtUic Include="WindowMain.ui" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="CanvasWidget.h" />
+    <ClInclude Include="State.h" />
+    <QtMoc Include="ToolMain.h" />
     <ClInclude Include="WindowNative.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
