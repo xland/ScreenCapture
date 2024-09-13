@@ -67,6 +67,14 @@
     <ClCompile>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
+    <Link>
+      <AdditionalDependencies>dwmapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+    </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="Configuration">
     <ClCompile>
@@ -100,10 +108,7 @@
     <ClCompile Include="CanvasWidget.cpp" />
     <ClCompile Include="WindowNative.cpp" />
     <QtRcc Include="rc.qrc" />
-    <QtUic Include="CanvasWidget.ui" />
     <QtUic Include="WindowMain.ui" />
-    <QtMoc Include="WindowMain.h" />
-    <ClCompile Include="WindowMain.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>

@@ -29,12 +29,6 @@
     <QtUic Include="WindowMain.ui">
       <Filter>Form Files</Filter>
     </QtUic>
-    <QtMoc Include="WindowMain.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <ClCompile Include="WindowMain.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -56,10 +50,5 @@
     <QtMoc Include="CanvasWidget.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-  </ItemGroup>
-  <ItemGroup>
-    <QtUic Include="CanvasWidget.ui">
-      <Filter>Form Files</Filter>
-    </QtUic>
   </ItemGroup>
 </Project>
