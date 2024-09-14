@@ -2,6 +2,7 @@
 #include <qpushbutton.h>
 #include <QFont>
 #include <QFontDatabase>
+#include <qtooltip.h>
 
 #include "CanvasWidget.h"
 #include "ToolMain.h"
@@ -72,6 +73,9 @@ void ToolMain::paintEvent(QPaintEvent * event)
 		}
 		painter.drawText(rect, Qt::AlignCenter,iconCode[i]);
 	}
+	painter.setPen(QColor(180, 180, 180));
+	painter.drawLine(3 + 10 * btnW, 10, 3 + 10 * btnW, height() - 10);
+	painter.drawLine(3 + 12 * btnW, 10, 3 + 12 * btnW, height() - 10);
 	painter.end();
 }
 
@@ -82,9 +86,12 @@ void ToolMain::mousePressEvent(QMouseEvent* event)
 void ToolMain::mouseMoveEvent(QMouseEvent* event)
 {
 	auto x = event->pos().x();
+	if (x<4 || x>width() - 7) return;
 	auto index{ x / (int)btnW };
 	if (index != hoverIndex) {
 		hoverIndex = index;
+		auto pos = event->globalPosition();
+		QToolTip::showText(QPoint(pos.x(),pos.y()), QString("Name: %1").arg(hoverIndex), this);
 		update();
 	}
 }
