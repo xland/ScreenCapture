@@ -26,9 +26,6 @@
     <QtRcc Include="rc.qrc">
       <Filter>Resource Files</Filter>
     </QtRcc>
-    <QtUic Include="WindowMain.ui">
-      <Filter>Form Files</Filter>
-    </QtUic>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -61,8 +58,6 @@
     </QtMoc>
   </ItemGroup>
   <ItemGroup>
-    <QtUic Include="ToolMain.ui">
-      <Filter>Form Files</Filter>
-    </QtUic>
+    <Font Include="res\iconfont.ttf" />
   </ItemGroup>
 </Project>

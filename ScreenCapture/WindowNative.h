@@ -8,6 +8,9 @@ class WindowNative
 {
 public:
 	static void Init();
+	static WindowNative* Get();
+	HWND hwnd;
+	int x, y, w, h;
 private:
 	void createWindow();
 	static LRESULT CALLBACK routeWinMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);

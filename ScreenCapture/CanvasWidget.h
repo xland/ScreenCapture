@@ -8,31 +8,34 @@
 #include <qpainterpath.h>
 #include <vector>
 #include <Windows.h>
+
 #include "State.h"
+#include "ToolMain.h"
 
 class CanvasWidget : public QWidget
 {
 	Q_OBJECT
 public:
-	CanvasWidget(const int& x, const int& y, const int& w,const int& h,QWidget *parent = nullptr);
+	CanvasWidget(QWidget *parent = nullptr);
 	~CanvasWidget();
+	static void Init();
+	static CanvasWidget* Get();
 protected:
 	void mousePressEvent(QMouseEvent* event) override;
 	void mouseMoveEvent(QMouseEvent* event) override;
 	void mouseReleaseEvent(QMouseEvent* event) override;
-private:
-	void onButtonClicked();
 	void paintEvent(QPaintEvent* event) override;
-	void shotScreen();
-	void initPainter();
+private:
+	void onButtonClicked();	
+	void initImgs();
 	void paintMask(QPainter& painter);
 private:
-	int x, y, w, h;
 	State state{State::start};
 	QRect maskRect;
 	qreal maskStroke{ 1.5 };
 	bool dragging = false;
 	QPoint dragPosition;
+	ToolMain* toolMain;
 
 	std::unique_ptr<QImage> imgBg;
 	std::unique_ptr<QImage> imgBoard;

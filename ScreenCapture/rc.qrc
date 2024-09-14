@@ -1,4 +1,5 @@
 <RCC>
-    <qresource prefix="WindowMain">
+    <qresource prefix="/">
+        <file>res/iconfont.ttf</file>
     </qresource>
 </RCC>
