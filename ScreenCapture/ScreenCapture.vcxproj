@@ -107,6 +107,7 @@
   <ItemGroup>
     <ClCompile Include="CanvasWidget.cpp" />
     <ClCompile Include="ToolMain.cpp" />
+    <ClCompile Include="ToolSub.cpp" />
     <ClCompile Include="WindowNative.cpp" />
     <QtRcc Include="rc.qrc" />
     <ClCompile Include="main.cpp" />
@@ -115,6 +116,7 @@
     <QtMoc Include="CanvasWidget.h" />
     <ClInclude Include="State.h" />
     <QtMoc Include="ToolMain.h" />
+    <QtMoc Include="ToolSub.h" />
     <ClInclude Include="WindowNative.h" />
   </ItemGroup>
   <ItemGroup>

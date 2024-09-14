@@ -10,6 +10,6 @@ public:
 	ToolSub(QWidget *parent = nullptr);
 	~ToolSub();
 	static void Init();
-	static void Get();
+	static ToolSub* Get();
 private:
 };

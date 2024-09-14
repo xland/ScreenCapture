@@ -46,7 +46,7 @@ void ToolMain::paintEvent(QPaintEvent * event)
 	auto font = QFont("iconfont");
 	font.setStyleStrategy(QFont::PreferAntialias);
 	font.setHintingPreference(QFont::PreferFullHinting);
-	font.setPixelSize(16);
+	font.setPixelSize(15);
 
 	QPainter painter(this);
 	painter.setRenderHint(QPainter::Antialiasing, true);
@@ -58,18 +58,27 @@ void ToolMain::paintEvent(QPaintEvent * event)
 	painter.setPen(pen);
 	painter.setBrush(Qt::GlobalColor::white);
 	painter.drawRect(rect().adjusted(1, 1, -1, -1));
-
-	painter.setPen(QColor(33, 33, 33));
 	for (size_t i = 0; i < 15; i++)
 	{
 		QRect rect(i* btnW+3, 0, btnW, height());
 		rect.adjust(4, 6, -4, -6);
-		if (i == hoverIndex) {
+		if (i == selectIndex) {
+			painter.save();
+			painter.setPen(Qt::NoPen);
+			painter.setBrush(QColor(228, 238, 255));
+			painter.drawRoundedRect(rect, 6, 6);
+			painter.restore();
+			painter.setPen(QColor(9, 88, 217));
+		}else if (i == hoverIndex) {
 			painter.save();
 			painter.setPen(Qt::NoPen);
 			painter.setBrush(QColor(238, 238, 238));
 			painter.drawRoundedRect(rect,6,6);
 			painter.restore();
+			painter.setPen(QColor(33, 33, 33));
+		}
+		else {
+			painter.setPen(QColor(33, 33, 33));
 		}
 		painter.drawText(rect, Qt::AlignCenter,iconCode[i]);
 	}
@@ -81,6 +90,15 @@ void ToolMain::paintEvent(QPaintEvent * event)
 
 void ToolMain::mousePressEvent(QMouseEvent* event)
 {
+	if (hoverIndex == -1) return;
+	if (hoverIndex == selectIndex) {
+		selectIndex = -1;
+	}
+	else {
+		selectIndex = hoverIndex;
+	}
+	update();
+	return;
 }
 
 void ToolMain::mouseMoveEvent(QMouseEvent* event)

@@ -21,6 +21,7 @@ protected:
 private:
 	qreal btnW{ 36 };
 	int hoverIndex{ -1 };
+	int selectIndex{ -1 };
 	std::vector<QChar> iconCode{
 		QChar(0xe8e8),
 		QChar(0xe6bc),
