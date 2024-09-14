@@ -117,8 +117,9 @@ void CanvasWidget::initImgs()
 	ReleaseDC(NULL, hScreen);
 
 	QImage bgTemp(&bgPix.front(), winNative->w, winNative->h, QImage::Format_ARGB32);
-	auto bg = bgTemp.convertToFormat(QImage::Format_RGB444); //让图像体积小一倍
+	auto bg = bgTemp.convertToFormat(QImage::Format_RGB444); //让图像体积小一倍，但图像颜色会变得不一样
 	imgBg = std::make_unique<QImage>(std::move(bg));
+	//imgBg = std::make_unique<QImage>(bgTemp.copy(0, 0, winNative->w, winNative->h)); //
 
 	imgBoard = std::make_unique<QImage>(winNative->w, winNative->h, QImage::Format_ARGB4444_Premultiplied);
 	imgBoard->fill(0);

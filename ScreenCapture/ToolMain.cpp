@@ -1,4 +1,4 @@
-#include <qlayout.h>
+﻿#include <qlayout.h>
 #include <qpushbutton.h>
 #include <QFont>
 #include <QFontDatabase>
