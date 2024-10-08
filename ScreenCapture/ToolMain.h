@@ -12,7 +12,7 @@ class ToolMain : public QWidget
 public:
 	ToolMain(QWidget *parent = nullptr);
 	~ToolMain();
-	static void Show(const QPoint& pos);
+	static void Show();
 protected:
 	void paintEvent(QPaintEvent* event) override;
 	void mousePressEvent(QMouseEvent* event) override;

@@ -31,12 +31,13 @@ ToolMain::ToolMain(QWidget *parent)
 ToolMain::~ToolMain()
 {}
 
-void ToolMain::Show(const QPoint & pos)
+void ToolMain::Show()
 {
-	if (!toolMain) {
-		auto canvas = CanvasWidget::Get();
+	auto canvas = CanvasWidget::Get();
+	if (!toolMain) {		
 		toolMain = std::make_unique<ToolMain>(canvas);
 	}
+	auto pos = canvas->maskRect.bottomRight();
 	toolMain->move(pos.x() - toolMain->width()+2, pos.y()+8);
 	toolMain->show();
 }
@@ -61,8 +62,8 @@ void ToolMain::paintEvent(QPaintEvent * event)
 	for (size_t i = 0; i < 15; i++)
 	{
 		QRect rect(i* btnW+3, 0, btnW, height());
-		rect.adjust(4, 6, -4, -6);
 		if (i == selectIndex) {
+			rect.adjust(4, 6, -4, -6);
 			painter.save();
 			painter.setPen(Qt::NoPen);
 			painter.setBrush(QColor(228, 238, 255));
@@ -70,6 +71,7 @@ void ToolMain::paintEvent(QPaintEvent * event)
 			painter.restore();
 			painter.setPen(QColor(9, 88, 217));
 		}else if (i == hoverIndex) {
+			rect.adjust(4, 6, -4, -6);
 			painter.save();
 			painter.setPen(Qt::NoPen);
 			painter.setBrush(QColor(238, 238, 238));

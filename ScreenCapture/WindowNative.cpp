@@ -7,7 +7,6 @@
 
 namespace {
     std::unique_ptr<WindowNative> win;
-    std::unique_ptr<CanvasWidget> canvas;
 }
 
 void WindowNative::Init()

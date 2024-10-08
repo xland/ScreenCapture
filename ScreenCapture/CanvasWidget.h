@@ -20,6 +20,8 @@ public:
 	~CanvasWidget();
 	static void Init();
 	static CanvasWidget* Get();
+public:
+	QRect maskRect;
 protected:
 	void mousePressEvent(QMouseEvent* event) override;
 	void mouseMoveEvent(QMouseEvent* event) override;
@@ -31,7 +33,6 @@ private:
 	void paintMask(QPainter& painter);
 private:
 	State state{State::start};
-	QRect maskRect;
 	qreal maskStroke{ 1.5 };
 	bool dragging = false;
 	QPoint dragPosition;

@@ -23,7 +23,6 @@ CanvasWidget::~CanvasWidget()
 void CanvasWidget::Init()
 {
 	canvasWidget = std::make_unique<CanvasWidget>();
-
 	auto hwnd = (HWND)canvasWidget->winId();
 	auto winNative = WindowNative::Get();
 	SetParent(hwnd, winNative->hwnd);
@@ -69,13 +68,10 @@ void CanvasWidget::mouseReleaseEvent(QMouseEvent* event)
 	if (event->button() == Qt::LeftButton) {
 		if (state == State::mask) {
 			state = State::tool;
-
-
-			auto pos = event->pos();
 			//auto btn = new QPushButton("allen", this);
 			//btn->move(pos);
 			//btn->show();
-			ToolMain::Show(event->pos());
+			ToolMain::Show();
 			
 		}
 		dragging = false;
@@ -110,6 +106,7 @@ void CanvasWidget::initImgs()
 	BOOL bRet = BitBlt(hDC, 0, 0, winNative->w, winNative->h, hScreen, winNative->x, winNative->y, SRCCOPY);
 	long long dataSize = winNative->w * winNative->h * 4;
 	std::vector<unsigned char> bgPix(dataSize, 0);
+	bgPix.resize(dataSize);
 	BITMAPINFO info = { sizeof(BITMAPINFOHEADER), (long)winNative->w, 0 - (long)winNative->h, 1, 32, BI_RGB, (DWORD)dataSize, 0, 0, 0, 0 };
 	GetDIBits(hDC, hBitmap, 0, winNative->h, &bgPix.front(), &info, DIB_RGB_COLORS);
 	DeleteObject(hBitmap);
@@ -117,14 +114,14 @@ void CanvasWidget::initImgs()
 	ReleaseDC(NULL, hScreen);
 
 	QImage bgTemp(&bgPix.front(), winNative->w, winNative->h, QImage::Format_ARGB32);
-	auto bg = bgTemp.convertToFormat(QImage::Format_RGB444); //让图像体积小一倍，但图像颜色会变得不一样
-	imgBg = std::make_unique<QImage>(std::move(bg));
-	//imgBg = std::make_unique<QImage>(bgTemp.copy(0, 0, winNative->w, winNative->h)); //
+	//auto bg = bgTemp.convertToFormat(QImage::Format_RGB444); //QImage::Format_RGB444 让图像体积小一倍，但图像颜色会变得不一样
+	//imgBg = std::make_unique<QImage>(std::move(bgTemp));
+	imgBg = std::make_unique<QImage>(bgTemp.copy(0, 0, winNative->w, winNative->h)); //
 
-	imgBoard = std::make_unique<QImage>(winNative->w, winNative->h, QImage::Format_ARGB4444_Premultiplied);
+	imgBoard = std::make_unique<QImage>(winNative->w, winNative->h, QImage::Format_ARGB32); //QImage::Format_ARGB4444_Premultiplied
 	imgBoard->fill(0);
 
-	imgCanvas = std::make_unique<QImage>(winNative->w, winNative->h, QImage::Format_ARGB4444_Premultiplied);
+	imgCanvas = std::make_unique<QImage>(winNative->w, winNative->h, QImage::Format_ARGB32); //QImage::Format_ARGB4444_Premultiplied
 	imgCanvas->fill(0);
 
 }
