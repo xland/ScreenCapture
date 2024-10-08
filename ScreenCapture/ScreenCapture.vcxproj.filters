@@ -43,12 +43,27 @@
     <ClCompile Include="ToolSub.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Config.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ToolBtn.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="WindowNative.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="State.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Config.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ToolBtn.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BtnType.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -65,5 +80,9 @@
   </ItemGroup>
   <ItemGroup>
     <Font Include="res\iconfont.ttf" />
+    <Font Include="config\iconfont.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="config\config.json" />
   </ItemGroup>
 </Project>

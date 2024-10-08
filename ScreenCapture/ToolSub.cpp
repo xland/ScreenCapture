@@ -25,3 +25,8 @@ ToolSub* ToolSub::Get()
 {
 	return toolSub.get();
 }
+
+void ToolSub::Show()
+{
+
+}

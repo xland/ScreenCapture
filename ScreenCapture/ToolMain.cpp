@@ -11,8 +11,7 @@ namespace {
 	std::unique_ptr<ToolMain> toolMain;
 }
 
-ToolMain::ToolMain(QWidget *parent)
-	: QWidget(parent)
+ToolMain::ToolMain(QWidget *parent) : QWidget(parent)
 {
 	setFixedSize(15*btnW+6, 36);
 	setMouseTracking(true);
@@ -31,12 +30,21 @@ ToolMain::ToolMain(QWidget *parent)
 ToolMain::~ToolMain()
 {}
 
+void ToolMain::Init()
+{
+	auto canvas = CanvasWidget::Get();
+	toolMain = std::make_unique<ToolMain>(canvas);
+	toolMain->hide();
+}
+
+ToolMain* ToolMain::Get()
+{
+	return toolMain.get();
+}
+
 void ToolMain::Show()
 {
 	auto canvas = CanvasWidget::Get();
-	if (!toolMain) {		
-		toolMain = std::make_unique<ToolMain>(canvas);
-	}
 	auto pos = canvas->maskRect.bottomRight();
 	toolMain->move(pos.x() - toolMain->width()+2, pos.y()+8);
 	toolMain->show();

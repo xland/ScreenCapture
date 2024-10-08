@@ -5,6 +5,8 @@
 #include <QMouseEvent>
 #include <QPoint>
 
+#include "ToolBtn.h"
+
 class ToolMain : public QWidget
 {
 	Q_OBJECT
@@ -12,7 +14,11 @@ class ToolMain : public QWidget
 public:
 	ToolMain(QWidget *parent = nullptr);
 	~ToolMain();
+	static void Init();
+	static ToolMain* Get();
 	static void Show();
+public:
+	std::vector<ToolBtn> btns;
 protected:
 	void paintEvent(QPaintEvent* event) override;
 	void mousePressEvent(QMouseEvent* event) override;

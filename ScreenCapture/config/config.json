@@ -1,0 +1,266 @@
+{
+  "iconFont": "./config/iconfont.ttf",
+  "defaultLang": "en",  
+  "toolMain": [
+    {
+      "name": "rect",
+      "icon": "e8e8",
+      "zhcn": "",
+      "en": ""
+    },
+    {
+      "name": "ellipse",
+      "icon": "e6bc",
+      "zhcn": "",
+      "en": ""
+    },
+    {
+      "name": "arrow",
+      "icon": "e603",
+      "zhcn": "",
+      "en": ""
+    },
+    {
+      "name": "number",
+      "icon": "e776",
+      "zhcn": "",
+      "en": ""
+    },
+    {
+      "name": "pen",
+      "icon": "e601",
+      "zhcn": "",
+      "en": ""
+    },
+    {
+      "name": "text",
+      "icon": "e69b",
+      "zhcn": "",
+      "en": ""
+    },
+    {
+      "name": "mosaic",
+      "icon": "e6ec",
+      "zhcn": "",
+      "en": ""
+    },
+    {
+      "name": "eraser",
+      "icon": "e87d",
+      "zhcn": "",
+      "en": ""
+    },
+    {
+      "name": "splitter"
+    },
+    {
+      "name": "undo",
+      "icon": "e82e",
+      "zhcn": "",
+      "en": ""
+    },
+    {
+      "name": "redo",
+      "icon": "e6be",
+      "zhcn": "",
+      "en": ""
+    },
+    {
+      "name": "splitter"
+    },
+    {
+      "name": "pin",
+      "icon": "ed85",
+      "zhcn": "",
+      "en": ""
+    },
+    {
+      "name": "save",
+      "icon": "ed8a",
+      "zhcn": "",
+      "en": ""
+    },
+    {
+      "name": "clipboard",
+      "icon": "e6a3",
+      "zhcn": "",
+      "en": ""
+    },
+    {
+      "name": "close",
+      "icon": "e6c0",
+      "zhcn": "",
+      "en": ""
+    }
+  ],
+  "toolSub": {
+    "rect": [
+      {
+        "name": "rectFill",
+        "icon": "e8e8",
+        "selectDefault": false,
+        "zhcn": "",
+        "en": ""
+      },
+      {
+        "name": "strokeWidth",
+        "zhcn": "",
+        "en": ""
+      },
+      {
+        "name": "colors"
+      }
+    ],
+    "ellipse": [
+      {
+        "name": "ellipseFill",
+        "icon": "e8e8",
+        "selectDefault": false,
+        "zhcn": "",
+        "en": ""
+      },
+      {
+        "name": "strokeWidth",
+        "zhcn": "",
+        "en": ""
+      },
+      {
+        "name": "colors"
+      }
+    ],
+    "arrow": [
+      {
+        "name": "arrowFill",
+        "selectDefault": true,
+        "icon": "e8e8",
+        "zhcn": "",
+        "en": ""
+      },
+      {
+        "name": "strokeWidth",
+        "zhcn": "",
+        "en": ""
+      },
+      {
+        "name": "colors"
+      }
+    ],
+    "number": [
+      {
+        "name": "numberFill",
+        "selectDefault": true,
+        "icon": "e8e8",
+        "zhcn": "",
+        "en": ""
+      },
+      {
+        "name": "strokeWidth",
+        "zhcn": "",
+        "en": ""
+      },
+      {
+        "name": "colors"
+      }
+    ],
+    "pen": [
+      {
+        "name": "penFill",
+        "selectDefault": false,
+        "icon": "e8e8",
+        "zhcn": "",
+        "en": ""
+      },
+      {
+        "name": "strokeWidth",
+        "zhcn": "",
+        "en": ""
+      },
+      {
+        "name": "colors"
+      }
+    ],
+    "text": [
+      {
+        "name": "colors"
+      }
+    ],
+    "mosaic": [
+      {
+        "name": "mosaicFill",
+        "icon": "e8e8",
+        "selectDefault": false,
+        "zhcn": "",
+        "en": ""
+      },
+      {
+        "name": "strokeWidth",
+        "zhcn": "",
+        "en": ""
+      }
+    ],
+    "eraser": [
+      {
+        "name": "eraserFill",
+        "icon": "e8e8",
+        "selectDefault": false,
+        "zhcn": "",
+        "en": ""
+      },
+      {
+        "name": "strokeWidth",
+        "zhcn": "",
+        "en": ""
+      }
+    ],
+    "colors": [
+      {
+        "name": "red",
+        "icon": "e8e8",
+        "zhcn": "",
+        "en": ""
+      },
+      {
+        "name": "yellow",
+        "icon": "e8e8",
+        "zhcn": "",
+        "en": ""
+      },
+      {
+        "name": "green",
+        "icon": "e8e8",
+        "zhcn": "",
+        "en": ""
+      },
+      {
+        "name": "cyan",
+        "icon": "e8e8",
+        "zhcn": "",
+        "en": ""
+      },
+      {
+        "name": "blue",
+        "icon": "e8e8",
+        "zhcn": "",
+        "en": ""
+      },
+      {
+        "name": "purple",
+        "icon": "e8e8",
+        "zhcn": "",
+        "en": ""
+      },
+      {
+        "name": "pink",
+        "icon": "e8e8",
+        "zhcn": "",
+        "en": ""
+      },
+      {
+        "name": "black",
+        "icon": "e8e8",
+        "zhcn": "",
+        "en": ""
+      }
+    ]
+  }
+}
