@@ -1,6 +1,8 @@
 #include <qlayout.h>
 #include <qpushbutton.h>
 
+#include "ToolMain.h"
+#include "ToolSub.h"
 #include "CanvasWidget.h"
 #include "WindowNative.h"
 
@@ -23,6 +25,10 @@ CanvasWidget::~CanvasWidget()
 void CanvasWidget::Init()
 {
 	canvasWidget = std::make_unique<CanvasWidget>();
+	auto ptr = canvasWidget.get();
+	ToolMain::Get()->setParent(ptr);
+	ToolSub::Get()->setParent(ptr);
+
 	auto hwnd = (HWND)canvasWidget->winId();
 	auto winNative = WindowNative::Get();
 	SetParent(hwnd, winNative->hwnd);
@@ -106,7 +112,7 @@ void CanvasWidget::initImgs()
 	BOOL bRet = BitBlt(hDC, 0, 0, winNative->w, winNative->h, hScreen, winNative->x, winNative->y, SRCCOPY);
 	long long dataSize = winNative->w * winNative->h * 4;
 	std::vector<unsigned char> bgPix(dataSize, 0);
-	bgPix.resize(dataSize);
+	//bgPix.resize(dataSize);
 	BITMAPINFO info = { sizeof(BITMAPINFOHEADER), (long)winNative->w, 0 - (long)winNative->h, 1, 32, BI_RGB, (DWORD)dataSize, 0, 0, 0, 0 };
 	GetDIBits(hDC, hBitmap, 0, winNative->h, &bgPix.front(), &info, DIB_RGB_COLORS);
 	DeleteObject(hBitmap);

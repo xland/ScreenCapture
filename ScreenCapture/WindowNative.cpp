@@ -1,7 +1,6 @@
 
 #include <format>
 #include <QApplication>
-#include <dwmapi.h>
 #include "WindowNative.h"
 #include "CanvasWidget.h"
 

@@ -15,6 +15,7 @@ ToolMain::ToolMain(QWidget *parent) : QWidget(parent)
 {
 	setFixedSize(15*btnW+6, 36);
 	setMouseTracking(true);
+	setWindowFlags(Qt::Widget);
 
 	//QVBoxLayout* layout = new QVBoxLayout(this);
 	//QPushButton* button = new QPushButton("Click Me", this);
@@ -32,8 +33,7 @@ ToolMain::~ToolMain()
 
 void ToolMain::Init()
 {
-	auto canvas = CanvasWidget::Get();
-	toolMain = std::make_unique<ToolMain>(canvas);
+	toolMain = std::make_unique<ToolMain>(nullptr);
 	toolMain->hide();
 }
 
