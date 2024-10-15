@@ -77,7 +77,7 @@ void ToolMain::paintEvent(QPaintEvent * event)
 {
 	auto font = QFont("iconfont");
 	font.setStyleStrategy(QFont::PreferAntialias);
-	font.setHintingPreference(QFont::PreferFullHinting);
+	//font.setHintingPreference(QFont::PreferFullHinting);
 	font.setPixelSize(15);
 
 	QPainter painter(this);
