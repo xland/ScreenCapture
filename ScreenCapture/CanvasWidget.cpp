@@ -3,7 +3,10 @@
 
 
 #include "CanvasWidget.h"
+#include "CutMask.h"
 #include "WindowNative.h"
+#include "ToolMain.h"
+#include "ToolSub.h"
 
 namespace {
 	std::unique_ptr<CanvasWidget> canvasWidget;
@@ -15,6 +18,10 @@ CanvasWidget::CanvasWidget(QWidget *parent) : QWidget(parent)
 	setWindowFlags(Qt::FramelessWindowHint);
 	auto winNative = WindowNative::Get();
 	setFixedSize(winNative->w, winNative->h);
+	cutMask = new CutMask(this);
+	toolMain = new ToolMain(this);
+	toolSub = new ToolSub(this);
+
 	show();
 
 }

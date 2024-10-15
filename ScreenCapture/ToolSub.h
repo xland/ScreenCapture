@@ -15,9 +15,6 @@ class ToolSub : public QMainWindow
 public:
 	ToolSub(QWidget *parent = nullptr);
 	~ToolSub();
-	static void Init();
-	static ToolSub* Get();
-	static void Show();
 	static void InitData(const QJsonObject& obj, const QString& lang);
 protected:
 	void paintEvent(QPaintEvent* event) override;

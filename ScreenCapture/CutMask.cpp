@@ -2,10 +2,8 @@
 
 #include "CutMask.h"
 #include "CanvasWidget.h"
+#include "ToolMain.h"
 
-namespace {
-	std::unique_ptr<CutMask> cutMask;
-}
 
 CutMask::CutMask(QWidget *parent) : QWidget(parent)
 {
@@ -19,18 +17,6 @@ CutMask::CutMask(QWidget *parent) : QWidget(parent)
 CutMask::~CutMask()
 {}
 
-void CutMask::Init()
-{
-	auto parent = CanvasWidget::Get();
-	cutMask = std::make_unique<CutMask>(parent);
-	//auto winNative = WindowNative::Get();
-	//maskRect.setRect(-maskStroke, -maskStroke, winNative->w + maskStroke, winNative->h + maskStroke);
-}
-
-CutMask* CutMask::Get()
-{
-	return cutMask.get();
-}
 
 void CutMask::paintEvent(QPaintEvent* event)
 {
@@ -59,7 +45,7 @@ void CutMask::mousePressEvent(QMouseEvent* event)
 			maskRect.setRect(dragPosition.x(), dragPosition.y(), 0, 0);
 		}
 		else if (canvasWidget->state == State::tool) {
-			ToolMain::Get()->hide();
+			canvasWidget->toolMain->hide();
 			if (mousePosState == 1) {
 				maskRect.setTopLeft(dragPosition);
 			}
@@ -191,11 +177,11 @@ void CutMask::mouseReleaseEvent(QMouseEvent* event)
 		auto canvasWidget = CanvasWidget::Get();
 		if (canvasWidget->state == State::mask) {
 			canvasWidget->state = State::tool;
-			ToolMain::Get()->show();
+			canvasWidget->toolMain->show();
 
 		}
 		else if (canvasWidget->state == State::tool) {
-			ToolMain::Get()->show();
+			canvasWidget->toolMain->show();
 		}
 		dragging = false;
 	}

@@ -9,7 +9,6 @@
 #include "Config.h"
 
 namespace {
-	std::unique_ptr<ToolMain> toolMain;
 	std::vector<ToolBtn> btns;
 	std::vector<unsigned> spliterIndexs;
 }
@@ -24,15 +23,6 @@ ToolMain::ToolMain(QWidget *parent) : QWidget(parent)
 ToolMain::~ToolMain()
 {}
 
-void ToolMain::Init()
-{
-	auto parent = CanvasWidget::Get();
-	toolMain = std::make_unique<ToolMain>(parent);
-}
-ToolMain* ToolMain::Get()
-{
-	return toolMain.get();
-}
 void ToolMain::InitData(const QJsonArray& arr, const QString& lang)
 {
 	int index{ 0 };
@@ -149,7 +139,7 @@ void ToolMain::mousePressEvent(QMouseEvent* event)
 		if (btn.name.isEmpty()) {
 			selectIndex = hoverIndex;
 			canvasWidget->state = btn.state;
-			ToolSub::Get()->show();
+			canvasWidget->toolSub->show();
 		}
 		else if(btn.name == "close"){
 			qApp->quit();
@@ -177,10 +167,9 @@ void ToolMain::mouseMoveEvent(QMouseEvent* event)
 
 void ToolMain::showEvent(QShowEvent* event)
 {
-	auto canvas = CutMask::Get();
-	auto pos = canvas->maskRect.bottomRight();
-	toolMain->move(pos.x() - toolMain->width() + 2, pos.y() + 6);
-	toolMain->show();
+	auto cutMask = CanvasWidget::Get()->cutMask;
+	auto pos = cutMask->maskRect.bottomRight();
+	move(pos.x() - width() + 2, pos.y() + 6);
 	QWidget::showEvent(event);
 }
 

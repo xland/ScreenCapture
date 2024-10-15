@@ -18,9 +18,7 @@ class ToolMain : public QWidget
 public:
 	ToolMain(QWidget *parent = nullptr);
 	~ToolMain();
-	static void Init();
 	static void InitData(const QJsonArray& arr,const QString& lang);
-	static ToolMain* Get();
 public:
 protected:
 	void paintEvent(QPaintEvent* event) override;

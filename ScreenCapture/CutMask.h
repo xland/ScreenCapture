@@ -9,8 +9,6 @@ class CutMask  : public QWidget
 public:
 	CutMask(QWidget *parent = nullptr);
 	~CutMask();
-	static void Init();
-	static CutMask* Get();
 public:
 	QRect maskRect;
 protected:

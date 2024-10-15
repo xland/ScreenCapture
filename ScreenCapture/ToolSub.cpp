@@ -1,9 +1,11 @@
 ﻿#include "ToolSub.h"
 #include "CanvasWidget.h"
 #include <memory>
+#include "Config.h"
+#include "ToolMain.h"
 
 namespace {
-	std::unique_ptr<ToolSub> toolSub{nullptr};	
+	//todo 钉住窗口该如何复用这个按钮容器
 	std::vector<ToolBtn> rectBtns;
 	std::vector<ToolBtn> ellipseBtns;
 	std::vector<ToolBtn> arrowBtns;
@@ -18,25 +20,10 @@ namespace {
 ToolSub::ToolSub(QWidget *parent) : QMainWindow(parent)
 {
 	setVisible(false);
+	setMouseTracking(true);
 }
 
 ToolSub::~ToolSub()
-{
-
-}
-
-void ToolSub::Init()
-{
-	auto parent = CanvasWidget::Get();
-	toolSub = std::make_unique<ToolSub>(parent);
-}
-
-ToolSub* ToolSub::Get()
-{
-	return toolSub.get();
-}
-
-void ToolSub::Show()
 {
 
 }
@@ -104,6 +91,19 @@ void ToolSub::InitData(const QJsonObject& obj, const QString& lang)
 
 void ToolSub::paintEvent(QPaintEvent* event)
 {
+	auto font = Config::GetIconFont();
+	font->setPixelSize(15);
+
+	QPainter painter(this);
+	painter.setRenderHint(QPainter::Antialiasing, true);
+	painter.setRenderHint(QPainter::TextAntialiasing, true);
+	painter.setFont(*font);
+
+	QPen pen(QColor(22, 119, 255));
+	pen.setWidth(1);
+	painter.setPen(pen);
+	painter.setBrush(Qt::GlobalColor::white);
+	painter.drawRect(rect().adjusted(1, 1, -1, -1));
 }
 
 void ToolSub::mousePressEvent(QMouseEvent* event)
@@ -120,6 +120,12 @@ void ToolSub::leaveEvent(QEvent* event)
 
 void ToolSub::showEvent(QShowEvent* event)
 {
+	auto toolMain = CanvasWidget::Get()->toolMain; 
+	auto toolSub = CanvasWidget::Get()->toolSub;
+	auto pos = toolMain->geometry().bottomLeft();
+	toolSub->move(pos.x(), pos.y());
+	setFixedSize(120, 36);
+	QWidget::showEvent(event);
 }
 
 ToolBtn ToolSub::makeBtn(const QJsonValue& val, const QString& lang)
