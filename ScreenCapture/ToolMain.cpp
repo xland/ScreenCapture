@@ -1,11 +1,11 @@
 ﻿#include <qlayout.h>
 #include <qpushbutton.h>
-#include <QFont>
-#include <QFontDatabase>
 #include <qtooltip.h>
 
 #include "CanvasWidget.h"
 #include "ToolMain.h"
+#include "CutMask.h"
+#include "Config.h"
 
 namespace {
 	std::unique_ptr<ToolMain> toolMain;
@@ -16,7 +16,6 @@ ToolMain::ToolMain(QWidget *parent) : QWidget(parent)
 {
 	setFixedSize(15*btnW+6, 36);
 	setMouseTracking(true);
-	setWindowFlags(Qt::Widget);
 	setVisible(false);
 
 	//QVBoxLayout* layout = new QVBoxLayout(this);
@@ -67,7 +66,7 @@ void ToolMain::InitData(const QJsonArray& arr)
 
 void ToolMain::Show()
 {
-	auto canvas = CanvasWidget::Get();
+	auto canvas = CutMask::Get();
 	auto pos = canvas->maskRect.bottomRight();
 	toolMain->move(pos.x() - toolMain->width()+2, pos.y()+8);
 	toolMain->show();
@@ -75,15 +74,13 @@ void ToolMain::Show()
 
 void ToolMain::paintEvent(QPaintEvent * event)
 {
-	auto font = QFont("iconfont");
-	font.setStyleStrategy(QFont::PreferAntialias);
-	//font.setHintingPreference(QFont::PreferFullHinting);
-	font.setPixelSize(15);
+	auto font = Config::GetIconFont();
+	font->setPixelSize(15);
 
 	QPainter painter(this);
 	painter.setRenderHint(QPainter::Antialiasing, true);
 	painter.setRenderHint(QPainter::TextAntialiasing, true);
-	painter.setFont(font);
+	painter.setFont(*font);
 
 	QPen pen(QColor(22, 119, 255));
 	pen.setWidth(1);    

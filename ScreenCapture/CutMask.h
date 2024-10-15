@@ -11,4 +11,15 @@ public:
 	~CutMask();
 	static void Init();
 	static CutMask* Get();
+public:
+	QRect maskRect;
+protected:
+	void paintEvent(QPaintEvent* event) override;
+	void mousePressEvent(QMouseEvent* event) override;
+	void mouseMoveEvent(QMouseEvent* event) override;
+	void mouseReleaseEvent(QMouseEvent* event) override;
+private:
+	qreal maskStroke{ 1.5 };
+	bool dragging = false;
+	QPoint dragPosition;
 };

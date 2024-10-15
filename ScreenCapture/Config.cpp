@@ -11,6 +11,7 @@
 
 namespace {
     std::unique_ptr<Config> setting;
+    std::unique_ptr<QFont> iconFont;
 }
 
 void Config::Init()
@@ -38,6 +39,11 @@ Config* Config::Get()
     return setting.get();
 }
 
+QFont* Config::GetIconFont()
+{
+    return iconFont.get();
+}
+
 void Config::initFont(const QJsonObject& obj)
 {
     QString name = obj["iconFont"].toString();
@@ -45,4 +51,8 @@ void Config::initFont(const QJsonObject& obj)
     if (result != 0) {
         qWarning() << "没有找到字体图标文件";
     }
+    auto fontName = obj["iconFontName"].toString();
+    iconFont = std::make_unique<QFont>(fontName);
+    iconFont->setStyleStrategy(QFont::PreferAntialias);
+    iconFont->setHintingPreference(QFont::PreferFullHinting);
 }

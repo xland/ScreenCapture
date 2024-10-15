@@ -6,6 +6,7 @@
 #include "CutMask.h"
 #include "ToolMain.h"
 #include "ToolSub.h"
+#include "CutMask.h"
 
 
 int main(int argc, char *argv[])
@@ -14,6 +15,7 @@ int main(int argc, char *argv[])
     Config::Init();
     WindowNative::Init();
     CanvasWidget::Init();
+    CutMask::Init();
     ToolMain::Init();
     ToolSub::Init();
     return a.exec();

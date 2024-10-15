@@ -1,6 +1,7 @@
 {
   "iconFont": "./config/iconfont.ttf",
-  "defaultLang": "en",  
+  "iconFontName": "iconfont",
+  "defaultLang": "en",
   "toolMain": [
     {
       "name": "rect",
