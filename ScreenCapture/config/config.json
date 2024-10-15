@@ -98,7 +98,7 @@
     "rect": [
       {
         "name": "rectFill",
-        "icon": "e8e8",
+        "icon": "e602",
         "selectDefault": false,
         "zhcn": "",
         "en": ""
@@ -115,7 +115,7 @@
     "ellipse": [
       {
         "name": "ellipseFill",
-        "icon": "e8e8",
+        "icon": "e600",
         "selectDefault": false,
         "zhcn": "",
         "en": ""
@@ -133,7 +133,7 @@
       {
         "name": "arrowFill",
         "selectDefault": true,
-        "icon": "e8e8",
+        "icon": "e604",
         "zhcn": "",
         "en": ""
       },
@@ -150,7 +150,7 @@
       {
         "name": "numberFill",
         "selectDefault": true,
-        "icon": "e8e8",
+        "icon": "e605",
         "zhcn": "",
         "en": ""
       },
@@ -163,11 +163,11 @@
         "name": "colors"
       }
     ],
-    "pen": [
+    "line": [
       {
-        "name": "penFill",
+        "name": "lineFill",
         "selectDefault": false,
-        "icon": "e8e8",
+        "icon": "e607",
         "zhcn": "",
         "en": ""
       },
@@ -188,7 +188,7 @@
     "mosaic": [
       {
         "name": "mosaicFill",
-        "icon": "e8e8",
+        "icon": "e602",
         "selectDefault": false,
         "zhcn": "",
         "en": ""
@@ -202,7 +202,7 @@
     "eraser": [
       {
         "name": "eraserFill",
-        "icon": "e8e8",
+        "icon": "e602",
         "selectDefault": false,
         "zhcn": "",
         "en": ""
@@ -213,55 +213,53 @@
         "en": ""
       }
     ],
-    "colors": [
-      {
-        "name": "red",
-        "icon": "e8e8",
-        "zhcn": "",
-        "en": ""
-      },
-      {
-        "name": "yellow",
-        "icon": "e8e8",
-        "zhcn": "",
-        "en": ""
-      },
-      {
-        "name": "green",
-        "icon": "e8e8",
-        "zhcn": "",
-        "en": ""
-      },
-      {
-        "name": "cyan",
-        "icon": "e8e8",
-        "zhcn": "",
-        "en": ""
-      },
-      {
-        "name": "blue",
-        "icon": "e8e8",
-        "zhcn": "",
-        "en": ""
-      },
-      {
-        "name": "purple",
-        "icon": "e8e8",
-        "zhcn": "",
-        "en": ""
-      },
-      {
-        "name": "pink",
-        "icon": "e8e8",
-        "zhcn": "",
-        "en": ""
-      },
-      {
-        "name": "black",
-        "icon": "e8e8",
-        "zhcn": "",
-        "en": ""
-      }
-    ]
+    "color": {
+      "icon": "e61d",
+      "iconSelected": "e721",
+      "defaultSelectedIndex": 0,
+      "items": [
+        {
+          "en": "red",
+          "zhcn": "红",
+          "value": "#CF1322"
+        },
+        {
+          "en": "yellow",
+          "zhcn": "黄",
+          "value": "#D48806"
+        },
+        {
+          "en": "green",
+          "zhcn": "绿",
+          "value": "#389E0D"
+        },
+        {
+          "en": "cyan",
+          "zhcn": "青",
+          "value": "#13C2C2"
+        },
+        {
+          "en": "blue",
+          "zhcn": "蓝",
+          "value": "#0958D9"
+        },
+        {
+          "en": "purple",
+          "zhcn": "紫",
+          "value": "#722ED1"
+        },
+        {
+          "en": "pink",
+          "zhcn": "粉",
+          "value": "#EB2F96"
+        },
+        {
+          "en": "black",
+          "zhcn": "黑",
+          "value": "#000000"
+        }
+      ]
+    }
+    
   }
 }

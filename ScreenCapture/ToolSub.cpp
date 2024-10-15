@@ -5,19 +5,15 @@
 #include "ToolMain.h"
 
 namespace {
-	//todo 钉住窗口该如何复用这个按钮容器
-	std::vector<ToolBtn> rectBtns;
-	std::vector<ToolBtn> ellipseBtns;
-	std::vector<ToolBtn> arrowBtns;
-	std::vector<ToolBtn> numberBtns;
-	std::vector<ToolBtn> penBtns;
-	std::vector<ToolBtn> textBtns;
-	std::vector<ToolBtn> mosaicBtns;
-	std::vector<ToolBtn> eraserBtns;
-	std::vector<ToolBtn> colorsBtns;
+	std::map<State, std::vector<ToolBtn>> btns;
+	QChar colorIcon;
+	QChar colorIconSelected;
+	int colorIndex;
+	std::vector<QString> colorTips;
+	std::vector<QString> colorValues;
 }
 
-ToolSub::ToolSub(QWidget *parent) : QMainWindow(parent)
+ToolSub::ToolSub(QWidget *parent) : QWidget(parent)
 {
 	setVisible(false);
 	setMouseTracking(true);
@@ -32,60 +28,57 @@ void ToolSub::InitData(const QJsonObject& obj, const QString& lang)
 {
 	if (obj["rect"].isArray()) {
 		auto arr = obj["rect"].toArray();
-		for (const QJsonValue& val : arr)
-		{
-			rectBtns.push_back(makeBtn(val,lang));
-		}
+		btns.insert({ State::rect,makeBtns(arr, lang) });
 	}
-	else if (obj["ellipse"].isArray()) {
+	if (obj["ellipse"].isArray()) {
 		auto arr = obj["ellipse"].toArray();
-		for (const QJsonValue& val : arr)
-		{
-			ellipseBtns.push_back(makeBtn(val, lang));
-		}
+		btns.insert({ State::ellipse,makeBtns(arr, lang) });
 	}
-	else if (obj["arrow"].isArray()) {
+	if (obj["arrow"].isArray()) {
 		auto arr = obj["arrow"].toArray();
-		for (const QJsonValue& val : arr)
-		{
-			arrowBtns.push_back(makeBtn(val, lang));
-		}
+		btns.insert({ State::arrow,makeBtns(arr, lang) });
 	}
-	else if (obj["number"].isArray()) {
+	if (obj["number"].isArray()) {
 		auto arr = obj["number"].toArray();
-		for (const QJsonValue& val : arr)
-		{
-			numberBtns.push_back(makeBtn(val, lang));
-		}
+		btns.insert({ State::number,makeBtns(arr, lang) });
 	}
-	else if (obj["pen"].isArray()) {
-		auto arr = obj["pen"].toArray();
-		for (const QJsonValue& val : arr)
-		{
-			penBtns.push_back(makeBtn(val, lang));
-		}
+	if (obj["line"].isArray()) {
+		auto arr = obj["line"].toArray();
+		btns.insert({ State::line,makeBtns(arr, lang) });
 	}
-	else if (obj["text"].isArray()) {
+	if (obj["text"].isArray()) {
 		auto arr = obj["text"].toArray();
-		for (const QJsonValue& val : arr)
-		{
-			textBtns.push_back(makeBtn(val, lang));
-		}
+		btns.insert({ State::text,makeBtns(arr, lang) });
 	}
-	else if (obj["mosaic"].isArray()) {
+	if (obj["mosaic"].isArray()) {
 		auto arr = obj["mosaic"].toArray();
-		for (const QJsonValue& val : arr)
-		{
-			mosaicBtns.push_back(makeBtn(val, lang));
-		}
+		btns.insert({ State::mosaic,makeBtns(arr, lang) });
 	}
-	else if (obj["eraser"].isArray()) {
+	if (obj["eraser"].isArray()) {
 		auto arr = obj["eraser"].toArray();
-		for (const QJsonValue& val : arr)
+		btns.insert({ State::eraser,makeBtns(arr, lang) });
+	}
+	if (obj["color"].isObject()) {
+		auto color = obj["color"].toObject(); 
+		colorIndex = color["defaultSelectedIndex"].toInt();
+		bool ok;
+		uint codePoint = color["icon"].toString().toUInt(&ok, 16);
+		if (ok) {
+			colorIcon = QChar(codePoint);
+		}
+		codePoint = color["iconSelected"].toString().toUInt(&ok, 16);
+		if (ok) {
+			colorIconSelected = QChar(codePoint);
+		}
+		auto arr = color["items"].toArray();
+		for (const QJsonValue& item:arr)
 		{
-			eraserBtns.push_back(makeBtn(val, lang));
+			colorTips.push_back(item[lang].toString());
+			colorValues.push_back(item["value"].toString());
 		}
 	}
+
+	
 
 }
 
@@ -99,11 +92,48 @@ void ToolSub::paintEvent(QPaintEvent* event)
 	painter.setRenderHint(QPainter::TextAntialiasing, true);
 	painter.setFont(*font);
 
-	QPen pen(QColor(22, 119, 255));
-	pen.setWidth(1);
-	painter.setPen(pen);
+	painter.setPen(Qt::GlobalColor::white);
 	painter.setBrush(Qt::GlobalColor::white);
-	painter.drawRect(rect().adjusted(1, 1, -1, -1));
+	painter.drawRect(rect().adjusted(0, 10, 0, 0));
+
+	auto canvasWidget = CanvasWidget::Get();
+	auto index = canvasWidget->toolMain->selectIndex;
+	auto x = 4+ index * 32 + 32 / 2;
+	QPolygon triangle;
+	triangle << QPoint(x, 6) << QPoint(x-4, 10) << QPoint(x+4, 10);
+	painter.drawPolygon(triangle);
+
+	auto& values = btns[canvasWidget->state];
+	x = 4;
+	for (size_t i = 0; i < values.size(); i++)
+	{
+		if (values[i].name == "colors") {
+			for (size_t j = 0; j < colorValues.size(); j++)
+			{
+				QRect rect(x, 10, 26, 32);
+				painter.setPen(QColor(colorValues[j]));
+				if (j == colorIndex) {
+					painter.drawText(rect, Qt::AlignCenter, colorIconSelected);
+				}
+				else {
+					painter.drawText(rect, Qt::AlignCenter, colorIcon);
+				}
+				x += 26;
+			}
+		}
+		else if (values[i].name == "strokeWidth") {
+			painter.setPen(QColor(190, 190, 190));
+			painter.drawLine(x, 10 + 16, x+80, 10+16);
+			x += 84;
+		}
+		else{
+			QRect rect(x, 10, btnW, 32);
+			painter.setPen(QColor(33, 33, 33));
+			painter.drawText(rect, Qt::AlignCenter, values[i].icon);
+			x += btnW;
+		}		
+	}
+	painter.end();
 }
 
 void ToolSub::mousePressEvent(QMouseEvent* event)
@@ -120,32 +150,59 @@ void ToolSub::leaveEvent(QEvent* event)
 
 void ToolSub::showEvent(QShowEvent* event)
 {
-	auto toolMain = CanvasWidget::Get()->toolMain; 
-	auto toolSub = CanvasWidget::Get()->toolSub;
+	auto canvasWidget = CanvasWidget::Get();
+	auto toolMain = canvasWidget->toolMain;
+	auto toolSub = canvasWidget->toolSub;
+	auto ptr = toolSub->parent();
 	auto pos = toolMain->geometry().bottomLeft();
 	toolSub->move(pos.x(), pos.y());
-	setFixedSize(120, 36);
+
+	auto values = btns[canvasWidget->state];
+	auto w{ 4 };
+	for (size_t i = 0; i < values.size(); i++)
+	{
+		if (values[i].name == "colors") {
+			for (size_t j = 0; j < colorValues.size(); j++)
+			{
+				w += 26;
+			}
+		}
+		else if (values[i].name == "strokeWidth") {
+			w += 84;
+		}
+		else {
+			w += btnW;
+		}
+	}
+	w += 4;
+	setFixedSize(w, 42);
 	QWidget::showEvent(event);
 }
 
-ToolBtn ToolSub::makeBtn(const QJsonValue& val, const QString& lang)
+std::vector<ToolBtn> ToolSub::makeBtns(const QJsonArray& arr, const QString& lang)
 {
-	ToolBtn btn;
-	btn.name = val["name"].toString();
-	if (btn.name == "strokeWidth" || btn.name == "colors") {
-		return btn;
-	}
-	btn.tipText = val[lang].toString();
-	btn.selected = val["selectDefault"].toBool(false);
+	std::vector<ToolBtn> btns;
+	for (const QJsonValue& val:arr)
 	{
-		bool ok;
-		uint codePoint = val["icon"].toString().toUInt(&ok, 16);
-		if (ok) {
-			btn.icon = QChar(codePoint);
+		ToolBtn btn;
+		btn.name = val["name"].toString();
+		if (btn.name == "strokeWidth" || btn.name == "colors") {
+			btns.push_back(std::move(btn));
+			continue;
 		}
-		else {
-			qWarning() << "转换失败";
+		btn.tipText = val[lang].toString();
+		btn.selected = val["selectDefault"].toBool(false);
+		{
+			bool ok;
+			uint codePoint = val["icon"].toString().toUInt(&ok, 16);
+			if (ok) {
+				btn.icon = QChar(codePoint);
+			}
+			else {
+				qWarning() << "转换失败";
+			}
 		}
-	}
-	return btn;
+		btns.push_back(std::move(btn));
+	}	
+	return btns;
 }

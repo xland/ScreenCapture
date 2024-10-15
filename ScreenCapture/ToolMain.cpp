@@ -15,9 +15,10 @@ namespace {
 
 ToolMain::ToolMain(QWidget *parent) : QWidget(parent)
 {
-	setFixedSize(btns.size()*btnW+10, 36);
+	setFixedSize(btns.size()*btnW+8, 32);
 	setMouseTracking(true);
 	setVisible(false);
+	
 }
 
 ToolMain::~ToolMain()
@@ -87,17 +88,14 @@ void ToolMain::paintEvent(QPaintEvent * event)
 	painter.setRenderHint(QPainter::Antialiasing, true);
 	painter.setRenderHint(QPainter::TextAntialiasing, true);
 	painter.setFont(*font);
-
-	QPen pen(QColor(22, 119, 255));
-	pen.setWidth(1);    
-	painter.setPen(pen);
+	painter.setPen(Qt::GlobalColor::white);
 	painter.setBrush(Qt::GlobalColor::white);
-	painter.drawRect(rect().adjusted(1, 1, -1, -1));
+	painter.drawRect(rect());
 	for (size_t i = 0; i < btns.size(); i++)
 	{
-		QRect rect(5+ i* btnW, 0, btnW, height());
+		QRect rect(4+ i* btnW, 0, btnW, height());
 		if (i == selectIndex) {
-			rect.adjust(2, 6, -2, -6);
+			rect.adjust(2, 4, -2, -4);
 			painter.save();
 			painter.setPen(Qt::NoPen);
 			painter.setBrush(QColor(228, 238, 255));
@@ -105,7 +103,7 @@ void ToolMain::paintEvent(QPaintEvent * event)
 			painter.restore();
 			painter.setPen(QColor(9, 88, 217));
 		}else if (i == hoverIndex) {
-			rect.adjust(2, 6, -2, -6);
+			rect.adjust(2, 4, -2, -4);
 			painter.save();
 			painter.setPen(Qt::NoPen);
 			painter.setBrush(QColor(238, 238, 238));
@@ -118,10 +116,10 @@ void ToolMain::paintEvent(QPaintEvent * event)
 		}
 		painter.drawText(rect, Qt::AlignCenter,btns[i].icon);
 	}
-	painter.setPen(QColor(180, 180, 180));
+	painter.setPen(QColor(190, 190, 190));
 	for (size_t i = 0; i < spliterIndexs.size(); i++)
 	{
-		painter.drawLine(5+spliterIndexs[i] * btnW, 10, 5+spliterIndexs[i] * btnW, height() - 10);
+		painter.drawLine(4+spliterIndexs[i] * btnW+0.5, 9, 4+spliterIndexs[i] * btnW+0.5, height() - 9);
 	}
 	painter.end();
 }
@@ -137,6 +135,7 @@ void ToolMain::mousePressEvent(QMouseEvent* event)
 	else {
 		auto& btn = btns[hoverIndex];
 		if (btn.name.isEmpty()) {
+			canvasWidget->toolSub->hide();
 			selectIndex = hoverIndex;
 			canvasWidget->state = btn.state;
 			canvasWidget->toolSub->show();
@@ -152,7 +151,7 @@ void ToolMain::mousePressEvent(QMouseEvent* event)
 
 void ToolMain::mouseMoveEvent(QMouseEvent* event)
 {
-	auto x = event->pos().x()-5;
+	auto x = event->pos().x()-4;
 	auto index{ x / (int)btnW };
 	if (index >= btns.size())index = -1;
 	if (index != hoverIndex) {
@@ -169,7 +168,7 @@ void ToolMain::showEvent(QShowEvent* event)
 {
 	auto cutMask = CanvasWidget::Get()->cutMask;
 	auto pos = cutMask->maskRect.bottomRight();
-	move(pos.x() - width() + 2, pos.y() + 6);
+	move(pos.x() - width(), pos.y() + 6);
 	QWidget::showEvent(event);
 }
 

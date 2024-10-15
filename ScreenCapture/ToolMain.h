@@ -20,6 +20,7 @@ public:
 	~ToolMain();
 	static void InitData(const QJsonArray& arr,const QString& lang);
 public:
+	int selectIndex{ -1 };
 protected:
 	void paintEvent(QPaintEvent* event) override;
 	void mousePressEvent(QMouseEvent* event) override;
@@ -27,7 +28,6 @@ protected:
 	void leaveEvent(QEvent* event) override;
 	void showEvent(QShowEvent* event) override;
 private:
-	qreal btnW{ 32 };
 	int hoverIndex{ -1 };
-	int selectIndex{ -1 };
+	qreal btnW{ 32 };
 };

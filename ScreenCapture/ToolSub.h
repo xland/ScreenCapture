@@ -8,7 +8,7 @@
 
 #include "ToolBtn.h"
 
-class ToolSub : public QMainWindow
+class ToolSub : public QWidget
 {
 	Q_OBJECT
 
@@ -23,6 +23,7 @@ protected:
 	void leaveEvent(QEvent* event) override;
 	void showEvent(QShowEvent* event) override;
 private:
-	static ToolBtn makeBtn(const QJsonValue& val, const QString& lang);
+	static std::vector<ToolBtn> makeBtns(const QJsonArray& arr, const QString& lang);
+	qreal btnW{ 32 };
 private:
 };
