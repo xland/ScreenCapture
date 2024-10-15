@@ -140,7 +140,8 @@ void ToolMain::mouseMoveEvent(QMouseEvent* event)
 		hoverIndex = index;
 		auto pos = event->globalPosition();
 		QToolTip::showText(QPoint(pos.x(),pos.y()), QString("Name: %1").arg(hoverIndex), this);
-		update();
+		repaint();
+		qDebug() << "repaint";
 	}
 }
 
@@ -148,7 +149,7 @@ void ToolMain::leaveEvent(QEvent* event)
 {
 	if (hoverIndex != -1) {
 		hoverIndex = -1;
-		update();
+		repaint();
 	}
 	QWidget::leaveEvent(event);
 }

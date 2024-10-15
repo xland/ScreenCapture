@@ -191,10 +191,6 @@ void CutMask::mouseReleaseEvent(QMouseEvent* event)
 		auto canvasWidget = CanvasWidget::Get();
 		if (canvasWidget->state == State::mask) {
 			canvasWidget->state = State::tool;
-			//auto btn = new QPushButton("allen", this);
-			//btn->move(pos);
-			//btn->show();
-
 			ToolMain::Show();
 
 		}
