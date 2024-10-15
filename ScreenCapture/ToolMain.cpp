@@ -68,7 +68,7 @@ void ToolMain::Show()
 {
 	auto canvas = CutMask::Get();
 	auto pos = canvas->maskRect.bottomRight();
-	toolMain->move(pos.x() - toolMain->width()+2, pos.y()+8);
+	toolMain->move(pos.x() - toolMain->width()+2, pos.y()+6);
 	toolMain->show();
 }
 

@@ -54,5 +54,5 @@ void Config::initFont(const QJsonObject& obj)
     auto fontName = obj["iconFontName"].toString();
     iconFont = std::make_unique<QFont>(fontName);
     iconFont->setStyleStrategy(QFont::PreferAntialias);
-    iconFont->setHintingPreference(QFont::PreferFullHinting);
+    iconFont->setHintingPreference(QFont::PreferNoHinting);
 }

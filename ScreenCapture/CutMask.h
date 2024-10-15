@@ -22,4 +22,5 @@ private:
 	qreal maskStroke{ 1.5 };
 	bool dragging = false;
 	QPoint dragPosition;
+	int mousePosState{ -1 };
 };
