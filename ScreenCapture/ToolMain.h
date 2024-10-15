@@ -4,6 +4,10 @@
 #include <qpainter.h>
 #include <QMouseEvent>
 #include <QPoint>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QJsonValue>
 
 #include "ToolBtn.h"
 
@@ -15,10 +19,10 @@ public:
 	ToolMain(QWidget *parent = nullptr);
 	~ToolMain();
 	static void Init();
+	static void InitData(const QJsonArray& arr);
 	static ToolMain* Get();
 	static void Show();
 public:
-	std::vector<ToolBtn> btns;
 protected:
 	void paintEvent(QPaintEvent* event) override;
 	void mousePressEvent(QMouseEvent* event) override;

@@ -9,6 +9,7 @@
 
 namespace {
 	std::unique_ptr<ToolMain> toolMain;
+	std::vector<ToolBtn> btns;
 }
 
 ToolMain::ToolMain(QWidget *parent) : QWidget(parent)
@@ -16,6 +17,7 @@ ToolMain::ToolMain(QWidget *parent) : QWidget(parent)
 	setFixedSize(15*btnW+6, 36);
 	setMouseTracking(true);
 	setWindowFlags(Qt::Widget);
+	setVisible(false);
 
 	//QVBoxLayout* layout = new QVBoxLayout(this);
 	//QPushButton* button = new QPushButton("Click Me", this);
@@ -33,13 +35,34 @@ ToolMain::~ToolMain()
 
 void ToolMain::Init()
 {
-	toolMain = std::make_unique<ToolMain>(nullptr);
-	toolMain->hide();
+	auto parent = CanvasWidget::Get();
+	toolMain = std::make_unique<ToolMain>(parent);
 }
-
 ToolMain* ToolMain::Get()
 {
 	return toolMain.get();
+}
+void ToolMain::InitData(const QJsonArray& arr)
+{
+	for (const QJsonValue& val : arr)
+	{
+		ToolBtn btn;
+		btn.name = val["name"].toString();
+		btn.en = val["en"].toString("");
+		btn.zhcn = val["zhcn"].toString("");
+		btn.selected = val["selectDefault"].toBool(false);
+		{
+			bool ok;
+			uint codePoint = val["icon"].toString().toUInt(&ok, 16);
+			if (ok) {
+				btn.icon = QChar(codePoint);
+			}
+			else {
+				qWarning() << "转换失败";
+			}
+		}
+		btns.push_back(btn);
+	}
 }
 
 void ToolMain::Show()

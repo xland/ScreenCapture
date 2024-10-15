@@ -29,13 +29,13 @@ void Config::Init()
     }
     QJsonObject jsonObject = document.object();
     initFont(jsonObject);
-    initToolMain(jsonObject["toolMain"].toArray());
-    initToolSub(jsonObject["toolSub"].toObject());
+    ToolMain::InitData(jsonObject["toolMain"].toArray());
+    ToolSub::InitData(jsonObject["toolSub"].toObject());
 }
 
 Config* Config::Get()
 {
-    return Config::Get();
+    return setting.get();
 }
 
 void Config::initFont(const QJsonObject& obj)
@@ -45,36 +45,4 @@ void Config::initFont(const QJsonObject& obj)
     if (result != 0) {
         qWarning() << "没有找到字体图标文件";
     }
-}
-
-void Config::initToolMain(const QJsonArray& arr)
-{
-    ToolMain::Init();
-    auto toolMain = ToolMain::Get();
-    for (const QJsonValue& val : arr)
-    {
-        ToolBtn btn;
-        btn.name = val["name"].toString();
-        btn.en = val["en"].toString("");
-        btn.zhcn = val["zhcn"].toString("");
-        btn.selected = val["selectDefault"].toBool(false);
-        {
-            bool ok;
-            uint codePoint = val["icon"].toString().toUInt(&ok, 16);
-            if (ok) {
-                btn.icon = QChar(codePoint);
-            }
-            else {
-                qWarning() << "转换失败";
-            }
-        }
-        toolMain->btns.push_back(btn);
-    }
-}
-
-void Config::initToolSub(const QJsonObject& obj)
-{
-    ToolSub::Init();
-    auto toolSub = ToolSub::Get();
-
 }

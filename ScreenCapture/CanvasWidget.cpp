@@ -1,8 +1,7 @@
 #include <qlayout.h>
 #include <qpushbutton.h>
 
-#include "ToolMain.h"
-#include "ToolSub.h"
+
 #include "CanvasWidget.h"
 #include "WindowNative.h"
 
@@ -25,9 +24,6 @@ CanvasWidget::~CanvasWidget()
 void CanvasWidget::Init()
 {
 	canvasWidget = std::make_unique<CanvasWidget>();
-	auto ptr = canvasWidget.get();
-	ToolMain::Get()->setParent(ptr);
-	ToolSub::Get()->setParent(ptr);
 
 	auto hwnd = (HWND)canvasWidget->winId();
 	auto winNative = WindowNative::Get();
@@ -93,8 +89,6 @@ void CanvasWidget::paintEvent(QPaintEvent* event)
 {
 	QPainter painter(this);
 	painter.drawImage(rect(), *imgBg);
-	painter.drawImage(rect(), *imgBoard);
-	painter.drawImage(rect(), *imgCanvas);
 	painter.setRenderHint(QPainter::Antialiasing, true);
 	paintMask(painter);	
 	painter.end();
@@ -122,13 +116,7 @@ void CanvasWidget::initImgs()
 	QImage bgTemp(&bgPix.front(), winNative->w, winNative->h, QImage::Format_ARGB32);
 	//auto bg = bgTemp.convertToFormat(QImage::Format_RGB444); //QImage::Format_RGB444 让图像体积小一倍，但图像颜色会变得不一样
 	//imgBg = std::make_unique<QImage>(std::move(bgTemp));
-	imgBg = std::make_unique<QImage>(bgTemp.copy(0, 0, winNative->w, winNative->h)); //
-
-	imgBoard = std::make_unique<QImage>(winNative->w, winNative->h, QImage::Format_ARGB32); //QImage::Format_ARGB4444_Premultiplied
-	imgBoard->fill(0);
-
-	imgCanvas = std::make_unique<QImage>(winNative->w, winNative->h, QImage::Format_ARGB32); //QImage::Format_ARGB4444_Premultiplied
-	imgCanvas->fill(0);
+	imgBg = std::make_unique<QImage>(bgTemp.copy(0, 0, winNative->w, winNative->h)); 
 
 }
 

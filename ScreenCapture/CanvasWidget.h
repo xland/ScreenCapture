@@ -39,7 +39,5 @@ private:
 	ToolMain* toolMain;
 
 	std::unique_ptr<QImage> imgBg;
-	std::unique_ptr<QImage> imgBoard;
-	std::unique_ptr<QImage> imgCanvas;
 	
 };

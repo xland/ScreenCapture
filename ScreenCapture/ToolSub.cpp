@@ -8,6 +8,7 @@ namespace {
 
 ToolSub::ToolSub(QWidget *parent) : QMainWindow(parent)
 {
+	setVisible(false);
 }
 
 ToolSub::~ToolSub()
@@ -17,8 +18,8 @@ ToolSub::~ToolSub()
 
 void ToolSub::Init()
 {
-	auto canvasWidget = CanvasWidget::Get();
-	toolSub = std::make_unique<ToolSub>(canvasWidget);
+	auto parent = CanvasWidget::Get();
+	toolSub = std::make_unique<ToolSub>(parent);
 }
 
 ToolSub* ToolSub::Get()
@@ -29,4 +30,8 @@ ToolSub* ToolSub::Get()
 void ToolSub::Show()
 {
 
+}
+
+void ToolSub::InitData(const QJsonObject& obj)
+{
 }

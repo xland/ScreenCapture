@@ -49,6 +49,9 @@
     <ClCompile Include="ToolBtn.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CutMask.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="WindowNative.h">
@@ -75,6 +78,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="ToolSub.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="CutMask.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

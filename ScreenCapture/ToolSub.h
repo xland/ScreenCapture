@@ -1,6 +1,10 @@
 ﻿#pragma once
 
 #include <QMainWindow>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QJsonValue>
 
 #include "ToolBtn.h"
 
@@ -14,6 +18,7 @@ public:
 	static void Init();
 	static ToolSub* Get();
 	static void Show();
+	static void InitData(const QJsonObject& obj);
 public:
 	std::vector<ToolBtn> rectBtns;
 	std::vector<ToolBtn> ellipseBtns;

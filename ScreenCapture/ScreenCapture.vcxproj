@@ -107,6 +107,7 @@
   <ItemGroup>
     <ClCompile Include="CanvasWidget.cpp" />
     <ClCompile Include="Config.cpp" />
+    <ClCompile Include="CutMask.cpp" />
     <ClCompile Include="ToolBtn.cpp" />
     <ClCompile Include="ToolMain.cpp" />
     <ClCompile Include="ToolSub.cpp" />
@@ -118,6 +119,7 @@
     <QtMoc Include="CanvasWidget.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="BtnType.h" />
+    <QtMoc Include="CutMask.h" />
     <ClInclude Include="ToolBtn.h" />
     <ClInclude Include="State.h" />
     <QtMoc Include="ToolMain.h" />
