@@ -6,92 +6,92 @@
     {
       "name": "rect",
       "icon": "e8e8",
-      "zhcn": "",
-      "en": ""
+      "zhcn": "矩形",
+      "en": "rect"
     },
     {
       "name": "ellipse",
       "icon": "e6bc",
-      "zhcn": "",
-      "en": ""
+      "zhcn": "圆形",
+      "en": "ellipse"
     },
     {
       "name": "arrow",
       "icon": "e603",
-      "zhcn": "",
-      "en": ""
+      "zhcn": "箭头",
+      "en": "arrow"
     },
     {
       "name": "number",
       "icon": "e776",
-      "zhcn": "",
-      "en": ""
+      "zhcn": "标号",
+      "en": "number"
     },
     {
-      "name": "pen",
+      "name": "line",
       "icon": "e601",
-      "zhcn": "",
-      "en": ""
+      "zhcn": "线条",
+      "en": "pen"
     },
     {
       "name": "text",
-      "icon": "e69b",
-      "zhcn": "",
-      "en": ""
+      "icon": "e6ec",
+      "zhcn": "文本",
+      "en": "text"
     },
     {
       "name": "mosaic",
-      "icon": "e6ec",
-      "zhcn": "",
-      "en": ""
+      "icon": "e82e",
+      "zhcn": "马赛克",
+      "en": "mosaic"
     },
     {
       "name": "eraser",
-      "icon": "e87d",
-      "zhcn": "",
-      "en": ""
+      "icon": "e6be",
+      "zhcn": "橡皮擦",
+      "en": "eraser"
     },
     {
       "name": "splitter"
     },
     {
       "name": "undo",
-      "icon": "e82e",
-      "zhcn": "",
-      "en": ""
+      "icon": "ed85",
+      "zhcn": "撤销",
+      "en": "undo"
     },
     {
       "name": "redo",
-      "icon": "e6be",
-      "zhcn": "",
-      "en": ""
+      "icon": "ed8a",
+      "zhcn": "重做",
+      "en": "redo"
     },
     {
       "name": "splitter"
     },
     {
       "name": "pin",
-      "icon": "ed85",
-      "zhcn": "",
-      "en": ""
-    },
-    {
-      "name": "save",
-      "icon": "ed8a",
-      "zhcn": "",
-      "en": ""
+      "icon": "e6a3",
+      "zhcn": "钉住",
+      "en": "pin"
     },
     {
       "name": "clipboard",
-      "icon": "e6a3",
-      "zhcn": "",
-      "en": ""
+      "icon": "e87f",
+      "zhcn": "保存到剪切板",
+      "en": "save to clipboard"
+    },
+    {
+      "name": "save",
+      "icon": "e6c0",
+      "zhcn": "保存",
+      "en": "save to disk"
     },
     {
       "name": "close",
-      "icon": "e6c0",
-      "zhcn": "",
-      "en": ""
+      "icon": "e6e7",
+      "zhcn": "关闭",
+      "en": "close"
     }
   ],
   "toolSub": {

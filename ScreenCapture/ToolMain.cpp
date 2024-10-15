@@ -10,11 +10,12 @@
 namespace {
 	std::unique_ptr<ToolMain> toolMain;
 	std::vector<ToolBtn> btns;
+	std::vector<unsigned> spliterIndexs;
 }
 
 ToolMain::ToolMain(QWidget *parent) : QWidget(parent)
 {
-	setFixedSize(15*btnW+6, 36);
+	setFixedSize(btns.size()*btnW+10, 36);
 	setMouseTracking(true);
 	setVisible(false);
 
@@ -43,10 +44,15 @@ ToolMain* ToolMain::Get()
 }
 void ToolMain::InitData(const QJsonArray& arr)
 {
+	int index{ 0 };
 	for (const QJsonValue& val : arr)
 	{
 		ToolBtn btn;
 		btn.name = val["name"].toString();
+		if (btn.name == "splitter") {
+			spliterIndexs.push_back(index);
+			continue;
+		}
 		btn.en = val["en"].toString("");
 		btn.zhcn = val["zhcn"].toString("");
 		btn.selected = val["selectDefault"].toBool(false);
@@ -61,6 +67,7 @@ void ToolMain::InitData(const QJsonArray& arr)
 			}
 		}
 		btns.push_back(btn);
+		index += 1;
 	}
 }
 
@@ -87,11 +94,11 @@ void ToolMain::paintEvent(QPaintEvent * event)
 	painter.setPen(pen);
 	painter.setBrush(Qt::GlobalColor::white);
 	painter.drawRect(rect().adjusted(1, 1, -1, -1));
-	for (size_t i = 0; i < 15; i++)
+	for (size_t i = 0; i < btns.size(); i++)
 	{
-		QRect rect(i* btnW+3, 0, btnW, height());
+		QRect rect(5+ i* btnW, 0, btnW, height());
 		if (i == selectIndex) {
-			rect.adjust(4, 6, -4, -6);
+			rect.adjust(2, 6, -2, -6);
 			painter.save();
 			painter.setPen(Qt::NoPen);
 			painter.setBrush(QColor(228, 238, 255));
@@ -99,7 +106,7 @@ void ToolMain::paintEvent(QPaintEvent * event)
 			painter.restore();
 			painter.setPen(QColor(9, 88, 217));
 		}else if (i == hoverIndex) {
-			rect.adjust(4, 6, -4, -6);
+			rect.adjust(2, 6, -2, -6);
 			painter.save();
 			painter.setPen(Qt::NoPen);
 			painter.setBrush(QColor(238, 238, 238));
@@ -110,11 +117,13 @@ void ToolMain::paintEvent(QPaintEvent * event)
 		else {
 			painter.setPen(QColor(33, 33, 33));
 		}
-		painter.drawText(rect, Qt::AlignCenter,iconCode[i]);
+		painter.drawText(rect, Qt::AlignCenter,btns[i].icon);
 	}
 	painter.setPen(QColor(180, 180, 180));
-	painter.drawLine(3 + 10 * btnW, 10, 3 + 10 * btnW, height() - 10);
-	painter.drawLine(3 + 12 * btnW, 10, 3 + 12 * btnW, height() - 10);
+	for (size_t i = 0; i < spliterIndexs.size(); i++)
+	{
+		painter.drawLine(5+spliterIndexs[i] * btnW, 10, 5+spliterIndexs[i] * btnW, height() - 10);
+	}
 	painter.end();
 }
 
@@ -133,15 +142,16 @@ void ToolMain::mousePressEvent(QMouseEvent* event)
 
 void ToolMain::mouseMoveEvent(QMouseEvent* event)
 {
-	auto x = event->pos().x();
-	if (x<4 || x>width() - 7) return;
+	auto x = event->pos().x()-5;
 	auto index{ x / (int)btnW };
+	if (index >= btns.size())index = -1;
 	if (index != hoverIndex) {
 		hoverIndex = index;
-		auto pos = event->globalPosition();
-		QToolTip::showText(QPoint(pos.x(),pos.y()), QString("Name: %1").arg(hoverIndex), this);
 		repaint();
-		qDebug() << "repaint";
+		if (hoverIndex>-1) {
+			auto pos = event->globalPosition();
+			QToolTip::showText(QPoint(pos.x(), pos.y()), btns[hoverIndex].zhcn, this);
+		}
 	}
 }
 
