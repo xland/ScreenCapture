@@ -60,6 +60,34 @@ void CutMask::mousePressEvent(QMouseEvent* event)
 		}
 		else if (canvasWidget->state == State::tool) {
 			ToolMain::Get()->hide();
+			if (mousePosState == 1) {
+				maskRect.setTopLeft(dragPosition);
+			}
+			else if (mousePosState == 2) {
+				maskRect.setTop(dragPosition.y());
+			}
+			else if (mousePosState == 3) {
+				maskRect.setTopRight(dragPosition);
+			}
+			else if (mousePosState == 4) {
+				maskRect.setRight(dragPosition.x());
+			}
+			else if (mousePosState == 5) {
+				maskRect.setBottomRight(dragPosition);
+			}
+			else if (mousePosState == 6) {
+				maskRect.setBottom(dragPosition.y());
+			}
+			else if (mousePosState == 7) {
+				maskRect.setBottomLeft(dragPosition);
+			}
+			else if (mousePosState == 8) {
+				maskRect.setLeft(dragPosition.x());
+			}
+			else {
+				return;
+			}
+			update();
 		}
 	}
 	else if (event->button() == Qt::RightButton) {
@@ -79,13 +107,36 @@ void CutMask::mouseMoveEvent(QMouseEvent* event)
 				update();
 			}
 			else if (canvasWidget->state == State::tool) {
-				auto cursor = this->cursor();
-				if (cursor == Qt::SizeAllCursor) {
+				if (mousePosState == 0) {
 					auto span = pos - dragPosition;
 					maskRect.moveTo(maskRect.topLeft() + span);
 					dragPosition = pos;
-					update();
 				}
+				else if (mousePosState == 1) {
+					maskRect.setTopLeft(pos);
+				}
+				else if (mousePosState == 2) {
+					maskRect.setTop(pos.y());
+				}
+				else if (mousePosState == 3) {
+					maskRect.setTopRight(pos);
+				}
+				else if (mousePosState == 4) {
+					maskRect.setRight(pos.x());
+				}
+				else if (mousePosState == 5) {
+					maskRect.setBottomRight(pos);
+				}
+				else if (mousePosState == 6) {
+					maskRect.setBottom(pos.y());
+				}
+				else if (mousePosState == 7) {
+					maskRect.setBottomLeft(pos);
+				}
+				else if (mousePosState == 8) {
+					maskRect.setLeft(pos.x());
+				}
+				update();
 			}
 		}
 	}
@@ -95,30 +146,39 @@ void CutMask::mouseMoveEvent(QMouseEvent* event)
 		auto rightX = maskRect.bottomRight().x(); auto bottomY = maskRect.bottomRight().y();
 		if (maskRect.contains(pos)) {
 			setCursor(Qt::SizeAllCursor);
+			mousePosState = 0;
 		}
 		else if (x < leftX && y< topY) {
 			setCursor(Qt::SizeFDiagCursor);
+			mousePosState = 1;
 		}
 		else if (x >= leftX && x< rightX && y < topY) {
 			setCursor(Qt::SizeVerCursor);
+			mousePosState = 2;
 		}
 		else if (x >= rightX && y < topY) {
 			setCursor(Qt::SizeBDiagCursor);
+			mousePosState = 3;
 		}
 		else if (x >= rightX && y >= topY && y<bottomY) {
 			setCursor(Qt::SizeHorCursor);
+			mousePosState = 4;
 		}
 		else if (x >= rightX && y >= bottomY) {
 			setCursor(Qt::SizeFDiagCursor);
+			mousePosState = 5;
 		}
 		else if (x >= leftX && x < rightX && y >= bottomY) {
 			setCursor(Qt::SizeVerCursor);
+			mousePosState = 6;
 		}
 		else if (x < leftX && y >= bottomY) {
 			setCursor(Qt::SizeBDiagCursor);
+			mousePosState = 7;
 		}
 		else if (x < leftX && y < bottomY && y>= topY) {
 			setCursor(Qt::SizeHorCursor);
+			mousePosState = 8;
 		}
 	}
 	event->accept();
@@ -127,6 +187,7 @@ void CutMask::mouseMoveEvent(QMouseEvent* event)
 void CutMask::mouseReleaseEvent(QMouseEvent* event)
 {
 	if (event->button() == Qt::LeftButton) {
+		maskRect = maskRect.normalized();
 		auto canvasWidget = CanvasWidget::Get();
 		if (canvasWidget->state == State::mask) {
 			canvasWidget->state = State::tool;
