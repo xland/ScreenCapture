@@ -2,8 +2,9 @@
 #include <qpushbutton.h>
 #include <qtooltip.h>
 
-#include "CanvasWidget.h"
 #include "ToolMain.h"
+#include "ToolSub.h"
+#include "CanvasWidget.h"
 #include "CutMask.h"
 #include "Config.h"
 
@@ -18,16 +19,6 @@ ToolMain::ToolMain(QWidget *parent) : QWidget(parent)
 	setFixedSize(btns.size()*btnW+10, 36);
 	setMouseTracking(true);
 	setVisible(false);
-
-	//QVBoxLayout* layout = new QVBoxLayout(this);
-	//QPushButton* button = new QPushButton("Click Me", this);
-	//connect(button, &QPushButton::clicked, this, &CanvasWidget::onButtonClicked);
-	//layout->addWidget(button);
-
-
-	//setStyleSheet("background-color: red;");
-	//connect(button, &QPushButton::clicked, this, &ToolMain::onButtonClicked);
-	//QToolTip::showText(widget->mapToGlobal(position), text, widget);
 }
 
 ToolMain::~ToolMain()
@@ -42,19 +33,45 @@ ToolMain* ToolMain::Get()
 {
 	return toolMain.get();
 }
-void ToolMain::InitData(const QJsonArray& arr)
+void ToolMain::InitData(const QJsonArray& arr, const QString& lang)
 {
 	int index{ 0 };
 	for (const QJsonValue& val : arr)
 	{
 		ToolBtn btn;
-		btn.name = val["name"].toString();
-		if (btn.name == "splitter") {
+		auto name = val["name"].toString();
+		if (name == "splitter") {
 			spliterIndexs.push_back(index);
 			continue;
 		}
-		btn.en = val["en"].toString("");
-		btn.zhcn = val["zhcn"].toString("");
+		else if (name == "rect") {
+			btn.state = State::rect;
+		}
+		else if (name == "ellipse") {
+			btn.state = State::ellipse;
+		}
+		else if (name == "arrow") {
+			btn.state = State::arrow;
+		}
+		else if (name == "number") {
+			btn.state = State::number;
+		}
+		else if (name == "line") {
+			btn.state = State::line;
+		}
+		else if (name == "text") {
+			btn.state = State::text;
+		}
+		else if (name == "mosaic") {
+			btn.state = State::mosaic;
+		}
+		else if (name == "eraser") {
+			btn.state = State::eraser;
+		}
+		else {
+			btn.name = name;
+		}
+		btn.tipText = val[lang].toString("");
 		btn.selected = val["selectDefault"].toBool(false);
 		{
 			bool ok;
@@ -69,14 +86,6 @@ void ToolMain::InitData(const QJsonArray& arr)
 		btns.push_back(btn);
 		index += 1;
 	}
-}
-
-void ToolMain::Show()
-{
-	auto canvas = CutMask::Get();
-	auto pos = canvas->maskRect.bottomRight();
-	toolMain->move(pos.x() - toolMain->width()+2, pos.y()+6);
-	toolMain->show();
 }
 
 void ToolMain::paintEvent(QPaintEvent * event)
@@ -130,11 +139,22 @@ void ToolMain::paintEvent(QPaintEvent * event)
 void ToolMain::mousePressEvent(QMouseEvent* event)
 {
 	if (hoverIndex == -1) return;
+	auto canvasWidget = CanvasWidget::Get();
 	if (hoverIndex == selectIndex) {
 		selectIndex = -1;
+		canvasWidget->state = State::tool;
 	}
 	else {
-		selectIndex = hoverIndex;
+		auto& btn = btns[hoverIndex];
+		if (btn.name.isEmpty()) {
+			selectIndex = hoverIndex;
+			canvasWidget->state = btn.state;
+			ToolSub::Get()->show();
+		}
+		else if(btn.name == "close"){
+			qApp->quit();
+		}
+		
 	}
 	update();
 	return;
@@ -150,9 +170,18 @@ void ToolMain::mouseMoveEvent(QMouseEvent* event)
 		repaint();
 		if (hoverIndex>-1) {
 			auto pos = event->globalPosition();
-			QToolTip::showText(QPoint(pos.x(), pos.y()), btns[hoverIndex].zhcn, this);
+			QToolTip::showText(QPoint(pos.x(), pos.y()), btns[hoverIndex].tipText, this);
 		}
 	}
+}
+
+void ToolMain::showEvent(QShowEvent* event)
+{
+	auto canvas = CutMask::Get();
+	auto pos = canvas->maskRect.bottomRight();
+	toolMain->move(pos.x() - toolMain->width() + 2, pos.y() + 6);
+	toolMain->show();
+	QWidget::showEvent(event);
 }
 
 void ToolMain::leaveEvent(QEvent* event)

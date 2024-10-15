@@ -29,9 +29,10 @@ void Config::Init()
         return;
     }
     QJsonObject jsonObject = document.object();
+    auto lang = jsonObject["defaultLang"].toString();
     initFont(jsonObject);
-    ToolMain::InitData(jsonObject["toolMain"].toArray());
-    ToolSub::InitData(jsonObject["toolSub"].toObject());
+    ToolMain::InitData(jsonObject["toolMain"].toArray(),lang);
+    ToolSub::InitData(jsonObject["toolSub"].toObject(),lang);
 }
 
 Config* Config::Get()

@@ -191,11 +191,11 @@ void CutMask::mouseReleaseEvent(QMouseEvent* event)
 		auto canvasWidget = CanvasWidget::Get();
 		if (canvasWidget->state == State::mask) {
 			canvasWidget->state = State::tool;
-			ToolMain::Show();
+			ToolMain::Get()->show();
 
 		}
 		else if (canvasWidget->state == State::tool) {
-			ToolMain::Show();
+			ToolMain::Get()->show();
 		}
 		dragging = false;
 	}

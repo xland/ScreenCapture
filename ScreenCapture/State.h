@@ -9,7 +9,6 @@ enum class State
     ellipse,
     arrow,
     number,
-    pen,
     line,
     text,
     mosaic,

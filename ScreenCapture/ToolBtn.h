@@ -3,6 +3,7 @@
 #include <qstring.h>
 
 #include "BtnType.h"
+#include "State.h"
 
 class ToolBtn
 {
@@ -12,9 +13,9 @@ public:
 public:
 	bool selected;
 	QChar icon;
+	QString tipText;
+	State state;
 	QString name;
-	QString zhcn;
-	QString en;
 private:
 
 };
