@@ -5,6 +5,7 @@
 #include "ToolMain.h"
 #include "ToolSub.h"
 #include "CanvasWidget.h"
+#include "WindowNative.h"
 #include "CutMask.h"
 #include "Config.h"
 
@@ -22,7 +23,8 @@ ToolMain::ToolMain(QWidget *parent) : QWidget(parent)
 }
 
 ToolMain::~ToolMain()
-{}
+{
+}
 
 void ToolMain::InitData(const QJsonArray& arr, const QString& lang)
 {
@@ -141,7 +143,9 @@ void ToolMain::mousePressEvent(QMouseEvent* event)
 			canvasWidget->toolSub->show();
 		}
 		else if(btn.name == "close"){
-			qApp->quit();
+			//qApp->quit();
+			parentWidget()->close();
+			WindowNative::Close();
 		}
 		
 	}
@@ -156,7 +160,7 @@ void ToolMain::mouseMoveEvent(QMouseEvent* event)
 	if (index >= btns.size())index = -1;
 	if (index != hoverIndex) {
 		hoverIndex = index;
-		repaint();
+		update();
 		if (hoverIndex>-1) {
 			auto pos = event->globalPosition();
 			QToolTip::showText(QPoint(pos.x(), pos.y()), btns[hoverIndex].tipText, this);
@@ -176,7 +180,7 @@ void ToolMain::leaveEvent(QEvent* event)
 {
 	if (hoverIndex != -1) {
 		hoverIndex = -1;
-		repaint();
+		update();
 	}
 	QWidget::leaveEvent(event);
 }

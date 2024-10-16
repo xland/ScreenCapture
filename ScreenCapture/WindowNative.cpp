@@ -5,17 +5,23 @@
 #include "CanvasWidget.h"
 
 namespace {
-    std::unique_ptr<WindowNative> win;
+    WindowNative* win;
 }
 
 void WindowNative::Init()
 {
-    win = std::make_unique<WindowNative>();
+    win = new WindowNative();
     win->createWindow();
 }
 WindowNative* WindowNative::Get()
 {
-    return win.get();
+    return win;
+}
+void WindowNative::Close()
+{
+    //CloseWindow(win->hwnd);
+    DestroyWindow(win->hwnd);
+    win = nullptr;
 }
 void WindowNative::createWindow()
 {
@@ -46,9 +52,9 @@ LRESULT WindowNative::routeWinMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPa
     switch (msg)
     {
         case WM_CLOSE: {
-            CloseWindow(hWnd);
             DestroyWindow(hWnd);
-            PostQuitMessage(0);
+            win = nullptr;
+            //PostQuitMessage(0);
             return true;
         }
         default: {

@@ -3,6 +3,7 @@
 #include "CutMask.h"
 #include "CanvasWidget.h"
 #include "ToolMain.h"
+#include "WindowNative.h"
 
 
 CutMask::CutMask(QWidget *parent) : QWidget(parent)
@@ -15,7 +16,8 @@ CutMask::CutMask(QWidget *parent) : QWidget(parent)
 }
 
 CutMask::~CutMask()
-{}
+{
+}
 
 
 void CutMask::paintEvent(QPaintEvent* event)
@@ -77,7 +79,8 @@ void CutMask::mousePressEvent(QMouseEvent* event)
 		}
 	}
 	else if (event->button() == Qt::RightButton) {
-		qApp->quit();
+		parentWidget()->close();
+		WindowNative::Close();
 	}
 	event->accept();
 }

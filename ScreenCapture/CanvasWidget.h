@@ -30,6 +30,7 @@ public:
 	CutMask* cutMask;
 protected:
 	void paintEvent(QPaintEvent* event) override;
+	void closeEvent(QCloseEvent* event) override;
 private:
 	void initImgs();
 private:
@@ -38,5 +39,6 @@ private:
 	QPoint dragPosition;
 
 	std::unique_ptr<QImage> imgBg;
+	QPixmap desktopImg;
 	
 };

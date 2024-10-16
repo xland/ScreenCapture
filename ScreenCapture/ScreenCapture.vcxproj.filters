@@ -52,6 +52,12 @@
     <ClCompile Include="CutMask.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="QHotKey\qhotkey.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="QHotKey\qhotkey_win.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="WindowNative.h">
@@ -81,6 +87,12 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="CutMask.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="QHotKey\qhotkey.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="QHotKey\qhotkey_p.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>
