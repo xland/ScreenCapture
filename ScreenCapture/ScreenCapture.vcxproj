@@ -110,9 +110,11 @@
     <ClCompile Include="CutMask.cpp" />
     <ClCompile Include="QHotKey\qhotkey.cpp" />
     <ClCompile Include="QHotKey\qhotkey_win.cpp" />
-    <ClCompile Include="ToolBtn.cpp" />
-    <ClCompile Include="ToolMain.cpp" />
-    <ClCompile Include="ToolSub.cpp" />
+    <ClCompile Include="Shape\ShapeRect.cpp" />
+    <ClCompile Include="Shape\ShapeBase.cpp" />
+    <ClCompile Include="Tool\ToolBtn.cpp" />
+    <ClCompile Include="Tool\ToolMain.cpp" />
+    <ClCompile Include="Tool\ToolSub.cpp" />
     <ClCompile Include="Tray.cpp" />
     <ClCompile Include="WindowNative.cpp" />
     <ClCompile Include="main.cpp" />
@@ -124,10 +126,12 @@
     <QtMoc Include="CutMask.h" />
     <QtMoc Include="QHotKey\qhotkey.h" />
     <QtMoc Include="QHotKey\qhotkey_p.h" />
-    <ClInclude Include="ToolBtn.h" />
+    <QtMoc Include="Shape\ShapeRect.h" />
+    <QtMoc Include="Shape\ShapeBase.h" />
+    <ClInclude Include="Tool\ToolBtn.h" />
     <ClInclude Include="State.h" />
-    <QtMoc Include="ToolMain.h" />
-    <QtMoc Include="ToolSub.h" />
+    <QtMoc Include="Tool\ToolMain.h" />
+    <QtMoc Include="Tool\ToolSub.h" />
     <QtMoc Include="Tray.h" />
     <ClInclude Include="WindowNative.h" />
   </ItemGroup>

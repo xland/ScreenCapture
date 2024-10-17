@@ -18,6 +18,7 @@ protected:
 	void mouseReleaseEvent(QMouseEvent* event) override;
 private:
 	void changeMaskRect(const QPoint& pos);
+	void changeMousePosState(const QPoint& pos);
 private:
 	qreal maskStroke{ 1.5 };
 	bool dragging = false;

@@ -2,7 +2,7 @@
 
 #include "CutMask.h"
 #include "CanvasWidget.h"
-#include "ToolMain.h"
+#include "Tool/ToolMain.h"
 #include "WindowNative.h"
 
 
@@ -11,7 +11,6 @@ CutMask::CutMask(QWidget *parent) : QWidget(parent)
 	setMouseTracking(true);
 	setGeometry(parent->rect());
 	maskRect.setRect(-maskStroke, -maskStroke, width() + maskStroke, height() + maskStroke);
-	auto size = geometry();
 	show();
 }
 
@@ -31,7 +30,6 @@ void CutMask::paintEvent(QPaintEvent* event)
 	painter.setPen(QPen(QBrush(QColor(22, 119, 255)), maskStroke));
 	painter.setBrush(QBrush(QColor(0, 0, 0, 120)));
 	painter.drawPath(mask);
-	QWidget::paintEvent(event);
 }
 
 void CutMask::mousePressEvent(QMouseEvent* event)
@@ -49,6 +47,9 @@ void CutMask::mousePressEvent(QMouseEvent* event)
 			if (mousePosState != 0) {
 				changeMaskRect(dragPosition);
 			}
+		}
+		else {
+			QCoreApplication::sendEvent(parentWidget(), event);
 		}
 	}
 	else if (event->button() == Qt::RightButton) {
@@ -82,45 +83,10 @@ void CutMask::mouseMoveEvent(QMouseEvent* event)
 		}
 	}
 	else if (canvasWidget->state == State::tool) {
-		auto x = pos.x(); auto y = pos.y();
-		auto leftX = maskRect.topLeft().x(); auto topY = maskRect.topLeft().y();
-		auto rightX = maskRect.bottomRight().x(); auto bottomY = maskRect.bottomRight().y();
-		if (maskRect.contains(pos)) {
-			setCursor(Qt::SizeAllCursor);
-			mousePosState = 0;
-		}
-		else if (x < leftX && y< topY) {
-			setCursor(Qt::SizeFDiagCursor);
-			mousePosState = 1;
-		}
-		else if (x >= leftX && x< rightX && y < topY) {
-			setCursor(Qt::SizeVerCursor);
-			mousePosState = 2;
-		}
-		else if (x >= rightX && y < topY) {
-			setCursor(Qt::SizeBDiagCursor);
-			mousePosState = 3;
-		}
-		else if (x >= rightX && y >= topY && y<bottomY) {
-			setCursor(Qt::SizeHorCursor);
-			mousePosState = 4;
-		}
-		else if (x >= rightX && y >= bottomY) {
-			setCursor(Qt::SizeFDiagCursor);
-			mousePosState = 5;
-		}
-		else if (x >= leftX && x < rightX && y >= bottomY) {
-			setCursor(Qt::SizeVerCursor);
-			mousePosState = 6;
-		}
-		else if (x < leftX && y >= bottomY) {
-			setCursor(Qt::SizeBDiagCursor);
-			mousePosState = 7;
-		}
-		else if (x < leftX && y < bottomY && y>= topY) {
-			setCursor(Qt::SizeHorCursor);
-			mousePosState = 8;
-		}
+		changeMousePosState(pos);
+	}
+	else {
+		setCursor(Qt::CrossCursor);
 	}
 	event->accept();
 }
@@ -170,4 +136,47 @@ void CutMask::changeMaskRect(const QPoint& pos)
 		maskRect.setLeft(pos.x());
 	}
 	update();
+}
+
+void CutMask::changeMousePosState(const QPoint& pos)
+{
+	auto x = pos.x(); auto y = pos.y();
+	auto leftX = maskRect.topLeft().x(); auto topY = maskRect.topLeft().y();
+	auto rightX = maskRect.bottomRight().x(); auto bottomY = maskRect.bottomRight().y();
+	if (maskRect.contains(pos)) {
+		setCursor(Qt::SizeAllCursor);
+		mousePosState = 0;
+	}
+	else if (x < leftX && y < topY) {
+		setCursor(Qt::SizeFDiagCursor);
+		mousePosState = 1;
+	}
+	else if (x >= leftX && x < rightX && y < topY) {
+		setCursor(Qt::SizeVerCursor);
+		mousePosState = 2;
+	}
+	else if (x >= rightX && y < topY) {
+		setCursor(Qt::SizeBDiagCursor);
+		mousePosState = 3;
+	}
+	else if (x >= rightX && y >= topY && y < bottomY) {
+		setCursor(Qt::SizeHorCursor);
+		mousePosState = 4;
+	}
+	else if (x >= rightX && y >= bottomY) {
+		setCursor(Qt::SizeFDiagCursor);
+		mousePosState = 5;
+	}
+	else if (x >= leftX && x < rightX && y >= bottomY) {
+		setCursor(Qt::SizeVerCursor);
+		mousePosState = 6;
+	}
+	else if (x < leftX && y >= bottomY) {
+		setCursor(Qt::SizeBDiagCursor);
+		mousePosState = 7;
+	}
+	else if (x < leftX && y < bottomY && y >= topY) {
+		setCursor(Qt::SizeHorCursor);
+		mousePosState = 8;
+	}
 }

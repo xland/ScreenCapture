@@ -122,7 +122,6 @@ void ToolMain::paintEvent(QPaintEvent * event)
 	{
 		painter.drawLine(4+spliterIndexs[i] * btnW+0.5, 9, 4+spliterIndexs[i] * btnW+0.5, height() - 9);
 	}
-	painter.end();
 }
 
 void ToolMain::mousePressEvent(QMouseEvent* event)

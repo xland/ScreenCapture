@@ -133,7 +133,6 @@ void ToolSub::paintEvent(QPaintEvent* event)
 			x += btnW;
 		}		
 	}
-	painter.end();
 }
 
 void ToolSub::mousePressEvent(QMouseEvent* event)

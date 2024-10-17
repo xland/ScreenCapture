@@ -4,8 +4,8 @@
 
 #include "App.h"
 #include "CutMask.h"
-#include "ToolMain.h"
-#include "ToolSub.h"
+#include "Tool/ToolMain.h"
+#include "Tool/ToolSub.h"
 #include "CutMask.h"
 
 

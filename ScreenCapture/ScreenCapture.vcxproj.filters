@@ -32,16 +32,16 @@
     <ClCompile Include="CanvasWidget.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ToolMain.cpp">
+    <ClCompile Include="Tool\ToolMain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ToolSub.cpp">
+    <ClCompile Include="Tool\ToolSub.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="App.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ToolBtn.cpp">
+    <ClCompile Include="Tool\ToolBtn.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CutMask.cpp">
@@ -56,6 +56,12 @@
     <ClCompile Include="Tray.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Shape\ShapeRect.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Shape\ShapeBase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="WindowNative.h">
@@ -67,7 +73,7 @@
     <ClInclude Include="App.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ToolBtn.h">
+    <ClInclude Include="Tool\ToolBtn.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="BtnType.h">
@@ -78,10 +84,10 @@
     <QtMoc Include="CanvasWidget.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="ToolMain.h">
+    <QtMoc Include="Tool\ToolMain.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="ToolSub.h">
+    <QtMoc Include="Tool\ToolSub.h">
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="CutMask.h">
@@ -94,6 +100,12 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="Tray.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Shape\ShapeRect.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Shape\ShapeBase.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

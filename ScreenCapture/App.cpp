@@ -6,8 +6,8 @@
 #include <QFontDatabase>
 
 #include "App.h"
-#include "ToolMain.h"
-#include "ToolSub.h"
+#include "Tool/ToolMain.h"
+#include "Tool/ToolSub.h"
 #include "QHotKey/qhotkey.h"
 #include "WindowNative.h"
 #include "CanvasWidget.h"

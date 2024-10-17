@@ -15,6 +15,7 @@
 class ToolMain;
 class ToolSub;
 class CutMask;
+class ShapeBase;
 class CanvasWidget : public QWidget
 {
 	Q_OBJECT
@@ -28,9 +29,13 @@ public:
 	ToolMain* toolMain;
 	ToolSub* toolSub;
 	CutMask* cutMask;
+	std::vector<ShapeBase*> shapes;
 protected:
 	void paintEvent(QPaintEvent* event) override;
 	void closeEvent(QCloseEvent* event) override;
+	void mousePressEvent(QMouseEvent* event) override;
+	void mouseMoveEvent(QMouseEvent* event) override;
+	void mouseReleaseEvent(QMouseEvent* event) override;
 private:
 	void initImgs();
 private:

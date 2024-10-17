@@ -5,8 +5,10 @@
 #include "CanvasWidget.h"
 #include "CutMask.h"
 #include "WindowNative.h"
-#include "ToolMain.h"
-#include "ToolSub.h"
+#include "Tool/ToolMain.h"
+#include "Tool/ToolSub.h"
+#include "Shape/ShapeBase.h"
+#include "Shape/ShapeRect.h"
 
 namespace {
 	CanvasWidget* canvasWidget;
@@ -55,14 +57,32 @@ void CanvasWidget::paintEvent(QPaintEvent* event)
 	QPainter painter(this);
 	//painter.drawImage(rect(), *imgBg);
 	painter.drawPixmap(rect(), desktopImg);
-	painter.end();
-	QWidget::paintEvent(event);
 }
 
 void CanvasWidget::closeEvent(QCloseEvent* event)
 {
 	event->accept();
 	delete canvasWidget;
+}
+
+void CanvasWidget::mousePressEvent(QMouseEvent* event)
+{
+	if (state == State::rect) {
+		auto rect = new ShapeRect(this);
+		cutMask->raise();
+		toolMain->raise();
+		toolSub->raise();
+		rect->show();
+		shapes.push_back(std::move(rect));
+	}
+}
+
+void CanvasWidget::mouseMoveEvent(QMouseEvent* event)
+{
+}
+
+void CanvasWidget::mouseReleaseEvent(QMouseEvent* event)
+{
 }
 
 
