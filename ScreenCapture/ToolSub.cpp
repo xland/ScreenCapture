@@ -1,7 +1,7 @@
 ﻿#include "ToolSub.h"
 #include "CanvasWidget.h"
 #include <memory>
-#include "Config.h"
+#include "App.h"
 #include "ToolMain.h"
 
 namespace {
@@ -84,7 +84,7 @@ void ToolSub::InitData(const QJsonObject& obj, const QString& lang)
 
 void ToolSub::paintEvent(QPaintEvent* event)
 {
-	auto font = Config::GetIconFont();
+	auto font = App::GetIconFont();
 	font->setPixelSize(15);
 
 	QPainter painter(this);

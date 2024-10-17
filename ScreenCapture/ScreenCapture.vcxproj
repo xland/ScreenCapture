@@ -106,20 +106,20 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CanvasWidget.cpp" />
-    <ClCompile Include="Config.cpp" />
+    <ClCompile Include="App.cpp" />
     <ClCompile Include="CutMask.cpp" />
     <ClCompile Include="QHotKey\qhotkey.cpp" />
     <ClCompile Include="QHotKey\qhotkey_win.cpp" />
     <ClCompile Include="ToolBtn.cpp" />
     <ClCompile Include="ToolMain.cpp" />
     <ClCompile Include="ToolSub.cpp" />
+    <ClCompile Include="Tray.cpp" />
     <ClCompile Include="WindowNative.cpp" />
-    <QtRcc Include="rc.qrc" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="CanvasWidget.h" />
-    <ClInclude Include="Config.h" />
+    <ClInclude Include="App.h" />
     <ClInclude Include="BtnType.h" />
     <QtMoc Include="CutMask.h" />
     <QtMoc Include="QHotKey\qhotkey.h" />
@@ -128,14 +128,26 @@
     <ClInclude Include="State.h" />
     <QtMoc Include="ToolMain.h" />
     <QtMoc Include="ToolSub.h" />
+    <QtMoc Include="Tray.h" />
     <ClInclude Include="WindowNative.h" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="config\iconfont.ttf" />
-    <Font Include="res\iconfont.ttf" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="config\config.json" />
+    <CopyFileToFolders Include="config\config.json">
+      <FileType>Document</FileType>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)config;%(DestinationFolders)</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)config;%(DestinationFolders)</DestinationFolders>
+    </CopyFileToFolders>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="config\logo.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="todo.md">
+      <DeploymentContent>false</DeploymentContent>
+    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

@@ -7,7 +7,7 @@
 #include "CanvasWidget.h"
 #include "WindowNative.h"
 #include "CutMask.h"
-#include "Config.h"
+#include "App.h"
 
 namespace {
 	std::vector<ToolBtn> btns;
@@ -21,7 +21,6 @@ ToolMain::ToolMain(QWidget *parent) : QWidget(parent)
 	setVisible(false);
 	
 }
-
 ToolMain::~ToolMain()
 {
 }
@@ -83,7 +82,7 @@ void ToolMain::InitData(const QJsonArray& arr, const QString& lang)
 
 void ToolMain::paintEvent(QPaintEvent * event)
 {
-	auto font = Config::GetIconFont();
+	auto font = App::GetIconFont();
 	font->setPixelSize(15);
 
 	QPainter painter(this);
@@ -143,11 +142,9 @@ void ToolMain::mousePressEvent(QMouseEvent* event)
 			canvasWidget->toolSub->show();
 		}
 		else if(btn.name == "close"){
-			//qApp->quit();
 			parentWidget()->close();
 			WindowNative::Close();
-		}
-		
+		}		
 	}
 	update();
 	return;

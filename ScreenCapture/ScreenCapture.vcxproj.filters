@@ -23,11 +23,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <QtRcc Include="rc.qrc">
-      <Filter>Resource Files</Filter>
-    </QtRcc>
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -43,7 +38,7 @@
     <ClCompile Include="ToolSub.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Config.cpp">
+    <ClCompile Include="App.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ToolBtn.cpp">
@@ -58,6 +53,9 @@
     <ClCompile Include="QHotKey\qhotkey_win.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Tray.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="WindowNative.h">
@@ -66,7 +64,7 @@
     <ClInclude Include="State.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Config.h">
+    <ClInclude Include="App.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ToolBtn.h">
@@ -95,12 +93,22 @@
     <QtMoc Include="QHotKey\qhotkey_p.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="Tray.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
-    <Font Include="res\iconfont.ttf" />
     <Font Include="config\iconfont.ttf" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="config\config.json" />
+    <Image Include="config\logo.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="config\config.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="todo.md" />
   </ItemGroup>
 </Project>

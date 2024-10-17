@@ -2,6 +2,23 @@
   "iconFont": "./config/iconfont.ttf",
   "iconFontName": "iconfont",
   "defaultLang": "en",
+  "hotKey": "Ctrl+Alt+Z",
+  "tray": {
+    "showIcon": true,
+    "iconPath": "./config/logo.ico",
+    "menu": [
+      {
+        "name": "about",
+        "zhcn": "关于",
+        "en": "about"
+      },
+      {
+        "name": "quit",
+        "zhcn": "退出",
+        "en": "quit"
+      }
+    ]
+  },  
   "toolMain": [
     {
       "name": "rect",
@@ -260,6 +277,6 @@
         }
       ]
     }
-    
+
   }
 }
