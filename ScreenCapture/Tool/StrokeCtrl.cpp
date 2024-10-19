@@ -5,12 +5,14 @@
 #include "StrokeCtrl.h"
 #include "State.h"
 #include "CanvasWidget.h"
+#include "ToolSub.h"
 
 StrokeCtrl::StrokeCtrl(QWidget *parent):QSlider(parent)
 {
     setVisible(false);
     setAttribute(Qt::WA_NoSystemBackground);
     setAttribute(Qt::WA_Hover);
+    setMouseTracking(true);
     connect(this, &QSlider::valueChanged, this, &StrokeCtrl::onValueChanged);
     setFixedSize(84, 32);
 }
@@ -51,8 +53,8 @@ void StrokeCtrl::mouseMoveEvent(QMouseEvent* event)
 {
     if (event->buttons() & Qt::LeftButton) {
         setPosByMouse(event->pos());
-        event->accept();
     }
+    event->ignore();
 }
 
 void StrokeCtrl::showEvent(QShowEvent* event)

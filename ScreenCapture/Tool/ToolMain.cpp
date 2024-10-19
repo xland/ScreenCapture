@@ -97,19 +97,15 @@ void ToolMain::paintEvent(QPaintEvent * event)
 		QRect rect(4+ i* btnW, 0, btnW, height());
 		if (i == selectIndex) {
 			rect.adjust(2, 4, -2, -4);
-			//painter.save();
 			painter.setPen(Qt::NoPen);
 			painter.setBrush(QColor(228, 238, 255));
 			painter.drawRoundedRect(rect, 6, 6);
-			//painter.restore();
 			painter.setPen(QColor(9, 88, 217));
 		}else if (i == hoverIndex) {
 			rect.adjust(2, 4, -2, -4);
-			//painter.save();
 			painter.setPen(Qt::NoPen);
 			painter.setBrush(QColor(238, 238, 238));
 			painter.drawRoundedRect(rect,6,6);
-			//painter.restore();
 			painter.setPen(QColor(33, 33, 33));
 		}
 		else {

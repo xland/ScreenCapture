@@ -1,6 +1,7 @@
 ﻿#include "ToolSub.h"
 #include "CanvasWidget.h"
 #include <memory>
+#include <tuple>
 #include "App.h"
 #include "ToolMain.h"
 #include "StrokeCtrl.h"
@@ -8,6 +9,7 @@
 
 namespace {
 	std::map<State, std::vector<ToolBtn>> btns;
+	std::vector<std::tuple<int, int, int>> btnSpanIndexs;
 }
 
 ToolSub::ToolSub(QWidget *parent) : QWidget(parent)
@@ -89,31 +91,73 @@ void ToolSub::paintEvent(QPaintEvent* event)
 	x = 4;
 	for (size_t i = 0; i < values.size(); i++)
 	{
-		if (values[i].name == "colors") {
+		if (values[i].name == "colorCtrl") {
 			x += colorCtrl->width();
 		}
-		else if (values[i].name == "strokeWidth") {
+		else if (values[i].name == "strokeCtrl") {
 			x += strokeCtrl->width();
 		}
 		else{
 			QRect rect(x, 10, btnW, 32);
-			painter.setPen(QColor(33, 33, 33));
+			if (values[i].selected) {
+				rect.adjust(2, 4, -2, -4);
+				painter.setPen(Qt::NoPen);
+				painter.setBrush(QColor(228, 238, 255));
+				painter.drawRoundedRect(rect, 6, 6);
+				painter.setPen(QColor(9, 88, 217));
+			}
+			else if (hoverIndex == i) {
+				rect.adjust(2, 4, -2, -4);
+				painter.setPen(Qt::NoPen);
+				painter.setBrush(QColor(228, 238, 255));
+				painter.drawRoundedRect(rect, 6, 6);
+				painter.setPen(QColor(33, 33, 33));
+			}
+			else {
+				painter.setPen(QColor(33, 33, 33));
+			}			
 			painter.drawText(rect, Qt::AlignCenter, values[i].icon);
 			x += btnW;
-		}		
+		}
 	}
 }
 
 void ToolSub::mousePressEvent(QMouseEvent* event)
 {
+	auto canvasWidget = CanvasWidget::Get();
+	auto& values = btns[canvasWidget->state];
+	values[hoverIndex].selected = !values[hoverIndex].selected;
+	update();
 }
 
 void ToolSub::mouseMoveEvent(QMouseEvent* event)
 {
+	auto x = event->pos().x();
+	auto tempIndex{ -1 };
+	for (auto& item:btnSpanIndexs)
+	{
+		auto start{ std::get<0>(item) };
+		auto end{ std::get<1>(item) };
+		auto index{ std::get<2>(item) };
+		if (x >= start && x <= end) {			
+			tempIndex = index;
+		}
+		else {
+			tempIndex = -1;
+		}
+	}
+	if (hoverIndex != tempIndex) {
+		hoverIndex = tempIndex;
+		update();
+	}
 }
 
 void ToolSub::leaveEvent(QEvent* event)
 {
+	if (hoverIndex != -1) {
+		hoverIndex = -1;
+		update();
+	}
 }
 
 void ToolSub::showEvent(QShowEvent* event)
@@ -142,6 +186,7 @@ void ToolSub::showEvent(QShowEvent* event)
 			strokeFlag = true;
 		}
 		else {
+			btnSpanIndexs.push_back({ w,w + btnW,i });
 			w += btnW;
 		}
 	}

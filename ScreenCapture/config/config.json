@@ -235,7 +235,7 @@
   "colorCtrl": {
     "icon": "e61d",
     "iconSelected": "e721",
-    "defaultSelectedIndex": 0,
+    "defaultSelectedIndex": 3,
     "items": [
       {
         "en": "red",

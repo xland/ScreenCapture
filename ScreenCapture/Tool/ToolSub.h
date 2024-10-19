@@ -19,6 +19,7 @@ public:
 	ToolSub(QWidget *parent = nullptr);
 	~ToolSub();
 	static void InitData(const QJsonObject& obj, const QString& lang);
+public:
 protected:
 	void paintEvent(QPaintEvent* event) override;
 	void mousePressEvent(QMouseEvent* event) override;
@@ -27,8 +28,9 @@ protected:
 	void showEvent(QShowEvent* event) override;
 private:
 	static std::vector<ToolBtn> makeBtns(const QJsonArray& arr, const QString& lang);
+private:
 	qreal btnW{ 32 };
 	StrokeCtrl* strokeCtrl;
 	ColorCtrl* colorCtrl;
-private:
+	int hoverIndex{ -1 };
 };
