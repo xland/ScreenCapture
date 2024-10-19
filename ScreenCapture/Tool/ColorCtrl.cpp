@@ -1,4 +1,5 @@
 #include <qpainter.h>
+#include <QMouseEvent>
 
 #include "ColorCtrl.h"
 #include "App.h"
@@ -16,6 +17,7 @@ ColorCtrl::ColorCtrl(QWidget *parent) : QWidget(parent)
 	setVisible(false);
 	setAttribute(Qt::WA_NoSystemBackground);
 	setAttribute(Qt::WA_Hover);
+	setMouseTracking(true);
 	auto w{ colorValues.size() * itemWidth };
 	setFixedSize(w, 32);
 }
@@ -57,6 +59,12 @@ void ColorCtrl::paintEvent(QPaintEvent * event)
 	for (int j = 0; j < colorValues.size(); j++)
 	{
 		QRect rect(j * itemWidth, 0, itemWidth, height());
+		if (j == hoverIndex) {
+			rect.adjust(0, 5, 0, -5);
+			painter.setPen(Qt::NoPen);
+			painter.setBrush(QColor(228, 238, 255));
+			painter.drawRoundedRect(rect, 6, 6);
+		}
 		painter.setPen(QColor(colorValues[j]));
 		if (j == selectedIndex) {
 			painter.drawText(rect, Qt::AlignCenter, colorIconSelected);
@@ -69,6 +77,28 @@ void ColorCtrl::paintEvent(QPaintEvent * event)
 
 void ColorCtrl::mousePressEvent(QMouseEvent* event)
 {
+	if (selectedIndex != hoverIndex) {
+		selectedIndex = hoverIndex;
+		update();
+	}
+}
+
+void ColorCtrl::mouseMoveEvent(QMouseEvent* event)
+{
+	auto pos = event->pos();
+	auto index = pos.x() / itemWidth;
+	if (index != hoverIndex) {
+		hoverIndex = index;
+		update();
+	}
+}
+
+void ColorCtrl::leaveEvent(QEvent* event)
+{
+	if (hoverIndex != -1) {
+		hoverIndex = -1;
+		update();
+	}
 }
 
 void ColorCtrl::showEvent(QShowEvent* event)

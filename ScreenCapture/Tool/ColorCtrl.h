@@ -17,8 +17,11 @@ public:
 protected:
 	void paintEvent(QPaintEvent* event) override;
 	void mousePressEvent(QMouseEvent* event) override;
+	void mouseMoveEvent(QMouseEvent* event) override;
+	void leaveEvent(QEvent* event) override;
 	void showEvent(QShowEvent* event) override;
 private:
 	int itemWidth{ 26 };
 	int selectedIndex{ -1 };
+	int hoverIndex{ -1 };
 };
