@@ -63,8 +63,6 @@ void ToolSub::InitData(const QJsonObject& obj, const QString& lang)
 
 void ToolSub::paintEvent(QPaintEvent* event)
 {
-
-
 	//painter.setPen(QColor(190, 190, 190));
 	//painter.drawLine(x, 10 + 16, x + 80, 10 + 16);
 
@@ -92,10 +90,10 @@ void ToolSub::paintEvent(QPaintEvent* event)
 	for (size_t i = 0; i < values.size(); i++)
 	{
 		if (values[i].name == "colors") {
-
+			x += colorCtrl->width();
 		}
 		else if (values[i].name == "strokeWidth") {
-			x += 84;
+			x += strokeCtrl->width();
 		}
 		else{
 			QRect rect(x, 10, btnW, 32);
@@ -128,18 +126,20 @@ void ToolSub::showEvent(QShowEvent* event)
 
 	auto values = btns[canvasWidget->state];
 	auto w{ 4 };
-	bool flag{ false };
+	bool strokeFlag{ false }, colorFlag{ false };
 	for (size_t i = 0; i < values.size(); i++)
 	{
 		if (values[i].name == "colorCtrl") {
 			colorCtrl->move(w, 10);
+			colorCtrl->show();
 			w += colorCtrl->width();
+			colorFlag = true;
 		}
 		else if (values[i].name == "strokeCtrl") {
 			strokeCtrl->move(w, 10);
 			strokeCtrl->show();
-			w += 84;
-			flag = true;
+			w += strokeCtrl->width();
+			strokeFlag = true;
 		}
 		else {
 			w += btnW;
@@ -147,8 +147,11 @@ void ToolSub::showEvent(QShowEvent* event)
 	}
 	w += 4;
 	setFixedSize(w, 42);
-	if (!flag) {
+	if (!strokeFlag) {
 		strokeCtrl->hide();
+	}
+	if (!colorFlag) {
+		colorCtrl->hide();
 	}
 	QWidget::showEvent(event);
 }
@@ -160,7 +163,7 @@ std::vector<ToolBtn> ToolSub::makeBtns(const QJsonArray& arr, const QString& lan
 	{
 		ToolBtn btn;
 		btn.name = val["name"].toString();
-		if (btn.name == "strokeWidth" || btn.name == "colors") {
+		if (btn.name == "strokeCtrl" || btn.name == "colorCtrl") {
 			btns.push_back(std::move(btn));
 			continue;
 		}

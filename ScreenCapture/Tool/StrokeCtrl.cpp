@@ -73,8 +73,8 @@ void StrokeCtrl::showEvent(QShowEvent* event)
 
 void StrokeCtrl::onValueChanged(int value)
 {
-    qreal x = getSliderXPos()-8;
-    auto pos = mapToGlobal(QPoint(x, -18));
+    qreal x = getSliderXPos()-10;
+    auto pos = mapToGlobal(QPoint(x, -30));
     QToolTip::showText(pos, QString::number(value), this);
     setToolTip(QString::number(value));
 }

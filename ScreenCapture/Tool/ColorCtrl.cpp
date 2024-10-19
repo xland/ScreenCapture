@@ -1,17 +1,21 @@
 #include <qpainter.h>
 
 #include "ColorCtrl.h"
+#include "App.h"
 
 namespace {
 	QChar colorIcon;
 	QChar colorIconSelected;
-	int colorIndex;
+	int defaultSelectedIndex;
 	std::vector<QString> colorTips;
 	std::vector<QString> colorValues;
 }
 
 ColorCtrl::ColorCtrl(QWidget *parent) : QWidget(parent)
 {
+	setVisible(false);
+	setAttribute(Qt::WA_NoSystemBackground);
+	setAttribute(Qt::WA_Hover);
 	auto w{ colorValues.size() * itemWidth };
 	setFixedSize(w, 32);
 }
@@ -23,7 +27,7 @@ ColorCtrl::~ColorCtrl()
 
 void ColorCtrl::InitData(const QJsonObject& obj, const QString& lang)
 {
-	colorIndex = obj["defaultSelectedIndex"].toInt();
+	defaultSelectedIndex = obj["defaultSelectedIndex"].toInt();
 	bool ok;
 	uint codePoint = obj["icon"].toString().toUInt(&ok, 16);
 	if (ok) {
@@ -43,12 +47,18 @@ void ColorCtrl::InitData(const QJsonObject& obj, const QString& lang)
 
 void ColorCtrl::paintEvent(QPaintEvent * event)
 {
+	auto font = App::GetIconFont();
+	font->setPixelSize(15);
+
 	QPainter painter(this);
+	painter.setRenderHint(QPainter::Antialiasing, true);
+	painter.setRenderHint(QPainter::TextAntialiasing, true);
+	painter.setFont(*font);
 	for (int j = 0; j < colorValues.size(); j++)
 	{
-		QRect rect(j * itemWidth, 10, itemWidth, height());
+		QRect rect(j * itemWidth, 0, itemWidth, height());
 		painter.setPen(QColor(colorValues[j]));
-		if (j == colorIndex) {
+		if (j == selectedIndex) {
 			painter.drawText(rect, Qt::AlignCenter, colorIconSelected);
 		}
 		else {
@@ -59,4 +69,9 @@ void ColorCtrl::paintEvent(QPaintEvent * event)
 
 void ColorCtrl::mousePressEvent(QMouseEvent* event)
 {
+}
+
+void ColorCtrl::showEvent(QShowEvent* event)
+{
+	selectedIndex = defaultSelectedIndex;
 }
