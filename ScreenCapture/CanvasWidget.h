@@ -24,6 +24,7 @@ public:
 	~CanvasWidget();
 	static void Init();
 	static CanvasWidget* Get();
+	void changeState(const State& state);
 public:
 	State state{ State::start };
 	ToolMain* toolMain;
@@ -38,6 +39,7 @@ protected:
 	void mouseReleaseEvent(QMouseEvent* event) override;
 private:
 	void initImgs();
+	void raiseTools();
 private:
 	qreal maskStroke{ 1.5 };
 	bool dragging = false;

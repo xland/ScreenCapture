@@ -19,6 +19,7 @@ public:
 	ToolSub(QWidget *parent = nullptr);
 	~ToolSub();
 	static void InitData(const QJsonObject& obj, const QString& lang);
+	bool getSelectState(const QString& btnName);
 public:
 protected:
 	void paintEvent(QPaintEvent* event) override;

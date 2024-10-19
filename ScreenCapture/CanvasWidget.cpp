@@ -43,12 +43,32 @@ void CanvasWidget::Init()
 	SetWindowPos(hwnd, nullptr, 0, 0, winNative->w, winNative->h, SWP_NOZORDER | SWP_SHOWWINDOW);
 	ShowWindow(winNative->hwnd, SW_SHOW);
 	SetForegroundWindow(winNative->hwnd);
-	//SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
 }
 
 CanvasWidget* CanvasWidget::Get()
 {
 	return canvasWidget;
+}
+
+void CanvasWidget::changeState(const State& state)
+{
+	toolSub->hide();
+	this->state = state;
+	if (state > State::tool) {
+		cutMask->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+	}
+	else {
+		cutMask->setAttribute(Qt::WA_TransparentForMouseEvents, false);
+	}
+	toolSub->show();
+	shapes.erase(std::remove_if(shapes.begin(), shapes.end(), [](ShapeBase* item) { return item->isTemp; }), shapes.end());
+	if (state == State::rect) {
+		auto rect = new ShapeRect(this);
+		rect->isFill = toolSub->getSelectState("rectFill");
+		raiseTools();
+		rect->show();
+		shapes.push_back(std::move(rect));
+	}
 }
 
 
@@ -61,20 +81,12 @@ void CanvasWidget::paintEvent(QPaintEvent* event)
 
 void CanvasWidget::closeEvent(QCloseEvent* event)
 {
-	event->accept();
 	delete canvasWidget;
 }
 
 void CanvasWidget::mousePressEvent(QMouseEvent* event)
 {
-	if (state == State::rect) {
-		auto rect = new ShapeRect(this);
-		cutMask->raise();
-		toolMain->raise();
-		toolSub->raise();
-		rect->show();
-		shapes.push_back(std::move(rect));
-	}
+
 }
 
 void CanvasWidget::mouseMoveEvent(QMouseEvent* event)
@@ -125,4 +137,11 @@ void CanvasWidget::initImgs()
 	////imgBg = std::make_unique<QImage>(std::move(bgTemp));
 	//imgBg = std::make_unique<QImage>(bgTemp.copy(0, 0, winNative->w, winNative->h)); 
 
+}
+
+void CanvasWidget::raiseTools()
+{
+	cutMask->raise();
+	toolMain->raise();
+	toolSub->raise();
 }

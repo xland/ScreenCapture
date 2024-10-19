@@ -17,6 +17,7 @@ CutMask::CutMask(QWidget *parent) : QWidget(parent)
 CutMask::~CutMask()
 {
 }
+
 void CutMask::paintEvent(QPaintEvent* event)
 {
 	QPainter painter(this);
@@ -49,14 +50,15 @@ void CutMask::mousePressEvent(QMouseEvent* event)
 			}
 		}
 		else {
-			QCoreApplication::sendEvent(parentWidget(), event);
+			//QCoreApplication::sendEvent(parentWidget(), event);
+			
 		}
 	}
 	else if (event->button() == Qt::RightButton) {
 		parentWidget()->close();
 		WindowNative::Close();
 	}
-	event->accept();
+	event->ignore();
 }
 
 void CutMask::mouseMoveEvent(QMouseEvent* event)
@@ -80,6 +82,9 @@ void CutMask::mouseMoveEvent(QMouseEvent* event)
 					changeMaskRect(pos);
 				}
 			}
+			else {
+				//QCoreApplication::sendEvent(parentWidget(), event);
+			}
 		}
 	}
 	else if (canvasWidget->state == State::tool) {
@@ -88,7 +93,7 @@ void CutMask::mouseMoveEvent(QMouseEvent* event)
 	else {
 		setCursor(Qt::CrossCursor);
 	}
-	event->accept();
+	event->ignore();
 }
 
 void CutMask::mouseReleaseEvent(QMouseEvent* event)
@@ -104,9 +109,12 @@ void CutMask::mouseReleaseEvent(QMouseEvent* event)
 		else if (canvasWidget->state == State::tool) {
 			canvasWidget->toolMain->show();
 		}
+		else {
+			//QCoreApplication::sendEvent(parentWidget(), event);
+		}
 		dragging = false;
 	}
-	event->accept();
+	event->ignore();
 }
 
 void CutMask::changeMaskRect(const QPoint& pos)

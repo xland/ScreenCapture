@@ -9,4 +9,6 @@ class ShapeBase  : public QWidget
 public:
 	ShapeBase(QWidget *parent);
 	~ShapeBase();
+public:
+	bool isTemp{ true };
 };

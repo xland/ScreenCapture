@@ -60,7 +60,19 @@ void ToolSub::InitData(const QJsonObject& obj, const QString& lang)
 		auto arr = obj["eraser"].toArray();
 		btns.insert({ State::eraser,makeBtns(arr, lang) });
 	}
+}
 
+bool ToolSub::getSelectState(const QString& btnName)
+{
+	auto canvasWidget = CanvasWidget::Get();
+	auto& values = btns[canvasWidget->state];
+	auto it = std::find_if(values.begin(), values.end(), [&btnName](const ToolBtn& item) {
+			return item.name == btnName;
+		});
+	if (it != values.end()) {
+		return (*it).selected;
+	}
+	return false;
 }
 
 void ToolSub::paintEvent(QPaintEvent* event)
