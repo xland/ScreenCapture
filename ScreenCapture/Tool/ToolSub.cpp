@@ -4,14 +4,10 @@
 #include "App.h"
 #include "ToolMain.h"
 #include "StrokeCtrl.h"
+#include "ColorCtrl.h"
 
 namespace {
 	std::map<State, std::vector<ToolBtn>> btns;
-	QChar colorIcon;
-	QChar colorIconSelected;
-	int colorIndex;
-	std::vector<QString> colorTips;
-	std::vector<QString> colorValues;
 }
 
 ToolSub::ToolSub(QWidget *parent) : QWidget(parent)
@@ -21,11 +17,11 @@ ToolSub::ToolSub(QWidget *parent) : QWidget(parent)
 	setAttribute(Qt::WA_Hover);
 	setMouseTracking(true);
 	strokeCtrl = new StrokeCtrl(this);
+	colorCtrl = new ColorCtrl(this);
 }
 
 ToolSub::~ToolSub()
 {
-
 }
 
 void ToolSub::InitData(const QJsonObject& obj, const QString& lang)
@@ -62,25 +58,7 @@ void ToolSub::InitData(const QJsonObject& obj, const QString& lang)
 		auto arr = obj["eraser"].toArray();
 		btns.insert({ State::eraser,makeBtns(arr, lang) });
 	}
-	if (obj["color"].isObject()) {
-		auto color = obj["color"].toObject(); 
-		colorIndex = color["defaultSelectedIndex"].toInt();
-		bool ok;
-		uint codePoint = color["icon"].toString().toUInt(&ok, 16);
-		if (ok) {
-			colorIcon = QChar(codePoint);
-		}
-		codePoint = color["iconSelected"].toString().toUInt(&ok, 16);
-		if (ok) {
-			colorIconSelected = QChar(codePoint);
-		}
-		auto arr = color["items"].toArray();
-		for (const QJsonValue& item:arr)
-		{
-			colorTips.push_back(item[lang].toString());
-			colorValues.push_back(item["value"].toString());
-		}
-	}
+
 }
 
 void ToolSub::paintEvent(QPaintEvent* event)
@@ -114,18 +92,7 @@ void ToolSub::paintEvent(QPaintEvent* event)
 	for (size_t i = 0; i < values.size(); i++)
 	{
 		if (values[i].name == "colors") {
-			for (size_t j = 0; j < colorValues.size(); j++)
-			{
-				QRect rect(x, 10, 26, 32);
-				painter.setPen(QColor(colorValues[j]));
-				if (j == colorIndex) {
-					painter.drawText(rect, Qt::AlignCenter, colorIconSelected);
-				}
-				else {
-					painter.drawText(rect, Qt::AlignCenter, colorIcon);
-				}
-				x += 26;
-			}
+
 		}
 		else if (values[i].name == "strokeWidth") {
 			x += 84;
@@ -164,15 +131,12 @@ void ToolSub::showEvent(QShowEvent* event)
 	bool flag{ false };
 	for (size_t i = 0; i < values.size(); i++)
 	{
-		if (values[i].name == "colors") {
-			for (size_t j = 0; j < colorValues.size(); j++)
-			{
-				w += 26;
-			}
+		if (values[i].name == "colorCtrl") {
+			colorCtrl->move(w, 10);
+			w += colorCtrl->width();
 		}
-		else if (values[i].name == "strokeWidth") {
-			strokeCtrl->move(w, 0);
-			strokeCtrl->setFixedSize(84, 42);
+		else if (values[i].name == "strokeCtrl") {
+			strokeCtrl->move(w, 10);
 			strokeCtrl->show();
 			w += 84;
 			flag = true;

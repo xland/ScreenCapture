@@ -1,10 +1,11 @@
 {
-  "iconFont": "./config/iconfont.ttf",
-  "iconFontName": "iconfont",
   "defaultLang": "en",
   "hotKey": "Ctrl+Alt+Z",
+  "icon": {
+    "fontPath": "./config/iconfont.ttf",
+    "fontName": "iconfont"
+  },
   "tray": {
-    "showIcon": true,
     "iconPath": "./config/logo.ico",
     "menu": [
       {
@@ -18,7 +19,7 @@
         "en": "quit"
       }
     ]
-  },  
+  },
   "toolMain": [
     {
       "name": "rect",
@@ -121,12 +122,12 @@
         "en": ""
       },
       {
-        "name": "strokeWidth",
+        "name": "strokeCtrl",
         "zhcn": "",
         "en": ""
       },
       {
-        "name": "colors"
+        "name": "colorCtrl"
       }
     ],
     "ellipse": [
@@ -138,12 +139,12 @@
         "en": ""
       },
       {
-        "name": "strokeWidth",
+        "name": "strokeCtrl",
         "zhcn": "",
         "en": ""
       },
       {
-        "name": "colors"
+        "name": "colorCtrl"
       }
     ],
     "arrow": [
@@ -155,12 +156,12 @@
         "en": ""
       },
       {
-        "name": "strokeWidth",
+        "name": "strokeCtrl",
         "zhcn": "",
         "en": ""
       },
       {
-        "name": "colors"
+        "name": "colorCtrl"
       }
     ],
     "number": [
@@ -172,12 +173,12 @@
         "en": ""
       },
       {
-        "name": "strokeWidth",
+        "name": "strokeCtrl",
         "zhcn": "",
         "en": ""
       },
       {
-        "name": "colors"
+        "name": "colorCtrl"
       }
     ],
     "line": [
@@ -189,17 +190,17 @@
         "en": ""
       },
       {
-        "name": "strokeWidth",
+        "name": "strokeCtrl",
         "zhcn": "",
         "en": ""
       },
       {
-        "name": "colors"
+        "name": "colorCtrl"
       }
     ],
     "text": [
       {
-        "name": "colors"
+        "name": "colorCtrl"
       }
     ],
     "mosaic": [
@@ -211,7 +212,7 @@
         "en": ""
       },
       {
-        "name": "strokeWidth",
+        "name": "strokeCtrl",
         "zhcn": "",
         "en": ""
       }
@@ -225,58 +226,57 @@
         "en": ""
       },
       {
-        "name": "strokeWidth",
+        "name": "strokeCtrl",
         "zhcn": "",
         "en": ""
       }
-    ],
-    "color": {
-      "icon": "e61d",
-      "iconSelected": "e721",
-      "defaultSelectedIndex": 0,
-      "items": [
-        {
-          "en": "red",
-          "zhcn": "红",
-          "value": "#CF1322"
-        },
-        {
-          "en": "yellow",
-          "zhcn": "黄",
-          "value": "#D48806"
-        },
-        {
-          "en": "green",
-          "zhcn": "绿",
-          "value": "#389E0D"
-        },
-        {
-          "en": "cyan",
-          "zhcn": "青",
-          "value": "#13C2C2"
-        },
-        {
-          "en": "blue",
-          "zhcn": "蓝",
-          "value": "#0958D9"
-        },
-        {
-          "en": "purple",
-          "zhcn": "紫",
-          "value": "#722ED1"
-        },
-        {
-          "en": "pink",
-          "zhcn": "粉",
-          "value": "#EB2F96"
-        },
-        {
-          "en": "black",
-          "zhcn": "黑",
-          "value": "#000000"
-        }
-      ]
-    }
-
+    ]
+  },
+  "colorCtrl": {
+    "icon": "e61d",
+    "iconSelected": "e721",
+    "defaultSelectedIndex": 0,
+    "items": [
+      {
+        "en": "red",
+        "zhcn": "红",
+        "value": "#CF1322"
+      },
+      {
+        "en": "yellow",
+        "zhcn": "黄",
+        "value": "#D48806"
+      },
+      {
+        "en": "green",
+        "zhcn": "绿",
+        "value": "#389E0D"
+      },
+      {
+        "en": "cyan",
+        "zhcn": "青",
+        "value": "#13C2C2"
+      },
+      {
+        "en": "blue",
+        "zhcn": "蓝",
+        "value": "#0958D9"
+      },
+      {
+        "en": "purple",
+        "zhcn": "紫",
+        "value": "#722ED1"
+      },
+      {
+        "en": "pink",
+        "zhcn": "粉",
+        "value": "#EB2F96"
+      },
+      {
+        "en": "black",
+        "zhcn": "黑",
+        "value": "#000000"
+      }
+    ]
   }
 }

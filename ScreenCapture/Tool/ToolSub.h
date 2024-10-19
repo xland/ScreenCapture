@@ -10,6 +10,7 @@
 
 
 class StrokeCtrl;
+class ColorCtrl;
 class ToolSub : public QWidget
 {
 	Q_OBJECT
@@ -28,5 +29,6 @@ private:
 	static std::vector<ToolBtn> makeBtns(const QJsonArray& arr, const QString& lang);
 	qreal btnW{ 32 };
 	StrokeCtrl* strokeCtrl;
+	ColorCtrl* colorCtrl;
 private:
 };

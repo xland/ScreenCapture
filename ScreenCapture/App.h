@@ -17,6 +17,8 @@ public:
 private:
 	static void initConfig();
 	static void initFont(const QJsonObject& obj);
-	static void initHotKey(const QString& keyComb);
+	static void initHotKey(const QJsonObject& obj);
+	static void initTool(const QJsonObject& obj,const QString& lang);
+	static void initTray(const QJsonObject& obj, const QString& lang);
 };
 

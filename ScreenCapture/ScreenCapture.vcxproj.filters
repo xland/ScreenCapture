@@ -65,6 +65,9 @@
     <ClCompile Include="Tool\StrokeCtrl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Tool\ColorCtrl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="WindowNative.h">
@@ -112,6 +115,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="Tool\StrokeCtrl.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Tool\ColorCtrl.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

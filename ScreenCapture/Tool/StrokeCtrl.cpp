@@ -12,6 +12,7 @@ StrokeCtrl::StrokeCtrl(QWidget *parent):QSlider(parent)
     setAttribute(Qt::WA_NoSystemBackground);
     setAttribute(Qt::WA_Hover);
     connect(this, &QSlider::valueChanged, this, &StrokeCtrl::onValueChanged);
+    setFixedSize(84, 32);
 }
 
 StrokeCtrl::~StrokeCtrl()
@@ -23,7 +24,7 @@ void StrokeCtrl::paintEvent(QPaintEvent* event)
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
     painter.setPen(Qt::gray);
-    auto y{ 10 + (height()-10) / 2 };
+    auto y{ height() / 2 };
     painter.drawLine(4, y, width()-8, y);
     qreal x = getSliderXPos();
     QRect rect(x, y-4, 8, 8);
