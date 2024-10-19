@@ -62,6 +62,9 @@
     <ClCompile Include="Shape\ShapeBase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Tool\StrokeCtrl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="WindowNative.h">
@@ -106,6 +109,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="Shape\ShapeBase.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Tool\StrokeCtrl.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

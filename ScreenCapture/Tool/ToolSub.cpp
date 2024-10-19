@@ -3,6 +3,7 @@
 #include <memory>
 #include "App.h"
 #include "ToolMain.h"
+#include "StrokeCtrl.h"
 
 namespace {
 	std::map<State, std::vector<ToolBtn>> btns;
@@ -16,7 +17,10 @@ namespace {
 ToolSub::ToolSub(QWidget *parent) : QWidget(parent)
 {
 	setVisible(false);
+	setAttribute(Qt::WA_NoSystemBackground);
+	setAttribute(Qt::WA_Hover);
 	setMouseTracking(true);
+	strokeCtrl = new StrokeCtrl(this);
 }
 
 ToolSub::~ToolSub()
@@ -77,13 +81,15 @@ void ToolSub::InitData(const QJsonObject& obj, const QString& lang)
 			colorValues.push_back(item["value"].toString());
 		}
 	}
-
-	
-
 }
 
 void ToolSub::paintEvent(QPaintEvent* event)
 {
+
+
+	//painter.setPen(QColor(190, 190, 190));
+	//painter.drawLine(x, 10 + 16, x + 80, 10 + 16);
+
 	auto font = App::GetIconFont();
 	font->setPixelSize(15);
 
@@ -122,8 +128,6 @@ void ToolSub::paintEvent(QPaintEvent* event)
 			}
 		}
 		else if (values[i].name == "strokeWidth") {
-			painter.setPen(QColor(190, 190, 190));
-			painter.drawLine(x, 10 + 16, x+80, 10+16);
 			x += 84;
 		}
 		else{
@@ -152,12 +156,12 @@ void ToolSub::showEvent(QShowEvent* event)
 	auto canvasWidget = CanvasWidget::Get();
 	auto toolMain = canvasWidget->toolMain;
 	auto toolSub = canvasWidget->toolSub;
-	auto ptr = toolSub->parent();
 	auto pos = toolMain->geometry().bottomLeft();
 	toolSub->move(pos.x(), pos.y());
 
 	auto values = btns[canvasWidget->state];
 	auto w{ 4 };
+	bool flag{ false };
 	for (size_t i = 0; i < values.size(); i++)
 	{
 		if (values[i].name == "colors") {
@@ -167,7 +171,11 @@ void ToolSub::showEvent(QShowEvent* event)
 			}
 		}
 		else if (values[i].name == "strokeWidth") {
+			strokeCtrl->move(w, 0);
+			strokeCtrl->setFixedSize(84, 42);
+			strokeCtrl->show();
 			w += 84;
+			flag = true;
 		}
 		else {
 			w += btnW;
@@ -175,6 +183,9 @@ void ToolSub::showEvent(QShowEvent* event)
 	}
 	w += 4;
 	setFixedSize(w, 42);
+	if (!flag) {
+		strokeCtrl->hide();
+	}
 	QWidget::showEvent(event);
 }
 

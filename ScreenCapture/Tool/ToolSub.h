@@ -8,6 +8,8 @@
 
 #include "ToolBtn.h"
 
+
+class StrokeCtrl;
 class ToolSub : public QWidget
 {
 	Q_OBJECT
@@ -25,5 +27,6 @@ protected:
 private:
 	static std::vector<ToolBtn> makeBtns(const QJsonArray& arr, const QString& lang);
 	qreal btnW{ 32 };
+	StrokeCtrl* strokeCtrl;
 private:
 };
