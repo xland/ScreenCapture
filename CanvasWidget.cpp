@@ -1,6 +1,6 @@
 #include <qlayout.h>
 #include <qpushbutton.h>
-
+#include <QEvent>
 
 #include "CanvasWidget.h"
 #include "CutMask.h"
@@ -25,7 +25,7 @@ CanvasWidget::CanvasWidget(QWidget *parent) : QWidget(parent)
 	cutMask = new CutMask(this);
 	toolMain = new ToolMain(this);
 	toolSub = new ToolSub(this);
-
+    this->installEventFilter(this);
 	show();
 
 }
@@ -51,27 +51,13 @@ CanvasWidget* CanvasWidget::Get()
 	return canvasWidget;
 }
 
-void CanvasWidget::changeState(const State& state)
+void CanvasWidget::addShape(const QPoint& pos)
 {
-	toolSub->hide();
-	this->state = state;
-	if (state > State::tool) {
-		cutMask->setAttribute(Qt::WA_TransparentForMouseEvents, true);
-	}
-	else {
-		cutMask->setAttribute(Qt::WA_TransparentForMouseEvents, false);
-	}
-	toolSub->show();
-    addShape();
-}
-
-void CanvasWidget::addShape()
-{
-    shapes.erase(std::remove_if(shapes.begin(), shapes.end(), [](ShapeBase* item) { return item->isTemp; }), shapes.end());
+    // shapes.erase(std::remove_if(shapes.begin(), shapes.end(), [](ShapeBase* item) { return item->state == ShapeState::temp; }), shapes.end());
     if (state == State::rect) {
-        shapes.push_back(new ShapeRect(this));
+        shapes.push_back(new ShapeRect(pos,this));
     }else if(state == State::ellipse){
-        shapes.push_back(new ShapeEllipse(this));
+        shapes.push_back(new ShapeEllipse(pos,this));
     }
     cutMask->raise();
     toolMain->raise();
@@ -91,17 +77,43 @@ void CanvasWidget::closeEvent(QCloseEvent* event)
 	delete canvasWidget;
 }
 
-void CanvasWidget::mousePressEvent(QMouseEvent* event)
+bool CanvasWidget::eventFilter(QObject *obj, QEvent *event)
 {
-
-}
-
-void CanvasWidget::mouseMoveEvent(QMouseEvent* event)
-{
-}
-
-void CanvasWidget::mouseReleaseEvent(QMouseEvent* event)
-{
+    if (event->type() == QEvent::MouseMove) {
+        QMouseEvent *e = static_cast<QMouseEvent *>(event);
+        cutMask->MoveEvent(e);
+        for (auto shape:shapes) {
+            shape->MoveEvent(e);
+        }
+        return true;
+    }
+    if(event->type() == QEvent::MouseButtonPress){
+        QMouseEvent *e = static_cast<QMouseEvent *>(event);
+        cutMask->PressEvent(e);
+        for (auto shape:shapes) {
+            shape->PressEvent(e);
+            if(shape->state != ShapeState::ready){
+                break;
+            }
+        }
+        if(!e->isAccepted()){
+            addShape(e->pos());
+            qDebug()<<"add one";
+        }
+        return true;
+    }
+    if(event->type() == QEvent::MouseButtonRelease){
+        QMouseEvent *e = static_cast<QMouseEvent *>(event);
+        cutMask->ReleaseEvent(e);
+        for (auto shape:shapes) {
+            shape->ReleaseEvent(e);
+            if(e->isAccepted()){
+                break;
+            }
+        }
+        return true;
+    }
+    return false;
 }
 
 
@@ -123,9 +135,6 @@ void CanvasWidget::initImgs()
 		}
 	}
 
-
-
-
 	//auto winNative = WindowNative::Get();
 	//HDC hScreen = GetDC(NULL); 
 	//HDC hDC = CreateCompatibleDC(hScreen); 
@@ -144,11 +153,4 @@ void CanvasWidget::initImgs()
 	////imgBg = std::make_unique<QImage>(std::move(bgTemp));
 	//imgBg = std::make_unique<QImage>(bgTemp.copy(0, 0, winNative->w, winNative->h)); 
 
-}
-
-void CanvasWidget::raiseTools()
-{
-	cutMask->raise();
-	toolMain->raise();
-	toolSub->raise();
 }

@@ -24,8 +24,7 @@ public:
 	~CanvasWidget();
 	static void Init();
 	static CanvasWidget* Get();
-	void changeState(const State& state);
-    void addShape();
+    void addShape(const QPoint& pos);
 public:
 	State state{ State::start };
 	ToolMain* toolMain;
@@ -35,12 +34,9 @@ public:
 protected:
 	void paintEvent(QPaintEvent* event) override;
 	void closeEvent(QCloseEvent* event) override;
-	void mousePressEvent(QMouseEvent* event) override;
-	void mouseMoveEvent(QMouseEvent* event) override;
-	void mouseReleaseEvent(QMouseEvent* event) override;
+    bool eventFilter(QObject *obj, QEvent *event) override;
 private:
 	void initImgs();
-	void raiseTools();
 private:
 	qreal maskStroke{ 1.5 };
 	bool dragging = false;

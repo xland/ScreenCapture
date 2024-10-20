@@ -8,14 +8,14 @@ class ShapeEllipse: public ShapeBase
 	Q_OBJECT
 
 public:
-    ShapeEllipse(QWidget *parent);
+    ShapeEllipse(const QPoint& pos,QWidget *parent);
     ~ShapeEllipse();
+    void PressEvent(QMouseEvent* event) override;
+    void MoveEvent(QMouseEvent* event) override;
+    void ReleaseEvent(QMouseEvent* event) override;
 public:
 protected:
-	void paintEvent(QPaintEvent* event) override;
-	void mousePressEvent(QMouseEvent* event) override;
-	void mouseMoveEvent(QMouseEvent* event) override;
-	void mouseReleaseEvent(QMouseEvent* event) override;
+    void paintEvent(QPaintEvent* event) override;
 private:
     QPoint posPress;
     QRect rectShape;

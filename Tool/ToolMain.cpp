@@ -131,7 +131,10 @@ void ToolMain::mousePressEvent(QMouseEvent* event)
 	else {
 		auto& btn = btns[hoverIndex];
 		if (btn.name.isEmpty()) {
-			canvasWidget->changeState(btn.state);
+            // canvasWidget->changeState(btn.state);
+            canvasWidget->toolSub->hide();
+            canvasWidget->state = btn.state;
+            canvasWidget->toolSub->show();
 			selectIndex = hoverIndex;
 		}
 		else if(btn.name == "close"){

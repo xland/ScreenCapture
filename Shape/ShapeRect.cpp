@@ -5,7 +5,7 @@
 #include "../CanvasWidget.h"
 #include "../Tool/ToolSub.h"
 
-ShapeRect::ShapeRect(QWidget *parent) : ShapeBase(parent)
+ShapeRect::ShapeRect(const QPoint& pos,QWidget *parent) : ShapeBase(parent)
 {
     setVisible(true);
 	setMouseTracking(true);
@@ -13,6 +13,13 @@ ShapeRect::ShapeRect(QWidget *parent) : ShapeBase(parent)
 	auto size = parent->size();
 	setFixedSize(size);
 	setFocusPolicy(Qt::StrongFocus);
+    rectShape.setTopLeft(pos);
+    rectShape.setSize(QSize(0,0));
+
+    auto toolSub = CanvasWidget::Get()->toolSub;
+    isFill = toolSub->getSelectState("rectFill");
+    color = toolSub->getColor();
+    strokeWidth = toolSub->getStrokeWidth();
 }
 
 ShapeRect::~ShapeRect()
@@ -33,30 +40,25 @@ void ShapeRect::paintEvent(QPaintEvent* event)
     painter.drawRect(rectShape);
 }
 
-void ShapeRect::mousePressEvent(QMouseEvent* event)
+void ShapeRect::PressEvent(QMouseEvent* event)
 {
-    if (event->button() == Qt::LeftButton) {
-        rectShape.setTopLeft(event->pos());
-        rectShape.setSize(QSize(0,0));
-        auto toolSub = CanvasWidget::Get()->toolSub;
-        isFill = toolSub->getSelectState("rectFill");
-        color = toolSub->getColor();
-        strokeWidth = toolSub->getStrokeWidth();
-    }
+
 }
 
-void ShapeRect::mouseMoveEvent(QMouseEvent* event)
+void ShapeRect::MoveEvent(QMouseEvent* event)
 {
+    if(state == ShapeState::ready){
+        return;
+    }
     auto pos = event->pos();
     if (event->buttons() & Qt::LeftButton) {
-        if(isTemp) isTemp = false;
+        state = ShapeState::sizing;
         rectShape.setBottomRight(pos);
         update();
     }
 }
 
-void ShapeRect::mouseReleaseEvent(QMouseEvent* event)
+void ShapeRect::ReleaseEvent(QMouseEvent* event)
 {
-    auto canvasWidget = CanvasWidget::Get();
-    canvasWidget->addShape();
+    state = ShapeState::ready;
 }

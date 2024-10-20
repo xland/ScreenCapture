@@ -1,5 +1,4 @@
-﻿#include <memory>
-#include <tuple>
+﻿#include <tuple>
 
 #include "ToolSub.h"
 #include "../CanvasWidget.h"
