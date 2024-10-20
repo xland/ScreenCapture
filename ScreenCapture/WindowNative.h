@@ -9,6 +9,7 @@ class WindowNative
 public:
 	static void Init();
 	static WindowNative* Get();
+	static void Close();
 	HWND hwnd;
 	int x, y, w, h;
 private:

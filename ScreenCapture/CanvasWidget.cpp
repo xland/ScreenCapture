@@ -1,146 +1,147 @@
 #include <qlayout.h>
 #include <qpushbutton.h>
 
-#include "ToolMain.h"
-#include "ToolSub.h"
+
 #include "CanvasWidget.h"
+#include "CutMask.h"
 #include "WindowNative.h"
+#include "Tool/ToolMain.h"
+#include "Tool/ToolSub.h"
+#include "Shape/ShapeBase.h"
+#include "Shape/ShapeRect.h"
 
 namespace {
-	std::unique_ptr<CanvasWidget> canvasWidget;
+	CanvasWidget* canvasWidget;
 }
 
 CanvasWidget::CanvasWidget(QWidget *parent) : QWidget(parent)
 {
 	initImgs();
 	setWindowFlags(Qt::FramelessWindowHint);
+	setAttribute(Qt::WA_QuitOnClose, false);
 	auto winNative = WindowNative::Get();
-	maskRect.setRect(-maskStroke, -maskStroke, winNative->w + maskStroke, winNative->h + maskStroke);	
+	setFixedSize(winNative->w, winNative->h);
+	cutMask = new CutMask(this);
+	toolMain = new ToolMain(this);
+	toolSub = new ToolSub(this);
+
 	show();
+
 }
 
 CanvasWidget::~CanvasWidget()
-{}
+{
+	canvasWidget = nullptr;
+}
 
 void CanvasWidget::Init()
 {
-	canvasWidget = std::make_unique<CanvasWidget>();
-	auto ptr = canvasWidget.get();
-	ToolMain::Get()->setParent(ptr);
-	ToolSub::Get()->setParent(ptr);
-
+	canvasWidget = new CanvasWidget();
 	auto hwnd = (HWND)canvasWidget->winId();
 	auto winNative = WindowNative::Get();
 	SetParent(hwnd, winNative->hwnd);
 	SetWindowPos(hwnd, nullptr, 0, 0, winNative->w, winNative->h, SWP_NOZORDER | SWP_SHOWWINDOW);
 	ShowWindow(winNative->hwnd, SW_SHOW);
+	SetForegroundWindow(winNative->hwnd);
 }
 
 CanvasWidget* CanvasWidget::Get()
 {
-	return canvasWidget.get();
+	return canvasWidget;
 }
 
-void CanvasWidget::mousePressEvent(QMouseEvent * event)
+void CanvasWidget::changeState(const State& state)
 {
-	if (event->button() == Qt::LeftButton) {
-		dragging = true;
-		dragPosition = event->pos();
-		if (state == State::start) {
-			maskRect.setRect(dragPosition.x(), dragPosition.y(), 0, 0);
-			state = State::mask;
-		}
+	toolSub->hide();
+	this->state = state;
+	if (state > State::tool) {
+		cutMask->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 	}
-	else if (event->button() == Qt::RightButton) {
-		qApp->quit();
+	else {
+		cutMask->setAttribute(Qt::WA_TransparentForMouseEvents, false);
 	}
-	event->accept();
+	toolSub->show();
+	shapes.erase(std::remove_if(shapes.begin(), shapes.end(), [](ShapeBase* item) { return item->isTemp; }), shapes.end());
+	if (state == State::rect) {
+		auto rect = new ShapeRect(this);
+		rect->isFill = toolSub->getSelectState("rectFill");
+		raiseTools();
+		rect->show();
+		shapes.push_back(std::move(rect));
+	}
 }
 
-void CanvasWidget::mouseMoveEvent(QMouseEvent* event)
-{
-	if (dragging && event->buttons() & Qt::LeftButton) {
-
-		if (state == State::mask) {
-			maskRect.setBottomRight(event->pos());
-			update();
-		}
-	}
-	event->accept();
-}
-
-void CanvasWidget::mouseReleaseEvent(QMouseEvent* event)
-{
-	if (event->button() == Qt::LeftButton) {
-		if (state == State::mask) {
-			state = State::tool;
-			//auto btn = new QPushButton("allen", this);
-			//btn->move(pos);
-			//btn->show();
-			ToolMain::Show();
-			
-		}
-		dragging = false;
-	}
-	event->accept();
-}
-
-void CanvasWidget::onButtonClicked()
-{
-}
 
 void CanvasWidget::paintEvent(QPaintEvent* event)
 {
 	QPainter painter(this);
-	painter.drawImage(rect(), *imgBg);
-	painter.drawImage(rect(), *imgBoard);
-	painter.drawImage(rect(), *imgCanvas);
-	painter.setRenderHint(QPainter::Antialiasing, true);
-	paintMask(painter);	
-	painter.end();
-	QWidget::paintEvent(event);
+	//painter.drawImage(rect(), *imgBg);
+	painter.drawPixmap(rect(), desktopImg);
+}
+
+void CanvasWidget::closeEvent(QCloseEvent* event)
+{
+	delete canvasWidget;
+}
+
+void CanvasWidget::mousePressEvent(QMouseEvent* event)
+{
+
+}
+
+void CanvasWidget::mouseMoveEvent(QMouseEvent* event)
+{
+}
+
+void CanvasWidget::mouseReleaseEvent(QMouseEvent* event)
+{
 }
 
 
 void CanvasWidget::initImgs()
 {
-	auto winNative = WindowNative::Get();
-	HDC hScreen = GetDC(NULL); 
-	HDC hDC = CreateCompatibleDC(hScreen); 
-	HBITMAP hBitmap = CreateCompatibleBitmap(hScreen, winNative->w, winNative->h);
-	DeleteObject(SelectObject(hDC, hBitmap)); 
-	BOOL bRet = BitBlt(hDC, 0, 0, winNative->w, winNative->h, hScreen, winNative->x, winNative->y, SRCCOPY);
-	long long dataSize = winNative->w * winNative->h * 4;
-	std::vector<unsigned char> bgPix(dataSize, 0);
-	//bgPix.resize(dataSize);
-	BITMAPINFO info = { sizeof(BITMAPINFOHEADER), (long)winNative->w, 0 - (long)winNative->h, 1, 32, BI_RGB, (DWORD)dataSize, 0, 0, 0, 0 };
-	GetDIBits(hDC, hBitmap, 0, winNative->h, &bgPix.front(), &info, DIB_RGB_COLORS);
-	DeleteObject(hBitmap);
-	DeleteDC(hDC);
-	ReleaseDC(NULL, hScreen);
+	auto screenRect = QRect(GetSystemMetrics(SM_XVIRTUALSCREEN), GetSystemMetrics(SM_YVIRTUALSCREEN),
+		GetSystemMetrics(SM_CXVIRTUALSCREEN), GetSystemMetrics(SM_CYVIRTUALSCREEN));
+	auto screens = QGuiApplication::screens();
+	for (auto screen:screens) {
+		auto pos = screen->geometry().topLeft();
+		if (pos.x() == 0 && pos.y() == 0) {
+			auto dpr = screen->devicePixelRatio();
+			desktopImg = screen->grabWindow(0,
+				screenRect.x() / dpr,
+				screenRect.y() / dpr,
+				screenRect.width() / dpr,
+				screenRect.height() / dpr);
+			break;
+		}
+	}
 
-	QImage bgTemp(&bgPix.front(), winNative->w, winNative->h, QImage::Format_ARGB32);
-	//auto bg = bgTemp.convertToFormat(QImage::Format_RGB444); //QImage::Format_RGB444 让图像体积小一倍，但图像颜色会变得不一样
-	//imgBg = std::make_unique<QImage>(std::move(bgTemp));
-	imgBg = std::make_unique<QImage>(bgTemp.copy(0, 0, winNative->w, winNative->h)); //
 
-	imgBoard = std::make_unique<QImage>(winNative->w, winNative->h, QImage::Format_ARGB32); //QImage::Format_ARGB4444_Premultiplied
-	imgBoard->fill(0);
 
-	imgCanvas = std::make_unique<QImage>(winNative->w, winNative->h, QImage::Format_ARGB32); //QImage::Format_ARGB4444_Premultiplied
-	imgCanvas->fill(0);
+
+	//auto winNative = WindowNative::Get();
+	//HDC hScreen = GetDC(NULL); 
+	//HDC hDC = CreateCompatibleDC(hScreen); 
+	//HBITMAP hBitmap = CreateCompatibleBitmap(hScreen, winNative->w, winNative->h);
+	//DeleteObject(SelectObject(hDC, hBitmap)); 
+	//BOOL bRet = BitBlt(hDC, 0, 0, winNative->w, winNative->h, hScreen, winNative->x, winNative->y, SRCCOPY);
+	//long long dataSize = winNative->w * winNative->h * 4;
+	//std::vector<unsigned char> bgPix(dataSize, 0);
+	//BITMAPINFO info = { sizeof(BITMAPINFOHEADER), (long)winNative->w, 0 - (long)winNative->h, 1, 32, BI_RGB, (DWORD)dataSize, 0, 0, 0, 0 };
+	//GetDIBits(hDC, hBitmap, 0, winNative->h, &bgPix.front(), &info, DIB_RGB_COLORS);
+	//DeleteObject(hBitmap);
+	//DeleteDC(hDC);
+	//ReleaseDC(NULL, hScreen);
+	//QImage bgTemp(&bgPix.front(), winNative->w, winNative->h, QImage::Format_ARGB32);
+	////auto bg = bgTemp.convertToFormat(QImage::Format_RGB444); //QImage::Format_RGB444 让图像体积小一倍，但图像颜色会变得不一样
+	////imgBg = std::make_unique<QImage>(std::move(bgTemp));
+	//imgBg = std::make_unique<QImage>(bgTemp.copy(0, 0, winNative->w, winNative->h)); 
 
 }
 
-void CanvasWidget::paintMask(QPainter& painter)
+void CanvasWidget::raiseTools()
 {
-	QPainterPath temp0;
-	temp0.addRect(-maskStroke, -maskStroke, width() + maskStroke, height() + maskStroke);
-	QPainterPath temp1;
-	temp1.addRect(maskRect);
-	auto mask = temp0.subtracted(temp1);
-
-	painter.setPen(QPen(QBrush(QColor(22, 119, 255)), maskStroke));
-	painter.setBrush(QBrush(QColor(0, 0, 0, 120)));
-	painter.drawPath(mask);
+	cutMask->raise();
+	toolMain->raise();
+	toolSub->raise();
 }

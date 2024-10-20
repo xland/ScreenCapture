@@ -23,11 +23,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <QtRcc Include="rc.qrc">
-      <Filter>Resource Files</Filter>
-    </QtRcc>
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -37,16 +32,40 @@
     <ClCompile Include="CanvasWidget.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ToolMain.cpp">
+    <ClCompile Include="Tool\ToolMain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ToolSub.cpp">
+    <ClCompile Include="Tool\ToolSub.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Config.cpp">
+    <ClCompile Include="App.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ToolBtn.cpp">
+    <ClCompile Include="Tool\ToolBtn.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CutMask.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="QHotKey\qhotkey.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="QHotKey\qhotkey_win.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Tray.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Shape\ShapeRect.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Shape\ShapeBase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Tool\StrokeCtrl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Tool\ColorCtrl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -57,10 +76,10 @@
     <ClInclude Include="State.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Config.h">
+    <ClInclude Include="App.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ToolBtn.h">
+    <ClInclude Include="Tool\ToolBtn.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="BtnType.h">
@@ -71,18 +90,49 @@
     <QtMoc Include="CanvasWidget.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="ToolMain.h">
+    <QtMoc Include="Tool\ToolMain.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="ToolSub.h">
+    <QtMoc Include="Tool\ToolSub.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="CutMask.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="QHotKey\qhotkey.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="QHotKey\qhotkey_p.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Tray.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Shape\ShapeRect.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Shape\ShapeBase.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Tool\StrokeCtrl.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Tool\ColorCtrl.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>
   <ItemGroup>
-    <Font Include="res\iconfont.ttf" />
     <Font Include="config\iconfont.ttf" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="config\config.json" />
+    <Image Include="config\logo.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="config\config.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="todo.md" />
   </ItemGroup>
 </Project>

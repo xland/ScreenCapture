@@ -1,199 +1,218 @@
 {
-  "iconFont": "./config/iconfont.ttf",
-  "defaultLang": "en",  
+  "defaultLang": "en",
+  "hotKey": "Ctrl+Alt+Z",
+  "icon": {
+    "fontPath": "./config/iconfont.ttf",
+    "fontName": "iconfont"
+  },
+  "tray": {
+    "iconPath": "./config/logo.ico",
+    "menu": [
+      {
+        "name": "about",
+        "zhcn": "关于",
+        "en": "about"
+      },
+      {
+        "name": "quit",
+        "zhcn": "退出",
+        "en": "quit"
+      }
+    ]
+  },
   "toolMain": [
     {
       "name": "rect",
       "icon": "e8e8",
-      "zhcn": "",
-      "en": ""
+      "zhcn": "矩形",
+      "en": "rect"
     },
     {
       "name": "ellipse",
       "icon": "e6bc",
-      "zhcn": "",
-      "en": ""
+      "zhcn": "圆形",
+      "en": "ellipse"
     },
     {
       "name": "arrow",
       "icon": "e603",
-      "zhcn": "",
-      "en": ""
+      "zhcn": "箭头",
+      "en": "arrow"
     },
     {
       "name": "number",
       "icon": "e776",
-      "zhcn": "",
-      "en": ""
+      "zhcn": "标号",
+      "en": "number"
     },
     {
-      "name": "pen",
+      "name": "line",
       "icon": "e601",
-      "zhcn": "",
-      "en": ""
+      "zhcn": "线条",
+      "en": "pen"
     },
     {
       "name": "text",
-      "icon": "e69b",
-      "zhcn": "",
-      "en": ""
+      "icon": "e6ec",
+      "zhcn": "文本",
+      "en": "text"
     },
     {
       "name": "mosaic",
-      "icon": "e6ec",
-      "zhcn": "",
-      "en": ""
+      "icon": "e82e",
+      "zhcn": "马赛克",
+      "en": "mosaic"
     },
     {
       "name": "eraser",
-      "icon": "e87d",
-      "zhcn": "",
-      "en": ""
+      "icon": "e6be",
+      "zhcn": "橡皮擦",
+      "en": "eraser"
     },
     {
       "name": "splitter"
     },
     {
       "name": "undo",
-      "icon": "e82e",
-      "zhcn": "",
-      "en": ""
+      "icon": "ed85",
+      "zhcn": "撤销",
+      "en": "undo"
     },
     {
       "name": "redo",
-      "icon": "e6be",
-      "zhcn": "",
-      "en": ""
+      "icon": "ed8a",
+      "zhcn": "重做",
+      "en": "redo"
     },
     {
       "name": "splitter"
     },
     {
       "name": "pin",
-      "icon": "ed85",
-      "zhcn": "",
-      "en": ""
-    },
-    {
-      "name": "save",
-      "icon": "ed8a",
-      "zhcn": "",
-      "en": ""
+      "icon": "e6a3",
+      "zhcn": "钉住",
+      "en": "pin"
     },
     {
       "name": "clipboard",
-      "icon": "e6a3",
-      "zhcn": "",
-      "en": ""
+      "icon": "e87f",
+      "zhcn": "保存到剪切板",
+      "en": "save to clipboard"
+    },
+    {
+      "name": "save",
+      "icon": "e6c0",
+      "zhcn": "保存",
+      "en": "save to disk"
     },
     {
       "name": "close",
-      "icon": "e6c0",
-      "zhcn": "",
-      "en": ""
+      "icon": "e6e7",
+      "zhcn": "关闭",
+      "en": "close"
     }
   ],
   "toolSub": {
     "rect": [
       {
         "name": "rectFill",
-        "icon": "e8e8",
+        "icon": "e602",
         "selectDefault": false,
         "zhcn": "",
         "en": ""
       },
       {
-        "name": "strokeWidth",
+        "name": "strokeCtrl",
         "zhcn": "",
         "en": ""
       },
       {
-        "name": "colors"
+        "name": "colorCtrl"
       }
     ],
     "ellipse": [
       {
         "name": "ellipseFill",
-        "icon": "e8e8",
+        "icon": "e600",
         "selectDefault": false,
         "zhcn": "",
         "en": ""
       },
       {
-        "name": "strokeWidth",
+        "name": "strokeCtrl",
         "zhcn": "",
         "en": ""
       },
       {
-        "name": "colors"
+        "name": "colorCtrl"
       }
     ],
     "arrow": [
       {
         "name": "arrowFill",
         "selectDefault": true,
-        "icon": "e8e8",
+        "icon": "e604",
         "zhcn": "",
         "en": ""
       },
       {
-        "name": "strokeWidth",
+        "name": "strokeCtrl",
         "zhcn": "",
         "en": ""
       },
       {
-        "name": "colors"
+        "name": "colorCtrl"
       }
     ],
     "number": [
       {
         "name": "numberFill",
         "selectDefault": true,
-        "icon": "e8e8",
+        "icon": "e605",
         "zhcn": "",
         "en": ""
       },
       {
-        "name": "strokeWidth",
+        "name": "strokeCtrl",
         "zhcn": "",
         "en": ""
       },
       {
-        "name": "colors"
+        "name": "colorCtrl"
       }
     ],
-    "pen": [
+    "line": [
       {
-        "name": "penFill",
+        "name": "lineFill",
         "selectDefault": false,
-        "icon": "e8e8",
+        "icon": "e607",
         "zhcn": "",
         "en": ""
       },
       {
-        "name": "strokeWidth",
+        "name": "strokeCtrl",
         "zhcn": "",
         "en": ""
       },
       {
-        "name": "colors"
+        "name": "colorCtrl"
       }
     ],
     "text": [
       {
-        "name": "colors"
+        "name": "colorCtrl"
       }
     ],
     "mosaic": [
       {
         "name": "mosaicFill",
-        "icon": "e8e8",
+        "icon": "e602",
         "selectDefault": false,
         "zhcn": "",
         "en": ""
       },
       {
-        "name": "strokeWidth",
+        "name": "strokeCtrl",
         "zhcn": "",
         "en": ""
       }
@@ -201,65 +220,62 @@
     "eraser": [
       {
         "name": "eraserFill",
-        "icon": "e8e8",
+        "icon": "e602",
         "selectDefault": false,
         "zhcn": "",
         "en": ""
       },
       {
-        "name": "strokeWidth",
+        "name": "strokeCtrl",
         "zhcn": "",
         "en": ""
       }
-    ],
-    "colors": [
+    ]
+  },
+  "colorCtrl": {
+    "icon": "e61d",
+    "iconSelected": "e721",
+    "defaultSelectedIndex": 3,
+    "items": [
       {
-        "name": "red",
-        "icon": "e8e8",
-        "zhcn": "",
-        "en": ""
+        "en": "red",
+        "zhcn": "红",
+        "value": "#CF1322"
       },
       {
-        "name": "yellow",
-        "icon": "e8e8",
-        "zhcn": "",
-        "en": ""
+        "en": "yellow",
+        "zhcn": "黄",
+        "value": "#D48806"
       },
       {
-        "name": "green",
-        "icon": "e8e8",
-        "zhcn": "",
-        "en": ""
+        "en": "green",
+        "zhcn": "绿",
+        "value": "#389E0D"
       },
       {
-        "name": "cyan",
-        "icon": "e8e8",
-        "zhcn": "",
-        "en": ""
+        "en": "cyan",
+        "zhcn": "青",
+        "value": "#13C2C2"
       },
       {
-        "name": "blue",
-        "icon": "e8e8",
-        "zhcn": "",
-        "en": ""
+        "en": "blue",
+        "zhcn": "蓝",
+        "value": "#0958D9"
       },
       {
-        "name": "purple",
-        "icon": "e8e8",
-        "zhcn": "",
-        "en": ""
+        "en": "purple",
+        "zhcn": "紫",
+        "value": "#722ED1"
       },
       {
-        "name": "pink",
-        "icon": "e8e8",
-        "zhcn": "",
-        "en": ""
+        "en": "pink",
+        "zhcn": "粉",
+        "value": "#EB2F96"
       },
       {
-        "name": "black",
-        "icon": "e8e8",
-        "zhcn": "",
-        "en": ""
+        "en": "black",
+        "zhcn": "黑",
+        "value": "#000000"
       }
     ]
   }

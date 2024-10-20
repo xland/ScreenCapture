@@ -2,14 +2,18 @@
 #include "WindowNative.h"
 #include "CanvasWidget.h"
 
-#include "Config.h"
+#include "App.h"
+#include "CutMask.h"
+#include "Tool/ToolMain.h"
+#include "Tool/ToolSub.h"
+#include "CutMask.h"
 
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    Config::Init();
-    WindowNative::Init();
-    CanvasWidget::Init();
-    return a.exec();
+    App::Init();
+    auto resut = a.exec();
+    App::Dispose();
+    return resut;
 }

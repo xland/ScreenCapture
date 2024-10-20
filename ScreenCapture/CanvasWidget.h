@@ -10,8 +10,12 @@
 #include <Windows.h>
 
 #include "State.h"
-#include "ToolMain.h"
 
+
+class ToolMain;
+class ToolSub;
+class CutMask;
+class ShapeBase;
 class CanvasWidget : public QWidget
 {
 	Q_OBJECT
@@ -20,26 +24,28 @@ public:
 	~CanvasWidget();
 	static void Init();
 	static CanvasWidget* Get();
+	void changeState(const State& state);
 public:
-	QRect maskRect;
+	State state{ State::start };
+	ToolMain* toolMain;
+	ToolSub* toolSub;
+	CutMask* cutMask;
+	std::vector<ShapeBase*> shapes;
 protected:
+	void paintEvent(QPaintEvent* event) override;
+	void closeEvent(QCloseEvent* event) override;
 	void mousePressEvent(QMouseEvent* event) override;
 	void mouseMoveEvent(QMouseEvent* event) override;
 	void mouseReleaseEvent(QMouseEvent* event) override;
-	void paintEvent(QPaintEvent* event) override;
 private:
-	void onButtonClicked();	
 	void initImgs();
-	void paintMask(QPainter& painter);
+	void raiseTools();
 private:
-	State state{State::start};
 	qreal maskStroke{ 1.5 };
 	bool dragging = false;
 	QPoint dragPosition;
-	ToolMain* toolMain;
 
 	std::unique_ptr<QImage> imgBg;
-	std::unique_ptr<QImage> imgBoard;
-	std::unique_ptr<QImage> imgCanvas;
+	QPixmap desktopImg;
 	
 };
