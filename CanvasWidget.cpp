@@ -9,6 +9,7 @@
 #include "Tool/ToolSub.h"
 #include "Shape/ShapeBase.h"
 #include "Shape/ShapeRect.h"
+#include "Shape/ShapeEllipse.h"
 
 namespace {
 	CanvasWidget* canvasWidget;
@@ -68,11 +69,13 @@ void CanvasWidget::addShape()
 {
     shapes.erase(std::remove_if(shapes.begin(), shapes.end(), [](ShapeBase* item) { return item->isTemp; }), shapes.end());
     if (state == State::rect) {
-        auto rect = new ShapeRect(this);
-        raiseTools();
-        rect->show();
-        shapes.push_back(std::move(rect));
+        shapes.push_back(new ShapeRect(this));
+    }else if(state == State::ellipse){
+        shapes.push_back(new ShapeEllipse(this));
     }
+    cutMask->raise();
+    toolMain->raise();
+    toolSub->raise();
 }
 
 

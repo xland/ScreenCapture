@@ -1,11 +1,11 @@
 #include <qpainter.h>
 #include <QMouseEvent>
 
-#include "ShapeRect.h"
+#include "ShapeEllipse.h"
 #include "../CanvasWidget.h"
 #include "../Tool/ToolSub.h"
 
-ShapeRect::ShapeRect(QWidget *parent) : ShapeBase(parent)
+ShapeEllipse::ShapeEllipse(QWidget *parent) : ShapeBase(parent)
 {
     setVisible(true);
 	setMouseTracking(true);
@@ -15,11 +15,11 @@ ShapeRect::ShapeRect(QWidget *parent) : ShapeBase(parent)
 	setFocusPolicy(Qt::StrongFocus);
 }
 
-ShapeRect::~ShapeRect()
+ShapeEllipse::~ShapeEllipse()
 {
 }
 
-void ShapeRect::paintEvent(QPaintEvent* event)
+void ShapeEllipse::paintEvent(QPaintEvent* event)
 {
 	QPainter painter(this);
 	painter.setRenderHint(QPainter::Antialiasing, true);
@@ -30,10 +30,10 @@ void ShapeRect::paintEvent(QPaintEvent* event)
         QPen pen(color, strokeWidth);
         painter.setPen(pen);
     }
-    painter.drawRect(rectShape);
+    painter.drawEllipse(rectShape);
 }
 
-void ShapeRect::mousePressEvent(QMouseEvent* event)
+void ShapeEllipse::mousePressEvent(QMouseEvent* event)
 {
     if (event->button() == Qt::LeftButton) {
         rectShape.setTopLeft(event->pos());
@@ -45,7 +45,7 @@ void ShapeRect::mousePressEvent(QMouseEvent* event)
     }
 }
 
-void ShapeRect::mouseMoveEvent(QMouseEvent* event)
+void ShapeEllipse::mouseMoveEvent(QMouseEvent* event)
 {
     auto pos = event->pos();
     if (event->buttons() & Qt::LeftButton) {
@@ -55,7 +55,7 @@ void ShapeRect::mouseMoveEvent(QMouseEvent* event)
     }
 }
 
-void ShapeRect::mouseReleaseEvent(QMouseEvent* event)
+void ShapeEllipse::mouseReleaseEvent(QMouseEvent* event)
 {
     auto canvasWidget = CanvasWidget::Get();
     canvasWidget->addShape();

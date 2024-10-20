@@ -38,10 +38,12 @@ set(PROJECT_SOURCES
         Tool/StrokeCtrl.h
         Tool/ToolBtn.cpp
 
-        Shape/ShapeRect.cpp
-        Shape/ShapeRect.h
         Shape/ShapeBase.cpp
         Shape/ShapeBase.h
+        Shape/ShapeRect.cpp
+        Shape/ShapeRect.h
+        Shape/ShapeEllipse.cpp
+        Shape/ShapeEllipse.h
 
         QHotKey/qhotkey_p.h
         QHotKey/qhotkey_win.cpp
