@@ -47,6 +47,11 @@ void ColorCtrl::InitData(const QJsonObject& obj, const QString& lang)
 	}
 }
 
+QColor ColorCtrl::getColor()
+{
+    return QColor(colorValues[selectedIndex]);
+}
+
 void ColorCtrl::paintEvent(QPaintEvent * event)
 {
 	auto font = App::GetIconFont();

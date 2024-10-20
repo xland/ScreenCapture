@@ -36,7 +36,6 @@ void CutMask::paintEvent(QPaintEvent* event)
 void CutMask::mousePressEvent(QMouseEvent* event)
 {
 	if (event->button() == Qt::LeftButton) {
-		dragging = true;
 		dragPosition = event->pos();
 		auto canvasWidget = CanvasWidget::Get();
 		if (canvasWidget->state == State::start) {
@@ -65,28 +64,26 @@ void CutMask::mouseMoveEvent(QMouseEvent* event)
 {
 	auto canvasWidget = CanvasWidget::Get();
 	auto pos = event->pos();
-	if (dragging) {
-		if (event->buttons() & Qt::LeftButton) {
-			if (canvasWidget->state == State::mask) {
-				maskRect.setBottomRight(pos);
-				update();
-			}
-			else if (canvasWidget->state == State::tool) {
-				if (mousePosState == 0) {
-					auto span = pos - dragPosition;
-					maskRect.moveTo(maskRect.topLeft() + span);
-					dragPosition = pos;
-					update();
-				}
-				else{
-					changeMaskRect(pos);
-				}
-			}
-			else {
-				//QCoreApplication::sendEvent(parentWidget(), event);
-			}
-		}
-	}
+    if (event->buttons() & Qt::LeftButton) {
+        if (canvasWidget->state == State::mask) {
+            maskRect.setBottomRight(pos);
+            update();
+        }
+        else if (canvasWidget->state == State::tool) {
+            if (mousePosState == 0) {
+                auto span = pos - dragPosition;
+                maskRect.moveTo(maskRect.topLeft() + span);
+                dragPosition = pos;
+                update();
+            }
+            else{
+                changeMaskRect(pos);
+            }
+        }
+        else {
+            //QCoreApplication::sendEvent(parentWidget(), event);
+        }
+    }
 	else if (canvasWidget->state == State::tool) {
 		changeMousePosState(pos);
 	}
@@ -112,7 +109,6 @@ void CutMask::mouseReleaseEvent(QMouseEvent* event)
 		else {
 			//QCoreApplication::sendEvent(parentWidget(), event);
 		}
-		dragging = false;
 	}
 	event->ignore();
 }

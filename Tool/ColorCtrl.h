@@ -14,6 +14,7 @@ public:
 	ColorCtrl(QWidget *parent);
 	~ColorCtrl();
 	static void InitData(const QJsonObject& obj, const QString& lang);
+    QColor getColor();
 protected:
 	void paintEvent(QPaintEvent* event) override;
 	void mousePressEvent(QMouseEvent* event) override;

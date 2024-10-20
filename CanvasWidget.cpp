@@ -61,14 +61,18 @@ void CanvasWidget::changeState(const State& state)
 		cutMask->setAttribute(Qt::WA_TransparentForMouseEvents, false);
 	}
 	toolSub->show();
-	shapes.erase(std::remove_if(shapes.begin(), shapes.end(), [](ShapeBase* item) { return item->isTemp; }), shapes.end());
-	if (state == State::rect) {
-		auto rect = new ShapeRect(this);
-		rect->isFill = toolSub->getSelectState("rectFill");
-		raiseTools();
-		rect->show();
-		shapes.push_back(std::move(rect));
-	}
+    addShape();
+}
+
+void CanvasWidget::addShape()
+{
+    shapes.erase(std::remove_if(shapes.begin(), shapes.end(), [](ShapeBase* item) { return item->isTemp; }), shapes.end());
+    if (state == State::rect) {
+        auto rect = new ShapeRect(this);
+        raiseTools();
+        rect->show();
+        shapes.push_back(std::move(rect));
+    }
 }
 
 

@@ -76,6 +76,16 @@ bool ToolSub::getSelectState(const QString& btnName)
 	return false;
 }
 
+QColor ToolSub::getColor()
+{
+    return colorCtrl->getColor();
+}
+
+int ToolSub::getStrokeWidth()
+{
+    return strokeCtrl->value();
+}
+
 void ToolSub::paintEvent(QPaintEvent* event)
 {
 	//painter.setPen(QColor(190, 190, 190));

@@ -25,6 +25,7 @@ public:
 	static void Init();
 	static CanvasWidget* Get();
 	void changeState(const State& state);
+    void addShape();
 public:
 	State state{ State::start };
 	ToolMain* toolMain;
