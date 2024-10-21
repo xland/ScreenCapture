@@ -5,23 +5,26 @@
 
 class CutMask  : public QWidget
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	CutMask(QWidget *parent = nullptr);
-	~CutMask();
+    CutMask(QWidget* parent = nullptr);
+    ~CutMask();
     void PressEvent(QMouseEvent* event);
     void MoveEvent(QMouseEvent* event);
     void ReleaseEvent(QMouseEvent* event);
 public:
-	QRect maskRect;
+    QRect maskRect;
 protected:
     void paintEvent(QPaintEvent* event) override;
+    void mousePressEvent(QMouseEvent* event) override;
+    void mouseMoveEvent(QMouseEvent* event) override;
+    void mouseReleaseEvent(QMouseEvent* event) override;
 private:
-	void changeMaskRect(const QPoint& pos);
-	void changeMousePosState(const QPoint& pos);
+    void changeMaskRect(const QPoint& pos);
+    void changeMousePosState(const QPoint& pos);
 private:
-	qreal maskStroke{ 1.5 };
-	QPoint dragPosition;
-	int mousePosState{ -1 };
+    qreal maskStroke{ 1.5 };
+    QPoint dragPosition;
+    int mousePosState{ -1 };
 };

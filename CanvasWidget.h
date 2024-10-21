@@ -18,31 +18,34 @@ class CutMask;
 class ShapeBase;
 class CanvasWidget : public QWidget
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	CanvasWidget(QWidget *parent = nullptr);
-	~CanvasWidget();
-	static void Init();
-	static CanvasWidget* Get();
-    void addShape(const QPoint& pos);
+    CanvasWidget(QWidget* parent = nullptr);
+    ~CanvasWidget();
+    static void Init();
+    static CanvasWidget* Get();
+    void addShape();
+    void dispathcEvent(QMouseEvent* event);
+    void mousePressEvent(QMouseEvent* event) override;
+    void mouseMoveEvent(QMouseEvent* event) override;
+    void mouseReleaseEvent(QMouseEvent* event) override;
 public:
-	State state{ State::start };
-	ToolMain* toolMain;
-	ToolSub* toolSub;
-	CutMask* cutMask;
-	std::vector<ShapeBase*> shapes;
+    State state{ State::start };
+    ToolMain* toolMain;
+    ToolSub* toolSub;
+    CutMask* cutMask;
+    std::vector<ShapeBase*> shapes;
 protected:
-	void paintEvent(QPaintEvent* event) override;
-	void closeEvent(QCloseEvent* event) override;
-    bool eventFilter(QObject *obj, QEvent *event) override;
+    void paintEvent(QPaintEvent* event) override;
+    void closeEvent(QCloseEvent* event) override;
 private:
-	void initImgs();
+    void initImgs();
 private:
-	qreal maskStroke{ 1.5 };
-	bool dragging = false;
-	QPoint dragPosition;
+    qreal maskStroke{ 1.5 };
+    bool dragging = false;
+    QPoint dragPosition;
 
-	std::unique_ptr<QImage> imgBg;
-	QPixmap desktopImg;
-	
+    QImage imgBg;
+    QPixmap desktopImg;
+
 };

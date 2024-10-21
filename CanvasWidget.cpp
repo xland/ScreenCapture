@@ -11,146 +11,136 @@
 #include "Shape/ShapeRect.h"
 #include "Shape/ShapeEllipse.h"
 
-namespace {
-	CanvasWidget* canvasWidget;
+namespace
+{
+CanvasWidget* canvasWidget;
 }
 
-CanvasWidget::CanvasWidget(QWidget *parent) : QWidget(parent)
+CanvasWidget::CanvasWidget(QWidget* parent) : QWidget(parent)
 {
-	initImgs();
-	setWindowFlags(Qt::FramelessWindowHint);
-	setAttribute(Qt::WA_QuitOnClose, false);
-	auto winNative = WindowNative::Get();
-	setFixedSize(winNative->w, winNative->h);
-	cutMask = new CutMask(this);
-	toolMain = new ToolMain(this);
-	toolSub = new ToolSub(this);
-    this->installEventFilter(this);
-	show();
-
+    initImgs();
+    setWindowFlags(Qt::FramelessWindowHint);
+    setAttribute(Qt::WA_QuitOnClose, false);
+    setMouseTracking(true);
+    auto winNative = WindowNative::Get();
+    setFixedSize(winNative->w, winNative->h);
+    cutMask = new CutMask(this);
+    toolMain = new ToolMain(this);
+    toolSub = new ToolSub(this);
+    show();
 }
 
 CanvasWidget::~CanvasWidget()
 {
-	canvasWidget = nullptr;
+    canvasWidget = nullptr;
 }
 
 void CanvasWidget::Init()
 {
-	canvasWidget = new CanvasWidget();
-	auto hwnd = (HWND)canvasWidget->winId();
-	auto winNative = WindowNative::Get();
-	SetParent(hwnd, winNative->hwnd);
-	SetWindowPos(hwnd, nullptr, 0, 0, winNative->w, winNative->h, SWP_NOZORDER | SWP_SHOWWINDOW);
-	ShowWindow(winNative->hwnd, SW_SHOW);
-	SetForegroundWindow(winNative->hwnd);
+    canvasWidget = new CanvasWidget();
+    auto hwnd = (HWND)canvasWidget->winId();
+    auto winNative = WindowNative::Get();
+    SetParent(hwnd, winNative->hwnd);
+    SetWindowPos(hwnd, nullptr, 0, 0, winNative->w, winNative->h, SWP_NOZORDER | SWP_SHOWWINDOW);
+    ShowWindow(winNative->hwnd, SW_SHOW);
+    SetForegroundWindow(winNative->hwnd);
 }
 
 CanvasWidget* CanvasWidget::Get()
 {
-	return canvasWidget;
+    return canvasWidget;
 }
 
-void CanvasWidget::addShape(const QPoint& pos)
+void CanvasWidget::addShape()
 {
-    // shapes.erase(std::remove_if(shapes.begin(), shapes.end(), [](ShapeBase* item) { return item->state == ShapeState::temp; }), shapes.end());
-    if (state == State::rect) {
-        shapes.push_back(new ShapeRect(pos,this));
-    }else if(state == State::ellipse){
-        shapes.push_back(new ShapeEllipse(pos,this));
+    shapes.erase(std::remove_if(shapes.begin(), shapes.end(), [](ShapeBase * item) { return item->state == ShapeState::temp; }), shapes.end());
+    toolSub->hide();
+    if (state == State::rect)
+    {
+        shapes.push_back(new ShapeRect(this));
+    }
+    else if (state == State::ellipse)
+    {
+        shapes.push_back(new ShapeEllipse(this));
     }
     cutMask->raise();
     toolMain->raise();
     toolSub->raise();
+    toolSub->show();
+}
+
+void CanvasWidget::dispathcEvent(QMouseEvent* event)
+{
+    for (auto shape : shapes)
+    {
+        QCoreApplication::sendEvent(shape, event);
+    }
+    QCoreApplication::sendEvent(this, event);
 }
 
 
 void CanvasWidget::paintEvent(QPaintEvent* event)
 {
-	QPainter painter(this);
-	//painter.drawImage(rect(), *imgBg);
-	painter.drawPixmap(rect(), desktopImg);
+    QPainter painter(this);
+    painter.drawImage(rect(), imgBg);
+    // painter.drawPixmap(rect(), desktopImg);
 }
 
 void CanvasWidget::closeEvent(QCloseEvent* event)
 {
-	delete canvasWidget;
+    delete canvasWidget;
 }
 
-bool CanvasWidget::eventFilter(QObject *obj, QEvent *event)
+void CanvasWidget::mousePressEvent(QMouseEvent* event)
 {
-    if (event->type() == QEvent::MouseMove) {
-        QMouseEvent *e = static_cast<QMouseEvent *>(event);
-        cutMask->MoveEvent(e);
-        for (auto shape:shapes) {
-            shape->MoveEvent(e);
-        }
-        return true;
-    }
-    if(event->type() == QEvent::MouseButtonPress){
-        QMouseEvent *e = static_cast<QMouseEvent *>(event);
-        cutMask->PressEvent(e);
-        for (auto shape:shapes) {
-            shape->PressEvent(e);
-            if(shape->state != ShapeState::ready){
-                break;
-            }
-        }
-        if(!e->isAccepted()){
-            addShape(e->pos());
-            qDebug()<<"add one";
-        }
-        return true;
-    }
-    if(event->type() == QEvent::MouseButtonRelease){
-        QMouseEvent *e = static_cast<QMouseEvent *>(event);
-        cutMask->ReleaseEvent(e);
-        for (auto shape:shapes) {
-            shape->ReleaseEvent(e);
-            if(e->isAccepted()){
-                break;
-            }
-        }
-        return true;
-    }
-    return false;
+
 }
 
+void CanvasWidget::mouseMoveEvent(QMouseEvent* event)
+{
+}
+
+void CanvasWidget::mouseReleaseEvent(QMouseEvent* event)
+{
+    addShape();
+}
 
 void CanvasWidget::initImgs()
 {
-	auto screenRect = QRect(GetSystemMetrics(SM_XVIRTUALSCREEN), GetSystemMetrics(SM_YVIRTUALSCREEN),
-		GetSystemMetrics(SM_CXVIRTUALSCREEN), GetSystemMetrics(SM_CYVIRTUALSCREEN));
-	auto screens = QGuiApplication::screens();
-	for (auto screen:screens) {
-		auto pos = screen->geometry().topLeft();
-		if (pos.x() == 0 && pos.y() == 0) {
-			auto dpr = screen->devicePixelRatio();
-			desktopImg = screen->grabWindow(0,
-				screenRect.x() / dpr,
-				screenRect.y() / dpr,
-				screenRect.width() / dpr,
-				screenRect.height() / dpr);
-			break;
-		}
-	}
+    auto screenRect = QRect(GetSystemMetrics(SM_XVIRTUALSCREEN), GetSystemMetrics(SM_YVIRTUALSCREEN),
+            GetSystemMetrics(SM_CXVIRTUALSCREEN), GetSystemMetrics(SM_CYVIRTUALSCREEN));
+    auto screens = QGuiApplication::screens();
+    for (auto screen : screens)
+    {
+        auto pos = screen->geometry().topLeft();
+        if (pos.x() == 0 && pos.y() == 0)
+        {
+            auto dpr = screen->devicePixelRatio();
+            imgBg = screen->grabWindow(0,
+                    screenRect.x() / dpr,
+                    screenRect.y() / dpr,
+                    screenRect.width() / dpr,
+                    screenRect.height() / dpr).toImage();
+            break;
+        }
+    }
 
-	//auto winNative = WindowNative::Get();
-	//HDC hScreen = GetDC(NULL); 
-	//HDC hDC = CreateCompatibleDC(hScreen); 
-	//HBITMAP hBitmap = CreateCompatibleBitmap(hScreen, winNative->w, winNative->h);
-	//DeleteObject(SelectObject(hDC, hBitmap)); 
-	//BOOL bRet = BitBlt(hDC, 0, 0, winNative->w, winNative->h, hScreen, winNative->x, winNative->y, SRCCOPY);
-	//long long dataSize = winNative->w * winNative->h * 4;
-	//std::vector<unsigned char> bgPix(dataSize, 0);
-	//BITMAPINFO info = { sizeof(BITMAPINFOHEADER), (long)winNative->w, 0 - (long)winNative->h, 1, 32, BI_RGB, (DWORD)dataSize, 0, 0, 0, 0 };
-	//GetDIBits(hDC, hBitmap, 0, winNative->h, &bgPix.front(), &info, DIB_RGB_COLORS);
-	//DeleteObject(hBitmap);
-	//DeleteDC(hDC);
-	//ReleaseDC(NULL, hScreen);
-	//QImage bgTemp(&bgPix.front(), winNative->w, winNative->h, QImage::Format_ARGB32);
-	////auto bg = bgTemp.convertToFormat(QImage::Format_RGB444); //QImage::Format_RGB444 让图像体积小一倍，但图像颜色会变得不一样
-	////imgBg = std::make_unique<QImage>(std::move(bgTemp));
-	//imgBg = std::make_unique<QImage>(bgTemp.copy(0, 0, winNative->w, winNative->h)); 
+    //auto winNative = WindowNative::Get();
+    //HDC hScreen = GetDC(NULL);
+    //HDC hDC = CreateCompatibleDC(hScreen);
+    //HBITMAP hBitmap = CreateCompatibleBitmap(hScreen, winNative->w, winNative->h);
+    //DeleteObject(SelectObject(hDC, hBitmap));
+    //BOOL bRet = BitBlt(hDC, 0, 0, winNative->w, winNative->h, hScreen, winNative->x, winNative->y, SRCCOPY);
+    //long long dataSize = winNative->w * winNative->h * 4;
+    //std::vector<unsigned char> bgPix(dataSize, 0);
+    //BITMAPINFO info = { sizeof(BITMAPINFOHEADER), (long)winNative->w, 0 - (long)winNative->h, 1, 32, BI_RGB, (DWORD)dataSize, 0, 0, 0, 0 };
+    //GetDIBits(hDC, hBitmap, 0, winNative->h, &bgPix.front(), &info, DIB_RGB_COLORS);
+    //DeleteObject(hBitmap);
+    //DeleteDC(hDC);
+    //ReleaseDC(NULL, hScreen);
+    //QImage bgTemp(&bgPix.front(), winNative->w, winNative->h, QImage::Format_ARGB32);
+    ////auto bg = bgTemp.convertToFormat(QImage::Format_RGB444); //QImage::Format_RGB444 让图像体积小一倍，但图像颜色会变得不一样
+    ////imgBg = std::make_unique<QImage>(std::move(bgTemp));
+    //imgBg = std::make_unique<QImage>(bgTemp.copy(0, 0, winNative->w, winNative->h));
 
 }

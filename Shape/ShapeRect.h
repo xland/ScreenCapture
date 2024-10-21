@@ -5,17 +5,17 @@
 
 class ShapeRect: public ShapeBase
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-    ShapeRect(const QPoint& pos,QWidget *parent);
-	~ShapeRect();
-    void PressEvent(QMouseEvent* event) override;
-    void MoveEvent(QMouseEvent* event) override;
-    void ReleaseEvent(QMouseEvent* event) override;
+    ShapeRect(QWidget* parent);
+    ~ShapeRect();
 public:
 protected:
     void paintEvent(QPaintEvent* event) override;
+    void mousePressEvent(QMouseEvent* event) override;
+    void mouseMoveEvent(QMouseEvent* event) override;
+    void mouseReleaseEvent(QMouseEvent* event) override;
 private:
     QPoint posPress;
     QRect rectShape;
