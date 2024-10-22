@@ -1,4 +1,7 @@
 #include <qcursor.h>
+#include <QGraphicsSceneMouseEvent>
+#include <QGraphicsSceneHoverEvent>
+#include <QGraphicsScene>
 
 #include "CutMask.h"
 #include "CanvasWidget.h"
@@ -6,134 +9,126 @@
 #include "WindowNative.h"
 
 
-CutMask::CutMask(QWidget* parent) : QWidget(parent)
+CutMask::CutMask() : QGraphicsPathItem()
 {
-    setGeometry(parent->rect());
-    maskRect.setRect(-maskStroke, -maskStroke, width() + maskStroke, height() + maskStroke);
-    show();
-    // setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    auto win = WindowNative::Get();
+    QPainterPath temp0;
+    temp0.addRect(-maskStroke, -maskStroke, win->w + maskStroke, win->h + maskStroke);
+    QPainterPath temp1;
+    temp1.addRect(300, 400, 600, 500);
+    auto mask = temp0.subtracted(temp1);
+    setPath(mask);
+    setAcceptHoverEvents(true);
+    setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable);
+    setAcceptedMouseButtons(Qt::LeftButton);
+    // setAcceptedMouseButtons(Qt::LeftButton);
+    setPen(QPen(QBrush(QColor(22, 119, 255)), maskStroke));
+    setBrush(QBrush(QColor(0, 0, 0, 120)));
+
+
 }
 
 CutMask::~CutMask()
 {
 }
 
-void CutMask::paintEvent(QPaintEvent* event)
+void CutMask::hoverMoveEvent(QGraphicsSceneHoverEvent* event)
 {
-    QPainter painter(this);
-    painter.setRenderHint(QPainter::Antialiasing, true);
-    QPainterPath temp0;
-    temp0.addRect(-maskStroke, -maskStroke, width() + maskStroke, height() + maskStroke);
-    QPainterPath temp1;
-    temp1.addRect(maskRect);
-    auto mask = temp0.subtracted(temp1);
-
-    painter.setPen(QPen(QBrush(QColor(22, 119, 255)), maskStroke));
-    painter.setBrush(QBrush(QColor(0, 0, 0, 120)));
-    painter.drawPath(mask);
+    dragPosition = event->pos();
+    event->ignore();
+    auto canvas = CanvasWidget::Get();
+    canvas->dispatchEvent(event);
 }
 
-void CutMask::mousePressEvent(QMouseEvent* event)
+void CutMask::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
-    auto btn = event->button();
-    if (btn == Qt::LeftButton)
-    {
-        dragPosition = event->pos();
-        auto canvasWidget = CanvasWidget::Get();
-        if (canvasWidget->state == State::start)
-        {
-            canvasWidget->state = State::mask;
-            maskRect.setRect(dragPosition.x(), dragPosition.y(), 0, 0);
-            return;
-        }
-        if (canvasWidget->state == State::tool)
-        {
-            canvasWidget->toolMain->hide();
-            if (mousePosState != 0)
-            {
-                changeMaskRect(dragPosition);
-            }
-            return;
-        }
-        // canvasWidget->dispathcEvent(event);
-        // setAttribute(Qt::WA_TransparentForMouseEvents, true);
-        return;
-    }
-    else if (btn == Qt::RightButton)
-    {
-        parentWidget()->close();
-        WindowNative::Close();
-        // event->accept();
-        return;
-    }
+    // dragPosition = event->pos();
+    // auto canvasWidget = CanvasWidget::Get();
+    // if (canvasWidget->state == State::start)
+    // {
+    //     canvasWidget->state = State::mask;
+    //     maskRect.setRect(dragPosition.x(), dragPosition.y(), 0, 0);
+    //     return;
+    // }
+    // if (canvasWidget->state == State::tool)
+    // {
+    //     canvasWidget->toolMain->hide();
+    //     if (mousePosState != 0)
+    //     {
+    //         changeMaskRect(dragPosition);
+    //     }
+    //     return;
+    // }
+    // else if (btn == Qt::RightButton)
+    // {
+    //     parentWidget()->close();
+    //     WindowNative::Close();
+    //     return;
+    // }
+
+    // QGraphicsScene::mousePressEvent(event);
 }
 
-void CutMask::mouseMoveEvent(QMouseEvent* event)
+// void CutMask::mouseMoveEvent(QGraphicsSceneHoverEvent* event)
+// {
+//     auto canvasWidget = CanvasWidget::Get();
+//     auto pos = event->pos();
+//     if (canvasWidget->state == State::mask)
+//     {
+//         maskRect.setBottomRight(pos);
+//         update();
+//     }
+//     else if (canvasWidget->state == State::tool)
+//     {
+//         if (mousePosState == 0)
+//         {
+//             auto span = pos - dragPosition;
+//             maskRect.moveTo(maskRect.topLeft() + span);
+//             dragPosition = pos;
+//             update();
+//         }
+//         else
+//         {
+//             changeMaskRect(pos);
+//         }
+//     }
+//     else
+//     {
+//         //QCoreApplication::sendEvent(parentWidget(), event);
+//         // canvasWidget->dispathcEvent(event);
+//     }
+//     if (canvasWidget->state == State::tool)
+//     {
+//         changeMousePosState(pos);
+//     }
+//     else
+//     {
+//         setCursor(Qt::CrossCursor);
+//     }
+// }
+
+void CutMask::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 {
+    maskRect = maskRect.normalized();
     auto canvasWidget = CanvasWidget::Get();
-    auto pos = event->pos();
-    if (event->buttons() & Qt::LeftButton)
+    if (canvasWidget->state == State::mask)
     {
-        if (canvasWidget->state == State::mask)
-        {
-            maskRect.setBottomRight(pos);
-            update();
-        }
-        else if (canvasWidget->state == State::tool)
-        {
-            if (mousePosState == 0)
-            {
-                auto span = pos - dragPosition;
-                maskRect.moveTo(maskRect.topLeft() + span);
-                dragPosition = pos;
-                update();
-            }
-            else
-            {
-                changeMaskRect(pos);
-            }
-        }
-        else
-        {
-            //QCoreApplication::sendEvent(parentWidget(), event);
-            // canvasWidget->dispathcEvent(event);
-        }
+        canvasWidget->state = State::tool;
+        canvasWidget->toolMain->show();
+
     }
     else if (canvasWidget->state == State::tool)
     {
-        changeMousePosState(pos);
+        canvasWidget->toolMain->show();
     }
     else
     {
-        setCursor(Qt::CrossCursor);
+        //QCoreApplication::sendEvent(parentWidget(), event);
+        // canvasWidget->dispathcEvent(event);
     }
 }
 
-void CutMask::mouseReleaseEvent(QMouseEvent* event)
-{
-    if (event->button() == Qt::LeftButton)
-    {
-        maskRect = maskRect.normalized();
-        auto canvasWidget = CanvasWidget::Get();
-        if (canvasWidget->state == State::mask)
-        {
-            canvasWidget->state = State::tool;
-            canvasWidget->toolMain->show();
-
-        }
-        else if (canvasWidget->state == State::tool)
-        {
-            canvasWidget->toolMain->show();
-        }
-        else
-        {
-            //QCoreApplication::sendEvent(parentWidget(), event);
-            // canvasWidget->dispathcEvent(event);
-        }
-    }
-}
-
-void CutMask::changeMaskRect(const QPoint& pos)
+void CutMask::changeMaskRect(const QPointF& pos)
 {
     if (mousePosState == 1)
     {
@@ -170,7 +165,7 @@ void CutMask::changeMaskRect(const QPoint& pos)
     update();
 }
 
-void CutMask::changeMousePosState(const QPoint& pos)
+void CutMask::changeMousePosState(const QPointF& pos)
 {
     auto x = pos.x(); auto y = pos.y();
     auto leftX = maskRect.topLeft().x(); auto topY = maskRect.topLeft().y();

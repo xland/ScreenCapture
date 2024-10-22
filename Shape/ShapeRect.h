@@ -1,24 +1,22 @@
 #pragma once
 
 #include <QWidget>
-#include "ShapeBase.h"
+#include <QGraphicsRectItem>
 
-class ShapeRect: public ShapeBase
+class ShapeRect: public QGraphicsRectItem
 {
-    Q_OBJECT
-
 public:
-    ShapeRect(QWidget* parent);
+    ShapeRect();
     ~ShapeRect();
+    void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
+    void hoverMoveEvent(QGraphicsSceneHoverEvent* event) override;
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent* event) override;
 public:
 protected:
-    void paintEvent(QPaintEvent* event) override;
-    void mousePressEvent(QMouseEvent* event) override;
-    void mouseMoveEvent(QMouseEvent* event) override;
-    void mouseReleaseEvent(QMouseEvent* event) override;
+
 private:
-    QPoint posPress;
-    QRect rectShape;
+    QPointF posPress;
+    QRectF rectShape;
     bool isFill{ false };
     int strokeWidth{ 2 };
     QColor color{ Qt::red };

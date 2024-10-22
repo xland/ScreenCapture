@@ -1,19 +1,15 @@
 #pragma once
 
 #include <QWidget>
-
+#include <QGraphicsItem>
 #include "ShapeState.h"
 
-class ShapeBase  : public QWidget
+class ShapeBase  : public QGraphicsItem
 {
-	Q_OBJECT
 
 public:
-	ShapeBase(QWidget *parent);
-	~ShapeBase();
-    virtual void PressEvent(QMouseEvent* event){};
-    virtual void MoveEvent(QMouseEvent* event){};
-    virtual void ReleaseEvent(QMouseEvent* event){};
+    ShapeBase();
+    ~ShapeBase();
 public:
     ShapeState state{ShapeState::temp};
 };

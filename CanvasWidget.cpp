@@ -21,12 +21,34 @@ CanvasWidget::CanvasWidget(QWidget* parent) : QWidget(parent)
     initImgs();
     setWindowFlags(Qt::FramelessWindowHint);
     setAttribute(Qt::WA_QuitOnClose, false);
-    setMouseTracking(true);
+    // setMouseTracking(true);
     auto winNative = WindowNative::Get();
     setFixedSize(winNative->w, winNative->h);
-    cutMask = new CutMask(this);
-    toolMain = new ToolMain(this);
-    toolSub = new ToolSub(this);
+    // cutMask = new CutMask(this);
+    // toolMain = new ToolMain(this);
+    // toolSub = new ToolSub(this);
+
+    QGraphicsScene* scene = new QGraphicsScene(this);
+    scene->setSceneRect(0, 0, winNative->w, winNative->h);
+    scene->setBackgroundBrush(desktopImg);
+
+    shapeRect = new ShapeRect();
+    scene->addItem(shapeRect);
+
+
+    cutMask = new CutMask();
+    scene->addItem(cutMask);
+
+
+
+    QGraphicsView* view = new QGraphicsView(scene, this);
+    view->setRenderHint(QPainter::Antialiasing);
+    view->setRenderHint(QPainter::SmoothPixmapTransform);
+    view->setCacheMode(QGraphicsView::CacheBackground);
+    view->setFrameStyle(QFrame::NoFrame);
+    view->setGeometry(0, 0, winNative->w, winNative->h);
+    view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     show();
 }
 
@@ -51,59 +73,25 @@ CanvasWidget* CanvasWidget::Get()
     return canvasWidget;
 }
 
-void CanvasWidget::addShape()
+void CanvasWidget::dispatchEvent(QGraphicsSceneHoverEvent* e)
 {
-    shapes.erase(std::remove_if(shapes.begin(), shapes.end(), [](ShapeBase * item) { return item->state == ShapeState::temp; }), shapes.end());
-    toolSub->hide();
-    if (state == State::rect)
-    {
-        shapes.push_back(new ShapeRect(this));
-    }
-    else if (state == State::ellipse)
-    {
-        shapes.push_back(new ShapeEllipse(this));
-    }
-    cutMask->raise();
-    cutMask->setAttribute(Qt::WA_TransparentForMouseEvents, true);
-    toolMain->raise();
-    toolSub->raise();
-    toolSub->show();
+    shapeRect->hoverMoveEvent(e);
 }
 
-void CanvasWidget::dispathcEvent(QMouseEvent* event)
-{
-    for (auto shape : shapes)
-    {
-        QCoreApplication::sendEvent(shape, event);
-    }
-    QCoreApplication::sendEvent(this, event);
-}
-
-
-void CanvasWidget::paintEvent(QPaintEvent* event)
-{
-    QPainter painter(this);
-    // painter.drawImage(rect(), imgBg);
-    painter.drawPixmap(rect(), desktopImg);
-}
 
 void CanvasWidget::closeEvent(QCloseEvent* event)
 {
+    // delete cutMask;
     delete canvasWidget;
 }
 
 void CanvasWidget::mousePressEvent(QMouseEvent* event)
 {
-
-}
-
-void CanvasWidget::mouseMoveEvent(QMouseEvent* event)
-{
-}
-
-void CanvasWidget::mouseReleaseEvent(QMouseEvent* event)
-{
-    addShape();
+    if (event->button() == Qt::RightButton)
+    {
+        close();
+        WindowNative::Close();
+    }
 }
 
 void CanvasWidget::initImgs()

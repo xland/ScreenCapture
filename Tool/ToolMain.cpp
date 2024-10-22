@@ -152,7 +152,7 @@ void ToolMain::mousePressEvent(QMouseEvent* event)
         if (btn.name.isEmpty())
         {
             canvasWidget->state = btn.state;
-            canvasWidget->addShape();
+            // canvasWidget->addShape();
             selectIndex = hoverIndex;
         }
         else if (btn.name == "close")

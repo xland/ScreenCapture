@@ -8,6 +8,7 @@
 #include <qpainterpath.h>
 #include <vector>
 #include <Windows.h>
+#include <QGraphicsView>
 
 #include "State.h"
 
@@ -15,7 +16,7 @@
 class ToolMain;
 class ToolSub;
 class CutMask;
-class ShapeBase;
+class ShapeRect;
 class CanvasWidget : public QWidget
 {
     Q_OBJECT
@@ -24,27 +25,25 @@ public:
     ~CanvasWidget();
     static void Init();
     static CanvasWidget* Get();
-    void addShape();
-    void dispathcEvent(QMouseEvent* event);
-    void mousePressEvent(QMouseEvent* event) override;
-    void mouseMoveEvent(QMouseEvent* event) override;
-    void mouseReleaseEvent(QMouseEvent* event) override;
+    void dispatchEvent(QGraphicsSceneHoverEvent* e);
 public:
     State state{ State::start };
     ToolMain* toolMain;
     ToolSub* toolSub;
     CutMask* cutMask;
-    std::vector<ShapeBase*> shapes;
+    std::vector<QGraphicsItem*> shapes;
+    QGraphicsScene* scene;
+    QGraphicsView* view;
 protected:
-    void paintEvent(QPaintEvent* event) override;
     void closeEvent(QCloseEvent* event) override;
+    void mousePressEvent(QMouseEvent* event) override;
 private:
     void initImgs();
 private:
     qreal maskStroke{ 1.5 };
     bool dragging = false;
     QPoint dragPosition;
-
+    ShapeRect* shapeRect;
     QImage imgBg;
     QPixmap desktopImg;
 

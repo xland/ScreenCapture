@@ -2,29 +2,25 @@
 
 #include <QWidget>
 #include <QMouseEvent>
+#include <QGraphicsItem>
+#include <QGraphicsPathItem>
 
-class CutMask  : public QWidget
+class CutMask  : public QGraphicsPathItem
 {
-    Q_OBJECT
-
 public:
-    CutMask(QWidget* parent = nullptr);
+    CutMask();
     ~CutMask();
-    void PressEvent(QMouseEvent* event);
-    void MoveEvent(QMouseEvent* event);
-    void ReleaseEvent(QMouseEvent* event);
 public:
-    QRect maskRect;
+    QRectF maskRect;
 protected:
-    void paintEvent(QPaintEvent* event) override;
-    void mousePressEvent(QMouseEvent* event) override;
-    void mouseMoveEvent(QMouseEvent* event) override;
-    void mouseReleaseEvent(QMouseEvent* event) override;
+    void hoverMoveEvent(QGraphicsSceneHoverEvent* event) override;
+    void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent* event) override;
 private:
-    void changeMaskRect(const QPoint& pos);
-    void changeMousePosState(const QPoint& pos);
+    void changeMaskRect(const QPointF& pos);
+    void changeMousePosState(const QPointF& pos);
 private:
     qreal maskStroke{ 1.5 };
-    QPoint dragPosition;
+    QPointF dragPosition;
     int mousePosState{ -1 };
 };

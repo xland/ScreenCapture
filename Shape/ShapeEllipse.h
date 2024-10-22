@@ -5,17 +5,15 @@
 
 class ShapeEllipse: public ShapeBase
 {
-    Q_OBJECT
-
 public:
-    ShapeEllipse(QWidget* parent);
+    ShapeEllipse();
     ~ShapeEllipse();
 public:
 protected:
-    void paintEvent(QPaintEvent* event) override;
-    void mousePressEvent(QMouseEvent* event) override;
-    void mouseMoveEvent(QMouseEvent* event) override;
-    void mouseReleaseEvent(QMouseEvent* event) override;
+    // void paintEvent(QPaintEvent* event) override;
+    // void mousePressEvent(QMouseEvent* event) override;
+    // void mouseMoveEvent(QMouseEvent* event) override;
+    // void mouseReleaseEvent(QMouseEvent* event) override;
 private:
     QPoint posPress;
     QRect rectShape;
