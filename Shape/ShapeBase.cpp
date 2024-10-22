@@ -6,4 +6,5 @@ ShapeBase::ShapeBase()
 }
 
 ShapeBase::~ShapeBase()
-{}
+{
+}

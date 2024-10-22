@@ -77,6 +77,16 @@ void CanvasWidget::dispatchEvent(QGraphicsSceneHoverEvent* e)
 
 void CanvasWidget::addShape()
 {
+    auto items = scene->items();
+    for (size_t i = 1; i < items.size(); i++)
+    {
+        auto shape = dynamic_cast<ShapeBase*>(items[i]);
+        if (shape->state == ShapeState::temp) {
+            scene->removeItem(items[i]);
+
+            //delete shape;
+        }
+    }
     if (state == State::rect) {
         scene->addItem(new ShapeRect());
     }
