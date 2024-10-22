@@ -64,6 +64,7 @@ void CanvasWidget::addShape()
         shapes.push_back(new ShapeEllipse(this));
     }
     cutMask->raise();
+    cutMask->setAttribute(Qt::WA_TransparentForMouseEvents, true);
     toolMain->raise();
     toolSub->raise();
     toolSub->show();
@@ -82,8 +83,8 @@ void CanvasWidget::dispathcEvent(QMouseEvent* event)
 void CanvasWidget::paintEvent(QPaintEvent* event)
 {
     QPainter painter(this);
-    painter.drawImage(rect(), imgBg);
-    // painter.drawPixmap(rect(), desktopImg);
+    // painter.drawImage(rect(), imgBg);
+    painter.drawPixmap(rect(), desktopImg);
 }
 
 void CanvasWidget::closeEvent(QCloseEvent* event)
@@ -116,11 +117,11 @@ void CanvasWidget::initImgs()
         if (pos.x() == 0 && pos.y() == 0)
         {
             auto dpr = screen->devicePixelRatio();
-            imgBg = screen->grabWindow(0,
+            desktopImg = screen->grabWindow(0,
                     screenRect.x() / dpr,
                     screenRect.y() / dpr,
                     screenRect.width() / dpr,
-                    screenRect.height() / dpr).toImage();
+                    screenRect.height() / dpr);
             break;
         }
     }

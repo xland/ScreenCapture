@@ -77,4 +77,6 @@ void ShapeRect::mouseMoveEvent(QMouseEvent* event)
 void ShapeRect::mouseReleaseEvent(QMouseEvent* event)
 {
     state = ShapeState::ready;
+    auto canvasWidget = CanvasWidget::Get();
+    canvasWidget->addShape();
 }

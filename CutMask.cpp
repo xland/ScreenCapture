@@ -55,7 +55,8 @@ void CutMask::mousePressEvent(QMouseEvent* event)
             }
             return;
         }
-        canvasWidget->dispathcEvent(event);
+        // canvasWidget->dispathcEvent(event);
+        // setAttribute(Qt::WA_TransparentForMouseEvents, true);
         return;
     }
     else if (btn == Qt::RightButton)
@@ -95,7 +96,7 @@ void CutMask::mouseMoveEvent(QMouseEvent* event)
         else
         {
             //QCoreApplication::sendEvent(parentWidget(), event);
-            canvasWidget->dispathcEvent(event);
+            // canvasWidget->dispathcEvent(event);
         }
     }
     else if (canvasWidget->state == State::tool)
@@ -127,7 +128,7 @@ void CutMask::mouseReleaseEvent(QMouseEvent* event)
         else
         {
             //QCoreApplication::sendEvent(parentWidget(), event);
-            canvasWidget->dispathcEvent(event);
+            // canvasWidget->dispathcEvent(event);
         }
     }
 }
