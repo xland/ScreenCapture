@@ -24,31 +24,28 @@ CanvasWidget::CanvasWidget(QWidget* parent) : QWidget(parent)
     // setMouseTracking(true);
     auto winNative = WindowNative::Get();
     setFixedSize(winNative->w, winNative->h);
-    // cutMask = new CutMask(this);
-    // toolMain = new ToolMain(this);
-    // toolSub = new ToolSub(this);
 
-    QGraphicsScene* scene = new QGraphicsScene(this);
+
+    scene = new QGraphicsScene(this);
     scene->setSceneRect(0, 0, winNative->w, winNative->h);
     scene->setBackgroundBrush(desktopImg);
-
     // shapeRect = new ShapeRect();
     // scene->addItem(shapeRect);
-
-
     cutMask = new CutMask();
     scene->addItem(cutMask);
 
-
-
-    QGraphicsView* view = new QGraphicsView(scene, this);
+    view = new QGraphicsView(scene, this);
     view->setRenderHint(QPainter::Antialiasing);
     view->setRenderHint(QPainter::SmoothPixmapTransform);
-    // view->setCacheMode(QGraphicsView::CacheBackground);
+    //view->setCacheMode(QGraphicsView::CacheBackground);
     view->setFrameStyle(QFrame::NoFrame);
     view->setGeometry(0, 0, winNative->w, winNative->h);
     view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+    toolMain = new ToolMain(this);
+    toolSub = new ToolSub(this);
+
     show();
 }
 
@@ -76,6 +73,14 @@ CanvasWidget* CanvasWidget::Get()
 void CanvasWidget::dispatchEvent(QGraphicsSceneHoverEvent* e)
 {
     // shapeRect->hoverMoveEvent(e);
+}
+
+void CanvasWidget::addShape()
+{
+    if (state == State::rect) {
+        scene->addItem(new ShapeRect());
+    }
+    toolSub->show();
 }
 
 

@@ -152,7 +152,7 @@ void ToolMain::mousePressEvent(QMouseEvent* event)
         if (btn.name.isEmpty())
         {
             canvasWidget->state = btn.state;
-            // canvasWidget->addShape();
+            canvasWidget->addShape();
             selectIndex = hoverIndex;
         }
         else if (btn.name == "close")
@@ -187,7 +187,6 @@ void ToolMain::showEvent(QShowEvent* event)
     auto cutMask = CanvasWidget::Get()->cutMask;
     auto pos = cutMask->maskRect.bottomRight();
     move(pos.x() - width(), pos.y() + 6);
-    QWidget::showEvent(event);
 }
 
 void ToolMain::leaveEvent(QEvent* event)

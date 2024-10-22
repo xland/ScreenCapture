@@ -9,7 +9,6 @@
 #include <vector>
 #include <Windows.h>
 #include <QGraphicsView>
-
 #include "State.h"
 
 
@@ -26,6 +25,7 @@ public:
     static void Init();
     static CanvasWidget* Get();
     void dispatchEvent(QGraphicsSceneHoverEvent* e);
+    void addShape();
 public:
     State state{ State::start };
     ToolMain* toolMain;

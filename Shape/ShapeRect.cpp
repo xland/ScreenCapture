@@ -9,35 +9,48 @@
 
 ShapeRect::ShapeRect() : QGraphicsRectItem()
 {
-    rectShape.setRect(460, 520, 1200, 800);
-    setRect(rectShape);
-    setAcceptHoverEvents(true);
-    setAcceptedMouseButtons(Qt::LeftButton);
-    setPen(QPen(QBrush(Qt::red), strokeWidth));
-    setBrush(QBrush(Qt::red));
-    setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable);
+    //setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable);
+    //setCacheMode(QGraphicsItem::ItemCoordinateCache);
 }
 
 ShapeRect::~ShapeRect()
 {
 }
 
-void ShapeRect::mousePressEvent(QGraphicsSceneMouseEvent* event)
+void ShapeRect::mousePress(QGraphicsSceneMouseEvent* event)
 {
     rectShape.setTopLeft(event->pos());
     auto toolSub = CanvasWidget::Get()->toolSub;
     isFill = toolSub->getSelectState("rectFill");
     color = toolSub->getColor();
     strokeWidth = toolSub->getStrokeWidth();
+    if (isFill) {
+        setBrush(QBrush(color));
+        setPen(Qt::NoPen);
+    }
+    else {
+        setPen(QPen(QBrush(color), strokeWidth));
+        setBrush(Qt::NoBrush);
+    }
 }
 
-void ShapeRect::hoverMoveEvent(QGraphicsSceneHoverEvent* event)
+void ShapeRect::hoverMove(QGraphicsSceneHoverEvent* event)
+{
+}
+
+void ShapeRect::mouseRelease(QGraphicsSceneMouseEvent* event)
+{
+}
+void ShapeRect::mouseMove(QGraphicsSceneMouseEvent* event)
 {
     auto pos = event->pos();
     rectShape.setBottomRight(pos);
     setRect(rectShape);
-}
+    scene()->invalidate(rectShape.adjusted(-56, -56, 56, 56));
 
-void ShapeRect::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
-{
+    //auto pos = event->pos();
+    //QRectF newRect(rectShape.topLeft(), pos);
+    //setRect(newRect);
+    //rectShape = newRect;
+    //update();
 }

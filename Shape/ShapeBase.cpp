@@ -1,6 +1,6 @@
 #include "ShapeBase.h"
 
-ShapeBase::ShapeBase() : QGraphicsItem()
+ShapeBase::ShapeBase()
 {
     // setAttribute(Qt::WA_TransparentForMouseEvents, true);
 }

@@ -7,6 +7,7 @@
 #include "CanvasWidget.h"
 #include "Tool/ToolMain.h"
 #include "WindowNative.h"
+#include "Shape/ShapeBase.h"
 
 
 CutMask::CutMask() : QGraphicsPathItem()
@@ -20,6 +21,7 @@ CutMask::CutMask() : QGraphicsPathItem()
     setAcceptedMouseButtons(Qt::LeftButton);
     setPen(QPen(QBrush(QColor(22, 119, 255)), maskStroke));
     setBrush(QBrush(QColor(0, 0, 0, 120)));
+    setZValue(888);
 }
 
 CutMask::~CutMask()
@@ -28,9 +30,16 @@ CutMask::~CutMask()
 
 void CutMask::hoverMoveEvent(QGraphicsSceneHoverEvent* event)
 {
-    dragPosition = event->pos();
-    event->ignore();
     auto canvas = CanvasWidget::Get();
+    if (canvas->state == State::tool)
+    {
+        changeMousePosState(event->pos());
+    }
+    else
+    {
+        setCursor(Qt::CrossCursor);
+    }
+    event->ignore();
     canvas->dispatchEvent(event);
 }
 
@@ -50,6 +59,12 @@ void CutMask::mousePressEvent(QGraphicsSceneMouseEvent* event)
         {
             changeMaskRect(dragPosition);
         }
+    }
+    auto items = scene()->items();
+    for (size_t i = 1; i < items.size(); i++)
+    {
+        ShapeBase* shape = dynamic_cast<ShapeBase*>(items[i]);
+        shape->mousePress(event);
     }
 }
 
@@ -76,39 +91,33 @@ void CutMask::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
             changeMaskRect(pos);
         }
     }
-    else
+    auto items = scene()->items();
+    for (size_t i = 1; i < items.size(); i++)
     {
-        //QCoreApplication::sendEvent(parentWidget(), event);
-        // canvasWidget->dispathcEvent(event);
-    }
-    if (canvasWidget->state == State::tool)
-    {
-        changeMousePosState(pos);
-    }
-    else
-    {
-        setCursor(Qt::CrossCursor);
+        ShapeBase* shape = dynamic_cast<ShapeBase*>(items[i]);
+        shape->mouseMove(event);
     }
 }
 
 void CutMask::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 {
-    // maskRect = maskRect.normalized();
-    // auto canvasWidget = CanvasWidget::Get();
-    // if (canvasWidget->state == State::mask)
-    // {
-    //     canvasWidget->state = State::tool;
-    //     canvasWidget->toolMain->show();
-    // }
-    // else if (canvasWidget->state == State::tool)
-    // {
-    //     canvasWidget->toolMain->show();
-    // }
-    // else
-    // {
-    //     //QCoreApplication::sendEvent(parentWidget(), event);
-    //     // canvasWidget->dispathcEvent(event);
-    // }
+     maskRect = maskRect.normalized();    
+     auto canvas = CanvasWidget::Get();
+     if (canvas->state == State::mask)
+     {
+         canvas->state = State::tool;
+         canvas->toolMain->show();
+     }
+     else if (canvas->state == State::tool)
+     {
+         canvas->toolMain->show();
+     }
+     auto items = scene()->items();
+     for (size_t i = 1; i < items.size(); i++)
+     {
+         ShapeBase* shape = dynamic_cast<ShapeBase*>(items[i]);
+         shape->mouseRelease(event);
+     }
 }
 
 void CutMask::changeMaskRect(const QPointF& pos)

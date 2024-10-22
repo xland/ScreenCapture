@@ -3,14 +3,17 @@
 #include <QWidget>
 #include <QGraphicsRectItem>
 
-class ShapeRect: public QGraphicsRectItem
+#include "ShapeBase.h"
+
+class ShapeRect: public QGraphicsRectItem,public ShapeBase
 {
 public:
     ShapeRect();
     ~ShapeRect();
-    void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
-    void hoverMoveEvent(QGraphicsSceneHoverEvent* event) override;
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent* event) override;
+    void mousePress(QGraphicsSceneMouseEvent* event) override;
+    void hoverMove(QGraphicsSceneHoverEvent* event) override;
+    void mouseRelease(QGraphicsSceneMouseEvent* event) override;
+    void mouseMove(QGraphicsSceneMouseEvent* event) override;
 public:
 protected:
 
