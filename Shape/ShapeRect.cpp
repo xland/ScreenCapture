@@ -1,5 +1,4 @@
 #include <qpainter.h>
-#include <QMouseEvent>
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsSceneHoverEvent>
 
@@ -7,7 +6,7 @@
 #include "../CanvasWidget.h"
 #include "../Tool/ToolSub.h"
 
-ShapeRect::ShapeRect() : QGraphicsRectItem()
+ShapeRect::ShapeRect() : QGraphicsRectItem(),ShapeBase()
 {
     //setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable);
     //setCacheMode(QGraphicsItem::ItemCoordinateCache);
@@ -19,6 +18,9 @@ ShapeRect::~ShapeRect()
 
 void ShapeRect::mousePress(QGraphicsSceneMouseEvent* event)
 {
+    if (state == ShapeState::ready) {
+        return;
+    }
     rectShape.setTopLeft(event->pos());
     auto toolSub = CanvasWidget::Get()->toolSub;
     isFill = toolSub->getSelectState("rectFill");
@@ -40,17 +42,19 @@ void ShapeRect::hoverMove(QGraphicsSceneHoverEvent* event)
 
 void ShapeRect::mouseRelease(QGraphicsSceneMouseEvent* event)
 {
+    if (state == ShapeState::ready) {
+        return;
+    }
+    state = ShapeState::ready;
+    scene()->addItem(new ShapeRect());
 }
 void ShapeRect::mouseMove(QGraphicsSceneMouseEvent* event)
 {
+    if (state == ShapeState::ready) {
+        return;
+    }
     auto pos = event->pos();
     rectShape.setBottomRight(pos);
     setRect(rectShape);
     scene()->invalidate(rectShape.adjusted(-56, -56, 56, 56));
-
-    //auto pos = event->pos();
-    //QRectF newRect(rectShape.topLeft(), pos);
-    //setRect(newRect);
-    //rectShape = newRect;
-    //update();
 }

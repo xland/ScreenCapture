@@ -16,7 +16,6 @@ public:
     void mouseMove(QGraphicsSceneMouseEvent* event) override;
 public:
 protected:
-
 private:
     QPointF posPress;
     QRectF rectShape;

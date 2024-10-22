@@ -80,6 +80,9 @@ void CanvasWidget::addShape()
     if (state == State::rect) {
         scene->addItem(new ShapeRect());
     }
+    else if (state == State::ellipse) {
+        scene->addItem(new ShapeEllipse());
+    }
     toolSub->show();
 }
 

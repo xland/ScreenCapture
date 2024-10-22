@@ -1,66 +1,58 @@
 #include <qpainter.h>
-#include <QMouseEvent>
+
 
 #include "ShapeEllipse.h"
 #include "../CanvasWidget.h"
 #include "../Tool/ToolSub.h"
 
-// ShapeEllipse::ShapeEllipse(QWidget* parent) : ShapeBase(parent)
-// {
-//     setVisible(true);
-//     move(0, 0);
-//     auto size = parent->size();
-//     setFixedSize(size);
-//     setFocusPolicy(Qt::StrongFocus);
-//     rectShape.setSize(QSize(0, 0));
-//     auto toolSub = CanvasWidget::Get()->toolSub;
-//     isFill = toolSub->getSelectState("rectFill");
-//     color = toolSub->getColor();
-//     strokeWidth = toolSub->getStrokeWidth();
-// }
+ ShapeEllipse::ShapeEllipse() : QGraphicsEllipseItem(),ShapeBase()
+ {
+ }
 
 ShapeEllipse::~ShapeEllipse()
 {
 }
 
-// void ShapeEllipse::paintEvent(QPaintEvent* event)
-// {
-//     QPainter painter(this);
-//     painter.setRenderHint(QPainter::Antialiasing, true);
-//     if (isFill)
-//     {
-//         painter.setPen(Qt::NoPen);
-//         painter.setBrush(color);
-//     }
-//     else
-//     {
-//         QPen pen(color, strokeWidth);
-//         painter.setPen(pen);
-//     }
-//     painter.drawEllipse(rectShape);
-// }
+void ShapeEllipse::mousePress(QGraphicsSceneMouseEvent* event)
+{
+    if (state == ShapeState::ready) {
+        return;
+    }
+    rectShape.setTopLeft(event->pos());
+    auto toolSub = CanvasWidget::Get()->toolSub;
+    isFill = toolSub->getSelectState("rectFill");
+    color = toolSub->getColor();
+    strokeWidth = toolSub->getStrokeWidth();
+    if (isFill) {
+        setBrush(QBrush(color));
+        setPen(Qt::NoPen);
+    }
+    else {
+        setPen(QPen(QBrush(color), strokeWidth));
+        setBrush(Qt::NoBrush);
+    }
+}
 
-// void ShapeEllipse::mousePressEvent(QMouseEvent* event)
-// {
-//     rectShape.setTopLeft(event->pos());
-// }
+void ShapeEllipse::hoverMove(QGraphicsSceneHoverEvent* event)
+{
+}
 
-// void ShapeEllipse::mouseMoveEvent(QMouseEvent* event)
-// {
-//     if (state == ShapeState::ready) return;
-//     auto pos = event->pos();
-//     if (event->buttons() & Qt::LeftButton)
-//     {
-//         state = ShapeState::sizing;
-//         rectShape.setBottomRight(pos);
-//         update();
-//     }
-// }
+void ShapeEllipse::mouseRelease(QGraphicsSceneMouseEvent* event)
+{
+    if (state == ShapeState::ready) {
+        return;
+    }
+    state = ShapeState::ready;
+    scene()->addItem(new ShapeEllipse());
+}
 
-// void ShapeEllipse::mouseReleaseEvent(QMouseEvent* event)
-// {
-//     if (event->buttons() & Qt::LeftButton)
-//     {
-//         state = ShapeState::ready;
-//     }
-// }
+void ShapeEllipse::mouseMove(QGraphicsSceneMouseEvent* event)
+{
+    if (state == ShapeState::ready) {
+        return;
+    }
+    auto pos = event->pos();
+    rectShape.setBottomRight(pos);
+    setRect(rectShape);
+    scene()->invalidate(rectShape.adjusted(-56, -56, 56, 56));
+}
