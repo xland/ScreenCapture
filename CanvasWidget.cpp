@@ -32,8 +32,8 @@ CanvasWidget::CanvasWidget(QWidget* parent) : QWidget(parent)
     scene->setSceneRect(0, 0, winNative->w, winNative->h);
     scene->setBackgroundBrush(desktopImg);
 
-    shapeRect = new ShapeRect();
-    scene->addItem(shapeRect);
+    // shapeRect = new ShapeRect();
+    // scene->addItem(shapeRect);
 
 
     cutMask = new CutMask();
@@ -44,7 +44,7 @@ CanvasWidget::CanvasWidget(QWidget* parent) : QWidget(parent)
     QGraphicsView* view = new QGraphicsView(scene, this);
     view->setRenderHint(QPainter::Antialiasing);
     view->setRenderHint(QPainter::SmoothPixmapTransform);
-    view->setCacheMode(QGraphicsView::CacheBackground);
+    // view->setCacheMode(QGraphicsView::CacheBackground);
     view->setFrameStyle(QFrame::NoFrame);
     view->setGeometry(0, 0, winNative->w, winNative->h);
     view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -75,7 +75,7 @@ CanvasWidget* CanvasWidget::Get()
 
 void CanvasWidget::dispatchEvent(QGraphicsSceneHoverEvent* e)
 {
-    shapeRect->hoverMoveEvent(e);
+    // shapeRect->hoverMoveEvent(e);
 }
 
 

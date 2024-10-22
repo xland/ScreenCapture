@@ -14,12 +14,16 @@ public:
     QRectF maskRect;
 protected:
     void hoverMoveEvent(QGraphicsSceneHoverEvent* event) override;
+    void mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;
     void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
     void mouseReleaseEvent(QGraphicsSceneMouseEvent* event) override;
 private:
     void changeMaskRect(const QPointF& pos);
     void changeMousePosState(const QPointF& pos);
+    void updatePath();
 private:
+    QRectF winRect;
+    QPainterPath p;
     qreal maskStroke{ 1.5 };
     QPointF dragPosition;
     int mousePosState{ -1 };
