@@ -10,6 +10,7 @@ class ShapeRect: public QGraphicsRectItem,public ShapeBase
 public:
     ShapeRect();
     ~ShapeRect();
+    bool contains(const QPointF& point) override;
     void mousePress(QGraphicsSceneMouseEvent* event) override;
     void hoverMove(QGraphicsSceneHoverEvent* event) override;
     void mouseRelease(QGraphicsSceneMouseEvent* event) override;
@@ -18,7 +19,7 @@ public:
 protected:
 private:
     QPointF posPress;
-    QRectF rectShape;
+    QRectF rect;
     bool isFill{ false };
     int strokeWidth{ 2 };
     QColor color{ Qt::red };

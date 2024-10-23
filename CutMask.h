@@ -12,6 +12,7 @@ public:
     ~CutMask();
 public:
     QRectF maskRect;
+    Qt::CursorShape cursor;
 protected:
     void hoverMoveEvent(QGraphicsSceneHoverEvent* event) override;
     void mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;

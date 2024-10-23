@@ -22,6 +22,7 @@ CutMask::CutMask() : QGraphicsPathItem()
     setPen(QPen(QBrush(QColor(22, 119, 255)), maskStroke));
     setBrush(QBrush(QColor(0, 0, 0, 120)));
     setZValue(888);
+    
 }
 
 CutMask::~CutMask()
@@ -34,13 +35,17 @@ void CutMask::hoverMoveEvent(QGraphicsSceneHoverEvent* event)
     if (canvas->state == State::tool)
     {
         changeMousePosState(event->pos());
+        return;
     }
-    else
+    auto items = scene()->items();
+    for (size_t i = 1; i < items.size(); i++)
     {
-        setCursor(Qt::CrossCursor);
+        dynamic_cast<ShapeBase*>(items[i])->hoverMove(event);
+        if (event->isAccepted()) {
+            return;
+        }
     }
-    event->ignore();
-    canvas->dispatchEvent(event);
+    setCursor(Qt::CrossCursor);
 }
 
 void CutMask::mousePressEvent(QGraphicsSceneMouseEvent* event)
@@ -63,8 +68,7 @@ void CutMask::mousePressEvent(QGraphicsSceneMouseEvent* event)
     auto items = scene()->items();
     for (size_t i = 1; i < items.size(); i++)
     {
-        ShapeBase* shape = dynamic_cast<ShapeBase*>(items[i]);
-        shape->mousePress(event);
+        dynamic_cast<ShapeBase*>(items[i])->mousePress(event);
     }
 }
 
@@ -94,8 +98,7 @@ void CutMask::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
     auto items = scene()->items();
     for (size_t i = 1; i < items.size(); i++)
     {
-        ShapeBase* shape = dynamic_cast<ShapeBase*>(items[i]);
-        shape->mouseMove(event);
+        dynamic_cast<ShapeBase*>(items[i])->mouseMove(event);
     }
 }
 
@@ -115,8 +118,7 @@ void CutMask::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
      auto items = scene()->items();
      for (size_t i = 1; i < items.size(); i++)
      {
-         ShapeBase* shape = dynamic_cast<ShapeBase*>(items[i]);
-         shape->mouseRelease(event);
+         dynamic_cast<ShapeBase*>(items[i])->mouseRelease(event);
      }
 }
 

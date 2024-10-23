@@ -29,15 +29,13 @@ CanvasWidget::CanvasWidget(QWidget* parent) : QWidget(parent)
     scene = new QGraphicsScene(this);
     scene->setSceneRect(0, 0, winNative->w, winNative->h);
     scene->setBackgroundBrush(desktopImg);
-    // shapeRect = new ShapeRect();
-    // scene->addItem(shapeRect);
     cutMask = new CutMask();
     scene->addItem(cutMask);
 
     view = new QGraphicsView(scene, this);
     view->setRenderHint(QPainter::Antialiasing);
     view->setRenderHint(QPainter::SmoothPixmapTransform);
-    //view->setCacheMode(QGraphicsView::CacheBackground);
+    view->setCacheMode(QGraphicsView::CacheBackground);
     view->setFrameStyle(QFrame::NoFrame);
     view->setGeometry(0, 0, winNative->w, winNative->h);
     view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -83,8 +81,7 @@ void CanvasWidget::addShape()
         auto shape = dynamic_cast<ShapeBase*>(items[i]);
         if (shape->state == ShapeState::temp) {
             scene->removeItem(items[i]);
-
-            //delete shape;
+            delete shape;
         }
     }
     if (state == State::rect) {
@@ -99,7 +96,6 @@ void CanvasWidget::addShape()
 
 void CanvasWidget::closeEvent(QCloseEvent* event)
 {
-    // delete cutMask;
     delete canvasWidget;
 }
 

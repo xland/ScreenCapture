@@ -13,6 +13,11 @@ ShapeEllipse::~ShapeEllipse()
 {
 }
 
+bool ShapeEllipse::contains(const QPointF& point)
+{
+    return false;
+}
+
 void ShapeEllipse::mousePress(QGraphicsSceneMouseEvent* event)
 {
     if (state == ShapeState::ready) {

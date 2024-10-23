@@ -62,8 +62,8 @@ void StrokeCtrl::showEvent(QShowEvent* event)
     auto canvasWidget = CanvasWidget::Get();
     if (canvasWidget->state == State::rect) {
         setMinimum(1);
-        setMaximum(12);
-        setValue(6);
+        setMaximum(36);
+        setValue(2);
     }
     else {
         setMinimum(1);

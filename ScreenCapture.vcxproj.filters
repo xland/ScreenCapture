@@ -94,13 +94,13 @@
     <ClInclude Include="Shape\ShapeEllipse.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Shape\ShapeRect.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Shape\ShapeState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Tool\ToolBtn.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Shape\ShapeRect.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
