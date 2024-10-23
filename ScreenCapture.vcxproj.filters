@@ -82,16 +82,10 @@
     <ClInclude Include="BtnType.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CutMask.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="State.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="WindowNative.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Shape\ShapeBase.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Shape\ShapeEllipse.h">
@@ -103,10 +97,10 @@
     <ClInclude Include="Tool\ToolBtn.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Shape\ShapeRect.h">
+    <ClInclude Include="Shape\ShapeDragger.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Shape\ShapeDragger.h">
+    <ClInclude Include="Shape\ShapeBase.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -133,6 +127,12 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="Tool\ToolSub.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Shape\ShapeRect.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="CutMask.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

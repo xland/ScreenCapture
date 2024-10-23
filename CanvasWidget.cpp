@@ -7,9 +7,6 @@
 #include "WindowNative.h"
 #include "Tool/ToolMain.h"
 #include "Tool/ToolSub.h"
-#include "Shape/ShapeBase.h"
-#include "Shape/ShapeRect.h"
-#include "Shape/ShapeEllipse.h"
 #include "Shape/ShapeDragger.h"
 
 namespace
@@ -76,25 +73,24 @@ void CanvasWidget::dispatchEvent(QGraphicsSceneHoverEvent* e)
     // shapeRect->hoverMoveEvent(e);
 }
 
-void CanvasWidget::addShape()
-{
-    auto items = scene->items();
-    for (size_t i = 2; i < items.size(); i++)
-    {
-        auto shape = dynamic_cast<ShapeBase*>(items[i]);
-        if (shape->state == ShapeState::temp) {
-            scene->removeItem(items[i]);
-            delete shape;
-        }
-    }
-    if (state == State::rect) {
-        scene->addItem(new ShapeRect());
-    }
-    else if (state == State::ellipse) {
-        scene->addItem(new ShapeEllipse());
-    }
-    toolSub->show();
-}
+//void CanvasWidget::addShape()
+//{
+//    auto items = scene->items();
+//    for (size_t i = 2; i < items.size(); i++)
+//    {
+//        auto shape = dynamic_cast<ShapeBase*>(items[i]);
+//        if (!shape->isReady) {
+//            scene->removeItem(items[i]);
+//            delete shape;
+//        }
+//    }
+//    if (state == State::rect) {
+//        scene->addItem(new ShapeRect());
+//    }
+//    else if (state == State::ellipse) {
+//        scene->addItem(new ShapeEllipse());
+//    }
+//}
 
 
 void CanvasWidget::closeEvent(QCloseEvent* event)

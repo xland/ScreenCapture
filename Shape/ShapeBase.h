@@ -6,15 +6,13 @@
 
 class ShapeBase
 {
-
 public:
     ShapeBase();
     virtual ~ShapeBase();
-    virtual void hoverMove(QGraphicsSceneHoverEvent* event) = 0;
-    virtual void mouseMove(QGraphicsSceneMouseEvent* event) = 0;
-    virtual void mousePress(QGraphicsSceneMouseEvent* event) = 0;
-    virtual void mouseRelease(QGraphicsSceneMouseEvent* event) = 0;
     virtual bool contains(const QPointF& point) = 0;
 public:
-    ShapeState state{ShapeState::temp};
+    bool isHover{ false };
+    bool isReady{ false };
+    int hoverDraggerIndex{ 4 };
+    bool isMoving{ false };
 };

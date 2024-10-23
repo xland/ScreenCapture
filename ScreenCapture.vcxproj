@@ -127,7 +127,7 @@
   <ItemGroup>
     <ClInclude Include="App.h" />
     <ClInclude Include="BtnType.h" />
-    <ClInclude Include="CutMask.h" />
+    <QtMoc Include="CutMask.h" />
     <ClInclude Include="Shape\ShapeDragger.h" />
     <ClInclude Include="Tool\ToolBtn.h" />
     <QtMoc Include="Tool\ToolSub.h" />
@@ -138,7 +138,7 @@
     <QtMoc Include="QHotKey\qhotkey.h" />
     <ClInclude Include="Shape\ShapeBase.h" />
     <ClInclude Include="Shape\ShapeEllipse.h" />
-    <ClInclude Include="Shape\ShapeRect.h" />
+    <QtMoc Include="Shape\ShapeRect.h" />
     <ClInclude Include="Shape\ShapeState.h" />
     <ClInclude Include="State.h" />
     <ClInclude Include="WindowNative.h" />

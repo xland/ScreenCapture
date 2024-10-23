@@ -25,7 +25,7 @@ public:
     static void Init();
     static CanvasWidget* Get();
     void dispatchEvent(QGraphicsSceneHoverEvent* e);
-    void addShape();
+    //void addShape();
 public:
     State state{ State::start };
     ToolMain* toolMain;

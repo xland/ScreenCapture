@@ -5,16 +5,18 @@
 
 #include "ShapeBase.h"
 
-class ShapeRect: public QGraphicsRectItem,public ShapeBase
+class ShapeRect: public QObject, public QGraphicsRectItem,public ShapeBase
 {
+    Q_OBJECT
 public:
     ShapeRect();
     ~ShapeRect();
     bool contains(const QPointF& point) override;
-    void mousePress(QGraphicsSceneMouseEvent* event) override;
-    void hoverMove(QGraphicsSceneHoverEvent* event) override;
-    void mouseRelease(QGraphicsSceneMouseEvent* event) override;
-    void mouseMove(QGraphicsSceneMouseEvent* event) override;
+public:
+    void mousePress(QGraphicsSceneMouseEvent* event);
+    void hoverMove(QGraphicsSceneHoverEvent* event);
+    void mouseRelease(QGraphicsSceneMouseEvent* event);
+    void mouseMove(QGraphicsSceneMouseEvent* event);
 public:
     QRectF shape;
     bool isFill{ false };

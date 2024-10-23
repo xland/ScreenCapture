@@ -21,7 +21,9 @@ ShapeDragger::~ShapeDragger()
 
 void ShapeDragger::ShowRectDragger(ShapeRect* shapeRect)
 {
+    shape = shapeRect;
     p.clear();
+    rects.clear();
     auto half{ shapeRect->strokeWidth / 2 };
     auto rect = shapeRect->shape.adjusted(-half, -half, half, half);
     auto x{ rect.x()};
@@ -75,25 +77,54 @@ void ShapeDragger::mouseRelease(QGraphicsSceneMouseEvent* event)
 bool ShapeDragger::hoverRectDragger(QGraphicsSceneHoverEvent* event)
 {
     auto pos = event->pos();
-    if (rects[0].contains(pos)|| rects[4].contains(pos)) {
+    if (rects[0].contains(pos)) {
+        shape->hoverDraggerIndex = 0;
         CanvasWidget::Get()->cutMask->setCursor(Qt::SizeFDiagCursor);
         event->accept();
         return true;
     }
-    if (rects[1].contains(pos)|| rects[5].contains(pos)) {
+    if (rects[1].contains(pos)) {
+        shape->hoverDraggerIndex = 1;
         CanvasWidget::Get()->cutMask->setCursor(Qt::SizeVerCursor);
         event->accept();
         return true;
     }
-    if (rects[2].contains(pos) || rects[6].contains(pos)) {
+    if (rects[2].contains(pos)) {
+        shape->hoverDraggerIndex = 2;
         CanvasWidget::Get()->cutMask->setCursor(Qt::SizeBDiagCursor);
         event->accept();
         return true;
     }
-    if (rects[3].contains(pos) || rects[7].contains(pos)) {
+    if (rects[3].contains(pos)) {
+        shape->hoverDraggerIndex = 3;
         CanvasWidget::Get()->cutMask->setCursor(Qt::SizeHorCursor);
         event->accept();
         return true;
     }
+    if (rects[4].contains(pos)) {
+        shape->hoverDraggerIndex = 4;
+        CanvasWidget::Get()->cutMask->setCursor(Qt::SizeFDiagCursor);
+        event->accept();
+        return true;
+    }
+    if (rects[5].contains(pos)) {
+        shape->hoverDraggerIndex = 5;
+        CanvasWidget::Get()->cutMask->setCursor(Qt::SizeVerCursor);
+        event->accept();
+        return true;
+    }
+    if (rects[6].contains(pos)) {
+        shape->hoverDraggerIndex = 6;
+        CanvasWidget::Get()->cutMask->setCursor(Qt::SizeBDiagCursor);
+        event->accept();
+        return true;
+    }
+    if (rects[7].contains(pos)) {
+        shape->hoverDraggerIndex = 7;
+        CanvasWidget::Get()->cutMask->setCursor(Qt::SizeHorCursor);
+        event->accept();
+        return true;
+    }
+    event->ignore();
     return false;
 }

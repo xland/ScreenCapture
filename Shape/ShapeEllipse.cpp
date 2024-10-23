@@ -20,7 +20,7 @@ bool ShapeEllipse::contains(const QPointF& point)
 
 void ShapeEllipse::mousePress(QGraphicsSceneMouseEvent* event)
 {
-    if (state == ShapeState::ready) {
+    if (isReady) {
         return;
     }
     rectShape.setTopLeft(event->pos());
@@ -44,16 +44,16 @@ void ShapeEllipse::hoverMove(QGraphicsSceneHoverEvent* event)
 
 void ShapeEllipse::mouseRelease(QGraphicsSceneMouseEvent* event)
 {
-    if (state == ShapeState::ready) {
+    if (isReady) {
         return;
     }
-    state = ShapeState::ready;
+    isReady = true;
     scene()->addItem(new ShapeEllipse());
 }
 
 void ShapeEllipse::mouseMove(QGraphicsSceneMouseEvent* event)
 {
-    if (state == ShapeState::ready) {
+    if (isReady) {
         return;
     }
     auto pos = event->pos();

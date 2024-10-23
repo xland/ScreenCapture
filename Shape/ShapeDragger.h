@@ -3,6 +3,7 @@
 #include <QGraphicsPathItem>
 #include "../State.h"
 
+class ShapeBase;
 class ShapeRect;
 class ShapeDragger  : public QGraphicsPathItem
 {
@@ -18,6 +19,7 @@ protected:
 private:
     bool hoverRectDragger(QGraphicsSceneHoverEvent* event);
 private:
+    ShapeBase* shape;
 	QPainterPath p;
     qreal size{ 8.0f };
     std::vector<QRectF> rects;

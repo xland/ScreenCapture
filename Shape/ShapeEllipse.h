@@ -13,10 +13,10 @@ public:
     ShapeEllipse();
     ~ShapeEllipse();
     bool contains(const QPointF& point) override;
-    void mousePress(QGraphicsSceneMouseEvent* event) override;
-    void hoverMove(QGraphicsSceneHoverEvent* event) override;
-    void mouseRelease(QGraphicsSceneMouseEvent* event) override;
-    void mouseMove(QGraphicsSceneMouseEvent* event) override;
+    void mousePress(QGraphicsSceneMouseEvent* event);
+    void hoverMove(QGraphicsSceneHoverEvent* event);
+    void mouseRelease(QGraphicsSceneMouseEvent* event);
+    void mouseMove(QGraphicsSceneMouseEvent* event);
 public:
 protected:
 private:
