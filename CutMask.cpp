@@ -8,6 +8,7 @@
 #include "Tool/ToolMain.h"
 #include "WindowNative.h"
 #include "Shape/ShapeBase.h"
+#include "Shape/ShapeDragger.h"
 
 
 CutMask::CutMask() : QGraphicsPathItem()
@@ -17,12 +18,11 @@ CutMask::CutMask() : QGraphicsPathItem()
     maskRect.setRect(-maskStroke, -maskStroke, win->w + maskStroke, win->h + maskStroke);
     updatePath();
     setAcceptHoverEvents(true);
-    setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable);
-    setAcceptedMouseButtons(Qt::LeftButton);
+    //setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable);
+    //setAcceptedMouseButtons(Qt::LeftButton);
     setPen(QPen(QBrush(QColor(22, 119, 255)), maskStroke));
     setBrush(QBrush(QColor(0, 0, 0, 120)));
     setZValue(888);
-    
 }
 
 CutMask::~CutMask()
@@ -36,9 +36,13 @@ void CutMask::hoverMoveEvent(QGraphicsSceneHoverEvent* event)
     {
         changeMousePosState(event->pos());
         return;
-    }
+    }    
     auto items = scene()->items();
-    for (size_t i = 1; i < items.size(); i++)
+    canvas->shapeDragger->hoverMove(event);
+    if (event->isAccepted()) {
+        return;
+    }
+    for (size_t i = 2; i < items.size(); i++)
     {
         dynamic_cast<ShapeBase*>(items[i])->hoverMove(event);
         if (event->isAccepted()) {
@@ -66,7 +70,7 @@ void CutMask::mousePressEvent(QGraphicsSceneMouseEvent* event)
         }
     }
     auto items = scene()->items();
-    for (size_t i = 1; i < items.size(); i++)
+    for (size_t i = 2; i < items.size(); i++)
     {
         dynamic_cast<ShapeBase*>(items[i])->mousePress(event);
     }
@@ -96,7 +100,7 @@ void CutMask::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
         }
     }
     auto items = scene()->items();
-    for (size_t i = 1; i < items.size(); i++)
+    for (size_t i = 2; i < items.size(); i++)
     {
         dynamic_cast<ShapeBase*>(items[i])->mouseMove(event);
     }
@@ -116,7 +120,7 @@ void CutMask::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
          canvas->toolMain->show();
      }
      auto items = scene()->items();
-     for (size_t i = 1; i < items.size(); i++)
+     for (size_t i = 2; i < items.size(); i++)
      {
          dynamic_cast<ShapeBase*>(items[i])->mouseRelease(event);
      }

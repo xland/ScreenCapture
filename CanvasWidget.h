@@ -15,7 +15,7 @@
 class ToolMain;
 class ToolSub;
 class CutMask;
-class ShapeRect;
+class ShapeDragger;
 class CanvasWidget : public QWidget
 {
     Q_OBJECT
@@ -31,6 +31,7 @@ public:
     ToolMain* toolMain;
     ToolSub* toolSub;
     CutMask* cutMask;
+    ShapeDragger* shapeDragger;
     std::vector<QGraphicsItem*> shapes;
     QGraphicsScene* scene;
     QGraphicsView* view;
@@ -43,7 +44,6 @@ private:
     qreal maskStroke{ 1.5 };
     bool dragging = false;
     QPoint dragPosition;
-    ShapeRect* shapeRect;
     QImage imgBg;
     QPixmap desktopImg;
 

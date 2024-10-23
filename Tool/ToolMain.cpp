@@ -159,6 +159,7 @@ void ToolMain::mousePressEvent(QMouseEvent* event)
         {
             parentWidget()->close();
             WindowNative::Close();
+            return;
         }
     }
     update();

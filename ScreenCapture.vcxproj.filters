@@ -71,6 +71,9 @@
     <ClCompile Include="Tool\ToolSub.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Shape\ShapeDragger.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h">
@@ -101,6 +104,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Shape\ShapeRect.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Shape\ShapeDragger.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -113,6 +113,7 @@
     <ClCompile Include="QHotKey\qhotkey.cpp" />
     <ClCompile Include="QHotKey\qhotkey_win.cpp" />
     <ClCompile Include="Shape\ShapeBase.cpp" />
+    <ClCompile Include="Shape\ShapeDragger.cpp" />
     <ClCompile Include="Shape\ShapeEllipse.cpp" />
     <ClCompile Include="Shape\ShapeRect.cpp" />
     <ClCompile Include="Tool\ColorCtrl.cpp" />
@@ -127,6 +128,7 @@
     <ClInclude Include="App.h" />
     <ClInclude Include="BtnType.h" />
     <ClInclude Include="CutMask.h" />
+    <ClInclude Include="Shape\ShapeDragger.h" />
     <ClInclude Include="Tool\ToolBtn.h" />
     <QtMoc Include="Tool\ToolSub.h" />
     <QtMoc Include="Tool\ToolMain.h" />

@@ -5,6 +5,8 @@
 #include "ShapeRect.h"
 #include "../CanvasWidget.h"
 #include "../Tool/ToolSub.h"
+#include "../CutMask.h"
+#include "ShapeDragger.h"
 
 ShapeRect::ShapeRect() : QGraphicsRectItem(),ShapeBase()
 {
@@ -22,11 +24,11 @@ bool ShapeRect::contains(const QPointF& point)
         return false;
     }
     if (isFill) {
-        return rect.contains(point);
+        return shape.contains(point);
     }
     else {
-        QRectF outerRect = rect.adjusted(-strokeWidth, -strokeWidth, strokeWidth, strokeWidth);
-        return outerRect.contains(point) && !rect.contains(point);
+        QRectF outerRect = shape.adjusted(-strokeWidth, -strokeWidth, strokeWidth, strokeWidth);
+        return outerRect.contains(point) && !shape.contains(point);
     }
 }
 
@@ -53,7 +55,7 @@ void ShapeRect::mousePress(QGraphicsSceneMouseEvent* event)
 void ShapeRect::hoverMove(QGraphicsSceneHoverEvent* event)
 {
     if (contains(event->pos())) {
-        scene()->items()[0]->setCursor(Qt::SizeAllCursor);
+        CanvasWidget::Get()->cutMask->setCursor(Qt::SizeAllCursor);
         event->accept();
     }
     else {
@@ -67,6 +69,8 @@ void ShapeRect::mouseRelease(QGraphicsSceneMouseEvent* event)
         return;
     }
     state = ShapeState::ready;
+    auto dragger = dynamic_cast<ShapeDragger*>(scene()->items()[1]);
+    dragger->ShowRectDragger(this);
     scene()->addItem(new ShapeRect());
 }
 void ShapeRect::mouseMove(QGraphicsSceneMouseEvent* event)
@@ -92,8 +96,8 @@ void ShapeRect::mouseMove(QGraphicsSceneMouseEvent* event)
         y = posPress.y();
         h = pos.y() - y;
     }
-    rect.setRect(x, y, w, h);
+    shape.setRect(x, y, w, h);
     auto half{ strokeWidth / 2 };
-    setRect(rect.adjusted(-half,-half,half,half));
-    scene()->invalidate(rect.adjusted(-56 - half, -56 - half, 56+half, 56+half));
+    setRect(shape.adjusted(-half,-half,half,half));
+    scene()->invalidate(shape.adjusted(-56 - half, -56 - half, 56+half, 56+half));
 }

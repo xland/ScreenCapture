@@ -16,11 +16,11 @@ public:
     void mouseRelease(QGraphicsSceneMouseEvent* event) override;
     void mouseMove(QGraphicsSceneMouseEvent* event) override;
 public:
-protected:
-private:
-    QPointF posPress;
-    QRectF rect;
+    QRectF shape;
     bool isFill{ false };
     int strokeWidth{ 2 };
     QColor color{ Qt::red };
+protected:
+private:
+    QPointF posPress;
 };
