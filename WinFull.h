@@ -4,7 +4,7 @@
 #include <memory>
 #include <vector>
 #include <qwidget.h>
-
+#include <qobject.h>
 #include "State.h"
 
 class WinBoard;
@@ -14,10 +14,11 @@ class ToolMain;
 class ToolSub;
 class ShapeDragger;
 class ShapeBase;
-class WinFull
+class WinFull :public QObject
 {
+	Q_OBJECT
 public:
-	WinFull();
+	WinFull(QObject* parent = nullptr);
 	~WinFull();
 	void close();
 	void addShape(const QPoint& pos);

@@ -88,9 +88,6 @@
     <ClInclude Include="State.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="WinFull.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Shape\ShapeEllipse.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -139,6 +136,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="WinCanvas.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="WinFull.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

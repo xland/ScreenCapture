@@ -20,12 +20,6 @@ namespace {
 
 WinCanvas::WinCanvas(QWidget* parent) : QWidget(parent)
 {
-    setWindowFlags(Qt::FramelessWindowHint);
-    setAttribute(Qt::WA_TranslucentBackground);
-    setAttribute(Qt::WA_NoSystemBackground, true);
-    setAttribute(Qt::WA_QuitOnClose, false);
-    setFixedSize(3840, 2160);
-    show();
 }
 
 WinCanvas::~WinCanvas()
