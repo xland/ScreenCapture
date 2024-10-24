@@ -26,10 +26,10 @@
     <ClCompile Include="App.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CanvasWidget.cpp">
+    <ClCompile Include="WinBoard.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CutMask.cpp">
+    <ClCompile Include="WinMask.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp">
@@ -38,7 +38,7 @@
     <ClCompile Include="Tray.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="WindowNative.cpp">
+    <ClCompile Include="WinFull.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Shape\ShapeBase.cpp">
@@ -74,6 +74,9 @@
     <ClCompile Include="Shape\ShapeDragger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="WinCanvas.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h">
@@ -85,7 +88,7 @@
     <ClInclude Include="State.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="WindowNative.h">
+    <ClInclude Include="WinFull.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Shape\ShapeEllipse.h">
@@ -100,12 +103,9 @@
     <ClInclude Include="Shape\ShapeDragger.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Shape\ShapeBase.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <QtMoc Include="CanvasWidget.h">
+    <QtMoc Include="WinBoard.h">
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="Tray.h">
@@ -132,7 +132,13 @@
     <QtMoc Include="Shape\ShapeRect.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="CutMask.h">
+    <QtMoc Include="WinMask.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Shape\ShapeBase.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="WinCanvas.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

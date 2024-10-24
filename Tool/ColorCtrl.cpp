@@ -54,7 +54,7 @@ QColor ColorCtrl::getColor()
 
 void ColorCtrl::paintEvent(QPaintEvent * event)
 {
-	auto font = App::GetIconFont();
+	auto font = App::getIconFont();
 	font->setPixelSize(15);
 
 	QPainter painter(this);

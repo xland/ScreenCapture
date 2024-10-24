@@ -3,149 +3,147 @@
 #include <QGraphicsSceneHoverEvent>
 #include <QGraphicsScene>
 
-#include "CutMask.h"
-#include "CanvasWidget.h"
+#include "App.h"
+#include "WinMask.h"
+#include "WinBoard.h"
 #include "Tool/ToolMain.h"
-#include "WindowNative.h"
+#include "Tool/ToolSub.h"
+#include "WinFull.h"
 #include "Shape/ShapeBase.h"
 #include "Shape/ShapeDragger.h"
 #include "Shape/ShapeRect.h"
 #include "Shape/ShapeEllipse.h"
 
-
-CutMask::CutMask() : QGraphicsPathItem()
-{
-    auto win = WindowNative::Get();
-    winRect.setRect(-maskStroke * 6, -maskStroke * 6, win->w + maskStroke * 6, win->h + maskStroke * 6);
-    maskRect.setRect(-maskStroke, -maskStroke, win->w + maskStroke, win->h + maskStroke);
-    updatePath();
-    setAcceptHoverEvents(true);
-    //setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable);
-    setAcceptedMouseButtons(Qt::LeftButton);
-    setPen(QPen(QBrush(QColor(22, 119, 255)), maskStroke));
-    setBrush(QBrush(QColor(0, 0, 0, 120)));
-    setZValue(888);
+namespace {
+    WinMask* winMask;
 }
 
-CutMask::~CutMask()
+WinMask::WinMask(QWidget* parent) : QWidget(parent)
+{
+    setMouseTracking(true);
+}
+
+WinMask::~WinMask()
 {
 }
 
-void CutMask::hoverMoveEvent(QGraphicsSceneHoverEvent* event)
+void WinMask::paintEvent(QPaintEvent* event)
 {
-    auto canvas = CanvasWidget::Get();
-    if (canvas->state == State::tool)
-    {
-        changeMousePosState(event->pos().x(), event->pos().y());
-        return;
-    }
-    if (!isShapeUseMouse) {
-        changeMousePosState2(event->pos().x(), event->pos().y());
-    }
-    emit hoverMove(event);
-    //canvas->shapeDragger->hoverMove(event);
-    //if (event->isAccepted()) {
-    //    return;
-    //}
-    //auto items = scene()->items();
-    //for (size_t i = 2; i < items.size(); i++)
-    //{
-    //    dynamic_cast<ShapeBase*>(items[i])->hoverMove(event);
-    //    if (event->isAccepted()) {
-    //        return;
-    //    }
-    //}
-    //setCursor(Qt::CrossCursor);
+    auto full = App::getFull();
+    if (!full) return;
+    QPainter painter(this);
+    painter.setRenderHint(QPainter::Antialiasing, true);
+    painter.setPen(QPen(QBrush(QColor(22, 119, 255)), maskStroke));
+    painter.setBrush(QBrush(QColor(0, 0, 0, 120)));
+    p.clear();
+    p.addRect(-16, -16, full->w + 16, full->h +16);
+    p.addRect(maskRect);
+    painter.drawPath(p);
 }
 
-void CutMask::mousePressEvent(QGraphicsSceneMouseEvent* event)
+void WinMask::mousePressEvent(QMouseEvent* event)
 {
+    event->ignore();
     dragPosition = event->pos();
-    auto canvasWidget = CanvasWidget::Get();
-    if (canvasWidget->state == State::start)
+    auto full = App::getFull();
+    if (full->state == State::start)
     {
-        canvasWidget->state = State::mask;
+        full->state = State::mask;
         maskRect.setRect(dragPosition.x(), dragPosition.y(), 0, 0);
         return;
     }
-    if (canvasWidget->state == State::tool)
+    if (full->state == State::tool)
     {
-        canvasWidget->toolMain->hide();
+        full->toolMain->hide();
         if (mousePosState != 0)
         {
             changeMaskRect(dragPosition);
         }
         return;
     }
-    if (!isShapeUseMouse) {
-        addShape(canvasWidget->state);
+    if (full->state > State::tool && mousePosState > 0) {
+        full->toolMain->hide();
+        full->toolSub->hide();
+        return;
     }
     emit mousePress(event);
-    //auto items = scene()->items();
-    //for (size_t i = 2; i < items.size(); i++)
-    //{
-    //    dynamic_cast<ShapeBase*>(items[i])->mousePress(event);
-    //}
-    //if (!event->isAccepted()) {
-    //    canvasWidget->addShape();
-    //}
+    if (!event->isAccepted()) {
+        full->addShape(dragPosition);
+    }
 }
 
-void CutMask::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
+void WinMask::mouseMoveEvent(QMouseEvent* event)
 {
-    auto canvasWidget = CanvasWidget::Get();
+    auto full = App::getFull();
     auto pos = event->pos();
-    if (canvasWidget->state == State::mask)
-    {
-        maskRect.setBottomRight(pos);
-        updatePath();
-        return;
-    }
-    if (canvasWidget->state == State::tool)
-    {
-        if (mousePosState == 0)
+    if (event->buttons() == Qt::NoButton) {
+        if (full->state == State::tool)
         {
-            auto span = pos - dragPosition;
-            maskRect.moveTo(maskRect.topLeft() + span);
-            dragPosition = pos;
-            updatePath();
+            changeMousePosState(pos.x(), pos.y());
+            return;
         }
-        else
+        if (full->state > State::tool) {
+            changeMousePosState2(pos.x(), pos.y());
+            if (mousePosState != -1) {
+                return;
+            }
+        }
+        emit mouseMove(event);
+        setCursor(Qt::CrossCursor);
+    }
+    else
+    {
+        if (full->state == State::mask)
         {
+            maskRect.setBottomRight(pos);
+            update();
+            return;
+        }
+        if (full->state == State::tool)
+        {
+            if (mousePosState == 0)
+            {
+                auto span = pos - dragPosition;
+                maskRect.moveTo(maskRect.topLeft() + span);
+                dragPosition = pos;
+                update();
+            }
+            else
+            {
+                changeMaskRect(pos);
+            }
+            return;
+        }
+        if (full->state > State::tool && mousePosState>0) {
             changeMaskRect(pos);
+            return;
         }
-        return;
+        emit mouseDrag(event);
     }
-    emit mouseMove(event);
-    //auto items = scene()->items();
-    //for (size_t i = 2; i < items.size(); i++)
-    //{
-    //    dynamic_cast<ShapeBase*>(items[i])->mouseMove(event);
-    //}
 }
 
-void CutMask::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
+void WinMask::mouseReleaseEvent(QMouseEvent* event)
 {
      maskRect = maskRect.normalized();    
-     auto canvas = CanvasWidget::Get();
-     if (canvas->state == State::mask)
+     auto full = App::getFull();
+     if (full->state == State::mask)
      {
-         canvas->state = State::tool;
-         canvas->toolMain->show();
+         full->state = State::tool;
+         full->toolMain->show();
      }
-     else if (canvas->state == State::tool)
+     else if (full->state == State::tool)
      {
-         canvas->toolMain->show();
+         full->toolMain->show();
+     }
+     if (full->state > State::tool && mousePosState > 0) {
+         full->toolMain->show();
+         full->toolSub->show();
+         return;
      }
      emit mouseRelease(event);
-     //auto items = scene()->items();
-     //for (size_t i = 2; i < items.size(); i++)
-     //{
-     //    dynamic_cast<ShapeBase*>(items[i])->mouseRelease(event);
-     //}
 }
 
-void CutMask::changeMaskRect(const QPointF& pos)
+void WinMask::changeMaskRect(const QPoint& pos)
 {
     if (mousePosState == 1)
     {
@@ -179,10 +177,10 @@ void CutMask::changeMaskRect(const QPointF& pos)
     {
         maskRect.setLeft(pos.x());
     }
-    updatePath();
+    update();
 }
 
-void CutMask::changeMousePosState(const qreal& x, const qreal& y)
+void WinMask::changeMousePosState(const int& x, const int& y)
 {
     auto leftX = maskRect.topLeft().x(); auto topY = maskRect.topLeft().y();
     auto rightX = maskRect.bottomRight().x(); auto bottomY = maskRect.bottomRight().y();
@@ -233,7 +231,7 @@ void CutMask::changeMousePosState(const qreal& x, const qreal& y)
     }
 }
 
-void CutMask::changeMousePosState2(const qreal& x, const qreal& y)
+void WinMask::changeMousePosState2(const int& x, const int& y)
 {
     auto x1{ maskRect.x() - maskStroke}, x2{ x1 + maskStroke * 3 };
     auto x3{ maskRect.right() - maskStroke }, x4{ x3 + maskStroke*3 };
@@ -278,21 +276,7 @@ void CutMask::changeMousePosState2(const qreal& x, const qreal& y)
         mousePosState = 8;
     }
     else {
+        mousePosState = -1;
         setCursor(Qt::CrossCursor);
-    }
-}
-
-void CutMask::updatePath()
-{
-    p.clear();
-    p.addRect(winRect);
-    p.addRect(maskRect);
-    setPath(p);
-}
-
-void CutMask::addShape(const State& state)
-{
-    if (state == State::rect) {
-        scene()->addItem(new ShapeRect());
     }
 }

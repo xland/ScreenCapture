@@ -6,8 +6,8 @@
 int main(int argc, char* argv[])
 {
     QApplication a(argc, argv);
-    App::Init();
+    App::init();
     auto resut = a.exec();
-    App::Dispose();
+    App::dispose();
     return resut;
 }

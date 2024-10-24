@@ -4,9 +4,9 @@
 
 #include "ToolMain.h"
 #include "ToolSub.h"
-#include "../CanvasWidget.h"
-#include "../WindowNative.h"
-#include "../CutMask.h"
+#include "../WinBoard.h"
+#include "../WinFull.h"
+#include "../WinMask.h"
 #include "../App.h"
 
 namespace
@@ -95,7 +95,7 @@ void ToolMain::InitData(const QJsonArray& arr, const QString& lang)
 
 void ToolMain::paintEvent(QPaintEvent* event)
 {
-    auto font = App::GetIconFont();
+    auto font = App::getIconFont();
     font->setPixelSize(15);
 
     QPainter painter(this);
@@ -140,25 +140,25 @@ void ToolMain::paintEvent(QPaintEvent* event)
 void ToolMain::mousePressEvent(QMouseEvent* event)
 {
     if (hoverIndex == -1) return;
-    auto canvasWidget = CanvasWidget::Get();
+    auto full = App::getFull();
     if (hoverIndex == selectIndex)
     {
         selectIndex = -1;
-        canvasWidget->state = State::tool;
+        full->state = State::tool;
     }
     else
     {
         auto& btn = btns[hoverIndex];
         if (btn.name.isEmpty())
         {
-            canvasWidget->state = btn.state;
+            full->state = btn.state;
             selectIndex = hoverIndex;
-            canvasWidget->toolSub->show();
+            full->toolSub->show();
         }
         else if (btn.name == "close")
         {
             parentWidget()->close();
-            WindowNative::Close();
+            full->close();
             return;
         }
     }
@@ -185,7 +185,7 @@ void ToolMain::mouseMoveEvent(QMouseEvent* event)
 
 void ToolMain::showEvent(QShowEvent* event)
 {
-    auto cutMask = CanvasWidget::Get()->cutMask;
+    auto cutMask = App::getFull()->mask;
     auto pos = cutMask->maskRect.bottomRight();
     move(pos.x() - width(), pos.y() + 6);
 }

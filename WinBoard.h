@@ -14,30 +14,21 @@
 
 class ToolMain;
 class ToolSub;
-class CutMask;
+class WinMask;
+class WinCanvas;
 class ShapeDragger;
-class CanvasWidget : public QWidget
+class ShapeBase;
+class WinBoard : public QWidget
 {
     Q_OBJECT
 public:
-    CanvasWidget(QWidget* parent = nullptr);
-    ~CanvasWidget();
-    static void Init();
-    static CanvasWidget* Get();
+    WinBoard(QWidget* parent = nullptr);
+    ~WinBoard();
     void dispatchEvent(QGraphicsSceneHoverEvent* e);
-    //void addShape();
 public:
-    State state{ State::start };
-    ToolMain* toolMain;
-    ToolSub* toolSub;
-    CutMask* cutMask;
-    ShapeDragger* shapeDragger;
-    std::vector<QGraphicsItem*> shapes;
-    QGraphicsScene* scene;
-    QGraphicsView* view;
+
 protected:
-    void closeEvent(QCloseEvent* event) override;
-    void mousePressEvent(QMouseEvent* event) override;
+    void paintEvent(QPaintEvent* event) override;
 private:
     void initImgs();
 private:

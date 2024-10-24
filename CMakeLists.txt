@@ -18,14 +18,14 @@ set(PROJECT_SOURCES
         State.h
         App.h
         App.cpp
-        CanvasWidget.h
-        CanvasWidget.cpp
+        WinBoard.h
+        WinBoard.cpp
         Tray.h
         Tray.cpp
-        WindowNative.h
-        WindowNative.cpp
-        CutMask.h
-        CutMask.cpp
+        WinFull.h
+        WinFull.cpp
+        WinMask.h
+        WinMask.cpp
 
         Tool/ToolBtn.h
         Tool/ToolMain.cpp

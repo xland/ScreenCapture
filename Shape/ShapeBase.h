@@ -4,15 +4,15 @@
 #include <QGraphicsItem>
 #include "ShapeState.h"
 
-class ShapeBase
+class ShapeBase:public QObject
 {
+    Q_OBJECT
 public:
-    ShapeBase();
+    ShapeBase(const QPoint& pos,QObject* parent = nullptr);
     virtual ~ShapeBase();
-    virtual bool contains(const QPointF& point) = 0;
+    virtual bool contains(const QPoint& point) = 0;
+    virtual void paint(QPainter* painter) = 0;
 public:
-    bool isHover{ false };
-    bool isReady{ false };
-    int hoverDraggerIndex{ 4 };
-    bool isMoving{ false };
+    ShapeState state{ ShapeState::temp };
+    QPoint startPos;
 };

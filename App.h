@@ -5,14 +5,20 @@
 #include <QFont>
 #include <QFontDatabase>
 
+class WinFull;
+class WinBoard;
+class WinCanvas;
+class WinMask;
 class App
 {
 public:
-	static void Init();
-	static App* Get();
-	static QFont* GetIconFont();
-	static void Start();
-	static void Dispose();
+	static void init();
+	static App* get();
+	static QFont* getIconFont();
+	static WinFull* getFull();
+	static void disposeFull();
+	static void dispose();
+	static void start();
 public:
 private:
 	static void initConfig();

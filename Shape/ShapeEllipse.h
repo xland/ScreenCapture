@@ -1,27 +1,23 @@
 #pragma once
-
-#include <QWidget>
-#include <QGraphicsEllipseItem>
-#include <QGraphicsSceneMouseEvent>
-#include <QGraphicsSceneHoverEvent>
-
+#include <QMouseEvent>
 #include "ShapeBase.h"
 
-class ShapeEllipse: public QGraphicsEllipseItem, public ShapeBase
+class ShapeEllipse: public ShapeBase
 {
 public:
-    ShapeEllipse();
+    ShapeEllipse(const QPoint& pos, QObject* parent = nullptr);
     ~ShapeEllipse();
-    bool contains(const QPointF& point) override;
-    void mousePress(QGraphicsSceneMouseEvent* event);
-    void hoverMove(QGraphicsSceneHoverEvent* event);
-    void mouseRelease(QGraphicsSceneMouseEvent* event);
-    void mouseMove(QGraphicsSceneMouseEvent* event);
+    bool contains(const QPoint& point) override;
+    void paint(QPainter* painter) override;
+    void mousePress(QMouseEvent* event);
+    void hoverMove(QMouseEvent* event);
+    void mouseRelease(QMouseEvent* event);
+    void mouseMove(QMouseEvent* event);
 public:
 protected:
 private:
-    QPointF posPress;
-    QRectF rectShape;
+    QPoint posPress;
+    QRect rectShape;
     bool isFill{ false };
     int strokeWidth{ 2 };
     QColor color{ Qt::red };

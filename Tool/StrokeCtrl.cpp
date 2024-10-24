@@ -2,9 +2,11 @@
 #include <QWheelEvent>
 #include <qtooltip.h>
 
+#include "../App.h"
 #include "StrokeCtrl.h"
 #include "../State.h"
-#include "../CanvasWidget.h"
+#include "../WinBoard.h"
+#include "../WinFull.h"
 #include "ToolSub.h"
 
 StrokeCtrl::StrokeCtrl(QWidget *parent):QSlider(parent)
@@ -59,8 +61,8 @@ void StrokeCtrl::mouseMoveEvent(QMouseEvent* event)
 
 void StrokeCtrl::showEvent(QShowEvent* event)
 {
-    auto canvasWidget = CanvasWidget::Get();
-    if (canvasWidget->state == State::rect) {
+    auto full = App::getFull();
+    if (full->state == State::rect) {
         setMinimum(1);
         setMaximum(36);
         setValue(2);

@@ -1,8 +1,9 @@
 ﻿#include <tuple>
 
 #include "ToolSub.h"
-#include "../CanvasWidget.h"
+#include "../WinBoard.h"
 #include "../App.h"
+#include "../WinFull.h"
 #include "ToolMain.h"
 #include "StrokeCtrl.h"
 #include "ColorCtrl.h"
@@ -64,8 +65,8 @@ void ToolSub::InitData(const QJsonObject& obj, const QString& lang)
 
 bool ToolSub::getSelectState(const QString& btnName)
 {
-	auto canvasWidget = CanvasWidget::Get();
-	auto& values = btns[canvasWidget->state];
+	auto full = App::getFull();
+	auto& values = btns[full->state];
 	auto it = std::find_if(values.begin(), values.end(), [&btnName](const ToolBtn& item) {
 			return item.name == btnName;
 		});
@@ -90,7 +91,7 @@ void ToolSub::paintEvent(QPaintEvent* event)
 	//painter.setPen(QColor(190, 190, 190));
 	//painter.drawLine(x, 10 + 16, x + 80, 10 + 16);
 
-	auto font = App::GetIconFont();
+	auto font = App::getIconFont();
 	font->setPixelSize(15);
 
 	QPainter painter(this);
@@ -102,14 +103,14 @@ void ToolSub::paintEvent(QPaintEvent* event)
 	painter.setBrush(Qt::GlobalColor::white);
 	painter.drawRect(rect().adjusted(0, 10, 0, 0));
 
-	auto canvasWidget = CanvasWidget::Get();
-	auto index = canvasWidget->toolMain->selectIndex;
+	auto full = App::getFull();
+	auto index = full->toolMain->selectIndex;
 	auto x = 4+ index * 32 + 32 / 2;
 	QPolygon triangle;
 	triangle << QPoint(x, 6) << QPoint(x-4, 10) << QPoint(x+4, 10);
 	painter.drawPolygon(triangle);
 
-	auto& values = btns[canvasWidget->state];
+	auto& values = btns[full->state];
 	x = 4;
 	for (size_t i = 0; i < values.size(); i++)
 	{
@@ -146,8 +147,8 @@ void ToolSub::paintEvent(QPaintEvent* event)
 
 void ToolSub::mousePressEvent(QMouseEvent* event)
 {
-	auto canvasWidget = CanvasWidget::Get();
-	auto& values = btns[canvasWidget->state];
+	auto full = App::getFull();
+	auto& values = btns[full->state];
 	values[hoverIndex].selected = !values[hoverIndex].selected;
 	update();
 }
@@ -184,13 +185,13 @@ void ToolSub::leaveEvent(QEvent* event)
 
 void ToolSub::showEvent(QShowEvent* event)
 {
-	auto canvasWidget = CanvasWidget::Get();
-	auto toolMain = canvasWidget->toolMain;
-	auto toolSub = canvasWidget->toolSub;
+	auto full = App::getFull();
+	auto toolMain = full->toolMain;
+	auto toolSub = full->toolSub;
 	auto pos = toolMain->geometry().bottomLeft();
 	toolSub->move(pos.x(), pos.y());
 
-	auto values = btns[canvasWidget->state];
+	auto values = btns[full->state];
 	auto w{ 4 };
 	bool strokeFlag{ false }, colorFlag{ false };
 	for (size_t i = 0; i < values.size(); i++)

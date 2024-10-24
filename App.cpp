@@ -6,49 +6,62 @@
 #include <QFontDatabase>
 
 #include "App.h"
+#include "QHotKey/qhotkey.h"
 #include "Tool/ToolMain.h"
 #include "Tool/ToolSub.h"
 #include "Tool/ColorCtrl.h"
-#include "QHotKey/qhotkey.h"
-#include "WindowNative.h"
-#include "CanvasWidget.h"
+
 #include "Tray.h"
+#include "WinFull.h"
 
 namespace {
-    std::unique_ptr<App> setting;
+    std::unique_ptr<App> app;
     std::unique_ptr<QFont> iconFont;
     std::unique_ptr<QHotkey> hotkey;
     std::unique_ptr<Tray> tray;
+
+    std::unique_ptr<WinFull> full;
 }
 
-void App::Init()
+void App::init()
 {
     initConfig();
-    App::Start();
+    start();
 }
 
-App* App::Get()
+App* App::get()
 {
-    return setting.get();
+    return app.get();
 }
 
-QFont* App::GetIconFont()
+QFont* App::getIconFont()
 {
     return iconFont.get();
 }
 
-void App::Start()
+WinFull* App::getFull()
 {
-    WindowNative::Init();
-    CanvasWidget::Init();
+    return full.get();
 }
 
-void App::Dispose()
+void App::disposeFull()
 {
+    full.reset();
+}
+
+void App::dispose()
+{
+    full.reset();
     tray.reset();
     hotkey.reset();
     iconFont.reset();
-    setting.reset();
+    app.reset();
+}
+
+void App::start()
+{
+    if (full) return;
+    full = std::make_unique<WinFull>();
 }
 
 void App::initConfig()
@@ -93,7 +106,7 @@ void App::initHotKey(const QJsonObject& obj)
     if (obj["hotKey"].isString()) {
         auto keyComb = obj["hotKey"].toString();
         hotkey = std::make_unique<QHotkey>(QKeySequence(keyComb), true);
-        QObject::connect(hotkey.get(), &QHotkey::activated, &App::Start);
+        QObject::connect(hotkey.get(), &QHotkey::activated, &App::start);
     }
 }
 

@@ -53,7 +53,7 @@ void Tray::onTrayActived(QSystemTrayIcon::ActivationReason reason)
         }
         case QSystemTrayIcon::DoubleClick:
         {
-            App::Start();
+            App::start();
             break;
         }
         default:

@@ -3,27 +3,34 @@
 #include <QGraphicsSceneHoverEvent>
 
 #include "ShapeRect.h"
-#include "../CanvasWidget.h"
+#include "../App.h"
+#include "../WinBoard.h"
 #include "../Tool/ToolSub.h"
-#include "../CutMask.h"
+#include "../WinMask.h"
+#include "../WinCanvas.h"
+#include "../WinFull.h"
 #include "ShapeDragger.h"
 
-ShapeRect::ShapeRect() : QGraphicsRectItem(),ShapeBase()
+ShapeRect::ShapeRect(const QPoint& pos,QObject* parent) : ShapeBase(pos,parent)
 {
-    //setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable);
-    //setCacheMode(QGraphicsItem::ItemCoordinateCache);
-    auto cutMask = CanvasWidget::Get()->cutMask;
-    connect(cutMask, &CutMask::hoverMove, this, &ShapeRect::hoverMove);
-    connect(cutMask, &CutMask::mouseMove, this, &ShapeRect::mouseMove);
-    connect(cutMask, &CutMask::mousePress, this, &ShapeRect::mousePress);
-    connect(cutMask, &CutMask::mouseRelease, this, &ShapeRect::mouseRelease);
+    auto full = App::getFull();
+    connect(full->mask, &WinMask::mouseDrag, this, &ShapeRect::mouseDrag);
+    connect(full->mask, &WinMask::mouseMove, this, &ShapeRect::mouseMove);
+    connect(full->mask, &WinMask::mousePress, this, &ShapeRect::mousePress);
+    connect(full->mask, &WinMask::mouseRelease, this, &ShapeRect::mouseRelease);
+    full->canvas->shape = this;
+
+
+    //isFill = full->toolSub->getSelectState("rectFill");
+    //color = full->toolSub->getColor();
+    //strokeWidth = full->toolSub->getStrokeWidth();
 }
 
 ShapeRect::~ShapeRect()
 {
 }
 
-bool ShapeRect::contains(const QPointF& point)
+bool ShapeRect::contains(const QPoint& point)
 {
     if (isFill) {
         return shape.contains(point);
@@ -33,88 +40,99 @@ bool ShapeRect::contains(const QPointF& point)
         return outerRect.contains(point) && !shape.contains(point);
     }
 }
-void ShapeRect::hoverMove(QGraphicsSceneHoverEvent* event)
+void ShapeRect::paint(QPainter* painter)
 {
-    isHover = contains(event->pos());
-    if (isHover) {
-        CanvasWidget::Get()->cutMask->setCursor(Qt::SizeAllCursor);
-        event->accept();
+    if (isFill) {
+        painter->setBrush(QBrush(color));
+        painter->setPen(Qt::NoPen);
     }
-    else{
-        event->ignore();
+    else {
+        painter->setPen(QPen(QBrush(color), strokeWidth));
+        painter->setBrush(Qt::NoBrush);
     }
+    auto half{ strokeWidth / 2 };
+    painter->drawRect(shape.adjusted(-half, -half, half, half));
 }
-void ShapeRect::mousePress(QGraphicsSceneMouseEvent* event)
+void ShapeRect::mouseMove(QMouseEvent* event)
 {
-    if (isReady) {
-        if (isHover) {
-            isMoving = true;
-            posPress = event->pos();
-        }
-        return;
-    }
-    else{
-        posPress = event->pos();
-        hoverDraggerIndex = 4;
-        auto toolSub = CanvasWidget::Get()->toolSub;
-        isFill = toolSub->getSelectState("rectFill");
-        color = toolSub->getColor();
-        strokeWidth = toolSub->getStrokeWidth();
-        if (isFill) {
-            setBrush(QBrush(color));
-            setPen(Qt::NoPen);
-        }
-        else {
-            setPen(QPen(QBrush(color), strokeWidth));
-            setBrush(Qt::NoBrush);
-        }
-    }
-
+    //isHover = contains(event->pos());
+    //if (isHover) {
+    //    WinBoard::Get()->cutMask->setCursor(Qt::SizeAllCursor);
+    //    event->accept();
+    //}
+    //else{
+    //    event->ignore();
+    //}
 }
-void ShapeRect::mouseRelease(QGraphicsSceneMouseEvent* event)
+void ShapeRect::mousePress(QMouseEvent* event)
 {
-    if (isReady) {
-        if (isHover) {
-            CanvasWidget::Get()->shapeDragger->ShowRectDragger(this);
-        }        
-        return;
-    }
-    isReady = true;
-    CanvasWidget::Get()->shapeDragger->ShowRectDragger(this);
+    //if (isReady) {
+    //    if (isHover) {
+    //        isMoving = true;
+    //        posPress = event->pos();
+    //    }
+    //    return;
+    //}
+    //else{
+    //    posPress = event->pos();
+    //    hoverDraggerIndex = 4;
+    //    auto toolSub = WinBoard::Get()->toolSub;
+    //    isFill = toolSub->getSelectState("rectFill");
+    //    color = toolSub->getColor();
+    //    strokeWidth = toolSub->getStrokeWidth();
+    //    if (isFill) {
+    //        setBrush(QBrush(color));
+    //        setPen(Qt::NoPen);
+    //    }
+    //    else {
+    //        setPen(QPen(QBrush(color), strokeWidth));
+    //        setBrush(Qt::NoBrush);
+    //    }
+    //}
+    event->ignore();
 }
-void ShapeRect::mouseMove(QGraphicsSceneMouseEvent* event)
+void ShapeRect::mouseRelease(QMouseEvent* event)
 {
-    if (isReady) {
-
-        return;
+    //if (isReady) {
+    //    if (isHover) {
+    //        WinBoard::Get()->shapeDragger->ShowRectDragger(this);
+    //    }        
+    //    return;
+    //}
+    //isReady = true;
+    //WinBoard::Get()->shapeDragger->ShowRectDragger(this);
+    //WinBoard::Get()->update();
+}
+void ShapeRect::mouseDrag(QMouseEvent* event)
+{
+    if (state == ShapeState::temp) {
+        state = ShapeState::sizing4;
     }
-    if (isMoving) {
-        auto span = posPress - shape.topLeft();
-        auto pos = event->pos();
-        shape.moveTo(pos - span);
-    }
-    if (hoverDraggerIndex == 0 || hoverDraggerIndex == 4) {
+    //if (isMoving) {
+    //    auto span = posPress - shape.topLeft();
+    //    auto pos = event->pos();
+    //    shape.moveTo(pos - span);
+    //}
+    if (state == ShapeState::sizing4) {
         auto pos = event->pos();
         qreal x, y, w, h;
-        if (pos.x() < posPress.x()) {
+        if (pos.x() < startPos.x()) {
             x = pos.x();
-            w = posPress.x() - x;
+            w = startPos.x() - x;
         }
         else {
-            x = posPress.x();
+            x = startPos.x();
             w = pos.x() - x;
         }
-        if (pos.y() < posPress.y()) {
+        if (pos.y() < startPos.y()) {
             y = pos.y();
-            h = posPress.y() - y;
+            h = startPos.y() - y;
         }
         else {
-            y = posPress.y();
+            y = startPos.y();
             h = pos.y() - y;
         }
         shape.setRect(x, y, w, h);
     }
-    auto half{ strokeWidth / 2 };
-    setRect(shape.adjusted(-half,-half,half,half));
-    scene()->invalidate(shape.adjusted(-56 - half, -56 - half, 56+half, 56+half));
+    App::getFull()->canvas->update();
 }
