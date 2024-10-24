@@ -18,9 +18,6 @@ std::vector<unsigned> spliterIndexs;
 ToolMain::ToolMain(QWidget* parent) : QWidget(parent)
 {
     setFixedSize(btns.size()*btnW + 8, 32);
-    setMouseTracking(true);
-    setVisible(false);
-
 }
 ToolMain::~ToolMain()
 {
@@ -157,7 +154,6 @@ void ToolMain::mousePressEvent(QMouseEvent* event)
         }
         else if (btn.name == "close")
         {
-            parentWidget()->close();
             full->close();
             return;
         }

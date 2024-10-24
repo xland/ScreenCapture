@@ -8,34 +8,30 @@
 #include "WinCanvas.h"
 #include "Shape/ShapeRect.h"
 #include "Shape/ShapeEllipse.h"
+#include "Tool/ToolMain.h"
+#include "Tool/ToolSub.h"
 
 WinFull::WinFull()
 {
-    x = GetSystemMetrics(SM_XVIRTUALSCREEN);
-    y = GetSystemMetrics(SM_YVIRTUALSCREEN);
-    w = GetSystemMetrics(SM_CXVIRTUALSCREEN);
-    h = GetSystemMetrics(SM_CYVIRTUALSCREEN);
-
+    initSize();
     createNativeWindow();
-
-    board = new WinBoard();
-    processWidget(board);
-    canvas = new WinCanvas();
-    processWidget(canvas);
-    mask = new WinMask();
-    processWidget(mask);
-
+    createWidget();
+    createTool();
     ShowWindow(hwnd, SW_SHOW);
     SetForegroundWindow(hwnd);
 }
 WinFull::~WinFull()
 {
+    delete toolMain;
+    delete toolSub;
     delete board;
     delete canvas;
     delete mask;
 }
 void WinFull::close()
 {
+    toolMain->close();
+    toolSub->close();
     board->close();
     canvas->close();
     mask->close();
@@ -50,6 +46,13 @@ void WinFull::addShape(const QPoint& pos)
     else if (state == State::ellipse) {
         shapes.push_back(new ShapeEllipse(pos, board));
     }
+}
+void WinFull::initSize()
+{
+    x = GetSystemMetrics(SM_XVIRTUALSCREEN);
+    y = GetSystemMetrics(SM_YVIRTUALSCREEN);
+    w = GetSystemMetrics(SM_CXVIRTUALSCREEN);
+    h = GetSystemMetrics(SM_CYVIRTUALSCREEN);
 }
 void WinFull::createNativeWindow()
 {
@@ -67,8 +70,25 @@ void WinFull::createNativeWindow()
     wcx.hbrBackground = (HBRUSH)COLOR_WINDOW;
     wcx.lpszClassName = clsName.c_str();
     RegisterClassEx(&wcx);
-    hwnd = CreateWindowEx(NULL, clsName.c_str(), L"ScreenCapture", WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_POPUP,
+    auto style{ WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_POPUP };
+    hwnd = CreateWindowEx(NULL, clsName.c_str(), L"ScreenCapture", style,
         x, y, w, h, NULL, NULL, instance, NULL);
+}
+void WinFull::createWidget()
+{
+    board = new WinBoard();
+    processWidget(board);
+    canvas = new WinCanvas();
+    processWidget(canvas);
+    mask = new WinMask();
+    processWidget(mask);
+}
+void WinFull::createTool()
+{
+    toolMain = new ToolMain();
+    toolSub = new ToolSub();
+    processTool(toolMain);
+    processTool(toolSub);
 }
 void WinFull::processWidget(QWidget* tar)
 {
@@ -83,6 +103,16 @@ void WinFull::processWidget(QWidget* tar)
     SetParent(widgetHwnd, hwnd);
     SetWindowPos(widgetHwnd, nullptr, 0, 0, w, h, SWP_NOZORDER | SWP_SHOWWINDOW);
 }
+void WinFull::processTool(QWidget* tar)
+{
+    tar->setAttribute(Qt::WA_QuitOnClose, false);
+    tar->setWindowFlags(Qt::FramelessWindowHint);
+    tar->setAttribute(Qt::WA_NoSystemBackground);
+    tar->setMouseTracking(true);
+    tar->setVisible(false);
+    //tar->setAttribute(Qt::WA_Hover);  //enterEvent 和 leaveEvent，以及 hoverMoveEvent
+}
+
 LRESULT WinFull::routeWinMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     switch (msg)

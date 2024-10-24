@@ -15,10 +15,6 @@ namespace {
 
 ToolSub::ToolSub(QWidget *parent) : QWidget(parent)
 {
-	setVisible(false);
-	setAttribute(Qt::WA_NoSystemBackground);
-	setAttribute(Qt::WA_Hover);
-	setMouseTracking(true);
 	strokeCtrl = new StrokeCtrl(this);
 	colorCtrl = new ColorCtrl(this);
 }

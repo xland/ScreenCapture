@@ -33,8 +33,12 @@ public:
 	WinCanvas* canvas;
 	WinMask* mask;
 private:
+	void initSize();
 	void createNativeWindow();
+	void createWidget();
+	void createTool();
 	void processWidget(QWidget* tar);
+	void processTool(QWidget* tar);
 	static LRESULT CALLBACK routeWinMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 private:
 };
