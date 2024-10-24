@@ -26,9 +26,16 @@ public:
     ~WinBoard();
     void dispatchEvent(QGraphicsSceneHoverEvent* e);
 public:
-
+signals:
+    void mouseMove(QMouseEvent* e);
+    void mouseDrag(QMouseEvent* e);
+    void mousePress(QMouseEvent* e);
+    void mouseRelease(QMouseEvent* e);
 protected:
     void paintEvent(QPaintEvent* event) override;
+    void mousePressEvent(QMouseEvent* event) override;
+    void mouseMoveEvent(QMouseEvent* event) override;
+    void mouseReleaseEvent(QMouseEvent* event) override;
 private:
     void initImgs();
 private:

@@ -84,6 +84,11 @@ void WinFull::createWidget()
     processWidget(canvas);
     mask = new WinMask();
     processWidget(mask);
+
+    connect(board, &WinBoard::mouseDrag, mask, &WinMask::mouseDrag);
+    connect(board, &WinBoard::mouseMove, mask, &WinMask::mouseMove);
+    connect(board, &WinBoard::mousePress, mask, &WinMask::mousePress);
+    connect(board, &WinBoard::mouseRelease, mask, &WinMask::mouseRelease);
 }
 void WinFull::createTool()
 {
@@ -94,11 +99,11 @@ void WinFull::createTool()
 }
 void WinFull::processWidget(QWidget* tar)
 {
-    tar->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
+    tar->setWindowFlags(Qt::FramelessWindowHint);
     tar->setAttribute(Qt::WA_TranslucentBackground);
     //tar->setAttribute(Qt::WA_Hover);
     //tar->setAttribute(Qt::WA_TransparentForMouseEvents, false);
-    //tar->setAttribute(Qt::WA_NoSystemBackground, true);
+    tar->setAttribute(Qt::WA_NoSystemBackground, true);
     tar->setAttribute(Qt::WA_QuitOnClose, false);
     tar->setFixedSize(w, h);
     tar->show();
@@ -112,25 +117,25 @@ void WinFull::processTool(QWidget* tar)
     tar->setAttribute(Qt::WA_QuitOnClose, false);
     tar->setWindowFlags(Qt::FramelessWindowHint);
     tar->setAttribute(Qt::WA_TranslucentBackground);
-    //tar->setAttribute(Qt::WA_NoSystemBackground);
+    tar->setAttribute(Qt::WA_NoSystemBackground);
     tar->setMouseTracking(true);
     tar->setVisible(false);
-    //tar->setAttribute(Qt::WA_Hover);  //enterEvent 和 leaveEvent，以及 hoverMoveEvent
+    tar->setAttribute(Qt::WA_Hover);  //enterEvent 和 leaveEvent，以及 hoverMoveEvent
 }
 
 LRESULT WinFull::routeWinMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-    switch (msg)
-    {
-        case WM_MOUSEMOVE: {
-            int x = GET_X_LPARAM(lParam);
-            int y = GET_Y_LPARAM(lParam);
-            qDebug() << "allen" << x << y;
-            break;
-        }
-        default: {
-            break;
-        }            
-    }
+    //switch (msg)
+    //{
+    //    //case WM_MOUSEMOVE: {
+    //    //    int x = GET_X_LPARAM(lParam);
+    //    //    int y = GET_Y_LPARAM(lParam);
+    //    //    qDebug() << "allen" << x << y;
+    //    //    break;
+    //    //}
+    //    default: {
+    //        break;
+    //    }            
+    //}
     return DefWindowProc(hWnd, msg, wParam, lParam);
 }

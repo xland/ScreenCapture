@@ -14,21 +14,20 @@ class WinMask  : public QWidget
 public:
     WinMask(QWidget* parent = nullptr);
     ~WinMask();
+    void mousePress(QMouseEvent* event);
+    void mouseDrag(QMouseEvent* event);
+    void mouseRelease(QMouseEvent* event);
+    void mouseMove(QMouseEvent* event);
 public:
     QRect maskRect;
     bool isShapeUseMouse{ false };
-signals:
-    void mouseMove(QMouseEvent* e);
-    void mouseDrag(QMouseEvent* e);
-    void mousePress(QMouseEvent* e);
-    void mouseRelease(QMouseEvent* e);
+
 protected:
     void paintEvent(QPaintEvent* event) override;
-    void mousePressEvent(QMouseEvent* event) override;
-    void mouseMoveEvent(QMouseEvent* event) override;
-    void mouseReleaseEvent(QMouseEvent* event) override;
+    void showEvent(QShowEvent* event) override;
 
 private:
+
     void changeMaskRect(const QPoint& pos);
     void changeMousePosState(const int& x,const int& y);
     void changeMousePosState2(const int& x, const int& y);

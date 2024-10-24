@@ -6,7 +6,7 @@
 #include "../App.h"
 #include "../WinBoard.h"
 #include "../Tool/ToolSub.h"
-#include "../WinMask.h"
+#include "../WinBoard.h"
 #include "../WinCanvas.h"
 #include "../WinFull.h"
 #include "ShapeDragger.h"
@@ -14,10 +14,10 @@
 ShapeRect::ShapeRect(const QPoint& pos,QObject* parent) : ShapeBase(pos,parent)
 {
     auto full = App::getFull();
-    connect(full->mask, &WinMask::mouseDrag, this, &ShapeRect::mouseDrag);
-    connect(full->mask, &WinMask::mouseMove, this, &ShapeRect::mouseMove);
-    connect(full->mask, &WinMask::mousePress, this, &ShapeRect::mousePress);
-    connect(full->mask, &WinMask::mouseRelease, this, &ShapeRect::mouseRelease);
+    connect(full->board, &WinBoard::mouseDrag, this, &ShapeRect::mouseDrag);
+    connect(full->board, &WinBoard::mouseMove, this, &ShapeRect::mouseMove);
+    connect(full->board, &WinBoard::mousePress, this, &ShapeRect::mousePress);
+    connect(full->board, &WinBoard::mouseRelease, this, &ShapeRect::mouseRelease);
     full->canvas->shape = this;
 
 

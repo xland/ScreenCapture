@@ -16,6 +16,7 @@
 
 WinBoard::WinBoard(QWidget* parent) : QWidget(parent)
 {
+    setMouseTracking(true);
     initImgs();  
 }
 
@@ -40,6 +41,30 @@ void WinBoard::paintEvent(QPaintEvent* event)
     //{
     //    shapes[i]->paint(&painter);
     //}
+}
+
+void WinBoard::mousePressEvent(QMouseEvent* event)
+{
+    lower();
+    event->ignore();
+    emit mousePress(event);
+}
+
+void WinBoard::mouseMoveEvent(QMouseEvent* event)
+{
+    event->ignore();
+    if (event->buttons() == Qt::NoButton) {
+        emit mouseMove(event);
+    }
+    else {
+        emit mouseDrag(event);
+    }
+}
+
+void WinBoard::mouseReleaseEvent(QMouseEvent* event)
+{
+    event->ignore();
+    emit mouseRelease(event);
 }
 
 void WinBoard::initImgs()

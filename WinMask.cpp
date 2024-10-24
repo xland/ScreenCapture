@@ -20,7 +20,7 @@ namespace {
 
 WinMask::WinMask(QWidget* parent) : QWidget(parent)
 {
-    setMouseTracking(true);
+    setAttribute(Qt::WA_TransparentForMouseEvents, true);
 }
 
 WinMask::~WinMask()
@@ -41,9 +41,12 @@ void WinMask::paintEvent(QPaintEvent* event)
     painter.drawPath(p);
 }
 
-void WinMask::mousePressEvent(QMouseEvent* event)
+void WinMask::showEvent(QShowEvent* event)
 {
-    event->ignore();
+}
+
+void WinMask::mousePress(QMouseEvent* event)
+{
     dragPosition = event->pos();
     auto full = App::getFull();
     if (full->state == State::start)
@@ -66,63 +69,58 @@ void WinMask::mousePressEvent(QMouseEvent* event)
         full->toolSub->hide();
         return;
     }
-    emit mousePress(event);
     if (!event->isAccepted()) {
         full->addShape(dragPosition);
     }
 }
-
-void WinMask::mouseMoveEvent(QMouseEvent* event)
+void WinMask::mouseMove(QMouseEvent* event)
 {
     auto full = App::getFull();
     auto pos = event->pos();
-    if (event->buttons() == Qt::NoButton) {
-        if (full->state == State::tool)
-        {
-            changeMousePosState(pos.x(), pos.y());
-            return;
-        }
-        if (full->state > State::tool) {
-            changeMousePosState2(pos.x(), pos.y());
-            if (mousePosState != -1) {
-                return;
-            }
-        }
-        emit mouseMove(event);
-        setCursor(Qt::CrossCursor);
-    }
-    else
+    if (full->state == State::tool)
     {
-        if (full->state == State::mask)
+        changeMousePosState(pos.x(), pos.y());
+        return;
+    }
+    if (full->state > State::tool) {
+        changeMousePosState2(pos.x(), pos.y());
+        if (mousePosState != -1) {
+            return;
+        }
+    }
+    setCursor(Qt::CrossCursor);
+}
+void WinMask::mouseDrag(QMouseEvent* event) {
+    auto full = App::getFull();
+    auto pos = event->pos();
+    if (full->state == State::mask)
+    {
+        maskRect.setBottomRight(pos);
+        update();
+        return;
+    }
+    if (full->state == State::tool)
+    {
+        if (mousePosState == 0)
         {
-            maskRect.setBottomRight(pos);
+            auto span = pos - dragPosition;
+            maskRect.moveTo(maskRect.topLeft() + span);
+            dragPosition = pos;
             update();
-            return;
         }
-        if (full->state == State::tool)
+        else
         {
-            if (mousePosState == 0)
-            {
-                auto span = pos - dragPosition;
-                maskRect.moveTo(maskRect.topLeft() + span);
-                dragPosition = pos;
-                update();
-            }
-            else
-            {
-                changeMaskRect(pos);
-            }
-            return;
-        }
-        if (full->state > State::tool && mousePosState>0) {
             changeMaskRect(pos);
-            return;
         }
-        emit mouseDrag(event);
+        return;
+    }
+    if (full->state > State::tool && mousePosState > 0) {
+        changeMaskRect(pos);
+        return;
     }
 }
 
-void WinMask::mouseReleaseEvent(QMouseEvent* event)
+void WinMask::mouseRelease(QMouseEvent* event)
 {
      maskRect = maskRect.normalized();    
      auto full = App::getFull();
@@ -140,7 +138,6 @@ void WinMask::mouseReleaseEvent(QMouseEvent* event)
          full->toolSub->show();
          return;
      }
-     emit mouseRelease(event);
 }
 
 void WinMask::changeMaskRect(const QPoint& pos)
