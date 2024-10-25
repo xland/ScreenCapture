@@ -20,6 +20,7 @@ namespace {
 
 WinMask::WinMask(QWidget* parent) : QWidget(parent)
 {
+    //必须得让Board接收鼠标事件，因为Mask的透明区域没办法处理鼠标事件
     setAttribute(Qt::WA_TransparentForMouseEvents, true);
 }
 

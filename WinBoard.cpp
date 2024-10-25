@@ -92,7 +92,6 @@ void WinBoard::paintEvent(QPaintEvent* event)
 
 void WinBoard::mousePressEvent(QMouseEvent* event)
 {
-    lower();
     //HWND hwnd = (HWND)winId();
     //HWND canvasHwnd = (HWND)App::getFull()->canvas->winId();
     //SetWindowPos(hwnd, canvasHwnd, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
@@ -119,6 +118,25 @@ void WinBoard::mouseReleaseEvent(QMouseEvent* event)
 {
     event->ignore();
     emit mouseRelease(event);
+}
+
+void WinBoard::focusInEvent(QFocusEvent* event)
+{
+    event->ignore();
+}
+
+bool WinBoard::event(QEvent* event)
+{
+    if (event->type() == QEvent::WindowActivate) {
+        return true; // 返回 true 表示已处理该事件，Qt 将不再执行默认行为
+    }
+    return QWidget::event(event);
+}
+
+void WinBoard::showEvent(QShowEvent* event)
+{
+    hwnd = (HWND)winId();
+    SetWindowPos(hwnd, HWND_BOTTOM, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOOWNERZORDER | SWP_NOACTIVATE | SWP_NOSENDCHANGING);
 }
 
 void WinBoard::initImgs()

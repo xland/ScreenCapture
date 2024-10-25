@@ -27,6 +27,7 @@ public:
     void addShape(const QPoint& pos);
 public:
     std::vector<ShapeBase*> shapes;
+    HWND hwnd{nullptr};
 signals:
     void mouseMove(QMouseEvent* e);
     void mouseDrag(QMouseEvent* e);
@@ -37,6 +38,9 @@ protected:
     void mousePressEvent(QMouseEvent* event) override;
     void mouseMoveEvent(QMouseEvent* event) override;
     void mouseReleaseEvent(QMouseEvent* event) override;
+    void focusInEvent(QFocusEvent* event) override;
+    bool event(QEvent* event) override;
+    void showEvent(QShowEvent* event) override;
 private:
     void initImgs();
     void onShapeActivate(ShapeBase* shape);
@@ -46,5 +50,4 @@ private:
     QPoint dragPosition;
     QImage imgBg;
     QPixmap desktopImg;
-
 };

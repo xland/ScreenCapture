@@ -1,4 +1,4 @@
-#include <qcursor.h>
+﻿#include <qcursor.h>
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsSceneHoverEvent>
 #include <QGraphicsScene>

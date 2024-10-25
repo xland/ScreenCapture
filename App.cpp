@@ -13,6 +13,7 @@
 
 #include "Tray.h"
 #include "WinFull.h"
+#include "NativeEventFilter.h"
 
 namespace {
     std::unique_ptr<App> app;
@@ -21,6 +22,7 @@ namespace {
     std::unique_ptr<Tray> tray;
 
     std::unique_ptr<WinFull> full;
+    std::unique_ptr<NativeEventFilter> nativeEventFilter;
 }
 
 void App::init()
@@ -68,6 +70,8 @@ void App::start()
 {
     if (full) return;
     full = std::make_unique<WinFull>();
+    nativeEventFilter = std::make_unique<NativeEventFilter>();
+    qApp->installNativeEventFilter(nativeEventFilter.get());
 }
 
 void App::initConfig()
@@ -88,7 +92,8 @@ void App::initConfig()
     auto lang = jsonObject["defaultLang"].toString();
     initHotKey(jsonObject);
     initFont(jsonObject);
-    initTool(jsonObject, lang);    
+    initTool(jsonObject, lang);  
+    initTray(jsonObject, lang);
 }
 
 void App::initFont(const QJsonObject& obj)

@@ -90,7 +90,7 @@ void WinFull::createTool()
 }
 void WinFull::processWidget(QWidget* tar)
 {
-    tar->setWindowFlags(Qt::FramelessWindowHint);
+    tar->setWindowFlags(Qt::FramelessWindowHint | Qt::Tool);
     tar->setAttribute(Qt::WA_TranslucentBackground);
     //tar->setAttribute(Qt::WA_Hover);
     //tar->setAttribute(Qt::WA_TransparentForMouseEvents, false);

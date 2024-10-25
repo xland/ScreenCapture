@@ -107,6 +107,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp" />
+    <ClCompile Include="NativeEventFilter.cpp" />
     <ClCompile Include="WinBoard.cpp" />
     <ClCompile Include="WinCanvas.cpp" />
     <ClCompile Include="WinMask.cpp" />
@@ -130,6 +131,7 @@
     <ClInclude Include="BtnType.h" />
     <QtMoc Include="WinCanvas.h" />
     <QtMoc Include="WinMask.h" />
+    <ClInclude Include="NativeEventFilter.h" />
     <ClInclude Include="Shape\ShapeDragger.h" />
     <ClInclude Include="Tool\ToolBtn.h" />
     <QtMoc Include="Tool\ToolSub.h" />
