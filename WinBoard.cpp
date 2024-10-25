@@ -62,14 +62,13 @@ void WinBoard::onShapeActivate(ShapeBase* shape)
 {
     for (size_t i = 0; i < shapes.size(); i++)
     {
-        if (shapes[i]->state == ShapeState::active) {
-            if (shapes[i] == shape) {
-                return;
-            }
+        if (shapes[i] == shape) {
+            continue;
+        }
+        else if (shapes[i]->state != ShapeState::ready && shapes[i]->state != ShapeState::hidden) {
             shapes[i]->state = ShapeState::ready;
         }
     }
-    shape->state = ShapeState::active;
     update();
     App::getFull()->canvas->update();
 }

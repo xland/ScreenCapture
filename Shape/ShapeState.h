@@ -6,7 +6,6 @@ enum class ShapeState
     ready,
     active,
     hidden,
-    moving,
     sizing0,
     sizing1,
     sizing2,
@@ -15,4 +14,5 @@ enum class ShapeState
     sizing5,
     sizing6,
     sizing7,
+    moving,
 };

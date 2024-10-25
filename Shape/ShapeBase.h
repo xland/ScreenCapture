@@ -15,7 +15,7 @@ signals:
     void onActived(ShapeBase* e);
 public:
     int draggerSize{ 8 };
-    ShapeState state{ ShapeState::temp };
+    ShapeState state{ ShapeState::sizing4 };
     QPoint startPos;
     int hoverDraggerIndex{ -1 };
     std::vector<QRect> draggers;

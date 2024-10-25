@@ -18,7 +18,7 @@ ShapeRect::ShapeRect(const QPoint& pos,QObject* parent) : ShapeBase(pos,parent)
     connect(full->board, &WinBoard::mouseMove, this, &ShapeRect::mouseMove);
     connect(full->board, &WinBoard::mousePress, this, &ShapeRect::mousePress);
     connect(full->board, &WinBoard::mouseRelease, this, &ShapeRect::mouseRelease);
-
+    shape.setTopLeft(pos);
 
     //isFill = full->toolSub->getSelectState("rectFill");
     //color = full->toolSub->getColor();
@@ -150,12 +150,16 @@ void ShapeRect::mouseMove(QMouseEvent* event)
 }
 void ShapeRect::mousePress(QMouseEvent* event)
 {
-    if (state == ShapeState::ready) {
-        if (hoverDraggerIndex == 8) {
-            onActived(this);
-            event->accept();
+    if (hoverDraggerIndex >= 0) {
+        state = (ShapeState)((int)ShapeState::sizing0 + hoverDraggerIndex);
+        if (state == ShapeState::sizing0) {
+            startPos = shape.bottomRight();
         }
-        return;
+        else if (state == ShapeState::sizing1) {
+            startPos = shape.bottomLeft();
+        }
+        onActived(this);
+        event->accept();
     }
     //else{
     //    posPress = event->pos();
@@ -182,7 +186,7 @@ void ShapeRect::mouseRelease(QMouseEvent* event)
     //    }        
     //    return;
     //}
-    if (state >= ShapeState::moving) {
+    if (state >= ShapeState::sizing0) {
         state = ShapeState::active;
         auto canvas = App::getFull()->canvas;
         canvas->update();
@@ -193,34 +197,23 @@ void ShapeRect::mouseDrag(QMouseEvent* event)
     if (state == ShapeState::ready) {
         return;
     }
-    if (state == ShapeState::temp) {
-        state = ShapeState::sizing4;
-    }
     //if (isMoving) {
     //    auto span = posPress - shape.topLeft();
     //    auto pos = event->pos();
     //    shape.moveTo(pos - span);
     //}
-    if (state == ShapeState::sizing4) {
+    // 
+    
+    if (state == ShapeState::sizing0 || state == ShapeState::sizing4) {
         auto pos = event->pos();
-        qreal x, y, w, h;
-        if (pos.x() < startPos.x()) {
-            x = pos.x();
-            w = startPos.x() - x;
-        }
-        else {
-            x = startPos.x();
-            w = pos.x() - x;
-        }
-        if (pos.y() < startPos.y()) {
-            y = pos.y();
-            h = startPos.y() - y;
-        }
-        else {
-            y = startPos.y();
-            h = pos.y() - y;
-        }
-        shape.setRect(x, y, w, h);
+        shape.setCoords(pos.x(), pos.y(), startPos.x(), startPos.y());
+        shape = shape.normalized();
+    }
+    else if (state == ShapeState::sizing1) {
+        auto pos = event->pos();
+        shape.setY(pos.y());
+        shape = shape.normalized();
     }
     App::getFull()->canvas->update();
+    event->accept();
 }
