@@ -24,8 +24,9 @@ class WinBoard : public QWidget
 public:
     WinBoard(QWidget* parent = nullptr);
     ~WinBoard();
-    void dispatchEvent(QGraphicsSceneHoverEvent* e);
+    void addShape(const QPoint& pos);
 public:
+    std::vector<ShapeBase*> shapes;
 signals:
     void mouseMove(QMouseEvent* e);
     void mouseDrag(QMouseEvent* e);
@@ -38,6 +39,7 @@ protected:
     void mouseReleaseEvent(QMouseEvent* event) override;
 private:
     void initImgs();
+    void onShapeActivate(ShapeBase* shape);
 private:
     qreal maskStroke{ 1.5 };
     bool dragging = false;

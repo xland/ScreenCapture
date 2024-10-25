@@ -21,13 +21,11 @@ public:
 	WinFull(QObject* parent = nullptr);
 	~WinFull();
 	void close();
-	void addShape(const QPoint& pos);
 public:
 	State state{ State::start };
 	ToolMain* toolMain;
 	ToolSub* toolSub;
 	ShapeDragger* shapeDragger;
-	std::vector<ShapeBase*> shapes;
 	HWND hwnd;
 	int x, y, w, h;
 	WinBoard* board;

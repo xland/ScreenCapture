@@ -5,6 +5,7 @@
 
 #include "WinCanvas.h"
 #include "WinBoard.h"
+#include "App.h"
 #include "Tool/ToolMain.h"
 #include "Tool/ToolSub.h"
 #include "WinFull.h"
@@ -29,10 +30,19 @@ WinCanvas::~WinCanvas()
 
 void WinCanvas::paintEvent(QPaintEvent* event)
 {
-    if (!shape) { return; }
+    auto board = App::getFullBoard();
+    if (!board) return;
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
-    shape->paint(&painter);
+    painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
+    for (size_t i = 0; i < board->shapes.size(); i++)
+    {
+        if (board->shapes[i]->state != ShapeState::ready &&
+            board->shapes[i]->state != ShapeState::hidden
+            ) {
+            board->shapes[i]->paint(&painter);
+        }
+    }
 }
 
 

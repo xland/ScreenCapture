@@ -10,9 +10,13 @@ class ShapeBase:public QObject
 public:
     ShapeBase(const QPoint& pos,QObject* parent = nullptr);
     virtual ~ShapeBase();
-    virtual bool contains(const QPoint& point) = 0;
     virtual void paint(QPainter* painter) = 0;
+signals:
+    void onActived(ShapeBase* e);
 public:
+    int draggerSize{ 8 };
     ShapeState state{ ShapeState::temp };
     QPoint startPos;
+    int hoverDraggerIndex{ -1 };
+    std::vector<QRect> draggers;
 };

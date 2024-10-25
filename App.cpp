@@ -44,6 +44,12 @@ WinFull* App::getFull()
     return full.get();
 }
 
+WinBoard* App::getFullBoard()
+{
+    if (!full.get()) return nullptr;
+    return full.get()->board;
+}
+
 void App::disposeFull()
 {
     full.reset();

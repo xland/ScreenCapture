@@ -16,6 +16,7 @@ public:
 	static App* get();
 	static QFont* getIconFont();
 	static WinFull* getFull();
+	static WinBoard* getFullBoard();
 	static void disposeFull();
 	static void dispose();
 	static void start();

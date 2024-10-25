@@ -33,6 +33,7 @@ void WinMask::paintEvent(QPaintEvent* event)
     if (!full) return;
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
+    painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
     painter.setPen(QPen(QBrush(QColor(22, 119, 255)), maskStroke));
     painter.setBrush(QBrush(QColor(0, 0, 0, 120)));
     p.clear();
@@ -53,6 +54,7 @@ void WinMask::mousePress(QMouseEvent* event)
     {
         full->state = State::mask;
         maskRect.setRect(dragPosition.x(), dragPosition.y(), 0, 0);
+        event->accept();
         return;
     }
     if (full->state == State::tool)
@@ -62,15 +64,14 @@ void WinMask::mousePress(QMouseEvent* event)
         {
             changeMaskRect(dragPosition);
         }
+        event->accept();
         return;
     }
     if (full->state > State::tool && mousePosState > 0) {
         full->toolMain->hide();
         full->toolSub->hide();
+        event->accept();
         return;
-    }
-    if (!event->isAccepted()) {
-        full->addShape(dragPosition);
     }
 }
 void WinMask::mouseMove(QMouseEvent* event)
@@ -181,49 +182,50 @@ void WinMask::changeMousePosState(const int& x, const int& y)
 {
     auto leftX = maskRect.topLeft().x(); auto topY = maskRect.topLeft().y();
     auto rightX = maskRect.bottomRight().x(); auto bottomY = maskRect.bottomRight().y();
+    auto board = App::getFull()->board;
     if (maskRect.contains(x,y))
     {
-        setCursor(Qt::SizeAllCursor);
+        board->setCursor(Qt::SizeAllCursor);
         mousePosState = 0;
     }
     else if (x < leftX && y < topY)
     {
-        setCursor(Qt::SizeFDiagCursor);
+        board->setCursor(Qt::SizeFDiagCursor);
         mousePosState = 1;
     }
     else if (x >= leftX && x < rightX && y < topY)
     {
-        setCursor(Qt::SizeVerCursor);
+        board->setCursor(Qt::SizeVerCursor);
         mousePosState = 2;
     }
     else if (x >= rightX && y < topY)
     {
-        setCursor(Qt::SizeBDiagCursor);
+        board->setCursor(Qt::SizeBDiagCursor);
         mousePosState = 3;
     }
     else if (x >= rightX && y >= topY && y < bottomY)
     {
-        setCursor(Qt::SizeHorCursor);
+        board->setCursor(Qt::SizeHorCursor);
         mousePosState = 4;
     }
     else if (x >= rightX && y >= bottomY)
     {
-        setCursor(Qt::SizeFDiagCursor);
+        board->setCursor(Qt::SizeFDiagCursor);
         mousePosState = 5;
     }
     else if (x >= leftX && x < rightX && y >= bottomY)
     {
-        setCursor(Qt::SizeVerCursor);
+        board->setCursor(Qt::SizeVerCursor);
         mousePosState = 6;
     }
     else if (x < leftX && y >= bottomY)
     {
-        setCursor(Qt::SizeBDiagCursor);
+        board->setCursor(Qt::SizeBDiagCursor);
         mousePosState = 7;
     }
     else if (x < leftX && y < bottomY && y >= topY)
     {
-        setCursor(Qt::SizeHorCursor);
+        board->setCursor(Qt::SizeHorCursor);
         mousePosState = 8;
     }
 }
@@ -234,46 +236,47 @@ void WinMask::changeMousePosState2(const int& x, const int& y)
     auto x3{ maskRect.right() - maskStroke }, x4{ x3 + maskStroke*3 };
     auto y1{ maskRect.y() - maskStroke }, y2{ y1 + maskStroke *3 };
     auto y3{ maskRect.bottom() - maskStroke }, y4{ y3 + maskStroke*3 };
+    auto board = App::getFull()->board;
     if (x >= x1 && x<=x2 && y>=y1 && y <= y2) {
-        setCursor(Qt::SizeFDiagCursor);
+        board->setCursor(Qt::SizeFDiagCursor);
         mousePosState = 1;
     }
     else if (x >= x2 && x<=x3 && y>=y1 && y <= y2) {
-        setCursor(Qt::SizeVerCursor);
+        board->setCursor(Qt::SizeVerCursor);
         mousePosState = 2;
     }
     else if (x >= x3 && x <= x4 && y >= y1 && y <= y2)
     {
-        setCursor(Qt::SizeBDiagCursor);
+        board->setCursor(Qt::SizeBDiagCursor);
         mousePosState = 3;
     }
     else if (x >= x3 && x <= x4 && y >= y2 && y <= y3)
     {
-        setCursor(Qt::SizeHorCursor);
+        board->setCursor(Qt::SizeHorCursor);
         mousePosState = 4;
     }
     else if (x >= x3 && x <= x4 && y >= y3 && y <= y4)
     {
-        setCursor(Qt::SizeFDiagCursor);
+        board->setCursor(Qt::SizeFDiagCursor);
         mousePosState = 5;
     }
     else if (x >= x2 && x <= x3 && y >= y3 && y <= y4)
     {
-        setCursor(Qt::SizeVerCursor);
+        board->setCursor(Qt::SizeVerCursor);
         mousePosState = 6;
     }
     else if (x >= x1 && x <= x2 && y >= y3 && y <= y4)
     {
-        setCursor(Qt::SizeBDiagCursor);
+        board->setCursor(Qt::SizeBDiagCursor);
         mousePosState = 7;
     }
     else if (x >= x1 && x <= x2 && y >= y2 && y <= y3)
     {
-        setCursor(Qt::SizeHorCursor);
+        board->setCursor(Qt::SizeHorCursor);
         mousePosState = 8;
     }
     else {
+        board->setCursor(Qt::CrossCursor);
         mousePosState = -1;
-        setCursor(Qt::CrossCursor);
     }
 }

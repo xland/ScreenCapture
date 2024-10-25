@@ -17,6 +17,7 @@
 WinBoard::WinBoard(QWidget* parent) : QWidget(parent)
 {
     setMouseTracking(true);
+    setCursor(Qt::CrossCursor);
     initImgs();  
 }
 
@@ -24,30 +25,83 @@ WinBoard::~WinBoard()
 {
 }
 
-void WinBoard::dispatchEvent(QGraphicsSceneHoverEvent* e)
+void WinBoard::addShape(const QPoint& pos)
 {
-    // shapeRect->hoverMoveEvent(e);
+    bool flag{ false };
+    for (auto it = shapes.begin(); it != shapes.end(); ) {
+        if ((*it)->state == ShapeState::active) {
+            (*it)->state = ShapeState::ready;
+            flag = true;
+        }
+        if ((*it)->state == ShapeState::temp) {
+            it = shapes.erase(it);
+        }
+        else {
+            ++it;
+        }
+    }
+    if (flag) {
+        update();
+    }
+    ShapeBase* shape;
+    auto full = App::getFull();
+    if (full->state == State::rect) {
+        shape = new ShapeRect(pos, this);
+    }
+    else if (full->state == State::ellipse) {
+        shape = new ShapeEllipse(pos, this);
+    }
+    else
+    {
+        return;
+    }
+    connect(shape, &ShapeBase::onActived, this, &WinBoard::onShapeActivate);
+    shapes.push_back(shape);
 }
-
+void WinBoard::onShapeActivate(ShapeBase* shape)
+{
+    for (size_t i = 0; i < shapes.size(); i++)
+    {
+        if (shapes[i]->state == ShapeState::active) {
+            if (shapes[i] == shape) {
+                return;
+            }
+            shapes[i]->state = ShapeState::ready;
+        }
+    }
+    shape->state = ShapeState::active;
+    update();
+    App::getFull()->canvas->update();
+}
 
 void WinBoard::paintEvent(QPaintEvent* event)
 {
-
     QPainter painter(this);
+    painter.setRenderHint(QPainter::Antialiasing, true);
+    painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
+    painter.setRenderHint(QPainter::LosslessImageRendering, true);
     // painter.drawImage(rect(), imgBg);
     painter.drawPixmap(rect(), desktopImg);
-    //auto& shapes = App::getFull()->shapes;
-    //for (size_t i = 0; i < shapes.size(); i++)
-    //{
-    //    shapes[i]->paint(&painter);
-    //}
+    for (size_t i = 0; i < shapes.size(); i++)
+    {
+        if (shapes[i]->state != ShapeState::ready) {
+            continue;
+        }
+        shapes[i]->paint(&painter);
+    }
 }
 
 void WinBoard::mousePressEvent(QMouseEvent* event)
 {
-    lower();
+    //lower();
+    HWND hwnd = (HWND)winId();
+    HWND canvasHwnd = (HWND)App::getFull()->canvas->winId();
+    SetWindowPos(hwnd, canvasHwnd, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
     event->ignore();
     emit mousePress(event);
+    if (!event->isAccepted()) {
+        addShape(event->pos());
+    }
 }
 
 void WinBoard::mouseMoveEvent(QMouseEvent* event)
@@ -106,3 +160,5 @@ void WinBoard::initImgs()
     //imgBg = std::make_unique<QImage>(bgTemp.copy(0, 0, winNative->w, winNative->h));
 
 }
+
+

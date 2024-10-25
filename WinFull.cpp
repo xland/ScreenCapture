@@ -40,15 +40,7 @@ void WinFull::close()
     DestroyWindow(hwnd);
     App::disposeFull();
 }
-void WinFull::addShape(const QPoint& pos)
-{
-    if (state == State::rect) {
-        shapes.push_back(new ShapeRect(pos, board));
-    }
-    else if (state == State::ellipse) {
-        shapes.push_back(new ShapeEllipse(pos, board));
-    }
-}
+
 void WinFull::initSize()
 {
     x = GetSystemMetrics(SM_XVIRTUALSCREEN);
@@ -84,7 +76,6 @@ void WinFull::createWidget()
     processWidget(canvas);
     mask = new WinMask();
     processWidget(mask);
-
     connect(board, &WinBoard::mouseDrag, mask, &WinMask::mouseDrag);
     connect(board, &WinBoard::mouseMove, mask, &WinMask::mouseMove);
     connect(board, &WinBoard::mousePress, mask, &WinMask::mousePress);
@@ -115,7 +106,7 @@ void WinFull::processWidget(QWidget* tar)
 void WinFull::processTool(QWidget* tar)
 {
     tar->setAttribute(Qt::WA_QuitOnClose, false);
-    tar->setWindowFlags(Qt::FramelessWindowHint);
+    tar->setWindowFlags(Qt::FramelessWindowHint | Qt::Tool | Qt::WindowStaysOnTopHint);
     tar->setAttribute(Qt::WA_TranslucentBackground);
     tar->setAttribute(Qt::WA_NoSystemBackground);
     tar->setMouseTracking(true);

@@ -10,7 +10,6 @@ class ShapeRect:public ShapeBase
 public:
     ShapeRect(const QPoint& pos,QObject* parent = nullptr);
     ~ShapeRect();
-    bool contains(const QPoint& point) override;
     void paint(QPainter* painter) override;
 public:
     QRect shape;
@@ -23,6 +22,9 @@ private:
     void mouseDrag(QMouseEvent* event);
     void mouseRelease(QMouseEvent* event);
     void mouseMove(QMouseEvent* event);
+    void paintDragger(QPainter* painter);
+    void hoverRectDragger(QMouseEvent* event);
+    void contains(QMouseEvent* event);
 private:
     QPointF posPress;
 };

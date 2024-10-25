@@ -16,7 +16,6 @@ public:
     WinCanvas(QWidget* parent = nullptr);
     ~WinCanvas();
 public:
-    ShapeBase* shape;
 
 protected:
     void paintEvent(QPaintEvent* event) override;
