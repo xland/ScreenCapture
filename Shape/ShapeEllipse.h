@@ -5,7 +5,7 @@
 class ShapeEllipse: public ShapeBase
 {
 public:
-    ShapeEllipse(const QPoint& pos, QObject* parent = nullptr);
+    ShapeEllipse(QObject* parent = nullptr);
     ~ShapeEllipse();
     bool contains(const QPoint& point);
     void paint(QPainter* painter) override;

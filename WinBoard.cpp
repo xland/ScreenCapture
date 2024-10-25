@@ -46,10 +46,10 @@ void WinBoard::addShape(const QPoint& pos)
     ShapeBase* shape;
     auto full = App::getFull();
     if (full->state == State::rect) {
-        shape = new ShapeRect(pos, this);
+        shape = new ShapeRect(this);
     }
     else if (full->state == State::ellipse) {
-        shape = new ShapeEllipse(pos, this);
+        shape = new ShapeEllipse(this);
     }
     else
     {
@@ -92,14 +92,15 @@ void WinBoard::paintEvent(QPaintEvent* event)
 
 void WinBoard::mousePressEvent(QMouseEvent* event)
 {
-    //lower();
-    HWND hwnd = (HWND)winId();
-    HWND canvasHwnd = (HWND)App::getFull()->canvas->winId();
-    SetWindowPos(hwnd, canvasHwnd, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+    lower();
+    //HWND hwnd = (HWND)winId();
+    //HWND canvasHwnd = (HWND)App::getFull()->canvas->winId();
+    //SetWindowPos(hwnd, canvasHwnd, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
     event->ignore();
     emit mousePress(event);
     if (!event->isAccepted()) {
         addShape(event->pos());
+        emit mousePress(event); //不然新添加的Shape收不到鼠标按下事件
     }
 }
 

@@ -5,7 +5,7 @@
 #include "../WinBoard.h"
 #include "../Tool/ToolSub.h"
 
- ShapeEllipse::ShapeEllipse(const QPoint& pos, QObject* parent) : ShapeBase(pos,parent)
+ ShapeEllipse::ShapeEllipse(QObject* parent) : ShapeBase(parent)
  {
  }
 

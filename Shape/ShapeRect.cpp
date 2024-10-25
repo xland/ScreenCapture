@@ -11,14 +11,13 @@
 #include "../WinFull.h"
 #include "ShapeDragger.h"
 
-ShapeRect::ShapeRect(const QPoint& pos,QObject* parent) : ShapeBase(pos,parent)
+ShapeRect::ShapeRect(QObject* parent) : ShapeBase(parent)
 {
     auto full = App::getFull();
     connect(full->board, &WinBoard::mouseDrag, this, &ShapeRect::mouseDrag);
     connect(full->board, &WinBoard::mouseMove, this, &ShapeRect::mouseMove);
     connect(full->board, &WinBoard::mousePress, this, &ShapeRect::mousePress);
     connect(full->board, &WinBoard::mouseRelease, this, &ShapeRect::mouseRelease);
-    shape.setTopLeft(pos);
 
     //isFill = full->toolSub->getSelectState("rectFill");
     //color = full->toolSub->getColor();
@@ -150,14 +149,15 @@ void ShapeRect::mouseMove(QMouseEvent* event)
 }
 void ShapeRect::mousePress(QMouseEvent* event)
 {
+    if (state == ShapeState::temp) {
+        shape.setTopLeft(event->pos());
+        shape.setBottomRight(event->pos());
+        hoverDraggerIndex = 4;
+    }
     if (hoverDraggerIndex >= 0) {
         state = (ShapeState)((int)ShapeState::sizing0 + hoverDraggerIndex);
-        if (state == ShapeState::sizing0) {
-            startPos = shape.bottomRight();
-        }
-        else if (state == ShapeState::sizing1) {
-            startPos = shape.bottomLeft();
-        }
+        topLeft = shape.topLeft();
+        rightBottom = shape.bottomRight();
         onActived(this);
         event->accept();
     }
@@ -204,14 +204,44 @@ void ShapeRect::mouseDrag(QMouseEvent* event)
     //}
     // 
     
-    if (state == ShapeState::sizing0 || state == ShapeState::sizing4) {
+    if (state == ShapeState::sizing0) {
         auto pos = event->pos();
-        shape.setCoords(pos.x(), pos.y(), startPos.x(), startPos.y());
+        shape.setCoords(pos.x(), pos.y(), rightBottom.x(), rightBottom.y());
         shape = shape.normalized();
     }
     else if (state == ShapeState::sizing1) {
         auto pos = event->pos();
-        shape.setY(pos.y());
+        shape.setCoords(topLeft.x(), pos.y(), rightBottom.x(), rightBottom.y());
+        shape = shape.normalized();
+    }
+    else if (state == ShapeState::sizing2) {
+        auto pos = event->pos();
+        shape.setCoords(topLeft.x(), pos.y(), pos.x(), rightBottom.y());
+        shape = shape.normalized();
+    }
+    else if (state == ShapeState::sizing3) {
+        auto pos = event->pos();
+        shape.setCoords(topLeft.x(), topLeft.y(), pos.x(), rightBottom.y());
+        shape = shape.normalized();
+    }
+    else if (state == ShapeState::sizing4) {
+        auto pos = event->pos();
+        shape.setCoords(topLeft.x(), topLeft.y(),pos.x(), pos.y());
+        shape = shape.normalized();
+    }
+    else if (state == ShapeState::sizing5) {
+        auto pos = event->pos();
+        shape.setCoords(topLeft.x(), topLeft.y(), rightBottom.x(), pos.y());
+        shape = shape.normalized();
+    }
+    else if (state == ShapeState::sizing6) {
+        auto pos = event->pos();
+        shape.setCoords(pos.x(), topLeft.y(), rightBottom.x(), pos.y());
+        shape = shape.normalized();
+    }
+    else if (state == ShapeState::sizing7) {
+        auto pos = event->pos();
+        shape.setCoords(pos.x(), topLeft.y(), rightBottom.x(), rightBottom.y());
         shape = shape.normalized();
     }
     App::getFull()->canvas->update();

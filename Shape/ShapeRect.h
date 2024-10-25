@@ -8,7 +8,7 @@ class ShapeRect:public ShapeBase
 {
     Q_OBJECT
 public:
-    ShapeRect(const QPoint& pos,QObject* parent = nullptr);
+    ShapeRect(QObject* parent = nullptr);
     ~ShapeRect();
     void paint(QPainter* painter) override;
 public:
@@ -26,5 +26,5 @@ private:
     void hoverRectDragger(QMouseEvent* event);
     void contains(QMouseEvent* event);
 private:
-    QPointF posPress;
+    QPoint topLeft, rightBottom,pressPos;
 };

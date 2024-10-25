@@ -8,15 +8,14 @@ class ShapeBase:public QObject
 {
     Q_OBJECT
 public:
-    ShapeBase(const QPoint& pos,QObject* parent = nullptr);
+    ShapeBase(QObject* parent = nullptr);
     virtual ~ShapeBase();
     virtual void paint(QPainter* painter) = 0;
 signals:
     void onActived(ShapeBase* e);
 public:
     int draggerSize{ 8 };
-    ShapeState state{ ShapeState::sizing4 };
-    QPoint startPos;
+    ShapeState state{ ShapeState::temp };
     int hoverDraggerIndex{ -1 };
     std::vector<QRect> draggers;
 };

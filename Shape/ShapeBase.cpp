@@ -1,6 +1,6 @@
 #include "ShapeBase.h"
 
-ShapeBase::ShapeBase(const QPoint& pos,QObject* parent):QObject(parent), startPos{pos}
+ShapeBase::ShapeBase(QObject* parent):QObject(parent)
 {
     // setAttribute(Qt::WA_TransparentForMouseEvents, true);
 }
