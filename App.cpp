@@ -82,6 +82,7 @@ void App::start()
 {
     if (full) return;
     full = std::make_unique<WinFull>();
+    full->init();
     nativeEventFilter = std::make_unique<NativeEventFilter>();
     qApp->installNativeEventFilter(nativeEventFilter.get());
 }

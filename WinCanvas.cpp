@@ -39,11 +39,10 @@ void WinCanvas::onShapeHover(ShapeBase* shape)
 
 void WinCanvas::paintEvent(QPaintEvent* event)
 {
-    auto board = App::getFullBoard();
-    if (!board) return;
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
     painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
+    auto board = App::getFullBoard();
     for (size_t i = 0; i < board->shapes.size(); i++)
     {
         if (board->shapes[i]->state >= ShapeState::sizing0) {

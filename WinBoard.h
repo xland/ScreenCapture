@@ -40,11 +40,8 @@ protected:
     void mouseReleaseEvent(QMouseEvent* event) override;
     void showEvent(QShowEvent* event) override;
 private:
-    void initImgs();
 private:
     qreal maskStroke{ 1.5 };
     bool dragging = false;
     QPoint dragPosition;
-    QImage imgBg;
-    QPixmap desktopImg;
 };

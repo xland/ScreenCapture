@@ -5,6 +5,7 @@
 #include <vector>
 #include <qwidget.h>
 #include <qobject.h>
+#include <qimage.h>
 #include "State.h"
 
 class WinBoard;
@@ -20,6 +21,7 @@ class WinFull :public QObject
 public:
 	WinFull(QObject* parent = nullptr);
 	~WinFull();
+	void init();
 	void close();
 public:
 	State state{ State::start };
@@ -31,8 +33,10 @@ public:
 	WinBoard* board;
 	WinCanvas* canvas;
 	WinMask* mask;
+	QPixmap bgImg;
 private:
 	void initSize();
+	void initBgImg();
 	void createNativeWindow();
 	void createWidget();
 	void createTool();
