@@ -15,8 +15,7 @@ ShapeEllipse::~ShapeEllipse()
 
 void ShapeEllipse::paintShape(QPainter* painter)
 {
-	auto half{ strokeWidth / 2 };
-	painter->drawEllipse(shape.adjusted(-half, -half, half, half));
+	painter->drawEllipse(shape);
 }
 
 void ShapeEllipse::mouseOnShape(QMouseEvent* event)
@@ -34,14 +33,16 @@ void ShapeEllipse::mouseOnShape(QMouseEvent* event)
         }
     }
     else {
-        QRectF outerRect = shape.adjusted(-strokeWidth, -strokeWidth, strokeWidth, strokeWidth);
+        float half{ strokeWidth / 2.f };
+        QRectF outerRect = shape.adjusted(-half, -half, half, half);
         int spanX{ pos.x() - center.x() }, spanY{ pos.y() - center.y() };
-        double normalizedX = spanX / static_cast<double>(outerRect.width() / 2);
-        double normalizedY = spanY / static_cast<double>(outerRect.height() / 2);
+        float normalizedX = spanX / static_cast<double>(outerRect.width() / 2);
+        float normalizedY = spanY / static_cast<double>(outerRect.height() / 2);
         auto flag = (normalizedX * normalizedX + normalizedY * normalizedY <= 1.0);
         if (flag) {
-            normalizedX = spanX / static_cast<double>(shape.width() / 2);
-            normalizedY = spanY / static_cast<double>(shape.height() / 2);
+            QRectF innerRect = shape.adjusted(half, half, -half, -half);
+            normalizedX = spanX / static_cast<double>(innerRect.width() / 2);
+            normalizedY = spanY / static_cast<double>(innerRect.height() / 2);
             flag = (normalizedX * normalizedX + normalizedY * normalizedY <= 1.0);
             if (!flag) {
                 hoverDraggerIndex = 8;
