@@ -52,6 +52,18 @@ WinBoard* App::getFullBoard()
     return full.get()->board;
 }
 
+WinCanvas* App::getFullCanvas()
+{
+    if (!full.get()) return nullptr;
+    return full.get()->canvas;
+}
+
+WinMask* App::getFullMask()
+{
+    if (!full.get()) return nullptr;
+    return full.get()->mask;
+}
+
 void App::disposeFull()
 {
     full.reset();

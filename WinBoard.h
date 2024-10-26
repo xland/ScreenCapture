@@ -43,7 +43,6 @@ protected:
     void showEvent(QShowEvent* event) override;
 private:
     void initImgs();
-    void onShapeActivate(ShapeBase* shape);
 private:
     qreal maskStroke{ 1.5 };
     bool dragging = false;

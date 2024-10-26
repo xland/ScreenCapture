@@ -6,6 +6,7 @@
 #include <QGraphicsPathItem>
 #include <qpen.h>
 #include <qbrush.h>
+#include <qtimer.h>
 #include "State.h"
 
 class ShapeBase;
@@ -15,10 +16,13 @@ class WinCanvas  : public QWidget
 public:
     WinCanvas(QWidget* parent = nullptr);
     ~WinCanvas();
+    void onShapeHover(ShapeBase* shape);
 public:
 
 protected:
     void paintEvent(QPaintEvent* event) override;
-
 private:
+    void onTimeout();
+private:
+    QTimer* timer;
 };

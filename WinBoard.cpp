@@ -27,21 +27,13 @@ WinBoard::~WinBoard()
 
 void WinBoard::addShape(const QPoint& pos)
 {
-    bool flag{ false };
     for (auto it = shapes.begin(); it != shapes.end(); ) {
-        if ((*it)->state == ShapeState::active) {
-            (*it)->state = ShapeState::ready;
-            flag = true;
-        }
         if ((*it)->state == ShapeState::temp) {
             it = shapes.erase(it);
         }
         else {
             ++it;
         }
-    }
-    if (flag) {
-        update();
     }
     ShapeBase* shape;
     auto full = App::getFull();
@@ -55,22 +47,8 @@ void WinBoard::addShape(const QPoint& pos)
     {
         return;
     }
-    connect(shape, &ShapeBase::onActived, this, &WinBoard::onShapeActivate);
+    connect(shape, &ShapeBase::onHover, App::getFull()->canvas, &WinCanvas::onShapeHover);
     shapes.push_back(shape);
-}
-void WinBoard::onShapeActivate(ShapeBase* shape)
-{
-    for (size_t i = 0; i < shapes.size(); i++)
-    {
-        if (shapes[i] == shape) {
-            continue;
-        }
-        else if (shapes[i]->state != ShapeState::ready && shapes[i]->state != ShapeState::hidden) {
-            shapes[i]->state = ShapeState::ready;
-        }
-    }
-    update();
-    App::getFull()->canvas->update();
 }
 
 void WinBoard::paintEvent(QPaintEvent* event)
@@ -92,6 +70,7 @@ void WinBoard::paintEvent(QPaintEvent* event)
 
 void WinBoard::mousePressEvent(QMouseEvent* event)
 {
+    //lower();
     //HWND hwnd = (HWND)winId();
     //HWND canvasHwnd = (HWND)App::getFull()->canvas->winId();
     //SetWindowPos(hwnd, canvasHwnd, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);

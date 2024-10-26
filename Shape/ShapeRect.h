@@ -11,6 +11,7 @@ public:
     ShapeRect(QObject* parent = nullptr);
     ~ShapeRect();
     void paint(QPainter* painter) override;
+    void paintDragger(QPainter* painter) override;
 public:
     QRect shape;
     bool isFill{ false };
@@ -22,9 +23,9 @@ private:
     void mouseDrag(QMouseEvent* event);
     void mouseRelease(QMouseEvent* event);
     void mouseMove(QMouseEvent* event);
-    void paintDragger(QPainter* painter);
     void hoverRectDragger(QMouseEvent* event);
     void contains(QMouseEvent* event);
+    void resetDragger();
 private:
     QPoint topLeft, rightBottom,pressPos;
 };

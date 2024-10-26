@@ -22,10 +22,19 @@ namespace {
 WinCanvas::WinCanvas(QWidget* parent) : QWidget(parent)
 {
     setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    timer = new QTimer(this);
+    timer->setSingleShot(true);
+    connect(timer, &QTimer::timeout, this, &WinCanvas::onTimeout);
 }
 
 WinCanvas::~WinCanvas()
 {
+}
+
+void WinCanvas::onShapeHover(ShapeBase* shape)
+{
+    update();
+    timer->start(800);
 }
 
 void WinCanvas::paintEvent(QPaintEvent* event)
@@ -37,12 +46,20 @@ void WinCanvas::paintEvent(QPaintEvent* event)
     painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
     for (size_t i = 0; i < board->shapes.size(); i++)
     {
-        if (board->shapes[i]->state != ShapeState::ready &&
-            board->shapes[i]->state != ShapeState::hidden
-            ) {
+        if (board->shapes[i]->state >= ShapeState::sizing0) {
             board->shapes[i]->paint(&painter);
+            break;
+        }
+        if (board->shapes[i]->hoverDraggerIndex >=0) {
+            board->shapes[i]->paintDragger(&painter);
+            break;
         }
     }
+}
+
+void WinCanvas::onTimeout()
+{
+    update();
 }
 
 

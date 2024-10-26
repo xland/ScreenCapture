@@ -18,6 +18,10 @@ ShapeRect::ShapeRect(QObject* parent) : ShapeBase(parent)
     connect(full->board, &WinBoard::mouseMove, this, &ShapeRect::mouseMove);
     connect(full->board, &WinBoard::mousePress, this, &ShapeRect::mousePress);
     connect(full->board, &WinBoard::mouseRelease, this, &ShapeRect::mouseRelease);
+    for (size_t i = 0; i < 8; i++)
+    {
+        draggers.push_back(QRect());
+    }
 
     //isFill = full->toolSub->getSelectState("rectFill");
     //color = full->toolSub->getColor();
@@ -31,22 +35,84 @@ ShapeRect::~ShapeRect()
 void ShapeRect::contains(QMouseEvent* event)
 {
     auto pos = event->pos();
-    if (isFill) {
-        if (shape.contains(pos)) {
-            hoverDraggerIndex = 8;
-            App::getFullBoard()->setCursor(Qt::SizeAllCursor);
-            event->accept();
+    hoverDraggerIndex = -1;
+    auto board = App::getFullBoard();
+    if (draggers[0].contains(pos)) {
+        hoverDraggerIndex = 0;
+        board->setCursor(Qt::SizeFDiagCursor);
+        event->accept();
+    }
+    else if (draggers[1].contains(pos)) {
+        hoverDraggerIndex = 1;
+        board->setCursor(Qt::SizeVerCursor);
+        event->accept();
+    }
+    else if (draggers[2].contains(pos)) {
+        hoverDraggerIndex = 2;
+        board->setCursor(Qt::SizeBDiagCursor);
+        event->accept();
+    }
+    else if (draggers[3].contains(pos)) {
+        hoverDraggerIndex = 3;
+        board->setCursor(Qt::SizeHorCursor);
+        event->accept();
+    }
+    else if (draggers[4].contains(pos)) {
+        hoverDraggerIndex = 4;
+        board->setCursor(Qt::SizeFDiagCursor);
+        event->accept();
+    }
+    else if (draggers[5].contains(pos)) {
+        hoverDraggerIndex = 5;
+        board->setCursor(Qt::SizeVerCursor);
+        event->accept();
+    }
+    else if (draggers[6].contains(pos)) {
+        hoverDraggerIndex = 6;
+        board->setCursor(Qt::SizeBDiagCursor);
+        event->accept();
+    }
+    else if (draggers[7].contains(pos)) {
+        hoverDraggerIndex = 7;
+        board->setCursor(Qt::SizeHorCursor);
+        event->accept();
+    }
+    if (hoverDraggerIndex == -1) {
+        if (isFill) {
+            if (shape.contains(pos)) {
+                hoverDraggerIndex = 8;
+                board->setCursor(Qt::SizeAllCursor);
+                event->accept();
+            }
+        }
+        else {
+            QRectF outerRect = shape.adjusted(-strokeWidth, -strokeWidth, strokeWidth, strokeWidth);
+            if (outerRect.contains(pos) && !shape.contains(pos)) {
+                hoverDraggerIndex = 8;
+                board->setCursor(Qt::SizeAllCursor);
+                event->accept();
+            }
         }
     }
-    else {
-        QRectF outerRect = shape.adjusted(-strokeWidth, -strokeWidth, strokeWidth, strokeWidth);
-        if (outerRect.contains(pos) && !shape.contains(pos)) {
-            hoverDraggerIndex = 8;
-            App::getFullBoard()->setCursor(Qt::SizeAllCursor);
-            event->accept();
-        }
+    if (hoverDraggerIndex > -1) {
+        onHover(this);
     }
 }
+void ShapeRect::resetDragger()
+{
+    auto half{ strokeWidth / 2 };
+    auto rect = shape.adjusted(-half, -half, half, half);
+    auto x{ rect.x() },y{ rect.y() },w{ rect.width() },h{ rect.height() };
+    draggers[0].setRect(x - draggerSize / 2, y - draggerSize / 2, draggerSize, draggerSize);
+    draggers[1].setRect(x + w / 2 - draggerSize / 2, y - draggerSize / 2, draggerSize, draggerSize);
+    draggers[2].setRect(x + w - draggerSize / 2, y - draggerSize / 2, draggerSize, draggerSize);
+    draggers[3].setRect(x + w - draggerSize / 2, y + h / 2 - draggerSize / 2, draggerSize, draggerSize);
+    draggers[4].setRect(x + w - draggerSize / 2, y + h - draggerSize / 2, draggerSize, draggerSize);
+    draggers[5].setRect(x + w / 2 - draggerSize / 2, y + h - draggerSize / 2, draggerSize, draggerSize);
+    draggers[6].setRect(x - draggerSize / 2, y + h - draggerSize / 2, draggerSize, draggerSize);
+    draggers[7].setRect(x - draggerSize / 2, y + h / 2 - draggerSize / 2, draggerSize, draggerSize);
+}
+
 void ShapeRect::hoverRectDragger(QMouseEvent* event)
 {
     auto pos = event->pos();
@@ -107,29 +173,11 @@ void ShapeRect::paint(QPainter* painter)
     }
     auto half{ strokeWidth / 2 };
     painter->drawRect(shape.adjusted(-half, -half, half, half));
-    if (state == ShapeState::active) {
-        paintDragger(painter);
-    }
 }
 void ShapeRect::paintDragger(QPainter* painter)
 {
     painter->setPen(QPen(QBrush(QColor(0, 0, 0)), 1));
     painter->setBrush(Qt::NoBrush);
-    auto half{ strokeWidth / 2 };
-    auto rect = shape.adjusted(-half, -half, half, half);
-    auto x{ rect.x() };
-    auto y{ rect.y() };
-    auto w{ rect.width() };
-    auto h{ rect.height() };
-    draggers.clear();
-    draggers.push_back(QRect(x - draggerSize / 2, y - draggerSize / 2, draggerSize, draggerSize));
-    draggers.push_back(QRect(x + w / 2 - draggerSize / 2, y - draggerSize / 2, draggerSize, draggerSize));
-    draggers.push_back(QRect(x + w - draggerSize / 2, y - draggerSize / 2, draggerSize, draggerSize));
-    draggers.push_back(QRect(x + w - draggerSize / 2, y + h / 2 - draggerSize / 2, draggerSize, draggerSize));
-    draggers.push_back(QRect(x + w - draggerSize / 2, y + h - draggerSize / 2, draggerSize, draggerSize));
-    draggers.push_back(QRect(x + w / 2 - draggerSize / 2, y + h - draggerSize / 2, draggerSize, draggerSize));
-    draggers.push_back(QRect(x - draggerSize / 2, y + h - draggerSize / 2, draggerSize, draggerSize));
-    draggers.push_back(QRect(x - draggerSize / 2, y + h / 2 - draggerSize / 2, draggerSize, draggerSize));
     for (size_t i = 0; i < draggers.size(); i++)
     {
         painter->drawRect(draggers[i]);
@@ -140,12 +188,12 @@ void ShapeRect::mouseMove(QMouseEvent* event)
     if (state == ShapeState::ready) {
         contains(event);
     }
-    else if (state == ShapeState::active) {
-        hoverRectDragger(event);
-        if (hoverDraggerIndex == -1) {
-            contains(event);
-        }
-    }
+    //else if (state == ShapeState::hover) {
+    //    hoverRectDragger(event);
+    //    if (hoverDraggerIndex == -1) {
+    //        contains(event);
+    //    }
+    //}
 }
 void ShapeRect::mousePress(QMouseEvent* event)
 {
@@ -158,8 +206,10 @@ void ShapeRect::mousePress(QMouseEvent* event)
         state = (ShapeState)((int)ShapeState::sizing0 + hoverDraggerIndex);
         topLeft = shape.topLeft();
         rightBottom = shape.bottomRight();
-        onActived(this);
+        pressPos = event->pos();
         event->accept();
+        App::getFullBoard()->update();
+        App::getFullCanvas()->update();
     }
     //else{
     //    posPress = event->pos();
@@ -180,16 +230,11 @@ void ShapeRect::mousePress(QMouseEvent* event)
 }
 void ShapeRect::mouseRelease(QMouseEvent* event)
 {
-    //if (isReady) {
-    //    if (isHover) {
-    //        WinBoard::Get()->shapeDragger->ShowRectDragger(this);
-    //    }        
-    //    return;
-    //}
     if (state >= ShapeState::sizing0) {
-        state = ShapeState::active;
-        auto canvas = App::getFull()->canvas;
-        canvas->update();
+        resetDragger();
+        state = ShapeState::ready;
+        App::getFullBoard()->update();
+        emit onHover(this);
     }
 }
 void ShapeRect::mouseDrag(QMouseEvent* event)
@@ -197,13 +242,6 @@ void ShapeRect::mouseDrag(QMouseEvent* event)
     if (state == ShapeState::ready) {
         return;
     }
-    //if (isMoving) {
-    //    auto span = posPress - shape.topLeft();
-    //    auto pos = event->pos();
-    //    shape.moveTo(pos - span);
-    //}
-    // 
-    
     if (state == ShapeState::sizing0) {
         auto pos = event->pos();
         shape.setCoords(pos.x(), pos.y(), rightBottom.x(), rightBottom.y());
@@ -243,6 +281,12 @@ void ShapeRect::mouseDrag(QMouseEvent* event)
         auto pos = event->pos();
         shape.setCoords(pos.x(), topLeft.y(), rightBottom.x(), rightBottom.y());
         shape = shape.normalized();
+    }
+    else if (state == ShapeState::moving) {
+        auto pos = event->pos();
+        auto span = pos - pressPos;
+        shape.translate(span);
+        pressPos = pos;
     }
     App::getFull()->canvas->update();
     event->accept();

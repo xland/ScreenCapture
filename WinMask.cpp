@@ -1,4 +1,4 @@
-#include <qcursor.h>
+ï»¿#include <qcursor.h>
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsSceneHoverEvent>
 #include <QGraphicsScene>
@@ -20,7 +20,7 @@ namespace {
 
 WinMask::WinMask(QWidget* parent) : QWidget(parent)
 {
-    //±ØĞëµÃÈÃBoard½ÓÊÕÊó±êÊÂ¼ş£¬ÒòÎªMaskµÄÍ¸Ã÷ÇøÓòÃ»°ì·¨´¦ÀíÊó±êÊÂ¼ş
+    //å¿…é¡»å¾—è®©Boardæ¥æ”¶é¼ æ ‡äº‹ä»¶ï¼Œå› ä¸ºMaskçš„é€æ˜åŒºåŸŸæ²¡åŠæ³•å¤„ç†é¼ æ ‡äº‹ä»¶
     setAttribute(Qt::WA_TransparentForMouseEvents, true);
 }
 

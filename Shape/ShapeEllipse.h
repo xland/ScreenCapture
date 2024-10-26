@@ -9,6 +9,7 @@ public:
     ~ShapeEllipse();
     bool contains(const QPoint& point);
     void paint(QPainter* painter) override;
+    void paintDragger(QPainter* painter) override;
     void mousePress(QMouseEvent* event);
     void hoverMove(QMouseEvent* event);
     void mouseRelease(QMouseEvent* event);

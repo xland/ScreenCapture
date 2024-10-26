@@ -17,6 +17,8 @@ public:
 	static QFont* getIconFont();
 	static WinFull* getFull();
 	static WinBoard* getFullBoard();
+	static WinCanvas* getFullCanvas();
+	static WinMask* getFullMask();
 	static void disposeFull();
 	static void dispose();
 	static void start();

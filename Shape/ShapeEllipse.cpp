@@ -23,6 +23,10 @@ void ShapeEllipse::paint(QPainter* painter)
 
 }
 
+void ShapeEllipse::paintDragger(QPainter* painter)
+{
+}
+
 void ShapeEllipse::mousePress(QMouseEvent* event)
 {
     //if (isReady) {

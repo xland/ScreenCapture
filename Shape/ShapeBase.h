@@ -11,8 +11,9 @@ public:
     ShapeBase(QObject* parent = nullptr);
     virtual ~ShapeBase();
     virtual void paint(QPainter* painter) = 0;
+    virtual void paintDragger(QPainter* painter) = 0;
 signals:
-    void onActived(ShapeBase* e);
+    void onHover(ShapeBase* e);
 public:
     int draggerSize{ 8 };
     ShapeState state{ ShapeState::temp };
