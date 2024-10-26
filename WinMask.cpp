@@ -79,13 +79,25 @@ void WinMask::mouseMove(QMouseEvent* event)
 {
     auto full = App::getFull();
     auto pos = event->pos();
-    if (full->state == State::tool)
+    if (full->state == State::start)
+    {
+        for (size_t i = 0; i < full->winRects.size(); i++)
+        {
+            if (full->winRects[i].contains(pos)) {
+                if (maskRect != full->winRects[i]) {
+                    maskRect = full->winRects[i];
+                    update();
+                    break;
+                }
+            }
+        }
+    }
+    else if (full->state == State::tool)
     {
         changeMousePosState(pos.x(), pos.y());
         event->accept();
-        return;
     }
-    if (full->state > State::tool) {
+    else if (full->state > State::tool) {
         changeMousePosState2(pos.x(), pos.y());
         if (mousePosState != -1) {
             event->accept();

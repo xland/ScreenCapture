@@ -1,4 +1,4 @@
-#include <qpainter.h>
+ï»¿#include <qpainter.h>
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsSceneHoverEvent>
 
@@ -134,7 +134,7 @@ void ShapeRect::mousePress(QMouseEvent* event)
         rightBottom = shape.bottomRight();
         pressPos = event->pos();
         event->accept();
-        App::getFullCanvas()->update(); //ËüÏÈÖØ»æ£¬±ÜÃâÉÁË¸
+        App::getFullCanvas()->update(); //å®ƒå…ˆé‡ç»˜ï¼Œé¿å…é—ªçƒ
         App::getFullBoard()->update();
     }
 }
@@ -219,6 +219,14 @@ void ShapeRect::mouseDrag(QMouseEvent* event)
         auto span = pos - pressPos;
         shape.translate(span);
         pressPos = pos;
+    }
+    if (event->modifiers() & Qt::ShiftModifier) {
+        if (shape.width() > shape.height()) {
+            shape.setHeight(shape.width());
+        }
+        else {
+            shape.setWidth(shape.height());
+        }
     }
     App::getFullCanvas()->update();
     event->accept();

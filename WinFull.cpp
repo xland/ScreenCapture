@@ -2,6 +2,7 @@
 #include <QApplication>
 #include <format>
 #include <Windowsx.h>
+#include <dwmapi.h>
 
 #include "App.h"
 #include "WinFull.h"
@@ -16,6 +17,8 @@
 WinFull::WinFull(QObject* parent) : QObject(parent)
 {
     initSize();
+    initScreens();
+    enumWinRects();
     initBgImg();
     createNativeWindow();
 }
@@ -162,4 +165,41 @@ LRESULT WinFull::routeWinMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
     //    }            
     //}
     return DefWindowProc(hWnd, msg, wParam, lParam);
+}
+void WinFull::initScreens() {
+    //EnumDisplayMonitors(NULL, NULL, [](HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMonitor, LPARAM lParam)
+    //    {
+    //        MONITORINFO info;
+    //        info.cbSize = sizeof(MONITORINFO);
+    //        GetMonitorInfo(hMonitor, &info);
+    //        POINT leftTop{ .x{info.rcMonitor.left},.y{info.rcMonitor.top} };
+    //        POINT rightBottom{ .x{info.rcMonitor.right},.y{info.rcMonitor.bottom} };
+    //        auto full = (WinFull*)lParam;
+    //        ScreenToClient(full->hwnd, &leftTop);
+    //        ScreenToClient(full->hwnd, &rightBottom);
+    //        full->screens.push_back(QRect(leftTop.x, leftTop.y, rightBottom.x + 1, rightBottom.y + 1));
+    //        return TRUE;
+    //    }, (LPARAM)this);
+}
+void WinFull::enumWinRects()
+{
+    EnumWindows([](HWND hwnd, LPARAM lparam)
+        {
+            if (!hwnd) return TRUE;
+            if (!IsWindowVisible(hwnd)) return TRUE;
+            if (IsIconic(hwnd)) return TRUE;
+            if (GetWindowTextLength(hwnd) < 1) return TRUE;
+            RECT rect;
+            DwmGetWindowAttribute(hwnd, DWMWA_EXTENDED_FRAME_BOUNDS, &rect, sizeof(RECT));
+            if (rect.right - rect.left <= 6 || rect.bottom - rect.top <= 6) {
+                return TRUE;
+            }
+            auto full = (WinFull*)lparam;
+            if (rect.left < full->x) rect.left = full->x;
+            if (rect.right > full->x + full->w) rect.right = full->x + full->w;
+            if (rect.top < full->y) rect.top = full->y;
+            if (rect.bottom > full->y + full->h) rect.bottom = full->y + full->h;
+            full->winRects.push_back(QRect(rect.left - full->x, rect.top - full->y, rect.right - full->x, rect.bottom - full->y));
+            return TRUE;
+        }, (LPARAM)this);
 }

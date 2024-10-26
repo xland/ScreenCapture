@@ -4,6 +4,7 @@
 #include <QMouseEvent>
 #include <QGraphicsItem>
 #include <QGraphicsPathItem>
+#include <dwmapi.h>
 #include <qpen.h>
 #include <qbrush.h>
 #include "State.h"
@@ -27,7 +28,6 @@ protected:
     void showEvent(QShowEvent* event) override;
 
 private:
-
     void changeMaskRect(const QPoint& pos);
     void changeMousePosState(const int& x,const int& y);
     void changeMousePosState2(const int& x, const int& y);
@@ -36,4 +36,5 @@ private:
     qreal maskStroke{ 1.8 };
     QPoint dragPosition;
     int mousePosState{ -1 };
+    std::vector<QRect> winRects;
 };
