@@ -31,28 +31,33 @@ WinCanvas::~WinCanvas()
 {
 }
 
-void WinCanvas::onShapeHover(ShapeBase* shape)
+void WinCanvas::changeShape(ShapeBase* shape, bool forceUpdate)
 {
-    update();
-    timer->start(800);
+    if (shape) {
+        timer->start(800);
+    }
+    if (shape != curShape) {
+        curShape = shape;
+        if (shape) {
+            update();
+        }
+    }
+    if (forceUpdate) {
+        update();
+    }
 }
 
 void WinCanvas::paintEvent(QPaintEvent* event)
 {
+    if (!curShape) return;
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
     painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
-    auto board = App::getFullBoard();
-    for (size_t i = 0; i < board->shapes.size(); i++)
-    {
-        if (board->shapes[i]->state >= ShapeState::sizing0) {
-            board->shapes[i]->paint(&painter);
-            break;
-        }
-        if (board->shapes[i]->hoverDraggerIndex >=0) {
-            board->shapes[i]->paintDragger(&painter);
-            break;
-        }
+    if (curShape->state >= ShapeState::sizing0) {
+        curShape->paint(&painter);
+    }
+    else {
+        curShape->paintDragger(&painter);
     }
 }
 

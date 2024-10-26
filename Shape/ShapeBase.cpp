@@ -1,8 +1,10 @@
 #include "ShapeBase.h"
+#include "App.h"
+#include "WinCanvas.h"
 
 ShapeBase::ShapeBase(QObject* parent):QObject(parent)
 {
-    // setAttribute(Qt::WA_TransparentForMouseEvents, true);
+	App::getFullCanvas()->curShape = this;
 }
 
 ShapeBase::~ShapeBase()

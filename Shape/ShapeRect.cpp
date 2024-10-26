@@ -14,95 +14,22 @@
 ShapeRect::ShapeRect(QObject* parent) : ShapeBase(parent)
 {
     auto full = App::getFull();
-    connect(full->board, &WinBoard::mouseDrag, this, &ShapeRect::mouseDrag);
-    connect(full->board, &WinBoard::mouseMove, this, &ShapeRect::mouseMove);
-    connect(full->board, &WinBoard::mousePress, this, &ShapeRect::mousePress);
-    connect(full->board, &WinBoard::mouseRelease, this, &ShapeRect::mouseRelease);
     for (size_t i = 0; i < 8; i++)
     {
         draggers.push_back(QRect());
     }
-
-    //isFill = full->toolSub->getSelectState("rectFill");
-    //color = full->toolSub->getColor();
-    //strokeWidth = full->toolSub->getStrokeWidth();
+    isFill = full->toolSub->getSelectState("rectFill");
+    color = full->toolSub->getColor();
+    strokeWidth = full->toolSub->getStrokeWidth();
 }
 
 ShapeRect::~ShapeRect()
 {
 }
 
-void ShapeRect::contains(QMouseEvent* event)
-{
-    auto pos = event->pos();
-    hoverDraggerIndex = -1;
-    auto board = App::getFullBoard();
-    if (draggers[0].contains(pos)) {
-        hoverDraggerIndex = 0;
-        board->setCursor(Qt::SizeFDiagCursor);
-        event->accept();
-    }
-    else if (draggers[1].contains(pos)) {
-        hoverDraggerIndex = 1;
-        board->setCursor(Qt::SizeVerCursor);
-        event->accept();
-    }
-    else if (draggers[2].contains(pos)) {
-        hoverDraggerIndex = 2;
-        board->setCursor(Qt::SizeBDiagCursor);
-        event->accept();
-    }
-    else if (draggers[3].contains(pos)) {
-        hoverDraggerIndex = 3;
-        board->setCursor(Qt::SizeHorCursor);
-        event->accept();
-    }
-    else if (draggers[4].contains(pos)) {
-        hoverDraggerIndex = 4;
-        board->setCursor(Qt::SizeFDiagCursor);
-        event->accept();
-    }
-    else if (draggers[5].contains(pos)) {
-        hoverDraggerIndex = 5;
-        board->setCursor(Qt::SizeVerCursor);
-        event->accept();
-    }
-    else if (draggers[6].contains(pos)) {
-        hoverDraggerIndex = 6;
-        board->setCursor(Qt::SizeBDiagCursor);
-        event->accept();
-    }
-    else if (draggers[7].contains(pos)) {
-        hoverDraggerIndex = 7;
-        board->setCursor(Qt::SizeHorCursor);
-        event->accept();
-    }
-    if (hoverDraggerIndex == -1) {
-        if (isFill) {
-            if (shape.contains(pos)) {
-                hoverDraggerIndex = 8;
-                board->setCursor(Qt::SizeAllCursor);
-                event->accept();
-            }
-        }
-        else {
-            QRectF outerRect = shape.adjusted(-strokeWidth, -strokeWidth, strokeWidth, strokeWidth);
-            if (outerRect.contains(pos) && !shape.contains(pos)) {
-                hoverDraggerIndex = 8;
-                board->setCursor(Qt::SizeAllCursor);
-                event->accept();
-            }
-        }
-    }
-    if (hoverDraggerIndex > -1) {
-        onHover(this);
-    }
-}
 void ShapeRect::resetDragger()
 {
-    auto half{ strokeWidth / 2 };
-    auto rect = shape.adjusted(-half, -half, half, half);
-    auto x{ rect.x() },y{ rect.y() },w{ rect.width() },h{ rect.height() };
+    auto x{ shape.x() },y{ shape.y() },w{ shape.width() },h{ shape.height() };
     draggers[0].setRect(x - draggerSize / 2, y - draggerSize / 2, draggerSize, draggerSize);
     draggers[1].setRect(x + w / 2 - draggerSize / 2, y - draggerSize / 2, draggerSize, draggerSize);
     draggers[2].setRect(x + w - draggerSize / 2, y - draggerSize / 2, draggerSize, draggerSize);
@@ -111,54 +38,6 @@ void ShapeRect::resetDragger()
     draggers[5].setRect(x + w / 2 - draggerSize / 2, y + h - draggerSize / 2, draggerSize, draggerSize);
     draggers[6].setRect(x - draggerSize / 2, y + h - draggerSize / 2, draggerSize, draggerSize);
     draggers[7].setRect(x - draggerSize / 2, y + h / 2 - draggerSize / 2, draggerSize, draggerSize);
-}
-
-void ShapeRect::hoverRectDragger(QMouseEvent* event)
-{
-    auto pos = event->pos();
-    if (draggers[0].contains(pos)) {
-        hoverDraggerIndex = 0;
-        App::getFullBoard()->setCursor(Qt::SizeFDiagCursor);
-        event->accept();
-    }
-    else if (draggers[1].contains(pos)) {
-        hoverDraggerIndex = 1;
-        App::getFullBoard()->setCursor(Qt::SizeVerCursor);
-        event->accept();
-    }
-    else if (draggers[2].contains(pos)) {
-        hoverDraggerIndex = 2;
-        App::getFullBoard()->setCursor(Qt::SizeBDiagCursor);
-        event->accept();
-    }
-    else if (draggers[3].contains(pos)) {
-        hoverDraggerIndex = 3;
-        App::getFullBoard()->setCursor(Qt::SizeHorCursor);
-        event->accept();
-    }
-    else if (draggers[4].contains(pos)) {
-        hoverDraggerIndex = 4;
-        App::getFullBoard()->setCursor(Qt::SizeFDiagCursor);
-        event->accept();
-    }
-    else if (draggers[5].contains(pos)) {
-        hoverDraggerIndex = 5;
-        App::getFullBoard()->setCursor(Qt::SizeVerCursor);
-        event->accept();
-    }
-    else if (draggers[6].contains(pos)) {
-        hoverDraggerIndex = 6;
-        App::getFullBoard()->setCursor(Qt::SizeBDiagCursor);
-        event->accept();
-    }
-    else if (draggers[7].contains(pos)) {
-        hoverDraggerIndex = 7;
-        App::getFullBoard()->setCursor(Qt::SizeHorCursor);
-        event->accept();
-    }
-    else {
-        hoverDraggerIndex = -1;
-    }
 }
 
 void ShapeRect::paint(QPainter* painter)
@@ -171,8 +50,7 @@ void ShapeRect::paint(QPainter* painter)
         painter->setPen(QPen(QBrush(color), strokeWidth));
         painter->setBrush(Qt::NoBrush);
     }
-    auto half{ strokeWidth / 2 };
-    painter->drawRect(shape.adjusted(-half, -half, half, half));
+    paintShape(painter);
 }
 void ShapeRect::paintDragger(QPainter* painter)
 {
@@ -183,17 +61,65 @@ void ShapeRect::paintDragger(QPainter* painter)
         painter->drawRect(draggers[i]);
     }
 }
+void ShapeRect::paintShape(QPainter* painter)
+{
+    //auto half{ strokeWidth / 2 };
+    //painter->drawRect(shape.adjusted(-half, -half, half, half));
+    painter->drawRect(shape);
+}
 void ShapeRect::mouseMove(QMouseEvent* event)
 {
-    if (state == ShapeState::ready) {
-        contains(event);
+    if (event->isAccepted()) return;
+    if (state != ShapeState::ready) return;
+    auto pos = event->pos();
+    hoverDraggerIndex = -1;
+    if (draggers[0].contains(pos)) {
+        hoverDraggerIndex = 0;
+        auto board = App::getFullBoard();
+        board->setCursor(Qt::SizeFDiagCursor);
     }
-    //else if (state == ShapeState::hover) {
-    //    hoverRectDragger(event);
-    //    if (hoverDraggerIndex == -1) {
-    //        contains(event);
-    //    }
-    //}
+    else if (draggers[1].contains(pos)) {
+        hoverDraggerIndex = 1;
+        auto board = App::getFullBoard();
+        board->setCursor(Qt::SizeVerCursor);
+    }
+    else if (draggers[2].contains(pos)) {
+        hoverDraggerIndex = 2;
+        auto board = App::getFullBoard();
+        board->setCursor(Qt::SizeBDiagCursor);
+    }
+    else if (draggers[3].contains(pos)) {
+        hoverDraggerIndex = 3;
+        auto board = App::getFullBoard();
+        board->setCursor(Qt::SizeHorCursor);
+    }
+    else if (draggers[4].contains(pos)) {
+        hoverDraggerIndex = 4;
+        auto board = App::getFullBoard();
+        board->setCursor(Qt::SizeFDiagCursor);
+    }
+    else if (draggers[5].contains(pos)) {
+        hoverDraggerIndex = 5;
+        auto board = App::getFullBoard();
+        board->setCursor(Qt::SizeVerCursor);
+    }
+    else if (draggers[6].contains(pos)) {
+        hoverDraggerIndex = 6;
+        auto board = App::getFullBoard();
+        board->setCursor(Qt::SizeBDiagCursor);
+    }
+    else if (draggers[7].contains(pos)) {
+        hoverDraggerIndex = 7;
+        auto board = App::getFullBoard();
+        board->setCursor(Qt::SizeHorCursor);
+    }
+    if (hoverDraggerIndex == -1) {
+        mouseOnShape(event);
+    }
+    if (hoverDraggerIndex > -1) {
+        App::getFullCanvas()->changeShape(this);
+        event->accept();
+    }
 }
 void ShapeRect::mousePress(QMouseEvent* event)
 {
@@ -208,25 +134,9 @@ void ShapeRect::mousePress(QMouseEvent* event)
         rightBottom = shape.bottomRight();
         pressPos = event->pos();
         event->accept();
+        App::getFullCanvas()->update(); //ËüÏÈÖØ»æ£¬±ÜÃâÉÁË¸
         App::getFullBoard()->update();
-        App::getFullCanvas()->update();
     }
-    //else{
-    //    posPress = event->pos();
-    //    hoverDraggerIndex = 4;
-    //    auto toolSub = WinBoard::Get()->toolSub;
-    //    isFill = toolSub->getSelectState("rectFill");
-    //    color = toolSub->getColor();
-    //    strokeWidth = toolSub->getStrokeWidth();
-    //    if (isFill) {
-    //        setBrush(QBrush(color));
-    //        setPen(Qt::NoPen);
-    //    }
-    //    else {
-    //        setPen(QPen(QBrush(color), strokeWidth));
-    //        setBrush(Qt::NoBrush);
-    //    }
-    //}
 }
 void ShapeRect::mouseRelease(QMouseEvent* event)
 {
@@ -234,7 +144,29 @@ void ShapeRect::mouseRelease(QMouseEvent* event)
         resetDragger();
         state = ShapeState::ready;
         App::getFullBoard()->update();
-        emit onHover(this);
+        App::getFullCanvas()->changeShape(this,true);
+        event->accept();
+    }
+}
+void ShapeRect::mouseOnShape(QMouseEvent* event)
+{
+    auto pos = event->pos();
+    if (isFill) {
+        if (shape.contains(pos)) {
+            hoverDraggerIndex = 8;
+            auto board = App::getFullBoard();
+            board->setCursor(Qt::SizeAllCursor);
+        }
+    }
+    else {
+        auto half{ strokeWidth / 2 };
+        QRectF outerRect = shape.adjusted(-half, -half, half, half);
+        QRectF innerRect = shape.adjusted(half, half, -half, -half);
+        if (outerRect.contains(pos) && !innerRect.contains(pos)) {
+            hoverDraggerIndex = 8;
+            auto board = App::getFullBoard();
+            board->setCursor(Qt::SizeAllCursor);
+        }
     }
 }
 void ShapeRect::mouseDrag(QMouseEvent* event)

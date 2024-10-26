@@ -12,6 +12,12 @@ public:
     ~ShapeRect();
     void paint(QPainter* painter) override;
     void paintDragger(QPainter* painter) override;
+    virtual void paintShape(QPainter* painter);
+    void mouseMove(QMouseEvent* event) override;
+    void mouseDrag(QMouseEvent* event) override;
+    void mousePress(QMouseEvent* event) override;
+    void mouseRelease(QMouseEvent* event) override;
+    virtual void mouseOnShape(QMouseEvent* event);
 public:
     QRect shape;
     bool isFill{ false };
@@ -19,12 +25,6 @@ public:
     QColor color{ Qt::red };
 protected:
 private:
-    void mousePress(QMouseEvent* event);
-    void mouseDrag(QMouseEvent* event);
-    void mouseRelease(QMouseEvent* event);
-    void mouseMove(QMouseEvent* event);
-    void hoverRectDragger(QMouseEvent* event);
-    void contains(QMouseEvent* event);
     void resetDragger();
 private:
     QPoint topLeft, rightBottom,pressPos;

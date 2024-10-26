@@ -113,10 +113,6 @@ void WinFull::createWidget()
     processWidget(canvas);
     mask = new WinMask();
     processWidget(mask);
-    connect(board, &WinBoard::mouseDrag, mask, &WinMask::mouseDrag);
-    connect(board, &WinBoard::mouseMove, mask, &WinMask::mouseMove);
-    connect(board, &WinBoard::mousePress, mask, &WinMask::mousePress);
-    connect(board, &WinBoard::mouseRelease, mask, &WinMask::mouseRelease);
 }
 void WinFull::createTool()
 {

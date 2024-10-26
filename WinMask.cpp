@@ -82,11 +82,13 @@ void WinMask::mouseMove(QMouseEvent* event)
     if (full->state == State::tool)
     {
         changeMousePosState(pos.x(), pos.y());
+        event->accept();
         return;
     }
     if (full->state > State::tool) {
         changeMousePosState2(pos.x(), pos.y());
         if (mousePosState != -1) {
+            event->accept();
             return;
         }
     }

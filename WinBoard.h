@@ -24,7 +24,7 @@ class WinBoard : public QWidget
 public:
     WinBoard(QWidget* parent = nullptr);
     ~WinBoard();
-    void addShape(const QPoint& pos);
+    ShapeBase* addShape();
 public:
     std::vector<ShapeBase*> shapes;
     HWND hwnd{nullptr};

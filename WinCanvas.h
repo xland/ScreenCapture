@@ -16,7 +16,8 @@ class WinCanvas  : public QWidget
 public:
     WinCanvas(QWidget* parent = nullptr);
     ~WinCanvas();
-    void onShapeHover(ShapeBase* shape);
+    void changeShape(ShapeBase* shape,bool forceUpdate=false);
+    ShapeBase* curShape;
 public:
 
 protected:

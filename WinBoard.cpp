@@ -25,7 +25,7 @@ WinBoard::~WinBoard()
 {
 }
 
-void WinBoard::addShape(const QPoint& pos)
+ShapeBase* WinBoard::addShape()
 {
     for (auto it = shapes.begin(); it != shapes.end(); ) {
         if ((*it)->state == ShapeState::temp) {
@@ -45,10 +45,10 @@ void WinBoard::addShape(const QPoint& pos)
     }
     else
     {
-        return;
+        return nullptr;
     }
-    connect(shape, &ShapeBase::onHover, App::getFullCanvas(), &WinCanvas::onShapeHover);
     shapes.push_back(shape);
+    return shape;
 }
 
 void WinBoard::paintEvent(QPaintEvent* event)
@@ -72,10 +72,16 @@ void WinBoard::mousePressEvent(QMouseEvent* event)
 {
     //lower(); //不如native event fillter
     event->ignore();
-    emit mousePress(event);
+    App::getFullMask()->mousePress(event);
+    if (event->isAccepted()) return;
+    for (int i = shapes.size() - 1; i >= 0; i--)
+    {
+        if (event->isAccepted()) return;
+        shapes[i]->mousePress(event);
+    }
     if (!event->isAccepted()) {
-        addShape(event->pos());
-        emit mousePress(event); //不然新添加的Shape收不到鼠标按下事件
+        auto shape = addShape();
+        shape->mousePress(event); //不然新添加的Shape收不到鼠标按下事件
     }
 }
 
@@ -83,17 +89,41 @@ void WinBoard::mouseMoveEvent(QMouseEvent* event)
 {
     event->ignore();
     if (event->buttons() == Qt::NoButton) {
-        emit mouseMove(event);
+        App::getFullMask()->mouseMove(event);
+        if (event->isAccepted()) return;
+        for (int i = shapes.size()-1; i >=0; i--)
+        {
+            if (event->isAccepted()) return;
+            shapes[i]->mouseMove(event);
+        }
+        if (!event->isAccepted()) {
+            App::getFullCanvas()->changeShape(nullptr);
+        }
     }
     else {
-        emit mouseDrag(event);
+        App::getFullMask()->mouseDrag(event);
+        if (event->isAccepted()) return;
+        for (int i = shapes.size() - 1; i >= 0; i--)
+        {
+            if (event->isAccepted()) return;
+            shapes[i]->mouseDrag(event);
+        }
     }
 }
 
 void WinBoard::mouseReleaseEvent(QMouseEvent* event)
 {
     event->ignore();
-    emit mouseRelease(event);
+    App::getFullMask()->mouseRelease(event);
+    if (event->isAccepted()) return;
+    for (int i = shapes.size() - 1; i >= 0; i--)
+    {
+        if (event->isAccepted()) return;
+        shapes[i]->mouseRelease(event);
+    }
+    if (!event->isAccepted()) {
+        App::getFullCanvas()->changeShape(nullptr);
+    }
 }
 
 void WinBoard::showEvent(QShowEvent* event)
