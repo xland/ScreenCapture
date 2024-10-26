@@ -288,6 +288,6 @@ void ShapeRect::mouseDrag(QMouseEvent* event)
         shape.translate(span);
         pressPos = pos;
     }
-    App::getFull()->canvas->update();
+    App::getFullCanvas()->update();
     event->accept();
 }

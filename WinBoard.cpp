@@ -47,7 +47,7 @@ void WinBoard::addShape(const QPoint& pos)
     {
         return;
     }
-    connect(shape, &ShapeBase::onHover, App::getFull()->canvas, &WinCanvas::onShapeHover);
+    connect(shape, &ShapeBase::onHover, App::getFullCanvas(), &WinCanvas::onShapeHover);
     shapes.push_back(shape);
 }
 
@@ -70,10 +70,7 @@ void WinBoard::paintEvent(QPaintEvent* event)
 
 void WinBoard::mousePressEvent(QMouseEvent* event)
 {
-    //lower();
-    //HWND hwnd = (HWND)winId();
-    //HWND canvasHwnd = (HWND)App::getFull()->canvas->winId();
-    //SetWindowPos(hwnd, canvasHwnd, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+    //lower(); //不如native event fillter
     event->ignore();
     emit mousePress(event);
     if (!event->isAccepted()) {
@@ -97,19 +94,6 @@ void WinBoard::mouseReleaseEvent(QMouseEvent* event)
 {
     event->ignore();
     emit mouseRelease(event);
-}
-
-void WinBoard::focusInEvent(QFocusEvent* event)
-{
-    event->ignore();
-}
-
-bool WinBoard::event(QEvent* event)
-{
-    if (event->type() == QEvent::WindowActivate) {
-        return true; // 返回 true 表示已处理该事件，Qt 将不再执行默认行为
-    }
-    return QWidget::event(event);
 }
 
 void WinBoard::showEvent(QShowEvent* event)
