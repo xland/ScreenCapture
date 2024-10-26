@@ -35,7 +35,6 @@ public:
 	WinMask* mask;
 	QPixmap bgImg;
 	std::vector<QRect> screens;
-	std::vector<QRect> winRects;
 private:
 	void initSize();
 	void initBgImg();
@@ -45,7 +44,6 @@ private:
 	void processWidget(QWidget* tar);
 	void processTool(QWidget* tar);
 	void initScreens();
-	void enumWinRects();
 	static LRESULT CALLBACK routeWinMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 private:
 };

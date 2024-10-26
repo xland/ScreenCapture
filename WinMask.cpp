@@ -2,6 +2,7 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsSceneHoverEvent>
 #include <QGraphicsScene>
+#include <qscreen.h>
 
 #include "App.h"
 #include "WinMask.h"
@@ -20,6 +21,7 @@ namespace {
 
 WinMask::WinMask(QWidget* parent) : QWidget(parent)
 {
+    enumWinRects();
     //必须得让Board接收鼠标事件，因为Mask的透明区域没办法处理鼠标事件
     setAttribute(Qt::WA_TransparentForMouseEvents, true);
 }
@@ -31,20 +33,21 @@ WinMask::~WinMask()
 void WinMask::paintEvent(QPaintEvent* event)
 {
     auto full = App::getFull();
-    if (!full) return;
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
     painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
     painter.setPen(QPen(QBrush(QColor(22, 119, 255)), maskStroke));
     painter.setBrush(QBrush(QColor(0, 0, 0, 120)));
     p.clear();
-    p.addRect(-16, -16, full->w + 16, full->h +16);
+    p.addRect(full->x-16, full->x-16, full->w + 16, full->h + 16);
     p.addRect(maskRect);
     painter.drawPath(p);
+    qDebug() << "paint";
 }
 
 void WinMask::showEvent(QShowEvent* event)
 {
+    auto w{ this->width() };
 }
 
 void WinMask::mousePress(QMouseEvent* event)
@@ -81,16 +84,18 @@ void WinMask::mouseMove(QMouseEvent* event)
     auto pos = event->pos();
     if (full->state == State::start)
     {
-        for (size_t i = 0; i < full->winRects.size(); i++)
+        for (size_t i = 0; i < winRects.size(); i++)
         {
-            if (full->winRects[i].contains(pos)) {
-                if (maskRect != full->winRects[i]) {
-                    maskRect = full->winRects[i];
+            if (winRects[i].contains(pos)) {
+                if (maskRect != winRects[i]) {
+                    maskRect = winRects[i];
                     update();
-                    break;
+                    qDebug() << "update";
                 }
+                break;
             }
         }
+        event->accept();
     }
     else if (full->state == State::tool)
     {
@@ -155,7 +160,27 @@ void WinMask::mouseRelease(QMouseEvent* event)
          return;
      }
 }
-
+void WinMask::enumWinRects()
+{
+    EnumWindows([](HWND hwnd, LPARAM lparam)
+        {
+            if (!hwnd) return TRUE;
+            if (!IsWindowVisible(hwnd)) return TRUE;
+            if (IsIconic(hwnd)) return TRUE;
+            if (GetWindowTextLength(hwnd) < 1) return TRUE;
+            RECT rect;
+            DwmGetWindowAttribute(hwnd, DWMWA_EXTENDED_FRAME_BOUNDS, &rect, sizeof(RECT));
+            if (rect.right - rect.left <= 6 || rect.bottom - rect.top <= 6) {
+                return TRUE;
+            }
+            auto mask = (WinMask*)lparam;
+            auto scale = mask->screen()->devicePixelRatio();
+            //auto tl = mask->mapFromParent(QPoint(rect.left, rect.top));
+            //auto br = mask->mapFromParent(QPoint(rect.right, rect.bottom));
+            mask->winRects.push_back(QRect(QPoint(rect.left/ scale, rect.top/ scale), QPoint(rect.right/ scale, rect.bottom/ scale)));
+            return TRUE;
+        }, (LPARAM)this);
+}
 void WinMask::changeMaskRect(const QPoint& pos)
 {
     if (mousePosState == 1)
@@ -192,7 +217,6 @@ void WinMask::changeMaskRect(const QPoint& pos)
     }
     update();
 }
-
 void WinMask::changeMousePosState(const int& x, const int& y)
 {
     auto leftX = maskRect.topLeft().x(); auto topY = maskRect.topLeft().y();
@@ -244,7 +268,6 @@ void WinMask::changeMousePosState(const int& x, const int& y)
         mousePosState = 8;
     }
 }
-
 void WinMask::changeMousePosState2(const int& x, const int& y)
 {
     auto x1{ maskRect.x() - maskStroke}, x2{ x1 + maskStroke * 3 };

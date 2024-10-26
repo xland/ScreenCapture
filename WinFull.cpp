@@ -18,7 +18,6 @@ WinFull::WinFull(QObject* parent) : QObject(parent)
 {
     initSize();
     initScreens();
-    enumWinRects();
     initBgImg();
     createNativeWindow();
 }
@@ -126,7 +125,7 @@ void WinFull::createTool()
 }
 void WinFull::processWidget(QWidget* tar)
 {
-    tar->setWindowFlags(Qt::FramelessWindowHint | Qt::Tool);
+    tar->setWindowFlags(Qt::FramelessWindowHint);
     tar->setAttribute(Qt::WA_TranslucentBackground);
     //tar->setAttribute(Qt::WA_Hover);
     //tar->setAttribute(Qt::WA_TransparentForMouseEvents, false);
@@ -180,26 +179,4 @@ void WinFull::initScreens() {
     //        full->screens.push_back(QRect(leftTop.x, leftTop.y, rightBottom.x + 1, rightBottom.y + 1));
     //        return TRUE;
     //    }, (LPARAM)this);
-}
-void WinFull::enumWinRects()
-{
-    EnumWindows([](HWND hwnd, LPARAM lparam)
-        {
-            if (!hwnd) return TRUE;
-            if (!IsWindowVisible(hwnd)) return TRUE;
-            if (IsIconic(hwnd)) return TRUE;
-            if (GetWindowTextLength(hwnd) < 1) return TRUE;
-            RECT rect;
-            DwmGetWindowAttribute(hwnd, DWMWA_EXTENDED_FRAME_BOUNDS, &rect, sizeof(RECT));
-            if (rect.right - rect.left <= 6 || rect.bottom - rect.top <= 6) {
-                return TRUE;
-            }
-            auto full = (WinFull*)lparam;
-            if (rect.left < full->x) rect.left = full->x;
-            if (rect.right > full->x + full->w) rect.right = full->x + full->w;
-            if (rect.top < full->y) rect.top = full->y;
-            if (rect.bottom > full->y + full->h) rect.bottom = full->y + full->h;
-            full->winRects.push_back(QRect(rect.left - full->x, rect.top - full->y, rect.right - full->x, rect.bottom - full->y));
-            return TRUE;
-        }, (LPARAM)this);
 }
