@@ -19,10 +19,10 @@ public:
 	void mouseRelease(QMouseEvent* event);
 	void mouseMove(QMouseEvent* event);
 public:
-	QRectF maskRect;
+	QRect maskRect;
 private:
-	QPainter painter;
+	//QPainter painter;
 	QPainterPath p;
-	QPointF posPress;
+	QPoint posPress;
 	qreal maskStroke{ 1.8 };
 };

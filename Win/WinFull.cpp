@@ -53,6 +53,8 @@ WinFull* WinFull::get()
 void WinFull::paintEvent(QPaintEvent* event)
 {
     QPainter painter(this);
+    painter.setRenderHint(QPainter::Antialiasing, true);
+    painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
     layerBoard->paint(&painter);
     layerCanvas->paint(&painter);
     layerMask->paint(&painter);

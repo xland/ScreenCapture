@@ -5,28 +5,36 @@
 
 LayerMask::LayerMask(QObject *parent) : LayerBase(parent)
 {
-	auto winFull = WinFull::get();
-	img = QImage(winFull->bgImg.size(), QImage::Format_ARGB32);
-    img.fill(QColor(0, 0, 0, 0));
-    painter.begin(&img);
-    painter.setRenderHint(QPainter::Antialiasing, true);
-    painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
-    painter.setPen(QPen(QBrush(QColor(22, 119, 255)), maskStroke));
-    painter.setBrush(QBrush(QColor(0, 0, 0, 120)));
+ //   auto winFull = WinFull::get();
+ //   img = winFull->grab().toImage(); //QImage(winFull->bgImg.size(), QImage::Format_ARGB32);
+ //   img.fill(QColor(0, 0, 0, 0));
+ //   painter.begin(&img);
+ //   painter.setRenderHint(QPainter::Antialiasing, true);
+ //   painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
+ //   painter.setPen(QPen(QBrush(QColor(22, 119, 255)), maskStroke));
+ //   painter.setBrush(QBrush(QColor(0, 0, 0, 120)));
 }
 
 LayerMask::~LayerMask()
 {
 }
 
-void LayerMask::paint(QPainter* p)
+void LayerMask::paint(QPainter* painter)
 {
-    p->drawImage(WinFull::get()->rect(), img);
+    auto full = WinFull::get();
+    painter->setPen(QPen(QBrush(QColor(22, 119, 255)), maskStroke));
+    painter->setBrush(QBrush(QColor(0, 0, 0, 120)));
+    p.clear();
+    p.addRect(full->x - 16, full->x - 16, full->w + 16, full->h + 16);
+    p.addRect(maskRect);
+    painter->drawPath(p);
+    //p->drawImage(WinFull::get()->rect(), img);
+
 }
 
 void LayerMask::mousePress(QMouseEvent* event)
 {
-    posPress = event->globalPosition();
+    posPress = event->pos();
     auto full = WinFull::get();
     if (full->state == State::start)
     {
@@ -56,7 +64,7 @@ void LayerMask::mousePress(QMouseEvent* event)
 void LayerMask::mouseDrag(QMouseEvent* event)
 {
     auto full = WinFull::get();
-    auto pos = event->globalPosition();
+    auto pos = event->pos();
     if (full->state == State::mask)
     {
         maskRect.setBottomRight(pos);
@@ -64,7 +72,6 @@ void LayerMask::mouseDrag(QMouseEvent* event)
         p.clear();
         p.addRect(full->x - 16, full->x - 16, full->w + 16, full->h + 16);
         p.addRect(maskRect);
-        painter.drawPath(p);
         full->update();
         return;
     }
