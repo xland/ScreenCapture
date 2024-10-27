@@ -2,6 +2,8 @@
 
 #include "CutMask.h"
 #include "../Win/WinFull.h"
+#include "../Tool/ToolMain.h"
+#include "../Tool/ToolSub.h"
 
 CutMask::CutMask(QWidget* parent) : QWidget(parent)
 {
@@ -36,8 +38,7 @@ void CutMask::mousePress(QMouseEvent* event)
     auto full = WinFull::get();
     if (full->state == State::start)
     {
-        full->state = State::mask;        
-        maskRect.setRect(posPress.x(), posPress.y(), 0, 0);
+        full->state = State::mask;
         event->accept();
         return;
     }
@@ -65,7 +66,7 @@ void CutMask::mouseDrag(QMouseEvent* event)
     auto pos = event->pos();
     if (full->state == State::mask)
     {
-        maskRect.setBottomRight(pos);
+        maskRect.setCoords(posPress.x(), posPress.y(), pos.x(),pos.y());
         update();
         return;
     }
@@ -74,6 +75,21 @@ void CutMask::mouseDrag(QMouseEvent* event)
 void CutMask::mouseRelease(QMouseEvent* event)
 {
     maskRect = maskRect.normalized();
+    auto full = WinFull::get();
+    if (full->state == State::mask)
+    {
+        full->state = State::tool;
+        full->toolMain->show();
+    }
+    else if (full->state == State::tool)
+    {
+        full->toolMain->show();
+    }
+    if (full->state > State::tool && mousePosState > 0) {
+        full->toolMain->show();
+        full->toolSub->show();
+        return;
+    }
 }
 
 void CutMask::mouseMove(QMouseEvent* event)
@@ -108,8 +124,6 @@ void CutMask::mouseMove(QMouseEvent* event)
     }
     setCursor(Qt::CrossCursor);
 }
-
-
 void CutMask::changeMaskRect(const QPoint& pos)
 {
     if (mousePosState == 1)

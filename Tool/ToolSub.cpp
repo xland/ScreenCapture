@@ -1,9 +1,6 @@
 ﻿#include <tuple>
 
 #include "ToolSub.h"
-#include "../WinBoard.h"
-#include "../App.h"
-#include "../WinFull.h"
 #include "ToolMain.h"
 #include "StrokeCtrl.h"
 #include "ColorCtrl.h"

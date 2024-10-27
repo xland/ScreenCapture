@@ -4,10 +4,6 @@
 
 #include "ToolMain.h"
 #include "ToolSub.h"
-#include "../WinBoard.h"
-#include "../WinFull.h"
-#include "../WinMask.h"
-#include "../App.h"
 
 namespace
 {

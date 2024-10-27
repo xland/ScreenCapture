@@ -154,8 +154,8 @@ void WinFull::createNativeWindow()
 void WinFull::initTools()
 {
     cutMask = new CutMask(this);
-    //toolMain = new ToolMain();
-    //toolSub = new ToolSub();
+    toolMain = new ToolMain(this);
+    toolSub = new ToolSub(this);
 }
 void WinFull::processSubWin()
 {

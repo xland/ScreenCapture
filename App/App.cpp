@@ -10,9 +10,9 @@
 #include "../QHotKey/qhotkey.h"
 #include "../Win/WinFull.h"
 
-//#include "../Tool/ToolMain.h"
-//#include "../Tool/ToolSub.h"
-//#include "../Tool/ColorCtrl.h"
+#include "../Tool/ToolMain.h"
+#include "../Tool/ToolSub.h"
+#include "../Tool/ColorCtrl.h"
 
 namespace {
     std::unique_ptr<App> app;
@@ -61,10 +61,10 @@ void App::initConfig()
     }
     QJsonObject jsonObject = document.object();
     auto lang = jsonObject["defaultLang"].toString();
-    //initHotKey(jsonObject);
-    //initFont(jsonObject);
-    //initTool(jsonObject, lang);  
-    //initTray(jsonObject, lang);
+    initHotKey(jsonObject);
+    initFont(jsonObject);
+    initTool(jsonObject, lang);  
+    initTray(jsonObject, lang);
 }
 void App::initFont(const QJsonObject& obj)
 {
@@ -91,15 +91,15 @@ void App::initHotKey(const QJsonObject& obj)
 }
 void App::initTool(const QJsonObject& obj, const QString& lang)
 {
-    //if (obj["toolMain"].isArray()) {
-    //    ToolMain::InitData(obj["toolMain"].toArray(), lang);
-    //}
-    //if (obj["toolSub"].isObject()) {
-    //    ToolSub::InitData(obj["toolSub"].toObject(), lang);
-    //}
-    //if (obj["colorCtrl"].isObject()) {
-    //    ColorCtrl::InitData(obj["colorCtrl"].toObject(), lang);
-    //}
+    if (obj["toolMain"].isArray()) {
+        ToolMain::InitData(obj["toolMain"].toArray(), lang);
+    }
+    if (obj["toolSub"].isObject()) {
+        ToolSub::InitData(obj["toolSub"].toObject(), lang);
+    }
+    if (obj["colorCtrl"].isObject()) {
+        ColorCtrl::InitData(obj["colorCtrl"].toObject(), lang);
+    }
 }
 void App::initTray(const QJsonObject& obj, const QString& lang)
 {
