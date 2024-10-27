@@ -6,7 +6,6 @@
 class LayerBase  : public QObject
 {
 	Q_OBJECT
-
 public:
 	LayerBase(QObject *parent);
 	virtual ~LayerBase();

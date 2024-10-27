@@ -59,9 +59,21 @@ void WinFull::paintEvent(QPaintEvent* event)
 }
 void WinFull::mousePressEvent(QMouseEvent* event)
 {
+    event->ignore();
+    layerMask->mousePress(event);
+    if (event->isAccepted()) return;
 }
 void WinFull::mouseMoveEvent(QMouseEvent* event)
 {
+    event->ignore();
+    if (event->buttons() == Qt::NoButton) {
+        layerMask->mouseMove(event);
+        if (event->isAccepted()) return;
+    }
+    else {
+        layerMask->mouseDrag(event);
+        if (event->isAccepted()) return;
+    }
 }
 void WinFull::mouseReleaseEvent(QMouseEvent* event)
 {
@@ -151,14 +163,9 @@ void WinFull::createTool()
 void WinFull::processWidget()
 {
     setWindowFlags(Qt::FramelessWindowHint);
-    setAttribute(Qt::WA_TranslucentBackground);
-    //tar->setAttribute(Qt::WA_Hover);
-    //tar->setAttribute(Qt::WA_TransparentForMouseEvents, false);
-    setAttribute(Qt::WA_NoSystemBackground, true);
     setAttribute(Qt::WA_QuitOnClose, false);
     setFixedSize(w, h);
     show();
-
     auto widgetHwnd = (HWND)winId();
     SetParent(widgetHwnd, hwnd);
     SetWindowPos(widgetHwnd, nullptr, 0, 0, w, h, SWP_NOZORDER | SWP_SHOWWINDOW);

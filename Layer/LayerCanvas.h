@@ -6,9 +6,9 @@
 class LayerCanvas  : public LayerBase
 {
 	Q_OBJECT
-
 public:
 	LayerCanvas(QObject *parent);
 	~LayerCanvas();
 	void paint(QPainter* painter) override;
+private:
 };
