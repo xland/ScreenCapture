@@ -23,31 +23,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="App.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="WinBoard.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="WinMask.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Tray.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="WinFull.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Shape\ShapeBase.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Shape\ShapeEllipse.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Shape\ShapeRect.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="QHotKey\qhotkey.cpp">
@@ -56,95 +32,50 @@
     <ClCompile Include="QHotKey\qhotkey_win.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Tool\ColorCtrl.cpp">
+    <ClCompile Include="App\App.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Tool\StrokeCtrl.cpp">
+    <ClCompile Include="Tool\CutMask.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Tool\ToolBtn.cpp">
+    <ClCompile Include="App\Tray.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Tool\ToolMain.cpp">
+    <ClCompile Include="Win\WinFull.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Tool\ToolSub.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Shape\ShapeDragger.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="WinCanvas.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="NativeEventFilter.cpp">
+    <ClCompile Include="Win\WinPin.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="App.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="BtnType.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="State.h">
+    <ClInclude Include="App\App.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Shape\ShapeEllipse.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Shape\ShapeState.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Tool\ToolBtn.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Shape\ShapeDragger.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="NativeEventFilter.h">
+    <ClInclude Include="App\State.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <QtMoc Include="WinBoard.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="Tray.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
     <QtMoc Include="QHotKey\qhotkey.h">
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="QHotKey\qhotkey_p.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="Tool\ColorCtrl.h">
+    <QtMoc Include="Win\WinPin.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="Tool\StrokeCtrl.h">
+    <QtMoc Include="Tool\CutMask.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="Tool\ToolMain.h">
+    <QtMoc Include="Win\WinFull.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="Tool\ToolSub.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="Shape\ShapeRect.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="WinMask.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="Shape\ShapeBase.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="WinCanvas.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="WinFull.h">
+    <QtMoc Include="App\Tray.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

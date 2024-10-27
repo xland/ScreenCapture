@@ -5,15 +5,13 @@
 #include <dwmapi.h>
 #include <qscreen.h>
 
-#include "../App/App.h"
 #include "WinFull.h"
-#include "../Layer/LayerBoard.h"
-#include "../Layer/LayerMask.h"
-#include "../Layer/LayerCanvas.h"
+#include "../App/App.h"
 #include "../Shape/ShapeRect.h"
 #include "../Shape/ShapeEllipse.h"
 #include "../Tool/ToolMain.h"
 #include "../Tool/ToolSub.h"
+#include "../Tool/CutMask.h"
 
 namespace {
     WinFull* winFull;
@@ -23,6 +21,8 @@ WinFull::WinFull(QWidget* parent) : QWidget(parent)
 {
     initSize();
     initScreens();
+    initBgImg();
+    initWinRects();
     createNativeWindow();
     setMouseTracking(true);
     setCursor(Qt::CrossCursor);
@@ -34,11 +34,10 @@ void WinFull::init()
 {
     WinFull::dispose();
     winFull = new WinFull();
-    winFull->initBgImg();
-    winFull->initLayers();
-    winFull->processWidget();
+    winFull->processSubWin();
     ShowWindow(winFull->hwnd, SW_SHOW);
     SetForegroundWindow(winFull->hwnd);
+    winFull->initTools();
 }
 void WinFull::dispose()
 {
@@ -55,30 +54,32 @@ void WinFull::paintEvent(QPaintEvent* event)
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
     painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
-    layerBoard->paint(&painter);
-    layerCanvas->paint(&painter);
-    layerMask->paint(&painter);
+    painter.setRenderHint(QPainter::LosslessImageRendering, true);
+    painter.drawPixmap(rect(),bgImg);
 }
 void WinFull::mousePressEvent(QMouseEvent* event)
 {
     event->ignore();
-    layerMask->mousePress(event);
+    cutMask->mousePress(event);
     if (event->isAccepted()) return;
 }
 void WinFull::mouseMoveEvent(QMouseEvent* event)
 {
     event->ignore();
     if (event->buttons() == Qt::NoButton) {
-        layerMask->mouseMove(event);
+        cutMask->mouseMove(event);
         if (event->isAccepted()) return;
     }
     else {
-        layerMask->mouseDrag(event);
+        cutMask->mouseDrag(event);
         if (event->isAccepted()) return;
     }
 }
 void WinFull::mouseReleaseEvent(QMouseEvent* event)
 {
+    event->ignore();
+    cutMask->mouseRelease(event);
+    if (event->isAccepted()) return;
 }
 void WinFull::showEvent(QShowEvent* event)
 {
@@ -106,7 +107,8 @@ void WinFull::initBgImg()
         if (pos.x() == 0 && pos.y() == 0)
         {
             auto dpr = screen->devicePixelRatio();
-            winFull->bgImg = screen->grabWindow(0, x / dpr, y / dpr, w / dpr, h / dpr).toImage();
+            bgImg = screen->grabWindow(0, x / dpr, y / dpr, w / dpr, h / dpr);
+            scaleFactor = dpr;
             break;
         }
     }
@@ -149,20 +151,13 @@ void WinFull::createNativeWindow()
     hwnd = CreateWindowEx(NULL, clsName.c_str(), L"ScreenCapture", style,
         x, y, w, h, NULL, NULL, instance, NULL);
 }
-void WinFull::initLayers()
+void WinFull::initTools()
 {
-    layerBoard = new LayerBoard(this);
-    layerCanvas = new LayerCanvas(this);
-    layerMask = new LayerMask(this);
-}
-void WinFull::createTool()
-{
+    cutMask = new CutMask(this);
     //toolMain = new ToolMain();
     //toolSub = new ToolSub();
-    //processTool(toolMain);
-    //processTool(toolSub);
 }
-void WinFull::processWidget()
+void WinFull::processSubWin()
 {
     setWindowFlags(Qt::FramelessWindowHint);
     setAttribute(Qt::WA_QuitOnClose, false);
@@ -202,6 +197,26 @@ LRESULT WinFull::routeWinMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
         }            
     }
     return DefWindowProc(hWnd, msg, wParam, lParam);
+}
+void WinFull::initWinRects()
+{
+    EnumWindows([](HWND hwnd, LPARAM lparam)
+        {
+            if (!hwnd) return TRUE;
+            if (!IsWindowVisible(hwnd)) return TRUE;
+            if (IsIconic(hwnd)) return TRUE;
+            if (GetWindowTextLength(hwnd) < 1) return TRUE;
+            RECT rect;
+            DwmGetWindowAttribute(hwnd, DWMWA_EXTENDED_FRAME_BOUNDS, &rect, sizeof(RECT));
+            if (rect.right - rect.left <= 6 || rect.bottom - rect.top <= 6) {
+                return TRUE;
+            }
+            auto self = (WinFull*)lparam;
+            auto sf = self->scaleFactor;
+            auto l{ rect.left - self->x }, t{ rect.top - self->y }, r{ rect.right - self->x }, b{ rect.bottom - self->y };
+            self->winRects.push_back(QRect(QPoint(l/sf, t/sf), QPoint(r/sf, b/sf)));
+            return TRUE;
+        }, (LPARAM)this);
 }
 void WinFull::initScreens() {
     //EnumDisplayMonitors(NULL, NULL, [](HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMonitor, LPARAM lParam)

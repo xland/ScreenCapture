@@ -9,9 +9,7 @@
 
 #include "../App/State.h"
 
-class LayerBoard;
-class LayerCanvas;
-class LayerMask;
+class CutMask;
 class ToolMain;
 class ToolSub;
 class ShapeDragger;
@@ -28,15 +26,15 @@ public:
 public:
 	State state{ State::start };
 	HWND hwnd;
+	float scaleFactor{1.0f};
 	int x, y, w, h;
 	ToolMain* toolMain;
 	ToolSub* toolSub;
 	ShapeDragger* shapeDragger;
-	LayerBoard* layerBoard;
-	LayerCanvas* layerCanvas;
-	LayerMask* layerMask;
-	QImage bgImg;
+	CutMask* cutMask;
+	QPixmap bgImg;
 	std::vector<QRect> screens;
+	std::vector<QRect> winRects;
 protected:
 	void paintEvent(QPaintEvent* event) override;
 	void mousePressEvent(QMouseEvent* event) override;
@@ -44,13 +42,13 @@ protected:
 	void mouseReleaseEvent(QMouseEvent* event) override;
 	void showEvent(QShowEvent* event) override;
 private:
+	void initWinRects();
 	void closeNative();
 	void initSize();
 	void initBgImg();
 	void createNativeWindow();
-	void initLayers();
-	void createTool();
-	void processWidget();
+	void initTools();
+	void processSubWin();
 	void processTool(QWidget* tar);
 	void initScreens();
 	static LRESULT CALLBACK routeWinMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);

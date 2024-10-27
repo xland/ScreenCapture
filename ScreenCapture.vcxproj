@@ -113,10 +113,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="App\App.cpp" />
-    <ClCompile Include="Layer\LayerBase.cpp" />
-    <ClCompile Include="Layer\LayerBoard.cpp" />
-    <ClCompile Include="Layer\LayerCanvas.cpp" />
-    <ClCompile Include="Layer\LayerMask.cpp" />
+    <ClCompile Include="Tool\CutMask.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="QHotKey\qhotkey.cpp" />
     <ClCompile Include="QHotKey\qhotkey_win.cpp" />
@@ -128,10 +125,7 @@
     <ClInclude Include="App\App.h" />
     <ClInclude Include="BtnType.h" />
     <QtMoc Include="Win\WinPin.h" />
-    <QtMoc Include="Layer\LayerBoard.h" />
-    <QtMoc Include="Layer\LayerCanvas.h" />
-    <QtMoc Include="Layer\LayerMask.h" />
-    <QtMoc Include="Layer\LayerBase.h" />
+    <QtMoc Include="Tool\CutMask.h" />
     <QtMoc Include="QHotKey\qhotkey_p.h" />
     <QtMoc Include="QHotKey\qhotkey.h" />
     <ClInclude Include="App\State.h" />
