@@ -177,13 +177,6 @@ void ToolMain::mouseMoveEvent(QMouseEvent* event)
     }
 }
 
-void ToolMain::showEvent(QShowEvent* event)
-{
-    //auto cutMask = App::getFull()->mask;
-    //auto pos = cutMask->maskRect.bottomRight();
-    //move(pos.x() - width(), pos.y() + 6);
-}
-
 void ToolMain::leaveEvent(QEvent* event)
 {
     if (hoverIndex != -1)

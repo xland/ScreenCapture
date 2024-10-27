@@ -1,12 +1,15 @@
 #pragma once
 
 #include <QWidget>
+#include "WinBase.h"
 
-class WinPin  : public QWidget
+class WinPin  : public WinBase
 {
 	Q_OBJECT
 
 public:
-	WinPin(QWidget *parent);
+	WinPin(QWidget *parent = nullptr);
 	~WinPin();
+	void showToolMain() override;
+	void showToolSub() override;
 };

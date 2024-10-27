@@ -5,13 +5,12 @@
 #include <vector>
 #include <qwidget.h>
 #include <qobject.h>
-#include <qimage.h>
+
 
 #include "WinBase.h"
 
 
 class CutMask;
-class ShapeDragger;
 class ShapeBase;
 class WinFull : public WinBase
 {
@@ -22,13 +21,13 @@ public:
 	static void init();
 	static void dispose();
 	static WinFull* get();
+	void showToolMain() override;
+	void showToolSub() override;
 public:
 	HWND hwnd;
 	float scaleFactor{1.0f};
 	int x, y, w, h;
-	ShapeDragger* shapeDragger;
 	CutMask* cutMask;
-	QPixmap bgImg;
 	std::vector<QRect> screens;
 	std::vector<QRect> winRects;
 protected:

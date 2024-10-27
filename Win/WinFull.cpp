@@ -42,12 +42,21 @@ void WinFull::init()
 void WinFull::dispose()
 {
     if (winFull) {
-        winFull->close();
+        winFull->closeNative();
     }
 }
 WinFull* WinFull::get()
 {
     return winFull;
+}
+void WinFull::showToolMain()
+{
+    auto pos = cutMask->maskRect.bottomRight();
+    toolMain->move(pos.x() - toolMain->width(), pos.y() + 6);
+    toolMain->show();
+}
+void WinFull::showToolSub()
+{
 }
 void WinFull::paintEvent(QPaintEvent* event)
 {

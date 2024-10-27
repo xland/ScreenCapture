@@ -26,7 +26,6 @@ protected:
 	void mousePressEvent(QMouseEvent* event) override;
 	void mouseMoveEvent(QMouseEvent* event) override;
 	void leaveEvent(QEvent* event) override;
-	void showEvent(QShowEvent* event) override;
 private:
 	int hoverIndex{ -1 };
 	qreal btnW{ 32 };

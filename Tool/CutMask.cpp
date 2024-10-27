@@ -20,6 +20,7 @@ void CutMask::paintEvent(QPaintEvent* event)
 {
     auto full = WinFull::get();
     QPainter painter(this);
+    painter.setRenderHint(QPainter::Antialiasing, true);
     painter.setPen(QPen(QBrush(QColor(22, 119, 255)), maskStroke));
     painter.setBrush(QBrush(QColor(0, 0, 0, 120)));
     p.clear();
@@ -42,22 +43,22 @@ void CutMask::mousePress(QMouseEvent* event)
         event->accept();
         return;
     }
-    //if (full->state == State::tool)
-    //{
-    //    full->toolMain->hide();
-    //    if (mousePosState != 0)
-    //    {
-    //        changeMaskRect(dragPosition);
-    //    }
-    //    event->accept();
-    //    return;
-    //}
-    //if (full->state > State::tool && mousePosState > 0) {
-    //    full->toolMain->hide();
-    //    full->toolSub->hide();
-    //    event->accept();
-    //    return;
-    //}
+    if (full->state == State::tool)
+    {
+        full->toolMain->hide();
+        if (mousePosState != 0)
+        {
+            changeMaskRect(posPress);
+        }
+        event->accept();
+        return;
+    }
+    if (full->state > State::tool && mousePosState > 0) {
+        full->toolMain->hide();
+        full->toolSub->hide();
+        event->accept();
+        return;
+    }
 }
 
 void CutMask::mouseDrag(QMouseEvent* event)
@@ -70,6 +71,25 @@ void CutMask::mouseDrag(QMouseEvent* event)
         update();
         return;
     }
+    if (full->state == State::tool)
+    {
+        if (mousePosState == 0)
+        {
+            auto span = pos - posPress;
+            maskRect.moveTo(maskRect.topLeft() + span);
+            posPress = pos;
+            update();
+        }
+        else
+        {
+            changeMaskRect(pos);
+        }
+        return;
+    }
+    if (full->state > State::tool && mousePosState > 0) {
+        changeMaskRect(pos);
+        return;
+    }
 }
 
 void CutMask::mouseRelease(QMouseEvent* event)
@@ -79,14 +99,14 @@ void CutMask::mouseRelease(QMouseEvent* event)
     if (full->state == State::mask)
     {
         full->state = State::tool;
-        full->toolMain->show();
+        full->showToolMain();
     }
     else if (full->state == State::tool)
     {
-        full->toolMain->show();
+        full->showToolMain();
     }
     if (full->state > State::tool && mousePosState > 0) {
-        full->toolMain->show();
+        full->showToolMain();
         full->toolSub->show();
         return;
     }
