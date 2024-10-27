@@ -2,6 +2,8 @@
 #include <qpushbutton.h>
 #include <qtooltip.h>
 
+#include "../App/App.h"
+#include "../Win/WinBase.h"
 #include "ToolMain.h"
 #include "ToolSub.h"
 
@@ -133,7 +135,7 @@ void ToolMain::paintEvent(QPaintEvent* event)
 void ToolMain::mousePressEvent(QMouseEvent* event)
 {
     if (hoverIndex == -1) return;
-    auto full = App::getFull();
+    auto full = (WinBase*)parent();
     if (hoverIndex == selectIndex)
     {
         selectIndex = -1;
@@ -177,9 +179,9 @@ void ToolMain::mouseMoveEvent(QMouseEvent* event)
 
 void ToolMain::showEvent(QShowEvent* event)
 {
-    auto cutMask = App::getFull()->mask;
-    auto pos = cutMask->maskRect.bottomRight();
-    move(pos.x() - width(), pos.y() + 6);
+    //auto cutMask = App::getFull()->mask;
+    //auto pos = cutMask->maskRect.bottomRight();
+    //move(pos.x() - width(), pos.y() + 6);
 }
 
 void ToolMain::leaveEvent(QEvent* event)

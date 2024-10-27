@@ -1,9 +1,11 @@
 ﻿#include <tuple>
 
+#include "../App/App.h"
 #include "ToolSub.h"
 #include "ToolMain.h"
 #include "StrokeCtrl.h"
 #include "ColorCtrl.h"
+#include "../Win/WinBase.h"
 
 namespace {
 	std::map<State, std::vector<ToolBtn>> btns;
@@ -58,7 +60,7 @@ void ToolSub::InitData(const QJsonObject& obj, const QString& lang)
 
 bool ToolSub::getSelectState(const QString& btnName)
 {
-	auto full = App::getFull();
+	auto full = (WinBase*)parent();;
 	auto& values = btns[full->state];
 	auto it = std::find_if(values.begin(), values.end(), [&btnName](const ToolBtn& item) {
 			return item.name == btnName;
@@ -96,7 +98,7 @@ void ToolSub::paintEvent(QPaintEvent* event)
 	painter.setBrush(Qt::GlobalColor::white);
 	painter.drawRect(rect().adjusted(0, 10, 0, 0));
 
-	auto full = App::getFull();
+	auto full = (WinBase*)parent();
 	auto index = full->toolMain->selectIndex;
 	auto x = 4+ index * 32 + 32 / 2;
 	QPolygon triangle;
@@ -140,7 +142,7 @@ void ToolSub::paintEvent(QPaintEvent* event)
 
 void ToolSub::mousePressEvent(QMouseEvent* event)
 {
-	auto full = App::getFull();
+	auto full = (WinBase*)parent();
 	auto& values = btns[full->state];
 	values[hoverIndex].selected = !values[hoverIndex].selected;
 	update();
@@ -178,7 +180,7 @@ void ToolSub::leaveEvent(QEvent* event)
 
 void ToolSub::showEvent(QShowEvent* event)
 {
-	auto full = App::getFull();
+	auto full = (WinBase*)parent();
 	auto toolMain = full->toolMain;
 	auto toolSub = full->toolSub;
 	auto pos = toolMain->geometry().bottomLeft();

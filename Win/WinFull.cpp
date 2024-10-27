@@ -17,7 +17,7 @@ namespace {
     WinFull* winFull;
 }
 
-WinFull::WinFull(QWidget* parent) : QWidget(parent)
+WinFull::WinFull(QWidget* parent) : WinBase(parent)
 {
     initSize();
     initScreens();
@@ -59,6 +59,7 @@ void WinFull::paintEvent(QPaintEvent* event)
 }
 void WinFull::mousePressEvent(QMouseEvent* event)
 {
+    //setUpdatesEnabled(false);
     event->ignore();
     cutMask->mousePress(event);
     if (event->isAccepted()) return;
@@ -79,6 +80,7 @@ void WinFull::mouseReleaseEvent(QMouseEvent* event)
 {
     event->ignore();
     cutMask->mouseRelease(event);
+    //setUpdatesEnabled(true);
     if (event->isAccepted()) return;
 }
 void WinFull::showEvent(QShowEvent* event)

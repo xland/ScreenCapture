@@ -2,7 +2,7 @@
 #include <QMouseEvent>
 
 #include "ColorCtrl.h"
-#include "../App.h"
+#include "../App/App.h"
 
 namespace {
 	QChar colorIcon;

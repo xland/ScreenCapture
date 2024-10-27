@@ -1,9 +1,10 @@
-#pragma once
+﻿#pragma once
 #include <string>
 #include <memory>
 #include <vector>
 #include <QFont>
 #include <QFontDatabase>
+#include <QJsonObject>
 
 class WinFull;
 class WinBoard;
@@ -15,10 +16,6 @@ public:
 	static void init();
 	static App* get();
 	static QFont* getIconFont();
-	static WinFull* getFull();
-	static WinBoard* getFullBoard();
-	static WinCanvas* getFullCanvas();
-	static WinMask* getFullMask();
 	static void disposeFull();
 	static void dispose();
 	static void start();

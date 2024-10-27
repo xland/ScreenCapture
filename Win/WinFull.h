@@ -7,14 +7,13 @@
 #include <qobject.h>
 #include <qimage.h>
 
-#include "../App/State.h"
+#include "WinBase.h"
+
 
 class CutMask;
-class ToolMain;
-class ToolSub;
 class ShapeDragger;
 class ShapeBase;
-class WinFull : public QWidget
+class WinFull : public WinBase
 {
 	Q_OBJECT
 public:
@@ -24,12 +23,9 @@ public:
 	static void dispose();
 	static WinFull* get();
 public:
-	State state{ State::start };
 	HWND hwnd;
 	float scaleFactor{1.0f};
 	int x, y, w, h;
-	ToolMain* toolMain;
-	ToolSub* toolSub;
 	ShapeDragger* shapeDragger;
 	CutMask* cutMask;
 	QPixmap bgImg;

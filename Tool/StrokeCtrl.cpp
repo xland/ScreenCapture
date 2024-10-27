@@ -4,9 +4,8 @@
 
 #include "../App/App.h"
 #include "StrokeCtrl.h"
-#include "../State.h"
-#include "../WinBoard.h"
-#include "../WinFull.h"
+#include "../App/State.h"
+#include "../Win/WinBase.h"
 #include "ToolSub.h"
 
 StrokeCtrl::StrokeCtrl(QWidget *parent):QSlider(parent)
@@ -61,7 +60,7 @@ void StrokeCtrl::mouseMoveEvent(QMouseEvent* event)
 
 void StrokeCtrl::showEvent(QShowEvent* event)
 {
-    auto full = App::getFull();
+    auto full = (WinBase*)parent()->parent();
     if (full->state == State::rect) {
         setMinimum(1);
         setMaximum(36);
