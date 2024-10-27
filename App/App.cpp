@@ -6,87 +6,45 @@
 #include <QFontDatabase>
 
 #include "App.h"
-#include "QHotKey/qhotkey.h"
-#include "Tool/ToolMain.h"
-#include "Tool/ToolSub.h"
-#include "Tool/ColorCtrl.h"
-
 #include "Tray.h"
-#include "WinFull.h"
-#include "NativeEventFilter.h"
+#include "../QHotKey/qhotkey.h"
+#include "../Win/WinFull.h"
+
+//#include "../Tool/ToolMain.h"
+//#include "../Tool/ToolSub.h"
+//#include "../Tool/ColorCtrl.h"
 
 namespace {
     std::unique_ptr<App> app;
     std::unique_ptr<QFont> iconFont;
     std::unique_ptr<QHotkey> hotkey;
     std::unique_ptr<Tray> tray;
-
-    std::unique_ptr<WinFull> full;
-    std::unique_ptr<NativeEventFilter> nativeEventFilter;
 }
-
 void App::init()
 {
     initConfig();
     start();
 }
-
 App* App::get()
 {
     return app.get();
 }
-
 QFont* App::getIconFont()
 {
     return iconFont.get();
 }
-
-WinFull* App::getFull()
-{
-    return full.get();
-}
-
-WinBoard* App::getFullBoard()
-{
-    if (!full.get()) return nullptr;
-    return full.get()->board;
-}
-
-WinCanvas* App::getFullCanvas()
-{
-    if (!full.get()) return nullptr;
-    return full.get()->canvas;
-}
-
-WinMask* App::getFullMask()
-{
-    if (!full.get()) return nullptr;
-    return full.get()->mask;
-}
-
-void App::disposeFull()
-{
-    full.reset();
-}
-
 void App::dispose()
 {
-    full.reset();
+    WinFull::dispose();
     tray.reset();
     hotkey.reset();
     iconFont.reset();
     app.reset();
 }
-
 void App::start()
 {
-    if (full) return;
-    full = std::make_unique<WinFull>();
-    full->init();
-    nativeEventFilter = std::make_unique<NativeEventFilter>();
-    qApp->installNativeEventFilter(nativeEventFilter.get());
+    WinFull::init();
 }
-
 void App::initConfig()
 {
     QFile file("./config/config.json");
@@ -103,12 +61,11 @@ void App::initConfig()
     }
     QJsonObject jsonObject = document.object();
     auto lang = jsonObject["defaultLang"].toString();
-    initHotKey(jsonObject);
-    initFont(jsonObject);
-    initTool(jsonObject, lang);  
-    initTray(jsonObject, lang);
+    //initHotKey(jsonObject);
+    //initFont(jsonObject);
+    //initTool(jsonObject, lang);  
+    //initTray(jsonObject, lang);
 }
-
 void App::initFont(const QJsonObject& obj)
 {
     if (obj["icon"].isObject()) {
@@ -124,7 +81,6 @@ void App::initFont(const QJsonObject& obj)
         iconFont->setHintingPreference(QFont::PreferNoHinting);
     }
 }
-
 void App::initHotKey(const QJsonObject& obj)
 {
     if (obj["hotKey"].isString()) {
@@ -133,20 +89,18 @@ void App::initHotKey(const QJsonObject& obj)
         QObject::connect(hotkey.get(), &QHotkey::activated, &App::start);
     }
 }
-
 void App::initTool(const QJsonObject& obj, const QString& lang)
 {
-    if (obj["toolMain"].isArray()) {
-        ToolMain::InitData(obj["toolMain"].toArray(), lang);
-    }
-    if (obj["toolSub"].isObject()) {
-        ToolSub::InitData(obj["toolSub"].toObject(), lang);
-    }
-    if (obj["colorCtrl"].isObject()) {
-        ColorCtrl::InitData(obj["colorCtrl"].toObject(), lang);
-    }
+    //if (obj["toolMain"].isArray()) {
+    //    ToolMain::InitData(obj["toolMain"].toArray(), lang);
+    //}
+    //if (obj["toolSub"].isObject()) {
+    //    ToolSub::InitData(obj["toolSub"].toObject(), lang);
+    //}
+    //if (obj["colorCtrl"].isObject()) {
+    //    ColorCtrl::InitData(obj["colorCtrl"].toObject(), lang);
+    //}
 }
-
 void App::initTray(const QJsonObject& obj, const QString& lang)
 {
     if (obj["tray"].isObject()) {

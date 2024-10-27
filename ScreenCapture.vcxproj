@@ -112,48 +112,31 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="App.cpp" />
-    <ClCompile Include="NativeEventFilter.cpp" />
-    <ClCompile Include="WinBoard.cpp" />
-    <ClCompile Include="WinCanvas.cpp" />
-    <ClCompile Include="WinMask.cpp" />
+    <ClCompile Include="App\App.cpp" />
+    <ClCompile Include="Layer\LayerBase.cpp" />
+    <ClCompile Include="Layer\LayerBoard.cpp" />
+    <ClCompile Include="Layer\LayerCanvas.cpp" />
+    <ClCompile Include="Layer\LayerMask.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="QHotKey\qhotkey.cpp" />
     <ClCompile Include="QHotKey\qhotkey_win.cpp" />
-    <ClCompile Include="Shape\ShapeBase.cpp" />
-    <ClCompile Include="Shape\ShapeDragger.cpp" />
-    <ClCompile Include="Shape\ShapeEllipse.cpp" />
-    <ClCompile Include="Shape\ShapeRect.cpp" />
-    <ClCompile Include="Tool\ColorCtrl.cpp" />
-    <ClCompile Include="Tool\StrokeCtrl.cpp" />
-    <ClCompile Include="Tool\ToolBtn.cpp" />
-    <ClCompile Include="Tool\ToolMain.cpp" />
-    <ClCompile Include="Tool\ToolSub.cpp" />
-    <ClCompile Include="Tray.cpp" />
-    <ClCompile Include="WinFull.cpp" />
+    <ClCompile Include="App\Tray.cpp" />
+    <ClCompile Include="Win\WinFull.cpp" />
+    <ClCompile Include="Win\WinPin.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="App.h" />
+    <ClInclude Include="App\App.h" />
     <ClInclude Include="BtnType.h" />
-    <QtMoc Include="WinCanvas.h" />
-    <QtMoc Include="WinMask.h" />
-    <ClInclude Include="NativeEventFilter.h" />
-    <ClInclude Include="Shape\ShapeDragger.h" />
-    <ClInclude Include="Tool\ToolBtn.h" />
-    <QtMoc Include="Tool\ToolSub.h" />
-    <QtMoc Include="Tool\ToolMain.h" />
-    <QtMoc Include="Tool\StrokeCtrl.h" />
-    <QtMoc Include="Tool\ColorCtrl.h" />
+    <QtMoc Include="Win\WinPin.h" />
+    <QtMoc Include="Layer\LayerBoard.h" />
+    <QtMoc Include="Layer\LayerCanvas.h" />
+    <QtMoc Include="Layer\LayerMask.h" />
+    <QtMoc Include="Layer\LayerBase.h" />
     <QtMoc Include="QHotKey\qhotkey_p.h" />
     <QtMoc Include="QHotKey\qhotkey.h" />
-    <QtMoc Include="Shape\ShapeBase.h" />
-    <ClInclude Include="Shape\ShapeEllipse.h" />
-    <QtMoc Include="Shape\ShapeRect.h" />
-    <ClInclude Include="Shape\ShapeState.h" />
-    <ClInclude Include="State.h" />
-    <QtMoc Include="WinFull.h" />
-    <QtMoc Include="Tray.h" />
-    <QtMoc Include="WinBoard.h" />
+    <ClInclude Include="App\State.h" />
+    <QtMoc Include="Win\WinFull.h" />
+    <QtMoc Include="App\Tray.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="CMakeLists.txt" />

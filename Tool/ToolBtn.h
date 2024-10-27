@@ -2,7 +2,7 @@
 #include <qchar.h>
 #include <qstring.h>
 
-#include "../State.h"
+#include "../App/State.h"
 
 class ToolBtn
 {

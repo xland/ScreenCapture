@@ -2,7 +2,7 @@
 #include <QWheelEvent>
 #include <qtooltip.h>
 
-#include "../App.h"
+#include "../App/App.h"
 #include "StrokeCtrl.h"
 #include "../State.h"
 #include "../WinBoard.h"

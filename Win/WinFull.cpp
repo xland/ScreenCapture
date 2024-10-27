@@ -3,48 +3,77 @@
 #include <format>
 #include <Windowsx.h>
 #include <dwmapi.h>
+#include <qscreen.h>
 
-#include "App.h"
+#include "../App/App.h"
 #include "WinFull.h"
-#include "WinBoard.h"
-#include "WinMask.h"
-#include "WinCanvas.h"
-#include "Shape/ShapeRect.h"
-#include "Shape/ShapeEllipse.h"
-#include "Tool/ToolMain.h"
-#include "Tool/ToolSub.h"
+#include "../Layer/LayerBoard.h"
+#include "../Layer/LayerMask.h"
+#include "../Layer/LayerCanvas.h"
+#include "../Shape/ShapeRect.h"
+#include "../Shape/ShapeEllipse.h"
+#include "../Tool/ToolMain.h"
+#include "../Tool/ToolSub.h"
 
-WinFull::WinFull(QObject* parent) : QObject(parent)
+namespace {
+    WinFull* winFull;
+}
+
+WinFull::WinFull(QWidget* parent) : QWidget(parent)
 {
     initSize();
     initScreens();
-    initBgImg();
     createNativeWindow();
+    setMouseTracking(true);
+    setCursor(Qt::CrossCursor);
 }
 WinFull::~WinFull()
 {
-    delete toolMain;
-    delete toolSub;
-    delete board;
-    delete canvas;
-    delete mask;
 }
 void WinFull::init()
 {
-    createWidget();
-    createTool();
-    ShowWindow(hwnd, SW_SHOW);
-    SetForegroundWindow(hwnd);
+    WinFull::dispose();
+    winFull = new WinFull();
+    winFull->initBgImg();
+    winFull->initLayers();
+    winFull->processWidget();
+    ShowWindow(winFull->hwnd, SW_SHOW);
+    SetForegroundWindow(winFull->hwnd);
 }
-void WinFull::close()
+void WinFull::dispose()
 {
-    toolMain->close();
-    toolSub->close();
-    board->close();
-    canvas->close();
-    mask->close();
+    if (winFull) {
+        winFull->close();
+    }
+}
+WinFull* WinFull::get()
+{
+    return winFull;
+}
+void WinFull::paintEvent(QPaintEvent* event)
+{
+    QPainter painter(this);
+    layerBoard->paint(&painter);
+    layerCanvas->paint(&painter);
+    layerMask->paint(&painter);
+}
+void WinFull::mousePressEvent(QMouseEvent* event)
+{
+}
+void WinFull::mouseMoveEvent(QMouseEvent* event)
+{
+}
+void WinFull::mouseReleaseEvent(QMouseEvent* event)
+{
+}
+void WinFull::showEvent(QShowEvent* event)
+{
+}
+void WinFull::closeNative()
+{
+    close();
     DestroyWindow(hwnd);
-    App::disposeFull();
+    delete winFull;
 }
 
 void WinFull::initSize()
@@ -63,8 +92,7 @@ void WinFull::initBgImg()
         if (pos.x() == 0 && pos.y() == 0)
         {
             auto dpr = screen->devicePixelRatio();
-            auto full = App::getFull();
-            bgImg = screen->grabWindow(0, x / dpr, y / dpr, w / dpr, h / dpr);
+            winFull->bgImg = screen->grabWindow(0, x / dpr, y / dpr, w / dpr, h / dpr).toImage();
             break;
         }
     }
@@ -107,34 +135,31 @@ void WinFull::createNativeWindow()
     hwnd = CreateWindowEx(NULL, clsName.c_str(), L"ScreenCapture", style,
         x, y, w, h, NULL, NULL, instance, NULL);
 }
-void WinFull::createWidget()
+void WinFull::initLayers()
 {
-    board = new WinBoard();
-    processWidget(board);
-    canvas = new WinCanvas();
-    processWidget(canvas);
-    mask = new WinMask();
-    processWidget(mask);
+    layerBoard = new LayerBoard(this);
+    layerCanvas = new LayerCanvas(this);
+    layerMask = new LayerMask(this);
 }
 void WinFull::createTool()
 {
-    toolMain = new ToolMain();
-    toolSub = new ToolSub();
-    processTool(toolMain);
-    processTool(toolSub);
+    //toolMain = new ToolMain();
+    //toolSub = new ToolSub();
+    //processTool(toolMain);
+    //processTool(toolSub);
 }
-void WinFull::processWidget(QWidget* tar)
+void WinFull::processWidget()
 {
-    tar->setWindowFlags(Qt::FramelessWindowHint);
-    tar->setAttribute(Qt::WA_TranslucentBackground);
+    setWindowFlags(Qt::FramelessWindowHint);
+    setAttribute(Qt::WA_TranslucentBackground);
     //tar->setAttribute(Qt::WA_Hover);
     //tar->setAttribute(Qt::WA_TransparentForMouseEvents, false);
-    tar->setAttribute(Qt::WA_NoSystemBackground, true);
-    tar->setAttribute(Qt::WA_QuitOnClose, false);
-    tar->setFixedSize(w, h);
-    tar->show();
+    setAttribute(Qt::WA_NoSystemBackground, true);
+    setAttribute(Qt::WA_QuitOnClose, false);
+    setFixedSize(w, h);
+    show();
 
-    auto widgetHwnd = (HWND)tar->winId();
+    auto widgetHwnd = (HWND)winId();
     SetParent(widgetHwnd, hwnd);
     SetWindowPos(widgetHwnd, nullptr, 0, 0, w, h, SWP_NOZORDER | SWP_SHOWWINDOW);
 }
@@ -151,18 +176,22 @@ void WinFull::processTool(QWidget* tar)
 
 LRESULT WinFull::routeWinMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-    //switch (msg)
-    //{
-    //    //case WM_MOUSEMOVE: {
-    //    //    int x = GET_X_LPARAM(lParam);
-    //    //    int y = GET_Y_LPARAM(lParam);
-    //    //    qDebug() << "allen" << x << y;
-    //    //    break;
-    //    //}
-    //    default: {
-    //        break;
-    //    }            
-    //}
+    switch (msg)
+    {
+        //case WM_MOUSEMOVE: {
+        //    int x = GET_X_LPARAM(lParam);
+        //    int y = GET_Y_LPARAM(lParam);
+        //    qDebug() << "allen" << x << y;
+        //    break;
+        //}
+        case WM_CLOSE: {
+            winFull->closeNative();
+            break;
+        }
+        default: {
+            break;
+        }            
+    }
     return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 void WinFull::initScreens() {
