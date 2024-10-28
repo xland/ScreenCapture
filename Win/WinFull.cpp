@@ -12,6 +12,7 @@
 #include "../Tool/ToolMain.h"
 #include "../Tool/ToolSub.h"
 #include "../Tool/CutMask.h"
+#include "../Tool/Canvas.h"
 
 namespace {
     WinFull* winFull;
@@ -63,6 +64,7 @@ void WinFull::showToolSub()
 {
     if (!toolSub) {
         toolSub = new ToolSub(this);
+        canvas = new Canvas(this);
         processTool(toolSub);
     }
     auto pos = toolMain->geometry().bottomLeft();
@@ -84,10 +86,18 @@ void WinFull::paintEvent(QPaintEvent* event)
 }
 void WinFull::mousePressEvent(QMouseEvent* event)
 {
-    //setUpdatesEnabled(false);
     event->ignore();
     cutMask->mousePress(event);
     if (event->isAccepted()) return;
+    for (int i = shapes.size() - 1; i >= 0; i--)
+    {
+        if (event->isAccepted()) return;
+        shapes[i]->mousePress(event);
+    }
+    if (!event->isAccepted()) {
+        auto shape = addShape();
+        shape->mousePress(event); //不然新添加的Shape收不到鼠标按下事件
+    }
 }
 void WinFull::mouseMoveEvent(QMouseEvent* event)
 {
@@ -177,14 +187,6 @@ void WinFull::createNativeWindow()
     auto style{ WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_POPUP };
     hwnd = CreateWindowEx(NULL, clsName.c_str(), L"ScreenCapture", style,
         x, y, w, h, NULL, NULL, instance, NULL);
-}
-void WinFull::initTools()
-{
-    cutMask = new CutMask(this);
-    toolMain = new ToolMain(this);
-    toolSub = new ToolSub(this);
-    processTool(toolMain);
-    processTool(toolSub);
 }
 void WinFull::processSubWin()
 {

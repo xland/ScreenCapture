@@ -1,8 +1,8 @@
 #include <qpainter.h>
 
 #include "ShapeEllipse.h"
-#include "../App.h"
-#include "../WinBoard.h"
+#include "../App/App.h"
+#include "../Win/WinBase.h"
 #include "../Tool/ToolSub.h"
 
  ShapeEllipse::ShapeEllipse(QObject* parent) : ShapeRect(parent)
@@ -28,7 +28,7 @@ void ShapeEllipse::mouseOnShape(QMouseEvent* event)
         auto flag = (normalizedX * normalizedX + normalizedY * normalizedY <= 1.0);
         if (flag) {
             hoverDraggerIndex = 8;
-            auto board = App::getFullBoard();
+            auto board = (WinBase*)parent();
             board->setCursor(Qt::SizeAllCursor);
         }
     }
@@ -46,7 +46,7 @@ void ShapeEllipse::mouseOnShape(QMouseEvent* event)
             flag = (normalizedX * normalizedX + normalizedY * normalizedY <= 1.0);
             if (!flag) {
                 hoverDraggerIndex = 8;
-                auto board = App::getFullBoard();
+                auto board = (WinBase*)parent();
                 board->setCursor(Qt::SizeAllCursor);
             }
         }

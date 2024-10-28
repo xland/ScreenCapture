@@ -1,7 +1,7 @@
 #pragma once
 
 #include <QGraphicsPathItem>
-#include "../State.h"
+#include "../App/State.h"
 
 class ShapeBase;
 class ShapeRect;

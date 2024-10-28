@@ -3,8 +3,7 @@
 #include <QGraphicsSceneHoverEvent>
 #include "ShapeDragger.h"
 #include "ShapeRect.h"
-#include "../WinBoard.h"
-#include "../WinMask.h"
+#include "../Win/WinBase.h"
 
 ShapeDragger::ShapeDragger() : QGraphicsPathItem()
 {

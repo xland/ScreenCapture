@@ -1,7 +1,8 @@
 #pragma once
 
-#include <QWidget>
-#include <QGraphicsItem>
+#include <QObject>
+#include <QMouseEvent>
+#include <QPainter>
 #include "ShapeState.h"
 
 class ShapeBase:public QObject

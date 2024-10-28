@@ -8,6 +8,8 @@
 class ToolMain;
 class ToolSub;
 class ShapeDragger;
+class ShapeBase;
+class Canvas;
 class WinBase  : public QWidget
 {
 	Q_OBJECT
@@ -17,10 +19,13 @@ public:
 	virtual void showToolMain() = 0;
 	virtual void showToolSub() = 0;
 	virtual void closeWin() = 0;
+	ShapeBase* addShape();
 public:
 	State state{ State::start };
+	std::vector<ShapeBase*> shapes;
 	ToolMain* toolMain;
 	ToolSub* toolSub;
-	ShapeDragger* shapeDragger;
+	ShapeDragger* dragger;
 	QPixmap bgImg;
+	Canvas* canvas;
 };

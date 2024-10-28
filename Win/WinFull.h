@@ -42,7 +42,6 @@ private:
 	void initSize();
 	void initBgImg();
 	void createNativeWindow();
-	void initTools();
 	void processSubWin();
 	void processTool(QWidget* tar);
 	void initScreens();
