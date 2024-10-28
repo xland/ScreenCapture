@@ -3,15 +3,15 @@
 #include <QMouseEvent>
 #include <QPainter>
 #include <QObject>
-#include <QPolygon>
+#include <QPainterPath>
 #include "ShapeBase.h"
 
-class ShapeArrow:public ShapeBase
+class ShapeNumber:public ShapeBase
 {
     Q_OBJECT
 public:
-    ShapeArrow(QObject* parent = nullptr);
-    ~ShapeArrow();
+    ShapeNumber(QObject* parent = nullptr);
+    ~ShapeNumber();
     virtual void paint(QPainter* painter) override;
     void paintDragger(QPainter* painter) override;
     void mouseMove(QMouseEvent* event) override;
@@ -20,9 +20,9 @@ public:
     void mouseRelease(QMouseEvent* event) override;
     virtual void mouseOnShape(QMouseEvent* event);
 public:
-    QPolygonF shape;
+    QPainterPath shape;
     bool isFill{ false };
-    int arrowSize{ 22 };
+    qreal arrowSize{ 22 };
     QColor color{ Qt::red };
 protected:
 private:

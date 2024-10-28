@@ -185,12 +185,6 @@
         "en": ""
       },
       {
-        "name": "strokeCtrl",
-        "zhcn": "",
-        "en": "",
-        "value": 2
-      },
-      {
         "name": "colorCtrl",
         "selectedIndex": 3
       }

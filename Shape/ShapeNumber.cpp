@@ -1,55 +1,54 @@
 ﻿#include <qpainter.h>
 #include <QTransform>
+#include <numbers>
 
-#include "ShapeArrow.h"
+#include "ShapeNumber.h"
 #include "../App/App.h"
 #include "../Tool/ToolSub.h"
 #include "../Win/WinBase.h"
 #include "../Layer/Canvas.h"
 
-ShapeArrow::ShapeArrow(QObject* parent) : ShapeBase(parent)
+ShapeNumber::ShapeNumber(QObject* parent) : ShapeBase(parent)
 {
     auto win = (WinBase*)parent;
     draggers.push_back(QRect());
-    draggers.push_back(QRect());
-    isFill = win->toolSub->getSelectState("arrowFill");
+    isFill = win->toolSub->getSelectState("numberFill");
     color = win->toolSub->getColor();
-    arrowSize = win->toolSub->getStrokeWidth();
 }
 
-ShapeArrow::~ShapeArrow()
+ShapeNumber::~ShapeNumber()
 {
 }
 
-void ShapeArrow::resetDragger()
+void ShapeNumber::resetDragger()
 {
     auto half{ draggerSize / 2 };    
-    draggers[0].setRect(shape[0].x() - half, shape[0].y() - half, draggerSize, draggerSize);
-    draggers[1].setRect(shape[3].x() - half, shape[3].y() - half, draggerSize, draggerSize);
+    draggers[0].setRect(endPos.x() - half, endPos.y() - half, draggerSize, draggerSize);
 }
 
-void ShapeArrow::resetShape()
+void ShapeNumber::resetShape()
 {
+    //startPos圆心；endPos箭头顶点
     QLineF line(startPos, endPos);
     qreal length = line.length();
     auto angle = line.angle();
-    qreal v1{ (qreal)arrowSize / 4.f };
-    qreal v2{ (qreal)arrowSize / 3.f*2.f };
+    double r = length/4.f*3.f;
+    double y = r * sin(10 * std::numbers::pi / 180.0); // 对应的直角边
+    double x = r * cos(10 * std::numbers::pi / 180.0); // 另一个直角边
     shape.clear();
-    shape.append(QPointF(0, 0));
-    shape.append(QPointF(length - arrowSize, -v1));
-    shape.append(QPointF(length - arrowSize - v1, -v2));
-    shape.append(QPointF(length, 0));
-    shape.append(QPointF(length - arrowSize - v1, v2));
-    shape.append(QPointF(length - arrowSize, v1));
-    shape.append(QPointF(0, 0));
+    shape.moveTo(x, -y);
+    shape.arcTo(QRectF(-r,-r, 2 * r, 2 * r), 10, 340);
+    shape.lineTo(length,0);
+    shape.lineTo(x, -y);
+    
     QTransform transform;
     transform.translate(startPos.x(), startPos.y());
     transform.rotate(-angle);
     shape = transform.map(shape);
+    
 }
 
-void ShapeArrow::paint(QPainter* painter)
+void ShapeNumber::paint(QPainter* painter)
 {
     if (isFill) {
         painter->setBrush(QBrush(color));
@@ -59,16 +58,15 @@ void ShapeArrow::paint(QPainter* painter)
         painter->setPen(QPen(QBrush(color), 1));
         painter->setBrush(Qt::NoBrush);
     }
-    painter->drawPolygon(shape);
+    painter->drawPath(shape);
 }
-void ShapeArrow::paintDragger(QPainter* painter)
+void ShapeNumber::paintDragger(QPainter* painter)
 {
     painter->setPen(QPen(QBrush(QColor(0, 0, 0)), 1));
     painter->setBrush(Qt::NoBrush);
     painter->drawRect(draggers[0]);
-    painter->drawRect(draggers[1]);
 }
-void ShapeArrow::mouseMove(QMouseEvent* event)
+void ShapeNumber::mouseMove(QMouseEvent* event)
 {
     if (state != ShapeState::ready) return;
     auto pos = event->pos();
@@ -77,12 +75,7 @@ void ShapeArrow::mouseMove(QMouseEvent* event)
         hoverDraggerIndex = 0;
         auto win = (WinBase*)parent();
         win->setCursor(Qt::SizeAllCursor);
-    }
-    else if (draggers[1].contains(pos)) {
-        hoverDraggerIndex = 1;
-        auto win = (WinBase*)parent();
-        win->setCursor(Qt::SizeAllCursor);
-    }    
+    }   
     if (hoverDraggerIndex == -1) {
         mouseOnShape(event);
     }
@@ -92,11 +85,11 @@ void ShapeArrow::mouseMove(QMouseEvent* event)
         event->accept();
     }
 }
-void ShapeArrow::mousePress(QMouseEvent* event)
+void ShapeNumber::mousePress(QMouseEvent* event)
 {
     if (state == ShapeState::temp) {
         startPos = event->pos().toPointF();
-        hoverDraggerIndex = 1;
+        hoverDraggerIndex = 0;
     }
     if (hoverDraggerIndex >= 0) {
         pressPos = event->pos().toPointF();
@@ -107,7 +100,7 @@ void ShapeArrow::mousePress(QMouseEvent* event)
         win->update();
     }
 }
-void ShapeArrow::mouseRelease(QMouseEvent* event)
+void ShapeNumber::mouseRelease(QMouseEvent* event)
 {
     if (state >= ShapeState::sizing0) {
         resetDragger();
@@ -117,24 +110,20 @@ void ShapeArrow::mouseRelease(QMouseEvent* event)
         event->accept();
     }
 }
-void ShapeArrow::mouseOnShape(QMouseEvent* event)
+void ShapeNumber::mouseOnShape(QMouseEvent* event)
 {
-    if (shape.containsPoint(event->pos(), Qt::WindingFill)) {
+    if (shape.contains(event->pos())) {
         hoverDraggerIndex = 8;
         auto board = (WinBase*)parent();
         board->setCursor(Qt::SizeAllCursor);
     }
 }
-void ShapeArrow::mouseDrag(QMouseEvent* event)
+void ShapeNumber::mouseDrag(QMouseEvent* event)
 {
     if (state == ShapeState::ready) {
         return;
     }
     if (state == ShapeState::sizing0) {
-        startPos = event->pos();
-        resetShape();
-    }
-    else if (state == ShapeState::sizing1) {
         endPos = event->pos();
         resetShape();
     }
@@ -142,18 +131,10 @@ void ShapeArrow::mouseDrag(QMouseEvent* event)
         auto pos = event->pos();
         auto span = pos - pressPos;
         shape.translate(span);
-        startPos = shape[0];
-        endPos = shape[3];
+        startPos+=span;
+        endPos+=span;
         pressPos = pos;
     }
-    //if (event->modifiers() & Qt::ShiftModifier) {
-    //    if (shape.width() > shape.height()) {
-    //        shape.setHeight(shape.width());
-    //    }
-    //    else {
-    //        shape.setWidth(shape.height());
-    //    }
-    //}
     auto win = (WinBase*)parent();
     win->canvas->update();
     event->accept();

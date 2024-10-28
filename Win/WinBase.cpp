@@ -3,6 +3,7 @@
 #include "../Shape/ShapeRect.h"
 #include "../Shape/ShapeEllipse.h"
 #include "../Shape/ShapeArrow.h"
+#include "../Shape/ShapeNumber.h"
 
 
 WinBase::WinBase(QWidget *parent) : QWidget(parent)
@@ -30,6 +31,9 @@ ShapeBase* WinBase::addShape()
     }
     else if (state == State::arrow) {
         shape = new ShapeArrow(this);
+    }
+    else if (state == State::number) {
+        shape = new ShapeNumber(this);
     }
     else
     {
