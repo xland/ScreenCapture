@@ -19,7 +19,6 @@ public:
     void mousePress(QMouseEvent* event) override;
     void mouseRelease(QMouseEvent* event) override;
 public:
-    bool isFill{ false };
     QColor color{ Qt::red };
     qreal strokeWidth;
 protected:
@@ -27,4 +26,5 @@ private:
     void resetDragger();
 private:
     QPointF startPos, endPos,pressPos;
+    double coeffA,coeffB,coeffC,diffVal;
 };

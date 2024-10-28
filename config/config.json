@@ -191,7 +191,7 @@
     ],
     "line": [
       {
-        "name": "lineFill",
+        "name": "lineTransparent",
         "selectDefault": false,
         "icon": "e607",
         "zhcn": "",
