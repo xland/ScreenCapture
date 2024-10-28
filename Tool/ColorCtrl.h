@@ -15,6 +15,7 @@ public:
 	~ColorCtrl();
 	static void InitData(const QJsonObject& obj, const QString& lang);
     QColor getColor();
+	int selectedIndex{ 0 };
 protected:
 	void paintEvent(QPaintEvent* event) override;
 	void mousePressEvent(QMouseEvent* event) override;
@@ -23,6 +24,5 @@ protected:
 	void showEvent(QShowEvent* event) override;
 private:
 	int itemWidth{ 26 };
-	int selectedIndex{ -1 };
 	int hoverIndex{ -1 };
 };

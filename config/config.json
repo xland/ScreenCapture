@@ -124,10 +124,14 @@
       {
         "name": "strokeCtrl",
         "zhcn": "",
-        "en": ""
+        "en": "",
+        "value": 2,
+        "min": 1,
+        "max": 20
       },
       {
-        "name": "colorCtrl"
+        "name": "colorCtrl",
+        "selectedIndex": 0
       }
     ],
     "ellipse": [
@@ -141,10 +145,14 @@
       {
         "name": "strokeCtrl",
         "zhcn": "",
-        "en": ""
+        "en": "",
+        "value": 2,
+        "min": 1,
+        "max": 20
       },
       {
-        "name": "colorCtrl"
+        "name": "colorCtrl",
+        "selectedIndex": 1
       }
     ],
     "arrow": [
@@ -158,10 +166,14 @@
       {
         "name": "strokeCtrl",
         "zhcn": "",
-        "en": ""
+        "en": "",
+        "value": 2,
+        "min": 1,
+        "max": 20
       },
       {
-        "name": "colorCtrl"
+        "name": "colorCtrl",
+        "selectedIndex": 2
       }
     ],
     "number": [
@@ -175,10 +187,12 @@
       {
         "name": "strokeCtrl",
         "zhcn": "",
-        "en": ""
+        "en": "",
+        "value": 2
       },
       {
-        "name": "colorCtrl"
+        "name": "colorCtrl",
+        "selectedIndex": 3
       }
     ],
     "line": [
@@ -192,15 +206,28 @@
       {
         "name": "strokeCtrl",
         "zhcn": "",
-        "en": ""
+        "en": "",
+        "value": 12,
+        "min": 1,
+        "max": 160
       },
       {
-        "name": "colorCtrl"
+        "name": "colorCtrl",
+        "selectedIndex": 4
       }
     ],
     "text": [
       {
-        "name": "colorCtrl"
+        "name": "strokeCtrl",
+        "zhcn": "",
+        "en": "",
+        "value": 20,
+        "min": 1,
+        "max": 60
+      },
+      {
+        "name": "colorCtrl",
+        "selectedIndex": 5
       }
     ],
     "mosaic": [
@@ -214,7 +241,10 @@
       {
         "name": "strokeCtrl",
         "zhcn": "",
-        "en": ""
+        "en": "",
+        "value": 10,
+        "min": 1,
+        "max": 60
       }
     ],
     "eraser": [
@@ -227,15 +257,17 @@
       },
       {
         "name": "strokeCtrl",
+        "value": 10,
         "zhcn": "",
-        "en": ""
+        "en": "",
+        "min": 1,
+        "max": 60
       }
     ]
   },
   "colorCtrl": {
     "icon": "e61d",
     "iconSelected": "e721",
-    "defaultSelectedIndex": 3,
     "items": [
       {
         "en": "red",

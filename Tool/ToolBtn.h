@@ -15,6 +15,10 @@ public:
 	QString tipText;
 	State state;
 	QString name;
+	unsigned min;
+	unsigned max;
+	unsigned value;
+	unsigned selectedIndex;
 private:
 
 };
