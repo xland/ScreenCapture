@@ -107,7 +107,7 @@ void CutMask::mouseRelease(QMouseEvent* event)
     }
     if (full->state > State::tool && mousePosState > 0) {
         full->showToolMain();
-        full->toolSub->show();
+        full->showToolSub();
         return;
     }
 }

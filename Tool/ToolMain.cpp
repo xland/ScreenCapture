@@ -148,7 +148,7 @@ void ToolMain::mousePressEvent(QMouseEvent* event)
         {
             full->state = btn.state;
             selectIndex = hoverIndex;
-            full->toolSub->show();
+            full->showToolSub();
         }
         else if (btn.name == "close")
         {

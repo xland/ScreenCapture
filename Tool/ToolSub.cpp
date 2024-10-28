@@ -181,11 +181,6 @@ void ToolSub::leaveEvent(QEvent* event)
 void ToolSub::showEvent(QShowEvent* event)
 {
 	auto full = (WinBase*)parent();
-	auto toolMain = full->toolMain;
-	auto toolSub = full->toolSub;
-	auto pos = toolMain->geometry().bottomLeft();
-	toolSub->move(pos.x(), pos.y());
-
 	auto values = btns[full->state];
 	auto w{ 4 };
 	bool strokeFlag{ false }, colorFlag{ false };

@@ -113,6 +113,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="App\App.cpp" />
+    <ClCompile Include="Tool\Canvas.cpp" />
     <ClCompile Include="Tool\ColorCtrl.cpp" />
     <ClCompile Include="Tool\CutMask.cpp" />
     <ClCompile Include="main.cpp" />
@@ -133,6 +134,7 @@
     <QtMoc Include="Win\WinBase.h" />
     <QtMoc Include="Tool\StrokeCtrl.h" />
     <QtMoc Include="Tool\ColorCtrl.h" />
+    <QtMoc Include="Tool\Canvas.h" />
     <ClInclude Include="Tool\ToolBtn.h" />
     <QtMoc Include="Tool\ToolMain.h" />
     <QtMoc Include="Tool\ToolSub.h" />

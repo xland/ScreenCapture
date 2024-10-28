@@ -37,7 +37,7 @@ void WinFull::init()
     winFull->processSubWin();
     ShowWindow(winFull->hwnd, SW_SHOW);
     SetForegroundWindow(winFull->hwnd);
-    winFull->initTools();
+    winFull->cutMask = new CutMask(winFull);
 }
 void WinFull::dispose()
 {
@@ -51,13 +51,28 @@ WinFull* WinFull::get()
 }
 void WinFull::showToolMain()
 {
+    if (!toolMain) {
+        toolMain = new ToolMain(this);
+        processTool(toolMain);
+    }
     auto pos = cutMask->maskRect.bottomRight();
     toolMain->move(pos.x() - toolMain->width(), pos.y() + 6);
     toolMain->show();
-    toolMain->raise();
 }
 void WinFull::showToolSub()
 {
+    if (!toolSub) {
+        toolSub = new ToolSub(this);
+        processTool(toolSub);
+    }
+    auto pos = toolMain->geometry().bottomLeft();
+    toolSub->move(pos.x(), pos.y());
+    if (toolSub->isVisible()) {
+        toolSub->update();
+    }
+    else {
+        toolSub->show();
+    }    
 }
 void WinFull::paintEvent(QPaintEvent* event)
 {
@@ -185,8 +200,8 @@ void WinFull::processTool(QWidget* tar)
 {
     tar->setAttribute(Qt::WA_QuitOnClose, false);
     tar->setWindowFlags(Qt::FramelessWindowHint | Qt::Tool | Qt::WindowStaysOnTopHint);
-    //tar->setAttribute(Qt::WA_TranslucentBackground);
-    //tar->setAttribute(Qt::WA_NoSystemBackground);
+    tar->setAttribute(Qt::WA_TranslucentBackground);
+    tar->setAttribute(Qt::WA_NoSystemBackground);
     tar->setMouseTracking(true);
     tar->setVisible(false);
     tar->setAttribute(Qt::WA_Hover);  //enterEvent 和 leaveEvent，以及 hoverMoveEvent
