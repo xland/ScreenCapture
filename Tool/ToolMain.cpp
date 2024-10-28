@@ -152,7 +152,7 @@ void ToolMain::mousePressEvent(QMouseEvent* event)
         }
         else if (btn.name == "close")
         {
-            full->close();
+            full->closeWin();
             return;
         }
     }

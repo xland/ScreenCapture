@@ -12,4 +12,5 @@ public:
 	~WinPin();
 	void showToolMain() override;
 	void showToolSub() override;
+	void closeWin() override;
 };

@@ -13,3 +13,7 @@ void WinPin::showToolMain()
 void WinPin::showToolSub()
 {
 }
+
+void WinPin::closeWin()
+{
+}

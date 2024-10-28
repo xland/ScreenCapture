@@ -23,6 +23,7 @@ public:
 	static WinFull* get();
 	void showToolMain() override;
 	void showToolSub() override;
+	void closeWin() override;
 public:
 	HWND hwnd;
 	float scaleFactor{1.0f};
@@ -38,7 +39,6 @@ protected:
 	void showEvent(QShowEvent* event) override;
 private:
 	void initWinRects();
-	void closeNative();
 	void initSize();
 	void initBgImg();
 	void createNativeWindow();

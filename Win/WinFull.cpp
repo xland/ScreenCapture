@@ -42,7 +42,7 @@ void WinFull::init()
 void WinFull::dispose()
 {
     if (winFull) {
-        winFull->closeNative();
+        winFull->closeWin();
     }
 }
 WinFull* WinFull::get()
@@ -54,6 +54,7 @@ void WinFull::showToolMain()
     auto pos = cutMask->maskRect.bottomRight();
     toolMain->move(pos.x() - toolMain->width(), pos.y() + 6);
     toolMain->show();
+    toolMain->raise();
 }
 void WinFull::showToolSub()
 {
@@ -95,7 +96,7 @@ void WinFull::mouseReleaseEvent(QMouseEvent* event)
 void WinFull::showEvent(QShowEvent* event)
 {
 }
-void WinFull::closeNative()
+void WinFull::closeWin()
 {
     close();
     DestroyWindow(hwnd);
@@ -167,6 +168,8 @@ void WinFull::initTools()
     cutMask = new CutMask(this);
     toolMain = new ToolMain(this);
     toolSub = new ToolSub(this);
+    processTool(toolMain);
+    processTool(toolSub);
 }
 void WinFull::processSubWin()
 {
@@ -182,8 +185,8 @@ void WinFull::processTool(QWidget* tar)
 {
     tar->setAttribute(Qt::WA_QuitOnClose, false);
     tar->setWindowFlags(Qt::FramelessWindowHint | Qt::Tool | Qt::WindowStaysOnTopHint);
-    tar->setAttribute(Qt::WA_TranslucentBackground);
-    tar->setAttribute(Qt::WA_NoSystemBackground);
+    //tar->setAttribute(Qt::WA_TranslucentBackground);
+    //tar->setAttribute(Qt::WA_NoSystemBackground);
     tar->setMouseTracking(true);
     tar->setVisible(false);
     tar->setAttribute(Qt::WA_Hover);  //enterEvent 和 leaveEvent，以及 hoverMoveEvent
@@ -193,14 +196,8 @@ LRESULT WinFull::routeWinMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     switch (msg)
     {
-        //case WM_MOUSEMOVE: {
-        //    int x = GET_X_LPARAM(lParam);
-        //    int y = GET_Y_LPARAM(lParam);
-        //    qDebug() << "allen" << x << y;
-        //    break;
-        //}
         case WM_CLOSE: {
-            winFull->closeNative();
+            winFull->closeWin();
             break;
         }
         default: {

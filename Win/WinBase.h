@@ -16,6 +16,7 @@ public:
 	virtual ~WinBase();
 	virtual void showToolMain() = 0;
 	virtual void showToolSub() = 0;
+	virtual void closeWin() = 0;
 public:
 	State state{ State::start };
 	ToolMain* toolMain;
