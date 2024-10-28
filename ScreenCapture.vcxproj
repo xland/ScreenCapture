@@ -113,6 +113,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="App\App.cpp" />
+    <ClCompile Include="Shape\ShapeArrow.cpp" />
     <ClCompile Include="Shape\ShapeBase.cpp" />
     <ClCompile Include="Shape\ShapeEllipse.cpp" />
     <ClCompile Include="Shape\ShapeRect.cpp" />
@@ -139,6 +140,7 @@
     <QtMoc Include="Tool\ColorCtrl.h" />
     <QtMoc Include="Layer\Canvas.h" />
     <QtMoc Include="Shape\ShapeBase.h" />
+    <QtMoc Include="Shape\ShapeArrow.h" />
     <ClInclude Include="Shape\ShapeEllipse.h" />
     <QtMoc Include="Shape\ShapeRect.h" />
     <ClInclude Include="Shape\ShapeState.h" />

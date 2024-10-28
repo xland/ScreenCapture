@@ -2,6 +2,7 @@
 #include "../Shape/ShapeBase.h"
 #include "../Shape/ShapeRect.h"
 #include "../Shape/ShapeEllipse.h"
+#include "../Shape/ShapeArrow.h"
 
 
 WinBase::WinBase(QWidget *parent) : QWidget(parent)
@@ -26,6 +27,9 @@ ShapeBase* WinBase::addShape()
     }
     else if (state == State::ellipse) {
         shape = new ShapeEllipse(this);
+    }
+    else if (state == State::arrow) {
+        shape = new ShapeArrow(this);
     }
     else
     {

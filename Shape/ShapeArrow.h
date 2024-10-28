@@ -3,6 +3,7 @@
 #include <QMouseEvent>
 #include <QPainter>
 #include <QObject>
+#include <QPolygon>
 #include "ShapeBase.h"
 
 class ShapeArrow:public ShapeBase
@@ -19,13 +20,13 @@ public:
     void mouseRelease(QMouseEvent* event) override;
     virtual void mouseOnShape(QMouseEvent* event);
 public:
-    QRect shape;
+    QPolygon shape;
     bool isFill{ false };
-    int strokeWidth{ 2 };
+    int arrowSize{ 22 };
     QColor color{ Qt::red };
 protected:
 private:
     void resetDragger();
 private:
-    QPoint topLeft, rightBottom,pressPos;
+    QPoint startPos, endPos;
 };

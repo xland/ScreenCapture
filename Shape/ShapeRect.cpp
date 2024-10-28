@@ -144,8 +144,8 @@ void ShapeRect::mouseOnShape(QMouseEvent* event)
     if (isFill) {
         if (shape.contains(pos)) {
             hoverDraggerIndex = 8;
-            auto board = (WinBase*)parent();
-            board->setCursor(Qt::SizeAllCursor);
+            auto win = (WinBase*)parent();
+            win->setCursor(Qt::SizeAllCursor);
         }
     }
     else {
@@ -154,8 +154,8 @@ void ShapeRect::mouseOnShape(QMouseEvent* event)
         QRectF innerRect = shape.adjusted(half, half, -half, -half);
         if (outerRect.contains(pos) && !innerRect.contains(pos)) {
             hoverDraggerIndex = 8;
-            auto board = (WinBase*)parent();
-            board->setCursor(Qt::SizeAllCursor);
+            auto win = (WinBase*)parent();
+            win->setCursor(Qt::SizeAllCursor);
         }
     }
 }

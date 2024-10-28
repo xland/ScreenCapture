@@ -77,6 +77,9 @@
     <ClCompile Include="Shape\ShapeRect.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Shape\ShapeArrow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BtnType.h">
@@ -139,6 +142,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="Shape\ShapeRect.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Shape\ShapeArrow.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>
