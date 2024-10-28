@@ -116,6 +116,7 @@
     <ClCompile Include="Shape\ShapeArrow.cpp" />
     <ClCompile Include="Shape\ShapeBase.cpp" />
     <ClCompile Include="Shape\ShapeEllipse.cpp" />
+    <ClCompile Include="Shape\ShapeLine.cpp" />
     <ClCompile Include="Shape\ShapeNumber.cpp" />
     <ClCompile Include="Shape\ShapeRect.cpp" />
     <ClCompile Include="Layer\Canvas.cpp" />
@@ -145,6 +146,7 @@
     <ClInclude Include="Shape\ShapeEllipse.h" />
     <QtMoc Include="Shape\ShapeRect.h" />
     <QtMoc Include="Shape\ShapeNumber.h" />
+    <QtMoc Include="Shape\ShapeLine.h" />
     <ClInclude Include="Shape\ShapeState.h" />
     <ClInclude Include="Tool\ToolBtn.h" />
     <QtMoc Include="Tool\ToolMain.h" />

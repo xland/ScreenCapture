@@ -59,18 +59,19 @@ void ShapeNumber::paint(QPainter* painter)
     if (isFill) {
         painter->setBrush(QBrush(color));
         painter->setPen(Qt::NoPen);
+        painter->drawPath(shape);
+        painter->setPen(QColor(255, 255, 255));
     }
     else {
         painter->setPen(QPen(QBrush(color), 1));
         painter->setBrush(Qt::NoBrush);
+        painter->drawPath(shape);
+        painter->setPen(color);
     }
-    painter->drawPath(shape);
     QRectF rect(startPos.x() - r, startPos.y() - r, 2 * r, 2 * r);
-    int fontSize = qMin(rect.width(), rect.height()) / 3;
     QFont font = painter->font();
-    font.setPointSize(fontSize);
+    font.setPointSize(r/4*3);
     painter->setFont(font);
-    painter->setPen(QColor(255, 255, 255));
     painter->drawText(rect, Qt::AlignCenter, QString::number(val));
 }
 void ShapeNumber::paintDragger(QPainter* painter)
