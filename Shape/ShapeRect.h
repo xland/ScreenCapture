@@ -11,9 +11,8 @@ class ShapeRect:public ShapeBase
 public:
     ShapeRect(QObject* parent = nullptr);
     ~ShapeRect();
-    void paint(QPainter* painter) override;
+    virtual void paint(QPainter* painter) override;
     void paintDragger(QPainter* painter) override;
-    virtual void paintShape(QPainter* painter);
     void mouseMove(QMouseEvent* event) override;
     void mouseDrag(QMouseEvent* event) override;
     void mousePress(QMouseEvent* event) override;

@@ -7,7 +7,6 @@
 
 class ToolMain;
 class ToolSub;
-class ShapeDragger;
 class ShapeBase;
 class Canvas;
 class WinBase  : public QWidget
@@ -25,7 +24,6 @@ public:
 	std::vector<ShapeBase*> shapes;
 	ToolMain* toolMain;
 	ToolSub* toolSub;
-	ShapeDragger* dragger;
 	QPixmap bgImg;
 	Canvas* canvas;
 };

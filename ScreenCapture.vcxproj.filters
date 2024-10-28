@@ -71,9 +71,6 @@
     <ClCompile Include="Shape\ShapeBase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Shape\ShapeDragger.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Shape\ShapeEllipse.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -92,9 +89,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Tool\ToolBtn.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Shape\ShapeDragger.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Shape\ShapeEllipse.h">

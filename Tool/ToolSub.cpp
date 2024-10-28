@@ -16,6 +16,10 @@ ToolSub::ToolSub(QWidget *parent) : QWidget(parent)
 {
 	strokeCtrl = new StrokeCtrl(this);
 	colorCtrl = new ColorCtrl(this);
+	setCursor(Qt::PointingHandCursor);
+	setMouseTracking(true);
+	setVisible(false);
+	setAttribute(Qt::WA_Hover);  //enterEvent 和 leaveEvent，以及 hoverMoveEvent
 }
 
 ToolSub::~ToolSub()
@@ -187,12 +191,16 @@ void ToolSub::showEvent(QShowEvent* event)
 	for (size_t i = 0; i < values.size(); i++)
 	{
 		if (values[i].name == "colorCtrl") {
+			colorCtrl->selectedIndex = values[i].selectedIndex;
 			colorCtrl->move(w, 10);
 			colorCtrl->show();
 			w += colorCtrl->width();
 			colorFlag = true;
 		}
 		else if (values[i].name == "strokeCtrl") {
+			strokeCtrl->setMaximum(values[i].max);
+			strokeCtrl->setMinimum(values[i].min);
+			strokeCtrl->setValue(values[i].value);
 			strokeCtrl->move(w, 10);
 			strokeCtrl->show();
 			w += strokeCtrl->width();
@@ -221,11 +229,19 @@ std::vector<ToolBtn> ToolSub::makeBtns(const QJsonArray& arr, const QString& lan
 	{
 		ToolBtn btn;
 		btn.name = val["name"].toString();
-		if (btn.name == "strokeCtrl" || btn.name == "colorCtrl") {
+		btn.tipText = val[lang].toString();
+		if (btn.name == "strokeCtrl") {
+			btn.min = val["min"].toInt();
+			btn.max = val["max"].toInt();
+			btn.value = val["value"].toInt();
 			btns.push_back(std::move(btn));
 			continue;
 		}
-		btn.tipText = val[lang].toString();
+		else if (btn.name == "colorCtrl") {
+			btn.selectedIndex = val["selectedIndex"].toInt();
+			btns.push_back(std::move(btn));
+			continue;
+		}
 		btn.selected = val["selectDefault"].toBool(false);
 		{
 			bool ok;

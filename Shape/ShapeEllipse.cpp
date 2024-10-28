@@ -13,8 +13,16 @@ ShapeEllipse::~ShapeEllipse()
 {
 }
 
-void ShapeEllipse::paintShape(QPainter* painter)
+void ShapeEllipse::paint(QPainter* painter)
 {
+    if (isFill) {
+        painter->setBrush(QBrush(color));
+        painter->setPen(Qt::NoPen);
+    }
+    else {
+        painter->setPen(QPen(QBrush(color), strokeWidth));
+        painter->setBrush(Qt::NoBrush);
+    }
 	painter->drawEllipse(shape);
 }
 

@@ -1,23 +1,21 @@
 ﻿#include <qpainter.h>
-#include <QGraphicsSceneMouseEvent>
-#include <QGraphicsSceneHoverEvent>
 
 #include "ShapeRect.h"
 #include "../App/App.h"
 #include "../Tool/ToolSub.h"
 #include "../Win/WinBase.h"
-#include "ShapeDragger.h"
+#include "../Tool/Canvas.h"
 
 ShapeRect::ShapeRect(QObject* parent) : ShapeBase(parent)
 {
-    auto full = (WinBase*)parent;
+    auto win = (WinBase*)parent;
     for (size_t i = 0; i < 8; i++)
     {
         draggers.push_back(QRect());
     }
-    isFill = full->toolSub->getSelectState("rectFill");
-    color = full->toolSub->getColor();
-    strokeWidth = full->toolSub->getStrokeWidth();
+    isFill = win->toolSub->getSelectState("rectFill");
+    color = win->toolSub->getColor();
+    strokeWidth = win->toolSub->getStrokeWidth();
 }
 
 ShapeRect::~ShapeRect()
@@ -47,7 +45,7 @@ void ShapeRect::paint(QPainter* painter)
         painter->setPen(QPen(QBrush(color), strokeWidth));
         painter->setBrush(Qt::NoBrush);
     }
-    paintShape(painter);
+    painter->drawRect(shape);
 }
 void ShapeRect::paintDragger(QPainter* painter)
 {
@@ -58,63 +56,57 @@ void ShapeRect::paintDragger(QPainter* painter)
         painter->drawRect(draggers[i]);
     }
 }
-void ShapeRect::paintShape(QPainter* painter)
-{
-    //auto half{ strokeWidth / 2 };
-    //painter->drawRect(shape.adjusted(-half, -half, half, half));
-    painter->drawRect(shape);
-}
 void ShapeRect::mouseMove(QMouseEvent* event)
 {
-    if (event->isAccepted()) return;
     if (state != ShapeState::ready) return;
     auto pos = event->pos();
     hoverDraggerIndex = -1;
     if (draggers[0].contains(pos)) {
         hoverDraggerIndex = 0;
-        auto board = (WinBase*)parent();
-        board->setCursor(Qt::SizeFDiagCursor);
+        auto win = (WinBase*)parent();
+        win->setCursor(Qt::SizeFDiagCursor);
     }
     else if (draggers[1].contains(pos)) {
         hoverDraggerIndex = 1;
-        auto board = (WinBase*)parent();
-        board->setCursor(Qt::SizeVerCursor);
+        auto win = (WinBase*)parent();
+        win->setCursor(Qt::SizeVerCursor);
     }
     else if (draggers[2].contains(pos)) {
         hoverDraggerIndex = 2;
-        auto board = (WinBase*)parent();
-        board->setCursor(Qt::SizeBDiagCursor);
+        auto win = (WinBase*)parent();
+        win->setCursor(Qt::SizeBDiagCursor);
     }
     else if (draggers[3].contains(pos)) {
         hoverDraggerIndex = 3;
-        auto board = (WinBase*)parent();
-        board->setCursor(Qt::SizeHorCursor);
+        auto win = (WinBase*)parent();
+        win->setCursor(Qt::SizeHorCursor);
     }
     else if (draggers[4].contains(pos)) {
         hoverDraggerIndex = 4;
-        auto board = (WinBase*)parent();
-        board->setCursor(Qt::SizeFDiagCursor);
+        auto win = (WinBase*)parent();
+        win->setCursor(Qt::SizeFDiagCursor);
     }
     else if (draggers[5].contains(pos)) {
         hoverDraggerIndex = 5;
-        auto board = (WinBase*)parent();
-        board->setCursor(Qt::SizeVerCursor);
+        auto win = (WinBase*)parent();
+        win->setCursor(Qt::SizeVerCursor);
     }
     else if (draggers[6].contains(pos)) {
         hoverDraggerIndex = 6;
-        auto board = (WinBase*)parent();
-        board->setCursor(Qt::SizeBDiagCursor);
+        auto win = (WinBase*)parent();
+        win->setCursor(Qt::SizeBDiagCursor);
     }
     else if (draggers[7].contains(pos)) {
         hoverDraggerIndex = 7;
-        auto board = (WinBase*)parent();
-        board->setCursor(Qt::SizeHorCursor);
+        auto win = (WinBase*)parent();
+        win->setCursor(Qt::SizeHorCursor);
     }
     if (hoverDraggerIndex == -1) {
         mouseOnShape(event);
     }
     if (hoverDraggerIndex > -1) {
-        //App::getFullCanvas()->changeShape(this);
+        auto win = (WinBase*)parent();
+        win->canvas->changeShape(this);
         event->accept();
     }
 }
@@ -131,8 +123,9 @@ void ShapeRect::mousePress(QMouseEvent* event)
         rightBottom = shape.bottomRight();
         pressPos = event->pos();
         event->accept();
-        //App::getFullCanvas()->update(); //它先重绘，避免闪烁
-        //App::getFullBoard()->update();
+        auto win = (WinBase*)parent();
+        win->canvas->changeShape(this);
+        win->update();
     }
 }
 void ShapeRect::mouseRelease(QMouseEvent* event)
@@ -140,8 +133,8 @@ void ShapeRect::mouseRelease(QMouseEvent* event)
     if (state >= ShapeState::sizing0) {
         resetDragger();
         state = ShapeState::ready;
-        //App::getFullBoard()->update();
-        //App::getFullCanvas()->changeShape(this,true);
+        auto win = (WinBase*)parent();
+        win->canvas->changeShape(this,true);
         event->accept();
     }
 }
@@ -225,6 +218,7 @@ void ShapeRect::mouseDrag(QMouseEvent* event)
             shape.setWidth(shape.height());
         }
     }
-    //App::getFullCanvas()->update();
+    auto win = (WinBase*)parent();
+    win->canvas->update();
     event->accept();
 }

@@ -16,6 +16,10 @@ std::vector<unsigned> spliterIndexs;
 ToolMain::ToolMain(QWidget* parent) : QWidget(parent)
 {
     setFixedSize(btns.size()*btnW + 8, 32);
+    setCursor(Qt::PointingHandCursor);
+    setMouseTracking(true);
+    setVisible(false);
+    setAttribute(Qt::WA_Hover);  //enterEvent 和 leaveEvent，以及 hoverMoveEvent
 }
 ToolMain::~ToolMain()
 {

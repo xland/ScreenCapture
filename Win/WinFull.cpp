@@ -54,7 +54,6 @@ void WinFull::showToolMain()
 {
     if (!toolMain) {
         toolMain = new ToolMain(this);
-        processTool(toolMain);
     }
     auto pos = cutMask->maskRect.bottomRight();
     toolMain->move(pos.x() - toolMain->width(), pos.y() + 6);
@@ -65,16 +64,13 @@ void WinFull::showToolSub()
     if (!toolSub) {
         toolSub = new ToolSub(this);
         canvas = new Canvas(this);
-        processTool(toolSub);
+    }
+    if (toolSub->isVisible()) {
+        toolSub->hide();
     }
     auto pos = toolMain->geometry().bottomLeft();
     toolSub->move(pos.x(), pos.y());
-    if (toolSub->isVisible()) {
-        toolSub->update();
-    }
-    else {
-        toolSub->show();
-    }    
+    toolSub->show();
 }
 void WinFull::paintEvent(QPaintEvent* event)
 {
@@ -83,6 +79,12 @@ void WinFull::paintEvent(QPaintEvent* event)
     painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
     painter.setRenderHint(QPainter::LosslessImageRendering, true);
     painter.drawPixmap(rect(),bgImg);
+    for (size_t i = 0; i < shapes.size(); i++)
+    {
+        if (shapes[i]->state == ShapeState::ready) {
+            shapes[i]->paint(&painter);
+        }        
+    }
 }
 void WinFull::mousePressEvent(QMouseEvent* event)
 {
@@ -105,18 +107,38 @@ void WinFull::mouseMoveEvent(QMouseEvent* event)
     if (event->buttons() == Qt::NoButton) {
         cutMask->mouseMove(event);
         if (event->isAccepted()) return;
+        for (int i = shapes.size() - 1; i >= 0; i--)
+        {
+            if (event->isAccepted()) return;
+            shapes[i]->mouseMove(event);
+        }
+        if (canvas && !event->isAccepted()) {
+            canvas->changeShape(nullptr);
+        }
     }
     else {
         cutMask->mouseDrag(event);
         if (event->isAccepted()) return;
+        for (int i = shapes.size() - 1; i >= 0; i--)
+        {
+            if (event->isAccepted()) return;
+            shapes[i]->mouseDrag(event);
+        }
     }
 }
 void WinFull::mouseReleaseEvent(QMouseEvent* event)
 {
     event->ignore();
     cutMask->mouseRelease(event);
-    //setUpdatesEnabled(true);
     if (event->isAccepted()) return;
+    for (int i = shapes.size() - 1; i >= 0; i--)
+    {
+        if (event->isAccepted()) return;
+        shapes[i]->mouseRelease(event);
+    }
+    if (canvas && !event->isAccepted()) {
+        canvas->changeShape(nullptr);
+    }
 }
 void WinFull::showEvent(QShowEvent* event)
 {
@@ -197,16 +219,6 @@ void WinFull::processSubWin()
     auto widgetHwnd = (HWND)winId();
     SetParent(widgetHwnd, hwnd);
     SetWindowPos(widgetHwnd, nullptr, 0, 0, w, h, SWP_NOZORDER | SWP_SHOWWINDOW);
-}
-void WinFull::processTool(QWidget* tar)
-{
-    tar->setAttribute(Qt::WA_QuitOnClose, false);
-    tar->setWindowFlags(Qt::FramelessWindowHint | Qt::Tool | Qt::WindowStaysOnTopHint);
-    tar->setAttribute(Qt::WA_TranslucentBackground);
-    tar->setAttribute(Qt::WA_NoSystemBackground);
-    tar->setMouseTracking(true);
-    tar->setVisible(false);
-    tar->setAttribute(Qt::WA_Hover);  //enterEvent 和 leaveEvent，以及 hoverMoveEvent
 }
 
 LRESULT WinFull::routeWinMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)

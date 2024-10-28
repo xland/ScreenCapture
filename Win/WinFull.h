@@ -43,7 +43,6 @@ private:
 	void initBgImg();
 	void createNativeWindow();
 	void processSubWin();
-	void processTool(QWidget* tar);
 	void initScreens();
 	static LRESULT CALLBACK routeWinMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 private:
