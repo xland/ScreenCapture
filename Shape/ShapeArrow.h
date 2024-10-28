@@ -5,12 +5,12 @@
 #include <QObject>
 #include "ShapeBase.h"
 
-class ShapeRect:public ShapeBase
+class ShapeArrow:public ShapeBase
 {
     Q_OBJECT
 public:
-    ShapeRect(QObject* parent = nullptr);
-    virtual ~ShapeRect();
+    ShapeArrow(QObject* parent = nullptr);
+    ~ShapeArrow();
     virtual void paint(QPainter* painter) override;
     void paintDragger(QPainter* painter) override;
     void mouseMove(QMouseEvent* event) override;
