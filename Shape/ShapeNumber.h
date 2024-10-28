@@ -22,7 +22,6 @@ public:
 public:
     QPainterPath shape;
     bool isFill{ false };
-    qreal arrowSize{ 22 };
     QColor color{ Qt::red };
 protected:
 private:
@@ -30,4 +29,6 @@ private:
     void resetShape();
 private:
     QPointF startPos, endPos,pressPos;
+    unsigned int val;
+    qreal r;
 };

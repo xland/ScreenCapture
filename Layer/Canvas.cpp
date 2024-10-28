@@ -39,6 +39,7 @@ void Canvas::paintEvent(QPaintEvent* event)
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
     painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
+    painter.setRenderHint(QPainter::TextAntialiasing, true);
     if (curShape->state >= ShapeState::sizing0) {
         curShape->paint(&painter);
     }

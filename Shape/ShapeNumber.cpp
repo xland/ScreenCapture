@@ -8,12 +8,18 @@
 #include "../Win/WinBase.h"
 #include "../Layer/Canvas.h"
 
+namespace {
+    static int numVal{ 0 };
+}
+
+
 ShapeNumber::ShapeNumber(QObject* parent) : ShapeBase(parent)
 {
     auto win = (WinBase*)parent;
     draggers.push_back(QRect());
     isFill = win->toolSub->getSelectState("numberFill");
     color = win->toolSub->getColor();
+    val = ++numVal;
 }
 
 ShapeNumber::~ShapeNumber()
@@ -32,7 +38,7 @@ void ShapeNumber::resetShape()
     QLineF line(startPos, endPos);
     qreal length = line.length();
     auto angle = line.angle();
-    double r = length/4.f*3.f;
+    r = length/4.f*3.f;
     double y = r * sin(10 * std::numbers::pi / 180.0); // 对应的直角边
     double x = r * cos(10 * std::numbers::pi / 180.0); // 另一个直角边
     shape.clear();
@@ -59,6 +65,13 @@ void ShapeNumber::paint(QPainter* painter)
         painter->setBrush(Qt::NoBrush);
     }
     painter->drawPath(shape);
+    QRectF rect(startPos.x() - r, startPos.y() - r, 2 * r, 2 * r);
+    int fontSize = qMin(rect.width(), rect.height()) / 3;
+    QFont font = painter->font();
+    font.setPointSize(fontSize);
+    painter->setFont(font);
+    painter->setPen(QColor(255, 255, 255));
+    painter->drawText(rect, Qt::AlignCenter, QString::number(val));
 }
 void ShapeNumber::paintDragger(QPainter* painter)
 {
