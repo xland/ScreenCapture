@@ -20,13 +20,15 @@ public:
     void mouseRelease(QMouseEvent* event) override;
     virtual void mouseOnShape(QMouseEvent* event);
 public:
-    QPolygon shape;
+    QPolygonF shape;
     bool isFill{ false };
     int arrowSize{ 22 };
     QColor color{ Qt::red };
 protected:
 private:
     void resetDragger();
+    void resetShape();
 private:
-    QPoint startPos, endPos;
+    qreal angle;
+    QPointF startPos, endPos,pressPos;
 };
