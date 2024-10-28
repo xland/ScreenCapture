@@ -11,8 +11,8 @@
 #include "../Shape/ShapeEllipse.h"
 #include "../Tool/ToolMain.h"
 #include "../Tool/ToolSub.h"
-#include "../Tool/CutMask.h"
-#include "../Tool/Canvas.h"
+#include "../Layer/CutMask.h"
+#include "../Layer/Canvas.h"
 
 namespace {
     WinFull* winFull;

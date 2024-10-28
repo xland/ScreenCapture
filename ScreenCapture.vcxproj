@@ -116,9 +116,9 @@
     <ClCompile Include="Shape\ShapeBase.cpp" />
     <ClCompile Include="Shape\ShapeEllipse.cpp" />
     <ClCompile Include="Shape\ShapeRect.cpp" />
-    <ClCompile Include="Tool\Canvas.cpp" />
+    <ClCompile Include="Layer\Canvas.cpp" />
     <ClCompile Include="Tool\ColorCtrl.cpp" />
-    <ClCompile Include="Tool\CutMask.cpp" />
+    <ClCompile Include="Layer\CutMask.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="QHotKey\qhotkey.cpp" />
     <ClCompile Include="QHotKey\qhotkey_win.cpp" />
@@ -137,7 +137,7 @@
     <QtMoc Include="Win\WinBase.h" />
     <QtMoc Include="Tool\StrokeCtrl.h" />
     <QtMoc Include="Tool\ColorCtrl.h" />
-    <QtMoc Include="Tool\Canvas.h" />
+    <QtMoc Include="Layer\Canvas.h" />
     <QtMoc Include="Shape\ShapeBase.h" />
     <ClInclude Include="Shape\ShapeEllipse.h" />
     <QtMoc Include="Shape\ShapeRect.h" />
@@ -146,7 +146,7 @@
     <QtMoc Include="Tool\ToolMain.h" />
     <QtMoc Include="Tool\ToolSub.h" />
     <QtMoc Include="Win\WinPin.h" />
-    <QtMoc Include="Tool\CutMask.h" />
+    <QtMoc Include="Layer\CutMask.h" />
     <QtMoc Include="QHotKey\qhotkey_p.h" />
     <QtMoc Include="QHotKey\qhotkey.h" />
     <ClInclude Include="App\State.h" />

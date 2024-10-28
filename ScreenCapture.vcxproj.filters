@@ -35,7 +35,7 @@
     <ClCompile Include="App\App.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Tool\CutMask.cpp">
+    <ClCompile Include="Layer\CutMask.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="App\Tray.cpp">
@@ -65,7 +65,7 @@
     <ClCompile Include="Win\WinBase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Tool\Canvas.cpp">
+    <ClCompile Include="Layer\Canvas.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Shape\ShapeBase.cpp">
@@ -108,7 +108,7 @@
     <QtMoc Include="Win\WinPin.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="Tool\CutMask.h">
+    <QtMoc Include="Layer\CutMask.h">
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="Win\WinFull.h">
@@ -132,7 +132,7 @@
     <QtMoc Include="Win\WinBase.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="Tool\Canvas.h">
+    <QtMoc Include="Layer\Canvas.h">
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="Shape\ShapeBase.h">

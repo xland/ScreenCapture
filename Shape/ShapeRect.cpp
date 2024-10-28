@@ -4,7 +4,7 @@
 #include "../App/App.h"
 #include "../Tool/ToolSub.h"
 #include "../Win/WinBase.h"
-#include "../Tool/Canvas.h"
+#include "../Layer/Canvas.h"
 
 ShapeRect::ShapeRect(QObject* parent) : ShapeBase(parent)
 {
