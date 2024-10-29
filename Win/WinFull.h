@@ -5,7 +5,7 @@
 #include <vector>
 #include <qwidget.h>
 #include <qobject.h>
-
+#include <QTextEdit>
 
 #include "WinBase.h"
 

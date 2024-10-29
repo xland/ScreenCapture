@@ -120,6 +120,7 @@
     <ClCompile Include="Shape\ShapeNumber.cpp" />
     <ClCompile Include="Shape\ShapeRect.cpp" />
     <ClCompile Include="Layer\Canvas.cpp" />
+    <ClCompile Include="Shape\ShapeText.cpp" />
     <ClCompile Include="Tool\ColorCtrl.cpp" />
     <ClCompile Include="Layer\CutMask.cpp" />
     <ClCompile Include="main.cpp" />
@@ -148,6 +149,7 @@
     <QtMoc Include="Shape\ShapeNumber.h" />
     <QtMoc Include="Shape\ShapeLine.h" />
     <ClInclude Include="Shape\ShapeState.h" />
+    <QtMoc Include="Shape\ShapeText.h" />
     <ClInclude Include="Tool\ToolBtn.h" />
     <QtMoc Include="Tool\ToolMain.h" />
     <QtMoc Include="Tool\ToolSub.h" />

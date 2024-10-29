@@ -5,6 +5,7 @@
 #include "../Shape/ShapeArrow.h"
 #include "../Shape/ShapeNumber.h"
 #include "../Shape/ShapeLine.h"
+#include "../Shape/ShapeText.h"
 
 
 WinBase::WinBase(QWidget *parent) : QWidget(parent)
@@ -38,6 +39,9 @@ ShapeBase* WinBase::addShape()
     }
     else if (state == State::line) {
         shape = new ShapeLine(this);
+    }
+    else if (state == State::text) {
+        shape = new ShapeText(this);
     }
     else
     {

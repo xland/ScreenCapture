@@ -215,8 +215,8 @@
         "name": "strokeCtrl",
         "zhcn": "",
         "en": "",
-        "value": 20,
-        "min": 1,
+        "value": 26,
+        "min": 10,
         "max": 60
       },
       {

@@ -277,7 +277,6 @@ void CutMask::changeMousePosState2(const int& x, const int& y)
         mousePosState = 8;
     }
     else {
-        winFull->setCursor(Qt::CrossCursor);
         mousePosState = -1;
     }
 }
