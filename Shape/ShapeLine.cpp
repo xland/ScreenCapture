@@ -56,19 +56,19 @@ void ShapeLine::mouseMove(QMouseEvent* event)
     if (draggers[0].contains(pos)) {
         hoverDraggerIndex = 0;
         auto win = (WinBase*)parent();
-        win->setCursor(Qt::SizeAllCursor);
+        win->updateCursor(Qt::SizeAllCursor);
     }
     else if (draggers[1].contains(pos)) {
         hoverDraggerIndex = 1;
         auto win = (WinBase*)parent();
-        win->setCursor(Qt::SizeAllCursor);
+        win->updateCursor(Qt::SizeAllCursor);
     }
     if (hoverDraggerIndex == -1) {
         double distance = std::abs(coeffA * pos.x() + coeffB * pos.y() + coeffC) / diffVal;
         if (distance <= strokeWidth / 2) {
             hoverDraggerIndex = 8;
             auto win = (WinBase*)parent();
-            win->setCursor(Qt::SizeAllCursor);
+            win->updateCursor(Qt::SizeAllCursor);
         }
     }
     if (hoverDraggerIndex > -1) {

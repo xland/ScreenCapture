@@ -1,5 +1,6 @@
 ﻿#include <qpainter.h>
 #include <QTransform>
+#include <QTextDocument>
 #include <numbers>
 #include <QTextCharFormat>
 
@@ -18,7 +19,11 @@ ShapeText::ShapeText(QObject* parent) : ShapeBase(parent)
     draggers.push_back(QRect());
     draggers.push_back(QRect());
     color = win->toolSub->getColor();
+    strokeWidth = win->toolSub->getStrokeWidth();
+
+
     textEdit = new QTextEdit((QWidget*)parent);
+    textEdit->setContentsMargins(10, 10, 10, 10);
     textEdit->setStyleSheet("border: 1px solid gray; border-radius: 2px;");
     QPalette palette = textEdit->palette();
     palette.setColor(QPalette::Base, Qt::transparent); // 设置背景色为透明
@@ -33,7 +38,7 @@ ShapeText::ShapeText(QObject* parent) : ShapeBase(parent)
     fmt.setFontWeight(QFont::Bold);
     fmt.setForeground(Qt::red);
     
-    QPen    pen;
+    QPen pen;
     pen.setStyle(Qt::SolidLine);
     pen.setWidthF(1);
     pen.setBrush(Qt::gray);
@@ -47,14 +52,8 @@ ShapeText::ShapeText(QObject* parent) : ShapeBase(parent)
     cursor.select(QTextCursor::Document);
     cursor.mergeCharFormat(fmt);
     cursor.setCharFormat(fmt);
-
-
-    textEdit->move(10, 10);
-    textEdit->setFixedSize(300, 300);
-    textEdit->show();
-    
-    //textEdit->setStyleSheet("QPlainTextEdit { background: transparent; border: none; }");
-    strokeWidth = win->toolSub->getStrokeWidth();
+    textEdit->hide();
+    connect(textEdit->document(), &QTextDocument::contentsChanged, this, &ShapeText::adjustSize);
 }
 
 ShapeText::~ShapeText()
@@ -69,6 +68,13 @@ void ShapeText::resetDragger()
     draggers[1].setRect(endPos.x() - half, endPos.y() - half, draggerSize, draggerSize);
     draggers[2].setRect(endPos.x() - half, endPos.y() - half, draggerSize, draggerSize);
     draggers[3].setRect(endPos.x() - half, endPos.y() - half, draggerSize, draggerSize);
+}
+
+void ShapeText::adjustSize()
+{
+    QSize size = textEdit->document()->size().toSize();
+    size += QSize(20, 20); // 增加边距
+    textEdit->setFixedSize(size);
 }
 
 void ShapeText::paint(QPainter* painter)
@@ -96,27 +102,27 @@ void ShapeText::mouseMove(QMouseEvent* event)
     if (draggers[0].contains(pos)) {
         hoverDraggerIndex = 0;
         auto win = (WinBase*)parent();
-        win->setCursor(Qt::SizeAllCursor);
+        win->updateCursor(Qt::SizeAllCursor);
     }
     else if (draggers[1].contains(pos)) {
         hoverDraggerIndex = 1;
         auto win = (WinBase*)parent();
-        win->setCursor(Qt::SizeAllCursor);
+        win->updateCursor(Qt::SizeAllCursor);
     }
     else if (draggers[2].contains(pos)) {
         hoverDraggerIndex = 1;
         auto win = (WinBase*)parent();
-        win->setCursor(Qt::SizeAllCursor);
+        win->updateCursor(Qt::SizeAllCursor);
     }
     else if (draggers[3].contains(pos)) {
         hoverDraggerIndex = 1;
         auto win = (WinBase*)parent();
-        win->setCursor(Qt::SizeAllCursor);
+        win->updateCursor(Qt::SizeAllCursor);
     }
     if (hoverDraggerIndex == -1) {
         //hoverDraggerIndex = 8;
         auto win = (WinBase*)parent();
-        win->setCursor(Qt::IBeamCursor);
+        win->updateCursor(Qt::IBeamCursor);
     }
     if (hoverDraggerIndex > -1) {
         auto win = (WinBase*)parent();
@@ -129,15 +135,10 @@ void ShapeText::mousePress(QMouseEvent* event)
     if (state == ShapeState::temp) {
         startPos = event->pos().toPointF();
         endPos = startPos;
-        hoverDraggerIndex = 2;
-    }
-    if (hoverDraggerIndex >= 0) {
-        pressPos = event->pos().toPointF();
-        state = (ShapeState)((int)ShapeState::sizing0 + hoverDraggerIndex);
-        event->accept();
-        auto win = (WinBase*)parent();
-        win->canvas->changeShape(this);
-        win->update();
+
+        textEdit->move(event->pos());
+        textEdit->setFixedSize(300, 300);
+        textEdit->show();
     }
 }
 void ShapeText::mouseRelease(QMouseEvent* event)

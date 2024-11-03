@@ -142,7 +142,6 @@ void CutMask::mouseMove(QMouseEvent* event)
             return;
         }
     }
-    setCursor(Qt::CrossCursor);
 }
 void CutMask::changeMaskRect(const QPoint& pos)
 {
@@ -187,47 +186,47 @@ void CutMask::changeMousePosState(const int& x, const int& y)
     auto winFull = WinFull::get();
     if (maskRect.contains(x, y))
     {
-        winFull->setCursor(Qt::SizeAllCursor);
+        winFull->updateCursor(Qt::SizeAllCursor);
         mousePosState = 0;
     }
     else if (x < leftX && y < topY)
     {
-        winFull->setCursor(Qt::SizeFDiagCursor);
+        winFull->updateCursor(Qt::SizeFDiagCursor);
         mousePosState = 1;
     }
     else if (x >= leftX && x < rightX && y < topY)
     {
-        winFull->setCursor(Qt::SizeVerCursor);
+        winFull->updateCursor(Qt::SizeVerCursor);
         mousePosState = 2;
     }
     else if (x >= rightX && y < topY)
     {
-        winFull->setCursor(Qt::SizeBDiagCursor);
+        winFull->updateCursor(Qt::SizeBDiagCursor);
         mousePosState = 3;
     }
     else if (x >= rightX && y >= topY && y < bottomY)
     {
-        winFull->setCursor(Qt::SizeHorCursor);
+        winFull->updateCursor(Qt::SizeHorCursor);
         mousePosState = 4;
     }
     else if (x >= rightX && y >= bottomY)
     {
-        winFull->setCursor(Qt::SizeFDiagCursor);
+        winFull->updateCursor(Qt::SizeFDiagCursor);
         mousePosState = 5;
     }
     else if (x >= leftX && x < rightX && y >= bottomY)
     {
-        winFull->setCursor(Qt::SizeVerCursor);
+        winFull->updateCursor(Qt::SizeVerCursor);
         mousePosState = 6;
     }
     else if (x < leftX && y >= bottomY)
     {
-        winFull->setCursor(Qt::SizeBDiagCursor);
+        winFull->updateCursor(Qt::SizeBDiagCursor);
         mousePosState = 7;
     }
     else if (x < leftX && y < bottomY && y >= topY)
     {
-        winFull->setCursor(Qt::SizeHorCursor);
+        winFull->updateCursor(Qt::SizeHorCursor);
         mousePosState = 8;
     }
 }
@@ -239,41 +238,41 @@ void CutMask::changeMousePosState2(const int& x, const int& y)
     auto y3{ maskRect.bottom() - maskStroke }, y4{ y3 + maskStroke * 3 };
     auto winFull = WinFull::get();
     if (x >= x1 && x <= x2 && y >= y1 && y <= y2) {
-        winFull->setCursor(Qt::SizeFDiagCursor);
+        winFull->updateCursor(Qt::SizeFDiagCursor);
         mousePosState = 1;
     }
     else if (x >= x2 && x <= x3 && y >= y1 && y <= y2) {
-        winFull->setCursor(Qt::SizeVerCursor);
+        winFull->updateCursor(Qt::SizeVerCursor);
         mousePosState = 2;
     }
     else if (x >= x3 && x <= x4 && y >= y1 && y <= y2)
     {
-        winFull->setCursor(Qt::SizeBDiagCursor);
+        winFull->updateCursor(Qt::SizeBDiagCursor);
         mousePosState = 3;
     }
     else if (x >= x3 && x <= x4 && y >= y2 && y <= y3)
     {
-        winFull->setCursor(Qt::SizeHorCursor);
+        winFull->updateCursor(Qt::SizeHorCursor);
         mousePosState = 4;
     }
     else if (x >= x3 && x <= x4 && y >= y3 && y <= y4)
     {
-        winFull->setCursor(Qt::SizeFDiagCursor);
+        winFull->updateCursor(Qt::SizeFDiagCursor);
         mousePosState = 5;
     }
     else if (x >= x2 && x <= x3 && y >= y3 && y <= y4)
     {
-        winFull->setCursor(Qt::SizeVerCursor);
+        winFull->updateCursor(Qt::SizeVerCursor);
         mousePosState = 6;
     }
     else if (x >= x1 && x <= x2 && y >= y3 && y <= y4)
     {
-        winFull->setCursor(Qt::SizeBDiagCursor);
+        winFull->updateCursor(Qt::SizeBDiagCursor);
         mousePosState = 7;
     }
     else if (x >= x1 && x <= x2 && y >= y2 && y <= y3)
     {
-        winFull->setCursor(Qt::SizeHorCursor);
+        winFull->updateCursor(Qt::SizeHorCursor);
         mousePosState = 8;
     }
     else {

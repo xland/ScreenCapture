@@ -88,7 +88,7 @@ void ShapeNumber::mouseMove(QMouseEvent* event)
     if (draggers[0].contains(pos)) {
         hoverDraggerIndex = 0;
         auto win = (WinBase*)parent();
-        win->setCursor(Qt::SizeAllCursor);
+        win->updateCursor(Qt::SizeAllCursor);
     }   
     if (hoverDraggerIndex == -1) {
         mouseOnShape(event);
@@ -128,8 +128,8 @@ void ShapeNumber::mouseOnShape(QMouseEvent* event)
 {
     if (shape.contains(event->pos())) {
         hoverDraggerIndex = 8;
-        auto board = (WinBase*)parent();
-        board->setCursor(Qt::SizeAllCursor);
+        auto win = (WinBase*)parent();
+        win->updateCursor(Qt::SizeAllCursor);
     }
 }
 void ShapeNumber::mouseDrag(QMouseEvent* event)

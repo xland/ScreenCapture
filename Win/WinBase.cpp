@@ -50,3 +50,9 @@ ShapeBase* WinBase::addShape()
     shapes.push_back(shape);
     return shape;
 }
+void WinBase::updateCursor(Qt::CursorShape cur)
+{
+    if (cursor().shape() != cur) {
+        setCursor(cur);
+    }
+}

@@ -25,6 +25,7 @@ public:
 protected:
 private:
     void resetDragger();
+    void adjustSize();
 private:
     QPointF startPos,endPos,pressPos;
     QTextEdit* textEdit;

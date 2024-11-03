@@ -76,12 +76,12 @@ void ShapeArrow::mouseMove(QMouseEvent* event)
     if (draggers[0].contains(pos)) {
         hoverDraggerIndex = 0;
         auto win = (WinBase*)parent();
-        win->setCursor(Qt::SizeAllCursor);
+        win->updateCursor(Qt::SizeAllCursor);
     }
     else if (draggers[1].contains(pos)) {
         hoverDraggerIndex = 1;
         auto win = (WinBase*)parent();
-        win->setCursor(Qt::SizeAllCursor);
+        win->updateCursor(Qt::SizeAllCursor);
     }    
     if (hoverDraggerIndex == -1) {
         mouseOnShape(event);
@@ -121,8 +121,8 @@ void ShapeArrow::mouseOnShape(QMouseEvent* event)
 {
     if (shape.containsPoint(event->pos(), Qt::WindingFill)) {
         hoverDraggerIndex = 8;
-        auto board = (WinBase*)parent();
-        board->setCursor(Qt::SizeAllCursor);
+        auto win = (WinBase*)parent();
+        win->updateCursor(Qt::SizeAllCursor);
     }
 }
 void ShapeArrow::mouseDrag(QMouseEvent* event)

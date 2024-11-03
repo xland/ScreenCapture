@@ -36,8 +36,8 @@ void ShapeEllipse::mouseOnShape(QMouseEvent* event)
         auto flag = (normalizedX * normalizedX + normalizedY * normalizedY <= 1.0);
         if (flag) {
             hoverDraggerIndex = 8;
-            auto board = (WinBase*)parent();
-            board->setCursor(Qt::SizeAllCursor);
+            auto win = (WinBase*)parent();
+            win->updateCursor(Qt::SizeAllCursor);
         }
     }
     else {
@@ -54,8 +54,8 @@ void ShapeEllipse::mouseOnShape(QMouseEvent* event)
             flag = (normalizedX * normalizedX + normalizedY * normalizedY <= 1.0);
             if (!flag) {
                 hoverDraggerIndex = 8;
-                auto board = (WinBase*)parent();
-                board->setCursor(Qt::SizeAllCursor);
+                auto win = (WinBase*)parent();
+                win->updateCursor(Qt::SizeAllCursor);
             }
         }
     }
