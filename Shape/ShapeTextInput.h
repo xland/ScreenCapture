@@ -14,4 +14,5 @@ signals:
 	void focusOut();
 private:
 	void focusOutEvent(QFocusEvent* event) override;
+	void paintEvent(QPaintEvent*) override;
 };

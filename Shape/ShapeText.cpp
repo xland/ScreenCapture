@@ -28,7 +28,7 @@ ShapeText::ShapeText(QObject* parent) : ShapeBase(parent)
     textEdit = new ShapeTextInput((QWidget*)parent);
     textEdit->setLineWrapMode(QTextEdit::NoWrap);
     textEdit->setContentsMargins(10, 10, 10, 10);
-    textEdit->setStyleSheet("border: 1px solid gray; border-radius: 2px;");
+    textEdit->setStyleSheet("border: 1px solid gray;");
     QPalette palette = textEdit->palette();
     palette.setColor(QPalette::Base, Qt::transparent); // 设置背景色为透明
     textEdit->setPalette(palette);
@@ -42,11 +42,10 @@ ShapeText::ShapeText(QObject* parent) : ShapeBase(parent)
     textEdit->hide();
     connect(textEdit->document(), &QTextDocument::contentsChanged, this, &ShapeText::adjustSize);
     connect(textEdit, &ShapeTextInput::focusOut, [this]() {
-        textVal = textEdit->toPlainText();
-        state = ShapeState::ready;
-        textEdit->hide();
+        textEdit->setStyleSheet("border: none;");
         auto win = (WinBase*)this->parent();
         win->update();
+        textEdit->hide();
         });
 }
 
@@ -72,7 +71,7 @@ void ShapeText::adjustSize()
     textEdit->setFixedSize(size);
     textVal = textEdit->toPlainText();
     textVal = textEdit->toPlainText();
-    if (!textVal.isEmpty()) {
+    if (!textEdit->document()->isEmpty()) {
         state = ShapeState::ready;
     }
 }
@@ -84,6 +83,9 @@ void ShapeText::paint(QPainter* painter)
     //painter->translate(startPos);
     //painter->rotate(rotate);
     textEdit->render(painter,textEdit->pos());
+    //if (state == ShapeState::ready) {
+    //    
+    //}
     //textEdit->setParent((QWidget*)painter->device());
     //painter->restore();
 
