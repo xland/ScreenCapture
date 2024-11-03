@@ -212,6 +212,20 @@
     ],
     "text": [
       {
+        "name": "bold",
+        "selectDefault": false,
+        "icon": "e634",
+        "zhcn": "",
+        "en": ""
+      },
+      {
+        "name": "italic",
+        "selectDefault": false,
+        "icon": "e682",
+        "zhcn": "",
+        "en": ""
+      },
+      {
         "name": "strokeCtrl",
         "zhcn": "",
         "en": "",

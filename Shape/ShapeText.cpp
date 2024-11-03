@@ -23,6 +23,7 @@ ShapeText::ShapeText(QObject* parent) : ShapeBase(parent)
 
 
     textEdit = new QTextEdit((QWidget*)parent);
+    textEdit->setLineWrapMode(QTextEdit::NoWrap);
     textEdit->setContentsMargins(10, 10, 10, 10);
     textEdit->setStyleSheet("border: 1px solid gray; border-radius: 2px;");
     QPalette palette = textEdit->palette();
@@ -72,7 +73,8 @@ void ShapeText::resetDragger()
 
 void ShapeText::adjustSize()
 {
-    QSize size = textEdit->document()->size().toSize();
+    textEdit->document()->adjustSize();
+    auto size = textEdit->document()->size().toSize();
     size += QSize(20, 20); // 增加边距
     textEdit->setFixedSize(size);
 }
@@ -136,9 +138,10 @@ void ShapeText::mousePress(QMouseEvent* event)
         startPos = event->pos().toPointF();
         endPos = startPos;
 
-        textEdit->move(event->pos());
-        textEdit->setFixedSize(300, 300);
+        textEdit->move(event->pos() + QPoint(-10,-10));
+        textEdit->setText("");
         textEdit->show();
+        textEdit->setFocus();
     }
 }
 void ShapeText::mouseRelease(QMouseEvent* event)

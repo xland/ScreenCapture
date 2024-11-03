@@ -87,9 +87,6 @@ int ToolSub::getStrokeWidth()
 
 void ToolSub::paintEvent(QPaintEvent* event)
 {
-	//painter.setPen(QColor(190, 190, 190));
-	//painter.drawLine(x, 10 + 16, x + 80, 10 + 16);
-
 	auto font = App::getIconFont();
 	font->setPixelSize(15);
 
@@ -104,7 +101,7 @@ void ToolSub::paintEvent(QPaintEvent* event)
 
 	auto full = (WinBase*)parent();
 	auto index = full->toolMain->selectIndex;
-	auto x = 4+ index * 32 + 32 / 2;
+	auto x = 4 + index * 32 + 32 / 2;
 	QPolygon triangle;
 	triangle << QPoint(x, 6) << QPoint(x-4, 10) << QPoint(x+4, 10);
 	painter.drawPolygon(triangle);
@@ -163,9 +160,7 @@ void ToolSub::mouseMoveEvent(QMouseEvent* event)
 		auto index{ std::get<2>(item) };
 		if (x >= start && x <= end) {			
 			tempIndex = index;
-		}
-		else {
-			tempIndex = -1;
+			break;
 		}
 	}
 	if (hoverIndex != tempIndex) {

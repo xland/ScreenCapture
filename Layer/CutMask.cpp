@@ -68,7 +68,17 @@ void CutMask::mouseDrag(QMouseEvent* event)
     if (full->state == State::mask)
     {
         maskRect.setCoords(posPress.x(), posPress.y(), pos.x(),pos.y());
+
+
+        //InvalidateRect((HWND)this->winId(), nullptr, TRUE);
+        //UpdateWindow((HWND)this->winId());
+        //InvalidateRect((HWND)full->winId(), nullptr, TRUE);
+        //UpdateWindow((HWND)full->winId());
         update();
+        //raise();
+        //full->update();
+        //repaint();
+        //paintEvent(nullptr);
         return;
     }
     if (full->state == State::tool)

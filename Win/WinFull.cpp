@@ -4,6 +4,7 @@
 #include <Windowsx.h>
 #include <dwmapi.h>
 #include <qscreen.h>
+#include <qimage.h>
 
 #include "WinFull.h"
 #include "../App/App.h"
@@ -26,6 +27,9 @@ WinFull::WinFull(QWidget* parent) : WinBase(parent)
     initWinRects();
     setAttribute(Qt::WA_OpaquePaintEvent);
     setAttribute(Qt::WA_NoSystemBackground);
+    //setAttribute(Qt::WA_TranslucentBackground);
+    //setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
+    setAutoFillBackground(false);
     createNativeWindow();
     setMouseTracking(true);
     setCursor(Qt::CrossCursor);
@@ -239,6 +243,18 @@ LRESULT WinFull::routeWinMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
             winFull->closeWin();
             break;
         }
+        //case WM_PAINT: {
+        //    PAINTSTRUCT ps;
+        //    HDC hdc = BeginPaint(hWnd, &ps);
+        //    HDC memDC = CreateCompatibleDC(hdc);
+        //    if (memDC) {
+        //        HBITMAP oldBitmap = (HBITMAP)SelectObject(memDC, winFull->bgImg.toImage().toHBITMAP());                
+        //        BitBlt(hdc, 0, 0, winFull->w, winFull->h, memDC, 0, 0, SRCCOPY);
+        //        SelectObject(memDC, oldBitmap);
+        //        DeleteDC(memDC);
+        //    }
+        //    EndPaint(hWnd, &ps);
+        //}
         default: {
             break;
         }            
