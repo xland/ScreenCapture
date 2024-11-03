@@ -24,6 +24,8 @@ WinFull::WinFull(QWidget* parent) : WinBase(parent)
     initScreens();
     initBgImg();
     initWinRects();
+    setAttribute(Qt::WA_OpaquePaintEvent);
+    setAttribute(Qt::WA_NoSystemBackground);
     createNativeWindow();
     setMouseTracking(true);
     setCursor(Qt::CrossCursor);
