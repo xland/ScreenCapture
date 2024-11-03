@@ -118,7 +118,12 @@ void WinFull::mouseMoveEvent(QMouseEvent* event)
             if (canvas) {
                 canvas->changeShape(nullptr);
             }
-            winFull->updateCursor(Qt::CrossCursor);
+            if (state == State::text) {
+                winFull->updateCursor(Qt::IBeamCursor);
+            }
+            else {
+                winFull->updateCursor(Qt::CrossCursor);
+            }            
         }
     }
     else {
