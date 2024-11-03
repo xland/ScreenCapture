@@ -18,6 +18,7 @@ ShapeBase* WinBase::addShape()
 {
     for (auto it = shapes.begin(); it != shapes.end(); ) {
         if ((*it)->state == ShapeState::temp) {
+            (*it)->deleteLater();
             it = shapes.erase(it);
         }
         else {
