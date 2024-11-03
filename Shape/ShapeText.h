@@ -21,7 +21,9 @@ public:
     void mouseRelease(QMouseEvent* event) override;
 public:
     QColor color{ Qt::red };
-    qreal strokeWidth;
+    qreal fontSize;
+    bool bold;
+    bool italic;
 protected:
 private:
     void resetDragger();

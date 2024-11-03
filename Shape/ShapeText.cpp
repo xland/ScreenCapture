@@ -18,9 +18,11 @@ ShapeText::ShapeText(QObject* parent) : ShapeBase(parent)
     draggers.push_back(QRect());
     draggers.push_back(QRect());
     draggers.push_back(QRect());
-    color = win->toolSub->getColor();
-    strokeWidth = win->toolSub->getStrokeWidth();
 
+    color = win->toolSub->getColor();
+    fontSize = win->toolSub->getStrokeWidth();
+    bold = win->toolSub->getSelectState("bold");
+    italic = win->toolSub->getSelectState("italic");
 
     textEdit = new QTextEdit((QWidget*)parent);
     textEdit->setLineWrapMode(QTextEdit::NoWrap);
@@ -29,30 +31,13 @@ ShapeText::ShapeText(QObject* parent) : ShapeBase(parent)
     QPalette palette = textEdit->palette();
     palette.setColor(QPalette::Base, Qt::transparent); // 设置背景色为透明
     textEdit->setPalette(palette);
-    //textEdit->setTextBackgroundColor(Qt::gray);
-    textEdit->setFontItalic(true);
-    textEdit->setFontPointSize(38.f);
-    textEdit->setText("这是一段带阴影和斜体的文本。");
-
-    QTextCharFormat fmt;
-    fmt.setFontPointSize(38.f);
-    fmt.setFontWeight(QFont::Bold);
-    fmt.setForeground(Qt::red);
-    
-    QPen pen;
-    pen.setStyle(Qt::SolidLine);
-    pen.setWidthF(1);
-    pen.setBrush(Qt::gray);
-    pen.setCapStyle(Qt::RoundCap);
-    pen.setJoinStyle(Qt::RoundJoin);
-    fmt.setTextOutline(pen);
-
-
-    // 使用 QTextCursor 设置文本格式
-    QTextCursor cursor = textEdit->textCursor();
-    cursor.select(QTextCursor::Document);
-    cursor.mergeCharFormat(fmt);
-    cursor.setCharFormat(fmt);
+    textEdit->setFontItalic(italic);
+    textEdit->setFontPointSize(fontSize);
+    if (bold) {
+        QFont font = textEdit->font();
+        font.setWeight(QFont::Bold);
+        textEdit->setFont(font);
+    }
     textEdit->hide();
     connect(textEdit->document(), &QTextDocument::contentsChanged, this, &ShapeText::adjustSize);
 }
