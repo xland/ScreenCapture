@@ -3,6 +3,7 @@
 #include <QTextDocument>
 #include <numbers>
 #include <QTextCharFormat>
+#include <QTextOption>
 
 #include "ShapeText.h"
 #include "../App/App.h"
@@ -24,7 +25,7 @@ ShapeText::ShapeText(QObject* parent) : ShapeBase(parent)
     bold = win->toolSub->getSelectState("bold");
     italic = win->toolSub->getSelectState("italic");
 
-    textEdit = new QTextEdit((QWidget*)parent);
+    textEdit = new ShapeTextInput((QWidget*)parent);
     textEdit->setLineWrapMode(QTextEdit::NoWrap);
     textEdit->setContentsMargins(10, 10, 10, 10);
     textEdit->setStyleSheet("border: 1px solid gray; border-radius: 2px;");
@@ -40,6 +41,13 @@ ShapeText::ShapeText(QObject* parent) : ShapeBase(parent)
     }
     textEdit->hide();
     connect(textEdit->document(), &QTextDocument::contentsChanged, this, &ShapeText::adjustSize);
+    connect(textEdit, &ShapeTextInput::focusOut, [this]() {
+        textVal = textEdit->toPlainText();
+        state = ShapeState::ready;
+        textEdit->hide();
+        auto win = (WinBase*)this->parent();
+        win->update();
+        });
 }
 
 ShapeText::~ShapeText()
@@ -62,16 +70,35 @@ void ShapeText::adjustSize()
     auto size = textEdit->document()->size().toSize();
     size += QSize(20, 20); // 增加边距
     textEdit->setFixedSize(size);
+    textVal = textEdit->toPlainText();
+    textVal = textEdit->toPlainText();
+    if (!textVal.isEmpty()) {
+        state = ShapeState::ready;
+    }
 }
 
 void ShapeText::paint(QPainter* painter)
 {
+    if (textEdit->isVisible()) return;
     //painter->save();
     //painter->translate(startPos);
     //painter->rotate(rotate);
-    //textEdit->render(painter);
+    textEdit->render(painter,textEdit->pos());
     //textEdit->setParent((QWidget*)painter->device());
     //painter->restore();
+
+
+    //QFont font;
+    //font.setPointSize(fontSize); 
+    //font.setBold(bold);    
+    //font.setItalic(italic);
+    //painter->setFont(font); 
+    //painter->setPen(color); 
+    //QFontMetrics metrics(font);
+    //auto d = metrics.descent();
+    //QTextOption textOption;
+    //textOption.setWrapMode(QTextOption::WordWrap);
+    //painter->drawText(startPos.x()-5, startPos.y() + metrics.ascent() - metrics.descent(), textVal, textOption);
 
 }
 void ShapeText::paintDragger(QPainter* painter)

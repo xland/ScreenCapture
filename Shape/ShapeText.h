@@ -4,8 +4,9 @@
 #include <QPainter>
 #include <QObject>
 #include <QPainterPath>
-#include <QTextEdit>
+
 #include "ShapeBase.h"
+#include "ShapeTextInput.h"
 
 class ShapeText:public ShapeBase
 {
@@ -24,12 +25,13 @@ public:
     qreal fontSize;
     bool bold;
     bool italic;
+    QString textVal;
 protected:
 private:
     void resetDragger();
     void adjustSize();
 private:
     QPointF startPos,endPos,pressPos;
-    QTextEdit* textEdit;
+    ShapeTextInput* textEdit;
     qreal rotate{45};
 };
