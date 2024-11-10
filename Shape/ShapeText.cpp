@@ -15,10 +15,6 @@
 ShapeText::ShapeText(QObject* parent) : ShapeBase(parent)
 {
     auto win = (WinBase*)parent;
-    draggers.push_back(QRect());
-    draggers.push_back(QRect());
-    draggers.push_back(QRect());
-    draggers.push_back(QRect());
 
     color = win->toolSub->getColor();
     fontSize = win->toolSub->getStrokeWidth();
@@ -56,15 +52,6 @@ ShapeText::~ShapeText()
     delete textEdit;
 }
 
-void ShapeText::resetDragger()
-{
-    auto half{ draggerSize / 2 };
-    draggers[0].setRect(startPos.x() - half, startPos.y() - half, draggerSize, draggerSize);
-    draggers[1].setRect(endPos.x() - half, endPos.y() - half, draggerSize, draggerSize);
-    draggers[2].setRect(endPos.x() - half, endPos.y() - half, draggerSize, draggerSize);
-    draggers[3].setRect(endPos.x() - half, endPos.y() - half, draggerSize, draggerSize);
-}
-
 void ShapeText::adjustSize()
 {
     textEdit->document()->adjustSize();
@@ -90,43 +77,29 @@ void ShapeText::paint(QPainter* painter)
 }
 void ShapeText::paintDragger(QPainter* painter)
 {
-    painter->setPen(QPen(QBrush(QColor(0, 0, 0)), 1));
+    if (!textEdit->isHidden()) return;
+    painter->setPen(QPen(QBrush(color), 1));
     painter->setBrush(Qt::NoBrush);
-    painter->drawRect(draggers[0]);
-    painter->drawRect(draggers[1]);
+    auto rect = textEdit->geometry();
+    painter->drawRect(rect);
 }
 void ShapeText::mouseMove(QMouseEvent* event)
 {
     if (state != ShapeState::ready) return;
     auto pos = event->pos();
-    hoverDraggerIndex = -1;
-    if (draggers[0].contains(pos)) {
-        hoverDraggerIndex = 0;
+    auto rect = textEdit->geometry();
+    auto innerRect = rect.adjusted(1, 1, -1, -1);
+    auto outerRect = rect.adjusted(-1, -1, 1, 1);
+    if (outerRect.contains(pos)) {
         auto win = (WinBase*)parent();
-        win->updateCursor(Qt::SizeAllCursor);
-    }
-    else if (draggers[1].contains(pos)) {
-        hoverDraggerIndex = 1;
-        auto win = (WinBase*)parent();
-        win->updateCursor(Qt::SizeAllCursor);
-    }
-    else if (draggers[2].contains(pos)) {
-        hoverDraggerIndex = 1;
-        auto win = (WinBase*)parent();
-        win->updateCursor(Qt::SizeAllCursor);
-    }
-    else if (draggers[3].contains(pos)) {
-        hoverDraggerIndex = 1;
-        auto win = (WinBase*)parent();
-        win->updateCursor(Qt::SizeAllCursor);
-    }
-    if (hoverDraggerIndex == -1) {
-        //hoverDraggerIndex = 8;
-        auto win = (WinBase*)parent();
-        win->updateCursor(Qt::IBeamCursor);
-    }
-    if (hoverDraggerIndex > -1) {
-        auto win = (WinBase*)parent();
+        if (innerRect.contains(pos)) {
+            hoverDraggerIndex = 0;
+            win->updateCursor(Qt::IBeamCursor);
+        }
+        else {
+            hoverDraggerIndex = 8;
+            win->updateCursor(Qt::SizeAllCursor);
+        }
         win->canvas->changeShape(this);
         event->accept();
     }
@@ -134,19 +107,22 @@ void ShapeText::mouseMove(QMouseEvent* event)
 void ShapeText::mousePress(QMouseEvent* event)
 {
     if (state == ShapeState::temp) {
-        startPos = event->pos().toPointF();
-        endPos = startPos;
-
         textEdit->move(event->pos() + QPoint(-10,-10));
         textEdit->setText("");
         textEdit->show();
         textEdit->setFocus();
     }
+    else {
+        if (textEdit->isHidden() && hoverDraggerIndex == 0) {
+            state = ShapeState::temp;
+            textEdit->show();
+            textEdit->setFocus();
+        }
+    }
 }
 void ShapeText::mouseRelease(QMouseEvent* event)
 {
     if (state >= ShapeState::sizing0) {
-        resetDragger();
         QRect rect;
         rect.setCoords(startPos.x(), startPos.y(), endPos.x(), endPos.y());
         //textEdit->move(startPos.toPoint());

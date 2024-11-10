@@ -28,7 +28,6 @@ public:
     QString textVal;
 protected:
 private:
-    void resetDragger();
     void adjustSize();
 private:
     QPointF startPos,endPos,pressPos;
