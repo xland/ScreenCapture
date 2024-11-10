@@ -42,10 +42,11 @@ ShapeText::ShapeText(QObject* parent) : ShapeBase(parent)
     textEdit->hide();
     connect(textEdit->document(), &QTextDocument::contentsChanged, this, &ShapeText::adjustSize);
     connect(textEdit, &ShapeTextInput::focusOut, [this]() {
-        textEdit->setStyleSheet("border: none;");
+        textEdit->setStyleSheet("border: none;padding-left:1px;padding-top:1px");
+        textEdit->setAttribute(Qt::WA_NoSystemBackground, true);
+        textEdit->hide();
         auto win = (WinBase*)this->parent();
         win->update();
-        textEdit->hide();
         });
 }
 
