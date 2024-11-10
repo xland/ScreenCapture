@@ -27,13 +27,13 @@ ShapeText::ShapeText(QObject* parent) : ShapeBase(parent)
 
     textEdit = new ShapeTextInput((QWidget*)parent);
     textEdit->setLineWrapMode(QTextEdit::NoWrap);
-    textEdit->setContentsMargins(10, 10, 10, 10);
-    textEdit->setStyleSheet("border: 1px solid gray;");
-    QPalette palette = textEdit->palette();
-    palette.setColor(QPalette::Base, Qt::transparent); // 设置背景色为透明
-    textEdit->setPalette(palette);
+    textEdit->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff); // 禁用垂直滚动条
+    textEdit->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff); // 禁用水平滚动条
+    QString style{ "color:%1;border:1px solid %1;background:transparent;font-size:%2px;" };
+    style = style.arg(color.name()).arg(fontSize);
+    textEdit->setStyleSheet(style);
     textEdit->setFontItalic(italic);
-    textEdit->setFontPointSize(fontSize);
+
     if (bold) {
         QFont font = textEdit->font();
         font.setWeight(QFont::Bold);
@@ -42,8 +42,9 @@ ShapeText::ShapeText(QObject* parent) : ShapeBase(parent)
     textEdit->hide();
     connect(textEdit->document(), &QTextDocument::contentsChanged, this, &ShapeText::adjustSize);
     connect(textEdit, &ShapeTextInput::focusOut, [this]() {
-        textEdit->setStyleSheet("border: none;padding-left:1px;padding-top:1px");
-        textEdit->setAttribute(Qt::WA_NoSystemBackground, true);
+        auto style = QString{ "color:%1;border:none;padding-left:-1px;padding-top:1px;background:transparent;font-size:%2px;" };
+        style = style.arg(color.name()).arg(fontSize);
+        textEdit->setStyleSheet(style);
         textEdit->hide();
         auto win = (WinBase*)this->parent();
         win->update();
@@ -68,9 +69,13 @@ void ShapeText::adjustSize()
 {
     textEdit->document()->adjustSize();
     auto size = textEdit->document()->size().toSize();
-    size += QSize(20, 20); // 增加边距
+    if (textEdit->document()->isEmpty()) {
+        size += QSize(8, 16); 
+    }
+    else {
+        state = ShapeState::ready;
+    }
     textEdit->setFixedSize(size);
-    textVal = textEdit->toPlainText();
     textVal = textEdit->toPlainText();
     if (!textEdit->document()->isEmpty()) {
         state = ShapeState::ready;
@@ -80,29 +85,8 @@ void ShapeText::adjustSize()
 void ShapeText::paint(QPainter* painter)
 {
     if (textEdit->isVisible()) return;
-    //painter->save();
-    //painter->translate(startPos);
-    //painter->rotate(rotate);
+    textEdit->setFontPointSize(fontSize);
     textEdit->render(painter,textEdit->pos());
-    //if (state == ShapeState::ready) {
-    //    
-    //}
-    //textEdit->setParent((QWidget*)painter->device());
-    //painter->restore();
-
-
-    //QFont font;
-    //font.setPointSize(fontSize); 
-    //font.setBold(bold);    
-    //font.setItalic(italic);
-    //painter->setFont(font); 
-    //painter->setPen(color); 
-    //QFontMetrics metrics(font);
-    //auto d = metrics.descent();
-    //QTextOption textOption;
-    //textOption.setWrapMode(QTextOption::WordWrap);
-    //painter->drawText(startPos.x()-5, startPos.y() + metrics.ascent() - metrics.descent(), textVal, textOption);
-
 }
 void ShapeText::paintDragger(QPainter* painter)
 {
