@@ -6,14 +6,14 @@
 #include "../Win/WinBase.h"
 #include "../Layer/Canvas.h"
 
-ShapeRect::ShapeRect(QObject* parent) : ShapeBase(parent)
+ShapeRect::ShapeRect(QObject* parent, const QString&& btnName) : ShapeBase(parent)
 {
     auto win = (WinBase*)parent;
     for (size_t i = 0; i < 8; i++)
     {
         draggers.push_back(QRect());
     }
-    isFill = win->toolSub->getSelectState("rectFill");
+    isFill = win->toolSub->getSelectState(btnName);
     color = win->toolSub->getColor();
     strokeWidth = win->toolSub->getStrokeWidth();
 }

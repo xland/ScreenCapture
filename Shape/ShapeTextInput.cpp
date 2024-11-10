@@ -1,4 +1,4 @@
-#include <QPainter>
+ï»¿#include <QPainter>
 #include "ShapeTextInput.h"
 
 ShapeTextInput::ShapeTextInput(QWidget* parent) : QTextEdit(parent)
@@ -22,7 +22,7 @@ void ShapeTextInput::paintEvent(QPaintEvent* event)
 	//QPainter painter(this);
 	//painter.setRenderHint(QPainter::Antialiasing); 
 	//painter.fillRect(rect(), Qt::transparent);
-	//painter.setPen(QColor(128, 128, 128)); // »ÒÉ«±ß¿ò
+	//painter.setPen(QColor(128, 128, 128)); // ç°è‰²è¾¹æ¡†
 	//painter.drawRect(rect().adjusted(1, 1, -1, -1)); 
 	//textEdit->render(&painter);
 	//QTextEdit::paintEvent(event);

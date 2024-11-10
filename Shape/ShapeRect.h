@@ -9,7 +9,7 @@ class ShapeRect:public ShapeBase
 {
     Q_OBJECT
 public:
-    ShapeRect(QObject* parent = nullptr);
+    ShapeRect(QObject* parent = nullptr, const QString&& btnName = "rectFill");
     virtual ~ShapeRect();
     virtual void paint(QPainter* painter) override;
     void paintDragger(QPainter* painter) override;

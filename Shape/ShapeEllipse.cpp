@@ -5,9 +5,9 @@
 #include "../Win/WinBase.h"
 #include "../Tool/ToolSub.h"
 
- ShapeEllipse::ShapeEllipse(QObject* parent) : ShapeRect(parent)
- {
- }
+ShapeEllipse::ShapeEllipse(QObject* parent) : ShapeRect(parent, "ellipseFill")
+{
+}
 
 ShapeEllipse::~ShapeEllipse()
 {
@@ -25,7 +25,6 @@ void ShapeEllipse::paint(QPainter* painter)
     }
 	painter->drawEllipse(shape);
 }
-
 void ShapeEllipse::mouseOnShape(QMouseEvent* event)
 {
     auto pos = event->pos();

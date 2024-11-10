@@ -1,6 +1,4 @@
-
-
-#include "CutMask.h"
+﻿#include "CutMask.h"
 #include "../Win/WinFull.h"
 #include "../Tool/ToolMain.h"
 #include "../Tool/ToolSub.h"
