@@ -119,15 +119,15 @@ void WinFull::mouseMoveEvent(QMouseEvent* event)
             shapes[i]->mouseMove(event);
         }
         if (!event->isAccepted()) {
-            if (canvas) {
-                canvas->changeShape(nullptr);
-            }
             if (state == State::text) {
                 winFull->updateCursor(Qt::IBeamCursor);
             }
             else {
+                if (canvas) {
+                    canvas->changeShape(nullptr);
+                }
                 winFull->updateCursor(Qt::CrossCursor);
-            }            
+            }
         }
     }
     else {
@@ -151,7 +151,9 @@ void WinFull::mouseReleaseEvent(QMouseEvent* event)
         shapes[i]->mouseRelease(event);
     }
     if (canvas && !event->isAccepted()) {
-        canvas->changeShape(nullptr);
+        if (state != State::text) {
+            canvas->changeShape(nullptr);
+        }
     }
 }
 void WinFull::showEvent(QShowEvent* event)

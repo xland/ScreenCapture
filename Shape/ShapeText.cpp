@@ -25,8 +25,11 @@ ShapeText::ShapeText(QObject* parent) : ShapeBase(parent)
     textEdit->setLineWrapMode(QTextEdit::NoWrap);
     textEdit->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff); // 禁用垂直滚动条
     textEdit->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff); // 禁用水平滚动条
-    QString style{ "color:%1;border:1px dotted %1;background:transparent;font-size:%2px;margin:1px;padding:2px;" };
-    style = style.arg(color.name()).arg(fontSize);
+    QFont font = textEdit->font();
+    font.setPointSize(fontSize);  // 设置一个较大的字体大小
+    textEdit->setFont(font);
+    QString style{ "color:%1;background:transparent;margin:1px;padding:2px;" };
+    style = style.arg(color.name());
     textEdit->setStyleSheet(style);
     textEdit->setFontItalic(italic);
 
@@ -38,9 +41,6 @@ ShapeText::ShapeText(QObject* parent) : ShapeBase(parent)
     textEdit->hide();
     connect(textEdit->document(), &QTextDocument::contentsChanged, this, &ShapeText::adjustSize);
     connect(textEdit, &ShapeTextInput::focusOut, [this]() {
-        auto style = QString{ "color:%1;border:1px solid transparent;background:transparent;font-size:%2px;margin:1px;padding:2px;" };
-        style = style.arg(color.name()).arg(fontSize);
-        textEdit->setStyleSheet(style);
         textEdit->hide();
         auto win = (WinBase*)this->parent();
         win->update();
@@ -68,29 +68,37 @@ void ShapeText::adjustSize()
     if (!textEdit->document()->isEmpty()) {
         state = ShapeState::ready;
     }
+    auto win = (WinBase*)parent();
+    win->canvas->changeShape(this,true);
 }
 
 void ShapeText::paint(QPainter* painter)
 {
-    if (textEdit->isVisible()) return;
-    textEdit->setFontPointSize(fontSize);
+    if (textEdit->isVisible()) {
+        return;
+    }
     textEdit->render(painter,textEdit->pos());
 }
 void ShapeText::paintDragger(QPainter* painter)
 {
-    if (!textEdit->isHidden()) return;
-    painter->setPen(QPen(QBrush(color), 1));
+    QPen pen;
+    pen.setColor(color);           
+    pen.setStyle(Qt::DashLine);    
+    pen.setDashOffset(1);          
+    pen.setDashPattern({ 1, 2 }); 
+    pen.setWidth(1);
+    painter->setPen(pen);
     painter->setBrush(Qt::NoBrush);
     auto rect = textEdit->geometry();
     painter->drawRect(rect);
 }
 void ShapeText::mouseMove(QMouseEvent* event)
 {
-    if (state != ShapeState::ready) return;
     auto pos = event->pos();
     auto rect = textEdit->geometry();
-    auto innerRect = rect.adjusted(1, 1, -1, -1);
+    auto innerRect = rect.adjusted(2, 2, -2, -2);
     auto outerRect = rect.adjusted(-1, -1, 1, 1);
+    hoverDraggerIndex = -1;
     if (outerRect.contains(pos)) {
         auto win = (WinBase*)parent();
         if (innerRect.contains(pos)) {
@@ -101,7 +109,7 @@ void ShapeText::mouseMove(QMouseEvent* event)
             hoverDraggerIndex = 8;
             win->updateCursor(Qt::SizeAllCursor);
         }
-        win->canvas->changeShape(this);
+        win->canvas->changeShape(this,true);
         event->accept();
     }
 }
@@ -112,12 +120,18 @@ void ShapeText::mousePress(QMouseEvent* event)
         textEdit->setText("");
         textEdit->show();
         textEdit->setFocus();
+        auto win = (WinBase*)parent();
+        win->canvas->changeShape(this,true);
+        event->accept();
     }
     else {
         if (textEdit->isHidden() && hoverDraggerIndex == 0) {
             state = ShapeState::temp;
             textEdit->show();
             textEdit->setFocus();
+            auto win = (WinBase*)parent();
+            win->canvas->changeShape(this, true);
+            event->accept();
         }
     }
 }
@@ -135,8 +149,8 @@ void ShapeText::mouseRelease(QMouseEvent* event)
         state = ShapeState::ready;
         auto win = (WinBase*)parent();
         win->canvas->changeShape(this,true);
-        event->accept();
     }
+    event->accept();
 }
 void ShapeText::mouseDrag(QMouseEvent* event)
 {
