@@ -25,7 +25,7 @@ ShapeText::ShapeText(QObject* parent) : ShapeBase(parent)
     textEdit->setLineWrapMode(QTextEdit::NoWrap);
     textEdit->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff); // 禁用垂直滚动条
     textEdit->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff); // 禁用水平滚动条
-    QString style{ "color:%1;border:1px solid %1;background:transparent;font-size:%2px;" };
+    QString style{ "color:%1;border:1px dotted %1;background:transparent;font-size:%2px;margin:1px;padding:2px;" };
     style = style.arg(color.name()).arg(fontSize);
     textEdit->setStyleSheet(style);
     textEdit->setFontItalic(italic);
@@ -38,7 +38,7 @@ ShapeText::ShapeText(QObject* parent) : ShapeBase(parent)
     textEdit->hide();
     connect(textEdit->document(), &QTextDocument::contentsChanged, this, &ShapeText::adjustSize);
     connect(textEdit, &ShapeTextInput::focusOut, [this]() {
-        auto style = QString{ "color:%1;border:none;padding-left:-1px;padding-top:1px;background:transparent;font-size:%2px;" };
+        auto style = QString{ "color:%1;border:1px solid transparent;background:transparent;font-size:%2px;margin:1px;padding:2px;" };
         style = style.arg(color.name()).arg(fontSize);
         textEdit->setStyleSheet(style);
         textEdit->hide();
@@ -57,9 +57,10 @@ void ShapeText::adjustSize()
     textEdit->document()->adjustSize();
     auto size = textEdit->document()->size().toSize();
     if (textEdit->document()->isEmpty()) {
-        size += QSize(8, 16); 
+        size += QSize(12, 20); 
     }
     else {
+        size += QSize(6, 2);
         state = ShapeState::ready;
     }
     textEdit->setFixedSize(size);
