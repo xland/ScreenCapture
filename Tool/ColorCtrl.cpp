@@ -105,8 +105,3 @@ void ColorCtrl::leaveEvent(QEvent* event)
 		update();
 	}
 }
-
-void ColorCtrl::showEvent(QShowEvent* event)
-{
-	selectedIndex = defaultSelectedIndex;
-}

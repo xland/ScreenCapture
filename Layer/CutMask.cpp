@@ -126,7 +126,7 @@ void CutMask::mouseMove(QMouseEvent* event)
     auto winFull = WinFull::get();
     if (winFull->state == State::start)
     {
-        for (size_t i = 0; i < winFull->winRects.size(); i++)
+        for (int i = 0; i < winFull->winRects.size(); i++)
         {
             if (winFull->winRects[i].contains(pos)) {
                 if (maskRect != winFull->winRects[i]) {

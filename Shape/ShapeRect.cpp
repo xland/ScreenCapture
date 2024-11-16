@@ -9,7 +9,7 @@
 ShapeRect::ShapeRect(QObject* parent, const QString&& btnName) : ShapeBase(parent)
 {
     auto win = (WinBase*)parent;
-    for (size_t i = 0; i < 8; i++)
+    for (int i = 0; i < 8; i++)
     {
         draggers.push_back(QRect());
     }
@@ -51,7 +51,7 @@ void ShapeRect::paintDragger(QPainter* painter)
 {
     painter->setPen(QPen(QBrush(QColor(0, 0, 0)), 1));
     painter->setBrush(Qt::NoBrush);
-    for (size_t i = 0; i < draggers.size(); i++)
+    for (int i = 0; i < draggers.size(); i++)
     {
         painter->drawRect(draggers[i]);
     }

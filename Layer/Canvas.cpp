@@ -55,5 +55,4 @@ void Canvas::paintEvent(QPaintEvent* event)
 void Canvas::onTimeout()
 {
     update();
-    qDebug() << "Canvas::onTimeout";
 }

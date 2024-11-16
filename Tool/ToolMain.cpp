@@ -104,7 +104,7 @@ void ToolMain::paintEvent(QPaintEvent* event)
     painter.setPen(Qt::GlobalColor::white);
     painter.setBrush(Qt::GlobalColor::white);
     painter.drawRect(rect());
-    for (size_t i = 0; i < btns.size(); i++)
+    for (int i = 0; i < btns.size(); i++)
     {
         QRect rect(4 + i * btnW, 0, btnW, height());
         if (i == selectIndex)
@@ -130,7 +130,7 @@ void ToolMain::paintEvent(QPaintEvent* event)
         painter.drawText(rect, Qt::AlignCenter, btns[i].icon);
     }
     painter.setPen(QColor(190, 190, 190));
-    for (size_t i = 0; i < spliterIndexs.size(); i++)
+    for (int i = 0; i < spliterIndexs.size(); i++)
     {
         painter.drawLine(4 + spliterIndexs[i] * btnW + 0.5, 9, 4 + spliterIndexs[i] * btnW + 0.5, height() - 9);
     }
@@ -139,24 +139,24 @@ void ToolMain::paintEvent(QPaintEvent* event)
 void ToolMain::mousePressEvent(QMouseEvent* event)
 {
     if (hoverIndex == -1) return;
-    auto full = (WinBase*)parent();
+    auto win = (WinBase*)parent();
     if (hoverIndex == selectIndex)
     {
         selectIndex = -1;
-        full->state = State::tool;
+        win->state = State::tool;
     }
     else
     {
         auto& btn = btns[hoverIndex];
         if (btn.name.isEmpty())
         {
-            full->state = btn.state;
+            win->state = btn.state;
             selectIndex = hoverIndex;
-            full->showToolSub();
+            win->showToolSub();
         }
         else if (btn.name == "close")
         {
-            full->closeWin();
+            win->closeWin();
             return;
         }
     }

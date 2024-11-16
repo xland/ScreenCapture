@@ -108,7 +108,7 @@ void ToolSub::paintEvent(QPaintEvent* event)
 
 	auto& values = btns[full->state];
 	x = 4;
-	for (size_t i = 0; i < values.size(); i++)
+	for (int i = 0; i < values.size(); i++)
 	{
 		if (values[i].name == "colorCtrl") {
 			x += colorCtrl->width();
@@ -183,7 +183,7 @@ void ToolSub::showEvent(QShowEvent* event)
 	auto values = btns[full->state];
 	auto w{ 4 };
 	bool strokeFlag{ false }, colorFlag{ false };
-	for (size_t i = 0; i < values.size(); i++)
+	for (int i = 0; i < values.size(); i++)
 	{
 		if (values[i].name == "colorCtrl") {
 			colorCtrl->selectedIndex = values[i].selectedIndex;

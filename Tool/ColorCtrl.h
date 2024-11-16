@@ -21,7 +21,6 @@ protected:
 	void mousePressEvent(QMouseEvent* event) override;
 	void mouseMoveEvent(QMouseEvent* event) override;
 	void leaveEvent(QEvent* event) override;
-	void showEvent(QShowEvent* event) override;
 private:
 	int itemWidth{ 26 };
 	int hoverIndex{ -1 };

@@ -126,7 +126,6 @@ void WinFull::mouseMoveEvent(QMouseEvent* event)
             }
             if (canvas) {
                 canvas->changeShape(nullptr);
-                qDebug() << "changeShape(nullptr)";
             }
         }
     }
