@@ -1,4 +1,3 @@
-
 #include <QApplication>
 #include <format>
 #include <Windowsx.h>
@@ -85,7 +84,7 @@ void WinFull::paintEvent(QPaintEvent* event)
     painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
     painter.setRenderHint(QPainter::LosslessImageRendering, true);
     painter.drawPixmap(rect(),bgImg);
-    for (size_t i = 0; i < shapes.size(); i++)
+    for (int i = 0; i < shapes.size(); i++)
     {
         if (shapes[i]->state == ShapeState::ready) {
             shapes[i]->paint(&painter);
