@@ -33,6 +33,7 @@ private:
     void adjustSize();
     void createTextEdit();
     void focusOut();
+    void focusIn();
 private:
     QPointF startPos,endPos,pressPos;
     ShapeTextInput* textEdit;

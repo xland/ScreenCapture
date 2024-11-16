@@ -18,6 +18,12 @@ void ShapeTextInput::focusOutEvent(QFocusEvent * event)
 	emit focusOut();
 }
 
+void ShapeTextInput::focusInEvent(QFocusEvent* event)
+{
+	QTextEdit::focusInEvent(event);
+	emit focusIn();
+}
+
 void ShapeTextInput::paintEvent(QPaintEvent* event)
 {
 	QPainter painter(this);

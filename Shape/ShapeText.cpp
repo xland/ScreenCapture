@@ -62,6 +62,7 @@ void ShapeText::createTextEdit()
     textEdit->setStyleSheet(style);
     connect(textEdit->document(), &QTextDocument::contentsChanged, this, &ShapeText::adjustSize);
     connect(textEdit, &ShapeTextInput::focusOut, this, &ShapeText::focusOut);
+	connect(textEdit, &ShapeTextInput::focusIn, this, &ShapeText::focusIn);
 }
 
 void ShapeText::focusOut()
@@ -72,6 +73,12 @@ void ShapeText::focusOut()
     }
     textEdit->hide();
     qDebug() << "text focus out";
+}
+
+void ShapeText::focusIn()
+{
+    auto win = (WinBase*)parent();
+    win->update();
 }
 
 void ShapeText::paint(QPainter* painter)
@@ -118,8 +125,9 @@ void ShapeText::mouseMove(QMouseEvent* event)
             hoverDraggerIndex = 8;
             win->updateCursor(Qt::SizeAllCursor);
         }
-        win->canvas->changeShape(this,true);
+        win->canvas->changeShape(this);
         event->accept();
+        qDebug() << "text mouse move";
     }
 }
 void ShapeText::mousePress(QMouseEvent* event)
@@ -135,22 +143,16 @@ void ShapeText::mousePress(QMouseEvent* event)
     if (hoverDraggerIndex == 0) {
         textEdit->show();
         textEdit->setFocus();
-        auto win = (WinBase*)parent();
-        win->update();
-        event->accept();
         auto cursorPos = textEdit->mapFromGlobal(event->pos());
 		auto cursor = textEdit->cursorForPosition(cursorPos);
 		textEdit->setTextCursor(cursor);
-        return;
+        event->accept();
     }else if(hoverDraggerIndex == 8){
         textEdit->show();
         textEdit->setFocus();
 		pressPos = event->pos();
 		state = ShapeState::moving;
 		event->accept();
-		auto win = (WinBase*)parent();
-		win->canvas->changeShape(this,true);
-		win->update();
 	}
 }
 void ShapeText::mouseRelease(QMouseEvent* event)

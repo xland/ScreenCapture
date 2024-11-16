@@ -5,6 +5,7 @@
 Canvas::Canvas(QWidget *parent) : QWidget(parent)
 {
     timer = new QTimer(this);
+    timer->setInterval(800);
     timer->setSingleShot(true);
     connect(timer, &QTimer::timeout, this, &Canvas::onTimeout);
     setAttribute(Qt::WA_TransparentForMouseEvents, true);
@@ -20,14 +21,17 @@ Canvas::~Canvas()
 void Canvas::changeShape(ShapeBase* shape, bool forceUpdate)
 {
     if (shape) {
-        timer->start(800);
-    }
-    if (shape != curShape) {
-        curShape = shape;
-        if (shape) {
+        if (shape != curShape) {
             update();
-        }
+            curShape = shape;
+		}        
     }
+    else {
+        if (shape != curShape) {
+            timer->start();
+            curShape = shape;
+        }
+    }    
     if (forceUpdate) {
         update();
     }
@@ -51,4 +55,5 @@ void Canvas::paintEvent(QPaintEvent* event)
 void Canvas::onTimeout()
 {
     update();
+    qDebug() << "Canvas::onTimeout";
 }
