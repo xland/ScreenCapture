@@ -6,6 +6,7 @@
 #include "../Shape/ShapeNumber.h"
 #include "../Shape/ShapeLine.h"
 #include "../Shape/ShapeText.h"
+#include "../Shape/ShapeEraser.h"
 
 
 WinBase::WinBase(QWidget *parent) : QWidget(parent)
@@ -43,6 +44,9 @@ ShapeBase* WinBase::addShape()
     }
     else if (state == State::text) {
         shape = new ShapeText(this);
+    }
+    else if (state == State::eraser) {
+        shape = new ShapeEraser(this);
     }
     else
     {

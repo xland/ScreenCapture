@@ -221,8 +221,13 @@ void WinFull::createNativeWindow()
     wcx.lpszClassName = clsName.c_str();
     RegisterClassEx(&wcx);
     auto style{ WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_POPUP };
-    hwnd = CreateWindowEx(NULL, clsName.c_str(), L"ScreenCapture", style,
-        x, y, w, h, NULL, NULL, instance, NULL);
+#ifdef DEBUG
+    //auto exStyle = WS_EX_LAYERED;
+#else
+    //auto exStyle = WS_EX_LAYERED | WS_EX_TOPMOST;
+#endif
+    auto exStyle = NULL;
+    hwnd = CreateWindowEx(exStyle, clsName.c_str(), L"ScreenCapture", style,x, y, w, h, NULL, NULL, instance, NULL);
 }
 void WinFull::processSubWin()
 {
@@ -233,6 +238,32 @@ void WinFull::processSubWin()
     auto widgetHwnd = (HWND)winId();
     SetParent(widgetHwnd, hwnd);
     SetWindowPos(widgetHwnd, nullptr, 0, 0, w, h, SWP_NOZORDER | SWP_SHOWWINDOW);
+
+
+    //HDC hdc = GetDC(hwnd);
+    //HDC memDC = CreateCompatibleDC(hdc);
+    //BITMAPINFO info = { sizeof(BITMAPINFOHEADER), w, 0 - h, 1, 32, BI_RGB, w * 4 * h, 0, 0, 0, 0 };
+    //void* bits = nullptr;
+    //HBITMAP hBitmap = CreateDIBSection(hdc, &info, DIB_RGB_COLORS, &bits, nullptr, 0);
+    //auto img = bgImg.toImage();
+    //memcpy(bits, img.bits(), img.sizeInBytes());
+    //HBITMAP oldBitmap = (HBITMAP)SelectObject(memDC, hBitmap);
+    //BLENDFUNCTION blend = { .BlendOp{AC_SRC_OVER}, .SourceConstantAlpha{255}, .AlphaFormat{AC_SRC_ALPHA} };
+    //POINT pSrc = { 0, 0 };
+    //SIZE sizeWnd = { w, h };
+    //UpdateLayeredWindow(hwnd, hdc, NULL, &sizeWnd, memDC, &pSrc, NULL, &blend, ULW_ALPHA);
+    //DeleteObject(oldBitmap);
+    //DeleteObject(hBitmap);
+    //DeleteDC(memDC);
+    //ReleaseDC(hwnd, hdc);
+
+
+    //HDC hdc = GetDC(hwnd);
+    //BITMAPINFO info = { sizeof(BITMAPINFOHEADER), w, 0 - h, 1, 32, BI_RGB, w * 4 * h, 0, 0, 0, 0 };
+    //auto img = bgImg.toImage();
+    //StretchDIBits(hdc,0, 0, w, h,0, 0, w, h,img.bits(), &info, DIB_RGB_COLORS, SRCCOPY);
+    //ReleaseDC(hwnd, hdc);
+
 }
 
 LRESULT WinFull::routeWinMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -254,6 +285,7 @@ LRESULT WinFull::routeWinMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
         //        DeleteDC(memDC);
         //    }
         //    EndPaint(hWnd, &ps);
+        //    break;
         //}
         default: {
             break;

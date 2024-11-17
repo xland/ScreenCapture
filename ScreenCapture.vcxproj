@@ -78,6 +78,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <PreprocessorDefinitions>DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalDependencies>dwmapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -116,6 +117,7 @@
     <ClCompile Include="Shape\ShapeArrow.cpp" />
     <ClCompile Include="Shape\ShapeBase.cpp" />
     <ClCompile Include="Shape\ShapeEllipse.cpp" />
+    <ClCompile Include="Shape\ShapeEraser.cpp" />
     <ClCompile Include="Shape\ShapeLine.cpp" />
     <ClCompile Include="Shape\ShapeNumber.cpp" />
     <ClCompile Include="Shape\ShapeRect.cpp" />
@@ -151,6 +153,7 @@
     <QtMoc Include="Shape\ShapeRect.h" />
     <QtMoc Include="Shape\ShapeNumber.h" />
     <QtMoc Include="Shape\ShapeLine.h" />
+    <QtMoc Include="Shape\ShapeEraser.h" />
     <ClInclude Include="Shape\ShapeState.h" />
     <QtMoc Include="Shape\ShapeText.h" />
     <QtMoc Include="Shape\ShapeTextInput.h" />
