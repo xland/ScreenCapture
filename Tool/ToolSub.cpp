@@ -197,6 +197,7 @@ void ToolSub::showEvent(QShowEvent* event)
 			strokeCtrl->setMaximum(values[i].max);
 			strokeCtrl->setMinimum(values[i].min);
 			strokeCtrl->setValue(values[i].value);
+			strokeCtrl->setToolTip(QString::number(values[i].value));
 			strokeCtrl->move(w, 10);
 			strokeCtrl->show();
 			w += strokeCtrl->width();

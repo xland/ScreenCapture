@@ -58,22 +58,6 @@ void StrokeCtrl::mouseMoveEvent(QMouseEvent* event)
     event->ignore();
 }
 
-void StrokeCtrl::showEvent(QShowEvent* event)
-{
-    auto full = (WinBase*)parent()->parent();
-    if (full->state == State::rect) {
-        setMinimum(1);
-        setMaximum(36);
-        setValue(2);
-    }
-    else {
-        setMinimum(1);
-        setValue(22);
-        setMaximum(60);
-    }
-    setToolTip(QString::number(value()));
-}
-
 void StrokeCtrl::setPosByMouse(const QPoint& pos)
 {
     auto val = ((qreal)pos.x()) / ((qreal)width() - 6.f) * (qreal)maximum();
