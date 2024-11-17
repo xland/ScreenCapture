@@ -39,18 +39,27 @@ void ShapeLine::paint(QPainter* painter)
     pen.setWidth(strokeWidth);
     pen.setCapStyle(Qt::RoundCap);
     painter->setPen(pen);
-    painter->drawLine(startPos, endPos);
+    if (path.isEmpty()) {
+        painter->drawLine(startPos, endPos);
+    }
+    else {
+        painter->drawPath(path);
+    }
+
 }
 void ShapeLine::paintDragger(QPainter* painter)
 {
-    painter->setPen(QPen(QBrush(QColor(0, 0, 0)), 1));
-    painter->setBrush(Qt::NoBrush);
-    painter->drawRect(draggers[0]);
-    painter->drawRect(draggers[1]);
+    if (path.isEmpty()) {
+        painter->setPen(QPen(QBrush(QColor(0, 0, 0)), 1));
+        painter->setBrush(Qt::NoBrush);
+        painter->drawRect(draggers[0]);
+        painter->drawRect(draggers[1]);
+    }
 }
 void ShapeLine::mouseMove(QMouseEvent* event)
 {
     if (state != ShapeState::ready) return;
+    if (!path.isEmpty()) return;
     auto pos = event->pos();
     hoverDraggerIndex = -1;
     if (draggers[0].contains(pos)) {
@@ -80,30 +89,49 @@ void ShapeLine::mouseMove(QMouseEvent* event)
 void ShapeLine::mousePress(QMouseEvent* event)
 {
     if (state == ShapeState::temp) {
-        startPos = event->pos().toPointF();
-        endPos = startPos;
-        hoverDraggerIndex = 1;
+        auto flag = event->modifiers() & Qt::ShiftModifier;
+        if (flag) {
+            startPos = event->pos().toPointF();
+            endPos = startPos;
+            hoverDraggerIndex = 1;
+        }
+        else {
+            path.moveTo(event->pos());
+            path.lineTo(event->pos());
+            qDebug() << "press!!!!";
+            qDebug() << "line1" << path.elementCount();
+            event->accept();
+            state = ShapeState::sizing0;
+            auto win = (WinBase*)parent();
+            win->canvas->changeShape(this);
+        }
     }
-    if (hoverDraggerIndex >= 0) {
+    if (path.isEmpty() && hoverDraggerIndex >= 0) {
         pressPos = event->pos().toPointF();
         state = (ShapeState)((int)ShapeState::sizing0 + hoverDraggerIndex);
-        event->accept();
         auto win = (WinBase*)parent();
         win->canvas->changeShape(this);
         win->update();
+        event->accept();
     }
 }
 void ShapeLine::mouseRelease(QMouseEvent* event)
 {
-    if (state >= ShapeState::sizing0) {
-        resetDragger();
-        coeffA = startPos.y() - endPos.y();
-        coeffB = endPos.x() - startPos.x();
-        coeffC = startPos.x() * endPos.y() - endPos.x() * startPos.y();
-        diffVal = std::sqrt(coeffA * coeffA + coeffB * coeffB);
+    if (path.isEmpty()) {
+        if (state >= ShapeState::sizing0) {
+            resetDragger();
+            coeffA = startPos.y() - endPos.y();
+            coeffB = endPos.x() - startPos.x();
+            coeffC = startPos.x() * endPos.y() - endPos.x() * startPos.y();
+            diffVal = std::sqrt(coeffA * coeffA + coeffB * coeffB);
+            state = ShapeState::ready;
+            auto win = (WinBase*)parent();
+            win->canvas->changeShape(this, true);
+            event->accept();
+        }
+    }
+    else {
         state = ShapeState::ready;
-        auto win = (WinBase*)parent();
-        win->canvas->changeShape(this,true);
         event->accept();
     }
 }
@@ -112,18 +140,24 @@ void ShapeLine::mouseDrag(QMouseEvent* event)
     if (state == ShapeState::ready) {
         return;
     }
-    if (state == ShapeState::sizing0) {
-        startPos = event->pos();
+    if (path.elementCount() <=0) {
+        qDebug() << "empty";
+        if (state == ShapeState::sizing0) {
+            startPos = event->pos();
+        }
+        if (state == ShapeState::sizing1) {
+            endPos = event->pos();
+        }
+        else if (state == ShapeState::moving) {
+            auto pos = event->pos();
+            auto span = pos - pressPos;
+            startPos += span;
+            endPos += span;
+            pressPos = pos;
+        }
     }
-    if (state == ShapeState::sizing1) {
-        endPos = event->pos();
-    }
-    else if (state == ShapeState::moving) {
-        auto pos = event->pos();
-        auto span = pos - pressPos;
-        startPos+=span;
-        endPos+=span;
-        pressPos = pos;
+    else {
+        path.lineTo(event->position());
     }
     auto win = (WinBase*)parent();
     win->canvas->update();

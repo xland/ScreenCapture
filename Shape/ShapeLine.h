@@ -25,6 +25,7 @@ protected:
 private:
     void resetDragger();
 private:
-    QPointF startPos, endPos,pressPos;
+    QPointF startPos,endPos,pressPos;
     double coeffA,coeffB,coeffC,diffVal;
+    QPainterPath path;
 };
