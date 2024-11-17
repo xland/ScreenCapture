@@ -14,7 +14,6 @@ StrokeCtrl::StrokeCtrl(QWidget *parent):QSlider(parent)
     setAttribute(Qt::WA_NoSystemBackground);
     setAttribute(Qt::WA_Hover);
     setMouseTracking(true);
-    connect(this, &QSlider::valueChanged, this, &StrokeCtrl::onValueChanged);
     setFixedSize(84, 32);
 }
 
@@ -71,7 +70,7 @@ void StrokeCtrl::showEvent(QShowEvent* event)
         setValue(22);
         setMaximum(60);
     }
-    setToolTip(QString::number(value()));
+    connect(this, &QSlider::valueChanged, this, &StrokeCtrl::onValueChanged, Qt::UniqueConnection);
 }
 
 void StrokeCtrl::onValueChanged(int value)
