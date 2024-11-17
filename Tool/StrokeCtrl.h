@@ -16,9 +16,9 @@ protected:
 	void mousePressEvent(QMouseEvent* event) override;
 	void mouseMoveEvent(QMouseEvent* event) override;
 	void showEvent(QShowEvent* event) override;
-	
 private:
 	void setPosByMouse(const QPoint& pos);
 	qreal getSliderXPos();
-	void onValueChanged(int value);
+private:
+	void setTip();
 };

@@ -40,6 +40,7 @@ void StrokeCtrl::wheelEvent(QWheelEvent* event)
     auto y = event->angleDelta().y();
     int delta = y > 0 ? 1 : -1; 
     setValue(value() + delta); 
+    setTip();
     event->accept(); 
 }
 
@@ -70,15 +71,7 @@ void StrokeCtrl::showEvent(QShowEvent* event)
         setValue(22);
         setMaximum(60);
     }
-    connect(this, &QSlider::valueChanged, this, &StrokeCtrl::onValueChanged, Qt::UniqueConnection);
-}
-
-void StrokeCtrl::onValueChanged(int value)
-{
-    qreal x = getSliderXPos()-10;
-    auto pos = mapToGlobal(QPoint(x, -30));
-    QToolTip::showText(pos, QString::number(value), this);
-    setToolTip(QString::number(value));
+    setToolTip(QString::number(value()));
 }
 
 void StrokeCtrl::setPosByMouse(const QPoint& pos)
@@ -87,6 +80,7 @@ void StrokeCtrl::setPosByMouse(const QPoint& pos)
     if (val < 0) val = 1;
     if (val > maximum()) val = maximum();
     setValue(val);
+    setTip();
 }
 
 qreal StrokeCtrl::getSliderXPos()
@@ -100,4 +94,12 @@ qreal StrokeCtrl::getSliderXPos()
     else {
         return (val - min) / (max - min) * ((qreal)width() - 12.f) + 1.f;
     }
+}
+
+void StrokeCtrl::setTip()
+{
+    qreal x = getSliderXPos() - 10;
+    auto pos = mapToGlobal(QPoint(x, -30));
+    setToolTip(QString::number(value()));
+    QToolTip::showText(pos, QString::number(value()), this);
 }
