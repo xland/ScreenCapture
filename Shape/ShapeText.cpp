@@ -31,13 +31,12 @@ void ShapeText::adjustSize()
     textEdit->document()->adjustSize();
     auto size = textEdit->document()->size().toSize();
     if (textEdit->document()->isEmpty()) {
-        size += QSize(12, 6); 
+        size += QSize(8, 6); 
     }
     else {
         size += QSize(6, 2);
     }
     textEdit->setFixedSize(size);
-    qDebug() << "text adjustSize";
     auto win = (WinBase*)parent();
     win->update();
 }
@@ -46,15 +45,11 @@ void ShapeText::createTextEdit()
 {
     textEdit = new ShapeTextInput((QWidget*)parent());
     textEdit->setLineWrapMode(QTextEdit::NoWrap);
-    textEdit->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff); // 禁用垂直滚动条
-    textEdit->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff); // 禁用水平滚动条
-    //textEdit set topmost
-	textEdit->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
+    textEdit->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    textEdit->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     QFont font = textEdit->font();
     font.setPointSize(fontSize);
-    if (bold) {
-        font.setWeight(QFont::Bold);
-    }
+    font.setWeight(bold ? QFont::Bold : QFont::Normal);
     font.setItalic(italic);
     textEdit->setFont(font);
     QString style{ "color:%1;background:transparent;margin:1px;padding:2px;" };
@@ -72,7 +67,8 @@ void ShapeText::focusOut()
         state = ShapeState::temp;
     }
     textEdit->hide();
-    qDebug() << "text focus out";
+    auto win = (WinBase*)parent();
+    win->update();
 }
 
 void ShapeText::focusIn()
@@ -127,7 +123,6 @@ void ShapeText::mouseMove(QMouseEvent* event)
         }
         win->canvas->changeShape(this);
         event->accept();
-        qDebug() << "text mouse move";
     }
 }
 void ShapeText::mousePress(QMouseEvent* event)
@@ -161,8 +156,8 @@ void ShapeText::mouseRelease(QMouseEvent* event)
         state = ShapeState::ready;
         auto win = (WinBase*)parent();
         win->canvas->changeShape(this,true);
+        event->accept();
     }
-    event->accept();
 }
 void ShapeText::mouseDrag(QMouseEvent* event)
 {

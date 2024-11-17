@@ -143,6 +143,7 @@ void ToolSub::paintEvent(QPaintEvent* event)
 
 void ToolSub::mousePressEvent(QMouseEvent* event)
 {
+	if (hoverIndex < 0) return;
 	auto full = (WinBase*)parent();
 	auto& values = btns[full->state];
 	values[hoverIndex].selected = !values[hoverIndex].selected;

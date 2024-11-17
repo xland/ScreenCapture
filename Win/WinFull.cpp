@@ -38,7 +38,7 @@ WinFull::~WinFull()
 }
 void WinFull::init()
 {
-    WinFull::dispose();
+    WinFull::dispose(); //为什么要做这个工作？todo
     winFull = new WinFull();
     winFull->processSubWin();
     ShowWindow(winFull->hwnd, SW_SHOW);
@@ -163,6 +163,7 @@ void WinFull::closeWin()
     close();
     DestroyWindow(hwnd);
     delete winFull;
+    winFull = nullptr;
 }
 
 void WinFull::initSize()
