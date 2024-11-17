@@ -36,4 +36,5 @@ private:
 	StrokeCtrl* strokeCtrl;
 	ColorCtrl* colorCtrl;
 	int hoverIndex{ -1 };
+	int triangleX{ 0 };
 };

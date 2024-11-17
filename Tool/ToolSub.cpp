@@ -98,16 +98,14 @@ void ToolSub::paintEvent(QPaintEvent* event)
 	painter.setPen(Qt::GlobalColor::white);
 	painter.setBrush(Qt::GlobalColor::white);
 	painter.drawRect(rect().adjusted(0, 10, 0, 0));
-
-	auto full = (WinBase*)parent();
-	auto index = full->toolMain->selectIndex;
-	auto x = 4 + index * 32 + 32 / 2;
+	
 	QPolygon triangle;
-	triangle << QPoint(x, 6) << QPoint(x-4, 10) << QPoint(x+4, 10);
+	triangle << QPoint(triangleX, 6) << QPoint(triangleX-4, 10) << QPoint(triangleX+4, 10);
 	painter.drawPolygon(triangle);
 
-	auto& values = btns[full->state];
-	x = 4;
+	auto win = (WinBase*)parent();
+	auto& values = btns[win->state];
+	int x = 4;
 	for (int i = 0; i < values.size(); i++)
 	{
 		if (values[i].name == "colorCtrl") {
@@ -180,8 +178,8 @@ void ToolSub::leaveEvent(QEvent* event)
 
 void ToolSub::showEvent(QShowEvent* event)
 {
-	auto full = (WinBase*)parent();
-	auto values = btns[full->state];
+	auto win = (WinBase*)parent();
+	auto values = btns[win->state];
 	auto w{ 4 };
 	bool strokeFlag{ false }, colorFlag{ false };
 	for (int i = 0; i < values.size(); i++)
@@ -215,6 +213,18 @@ void ToolSub::showEvent(QShowEvent* event)
 	}
 	if (!colorFlag) {
 		colorCtrl->hide();
+	}
+
+	auto pos = win->toolMain->geometry().bottomLeft();
+	auto index = win->toolMain->selectIndex;
+	auto x = 4 + index * 32 + 32 / 2;
+	if (x > w) {
+		triangleX = w / 2;
+		move(pos.x()+x-w/2, pos.y());
+	}
+	else {
+		triangleX = x;
+		move(pos.x(), pos.y());
 	}
 	QWidget::showEvent(event);
 }

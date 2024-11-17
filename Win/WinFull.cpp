@@ -73,8 +73,6 @@ void WinFull::showToolSub()
     if (toolSub->isVisible()) {
         toolSub->hide();
     }
-    auto pos = toolMain->geometry().bottomLeft();
-    toolSub->move(pos.x(), pos.y());
     toolSub->show();
 }
 void WinFull::paintEvent(QPaintEvent* event)
