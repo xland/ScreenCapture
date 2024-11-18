@@ -98,6 +98,12 @@
     <ClCompile Include="Shape\ShapeEraser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Layer\Board.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Layer\LayerBase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BtnType.h">
@@ -181,6 +187,12 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="Shape\ShapeEraser.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Layer\Board.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Layer\LayerBase.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

@@ -6,17 +6,13 @@
 #include <QFontDatabase>
 #include <QJsonObject>
 
-class WinFull;
-class WinBoard;
-class WinCanvas;
-class WinMask;
+
 class App
 {
 public:
 	static void init();
 	static App* get();
 	static QFont* getIconFont();
-	static void disposeFull();
 	static void dispose();
 	static void start();
 public:

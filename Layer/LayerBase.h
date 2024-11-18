@@ -10,12 +10,12 @@ class ToolSub;
 class ShapeBase;
 class Canvas;
 class Board;
-class WinBase  : public QWidget
+class LayerBase : public QWidget
 {
 	Q_OBJECT
 public:
-	WinBase(QWidget* parent = nullptr);
-	virtual ~WinBase();
+	LayerBase(QWidget* parent = nullptr);
+	virtual ~LayerBase();
 	virtual void showToolMain() = 0;
 	virtual void showToolSub() = 0;
 	virtual void closeWin() = 0;

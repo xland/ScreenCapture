@@ -9,6 +9,7 @@
 #include <QMouseEvent>
 #include <QWidget>
 
+
 class CutMask  : public QWidget
 {
 	Q_OBJECT

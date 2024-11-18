@@ -25,10 +25,9 @@ public:
 	void showToolSub() override;
 	void closeWin() override;
 public:
-	HWND hwnd;
-	float scaleFactor{1.0f};
 	int x, y, w, h;
 	CutMask* cutMask;
+	float scaleFactor{ 1.0f };
 	std::vector<QRect> screens;
 	std::vector<QRect> winRects;
 protected:
@@ -36,15 +35,11 @@ protected:
 	void mousePressEvent(QMouseEvent* event) override;
 	void mouseMoveEvent(QMouseEvent* event) override;
 	void mouseReleaseEvent(QMouseEvent* event) override;
-	void showEvent(QShowEvent* event) override;
 private:
 	void initWinRects();
 	void initSize();
 	void initBgImg();
-	void createNativeWindow();
-	void processSubWin();
 	void initScreens();
-	static LRESULT CALLBACK routeWinMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 private:
 };
 

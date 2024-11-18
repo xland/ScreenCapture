@@ -4,6 +4,7 @@
 #include <dwmapi.h>
 #include <qscreen.h>
 #include <qimage.h>
+#include <qwindow.h>
 
 #include "WinFull.h"
 #include "../App/App.h"
@@ -13,6 +14,7 @@
 #include "../Tool/ToolSub.h"
 #include "../Layer/CutMask.h"
 #include "../Layer/Canvas.h"
+#include "../Layer/Board.h"
 
 namespace {
     WinFull* winFull;
@@ -21,28 +23,29 @@ namespace {
 WinFull::WinFull(QWidget* parent) : WinBase(parent)
 {
     initSize();
-    initScreens();
     initBgImg();
+    initScreens();
     initWinRects();
-    setAttribute(Qt::WA_OpaquePaintEvent);
     setAttribute(Qt::WA_NoSystemBackground);
+    setAttribute(Qt::WA_QuitOnClose, false);
     //setAttribute(Qt::WA_TranslucentBackground);
-    //setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
+    setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
     setAutoFillBackground(false);
-    createNativeWindow();
     setMouseTracking(true);
     setCursor(Qt::CrossCursor);
+
+    
+    setFixedSize(w, h);
+    show();
+    SetWindowPos((HWND)winId(), nullptr, x, y, w, h, SWP_NOZORDER | SWP_SHOWWINDOW);
 }
 WinFull::~WinFull()
 {
 }
 void WinFull::init()
 {
-    WinFull::dispose(); //为什么要做这个工作？todo
+    WinFull::dispose();
     winFull = new WinFull();
-    winFull->processSubWin();
-    ShowWindow(winFull->hwnd, SW_SHOW);
-    SetForegroundWindow(winFull->hwnd);
     winFull->cutMask = new CutMask(winFull);
 }
 void WinFull::dispose()
@@ -67,8 +70,9 @@ void WinFull::showToolMain()
 void WinFull::showToolSub()
 {
     if (!toolSub) {
-        toolSub = new ToolSub(this);
         canvas = new Canvas(this);
+        board = new Board(this);
+        toolSub = new ToolSub(this);
     }
     if (toolSub->isVisible()) {
         toolSub->hide();
@@ -76,18 +80,9 @@ void WinFull::showToolSub()
     toolSub->show();
 }
 void WinFull::paintEvent(QPaintEvent* event)
-{
-    QPainter painter(this);
-    painter.setRenderHint(QPainter::Antialiasing, true);
-    painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
-    painter.setRenderHint(QPainter::LosslessImageRendering, true);
-    painter.drawPixmap(rect(),bgImg);
-    for (int i = 0; i < shapes.size(); i++)
-    {
-        if (shapes[i]->state == ShapeState::ready) {
-            shapes[i]->paint(&painter);
-        }        
-    }
+{    
+    QPainter painter(this);    
+    painter.drawPixmap(rect(), bgImg);
 }
 void WinFull::mousePressEvent(QMouseEvent* event)
 {
@@ -153,13 +148,9 @@ void WinFull::mouseReleaseEvent(QMouseEvent* event)
         }
     }
 }
-void WinFull::showEvent(QShowEvent* event)
-{
-}
 void WinFull::closeWin()
 {
     close();
-    DestroyWindow(hwnd);
     delete winFull;
     winFull = nullptr;
 }
@@ -179,119 +170,11 @@ void WinFull::initBgImg()
         auto pos = screen->geometry().topLeft();
         if (pos.x() == 0 && pos.y() == 0)
         {
-            auto dpr = screen->devicePixelRatio();
-            bgImg = screen->grabWindow(0, x / dpr, y / dpr, w / dpr, h / dpr);
-            scaleFactor = dpr;
+            scaleFactor = screen->devicePixelRatio();
+            bgImg = screen->grabWindow(0, x / scaleFactor, y / scaleFactor, w / scaleFactor, h / scaleFactor);
             break;
         }
     }
-
-    //auto winNative = WinFull::Get();
-    //HDC hScreen = GetDC(NULL);
-    //HDC hDC = CreateCompatibleDC(hScreen);
-    //HBITMAP hBitmap = CreateCompatibleBitmap(hScreen, winNative->w, winNative->h);
-    //DeleteObject(SelectObject(hDC, hBitmap));
-    //BOOL bRet = BitBlt(hDC, 0, 0, winNative->w, winNative->h, hScreen, winNative->x, winNative->y, SRCCOPY);
-    //long long dataSize = winNative->w * winNative->h * 4;
-    //std::vector<unsigned char> bgPix(dataSize, 0);
-    //BITMAPINFO info = { sizeof(BITMAPINFOHEADER), (long)winNative->w, 0 - (long)winNative->h, 1, 32, BI_RGB, (DWORD)dataSize, 0, 0, 0, 0 };
-    //GetDIBits(hDC, hBitmap, 0, winNative->h, &bgPix.front(), &info, DIB_RGB_COLORS);
-    //DeleteObject(hBitmap);
-    //DeleteDC(hDC);
-    //ReleaseDC(NULL, hScreen);
-    //QImage bgTemp(&bgPix.front(), winNative->w, winNative->h, QImage::Format_ARGB32);
-    ////auto bg = bgTemp.convertToFormat(QImage::Format_RGB444); //QImage::Format_RGB444 让图像体积小一倍，但图像颜色会变得不一样
-    ////imgBg = std::make_unique<QImage>(std::move(bgTemp));
-    //imgBg = std::make_unique<QImage>(bgTemp.copy(0, 0, winNative->w, winNative->h));
-}
-void WinFull::createNativeWindow()
-{
-    auto instance = GetModuleHandle(NULL);
-    static int num = 0;
-    std::wstring clsName{ std::format(L"ScreenCapture{}", num++) };
-    WNDCLASSEX wcx{};
-    wcx.cbSize = sizeof(wcx);
-    wcx.style = CS_HREDRAW | CS_VREDRAW;
-    wcx.lpfnWndProc = &WinFull::routeWinMsg;
-    wcx.cbWndExtra = 0;
-    wcx.hInstance = instance;
-    wcx.hIcon = LoadIcon(instance, IDI_APPLICATION);
-    wcx.hCursor = LoadCursor(instance, IDC_CROSS);
-    wcx.hbrBackground = (HBRUSH)COLOR_WINDOW;
-    wcx.lpszClassName = clsName.c_str();
-    RegisterClassEx(&wcx);
-    auto style{ WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_POPUP };
-#ifdef DEBUG
-    //auto exStyle = WS_EX_LAYERED;
-#else
-    //auto exStyle = WS_EX_LAYERED | WS_EX_TOPMOST;
-#endif
-    auto exStyle = NULL;
-    hwnd = CreateWindowEx(exStyle, clsName.c_str(), L"ScreenCapture", style,x, y, w, h, NULL, NULL, instance, NULL);
-}
-void WinFull::processSubWin()
-{
-    setWindowFlags(Qt::FramelessWindowHint);
-    setAttribute(Qt::WA_QuitOnClose, false);
-    setFixedSize(w, h);
-    show();
-    auto widgetHwnd = (HWND)winId();
-    SetParent(widgetHwnd, hwnd);
-    SetWindowPos(widgetHwnd, nullptr, 0, 0, w, h, SWP_NOZORDER | SWP_SHOWWINDOW);
-
-
-    //HDC hdc = GetDC(hwnd);
-    //HDC memDC = CreateCompatibleDC(hdc);
-    //BITMAPINFO info = { sizeof(BITMAPINFOHEADER), w, 0 - h, 1, 32, BI_RGB, w * 4 * h, 0, 0, 0, 0 };
-    //void* bits = nullptr;
-    //HBITMAP hBitmap = CreateDIBSection(hdc, &info, DIB_RGB_COLORS, &bits, nullptr, 0);
-    //auto img = bgImg.toImage();
-    //memcpy(bits, img.bits(), img.sizeInBytes());
-    //HBITMAP oldBitmap = (HBITMAP)SelectObject(memDC, hBitmap);
-    //BLENDFUNCTION blend = { .BlendOp{AC_SRC_OVER}, .SourceConstantAlpha{255}, .AlphaFormat{AC_SRC_ALPHA} };
-    //POINT pSrc = { 0, 0 };
-    //SIZE sizeWnd = { w, h };
-    //UpdateLayeredWindow(hwnd, hdc, NULL, &sizeWnd, memDC, &pSrc, NULL, &blend, ULW_ALPHA);
-    //DeleteObject(oldBitmap);
-    //DeleteObject(hBitmap);
-    //DeleteDC(memDC);
-    //ReleaseDC(hwnd, hdc);
-
-
-    //HDC hdc = GetDC(hwnd);
-    //BITMAPINFO info = { sizeof(BITMAPINFOHEADER), w, 0 - h, 1, 32, BI_RGB, w * 4 * h, 0, 0, 0, 0 };
-    //auto img = bgImg.toImage();
-    //StretchDIBits(hdc,0, 0, w, h,0, 0, w, h,img.bits(), &info, DIB_RGB_COLORS, SRCCOPY);
-    //ReleaseDC(hwnd, hdc);
-
-}
-
-LRESULT WinFull::routeWinMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
-{
-    switch (msg)
-    {
-        case WM_CLOSE: {
-            winFull->closeWin();
-            break;
-        }
-        //case WM_PAINT: {
-        //    PAINTSTRUCT ps;
-        //    HDC hdc = BeginPaint(hWnd, &ps);
-        //    HDC memDC = CreateCompatibleDC(hdc);
-        //    if (memDC) {
-        //        HBITMAP oldBitmap = (HBITMAP)SelectObject(memDC, winFull->bgImg.toImage().toHBITMAP());                
-        //        BitBlt(hdc, 0, 0, winFull->w, winFull->h, memDC, 0, 0, SRCCOPY);
-        //        SelectObject(memDC, oldBitmap);
-        //        DeleteDC(memDC);
-        //    }
-        //    EndPaint(hWnd, &ps);
-        //    break;
-        //}
-        default: {
-            break;
-        }            
-    }
-    return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 void WinFull::initWinRects()
 {
