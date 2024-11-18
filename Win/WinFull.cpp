@@ -29,12 +29,10 @@ WinFull::WinFull(QWidget* parent) : WinBase(parent)
     setAttribute(Qt::WA_NoSystemBackground);
     setAttribute(Qt::WA_QuitOnClose, false);
     //setAttribute(Qt::WA_TranslucentBackground);
-    setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
+    setWindowFlags(Qt::FramelessWindowHint); //  | Qt::WindowStaysOnTopHint
     setAutoFillBackground(false);
     setMouseTracking(true);
-    setCursor(Qt::CrossCursor);
-
-    
+    setCursor(Qt::CrossCursor);    
     setFixedSize(w, h);
     show();
     SetWindowPos((HWND)winId(), nullptr, x, y, w, h, SWP_NOZORDER | SWP_SHOWWINDOW);
@@ -151,6 +149,8 @@ void WinFull::mouseReleaseEvent(QMouseEvent* event)
 void WinFull::closeWin()
 {
     close();
+    delete cutMask;
+    cutMask = nullptr;
     delete winFull;
     winFull = nullptr;
 }
@@ -168,11 +168,13 @@ void WinFull::initBgImg()
     for (auto screen : screens)
     {
         auto pos = screen->geometry().topLeft();
+        qreal sf = screen->devicePixelRatio();
         if (pos.x() == 0 && pos.y() == 0)
         {
-            scaleFactor = screen->devicePixelRatio();
-            bgImg = screen->grabWindow(0, x / scaleFactor, y / scaleFactor, w / scaleFactor, h / scaleFactor);
-            break;
+            bgImg = screen->grabWindow(0, x / sf, y / sf, w / sf, h / sf);
+        }
+        if (sf > scaleFactor) {
+            scaleFactor = sf;
         }
     }
 }
@@ -192,7 +194,8 @@ void WinFull::initWinRects()
             auto self = (WinFull*)lparam;
             auto sf = self->scaleFactor;
             auto l{ rect.left - self->x }, t{ rect.top - self->y }, r{ rect.right - self->x }, b{ rect.bottom - self->y };
-            self->winRects.push_back(QRect(QPoint(l/sf, t/sf), QPoint(r/sf, b/sf)));
+            auto lt = self->mapFromGlobal(QPoint(rect.right, rect.bottom));
+            self->winRects.push_back(QRect(QPoint(l, t), QPoint(r, b)));
             return TRUE;
         }, (LPARAM)this);
 }

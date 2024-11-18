@@ -5,8 +5,10 @@
 
 CutMask::CutMask(QWidget* parent) : QWidget(parent)
 {
-    setAttribute(Qt::WA_TransparentForMouseEvents, true);
-    setGeometry(parent->rect());
+    setAttribute(Qt::WA_NoSystemBackground);
+    setAttribute(Qt::WA_TranslucentBackground);
+    setAttribute(Qt::WA_TransparentForMouseEvents);
+    setFixedSize(parent->rect().size());
     show();
 }
 
@@ -27,9 +29,31 @@ void CutMask::paintEvent(QPaintEvent* event)
     painter.drawPath(p);
 }
 
-void CutMask::showEvent(QShowEvent* event)
-{
-}
+//void CutMask::mousePressEvent(QMouseEvent* event)
+//{
+//    event->ignore();
+//    mousePress(event);
+//    if (event->isAccepted()) return;
+//}
+//void CutMask::mouseMoveEvent(QMouseEvent* event)
+//{
+//    event->ignore();
+//    if (event->buttons() == Qt::NoButton) {
+//        mouseMove(event);
+//        if (event->isAccepted()) return;
+//    }
+//    else {
+//        mouseDrag(event);
+//        if (event->isAccepted()) return;
+//    }
+//}
+//void CutMask::mouseReleaseEvent(QMouseEvent* event)
+//{
+//    event->ignore();
+//    mouseRelease(event);
+//    if (event->isAccepted()) return;
+//}
+
 
 void CutMask::mousePress(QMouseEvent* event)
 {
@@ -66,17 +90,7 @@ void CutMask::mouseDrag(QMouseEvent* event)
     if (full->state == State::mask)
     {
         maskRect.setCoords(posPress.x(), posPress.y(), pos.x(),pos.y());
-
-
-        //InvalidateRect((HWND)this->winId(), nullptr, TRUE);
-        //UpdateWindow((HWND)this->winId());
-        //InvalidateRect((HWND)full->winId(), nullptr, TRUE);
-        //UpdateWindow((HWND)full->winId());
         update();
-        //raise();
-        //full->update();
-        //repaint();
-        //paintEvent(nullptr);
         return;
     }
     if (full->state == State::tool)

@@ -24,7 +24,9 @@ public:
 	QRect maskRect;
 protected:
 	void paintEvent(QPaintEvent* event) override;
-	void showEvent(QShowEvent* event) override;
+	//void mousePressEvent(QMouseEvent* event) override;
+	//void mouseMoveEvent(QMouseEvent* event) override;
+	//void mouseReleaseEvent(QMouseEvent* event) override;
 private:
 	void changeMaskRect(const QPoint& pos);
 	void changeMousePosState(const int& x, const int& y);
