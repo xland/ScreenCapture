@@ -36,6 +36,7 @@ void ShapeEraser::paint(QPainter* painter)
     QPen pen(Qt::transparent);
     pen.setWidth(strokeWidth);
     painter->setPen(pen);
+    painter->setBrush(Qt::NoBrush);
     painter->save();
     painter->setCompositionMode(QPainter::CompositionMode_Clear);
     if (path.isEmpty()) {
