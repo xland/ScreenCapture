@@ -24,8 +24,9 @@ namespace {
 WinFull::WinFull(QWidget* parent) : WinBase(parent)
 {
     winBg = new WinBg();
-    setGeometry(winBg->geometry());
+    setFixedSize(winBg->w, winBg->h);
     show();
+    SetWindowPos((HWND)winId(), nullptr, winBg->x, winBg->y, winBg->w, winBg->h, SWP_NOZORDER | SWP_SHOWWINDOW);
 }
 WinFull::~WinFull()
 {
@@ -72,7 +73,10 @@ void WinFull::paintEvent(QPaintEvent* event)
     QPainter painter(this);
     painter.setPen(QColor(Qt::red));
     painter.drawLine(QPoint(0, 0), QPoint(width(), height()));
-    cutMask->paint(&painter);
+    if (cutMask) {
+        cutMask->paint(&painter);
+    }
+    
 }
 
 void WinFull::mousePressEvent(QMouseEvent* event)
