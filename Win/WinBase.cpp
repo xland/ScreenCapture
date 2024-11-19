@@ -13,16 +13,15 @@
 
 WinBase::WinBase(QWidget *parent) : QWidget(parent)
 {
-
     setAttribute(Qt::WA_OpaquePaintEvent);
     setAttribute(Qt::WA_NoSystemBackground);
-    setAttribute(Qt::WA_TranslucentBackground);  //必须设置，不然Board无法执行擦除效果
-    setAutoFillBackground(false);
-    setMouseTracking(true);
-    setAttribute(Qt::WA_QuitOnClose, false);
-    setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint); //  
+    setAttribute(Qt::WA_TransparentForMouseEvents, false);
+    setAutoFillBackground(true);
+    setAttribute(Qt::WA_TranslucentBackground,true); 
+    setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint); // 
+    setAttribute(Qt::WA_QuitOnClose, false); //  
     setCursor(Qt::CrossCursor);
-    //this->installEventFilter(this);
+    this->installEventFilter(this);
 }
 
 WinBase::~WinBase()
@@ -76,21 +75,27 @@ void WinBase::updateCursor(Qt::CursorShape cur)
     }
 }
 
-//bool WinBase::eventFilter(QObject* watched, QEvent* event)
-//{
-//    auto type = event->type();
-//    event->ignore();
-//    if (type == QEvent::MouseButtonPress) {
-//        emit mousePress(static_cast<QMouseEvent*>(event));
-//        return true;
-//    }
-//    else if (type == QEvent::MouseMove) {
-//        emit mouseMove(static_cast<QMouseEvent*>(event));
-//        return true;
-//    }
-//    else if (type == QEvent::MouseButtonRelease) {
-//        emit mouseRelease(static_cast<QMouseEvent*>(event));
-//        return true;
-//    }
-//    return QObject::eventFilter(watched, event);
-//}
+bool WinBase::eventFilter(QObject* watched, QEvent* event)
+{
+    auto type = event->type();
+    event->ignore();
+    if (type == QEvent::MouseButtonPress) {
+        mousePress(static_cast<QMouseEvent*>(event));
+        return true;
+    }
+    else if (type == QEvent::MouseMove) {
+        auto e = static_cast<QMouseEvent*>(event);
+        if (e->buttons() == Qt::NoButton) {
+            mouseMove(e);
+        }
+        else {
+            mouseDrag(e);
+        }
+        return true;
+    }
+    else if (type == QEvent::MouseButtonRelease) {
+        mouseRelease(static_cast<QMouseEvent*>(event));
+        return true;
+    }
+    return QObject::eventFilter(watched, event);
+}

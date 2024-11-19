@@ -27,7 +27,7 @@ void CutMask::paint(QPainter* painter)
     painter->setPen(QPen(QBrush(QColor(22, 119, 255)), maskStroke));
     painter->setBrush(QBrush(QColor(0, 0, 0, 120)));
     p.clear();
-    p.addRect(-16, -16, full->w + 16, full->h + 16);
+    p.addRect(-16, -16, full->winBg->w + 16, full->winBg->h + 16);
     p.addRect(maskRect);
     painter->drawPath(p);
 }
@@ -297,7 +297,10 @@ void CutMask::initWinRects()
                 return TRUE;
             }
             auto sf = full->windowHandle()->devicePixelRatio();
-            auto l{ (rect.left - full->x) / sf }, t{ (rect.top - full->y) / sf }, r{ (rect.right - full->x) / sf }, b{ (rect.bottom - full->y) / sf };
+            auto l{ (rect.left - full->winBg->x) / sf }, 
+                t{ (rect.top - full->winBg->y) / sf }, 
+                r{ (rect.right - full->winBg->x) / sf }, 
+                b{ (rect.bottom - full->winBg->y) / sf };
             self->winRects.push_back(QRect(QPoint(l, t), QPoint(r, b)));
             return TRUE;
         }, (LPARAM)this);

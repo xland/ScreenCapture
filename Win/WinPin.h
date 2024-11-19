@@ -13,4 +13,8 @@ public:
 	void showToolMain() override;
 	void showToolSub() override;
 	void closeWin() override;
+	void mousePress(QMouseEvent* event) override;
+	void mouseMove(QMouseEvent* event) override;
+	void mouseRelease(QMouseEvent* event) override;
+	void mouseDrag(QMouseEvent* event) override;
 };

@@ -23,16 +23,16 @@ public:
 	void showToolMain() override;
 	void showToolSub() override;
 	void closeWin() override;
+	void mousePress(QMouseEvent* event) override;
+	void mouseMove(QMouseEvent* event) override;
+	void mouseDrag(QMouseEvent* event) override;
+	void mouseRelease(QMouseEvent* event) override;
 public:
-	int x, y, w, h;
 	CutMask* cutMask;
 	float sf{ 1.0f };
 	std::vector<QRect> screens;
 protected:
 	void paintEvent(QPaintEvent* event) override;
-	void mousePressEvent(QMouseEvent* event) override;
-	void mouseMoveEvent(QMouseEvent* event) override;
-	void mouseReleaseEvent(QMouseEvent* event) override;
 private:
 };
 

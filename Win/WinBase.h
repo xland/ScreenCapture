@@ -25,11 +25,10 @@ public:
 	virtual void closeWin() = 0;
 	ShapeBase* addShape();
 	void updateCursor(Qt::CursorShape cursor);
-signals:
-	void mousePress(QMouseEvent* event);
-	void mouseDrag(QMouseEvent* event);
-	void mouseRelease(QMouseEvent* event);
-	void mouseMove(QMouseEvent* event);
+	virtual void mousePress(QMouseEvent* event) = 0;
+	virtual void mouseDrag(QMouseEvent* event) = 0;
+	virtual void mouseRelease(QMouseEvent* event) = 0;
+	virtual void mouseMove(QMouseEvent* event) = 0;
 public:
 	State state{ State::start };
 	std::vector<ShapeBase*> shapes;
@@ -40,5 +39,5 @@ public:
 	WinBg* winBg;
 
 private:
-	//bool eventFilter(QObject* watched, QEvent* event) override;
+	bool eventFilter(QObject* watched, QEvent* event) override;
 };

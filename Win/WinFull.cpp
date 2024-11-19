@@ -23,13 +23,18 @@ namespace {
 
 WinFull::WinFull(QWidget* parent) : WinBase(parent)
 {
+    
     winBg = new WinBg();
     setFixedSize(winBg->w, winBg->h);
     show();
     SetWindowPos((HWND)winId(), nullptr, winBg->x, winBg->y, winBg->w, winBg->h, SWP_NOZORDER | SWP_SHOWWINDOW);
+
+    QRegion maskRegion = QRegion(0, 0, width(), height());
+    setMask(maskRegion);
 }
 WinFull::~WinFull()
 {
+    auto a = 1;
 }
 void WinFull::init()
 {
@@ -75,11 +80,10 @@ void WinFull::paintEvent(QPaintEvent* event)
     painter.drawLine(QPoint(0, 0), QPoint(width(), height()));
     if (cutMask) {
         cutMask->paint(&painter);
-    }
-    
+    }    
 }
 
-void WinFull::mousePressEvent(QMouseEvent* event)
+void WinFull::mousePress(QMouseEvent* event)
 {
     event->ignore();
     cutMask->mousePress(event);
@@ -94,10 +98,9 @@ void WinFull::mousePressEvent(QMouseEvent* event)
         shape->mousePress(event); //不然新添加的Shape收不到鼠标按下事件
     }
 }
-void WinFull::mouseMoveEvent(QMouseEvent* event)
+void WinFull::mouseMove(QMouseEvent* event)
 {
     event->ignore();
-    if (event->buttons() == Qt::NoButton) {
         cutMask->mouseMove(event);
         if (event->isAccepted()) return;
         for (int i = shapes.size() - 1; i >= 0; i--)
@@ -116,18 +119,18 @@ void WinFull::mouseMoveEvent(QMouseEvent* event)
                 canvas->changeShape(nullptr);
             }
         }
-    }
-    else {
-        cutMask->mouseDrag(event);
+}
+void WinFull::mouseDrag(QMouseEvent* event)
+{
+    cutMask->mouseDrag(event);
+    if (event->isAccepted()) return;
+    for (int i = shapes.size() - 1; i >= 0; i--)
+    {
         if (event->isAccepted()) return;
-        for (int i = shapes.size() - 1; i >= 0; i--)
-        {
-            if (event->isAccepted()) return;
-            shapes[i]->mouseDrag(event);
-        }
+        shapes[i]->mouseDrag(event);
     }
 }
-void WinFull::mouseReleaseEvent(QMouseEvent* event)
+void WinFull::mouseRelease(QMouseEvent* event)
 {
     event->ignore();
     cutMask->mouseRelease(event);

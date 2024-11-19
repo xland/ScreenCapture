@@ -13,10 +13,10 @@
 WinBg::WinBg(QWidget* parent) : QWidget(parent)
 {
     initSize();
-    initBgImg();    
-    setWindowFlags(Qt::FramelessWindowHint);
+    initBgImg();
     setAttribute(Qt::WA_OpaquePaintEvent);
     setAttribute(Qt::WA_NoSystemBackground);
+    setWindowFlags(Qt::FramelessWindowHint); //| Qt::WindowStaysOnTopHint
     setFixedSize(w, h);
     show();
     SetWindowPos((HWND)winId(), nullptr, x, y, w, h, SWP_NOZORDER | SWP_SHOWWINDOW);
