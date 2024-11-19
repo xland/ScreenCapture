@@ -33,8 +33,9 @@ void ShapeEraser::resetDragger()
 
 void ShapeEraser::paint(QPainter* painter)
 {
-    painter->setBrush(Qt::red);
-    painter->setPen(Qt::NoPen);
+    QPen pen(Qt::transparent);
+    pen.setWidth(strokeWidth);
+    painter->setPen(pen);
     painter->save();
     painter->setCompositionMode(QPainter::CompositionMode_Clear);
     if (path.isEmpty()) {

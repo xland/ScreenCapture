@@ -1,24 +1,18 @@
 ﻿#include <QWindow>
 #include "CutMask.h"
+#include "../Win/WinBase.h"
 #include "../Win/WinFull.h"
 #include "../Tool/ToolMain.h"
 #include "../Tool/ToolSub.h"
 
 CutMask::CutMask(QWidget* parent) : QWidget(parent)
 {
-    //setWindowFlags(Qt::FramelessWindowHint); //  | Qt::WindowStaysOnTopHint
-    //setAttribute(Qt::WA_NoSystemBackground);
-    //setAttribute(Qt::WA_TranslucentBackground);
-    //setAutoFillBackground(false);
     setMouseTracking(true);
     setAttribute(Qt::WA_TransparentForMouseEvents, true);
     setAttribute(Qt::WA_NoMousePropagation, false);
     setGeometry(parent->rect());
-    //setMouseTracking(true);
-    //auto win = WinFull::get();
-    //setFixedSize(win->w, win->h);
+    connect(parent, SIGNAL(WinBase::mousePress(QMouseEvent*)), this, SLOT(CutMask::mousePress(QMouseEvent*)));
     show();
-    //SetWindowPos((HWND)winId(), nullptr, win->x, win->y, win->w, win->h, SWP_NOZORDER | SWP_SHOWWINDOW);
     initWinRects();
 }
 

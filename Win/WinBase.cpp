@@ -15,16 +15,20 @@ WinBase::WinBase(QWidget *parent) : QWidget(parent)
 {
     setAttribute(Qt::WA_OpaquePaintEvent);
     setAttribute(Qt::WA_NoSystemBackground);
+    setAttribute(Qt::WA_OpaquePaintEvent);
+    setAttribute(Qt::WA_NoSystemBackground);
+    setAttribute(Qt::WA_TranslucentBackground);  //必须设置，不然Board无法执行擦除效果
     setAutoFillBackground(false);
     setMouseTracking(true);
     setAttribute(Qt::WA_QuitOnClose, false);
     setWindowFlags(Qt::FramelessWindowHint); //  | Qt::WindowStaysOnTopHint
     setCursor(Qt::CrossCursor);
-    this->installEventFilter(this);
+    //this->installEventFilter(this);
 }
 
 WinBase::~WinBase()
-{}
+{
+}
 
 ShapeBase* WinBase::addShape()
 {
@@ -73,20 +77,21 @@ void WinBase::updateCursor(Qt::CursorShape cur)
     }
 }
 
-bool WinBase::eventFilter(QObject* watched, QEvent* event)
-{
-    auto type = event->type();
-    if (type == QEvent::MouseButtonPress) {
-        qDebug() << "Mouse button press event captured!";
-        return true; // 拦截事件
-    }
-    else if (type == QEvent::MouseMove) {
-        qDebug() << "Mouse button press event captured!";
-        return true; // 拦截事件
-    }
-    else if (type == QEvent::MouseButtonRelease) {
-        qDebug() << "Mouse button press event captured!";
-        return true; // 拦截事件
-    }
-    return QObject::eventFilter(watched, event); // 继续传递事件
-}
+//bool WinBase::eventFilter(QObject* watched, QEvent* event)
+//{
+//    auto type = event->type();
+//    event->ignore();
+//    if (type == QEvent::MouseButtonPress) {
+//        emit mousePress(static_cast<QMouseEvent*>(event));
+//        return true;
+//    }
+//    else if (type == QEvent::MouseMove) {
+//        emit mouseMove(static_cast<QMouseEvent*>(event));
+//        return true;
+//    }
+//    else if (type == QEvent::MouseButtonRelease) {
+//        emit mouseRelease(static_cast<QMouseEvent*>(event));
+//        return true;
+//    }
+//    return QObject::eventFilter(watched, event);
+//}

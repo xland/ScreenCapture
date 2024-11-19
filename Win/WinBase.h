@@ -3,6 +3,9 @@
 #include <QWidget>
 #include <qimage.h>
 #include <QPixmap>
+#include <QMouseEvent>
+#include <QMouseEvent>
+
 #include "../App/State.h"
 
 class ToolMain;
@@ -21,7 +24,11 @@ public:
 	virtual void closeWin() = 0;
 	ShapeBase* addShape();
 	void updateCursor(Qt::CursorShape cursor);
-
+signals:
+	void mousePress(QMouseEvent* event);
+	void mouseDrag(QMouseEvent* event);
+	void mouseRelease(QMouseEvent* event);
+	void mouseMove(QMouseEvent* event);
 public:
 	State state{ State::start };
 	std::vector<ShapeBase*> shapes;
@@ -32,5 +39,5 @@ public:
 	Board* board;
 
 private:
-	bool eventFilter(QObject* watched, QEvent* event) override;
+	//bool eventFilter(QObject* watched, QEvent* event) override;
 };

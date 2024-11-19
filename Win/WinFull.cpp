@@ -24,12 +24,6 @@ WinFull::WinFull(QWidget* parent) : WinBase(parent)
 {
     initSize();
     initBgImg();
-
-    
-    //setAutoFillBackground(false);
-    //setAttribute(Qt::WA_NoSystemBackground);
-    //setAttribute(Qt::WA_Hover);
-    //setAttribute(Qt::WA_TranslucentBackground);
         
     setFixedSize(w, h);
     show();
@@ -85,70 +79,70 @@ void WinFull::paintEvent(QPaintEvent* event)
     painter.drawPixmap(rect(), bgImg);
 }
 
-//void WinFull::mousePressEvent(QMouseEvent* event)
-//{
-//    event->ignore();
-//    cutMask->mousePress(event);
-//    if (event->isAccepted()) return;
-//    for (int i = shapes.size() - 1; i >= 0; i--)
-//    {
-//        if (event->isAccepted()) return;
-//        shapes[i]->mousePress(event);
-//    }
-//    if (!event->isAccepted()) {
-//        auto shape = addShape();
-//        shape->mousePress(event); //不然新添加的Shape收不到鼠标按下事件
-//    }
-//}
-//void WinFull::mouseMoveEvent(QMouseEvent* event)
-//{
-//    event->ignore();
-//    if (event->buttons() == Qt::NoButton) {
-//        cutMask->mouseMove(event);
-//        if (event->isAccepted()) return;
-//        for (int i = shapes.size() - 1; i >= 0; i--)
-//        {
-//            if (event->isAccepted()) return;
-//            shapes[i]->mouseMove(event);
-//        }
-//        if (!event->isAccepted()) {
-//            if (state == State::text) {
-//                winFull->updateCursor(Qt::IBeamCursor);
-//            }
-//            else {
-//                winFull->updateCursor(Qt::CrossCursor);
-//            }
-//            if (canvas) {
-//                canvas->changeShape(nullptr);
-//            }
-//        }
-//    }
-//    else {
-//        cutMask->mouseDrag(event);
-//        if (event->isAccepted()) return;
-//        for (int i = shapes.size() - 1; i >= 0; i--)
-//        {
-//            if (event->isAccepted()) return;
-//            shapes[i]->mouseDrag(event);
-//        }
-//    }
-//}
-//void WinFull::mouseReleaseEvent(QMouseEvent* event)
-//{
-//    event->ignore();
-//    cutMask->mouseRelease(event);
-//    if (event->isAccepted()) return;
-//    for (int i = shapes.size() - 1; i >= 0; i--)
-//    {
-//        if (event->isAccepted()) return;
-//        shapes[i]->mouseRelease(event);
-//    }
-//    if (canvas && !event->isAccepted()) {
-//        if (state != State::text) {
-//            canvas->changeShape(nullptr);
-//        }
-//    }
-//}
+void WinFull::mousePressEvent(QMouseEvent* event)
+{
+    event->ignore();
+    cutMask->mousePress(event);
+    if (event->isAccepted()) return;
+    for (int i = shapes.size() - 1; i >= 0; i--)
+    {
+        if (event->isAccepted()) return;
+        shapes[i]->mousePress(event);
+    }
+    if (!event->isAccepted()) {
+        auto shape = addShape();
+        shape->mousePress(event); //不然新添加的Shape收不到鼠标按下事件
+    }
+}
+void WinFull::mouseMoveEvent(QMouseEvent* event)
+{
+    event->ignore();
+    if (event->buttons() == Qt::NoButton) {
+        cutMask->mouseMove(event);
+        if (event->isAccepted()) return;
+        for (int i = shapes.size() - 1; i >= 0; i--)
+        {
+            if (event->isAccepted()) return;
+            shapes[i]->mouseMove(event);
+        }
+        if (!event->isAccepted()) {
+            if (state == State::text) {
+                winFull->updateCursor(Qt::IBeamCursor);
+            }
+            else {
+                winFull->updateCursor(Qt::CrossCursor);
+            }
+            if (canvas) {
+                canvas->changeShape(nullptr);
+            }
+        }
+    }
+    else {
+        cutMask->mouseDrag(event);
+        if (event->isAccepted()) return;
+        for (int i = shapes.size() - 1; i >= 0; i--)
+        {
+            if (event->isAccepted()) return;
+            shapes[i]->mouseDrag(event);
+        }
+    }
+}
+void WinFull::mouseReleaseEvent(QMouseEvent* event)
+{
+    event->ignore();
+    cutMask->mouseRelease(event);
+    if (event->isAccepted()) return;
+    for (int i = shapes.size() - 1; i >= 0; i--)
+    {
+        if (event->isAccepted()) return;
+        shapes[i]->mouseRelease(event);
+    }
+    if (canvas && !event->isAccepted()) {
+        if (state != State::text) {
+            canvas->changeShape(nullptr);
+        }
+    }
+}
 void WinFull::closeWin()
 {
     close();
