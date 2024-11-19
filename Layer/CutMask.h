@@ -10,7 +10,7 @@
 #include <QWidget>
 
 
-class CutMask  : public QWidget
+class CutMask  : public QObject
 {
 	Q_OBJECT
 public:
@@ -20,13 +20,10 @@ public:
 	void mouseDrag(QMouseEvent* event);
 	void mouseRelease(QMouseEvent* event);
 	void mouseMove(QMouseEvent* event);
+	void paint(QPainter* painter);
 public:
 	QRect maskRect;
 protected:
-	void paintEvent(QPaintEvent* event) override;
-	//void mousePressEvent(QMouseEvent* event) override;
-	//void mouseMoveEvent(QMouseEvent* event) override;
-	//void mouseReleaseEvent(QMouseEvent* event) override;
 private:
 	void changeMaskRect(const QPoint& pos);
 	void changeMousePosState(const int& x, const int& y);

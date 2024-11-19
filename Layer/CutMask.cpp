@@ -1,18 +1,13 @@
 ﻿#include <QWindow>
 #include "CutMask.h"
+#include "../Win/WinBg.h"
 #include "../Win/WinBase.h"
 #include "../Win/WinFull.h"
 #include "../Tool/ToolMain.h"
 #include "../Tool/ToolSub.h"
 
-CutMask::CutMask(QWidget* parent) : QWidget(parent)
+CutMask::CutMask(QWidget* parent) : QObject(parent)
 {
-    setMouseTracking(true);
-    setAttribute(Qt::WA_TransparentForMouseEvents, true);
-    setAttribute(Qt::WA_NoMousePropagation, false);
-    setGeometry(parent->rect());
-    connect(parent, SIGNAL(WinBase::mousePress(QMouseEvent*)), this, SLOT(CutMask::mousePress(QMouseEvent*)));
-    show();
     initWinRects();
 }
 
@@ -20,43 +15,22 @@ CutMask::~CutMask()
 {
 }
 
-void CutMask::paintEvent(QPaintEvent* event)
+void CutMask::paint(QPainter* painter)
 {
+
+    //QPainter painter(this);
+    //painter.setPen(QColor(Qt::blue));
+    //painter.drawLine(QPoint(0, 0), QPoint(width(), height()));
+
     auto full = WinFull::get();
-    QPainter painter(this);
-    painter.setRenderHint(QPainter::Antialiasing, true);
-    painter.setPen(QPen(QBrush(QColor(22, 119, 255)), maskStroke));
-    painter.setBrush(QBrush(QColor(0, 0, 0, 120)));
+    painter->setRenderHint(QPainter::Antialiasing, true);
+    painter->setPen(QPen(QBrush(QColor(22, 119, 255)), maskStroke));
+    painter->setBrush(QBrush(QColor(0, 0, 0, 120)));
     p.clear();
     p.addRect(-16, -16, full->w + 16, full->h + 16);
     p.addRect(maskRect);
-    painter.drawPath(p);
+    painter->drawPath(p);
 }
-
-//void CutMask::mousePressEvent(QMouseEvent* event)
-//{
-//    event->ignore();
-//    mousePress(event);
-//    if (event->isAccepted()) return;
-//}
-//void CutMask::mouseMoveEvent(QMouseEvent* event)
-//{
-//    event->ignore();
-//    if (event->buttons() == Qt::NoButton) {
-//        mouseMove(event);
-//        if (event->isAccepted()) return;
-//    }
-//    else {
-//        mouseDrag(event);
-//        if (event->isAccepted()) return;
-//    }
-//}
-//void CutMask::mouseReleaseEvent(QMouseEvent* event)
-//{
-//    event->ignore();
-//    mouseRelease(event);
-//    if (event->isAccepted()) return;
-//}
 
 
 void CutMask::mousePress(QMouseEvent* event)
@@ -94,7 +68,7 @@ void CutMask::mouseDrag(QMouseEvent* event)
     if (full->state == State::mask)
     {
         maskRect.setCoords(posPress.x(), posPress.y(), pos.x(),pos.y());
-        update();
+        full->update();
         return;
     }
     if (full->state == State::tool)
@@ -104,7 +78,7 @@ void CutMask::mouseDrag(QMouseEvent* event)
             auto span = pos - posPress;
             maskRect.moveTo(maskRect.topLeft() + span);
             posPress = pos;
-            update();
+            full->update();
         }
         else
         {
@@ -141,27 +115,27 @@ void CutMask::mouseRelease(QMouseEvent* event)
 void CutMask::mouseMove(QMouseEvent* event)
 {
     auto pos = event->pos();
-    auto winFull = WinFull::get();
-    if (winFull->state == State::start)
+    auto full = WinFull::get();
+    if (full->state == State::start)
     {
         for (int i = 0; i < winRects.size(); i++)
         {
             if (winRects[i].contains(pos)) {
                 if (maskRect != winRects[i]) {
                     maskRect = winRects[i];
-                    update();
+                    full->update();
                 }
                 break;
             }
         }
         event->accept();
     }
-    else if (winFull->state == State::tool)
+    else if (full->state == State::tool)
     {
         changeMousePosState(pos.x(), pos.y());
         event->accept();
     }
-    else if (winFull->state > State::tool) {
+    else if (full->state > State::tool) {
         changeMousePosState2(pos.x(), pos.y());
         if (mousePosState != -1) {
             event->accept();
@@ -203,7 +177,7 @@ void CutMask::changeMaskRect(const QPoint& pos)
     {
         maskRect.setLeft(pos.x());
     }
-    update();
+    WinFull::get()->update();
 }
 void CutMask::changeMousePosState(const int& x, const int& y)
 {
@@ -314,15 +288,15 @@ void CutMask::initWinRects()
             if (IsIconic(hwnd)) return TRUE;
             if (GetWindowTextLength(hwnd) < 1) return TRUE;
             auto self = (CutMask*)lparam;
-            if (hwnd == (HWND)self->winId()) return TRUE;
             auto full = WinFull::get();
-            //if (hwnd == (HWND)full->winId()) return TRUE;
+            if (hwnd == (HWND)full->winId()) return TRUE;
+            if (hwnd == (HWND)full->winBg->winId()) return TRUE;
             RECT rect;
             DwmGetWindowAttribute(hwnd, DWMWA_EXTENDED_FRAME_BOUNDS, &rect, sizeof(RECT));
             if (rect.right - rect.left <= 6 || rect.bottom - rect.top <= 6) {
                 return TRUE;
             }
-            auto sf = self->windowHandle()->devicePixelRatio();
+            auto sf = full->windowHandle()->devicePixelRatio();
             auto l{ (rect.left - full->x) / sf }, t{ (rect.top - full->y) / sf }, r{ (rect.right - full->x) / sf }, b{ (rect.bottom - full->y) / sf };
             self->winRects.push_back(QRect(QPoint(l, t), QPoint(r, b)));
             return TRUE;

@@ -104,6 +104,9 @@
     <ClCompile Include="Layer\LayerBase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Win\WinBg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BtnType.h">
@@ -193,6 +196,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="Layer\LayerBase.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Win\WinBg.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

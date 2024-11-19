@@ -13,13 +13,14 @@
 
 WinBase::WinBase(QWidget *parent) : QWidget(parent)
 {
+
     setAttribute(Qt::WA_OpaquePaintEvent);
     setAttribute(Qt::WA_NoSystemBackground);
     setAttribute(Qt::WA_TranslucentBackground);  //必须设置，不然Board无法执行擦除效果
-    setAutoFillBackground(true);
+    setAutoFillBackground(false);
     setMouseTracking(true);
     setAttribute(Qt::WA_QuitOnClose, false);
-    setWindowFlags(Qt::FramelessWindowHint); //  | Qt::WindowStaysOnTopHint
+    setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint); //  
     setCursor(Qt::CrossCursor);
     //this->installEventFilter(this);
 }

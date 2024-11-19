@@ -11,7 +11,6 @@
 
 
 class CutMask;
-class ShapeBase;
 class WinFull : public WinBase
 {
 	Q_OBJECT
@@ -34,10 +33,6 @@ protected:
 	void mousePressEvent(QMouseEvent* event) override;
 	void mouseMoveEvent(QMouseEvent* event) override;
 	void mouseReleaseEvent(QMouseEvent* event) override;
-private:
-	void initSize();
-	void initBgImg();
-	void initScreens();
 private:
 };
 

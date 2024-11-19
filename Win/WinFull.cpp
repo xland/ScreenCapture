@@ -7,6 +7,7 @@
 #include <qwindow.h>
 
 #include "WinFull.h"
+#include "WinBg.h"
 #include "../App/App.h"
 #include "../Shape/ShapeRect.h"
 #include "../Shape/ShapeEllipse.h"
@@ -22,13 +23,9 @@ namespace {
 
 WinFull::WinFull(QWidget* parent) : WinBase(parent)
 {
-    initSize();
-    initBgImg();
-        
-    setFixedSize(w, h);
+    winBg = new WinBg();
+    setGeometry(winBg->geometry());
     show();
-    SetWindowPos((HWND)winId(), nullptr, x, y, w, h, SWP_NOZORDER | SWP_SHOWWINDOW);
-    setFocus();
 }
 WinFull::~WinFull()
 {
@@ -37,7 +34,6 @@ void WinFull::init()
 {
     WinFull::dispose();
     winFull = new WinFull();
-    winFull->initScreens();
     winFull->cutMask = new CutMask(winFull);
 }
 void WinFull::dispose()
@@ -73,10 +69,10 @@ void WinFull::showToolSub()
 }
 void WinFull::paintEvent(QPaintEvent* event)
 {    
-    QWindow* window = windowHandle();
-    auto sf = window->devicePixelRatio();
-    QPainter painter(this);    
-    painter.drawPixmap(rect(), bgImg);
+    QPainter painter(this);
+    painter.setPen(QColor(Qt::red));
+    painter.drawLine(QPoint(0, 0), QPoint(width(), height()));
+    cutMask->paint(&painter);
 }
 
 void WinFull::mousePressEvent(QMouseEvent* event)
@@ -146,45 +142,8 @@ void WinFull::mouseReleaseEvent(QMouseEvent* event)
 void WinFull::closeWin()
 {
     close();
-    delete cutMask;
-    cutMask = nullptr;
+    delete winBg;
+    winBg = nullptr;
     delete winFull;
     winFull = nullptr;
-}
-
-void WinFull::initSize()
-{
-    x = GetSystemMetrics(SM_XVIRTUALSCREEN);
-    y = GetSystemMetrics(SM_YVIRTUALSCREEN);
-    w = GetSystemMetrics(SM_CXVIRTUALSCREEN);
-    h = GetSystemMetrics(SM_CYVIRTUALSCREEN);
-}
-void WinFull::initBgImg()
-{
-    auto screens = QGuiApplication::screens();
-    for (auto screen : screens)
-    {
-        auto pos = screen->geometry().topLeft();
-        if (pos.x() == 0 && pos.y() == 0)
-        {
-            qreal sf = screen->devicePixelRatio();
-            bgImg = screen->grabWindow(0, x / sf, y / sf, w / sf, h / sf);
-        }
-    }
-}
-
-void WinFull::initScreens() {
-    //EnumDisplayMonitors(NULL, NULL, [](HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMonitor, LPARAM lParam)
-    //    {
-    //        MONITORINFO info;
-    //        info.cbSize = sizeof(MONITORINFO);
-    //        GetMonitorInfo(hMonitor, &info);
-    //        POINT leftTop{ .x{info.rcMonitor.left},.y{info.rcMonitor.top} };
-    //        POINT rightBottom{ .x{info.rcMonitor.right},.y{info.rcMonitor.bottom} };
-    //        auto full = (WinFull*)lParam;
-    //        ScreenToClient(full->hwnd, &leftTop);
-    //        ScreenToClient(full->hwnd, &rightBottom);
-    //        full->screens.push_back(QRect(leftTop.x, leftTop.y, rightBottom.x + 1, rightBottom.y + 1));
-    //        return TRUE;
-    //    }, (LPARAM)this);
 }

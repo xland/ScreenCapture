@@ -138,6 +138,7 @@
     <ClCompile Include="Tool\ToolSub.cpp" />
     <ClCompile Include="App\Util.cpp" />
     <ClCompile Include="Win\WinBase.cpp" />
+    <ClCompile Include="Win\WinBg.cpp" />
     <ClCompile Include="Win\WinFull.cpp" />
     <ClCompile Include="Win\WinPin.cpp" />
   </ItemGroup>
@@ -145,6 +146,7 @@
     <ClInclude Include="App\App.h" />
     <ClInclude Include="BtnType.h" />
     <ClInclude Include="App\Util.h" />
+    <QtMoc Include="Win\WinBg.h" />
     <QtMoc Include="Win\WinBase.h" />
     <QtMoc Include="Tool\StrokeCtrl.h" />
     <QtMoc Include="Tool\ColorCtrl.h" />
