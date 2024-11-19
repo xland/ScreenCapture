@@ -31,9 +31,11 @@ private:
 	void changeMaskRect(const QPoint& pos);
 	void changeMousePosState(const int& x, const int& y);
 	void changeMousePosState2(const int& x, const int& y);
+	void initWinRects();
 private:
 	QPainterPath p;
 	QPoint posPress;
 	qreal maskStroke{ 1.8 };
 	int mousePosState{ -1 };
+	std::vector<QRect> winRects;
 };

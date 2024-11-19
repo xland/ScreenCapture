@@ -24,18 +24,17 @@ WinFull::WinFull(QWidget* parent) : WinBase(parent)
 {
     initSize();
     initBgImg();
-    initScreens();
-    initWinRects();
-    setAttribute(Qt::WA_NoSystemBackground);
-    setAttribute(Qt::WA_QuitOnClose, false);
+
+    
+    //setAutoFillBackground(false);
+    //setAttribute(Qt::WA_NoSystemBackground);
+    //setAttribute(Qt::WA_Hover);
     //setAttribute(Qt::WA_TranslucentBackground);
-    setWindowFlags(Qt::FramelessWindowHint); //  | Qt::WindowStaysOnTopHint
-    setAutoFillBackground(false);
-    setMouseTracking(true);
-    setCursor(Qt::CrossCursor);    
+        
     setFixedSize(w, h);
     show();
     SetWindowPos((HWND)winId(), nullptr, x, y, w, h, SWP_NOZORDER | SWP_SHOWWINDOW);
+    setFocus();
 }
 WinFull::~WinFull()
 {
@@ -44,6 +43,7 @@ void WinFull::init()
 {
     WinFull::dispose();
     winFull = new WinFull();
+    winFull->initScreens();
     winFull->cutMask = new CutMask(winFull);
 }
 void WinFull::dispose()
@@ -79,73 +79,76 @@ void WinFull::showToolSub()
 }
 void WinFull::paintEvent(QPaintEvent* event)
 {    
+    QWindow* window = windowHandle();
+    auto sf = window->devicePixelRatio();
     QPainter painter(this);    
     painter.drawPixmap(rect(), bgImg);
 }
-void WinFull::mousePressEvent(QMouseEvent* event)
-{
-    event->ignore();
-    cutMask->mousePress(event);
-    if (event->isAccepted()) return;
-    for (int i = shapes.size() - 1; i >= 0; i--)
-    {
-        if (event->isAccepted()) return;
-        shapes[i]->mousePress(event);
-    }
-    if (!event->isAccepted()) {
-        auto shape = addShape();
-        shape->mousePress(event); //不然新添加的Shape收不到鼠标按下事件
-    }
-}
-void WinFull::mouseMoveEvent(QMouseEvent* event)
-{
-    event->ignore();
-    if (event->buttons() == Qt::NoButton) {
-        cutMask->mouseMove(event);
-        if (event->isAccepted()) return;
-        for (int i = shapes.size() - 1; i >= 0; i--)
-        {
-            if (event->isAccepted()) return;
-            shapes[i]->mouseMove(event);
-        }
-        if (!event->isAccepted()) {
-            if (state == State::text) {
-                winFull->updateCursor(Qt::IBeamCursor);
-            }
-            else {
-                winFull->updateCursor(Qt::CrossCursor);
-            }
-            if (canvas) {
-                canvas->changeShape(nullptr);
-            }
-        }
-    }
-    else {
-        cutMask->mouseDrag(event);
-        if (event->isAccepted()) return;
-        for (int i = shapes.size() - 1; i >= 0; i--)
-        {
-            if (event->isAccepted()) return;
-            shapes[i]->mouseDrag(event);
-        }
-    }
-}
-void WinFull::mouseReleaseEvent(QMouseEvent* event)
-{
-    event->ignore();
-    cutMask->mouseRelease(event);
-    if (event->isAccepted()) return;
-    for (int i = shapes.size() - 1; i >= 0; i--)
-    {
-        if (event->isAccepted()) return;
-        shapes[i]->mouseRelease(event);
-    }
-    if (canvas && !event->isAccepted()) {
-        if (state != State::text) {
-            canvas->changeShape(nullptr);
-        }
-    }
-}
+
+//void WinFull::mousePressEvent(QMouseEvent* event)
+//{
+//    event->ignore();
+//    cutMask->mousePress(event);
+//    if (event->isAccepted()) return;
+//    for (int i = shapes.size() - 1; i >= 0; i--)
+//    {
+//        if (event->isAccepted()) return;
+//        shapes[i]->mousePress(event);
+//    }
+//    if (!event->isAccepted()) {
+//        auto shape = addShape();
+//        shape->mousePress(event); //不然新添加的Shape收不到鼠标按下事件
+//    }
+//}
+//void WinFull::mouseMoveEvent(QMouseEvent* event)
+//{
+//    event->ignore();
+//    if (event->buttons() == Qt::NoButton) {
+//        cutMask->mouseMove(event);
+//        if (event->isAccepted()) return;
+//        for (int i = shapes.size() - 1; i >= 0; i--)
+//        {
+//            if (event->isAccepted()) return;
+//            shapes[i]->mouseMove(event);
+//        }
+//        if (!event->isAccepted()) {
+//            if (state == State::text) {
+//                winFull->updateCursor(Qt::IBeamCursor);
+//            }
+//            else {
+//                winFull->updateCursor(Qt::CrossCursor);
+//            }
+//            if (canvas) {
+//                canvas->changeShape(nullptr);
+//            }
+//        }
+//    }
+//    else {
+//        cutMask->mouseDrag(event);
+//        if (event->isAccepted()) return;
+//        for (int i = shapes.size() - 1; i >= 0; i--)
+//        {
+//            if (event->isAccepted()) return;
+//            shapes[i]->mouseDrag(event);
+//        }
+//    }
+//}
+//void WinFull::mouseReleaseEvent(QMouseEvent* event)
+//{
+//    event->ignore();
+//    cutMask->mouseRelease(event);
+//    if (event->isAccepted()) return;
+//    for (int i = shapes.size() - 1; i >= 0; i--)
+//    {
+//        if (event->isAccepted()) return;
+//        shapes[i]->mouseRelease(event);
+//    }
+//    if (canvas && !event->isAccepted()) {
+//        if (state != State::text) {
+//            canvas->changeShape(nullptr);
+//        }
+//    }
+//}
 void WinFull::closeWin()
 {
     close();
@@ -168,37 +171,14 @@ void WinFull::initBgImg()
     for (auto screen : screens)
     {
         auto pos = screen->geometry().topLeft();
-        qreal sf = screen->devicePixelRatio();
         if (pos.x() == 0 && pos.y() == 0)
         {
+            qreal sf = screen->devicePixelRatio();
             bgImg = screen->grabWindow(0, x / sf, y / sf, w / sf, h / sf);
-        }
-        if (sf > scaleFactor) {
-            scaleFactor = sf;
         }
     }
 }
-void WinFull::initWinRects()
-{
-    EnumWindows([](HWND hwnd, LPARAM lparam)
-        {
-            if (!hwnd) return TRUE;
-            if (!IsWindowVisible(hwnd)) return TRUE;
-            if (IsIconic(hwnd)) return TRUE;
-            if (GetWindowTextLength(hwnd) < 1) return TRUE;
-            RECT rect;
-            DwmGetWindowAttribute(hwnd, DWMWA_EXTENDED_FRAME_BOUNDS, &rect, sizeof(RECT));
-            if (rect.right - rect.left <= 6 || rect.bottom - rect.top <= 6) {
-                return TRUE;
-            }
-            auto self = (WinFull*)lparam;
-            auto sf = self->scaleFactor;
-            auto l{ rect.left - self->x }, t{ rect.top - self->y }, r{ rect.right - self->x }, b{ rect.bottom - self->y };
-            auto lt = self->mapFromGlobal(QPoint(rect.right, rect.bottom));
-            self->winRects.push_back(QRect(QPoint(l, t), QPoint(r, b)));
-            return TRUE;
-        }, (LPARAM)this);
-}
+
 void WinFull::initScreens() {
     //EnumDisplayMonitors(NULL, NULL, [](HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMonitor, LPARAM lParam)
     //    {

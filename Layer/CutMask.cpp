@@ -1,15 +1,25 @@
-﻿#include "CutMask.h"
+﻿#include <QWindow>
+#include "CutMask.h"
 #include "../Win/WinFull.h"
 #include "../Tool/ToolMain.h"
 #include "../Tool/ToolSub.h"
 
 CutMask::CutMask(QWidget* parent) : QWidget(parent)
 {
-    setAttribute(Qt::WA_NoSystemBackground);
-    setAttribute(Qt::WA_TranslucentBackground);
-    setAttribute(Qt::WA_TransparentForMouseEvents);
-    setFixedSize(parent->rect().size());
+    //setWindowFlags(Qt::FramelessWindowHint); //  | Qt::WindowStaysOnTopHint
+    //setAttribute(Qt::WA_NoSystemBackground);
+    //setAttribute(Qt::WA_TranslucentBackground);
+    //setAutoFillBackground(false);
+    setMouseTracking(true);
+    setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    setAttribute(Qt::WA_NoMousePropagation, false);
+    setGeometry(parent->rect());
+    //setMouseTracking(true);
+    //auto win = WinFull::get();
+    //setFixedSize(win->w, win->h);
     show();
+    //SetWindowPos((HWND)winId(), nullptr, win->x, win->y, win->w, win->h, SWP_NOZORDER | SWP_SHOWWINDOW);
+    initWinRects();
 }
 
 CutMask::~CutMask()
@@ -140,11 +150,11 @@ void CutMask::mouseMove(QMouseEvent* event)
     auto winFull = WinFull::get();
     if (winFull->state == State::start)
     {
-        for (int i = 0; i < winFull->winRects.size(); i++)
+        for (int i = 0; i < winRects.size(); i++)
         {
-            if (winFull->winRects[i].contains(pos)) {
-                if (maskRect != winFull->winRects[i]) {
-                    maskRect = winFull->winRects[i];
+            if (winRects[i].contains(pos)) {
+                if (maskRect != winRects[i]) {
+                    maskRect = winRects[i];
                     update();
                 }
                 break;
@@ -300,4 +310,27 @@ void CutMask::changeMousePosState2(const int& x, const int& y)
     else {
         mousePosState = -1;
     }
+}
+void CutMask::initWinRects()
+{
+    EnumWindows([](HWND hwnd, LPARAM lparam)
+        {
+            if (!hwnd) return TRUE;
+            if (!IsWindowVisible(hwnd)) return TRUE;
+            if (IsIconic(hwnd)) return TRUE;
+            if (GetWindowTextLength(hwnd) < 1) return TRUE;
+            auto self = (CutMask*)lparam;
+            if (hwnd == (HWND)self->winId()) return TRUE;
+            auto full = WinFull::get();
+            //if (hwnd == (HWND)full->winId()) return TRUE;
+            RECT rect;
+            DwmGetWindowAttribute(hwnd, DWMWA_EXTENDED_FRAME_BOUNDS, &rect, sizeof(RECT));
+            if (rect.right - rect.left <= 6 || rect.bottom - rect.top <= 6) {
+                return TRUE;
+            }
+            auto sf = self->windowHandle()->devicePixelRatio();
+            auto l{ (rect.left - full->x) / sf }, t{ (rect.top - full->y) / sf }, r{ (rect.right - full->x) / sf }, b{ (rect.bottom - full->y) / sf };
+            self->winRects.push_back(QRect(QPoint(l, t), QPoint(r, b)));
+            return TRUE;
+        }, (LPARAM)this);
 }

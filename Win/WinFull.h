@@ -27,16 +27,14 @@ public:
 public:
 	int x, y, w, h;
 	CutMask* cutMask;
-	float scaleFactor{ 1.0f };
+	float sf{ 1.0f };
 	std::vector<QRect> screens;
-	std::vector<QRect> winRects;
 protected:
 	void paintEvent(QPaintEvent* event) override;
-	void mousePressEvent(QMouseEvent* event) override;
-	void mouseMoveEvent(QMouseEvent* event) override;
-	void mouseReleaseEvent(QMouseEvent* event) override;
+	//void mousePressEvent(QMouseEvent* event) override;
+	//void mouseMoveEvent(QMouseEvent* event) override;
+	//void mouseReleaseEvent(QMouseEvent* event) override;
 private:
-	void initWinRects();
 	void initSize();
 	void initBgImg();
 	void initScreens();

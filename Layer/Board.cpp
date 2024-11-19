@@ -5,6 +5,7 @@
 
 Board::Board(QWidget *parent) : QWidget(parent)
 {
+    setAttribute(Qt::WA_NoSystemBackground);
     setAttribute(Qt::WA_TranslucentBackground);
     setAutoFillBackground(false);
     setAttribute(Qt::WA_TransparentForMouseEvents, true);

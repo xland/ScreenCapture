@@ -21,6 +21,7 @@ public:
 	virtual void closeWin() = 0;
 	ShapeBase* addShape();
 	void updateCursor(Qt::CursorShape cursor);
+
 public:
 	State state{ State::start };
 	std::vector<ShapeBase*> shapes;
@@ -29,4 +30,7 @@ public:
 	QPixmap bgImg;
 	Canvas* canvas;
 	Board* board;
+
+private:
+	bool eventFilter(QObject* watched, QEvent* event) override;
 };
