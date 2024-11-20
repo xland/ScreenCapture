@@ -6,9 +6,10 @@
 #include <QTextOption>
 
 #include "ShapeText.h"
+#include "../Win/WinBg.h"
+#include "../Win/WinBase.h"
 #include "../App/App.h"
 #include "../Tool/ToolSub.h"
-#include "../Win/WinBase.h"
 #include "../Layer/Canvas.h"
 
 
@@ -24,6 +25,7 @@ ShapeText::ShapeText(QObject* parent) : ShapeBase(parent)
 
 ShapeText::~ShapeText()
 {
+    delete textEdit;
 }
 
 void ShapeText::adjustSize()
@@ -43,17 +45,15 @@ void ShapeText::adjustSize()
 
 void ShapeText::createTextEdit()
 {
-    textEdit = new ShapeTextInput((QWidget*)parent());
-    textEdit->setLineWrapMode(QTextEdit::NoWrap);
-    textEdit->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    textEdit->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    textEdit = new ShapeTextInput();
     QFont font = textEdit->font();
     font.setPointSize(fontSize);
     font.setWeight(bold ? QFont::Bold : QFont::Normal);
     font.setItalic(italic);
     textEdit->setFont(font);
-    QString style{ "color:%1;background:transparent;margin:1px;padding:2px;" };
+    QString style{ "color:%1;background:transparent;margin:1px;padding:2px;caret-color:%1;" };
     style = style.arg(color.name());
+    textEdit->textInputCursorColor = color;
     textEdit->setStyleSheet(style);
     connect(textEdit->document(), &QTextDocument::contentsChanged, this, &ShapeText::adjustSize);
     connect(textEdit, &ShapeTextInput::focusOut, this, &ShapeText::focusOut);

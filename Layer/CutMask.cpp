@@ -23,7 +23,6 @@ void CutMask::paint(QPainter* painter)
     //painter.drawLine(QPoint(0, 0), QPoint(width(), height()));
 
     auto full = WinFull::get();
-    painter->setRenderHint(QPainter::Antialiasing, true);
     painter->setPen(QPen(QBrush(QColor(22, 119, 255)), maskStroke));
     painter->setBrush(QBrush(QColor(0, 0, 0, 120)));
     p.clear();

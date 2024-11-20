@@ -13,8 +13,12 @@ public:
 signals:
 	void focusOut();
 	void focusIn();
+public:
+	QColor textInputCursorColor;
 private:
 	void focusOutEvent(QFocusEvent* event) override;
 	void focusInEvent(QFocusEvent* event) override;
 	void paintEvent(QPaintEvent* event) override;
+private:
+	bool showTextInputCursor{ true };
 };

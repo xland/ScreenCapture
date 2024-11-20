@@ -4,9 +4,14 @@
 ShapeTextInput::ShapeTextInput(QWidget* parent) : QTextEdit(parent)
 {
 	setFrameStyle(QFrame::NoFrame);
-	//setAttribute(Qt::WA_OpaquePaintEvent);
-	//setAttribute(Qt::WA_NoSystemBackground,true);
-	//setAttribute(Qt::WA_TranslucentBackground);
+	setAttribute(Qt::WA_TranslucentBackground, true);
+	setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
+	setAttribute(Qt::WA_QuitOnClose, false);
+	setAttribute(Qt::WA_OpaquePaintEvent);
+	setAttribute(Qt::WA_NoSystemBackground);
+	setLineWrapMode(QTextEdit::NoWrap);
+	setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 }
 
 ShapeTextInput::~ShapeTextInput()
@@ -26,10 +31,13 @@ void ShapeTextInput::focusInEvent(QFocusEvent* event)
 
 void ShapeTextInput::paintEvent(QPaintEvent* event)
 {
-	QPainter painter(this);
 	QTextEdit::paintEvent(event);
-	painter.setRenderHint(QPainter::Antialiasing); 
-	painter.fillRect(rect(), Qt::transparent);
-	painter.setPen(QColor(128, 128, 128)); // 灰色边框
-	painter.drawRect(rect().adjusted(1, 1, -1, -1)); 
+	if (showTextInputCursor && isVisible()) {
+		QPainter painter(viewport());
+		painter.setRenderHint(QPainter::LosslessImageRendering, true);
+		painter.setBrush(textInputCursorColor);
+		painter.setPen(Qt::NoPen);
+		painter.drawRect(cursorRect());
+	}
+	showTextInputCursor = !showTextInputCursor;
 }
