@@ -19,7 +19,13 @@ ToolMain::ToolMain(QWidget* parent) : QWidget(parent)
     setCursor(Qt::PointingHandCursor);
     setMouseTracking(true);
     setVisible(false);
-    setAttribute(Qt::WA_Hover);  //enterEvent 和 leaveEvent，以及 hoverMoveEvent
+    setAutoFillBackground(false);
+    setAttribute(Qt::WA_TranslucentBackground, true);
+    setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
+    setAttribute(Qt::WA_QuitOnClose, false);
+    setAttribute(Qt::WA_OpaquePaintEvent);
+    setAttribute(Qt::WA_NoSystemBackground);
+    setAttribute(Qt::WA_Hover);
 }
 ToolMain::~ToolMain()
 {
@@ -94,6 +100,8 @@ void ToolMain::InitData(const QJsonArray& arr, const QString& lang)
 
 void ToolMain::paintEvent(QPaintEvent* event)
 {
+
+    qDebug()<<"!!!" << QTime::currentTime();
     auto font = App::getIconFont();
     font->setPixelSize(15);
 
@@ -104,6 +112,7 @@ void ToolMain::paintEvent(QPaintEvent* event)
     painter.setPen(Qt::GlobalColor::white);
     painter.setBrush(Qt::GlobalColor::white);
     painter.drawRect(rect());
+    qDebug() << "!!!" << QTime::currentTime();
     for (int i = 0; i < btns.size(); i++)
     {
         QRect rect(4 + i * btnW, 0, btnW, height());
@@ -129,17 +138,18 @@ void ToolMain::paintEvent(QPaintEvent* event)
         }
         painter.drawText(rect, Qt::AlignCenter, btns[i].icon);
     }
+    qDebug() << "!!!" << QTime::currentTime();
     painter.setPen(QColor(190, 190, 190));
     for (int i = 0; i < spliterIndexs.size(); i++)
     {
         painter.drawLine(4 + spliterIndexs[i] * btnW + 0.5, 9, 4 + spliterIndexs[i] * btnW + 0.5, height() - 9);
     }
+    qDebug() << "!!!" << QTime::currentTime();
 }
 
 void ToolMain::mousePressEvent(QMouseEvent* event)
 {
     if (hoverIndex == -1) return;
-    auto win = (WinBase*)parent();
     if (hoverIndex == selectIndex)
     {
         selectIndex = -1;
@@ -166,13 +176,16 @@ void ToolMain::mousePressEvent(QMouseEvent* event)
 
 void ToolMain::mouseMoveEvent(QMouseEvent* event)
 {
+
+    qDebug() << QTime::currentTime();
     auto x = event->pos().x() - 4;
     auto index{ x / (int)btnW };
     if (index >= btns.size())index = -1;
     if (index != hoverIndex)
     {
         hoverIndex = index;
-        update();
+        qDebug()<<QTime::currentTime();
+        repaint();
         if (hoverIndex > -1)
         {
             auto pos = event->globalPosition();

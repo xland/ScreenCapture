@@ -13,15 +13,13 @@
 
 WinBase::WinBase(QWidget *parent) : QWidget(parent)
 {
+    setAutoFillBackground(false);
+    setAttribute(Qt::WA_TranslucentBackground,true); 
+    setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
+    setAttribute(Qt::WA_QuitOnClose, false);
     setAttribute(Qt::WA_OpaquePaintEvent);
     setAttribute(Qt::WA_NoSystemBackground);
-    setAttribute(Qt::WA_TransparentForMouseEvents, false);
-    setAutoFillBackground(true);
-    setAttribute(Qt::WA_TranslucentBackground,true); 
-    setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint); // 
-    setAttribute(Qt::WA_QuitOnClose, false); //  
-    setCursor(Qt::CrossCursor);
-    this->installEventFilter(this);
+    setAttribute(Qt::WA_TransparentForMouseEvents, true);
 }
 
 WinBase::~WinBase()
@@ -75,10 +73,13 @@ void WinBase::updateCursor(Qt::CursorShape cur)
     }
 }
 
+//void WinBase::mousePressEvent(QMouseEvent* event)
+//{
+//}
+
 bool WinBase::eventFilter(QObject* watched, QEvent* event)
 {
     auto type = event->type();
-    event->ignore();
     if (type == QEvent::MouseButtonPress) {
         mousePress(static_cast<QMouseEvent*>(event));
         return true;

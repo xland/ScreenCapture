@@ -30,6 +30,26 @@ void WinBg::paintEvent(QPaintEvent* event)
     painter.drawPixmap(rect(), bgImg);
 }
 
+void WinBg::mousePressEvent(QMouseEvent* event)
+{
+    win->mousePress(event);
+}
+
+void WinBg::mouseMoveEvent(QMouseEvent* event)
+{
+    if (event->buttons() == Qt::NoButton) {
+        win->mouseMove(event);
+    }
+    else {
+        win->mouseDrag(event);
+    }
+}
+
+void WinBg::mouseReleaseEvent(QMouseEvent* event)
+{
+    win->mouseRelease(event);
+}
+
 void WinBg::initSize()
 {
     x = GetSystemMetrics(SM_XVIRTUALSCREEN);

@@ -23,18 +23,17 @@ namespace {
 
 WinFull::WinFull(QWidget* parent) : WinBase(parent)
 {
-    
     winBg = new WinBg();
+    winBg->win = this;
+    auto hwnd = (HWND)winId();
     setFixedSize(winBg->w, winBg->h);
     show();
-    SetWindowPos((HWND)winId(), nullptr, winBg->x, winBg->y, winBg->w, winBg->h, SWP_NOZORDER | SWP_SHOWWINDOW);
-
-    QRegion maskRegion = QRegion(0, 0, width(), height());
-    setMask(maskRegion);
+    SetWindowPos(hwnd, nullptr, winBg->x, winBg->y, winBg->w, winBg->h, SWP_NOZORDER | SWP_SHOWWINDOW);
+    LONG exStyle = GetWindowLong(hwnd, GWL_EXSTYLE);
+    SetWindowLong(hwnd, GWL_EXSTYLE, exStyle | WS_EX_TRANSPARENT);
 }
 WinFull::~WinFull()
 {
-    auto a = 1;
 }
 void WinFull::init()
 {
@@ -55,7 +54,8 @@ WinFull* WinFull::get()
 void WinFull::showToolMain()
 {
     if (!toolMain) {
-        toolMain = new ToolMain(this);
+        toolMain = new ToolMain();
+        toolMain->win = this;
     }
     auto pos = cutMask->maskRect.bottomRight();
     toolMain->move(pos.x() - toolMain->width(), pos.y() + 6);
@@ -76,6 +76,10 @@ void WinFull::showToolSub()
 void WinFull::paintEvent(QPaintEvent* event)
 {    
     QPainter painter(this);
+    //painter.setBrush(QColor(0, 0, 0, 1)); // 完全透明
+    //painter.setPen(Qt::NoPen);
+    //painter.drawRect(rect());
+
     painter.setPen(QColor(Qt::red));
     painter.drawLine(QPoint(0, 0), QPoint(width(), height()));
     if (cutMask) {
@@ -101,24 +105,24 @@ void WinFull::mousePress(QMouseEvent* event)
 void WinFull::mouseMove(QMouseEvent* event)
 {
     event->ignore();
-        cutMask->mouseMove(event);
+    cutMask->mouseMove(event);
+    if (event->isAccepted()) return;
+    for (int i = shapes.size() - 1; i >= 0; i--)
+    {
         if (event->isAccepted()) return;
-        for (int i = shapes.size() - 1; i >= 0; i--)
-        {
-            if (event->isAccepted()) return;
-            shapes[i]->mouseMove(event);
+        shapes[i]->mouseMove(event);
+    }
+    if (!event->isAccepted()) {
+        if (state == State::text) {
+            winFull->updateCursor(Qt::IBeamCursor);
         }
-        if (!event->isAccepted()) {
-            if (state == State::text) {
-                winFull->updateCursor(Qt::IBeamCursor);
-            }
-            else {
-                winFull->updateCursor(Qt::CrossCursor);
-            }
-            if (canvas) {
-                canvas->changeShape(nullptr);
-            }
+        else {
+            winFull->updateCursor(Qt::CrossCursor);
         }
+        if (canvas) {
+            canvas->changeShape(nullptr);
+        }
+    }
 }
 void WinFull::mouseDrag(QMouseEvent* event)
 {
