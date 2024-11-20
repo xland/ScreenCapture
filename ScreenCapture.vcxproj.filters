@@ -101,6 +101,9 @@
     <ClCompile Include="Win\WinBg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Shape\ShapeMosaic.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BtnType.h">
@@ -187,6 +190,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="Win\WinBg.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Shape\ShapeMosaic.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

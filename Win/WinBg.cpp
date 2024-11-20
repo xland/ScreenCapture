@@ -34,7 +34,7 @@ void WinBg::updateCursor(Qt::CursorShape cur)
 void WinBg::paintEvent(QPaintEvent* event)
 {    
     QPainter painter(this);    
-    painter.drawPixmap(rect(), bgImg);
+    painter.drawImage(rect(), bgImg);
 }
 
 void WinBg::mousePressEvent(QMouseEvent* event)
@@ -76,7 +76,7 @@ void WinBg::initBgImg()
         if (pos.x() == 0 && pos.y() == 0)
         {
             qreal sf = screen->devicePixelRatio();
-            bgImg = screen->grabWindow(0, x / sf, y / sf, w / sf, h / sf);
+            bgImg = screen->grabWindow(0, x / sf, y / sf, w / sf, h / sf).toImage();
         }
     }
 }

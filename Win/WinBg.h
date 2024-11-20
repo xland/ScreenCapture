@@ -19,7 +19,7 @@ public:
 	int x, y, w, h;
 	float sf{ 1.0f };
 	std::vector<QRect> screens;
-	QPixmap bgImg;
+	QImage bgImg;
 	WinBase* win;
 protected:
 	void paintEvent(QPaintEvent* event) override;
