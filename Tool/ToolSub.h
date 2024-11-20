@@ -11,6 +11,7 @@
 
 class StrokeCtrl;
 class ColorCtrl;
+class WinBase;
 class ToolSub : public QWidget
 {
 	Q_OBJECT
@@ -23,6 +24,7 @@ public:
     QColor getColor();
     int getStrokeWidth();
 public:
+	WinBase* win;
 protected:
 	void paintEvent(QPaintEvent* event) override;
 	void mousePressEvent(QMouseEvent* event) override;

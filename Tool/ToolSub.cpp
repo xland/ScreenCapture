@@ -19,7 +19,13 @@ ToolSub::ToolSub(QWidget *parent) : QWidget(parent)
 	setCursor(Qt::PointingHandCursor);
 	setMouseTracking(true);
 	setVisible(false);
-	setAttribute(Qt::WA_Hover);  //enterEvent 和 leaveEvent，以及 hoverMoveEvent
+	setAutoFillBackground(false);
+	setAttribute(Qt::WA_TranslucentBackground, true);
+	setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
+	setAttribute(Qt::WA_QuitOnClose, false);
+	setAttribute(Qt::WA_OpaquePaintEvent);
+	setAttribute(Qt::WA_NoSystemBackground);
+	setAttribute(Qt::WA_Hover);
 }
 
 ToolSub::~ToolSub()
@@ -64,8 +70,7 @@ void ToolSub::InitData(const QJsonObject& obj, const QString& lang)
 
 bool ToolSub::getSelectState(const QString& btnName)
 {
-	auto full = (WinBase*)parent();;
-	auto& values = btns[full->state];
+	auto& values = btns[win->state];
 	auto it = std::find_if(values.begin(), values.end(), [&btnName](const ToolBtn& item) {
 			return item.name == btnName;
 		});
@@ -103,7 +108,6 @@ void ToolSub::paintEvent(QPaintEvent* event)
 	triangle << QPoint(triangleX, 6) << QPoint(triangleX-4, 10) << QPoint(triangleX+4, 10);
 	painter.drawPolygon(triangle);
 
-	auto win = (WinBase*)parent();
 	auto& values = btns[win->state];
 	int x = 4;
 	for (int i = 0; i < values.size(); i++)
@@ -142,8 +146,7 @@ void ToolSub::paintEvent(QPaintEvent* event)
 void ToolSub::mousePressEvent(QMouseEvent* event)
 {
 	if (hoverIndex < 0) return;
-	auto full = (WinBase*)parent();
-	auto& values = btns[full->state];
+	auto& values = btns[win->state];
 	values[hoverIndex].selected = !values[hoverIndex].selected;
 	update();
 }
@@ -178,7 +181,6 @@ void ToolSub::leaveEvent(QEvent* event)
 
 void ToolSub::showEvent(QShowEvent* event)
 {
-	auto win = (WinBase*)parent();
 	auto values = btns[win->state];
 	auto w{ 4 };
 	bool strokeFlag{ false }, colorFlag{ false };

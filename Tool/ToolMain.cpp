@@ -100,11 +100,8 @@ void ToolMain::InitData(const QJsonArray& arr, const QString& lang)
 
 void ToolMain::paintEvent(QPaintEvent* event)
 {
-
-    qDebug()<<"!!!" << QTime::currentTime();
     auto font = App::getIconFont();
     font->setPixelSize(15);
-
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
     painter.setRenderHint(QPainter::TextAntialiasing, true);
@@ -112,7 +109,6 @@ void ToolMain::paintEvent(QPaintEvent* event)
     painter.setPen(Qt::GlobalColor::white);
     painter.setBrush(Qt::GlobalColor::white);
     painter.drawRect(rect());
-    qDebug() << "!!!" << QTime::currentTime();
     for (int i = 0; i < btns.size(); i++)
     {
         QRect rect(4 + i * btnW, 0, btnW, height());
@@ -138,13 +134,11 @@ void ToolMain::paintEvent(QPaintEvent* event)
         }
         painter.drawText(rect, Qt::AlignCenter, btns[i].icon);
     }
-    qDebug() << "!!!" << QTime::currentTime();
     painter.setPen(QColor(190, 190, 190));
     for (int i = 0; i < spliterIndexs.size(); i++)
     {
         painter.drawLine(4 + spliterIndexs[i] * btnW + 0.5, 9, 4 + spliterIndexs[i] * btnW + 0.5, height() - 9);
     }
-    qDebug() << "!!!" << QTime::currentTime();
 }
 
 void ToolMain::mousePressEvent(QMouseEvent* event)
@@ -176,15 +170,12 @@ void ToolMain::mousePressEvent(QMouseEvent* event)
 
 void ToolMain::mouseMoveEvent(QMouseEvent* event)
 {
-
-    qDebug() << QTime::currentTime();
     auto x = event->pos().x() - 4;
     auto index{ x / (int)btnW };
     if (index >= btns.size())index = -1;
     if (index != hoverIndex)
     {
         hoverIndex = index;
-        qDebug()<<QTime::currentTime();
         repaint();
         if (hoverIndex > -1)
         {

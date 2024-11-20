@@ -66,7 +66,8 @@ void WinFull::showToolSub()
     if (!toolSub) {
         canvas = new Canvas(this);
         board = new Board(this);
-        toolSub = new ToolSub(this);
+        toolSub = new ToolSub();
+        toolSub->win = this;
     }
     if (toolSub->isVisible()) {
         toolSub->hide();
@@ -76,10 +77,9 @@ void WinFull::showToolSub()
 void WinFull::paintEvent(QPaintEvent* event)
 {    
     QPainter painter(this);
-    //painter.setBrush(QColor(0, 0, 0, 1)); // 完全透明
-    //painter.setPen(Qt::NoPen);
-    //painter.drawRect(rect());
-
+    painter.setRenderHint(QPainter::Antialiasing, true);
+    painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
+    painter.setRenderHint(QPainter::TextAntialiasing, true);
     painter.setPen(QColor(Qt::red));
     painter.drawLine(QPoint(0, 0), QPoint(width(), height()));
     if (cutMask) {
@@ -155,6 +155,14 @@ void WinFull::closeWin()
     close();
     delete winBg;
     winBg = nullptr;
+    if (toolMain) {
+        delete toolMain;
+        toolMain = nullptr;
+    }
+    if (toolSub) {
+        delete toolSub;
+        toolSub = nullptr;
+    }
     delete winFull;
     winFull = nullptr;
 }
