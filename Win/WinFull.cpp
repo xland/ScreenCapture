@@ -15,7 +15,6 @@
 #include "../Tool/ToolSub.h"
 #include "../Layer/CutMask.h"
 #include "../Layer/Canvas.h"
-#include "../Layer/Board.h"
 
 namespace {
     WinFull* winFull;
@@ -65,7 +64,6 @@ void WinFull::showToolSub()
 {
     if (!toolSub) {
         canvas = new Canvas(this);
-        board = new Board(this);
         toolSub = new ToolSub();
         toolSub->win = this;
     }
@@ -80,8 +78,12 @@ void WinFull::paintEvent(QPaintEvent* event)
     painter.setRenderHint(QPainter::Antialiasing, true);
     painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
     painter.setRenderHint(QPainter::TextAntialiasing, true);
-    painter.setPen(QColor(Qt::red));
-    painter.drawLine(QPoint(0, 0), QPoint(width(), height()));
+    for (auto shape : shapes)
+    {
+        if (shape->state == ShapeState::ready) {
+            shape->paint(&painter);
+        }
+    }
     if (cutMask) {
         cutMask->paint(&painter);
     }    
@@ -104,7 +106,6 @@ void WinFull::mousePress(QMouseEvent* event)
 }
 void WinFull::mouseMove(QMouseEvent* event)
 {
-    event->ignore();
     cutMask->mouseMove(event);
     if (event->isAccepted()) return;
     for (int i = shapes.size() - 1; i >= 0; i--)
@@ -127,7 +128,9 @@ void WinFull::mouseMove(QMouseEvent* event)
 void WinFull::mouseDrag(QMouseEvent* event)
 {
     cutMask->mouseDrag(event);
-    if (event->isAccepted()) return;
+    if (event->isAccepted()) {
+        return;
+    }
     for (int i = shapes.size() - 1; i >= 0; i--)
     {
         if (event->isAccepted()) return;
@@ -136,7 +139,6 @@ void WinFull::mouseDrag(QMouseEvent* event)
 }
 void WinFull::mouseRelease(QMouseEvent* event)
 {
-    event->ignore();
     cutMask->mouseRelease(event);
     if (event->isAccepted()) return;
     for (int i = shapes.size() - 1; i >= 0; i--)

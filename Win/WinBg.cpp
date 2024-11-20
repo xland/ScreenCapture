@@ -17,12 +17,19 @@ WinBg::WinBg(QWidget* parent) : QWidget(parent)
     setAttribute(Qt::WA_OpaquePaintEvent);
     setAttribute(Qt::WA_NoSystemBackground);
     setWindowFlags(Qt::FramelessWindowHint); //| Qt::WindowStaysOnTopHint
+    setMouseTracking(true);
     setFixedSize(w, h);
     show();
     SetWindowPos((HWND)winId(), nullptr, x, y, w, h, SWP_NOZORDER | SWP_SHOWWINDOW);
 }
 WinBg::~WinBg()
 {
+}
+void WinBg::updateCursor(Qt::CursorShape cur)
+{
+    if (cursor().shape() != cur) {
+        setCursor(cur);
+    }
 }
 void WinBg::paintEvent(QPaintEvent* event)
 {    
@@ -32,11 +39,13 @@ void WinBg::paintEvent(QPaintEvent* event)
 
 void WinBg::mousePressEvent(QMouseEvent* event)
 {
+    event->ignore();
     win->mousePress(event);
 }
 
 void WinBg::mouseMoveEvent(QMouseEvent* event)
 {
+    event->ignore();
     if (event->buttons() == Qt::NoButton) {
         win->mouseMove(event);
     }
@@ -47,6 +56,7 @@ void WinBg::mouseMoveEvent(QMouseEvent* event)
 
 void WinBg::mouseReleaseEvent(QMouseEvent* event)
 {
+    event->ignore();
     win->mouseRelease(event);
 }
 

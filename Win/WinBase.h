@@ -38,7 +38,5 @@ public:
 	Board* board;
 	WinBg* winBg;
 protected:
-	//void mousePressEvent(QMouseEvent* event) override;
 private:
-	bool eventFilter(QObject* watched, QEvent* event) override;
 };

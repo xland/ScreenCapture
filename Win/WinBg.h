@@ -14,6 +14,7 @@ class WinBg : public QWidget
 public:
 	WinBg(QWidget* parent = nullptr);
 	~WinBg();
+	void updateCursor(Qt::CursorShape cur);
 public:
 	int x, y, w, h;
 	float sf{ 1.0f };
