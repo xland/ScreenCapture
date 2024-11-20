@@ -39,6 +39,7 @@ void ShapeLine::paint(QPainter* painter)
     pen.setWidth(strokeWidth);
     pen.setCapStyle(Qt::RoundCap);
     painter->setPen(pen);
+    painter->setBrush(Qt::NoBrush);
     if (path.isEmpty()) {
         painter->drawLine(startPos, endPos);
     }

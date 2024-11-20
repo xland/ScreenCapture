@@ -167,9 +167,9 @@
         "name": "strokeCtrl",
         "zhcn": "",
         "en": "",
-        "value": 22,
-        "min": 20,
-        "max": 80
+        "value": 16,
+        "min": 6,
+        "max": 60
       },
       {
         "name": "colorCtrl",
