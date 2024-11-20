@@ -35,6 +35,8 @@ void ShapeEraser::paint(QPainter* painter)
 {
     QPen pen(Qt::transparent);
     pen.setWidth(strokeWidth);
+    pen.setCapStyle(Qt::RoundCap);
+    pen.setJoinStyle(Qt::RoundJoin);
     painter->setPen(pen);
     painter->setBrush(Qt::NoBrush);
     painter->save();
@@ -99,47 +101,49 @@ void ShapeEraser::mousePress(QMouseEvent* event)
         else {
             path.moveTo(event->pos());
             path.lineTo(event->pos());
-            tempState = ShapeState::sizing0;
+            state = ShapeState::sizing0;
         }
-        state = ShapeState::ready;
     }
     if (path.isEmpty() && hoverDraggerIndex >= 0) {
         pressPos = event->pos().toPointF();
-        tempState = (ShapeState)((int)ShapeState::sizing0 + hoverDraggerIndex);
+        state = (ShapeState)((int)ShapeState::sizing0 + hoverDraggerIndex);
+        auto win = (WinBase*)parent();
+        win->canvas->changeShape(this);
+        win->update();
         event->accept();
     }
 }
 void ShapeEraser::mouseRelease(QMouseEvent* event)
 {
     if (path.isEmpty()) {
-        if (tempState >= ShapeState::sizing0) {
+        if (state >= ShapeState::sizing0) {
             resetDragger();
             coeffA = startPos.y() - endPos.y();
             coeffB = endPos.x() - startPos.x();
             coeffC = startPos.x() * endPos.y() - endPos.x() * startPos.y();
             diffVal = std::sqrt(coeffA * coeffA + coeffB * coeffB);
-            tempState = ShapeState::ready;
+            state = ShapeState::ready;
             event->accept();
         }
     }
     else {
-        tempState = ShapeState::ready;
+        state = ShapeState::ready;
         event->accept();
     }
 }
 void ShapeEraser::mouseDrag(QMouseEvent* event)
 {
-    if (tempState == ShapeState::ready) {
+    if (state == ShapeState::ready) {
         return;
     }
     if (path.elementCount() <= 0) {  //这里不能判断isEmpty
-        if (tempState == ShapeState::sizing0) {
+        if (state == ShapeState::sizing0) {
             startPos = event->pos();
         }
-        if (tempState == ShapeState::sizing1) {
+        if (state == ShapeState::sizing1) {
             endPos = event->pos();
         }
-        else if (tempState == ShapeState::moving) {
+        else if (state == ShapeState::moving) {
             auto pos = event->pos();
             auto span = pos - pressPos;
             startPos += span;

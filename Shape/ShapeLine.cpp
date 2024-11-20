@@ -38,6 +38,7 @@ void ShapeLine::paint(QPainter* painter)
     QPen pen(color);
     pen.setWidth(strokeWidth);
     pen.setCapStyle(Qt::RoundCap);
+    pen.setJoinStyle(Qt::RoundJoin);
     painter->setPen(pen);
     painter->setBrush(Qt::NoBrush);
     if (path.isEmpty()) {
