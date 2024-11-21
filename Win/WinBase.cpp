@@ -10,6 +10,7 @@
 #include "../Shape/ShapeLine.h"
 #include "../Shape/ShapeText.h"
 #include "../Shape/ShapeEraser.h"
+#include "../Shape/ShapeMosaic.h"
 
 
 WinBase::WinBase(QWidget *parent) : QWidget(parent)
@@ -57,6 +58,9 @@ ShapeBase* WinBase::addShape()
     }
     else if (state == State::text) {
         shape = new ShapeText(this);
+    }
+    else if (state == State::mosaic) {
+        shape = new ShapeMosaic(this);
     }
     else if (state == State::eraser) {
         shape = new ShapeEraser(this);
