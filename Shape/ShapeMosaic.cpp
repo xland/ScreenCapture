@@ -19,12 +19,41 @@ namespace {
 ShapeMosaic::ShapeMosaic(QObject* parent) : ShapeBase(parent)
 {
     auto win = (WinBase*)parent;
-    for (int i = 0; i < 8; i++)
-    {
-        draggers.push_back(QRect());
-    }
     isRect = win->toolSub->getSelectState("eraserFill");
+    if (isRect) {
+        for (int i = 0; i < 8; i++)
+        {
+            draggers.push_back(QRect());
+        }
+    }
     strokeWidth = win->toolSub->getStrokeWidth();
+
+
+
+    auto start = QTime::currentTime();
+    auto base = (WinBase*)parent;
+    imgScreen = base->winBg->bgImg.copy();
+    imgScreen.setDevicePixelRatio(base->windowHandle()->devicePixelRatio());
+    QPainter painter(&imgScreen);
+    for (int i = 0; i < base->shapes.size(); i++)
+    {
+        base->shapes[i]->paint(&painter);
+    }
+    auto w{ imgScreen.width()- mosaicRectSize }, h{ imgScreen.height()- mosaicRectSize };
+    QImage imgTemp = imgScreen.scaled(imgScreen.width() / mosaicRectSize, imgScreen.height() / mosaicRectSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+    for (uint x = 0; x < w; x += mosaicRectSize)
+    {
+        for (uint y = 0; y < h; y += mosaicRectSize)
+        {
+            auto c = imgTemp.pixelColor(x / mosaicRectSize, y / mosaicRectSize);
+            painter.setBrush(c);
+            painter.setPen(Qt::NoPen);
+            QRect rrr(x, y, mosaicRectSize, mosaicRectSize);
+            painter.drawRect(rrr);
+        }
+    }
+    int elapsedMilliseconds = start.msecsTo(QTime::currentTime());
+    imgScreen.save("allen123.png");
 }
 
 ShapeMosaic::~ShapeMosaic()
@@ -149,14 +178,15 @@ void ShapeMosaic::resetDragger()
 //    }
 //}
 
-QColor ShapeMosaic::getColor(const int& x, const int& y, const QImage& img)
+QColor ShapeMosaic::getColor(int x, int y, const QImage& img)
 {
-    if (x > img.width() || y > img.height()) {
-        return QColor(0, 0, 0, 0);
+    if (x > img.width()) {
+        x = img.width() - 1;
     }
-    else {
-        return imgPatch.pixelColor(x, y);
+    else if (y > img.height()) {
+        y = img.height() - 1;
     }
+    return img.pixelColor(x, y);
 }
 
 void ShapeMosaic::paint(QPainter* painter)

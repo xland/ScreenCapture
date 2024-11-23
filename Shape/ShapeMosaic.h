@@ -29,11 +29,12 @@ protected:
 private:
     void resetDragger();
     //void drawRectsByPoints(const QVector<QPointF>& points);
-    QColor getColor(const int& x, const int& y,const QImage& img);
+    QColor getColor(int x, int y,const QImage& img);
 private:
     QPointF startPos,endPos,pressPos;
     double coeffA,coeffB,coeffC,diffVal;
     QPainterPath path;
     bool isInitMosaic{ false };
     QImage imgPatch;
+    QImage imgScreen;
 };
