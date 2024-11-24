@@ -22,6 +22,7 @@ public:
     QColor color{ Qt::red };
     qreal strokeWidth;
     bool isRect;
+    ShapeState tempState;
 protected:
 private:
     void resetDragger();
