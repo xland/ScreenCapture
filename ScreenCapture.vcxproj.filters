@@ -101,6 +101,9 @@
     <ClCompile Include="Win\WinMask.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Win\WinBoard.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BtnType.h">
@@ -187,6 +190,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="Win\WinMask.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Win\WinBoard.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

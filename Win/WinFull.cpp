@@ -8,6 +8,7 @@
 
 #include "WinFull.h"
 #include "WinMask.h"
+#include "WinBoard.h"
 #include "WinCanvas.h"
 #include "../App/App.h"
 #include "../Tool/ToolMain.h"
@@ -56,6 +57,8 @@ void WinFull::showToolMain()
 void WinFull::showToolSub()
 {
     if (!toolSub) {
+        winBoard = new WinBoard();
+        winBoard->init(this);
         winCanvas = new WinCanvas();
         winCanvas->init(this);
         winMask->raise();
@@ -71,9 +74,7 @@ void WinFull::showToolSub()
 void WinFull::paintEvent(QPaintEvent* event)
 {    
     QPainter painter(this);
-    painter.drawImage(rect(), img);
-    paintShape(&painter);
-    qDebug() << "full paint~~~~~";
+    painter.drawImage(rect(), img);    
 }
 
 void WinFull::mousePressEvent(QMouseEvent* event)

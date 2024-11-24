@@ -3,6 +3,7 @@
 
 #include "WinBase.h"
 #include "WinCanvas.h"
+#include "WinBoard.h"
 #include "../Shape/ShapeBase.h"
 #include "../Shape/ShapeRect.h"
 #include "../Shape/ShapeEllipse.h"
@@ -127,19 +128,6 @@ void WinBase::mouseReleaseOnShape(QMouseEvent* event)
         }
     }
 }
-void WinBase::paintShape(QPainter* painter)
-{
-    painter->setRenderHint(QPainter::Antialiasing, true);
-    painter->setRenderHint(QPainter::SmoothPixmapTransform, true);
-    painter->setRenderHint(QPainter::TextAntialiasing, true);
-    for (auto shape : shapes)
-    {
-        if (shape->state == ShapeState::ready) {
-            shape->paint(painter);
-        }
-    }
-    refreshFlag = false;
-}
 void WinBase::initWindow()
 {
     setAutoFillBackground(false);
@@ -158,14 +146,7 @@ void WinBase::updateCursor(Qt::CursorShape cur)
     }
 }
 
-void WinBase::refresh(bool force)
+void WinBase::refreshBoard()
 {
-    if (refreshFlag) return;
-    refreshFlag = true;
-    if (force) {
-        repaint();
-    }
-    else {
-        update();
-    }
+    winBoard->refresh();
 }

@@ -109,7 +109,7 @@ void ShapeEraser::mousePress(QMouseEvent* event)
         state = (ShapeState)((int)ShapeState::sizing0 + hoverDraggerIndex);
         auto win = (WinBase*)parent();
         win->winCanvas->changeShape(this);
-        win->update();
+        win->refreshBoard();
         event->accept();
     }
 }
@@ -124,11 +124,15 @@ void ShapeEraser::mouseRelease(QMouseEvent* event)
             diffVal = std::sqrt(coeffA * coeffA + coeffB * coeffB);
             state = ShapeState::ready;
             event->accept();
+            auto win = (WinBase*)parent();
+            win->refreshBoard();
         }
     }
     else {
         state = ShapeState::ready;
         event->accept();
+        auto win = (WinBase*)parent();
+        win->refreshBoard();
     }
 }
 void ShapeEraser::mouseDrag(QMouseEvent* event)
@@ -155,6 +159,6 @@ void ShapeEraser::mouseDrag(QMouseEvent* event)
         path.lineTo(event->position());
     }
     auto win = (WinBase*)parent();
-    win->update();
+    win->refreshBoard();
     event->accept();
 }

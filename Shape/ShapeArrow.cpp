@@ -114,6 +114,7 @@ void ShapeArrow::mouseRelease(QMouseEvent* event)
         state = ShapeState::ready;
         auto win = (WinBase*)parent();
         win->winCanvas->changeShape(this,true);
+        win->refreshBoard();
         event->accept();
     }
 }

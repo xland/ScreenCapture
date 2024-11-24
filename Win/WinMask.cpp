@@ -189,7 +189,7 @@ void WinMask::changeMaskRect(const QPoint& pos)
     {
         maskRect.setLeft(pos.x());
     }
-    WinFull::get()->refresh();
+    update();
 }
 void WinMask::changeMousePosState(const int& x, const int& y)
 {

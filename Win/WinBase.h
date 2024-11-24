@@ -9,6 +9,7 @@
 
 class ToolMain;
 class ToolSub;
+class WinBoard;
 class WinCanvas;
 class ShapeBase;
 class WinBase  : public QWidget
@@ -22,7 +23,7 @@ public:
 	virtual void closeWin() = 0;
 	ShapeBase* addShape();
 	void updateCursor(Qt::CursorShape cur);
-	void refresh(bool force=false);
+	void refreshBoard();
 public:
 	State state{ State::start };
 	std::vector<ShapeBase*> shapes;
@@ -30,14 +31,13 @@ public:
 	ToolMain* toolMain;
 	ToolSub* toolSub;
 	WinCanvas* winCanvas;
+	WinBoard* winBoard;
 	QImage img;
 protected:
 	void mousePressOnShape(QMouseEvent* event);
 	void mouseMoveOnShape(QMouseEvent* event);
 	void mouseDragOnShape(QMouseEvent* event);
 	void mouseReleaseOnShape(QMouseEvent* event);
-	void paintShape(QPainter* painter);
 	void initWindow();
 private:
-	bool refreshFlag{ false };
 };
