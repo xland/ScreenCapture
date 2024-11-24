@@ -6,7 +6,6 @@
 #include <QTextOption>
 
 #include "ShapeText.h"
-#include "../Win/WinBg.h"
 #include "../Win/WinBase.h"
 #include "../App/App.h"
 #include "../Tool/ToolSub.h"

@@ -27,6 +27,7 @@ private:
 	void changeMousePosState(const int& x, const int& y);
 	void changeMousePosState2(const int& x, const int& y);
 	void initWinRects();
+	void initWindow();
 private:
 	QPainterPath p;
 	QPoint posPress;

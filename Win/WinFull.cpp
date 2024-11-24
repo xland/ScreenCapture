@@ -25,7 +25,7 @@ WinFull::WinFull(QWidget* parent) : WinBase(parent)
 }
 WinFull::~WinFull()
 {
-    delete winMask;
+    
 }
 void WinFull::init()
 {
@@ -56,7 +56,10 @@ void WinFull::showToolMain()
 void WinFull::showToolSub()
 {
     if (!toolSub) {
-        winCanvas = new WinCanvas(this);
+        winCanvas = new WinCanvas();
+        winCanvas->init(this);
+        winMask->raise();
+        toolMain->raise();
         toolSub = new ToolSub();
         toolSub->win = this;
     }
@@ -95,6 +98,7 @@ void WinFull::mouseMoveEvent(QMouseEvent* event)
 
 void WinFull::mouseReleaseEvent(QMouseEvent* event)
 {
+    event->ignore();
     winMask->mouseRelease(event);
     mouseReleaseOnShape(event);
 }
@@ -109,6 +113,7 @@ void WinFull::initWinSizeByDesktopSize()
 
 void WinFull::initDesktopImg()
 {
+    //需要提前拍照，不然把自己也拍进来了
     auto screens = QGuiApplication::screens();
     for (auto screen : screens)
     {
@@ -125,11 +130,23 @@ void WinFull::initDesktopImg()
 void WinFull::closeWin()
 {
     close();
+    if (winMask) {
+        winMask->close();
+        delete winMask;
+        winMask = nullptr;
+    }
+    if (winCanvas) {
+        winCanvas->close();
+        delete winCanvas;
+        winCanvas = nullptr;
+    }
     if (toolMain) {
+        toolMain->close();
         delete toolMain;
         toolMain = nullptr;
     }
     if (toolSub) {
+        toolSub->close();
         delete toolSub;
         toolSub = nullptr;
     }

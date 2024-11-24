@@ -22,6 +22,7 @@ public:
 	virtual void closeWin() = 0;
 	ShapeBase* addShape();
 	void updateCursor(Qt::CursorShape cur);
+	void refresh(bool force=false);
 public:
 	State state{ State::start };
 	std::vector<ShapeBase*> shapes;
@@ -37,4 +38,6 @@ protected:
 	void mouseReleaseOnShape(QMouseEvent* event);
 	void paintShape(QPainter* painter);
 	void initWindow();
+private:
+	bool refreshFlag{ false };
 };

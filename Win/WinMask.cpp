@@ -2,7 +2,6 @@
 #include <dwmapi.h>
 
 #include "WinMask.h"
-#include "../Win/WinBg.h"
 #include "../Win/WinBase.h"
 #include "../Win/WinFull.h"
 #include "../Tool/ToolMain.h"
@@ -11,9 +10,15 @@
 WinMask::WinMask(QWidget* parent) : QWidget(parent)
 {
     initWinRects();
-    auto winBase = (WinBase*)WinFull::get();
+    initWindow();
+}
 
-    
+WinMask::~WinMask()
+{
+}
+void WinMask::initWindow()
+{
+    auto winBase = (WinBase*)WinFull::get();
     setAutoFillBackground(false);
     setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::Tool);
     setAttribute(Qt::WA_QuitOnClose, false);
@@ -21,8 +26,6 @@ WinMask::WinMask(QWidget* parent) : QWidget(parent)
     setAttribute(Qt::WA_NoSystemBackground);
     setAttribute(Qt::WA_TranslucentBackground, true);
     setAttribute(Qt::WA_TransparentForMouseEvents, true);
-    setMouseTracking(true);
-
     setFixedSize(winBase->w, winBase->h);
     show();
     auto hwnd = (HWND)winId();
@@ -30,11 +33,6 @@ WinMask::WinMask(QWidget* parent) : QWidget(parent)
     LONG exStyle = GetWindowLong(hwnd, GWL_EXSTYLE);
     SetWindowLong(hwnd, GWL_EXSTYLE, exStyle | WS_EX_TRANSPARENT);
 }
-
-WinMask::~WinMask()
-{
-}
-
 
 void WinMask::mousePress(QMouseEvent* event)
 {
@@ -191,7 +189,7 @@ void WinMask::changeMaskRect(const QPoint& pos)
     {
         maskRect.setLeft(pos.x());
     }
-    WinFull::get()->update();
+    WinFull::get()->refresh();
 }
 void WinMask::changeMousePosState(const int& x, const int& y)
 {
@@ -319,3 +317,5 @@ void WinMask::initWinRects()
             return TRUE;
         }, (LPARAM)this);
 }
+
+

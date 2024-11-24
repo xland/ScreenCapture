@@ -1,21 +1,32 @@
 #include <QPainter>
+#include <Windows.h>
+
 #include "WinCanvas.h"
+#include "WinBase.h"
 #include "../Shape/ShapeBase.h"
 
 WinCanvas::WinCanvas(QWidget *parent) : QWidget(parent)
 {
-    timer = new QTimer(this);
-    timer->setInterval(800);
-    timer->setSingleShot(true);
-    connect(timer, &QTimer::timeout, this, &WinCanvas::onTimeout);
-    setAttribute(Qt::WA_TransparentForMouseEvents, true);
-    setGeometry(parent->rect());
-    lower();
-    show();
 }
 
 WinCanvas::~WinCanvas()
 {
+}
+void WinCanvas::initWindow()
+{
+    setAutoFillBackground(false);
+    setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::Tool);
+    setAttribute(Qt::WA_QuitOnClose, false);
+    setAttribute(Qt::WA_OpaquePaintEvent);
+    setAttribute(Qt::WA_NoSystemBackground);
+    setAttribute(Qt::WA_TranslucentBackground, true);
+    setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    setFixedSize(winBase->w, winBase->h);
+    show();
+    auto hwnd = (HWND)winId();
+    SetWindowPos(hwnd, nullptr, winBase->x, winBase->y, winBase->w, winBase->h, SWP_NOZORDER | SWP_SHOWWINDOW);
+    LONG exStyle = GetWindowLong(hwnd, GWL_EXSTYLE);
+    SetWindowLong(hwnd, GWL_EXSTYLE, exStyle | WS_EX_TRANSPARENT);
 }
 
 void WinCanvas::changeShape(ShapeBase* shape, bool forceUpdate)
@@ -37,6 +48,13 @@ void WinCanvas::changeShape(ShapeBase* shape, bool forceUpdate)
     }
 }
 
+void WinCanvas::init(WinBase* winBase)
+{
+    this->winBase = winBase;
+    initWindow();
+    initTimer();
+}
+
 void WinCanvas::paintEvent(QPaintEvent* event)
 {
     if (!curShape) return;
@@ -55,4 +73,12 @@ void WinCanvas::paintEvent(QPaintEvent* event)
 void WinCanvas::onTimeout()
 {
     update();
+}
+
+void WinCanvas::initTimer()
+{
+    timer = new QTimer(this);
+    timer->setInterval(800);
+    timer->setSingleShot(true);
+    connect(timer, &QTimer::timeout, this, &WinCanvas::onTimeout);
 }

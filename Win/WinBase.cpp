@@ -138,6 +138,7 @@ void WinBase::paintShape(QPainter* painter)
             shape->paint(painter);
         }
     }
+    refreshFlag = false;
 }
 void WinBase::initWindow()
 {
@@ -154,5 +155,17 @@ void WinBase::updateCursor(Qt::CursorShape cur)
 {
     if (cursor().shape() != cur) {
         setCursor(cur);
+    }
+}
+
+void WinBase::refresh(bool force)
+{
+    if (refreshFlag) return;
+    refreshFlag = true;
+    if (force) {
+        repaint();
+    }
+    else {
+        update();
     }
 }
