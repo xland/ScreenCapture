@@ -5,7 +5,7 @@
 #include "../App/App.h"
 #include "../Tool/ToolSub.h"
 #include "../Win/WinBase.h"
-#include "../Layer/Canvas.h"
+#include "../Win/WinCanvas.h"
 
 ShapeArrow::ShapeArrow(QObject* parent) : ShapeBase(parent)
 {
@@ -88,7 +88,7 @@ void ShapeArrow::mouseMove(QMouseEvent* event)
     }
     if (hoverDraggerIndex > -1) {
         auto win = (WinBase*)parent();
-        win->canvas->changeShape(this);
+        win->winCanvas->changeShape(this);
         event->accept();
     }
 }
@@ -103,7 +103,7 @@ void ShapeArrow::mousePress(QMouseEvent* event)
         state = (ShapeState)((int)ShapeState::sizing0 + hoverDraggerIndex);
         event->accept();
         auto win = (WinBase*)parent();
-        win->canvas->changeShape(this);
+        win->winCanvas->changeShape(this);
         win->update();
     }
 }
@@ -113,7 +113,7 @@ void ShapeArrow::mouseRelease(QMouseEvent* event)
         resetDragger();
         state = ShapeState::ready;
         auto win = (WinBase*)parent();
-        win->canvas->changeShape(this,true);
+        win->winCanvas->changeShape(this,true);
         event->accept();
     }
 }
@@ -155,6 +155,6 @@ void ShapeArrow::mouseDrag(QMouseEvent* event)
     //    }
     //}
     auto win = (WinBase*)parent();
-    win->canvas->update();
+    win->winCanvas->update();
     event->accept();
 }

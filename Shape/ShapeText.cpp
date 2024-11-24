@@ -10,7 +10,7 @@
 #include "../Win/WinBase.h"
 #include "../App/App.h"
 #include "../Tool/ToolSub.h"
-#include "../Layer/Canvas.h"
+#include "../Win/WinCanvas.h"
 
 
 ShapeText::ShapeText(QObject* parent) : ShapeBase(parent)
@@ -121,7 +121,7 @@ void ShapeText::mouseMove(QMouseEvent* event)
             hoverDraggerIndex = 8;
             win->updateCursor(Qt::SizeAllCursor);
         }
-        win->canvas->changeShape(this);
+        win->winCanvas->changeShape(this);
         event->accept();
     }
 }
@@ -155,7 +155,7 @@ void ShapeText::mouseRelease(QMouseEvent* event)
     if (state >= ShapeState::sizing0) {
         state = ShapeState::ready;
         auto win = (WinBase*)parent();
-        win->canvas->changeShape(this,true);
+        win->winCanvas->changeShape(this,true);
         event->accept();
     }
 }
@@ -168,7 +168,7 @@ void ShapeText::mouseDrag(QMouseEvent* event)
 		textEdit->move(p.x(), p.y());
         pressPos = pos;
         auto win = (WinBase*)parent();
-        win->canvas->update();
+        win->winCanvas->update();
         event->accept();
     }
 }

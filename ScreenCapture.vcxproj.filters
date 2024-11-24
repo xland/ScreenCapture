@@ -35,9 +35,6 @@
     <ClCompile Include="App\App.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Layer\CutMask.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="App\Tray.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -63,9 +60,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Win\WinBase.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Layer\Canvas.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Shape\ShapeBase.cpp">
@@ -98,10 +92,13 @@
     <ClCompile Include="Shape\ShapeEraser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Win\WinBg.cpp">
+    <ClCompile Include="Shape\ShapeMosaic.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Shape\ShapeMosaic.cpp">
+    <ClCompile Include="Win\WinCanvas.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Win\WinMask.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -138,9 +135,6 @@
     <QtMoc Include="Win\WinPin.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="Layer\CutMask.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
     <QtMoc Include="Win\WinFull.h">
       <Filter>Header Files</Filter>
     </QtMoc>
@@ -160,9 +154,6 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="Win\WinBase.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="Layer\Canvas.h">
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="Shape\ShapeBase.h">
@@ -189,10 +180,13 @@
     <QtMoc Include="Shape\ShapeEraser.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="Win\WinBg.h">
+    <QtMoc Include="Shape\ShapeMosaic.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="Shape\ShapeMosaic.h">
+    <QtMoc Include="Win\WinCanvas.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Win\WinMask.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

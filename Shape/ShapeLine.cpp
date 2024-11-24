@@ -6,7 +6,7 @@
 #include "../App/App.h"
 #include "../Tool/ToolSub.h"
 #include "../Win/WinBase.h"
-#include "../Layer/Canvas.h"
+#include "../Win/WinCanvas.h"
 
 
 ShapeLine::ShapeLine(QObject* parent) : ShapeBase(parent)
@@ -84,7 +84,7 @@ void ShapeLine::mouseMove(QMouseEvent* event)
     }
     if (hoverDraggerIndex > -1) {
         auto win = (WinBase*)parent();
-        win->canvas->changeShape(this);
+        win->winCanvas->changeShape(this);
         event->accept();
     }
 }
@@ -103,14 +103,14 @@ void ShapeLine::mousePress(QMouseEvent* event)
             event->accept();
             state = ShapeState::sizing0;
             auto win = (WinBase*)parent();
-            win->canvas->changeShape(this);
+            win->winCanvas->changeShape(this);
         }
     }
     if (path.isEmpty() && hoverDraggerIndex >= 0) {
         pressPos = event->pos().toPointF();
         state = (ShapeState)((int)ShapeState::sizing0 + hoverDraggerIndex);
         auto win = (WinBase*)parent();
-        win->canvas->changeShape(this);
+        win->winCanvas->changeShape(this);
         win->update();
         event->accept();
     }
@@ -126,7 +126,7 @@ void ShapeLine::mouseRelease(QMouseEvent* event)
             diffVal = std::sqrt(coeffA * coeffA + coeffB * coeffB);
             state = ShapeState::ready;
             auto win = (WinBase*)parent();
-            win->canvas->changeShape(this, true);
+            win->winCanvas->changeShape(this, true);
             event->accept();
         }
     }
@@ -159,6 +159,6 @@ void ShapeLine::mouseDrag(QMouseEvent* event)
         path.lineTo(event->position());
     }
     auto win = (WinBase*)parent();
-    win->canvas->update();
+    win->winCanvas->update();
     event->accept();
 }

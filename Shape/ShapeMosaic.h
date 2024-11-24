@@ -13,8 +13,8 @@ class ShapeMosaic:public ShapeBase
 public:
     ShapeMosaic(QObject* parent = nullptr);
     ~ShapeMosaic();
-    static void initMosaic(WinBg* winBg);
-    void initImgPatch();
+    //static void initMosaic(WinBg* winBg);
+    //void initImgPatch();
     virtual void paint(QPainter* painter) override;
     void paintDragger(QPainter* painter) override;
     void mouseMove(QMouseEvent* event) override;

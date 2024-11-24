@@ -122,11 +122,9 @@
     <ClCompile Include="Shape\ShapeMosaic.cpp" />
     <ClCompile Include="Shape\ShapeNumber.cpp" />
     <ClCompile Include="Shape\ShapeRect.cpp" />
-    <ClCompile Include="Layer\Canvas.cpp" />
     <ClCompile Include="Shape\ShapeText.cpp" />
     <ClCompile Include="Shape\ShapeTextInput.cpp" />
     <ClCompile Include="Tool\ColorCtrl.cpp" />
-    <ClCompile Include="Layer\CutMask.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="QHotKey\qhotkey.cpp" />
     <ClCompile Include="QHotKey\qhotkey_win.cpp" />
@@ -137,19 +135,20 @@
     <ClCompile Include="Tool\ToolSub.cpp" />
     <ClCompile Include="App\Util.cpp" />
     <ClCompile Include="Win\WinBase.cpp" />
-    <ClCompile Include="Win\WinBg.cpp" />
+    <ClCompile Include="Win\WinCanvas.cpp" />
     <ClCompile Include="Win\WinFull.cpp" />
+    <ClCompile Include="Win\WinMask.cpp" />
     <ClCompile Include="Win\WinPin.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App\App.h" />
     <ClInclude Include="BtnType.h" />
     <ClInclude Include="App\Util.h" />
-    <QtMoc Include="Win\WinBg.h" />
+    <QtMoc Include="Win\WinMask.h" />
+    <QtMoc Include="Win\WinCanvas.h" />
     <QtMoc Include="Win\WinBase.h" />
     <QtMoc Include="Tool\StrokeCtrl.h" />
     <QtMoc Include="Tool\ColorCtrl.h" />
-    <QtMoc Include="Layer\Canvas.h" />
     <QtMoc Include="Shape\ShapeBase.h" />
     <QtMoc Include="Shape\ShapeArrow.h" />
     <ClInclude Include="Shape\ShapeEllipse.h" />
@@ -165,7 +164,6 @@
     <QtMoc Include="Tool\ToolMain.h" />
     <QtMoc Include="Tool\ToolSub.h" />
     <QtMoc Include="Win\WinPin.h" />
-    <QtMoc Include="Layer\CutMask.h" />
     <QtMoc Include="QHotKey\qhotkey_p.h" />
     <QtMoc Include="QHotKey\qhotkey.h" />
     <ClInclude Include="App\State.h" />

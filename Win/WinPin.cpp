@@ -18,18 +18,18 @@ void WinPin::closeWin()
 {
 }
 
-void WinPin::mousePress(QMouseEvent* event)
+void WinPin::paintEvent(QPaintEvent* event)
 {
 }
 
-void WinPin::mouseMove(QMouseEvent* event)
+void WinPin::mousePressEvent(QMouseEvent* event)
 {
 }
 
-void WinPin::mouseRelease(QMouseEvent* event)
+void WinPin::mouseMoveEvent(QMouseEvent* event)
 {
 }
 
-void WinPin::mouseDrag(QMouseEvent* event)
+void WinPin::mouseReleaseEvent(QMouseEvent* event)
 {
 }

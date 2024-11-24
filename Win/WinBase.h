@@ -1,19 +1,16 @@
 #pragma once
 
 #include <QWidget>
-#include <qimage.h>
-#include <QPixmap>
 #include <QMouseEvent>
-#include <QMouseEvent>
+#include <QPainter>
+#include <QImage>
 
 #include "../App/State.h"
 
 class ToolMain;
 class ToolSub;
+class WinCanvas;
 class ShapeBase;
-class Canvas;
-class Board;
-class WinBg;
 class WinBase  : public QWidget
 {
 	Q_OBJECT
@@ -24,19 +21,20 @@ public:
 	virtual void showToolSub() {};
 	virtual void closeWin() = 0;
 	ShapeBase* addShape();
-	void updateCursor(Qt::CursorShape cursor);
-	virtual void mousePress(QMouseEvent* event) = 0;
-	virtual void mouseDrag(QMouseEvent* event) = 0;
-	virtual void mouseRelease(QMouseEvent* event) = 0;
-	virtual void mouseMove(QMouseEvent* event) = 0;
+	void updateCursor(Qt::CursorShape cur);
 public:
 	State state{ State::start };
 	std::vector<ShapeBase*> shapes;
+	int x, y, w, h;
 	ToolMain* toolMain;
 	ToolSub* toolSub;
-	Canvas* canvas;
-	Board* board;
-	WinBg* winBg;
+	WinCanvas* winCanvas;
+	QImage img;
 protected:
-private:
+	void mousePressOnShape(QMouseEvent* event);
+	void mouseMoveOnShape(QMouseEvent* event);
+	void mouseDragOnShape(QMouseEvent* event);
+	void mouseReleaseOnShape(QMouseEvent* event);
+	void paintShape(QPainter* painter);
+	void initWindow();
 };

@@ -6,7 +6,7 @@
 #include "../App/App.h"
 #include "../Tool/ToolSub.h"
 #include "../Win/WinBase.h"
-#include "../Layer/Canvas.h"
+#include "../Win/WinCanvas.h"
 
 namespace {
     static int numVal{ 0 };
@@ -95,7 +95,7 @@ void ShapeNumber::mouseMove(QMouseEvent* event)
     }
     if (hoverDraggerIndex > -1) {
         auto win = (WinBase*)parent();
-        win->canvas->changeShape(this);
+        win->winCanvas->changeShape(this);
         event->accept();
     }
 }
@@ -110,7 +110,7 @@ void ShapeNumber::mousePress(QMouseEvent* event)
         state = (ShapeState)((int)ShapeState::sizing0 + hoverDraggerIndex);
         event->accept();
         auto win = (WinBase*)parent();
-        win->canvas->changeShape(this);
+        win->winCanvas->changeShape(this);
         win->update();
     }
 }
@@ -120,7 +120,7 @@ void ShapeNumber::mouseRelease(QMouseEvent* event)
         resetDragger();
         state = ShapeState::ready;
         auto win = (WinBase*)parent();
-        win->canvas->changeShape(this,true);
+        win->winCanvas->changeShape(this,true);
         event->accept();
     }
 }
@@ -150,6 +150,6 @@ void ShapeNumber::mouseDrag(QMouseEvent* event)
         pressPos = pos;
     }
     auto win = (WinBase*)parent();
-    win->canvas->update();
+    win->winCanvas->update();
     event->accept();
 }

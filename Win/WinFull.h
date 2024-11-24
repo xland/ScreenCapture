@@ -1,16 +1,19 @@
 #pragma once
 #include <Windows.h>
-#include <string>
-#include <memory>
-#include <vector>
-#include <qwidget.h>
-#include <qobject.h>
-#include <QTextEdit>
+#include <QWidget>
+#include <QObject>
 
 #include "WinBase.h"
 
 
-class CutMask;
+class WinBg;
+class WinCanvas;
+class WinMask;
+class ToolColorPos;
+class ToolMain;
+class ToolSub;
+class ShapeBase;
+
 class WinFull : public WinBase
 {
 	Q_OBJECT
@@ -23,16 +26,16 @@ public:
 	void showToolMain() override;
 	void showToolSub() override;
 	void closeWin() override;
-	void mousePress(QMouseEvent* event) override;
-	void mouseMove(QMouseEvent* event) override;
-	void mouseDrag(QMouseEvent* event) override;
-	void mouseRelease(QMouseEvent* event) override;
 public:
-	CutMask* cutMask;
-	float sf{ 1.0f };
-	std::vector<QRect> screens;
+	WinMask* winMask;
+	ToolColorPos* toolColorPos;
 protected:
 	void paintEvent(QPaintEvent* event) override;
+	void mousePressEvent(QMouseEvent* event) override;
+	void mouseMoveEvent(QMouseEvent* event) override;
+	void mouseReleaseEvent(QMouseEvent* event) override;
 private:
+	void initWinSizeByDesktopSize();
+	void initDesktopImg();
 };
 

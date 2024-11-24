@@ -1,29 +1,27 @@
 #pragma once
 
 #include <QObject>
+#include <QWidget>
 #include <QPainter>
-#include <dwmapi.h>
-#include <qpoint.h>
 #include <QPaintEvent>
 #include <QPainterPath>
 #include <QMouseEvent>
-#include <QWidget>
 
 
-class CutMask  : public QObject
+class WinMask  : public QWidget
 {
 	Q_OBJECT
 public:
-	CutMask(QWidget* parent = nullptr);
-	~CutMask();
+	WinMask(QWidget* parent = nullptr);
+	~WinMask();
 	void mousePress(QMouseEvent* event);
 	void mouseDrag(QMouseEvent* event);
 	void mouseRelease(QMouseEvent* event);
 	void mouseMove(QMouseEvent* event);
-	void paint(QPainter* painter);
 public:
 	QRect maskRect;
 protected:
+	void paintEvent(QPaintEvent* event) override;
 private:
 	void changeMaskRect(const QPoint& pos);
 	void changeMousePosState(const int& x, const int& y);

@@ -6,7 +6,7 @@
 #include "../App/App.h"
 #include "../Tool/ToolSub.h"
 #include "../Win/WinBase.h"
-#include "../Layer/Canvas.h"
+#include "../Win/WinCanvas.h"
 
 
 ShapeEraser::ShapeEraser(QObject* parent) : ShapeBase(parent)
@@ -85,7 +85,7 @@ void ShapeEraser::mouseMove(QMouseEvent* event)
     }
     if (hoverDraggerIndex > -1) {
         auto win = (WinBase*)parent();
-        win->canvas->changeShape(this);
+        win->winCanvas->changeShape(this);
         event->accept();
     }
 }
@@ -108,7 +108,7 @@ void ShapeEraser::mousePress(QMouseEvent* event)
         pressPos = event->pos().toPointF();
         state = (ShapeState)((int)ShapeState::sizing0 + hoverDraggerIndex);
         auto win = (WinBase*)parent();
-        win->canvas->changeShape(this);
+        win->winCanvas->changeShape(this);
         win->update();
         event->accept();
     }

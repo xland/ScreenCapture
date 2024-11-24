@@ -10,7 +10,7 @@
 #include "../Tool/ToolSub.h"
 #include "../Win/WinBg.h"
 #include "../Win/WinBase.h"
-#include "../Layer/Canvas.h"
+#include "../Win/WinCanvas.h"
 
 namespace {
     int mosaicRectSize{ 18 };
@@ -19,6 +19,10 @@ namespace {
 ShapeMosaic::ShapeMosaic(QObject* parent) : ShapeBase(parent)
 {
     auto win = (WinBase*)parent;
+    auto winImg = win->grab().toImage();
+    winImg.save("allen456.png");
+
+
     isRect = win->toolSub->getSelectState("eraserFill");
     if (isRect) {
         for (int i = 0; i < 8; i++)
@@ -35,7 +39,7 @@ ShapeMosaic::ShapeMosaic(QObject* parent) : ShapeBase(parent)
 
 
     auto dpr = base->windowHandle()->devicePixelRatio();
-    imgScreen = base->winBg->bgImg.copy();
+    //imgScreen = base->winBg->bgImg.copy();
     imgScreen.setDevicePixelRatio(dpr);
     QPainter painter(&imgScreen);
     for (int i = 0; i < base->shapes.size(); i++)
@@ -65,54 +69,6 @@ ShapeMosaic::~ShapeMosaic()
 {
 }
 
-void ShapeMosaic::initImgPatch()
-{
-    //future.waitForFinished();
-    auto rect = path.boundingRect().toRect();
-    if (rect.width() <= mosaicRectSize || rect.height() <= mosaicRectSize) {
-        return;
-    }
-    auto base = (WinBase*)parent();
-    auto sf = base->windowHandle()->devicePixelRatio();
-    auto winBg = base->winBg;
-    auto l{ rect.left() * sf }; auto t{ rect.top() * sf }; auto w{ rect.width() * sf }; auto h{ rect.height() * sf };
-    imgPatch = QImage(w, h, QImage::Format_ARGB32);
-    QPainter painter(&imgPatch);
-    painter.drawImage(imgPatch.rect(), winBg->bgImg.copy(l, t, w, h));
-    painter.save();
-    painter.translate(-l,-t);
-    painter.scale(sf, sf);
-    base->render(&painter);
-    painter.restore();
-    for (uint x=0;x<imgPatch.width();x+=mosaicRectSize)
-    {   
-        for (uint y=0; y < imgPatch.height(); x += mosaicRectSize)
-        {
-            //一个格子采9个样即可
-            auto color0 = getColor(x + 1, y + 1, imgPatch);
-            auto color1 = getColor(x + mosaicRectSize - 1, y + 1, imgPatch);
-            auto color2 = getColor(x + mosaicRectSize - 1, y + mosaicRectSize - 1, imgPatch);
-            auto color3 = getColor(x + 1, y + mosaicRectSize - 1, imgPatch);
-            auto color4 = getColor(x + mosaicRectSize / 2, y + mosaicRectSize / 2, imgPatch);
-            auto color5 = getColor(x + 1, y + mosaicRectSize / 3, imgPatch);
-            auto color6 = getColor(x + mosaicRectSize / 3, y + mosaicRectSize / 3, imgPatch);
-            auto color7 = getColor(x + mosaicRectSize / 3 * 2, y + mosaicRectSize / 3 * 2, imgPatch);
-            auto color8 = getColor(x + 1, y + mosaicRectSize / 3 * 2, imgPatch);
-
-            auto r = color0.red() + color1.red() + color2.red() + color3.red() + color4.red() + color5.red() + color6.red() + color7.red() + color8.red();
-            auto g = color0.green() + color1.green() + color2.green() + color3.green() + color4.green() + color5.green() + color6.green() + color7.green() + color8.green();
-            auto b = color0.blue() + color1.blue() + color2.blue() + color3.blue() + color4.blue() + color5.blue() + color6.blue() + color7.blue() + color8.blue();
-            auto a = color0.alpha() + color1.alpha() + color2.alpha() + color3.alpha() + color4.alpha() + color5.alpha() + color6.alpha() + color7.alpha() + color8.alpha();
-            painter.setBrush(QColor(r / 9, g / 9, b / 9, a / 9));
-            painter.setPen(Qt::NoPen);
-            QRect rrr(x, y, mosaicRectSize, mosaicRectSize);
-            painter.drawRect(rrr);
-            if (y > 100 && x > 100) {
-                imgPatch.save("allen123.png");
-            }            
-        }
-    }
-}
 
 void ShapeMosaic::resetDragger()
 {
@@ -234,7 +190,7 @@ void ShapeMosaic::mouseMove(QMouseEvent* event)
     }
     if (hoverDraggerIndex > -1) {
         auto win = (WinBase*)parent();
-        win->canvas->changeShape(this);
+        win->winCanvas->changeShape(this);
         event->accept();
     }
 }
@@ -257,7 +213,7 @@ void ShapeMosaic::mousePress(QMouseEvent* event)
         pressPos = event->pos().toPointF();
         state = (ShapeState)((int)ShapeState::sizing0 + hoverDraggerIndex);
         auto win = (WinBase*)parent();
-        win->canvas->changeShape(this);
+        win->winCanvas->changeShape(this);
         win->update();
         event->accept();
     }
@@ -309,7 +265,7 @@ void ShapeMosaic::mouseDrag(QMouseEvent* event)
         //    points.append(path.pointAtPercent(percent));
         //}
         //drawRectsByPoints(points);
-        initImgPatch();
+        //initImgPatch();
     }
     auto win = (WinBase*)parent();
     win->update();

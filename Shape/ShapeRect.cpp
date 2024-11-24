@@ -4,7 +4,7 @@
 #include "../App/App.h"
 #include "../Tool/ToolSub.h"
 #include "../Win/WinBase.h"
-#include "../Layer/Canvas.h"
+#include "../Win/WinCanvas.h"
 
 ShapeRect::ShapeRect(QObject* parent, const QString&& btnName) : ShapeBase(parent)
 {
@@ -106,7 +106,7 @@ void ShapeRect::mouseMove(QMouseEvent* event)
     }
     if (hoverDraggerIndex > -1) {
         auto win = (WinBase*)parent();
-        win->canvas->changeShape(this);
+        win->winCanvas->changeShape(this);
         event->accept();
     }
 }
@@ -124,7 +124,7 @@ void ShapeRect::mousePress(QMouseEvent* event)
         pressPos = event->pos();
         event->accept();
         auto win = (WinBase*)parent();
-        win->canvas->changeShape(this);
+        win->winCanvas->changeShape(this);
         win->update();
     }
 }
@@ -134,7 +134,7 @@ void ShapeRect::mouseRelease(QMouseEvent* event)
         resetDragger();
         state = ShapeState::ready;
         auto win = (WinBase*)parent();
-        win->canvas->changeShape(this,true);
+        win->winCanvas->changeShape(this,true);
         event->accept();
     }
 }
@@ -219,6 +219,6 @@ void ShapeRect::mouseDrag(QMouseEvent* event)
         }
     }
     auto win = (WinBase*)parent();
-    win->canvas->update();
+    win->winCanvas->update();
     event->accept();
 }
