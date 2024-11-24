@@ -110,8 +110,8 @@ void ShapeLine::mousePress(QMouseEvent* event)
         pressPos = event->pos().toPointF();
         state = (ShapeState)((int)ShapeState::sizing0 + hoverDraggerIndex);
         auto win = (WinBase*)parent();
-        win->winCanvas->changeShape(this);
-        win->update();
+        win->winCanvas->changeShape(this,true);
+        win->refreshBoard();
         event->accept();
     }
 }
@@ -126,12 +126,15 @@ void ShapeLine::mouseRelease(QMouseEvent* event)
             diffVal = std::sqrt(coeffA * coeffA + coeffB * coeffB);
             state = ShapeState::ready;
             auto win = (WinBase*)parent();
-            win->winCanvas->changeShape(this, true);
+            win->refreshBoard();
+            win->winCanvas->changeShape(this,true);
             event->accept();
         }
     }
     else {
         state = ShapeState::ready;
+        auto win = (WinBase*)parent();
+        win->refreshBoard();
         event->accept();
     }
 }

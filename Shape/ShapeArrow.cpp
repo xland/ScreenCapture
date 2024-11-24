@@ -103,8 +103,8 @@ void ShapeArrow::mousePress(QMouseEvent* event)
         state = (ShapeState)((int)ShapeState::sizing0 + hoverDraggerIndex);
         event->accept();
         auto win = (WinBase*)parent();
-        win->winCanvas->changeShape(this);
-        win->update();
+        win->refreshBoard();
+        win->winCanvas->changeShape(this,true);
     }
 }
 void ShapeArrow::mouseRelease(QMouseEvent* event)
@@ -113,8 +113,8 @@ void ShapeArrow::mouseRelease(QMouseEvent* event)
         resetDragger();
         state = ShapeState::ready;
         auto win = (WinBase*)parent();
-        win->winCanvas->changeShape(this,true);
         win->refreshBoard();
+        win->winCanvas->changeShape(this,true);
         event->accept();
     }
 }
