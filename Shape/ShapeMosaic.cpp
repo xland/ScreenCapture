@@ -32,24 +32,29 @@ ShapeMosaic::ShapeMosaic(QObject* parent) : ShapeBase(parent)
 
     auto start = QTime::currentTime();
     auto base = (WinBase*)parent;
+
+
+    auto dpr = base->windowHandle()->devicePixelRatio();
     imgScreen = base->winBg->bgImg.copy();
-    imgScreen.setDevicePixelRatio(base->windowHandle()->devicePixelRatio());
+    imgScreen.setDevicePixelRatio(dpr);
     QPainter painter(&imgScreen);
     for (int i = 0; i < base->shapes.size(); i++)
     {
         base->shapes[i]->paint(&painter);
     }
-    auto w{ imgScreen.width()- mosaicRectSize }, h{ imgScreen.height()- mosaicRectSize };
-    QImage imgTemp = imgScreen.scaled(imgScreen.width() / mosaicRectSize, imgScreen.height() / mosaicRectSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-    for (uint x = 0; x < w; x += mosaicRectSize)
+    QImage imgTemp = imgScreen.scaled(imgScreen.width() / mosaicRectSize, 
+        imgScreen.height() / mosaicRectSize, Qt::IgnoreAspectRatio, 
+        Qt::SmoothTransformation);    
+    auto smallSize = mosaicRectSize / dpr;    
+    for (uint x = 0; x < imgTemp.width(); x++)
     {
-        for (uint y = 0; y < h; y += mosaicRectSize)
+        for (uint y = 0; y < imgTemp.height(); y++)
         {
-            auto c = imgTemp.pixelColor(x / mosaicRectSize, y / mosaicRectSize);
+            auto c = imgTemp.pixelColor(x, y);
             painter.setBrush(c);
             painter.setPen(Qt::NoPen);
-            QRect rrr(x, y, mosaicRectSize, mosaicRectSize);
-            painter.drawRect(rrr);
+            QRect mRect(x* smallSize, y* smallSize, smallSize, smallSize);
+            painter.drawRect(mRect);
         }
     }
     int elapsedMilliseconds = start.msecsTo(QTime::currentTime());
