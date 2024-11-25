@@ -13,8 +13,6 @@ class ShapeMosaic:public ShapeBase
 public:
     ShapeMosaic(QObject* parent = nullptr);
     ~ShapeMosaic();
-    //static void initMosaic(WinBg* winBg);
-    //void initImgPatch();
     virtual void paint(QPainter* painter) override;
     void paintDragger(QPainter* painter) override;
     void mouseMove(QMouseEvent* event) override;
@@ -27,14 +25,14 @@ public:
     bool isRect;
 protected:
 private:
+    void initMosaicBgImg();
     void resetDragger();
-    //void drawRectsByPoints(const QVector<QPointF>& points);
-    QColor getColor(int x, int y,const QImage& img);
 private:
     QPointF startPos,endPos,pressPos;
     double coeffA,coeffB,coeffC,diffVal;
     QPainterPath path;
     bool isInitMosaic{ false };
     QImage imgPatch;
-    QImage imgScreen;
+    QImage winImg;
+    QImage mosaicImg;
 };
