@@ -35,4 +35,5 @@ private:
     QImage imgPatch;
     QImage winImg;
     QImage mosaicImg;
+    QRect pathRect;
 };

@@ -11,10 +11,6 @@
 #include "../Win/WinBase.h"
 #include "../Win/WinCanvas.h"
 
-namespace {
-    
-}
-
 ShapeMosaic::ShapeMosaic(QObject* parent) : ShapeBase(parent)
 {
     auto win = (WinBase*)parent;
@@ -70,7 +66,7 @@ void ShapeMosaic::initMosaicBgImg()
             auto c = imgTemp.pixelColor(x, y);
             painter.setBrush(c);
             painter.setPen(Qt::NoPen);
-            QRect mRect(x * smallSize, y * smallSize, smallSize, smallSize);
+            QRectF mRect(x * smallSize, y * smallSize, smallSize, smallSize);
             painter.drawRect(mRect);
         }
     }
@@ -87,7 +83,7 @@ void ShapeMosaic::resetDragger()
 void ShapeMosaic::paint(QPainter* painter)
 {
     if (state == ShapeState::ready) {
-
+        painter->drawImage(pathRect, imgPatch);
     }
     else {
         painter->drawImage(QPoint(0, 0), mosaicImg);
@@ -180,6 +176,20 @@ void ShapeMosaic::mouseRelease(QMouseEvent* event)
     }
     else {
         state = ShapeState::ready;
+        pathRect = path.boundingRect().toRect().adjusted(-strokeWidth,-strokeWidth,strokeWidth,strokeWidth);
+        auto win = (WinBase*)(parent());
+        auto dpr = win->windowHandle()->devicePixelRatio();
+        auto tarRect = QRect(pathRect.topLeft()*dpr, pathRect.bottomRight()*dpr);
+        imgPatch = mosaicImg.copy(tarRect);
+        QPainter painter(&imgPatch);
+        painter.drawImage(QPoint(0, 0), winImg.copy(tarRect));
+        {
+            QImage emptyImage1;
+            mosaicImg.swap(emptyImage1);
+            QImage emptyImage2;
+            winImg.swap(emptyImage2);
+        }
+        win->refreshBoard();
         event->accept();
     }
 }
