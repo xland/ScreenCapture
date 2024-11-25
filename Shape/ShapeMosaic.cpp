@@ -34,8 +34,7 @@ void ShapeMosaic::initMosaicBgImg()
 {
     //auto start = QTime::currentTime();
     auto win = (WinBase*)parent();
-    winImg = win->grab().toImage().convertToFormat(QImage::Format_ARGB32);;
-
+    winImg = win->grab().toImage().convertToFormat(QImage::Format_ARGB32);
     auto dpr = win->windowHandle()->devicePixelRatio();
     winImg.setDevicePixelRatio(dpr);
     {
@@ -44,14 +43,8 @@ void ShapeMosaic::initMosaicBgImg()
         {
             win->shapes[i]->paint(&winPainter);
         }
-    }
-
-    
-
+    } 
     mosaicImg = winImg.copy();
-
-
-
     mosaicImg.setDevicePixelRatio(dpr);
     int mosaicRectSize{ 18 };
     QImage imgTemp = winImg.scaled(winImg.width() / mosaicRectSize,
