@@ -91,7 +91,6 @@ void ShapeMosaic::paint(QPainter* painter)
     }
     else {
         painter->drawImage(QPoint(0, 0), mosaicImg);
-
         QPainter winPainter(&winImg);
         winPainter.setCompositionMode(QPainter::CompositionMode_Clear);
         QPen pen(color);
@@ -101,21 +100,7 @@ void ShapeMosaic::paint(QPainter* painter)
         winPainter.setPen(pen);
         winPainter.setBrush(Qt::NoBrush);
         winPainter.drawPath(path);
-        winPainter.end();
         painter->drawImage(QPoint(0, 0), winImg);
-
-        static bool flag = false;
-        if (!flag && path.elementCount() > 40) {
-            //auto win = (WinBase*)parent();
-            //win->grab().save("allen123.png");
-            //winImg.save("allen123.png");
-            //mosaicImg.save("allen456.png");
-            QPainter mosaicPainter(&mosaicImg);
-            winPainter.setCompositionMode(QPainter::CompositionMode_SourceOver);
-            mosaicPainter.drawImage(QPoint(0, 0),winImg);
-            mosaicImg.save("allen123.png");
-            flag = true;
-        }
     }
 }
 void ShapeMosaic::paintDragger(QPainter* painter)
