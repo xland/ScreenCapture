@@ -106,7 +106,7 @@ void ShapeRect::mouseMove(QMouseEvent* event)
     }
     if (hoverDraggerIndex > -1) {
         auto win = (WinBase*)parent();
-        win->winCanvas->changeShape(this);
+        win->refreshCanvas(this);
         event->accept();
     }
 }
@@ -125,7 +125,7 @@ void ShapeRect::mousePress(QMouseEvent* event)
         event->accept();
         auto win = (WinBase*)parent();
         win->refreshBoard();
-        win->winCanvas->changeShape(this,true);
+        win->refreshCanvas(this,true);
     }
 }
 void ShapeRect::mouseRelease(QMouseEvent* event)
@@ -135,7 +135,7 @@ void ShapeRect::mouseRelease(QMouseEvent* event)
         state = ShapeState::ready;
         auto win = (WinBase*)parent();
         win->refreshBoard();
-        win->winCanvas->changeShape(this,true);
+        win->refreshCanvas(this,true);
         event->accept();
         qDebug() << "allen";
     }

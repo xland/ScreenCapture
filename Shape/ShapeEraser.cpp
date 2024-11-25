@@ -85,7 +85,7 @@ void ShapeEraser::mouseMove(QMouseEvent* event)
     }
     if (hoverDraggerIndex > -1) {
         auto win = (WinBase*)parent();
-        win->winCanvas->changeShape(this);
+        win->refreshCanvas(this);
         event->accept();
     }
 }
@@ -109,7 +109,7 @@ void ShapeEraser::mousePress(QMouseEvent* event)
         pressPos = event->pos().toPointF();
         tempState = (ShapeState)((int)ShapeState::sizing0 + hoverDraggerIndex);
         auto win = (WinBase*)parent();
-        win->winCanvas->changeShape(this);
+        win->refreshCanvas(this,true);
         win->refreshBoard();
         event->accept();
     }

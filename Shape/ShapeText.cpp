@@ -15,7 +15,7 @@
 ShapeText::ShapeText(QObject* parent) : ShapeBase(parent)
 {
     auto win = (WinBase*)parent;
-    state = ShapeState::ready;
+    //state = ShapeState::ready;
     color = win->toolSub->getColor();
     fontSize = win->toolSub->getStrokeWidth();
     bold = win->toolSub->getSelectState("bold");
@@ -39,7 +39,7 @@ void ShapeText::adjustSize()
     }
     textEdit->setFixedSize(size);
     auto win = (WinBase*)parent();
-    win->update();
+    win->refreshBoard();  //为什么要在board上画框
 }
 
 void ShapeText::createTextEdit()
@@ -65,30 +65,30 @@ void ShapeText::focusOut()
     if (text.isEmpty()) {
         state = ShapeState::temp;
     }
-    textEdit->hide();
+    state = ShapeState::ready;
     auto win = (WinBase*)parent();
-    win->update();
+    win->refreshBoard();
+    textEdit->hide();
 }
 
 void ShapeText::focusIn()
 {
     auto win = (WinBase*)parent();
-    win->update();
+    win->refreshBoard();
+    win->refreshCanvas(nullptr, true);
 }
 
 void ShapeText::paint(QPainter* painter)
 {
-    if (textEdit->isVisible()) {
-        paintBorder(painter);
-    }
-    else {
+    if (!textEdit->isVisible()) {
         this->textEdit->render(painter, textEdit->pos());
-    }    
+    }   
 }
 void ShapeText::paintDragger(QPainter* painter)
 {
-    if (textEdit->isVisible()) return;
-    paintBorder(painter);
+    if (!textEdit->isVisible()) {
+        paintBorder(painter);
+    }
 }
 void ShapeText::paintBorder(QPainter* painter)
 {
@@ -100,17 +100,16 @@ void ShapeText::paintBorder(QPainter* painter)
     pen.setWidth(1);
     painter->setPen(pen);
     painter->setBrush(Qt::NoBrush);
-    auto rect = textEdit->geometry();
+    auto rect = textEdit->geometry().adjusted(4,4,-4,-4);
     painter->drawRect(rect);
 }
 void ShapeText::mouseMove(QMouseEvent* event)
 {
     auto pos = event->pos();
     auto rect = textEdit->geometry();
-    auto innerRect = rect.adjusted(2, 2, -2, -2);
-    auto outerRect = rect.adjusted(-1, -1, 1, 1);
+    auto innerRect = rect.adjusted(3, 3, -3, -3);
     hoverDraggerIndex = -1;
-    if (outerRect.contains(pos)) {
+    if (rect.contains(pos)) {
         auto win = (WinBase*)parent();
         if (innerRect.contains(pos)) {
             hoverDraggerIndex = 0;
@@ -120,7 +119,7 @@ void ShapeText::mouseMove(QMouseEvent* event)
             hoverDraggerIndex = 8;
             win->updateCursor(Qt::SizeAllCursor);
         }
-        win->winCanvas->changeShape(this);
+        win->refreshCanvas(this);
         event->accept();
     }
 }
@@ -131,7 +130,8 @@ void ShapeText::mousePress(QMouseEvent* event)
         textEdit->move(event->pos() + QPoint(-10, -10));
         textEdit->show();
         textEdit->setFocus();
-        textEdit->setText(""); //用于触发adjustSize
+        textEdit->setText("");
+        event->accept();
         return;
     }
     if (hoverDraggerIndex == 0) {
@@ -154,7 +154,7 @@ void ShapeText::mouseRelease(QMouseEvent* event)
     if (state >= ShapeState::sizing0) {
         state = ShapeState::ready;
         auto win = (WinBase*)parent();
-        win->winCanvas->changeShape(this,true);
+        win->refreshCanvas(this,true);
         event->accept();
     }
 }

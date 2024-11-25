@@ -29,20 +29,20 @@ void WinCanvas::initWindow()
     SetWindowLong(hwnd, GWL_EXSTYLE, exStyle | WS_EX_TRANSPARENT);
 }
 
-void WinCanvas::changeShape(ShapeBase* shape, bool forceUpdate)
+void WinCanvas::refresh(ShapeBase* shape, bool forceUpdate)
 {
     if (shape) {
         if (shape != curShape) {
-            update();
             curShape = shape;
+            update();
 		}        
     }
     else {
         if (shape != curShape) {
-            timer->start();
             curShape = shape;
+            timer->start();
         }
-    }    
+    }
     if (forceUpdate) {
         update();
     }

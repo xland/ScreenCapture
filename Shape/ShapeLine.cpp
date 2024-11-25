@@ -84,7 +84,7 @@ void ShapeLine::mouseMove(QMouseEvent* event)
     }
     if (hoverDraggerIndex > -1) {
         auto win = (WinBase*)parent();
-        win->winCanvas->changeShape(this);
+        win->refreshCanvas(this);
         event->accept();
     }
 }
@@ -103,14 +103,14 @@ void ShapeLine::mousePress(QMouseEvent* event)
             event->accept();
             state = ShapeState::sizing0;
             auto win = (WinBase*)parent();
-            win->winCanvas->changeShape(this);
+            win->refreshCanvas(this);
         }
     }
     if (path.isEmpty() && hoverDraggerIndex >= 0) {
         pressPos = event->pos().toPointF();
         state = (ShapeState)((int)ShapeState::sizing0 + hoverDraggerIndex);
         auto win = (WinBase*)parent();
-        win->winCanvas->changeShape(this,true);
+        win->refreshCanvas(this,true);
         win->refreshBoard();
         event->accept();
     }
@@ -127,7 +127,7 @@ void ShapeLine::mouseRelease(QMouseEvent* event)
             state = ShapeState::ready;
             auto win = (WinBase*)parent();
             win->refreshBoard();
-            win->winCanvas->changeShape(this,true);
+            win->refreshCanvas(this,true);
             event->accept();
         }
     }

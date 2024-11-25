@@ -189,7 +189,7 @@ void ShapeMosaic::mouseMove(QMouseEvent* event)
     }
     if (hoverDraggerIndex > -1) {
         auto win = (WinBase*)parent();
-        win->winCanvas->changeShape(this);
+        win->refreshCanvas(this);
         event->accept();
     }
 }
@@ -212,7 +212,7 @@ void ShapeMosaic::mousePress(QMouseEvent* event)
         pressPos = event->pos().toPointF();
         state = (ShapeState)((int)ShapeState::sizing0 + hoverDraggerIndex);
         auto win = (WinBase*)parent();
-        win->winCanvas->changeShape(this);
+        win->refreshCanvas(this);
         win->update();
         event->accept();
     }

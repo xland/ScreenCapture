@@ -88,7 +88,7 @@ void ShapeArrow::mouseMove(QMouseEvent* event)
     }
     if (hoverDraggerIndex > -1) {
         auto win = (WinBase*)parent();
-        win->winCanvas->changeShape(this);
+        win->refreshCanvas(this);
         event->accept();
     }
 }
@@ -104,7 +104,7 @@ void ShapeArrow::mousePress(QMouseEvent* event)
         event->accept();
         auto win = (WinBase*)parent();
         win->refreshBoard();
-        win->winCanvas->changeShape(this,true);
+        win->refreshCanvas(this,true);
     }
 }
 void ShapeArrow::mouseRelease(QMouseEvent* event)
@@ -114,7 +114,7 @@ void ShapeArrow::mouseRelease(QMouseEvent* event)
         state = ShapeState::ready;
         auto win = (WinBase*)parent();
         win->refreshBoard();
-        win->winCanvas->changeShape(this,true);
+        win->refreshCanvas(this,true);
         event->accept();
     }
 }

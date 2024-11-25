@@ -99,7 +99,7 @@ void WinBase::mouseMoveOnShape(QMouseEvent* event)
             updateCursor(Qt::CrossCursor);
         }
         if (winCanvas) {
-            winCanvas->changeShape(nullptr);
+            winCanvas->refresh(nullptr);
         }
     }
 }
@@ -124,7 +124,7 @@ void WinBase::mouseReleaseOnShape(QMouseEvent* event)
     }
     if (winCanvas && !event->isAccepted()) {
         if (state != State::text) {
-            winCanvas->changeShape(nullptr);
+            winCanvas->refresh(nullptr);
         }
     }
 }
@@ -149,4 +149,9 @@ void WinBase::updateCursor(Qt::CursorShape cur)
 void WinBase::refreshBoard()
 {
     winBoard->refresh();
+}
+
+void WinBase::refreshCanvas(ShapeBase* shape,bool force)
+{
+    winCanvas->refresh(shape, force);
 }

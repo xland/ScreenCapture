@@ -32,12 +32,25 @@ void ShapeTextInput::focusInEvent(QFocusEvent* event)
 void ShapeTextInput::paintEvent(QPaintEvent* event)
 {
 	QTextEdit::paintEvent(event);
-	if (showTextInputCursor && isVisible()) {
+	if (isVisible()) {
 		QPainter painter(viewport());
-		painter.setRenderHint(QPainter::LosslessImageRendering, true);
-		painter.setBrush(textInputCursorColor);
-		painter.setPen(Qt::NoPen);
-		painter.drawRect(cursorRect());
+		painter.setRenderHint(QPainter::Antialiasing, true);
+		painter.setBrush(Qt::NoBrush);
+		QPen pen;
+		pen.setColor(textInputCursorColor);
+		pen.setWidth(1);
+		painter.setPen(pen);
+		if (showTextInputCursor)
+		{
+			auto span = document()->toPlainText() == "" ? -1 : -4;
+			auto cr = cursorRect().adjusted(0,1,0,span);
+			painter.drawLine(cr.topLeft(),cr.bottomLeft());
+		}
+		pen.setStyle(Qt::DashLine);
+		pen.setDashOffset(1);
+		pen.setDashPattern({ 1, 2 });
+		painter.setPen(pen);
+		painter.drawRect(1, 1, viewport()->width()-2, viewport()->height() - 2);
 	}
 	showTextInputCursor = !showTextInputCursor;
 }
