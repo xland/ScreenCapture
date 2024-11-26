@@ -9,6 +9,7 @@ ShapeEllipse::ShapeEllipse(QObject* parent) : ShapeRectBase(parent)
 {
     auto win = (WinBase*)parent;
     isFill = win->toolSub->getSelectState("ellipseFill");
+    color = win->toolSub->getColor();
     strokeWidth = win->toolSub->getStrokeWidth();
 }
 

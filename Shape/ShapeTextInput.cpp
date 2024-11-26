@@ -46,9 +46,8 @@ void ShapeTextInput::paintEvent(QPaintEvent* event)
 			auto cr = cursorRect().adjusted(0,1,0,span);
 			painter.drawLine(cr.topLeft(),cr.bottomLeft());
 		}
-		pen.setStyle(Qt::DashLine);
-		pen.setDashOffset(1);
-		pen.setDashPattern({ 1, 2 });
+		pen.setStyle(Qt::CustomDashLine);
+		pen.setDashPattern({ 3,3 });
 		painter.setPen(pen);
 		painter.drawRect(1, 1, viewport()->width()-2, viewport()->height() - 2);
 	}

@@ -151,6 +151,6 @@ void ShapeNumber::mouseDrag(QMouseEvent* event)
         pressPos = pos;
     }
     auto win = (WinBase*)parent();
-    win->winCanvas->update();
+    win->refreshCanvas(this, true);
     event->accept();
 }

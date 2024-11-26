@@ -8,8 +8,6 @@
 
 ShapeRectBase::ShapeRectBase(QObject* parent) : ShapeBase(parent)
 {
-    auto win = (WinBase*)parent;
-    color = win->toolSub->getColor();
 }
 
 ShapeRectBase::~ShapeRectBase()
@@ -34,15 +32,22 @@ void ShapeRectBase::resetDragger()
     draggers[6].setRect(x - draggerSize / 2, y + h - draggerSize / 2, draggerSize, draggerSize);
     draggers[7].setRect(x - draggerSize / 2, y + h / 2 - draggerSize / 2, draggerSize, draggerSize);
 }
-
-
 void ShapeRectBase::paintDragger(QPainter* painter)
 {
-    painter->setPen(QPen(QBrush(QColor(0, 0, 0)), 1));
+    if (draggers.empty()) return;
+    QPen pen;
+    pen.setColor(Qt::black);
+    pen.setWidth(1);
     painter->setBrush(Qt::NoBrush);
     for (int i = 0; i < draggers.size(); i++)
     {
         painter->drawRect(draggers[i]);
+    }
+    if (isEraser) {        
+        pen.setStyle(Qt::CustomDashLine);
+        pen.setDashPattern({3,3});
+        painter->setPen(pen);
+        painter->drawRect(shape);
     }
 }
 void ShapeRectBase::mouseMove(QMouseEvent* event)
@@ -114,7 +119,7 @@ void ShapeRectBase::mousePress(QMouseEvent* event)
         event->accept();
         auto win = (WinBase*)parent();
         win->refreshBoard();
-        win->refreshCanvas(this,true);
+        win->refreshCanvas(isEraser?nullptr:this, true);
     }
 }
 void ShapeRectBase::mouseRelease(QMouseEvent* event)
@@ -209,6 +214,11 @@ void ShapeRectBase::mouseDrag(QMouseEvent* event)
         }
     }
     auto win = (WinBase*)parent();
-    win->winCanvas->update();
+    if (isEraser) {
+        win->refreshBoard();
+    }
+    else {
+        win->refreshCanvas(this, true);
+    }
     event->accept();
 }

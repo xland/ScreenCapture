@@ -167,7 +167,7 @@ void ShapeText::mouseDrag(QMouseEvent* event)
 		textEdit->move(p.x(), p.y());
         pressPos = pos;
         auto win = (WinBase*)parent();
-        win->winCanvas->update();
+        win->refreshCanvas(this, true);
         event->accept();
     }
 }

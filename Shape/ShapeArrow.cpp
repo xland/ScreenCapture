@@ -10,8 +10,6 @@
 ShapeArrow::ShapeArrow(QObject* parent) : ShapeBase(parent)
 {
     auto win = (WinBase*)parent;
-    draggers.push_back(QRect());
-    draggers.push_back(QRect());
     isFill = win->toolSub->getSelectState("arrowFill");
     color = win->toolSub->getColor();
     arrowSize = win->toolSub->getStrokeWidth();
@@ -23,6 +21,10 @@ ShapeArrow::~ShapeArrow()
 
 void ShapeArrow::resetDragger()
 {
+    if (draggers.empty()) {
+        draggers.push_back(QRect());
+        draggers.push_back(QRect());
+    }
     auto half{ draggerSize / 2 };    
     draggers[0].setRect(shape[0].x() - half, shape[0].y() - half, draggerSize, draggerSize);
     draggers[1].setRect(shape[3].x() - half, shape[3].y() - half, draggerSize, draggerSize);
@@ -156,6 +158,6 @@ void ShapeArrow::mouseDrag(QMouseEvent* event)
     //    }
     //}
     auto win = (WinBase*)parent();
-    win->winCanvas->update();
+    win->refreshCanvas(this, true);
     event->accept();
 }

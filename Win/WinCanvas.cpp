@@ -35,6 +35,7 @@ void WinCanvas::refresh(ShapeBase* shape, bool forceUpdate)
         if (shape != curShape) {
             curShape = shape;
             update();
+            return;
 		}        
     }
     else {
@@ -62,7 +63,7 @@ void WinCanvas::paintEvent(QPaintEvent* event)
     painter.setRenderHint(QPainter::Antialiasing, true);
     painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
     painter.setRenderHint(QPainter::TextAntialiasing, true);
-    if (curShape->state >= ShapeState::sizing0) {
+    if (curShape->state >= ShapeState::sizing0 && !curShape->isEraser) {
         curShape->paint(&painter);
     }
     else {

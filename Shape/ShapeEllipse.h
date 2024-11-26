@@ -8,8 +8,8 @@ public:
     ShapeEllipse(QObject* parent = nullptr);
     ~ShapeEllipse(); 
     void paint(QPainter* painter) override;
-    void mouseOnShape(QMouseEvent* event) override;
-public:
-protected:
 private:
+    void mouseOnShape(QMouseEvent* event) override;
+private:
+    QColor color{ Qt::red };
 };

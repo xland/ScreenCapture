@@ -4,6 +4,7 @@
 #include "WinBase.h"
 #include "WinCanvas.h"
 #include "WinBoard.h"
+#include "../Tool/ToolSub.h"
 #include "../Shape/ShapeBase.h"
 #include "../Shape/ShapeRect.h"
 #include "../Shape/ShapeEllipse.h"
@@ -11,7 +12,8 @@
 #include "../Shape/ShapeNumber.h"
 #include "../Shape/ShapeLine.h"
 #include "../Shape/ShapeText.h"
-#include "../Shape/ShapeEraser.h"
+#include "../Shape/ShapeEraserRect.h"
+#include "../Shape/ShapeEraserLine.h"
 #include "../Shape/ShapeMosaic.h"
 
 
@@ -59,7 +61,13 @@ ShapeBase* WinBase::addShape()
         shape = new ShapeMosaic(this);
     }
     else if (state == State::eraser) {
-        shape = new ShapeEraser(this);
+        auto isRect = toolSub->getSelectState("eraserFill");
+        if (isRect) {
+            shape = new ShapeEraserRect(this);
+        }
+        else {
+            shape = new ShapeEraserLine(this);
+        }
     }
     else
     {

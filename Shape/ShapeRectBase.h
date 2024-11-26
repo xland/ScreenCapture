@@ -21,8 +21,7 @@ public:
 public:
     QRect shape;
     bool isFill{ false };
-    int strokeWidth{ 2 };
-    QColor color{ Qt::red };
+    int strokeWidth{ 2 };    
 protected:
     QPoint topLeft, rightBottom, pressPos;
 private:

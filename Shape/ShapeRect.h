@@ -12,4 +12,6 @@ public:
     ShapeRect(QObject* parent = nullptr);
     virtual ~ShapeRect();
     void paint(QPainter* painter) override;
+private:
+    QColor color{ Qt::red };
 };

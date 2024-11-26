@@ -22,4 +22,5 @@ public:
     ShapeState state{ ShapeState::temp };
     int hoverDraggerIndex{ -1 };
     std::vector<QRect> draggers;
+    bool isEraser{ false };
 };

@@ -50,7 +50,7 @@ void WinBoard::paintEvent(QPaintEvent* event)
     painter.setRenderHint(QPainter::TextAntialiasing, true);
     for (auto shape : winBase->shapes)
     {
-        if (shape->state == ShapeState::ready) {
+        if (shape->isEraser || shape->state == ShapeState::ready) {
             shape->paint(&painter);
         }
     }
