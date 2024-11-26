@@ -118,6 +118,8 @@
     <ClCompile Include="Shape\ShapeBase.cpp" />
     <ClCompile Include="Shape\ShapeEllipse.cpp" />
     <ClCompile Include="Shape\ShapeEraser.cpp" />
+    <ClCompile Include="Shape\ShapeEraserLine.cpp" />
+    <ClCompile Include="Shape\ShapeEraserRect.cpp" />
     <ClCompile Include="Shape\ShapeLine.cpp" />
     <ClCompile Include="Shape\ShapeLineBase.cpp" />
     <ClCompile Include="Shape\ShapeMosaic.cpp" />
@@ -163,6 +165,8 @@
     <QtMoc Include="Shape\ShapeMosaic.h" />
     <QtMoc Include="Shape\ShapeRectBase.h" />
     <QtMoc Include="Shape\ShapeLineBase.h" />
+    <QtMoc Include="Shape\ShapeEraserRect.h" />
+    <QtMoc Include="Shape\ShapeEraserLine.h" />
     <ClInclude Include="Shape\ShapeState.h" />
     <QtMoc Include="Shape\ShapeText.h" />
     <QtMoc Include="Shape\ShapeTextInput.h" />

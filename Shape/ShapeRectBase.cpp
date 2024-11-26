@@ -9,10 +9,6 @@
 ShapeRectBase::ShapeRectBase(QObject* parent) : ShapeBase(parent)
 {
     auto win = (WinBase*)parent;
-    for (int i = 0; i < 8; i++)
-    {
-        draggers.push_back(QRect());
-    }
     color = win->toolSub->getColor();
 }
 
@@ -22,6 +18,12 @@ ShapeRectBase::~ShapeRectBase()
 
 void ShapeRectBase::resetDragger()
 {
+    if (draggers.empty()) {
+        for (int i = 0; i < 8; i++)
+        {
+            draggers.push_back(QRect());
+        }
+    }
     auto x{ shape.x() },y{ shape.y() },w{ shape.width() },h{ shape.height() };
     draggers[0].setRect(x - draggerSize / 2, y - draggerSize / 2, draggerSize, draggerSize);
     draggers[1].setRect(x + w / 2 - draggerSize / 2, y - draggerSize / 2, draggerSize, draggerSize);
@@ -33,18 +35,7 @@ void ShapeRectBase::resetDragger()
     draggers[7].setRect(x - draggerSize / 2, y + h / 2 - draggerSize / 2, draggerSize, draggerSize);
 }
 
-void ShapeRectBase::paint(QPainter* painter)
-{
-    if (isFill) {
-        painter->setBrush(QBrush(color));
-        painter->setPen(Qt::NoPen);
-    }
-    else {
-        painter->setPen(QPen(QBrush(color), strokeWidth));
-        painter->setBrush(Qt::NoBrush);
-    }
-    painter->drawRect(shape);
-}
+
 void ShapeRectBase::paintDragger(QPainter* painter)
 {
     painter->setPen(QPen(QBrush(QColor(0, 0, 0)), 1));
@@ -135,7 +126,6 @@ void ShapeRectBase::mouseRelease(QMouseEvent* event)
         win->refreshBoard();
         win->refreshCanvas(this,true);
         event->accept();
-        qDebug() << "allen";
     }
 }
 void ShapeRectBase::mouseOnShape(QMouseEvent* event)

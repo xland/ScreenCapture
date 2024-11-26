@@ -11,5 +11,5 @@ class ShapeRect:public ShapeRectBase
 public:
     ShapeRect(QObject* parent = nullptr);
     virtual ~ShapeRect();
-
+    void paint(QPainter* painter) override;
 };

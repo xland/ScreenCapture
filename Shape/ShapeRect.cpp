@@ -16,3 +16,15 @@ ShapeRect::ShapeRect(QObject* parent) : ShapeRectBase(parent)
 ShapeRect::~ShapeRect()
 {
 }
+void ShapeRect::paint(QPainter* painter)
+{
+    if (isFill) {
+        painter->setBrush(QBrush(color));
+        painter->setPen(Qt::NoPen);
+    }
+    else {
+        painter->setPen(QPen(QBrush(color), strokeWidth));
+        painter->setBrush(Qt::NoBrush);
+    }
+    painter->drawRect(shape);
+}

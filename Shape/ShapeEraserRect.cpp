@@ -2,32 +2,55 @@
 #include <QTransform>
 #include <numbers>
 
-#include "ShapeLineBase.h"
+#include "ShapeEraserRect.h"
 #include "../App/App.h"
 #include "../Tool/ToolSub.h"
 #include "../Win/WinBase.h"
 #include "../Win/WinCanvas.h"
 
 
-ShapeLineBase::ShapeLineBase(QObject* parent) : ShapeBase(parent)
+ShapeEraserRect::ShapeEraserRect(QObject* parent) : ShapeBase(parent)
 {
-}
-
-ShapeLineBase::~ShapeLineBase()
-{
-}
-
-void ShapeLineBase::resetDragger()
-{
-    if (draggers.empty()) {
-        draggers.push_back(QRect());
+    auto win = (WinBase*)parent;
+    for (int i = 0; i < 8; i++)
+    {
         draggers.push_back(QRect());
     }
+    isRect = win->toolSub->getSelectState("eraserFill");
+    strokeWidth = win->toolSub->getStrokeWidth();
+}
+
+ShapeEraserRect::~ShapeEraserRect()
+{
+}
+
+void ShapeEraserRect::resetDragger()
+{
     auto half{ draggerSize / 2 };
     draggers[0].setRect(startPos.x() - half, startPos.y() - half, draggerSize, draggerSize);
     draggers[1].setRect(endPos.x() - half, endPos.y() - half, draggerSize, draggerSize);
 }
-void ShapeLineBase::paintDragger(QPainter* painter)
+
+void ShapeEraserRect::paint(QPainter* painter)
+{
+    QPen pen(Qt::transparent);
+    pen.setWidth(strokeWidth);
+    pen.setCapStyle(Qt::RoundCap);
+    pen.setJoinStyle(Qt::RoundJoin);
+    painter->setPen(pen);
+    painter->setBrush(Qt::NoBrush);
+    painter->save();
+    painter->setCompositionMode(QPainter::CompositionMode_Clear);
+    if (path.isEmpty()) {
+        painter->drawLine(startPos, endPos);
+    }
+    else {
+        painter->drawPath(path);
+    }
+    painter->restore();
+
+}
+void ShapeEraserRect::paintDragger(QPainter* painter)
 {
     if (path.isEmpty()) {
         painter->setPen(QPen(QBrush(QColor(0, 0, 0)), 1));
@@ -36,7 +59,7 @@ void ShapeLineBase::paintDragger(QPainter* painter)
         painter->drawRect(draggers[1]);
     }
 }
-void ShapeLineBase::mouseMove(QMouseEvent* event)
+void ShapeEraserRect::mouseMove(QMouseEvent* event)
 {
     if (state != ShapeState::ready) return;
     if (!path.isEmpty()) return;
@@ -66,9 +89,10 @@ void ShapeLineBase::mouseMove(QMouseEvent* event)
         event->accept();
     }
 }
-void ShapeLineBase::mousePress(QMouseEvent* event)
+void ShapeEraserRect::mousePress(QMouseEvent* event)
 {
     if (state == ShapeState::temp) {
+        state = ShapeState::ready;
         auto flag = event->modifiers() & Qt::ShiftModifier;
         if (flag) {
             startPos = event->pos().toPointF();
@@ -78,57 +102,53 @@ void ShapeLineBase::mousePress(QMouseEvent* event)
         else {
             path.moveTo(event->pos());
             path.lineTo(event->pos());
-            event->accept();
-            state = ShapeState::sizing0;
-            auto win = (WinBase*)parent();
-            win->refreshCanvas(this);
+            tempState = ShapeState::sizing0;
         }
     }
     if (path.isEmpty() && hoverDraggerIndex >= 0) {
         pressPos = event->pos().toPointF();
-        state = (ShapeState)((int)ShapeState::sizing0 + hoverDraggerIndex);
+        tempState = (ShapeState)((int)ShapeState::sizing0 + hoverDraggerIndex);
         auto win = (WinBase*)parent();
         win->refreshCanvas(this,true);
         win->refreshBoard();
         event->accept();
     }
 }
-void ShapeLineBase::mouseRelease(QMouseEvent* event)
+void ShapeEraserRect::mouseRelease(QMouseEvent* event)
 {
     if (path.isEmpty()) {
-        if (state >= ShapeState::sizing0) {
+        if (tempState >= ShapeState::sizing0) {
             resetDragger();
             coeffA = startPos.y() - endPos.y();
             coeffB = endPos.x() - startPos.x();
             coeffC = startPos.x() * endPos.y() - endPos.x() * startPos.y();
             diffVal = std::sqrt(coeffA * coeffA + coeffB * coeffB);
-            state = ShapeState::ready;
+            tempState = ShapeState::ready;
+            event->accept();
             auto win = (WinBase*)parent();
             win->refreshBoard();
-            win->refreshCanvas(this,true);
-            event->accept();
         }
     }
     else {
-        state = ShapeState::ready;
+        tempState = ShapeState::ready;
+        event->accept();
         auto win = (WinBase*)parent();
         win->refreshBoard();
-        event->accept();
     }
 }
-void ShapeLineBase::mouseDrag(QMouseEvent* event)
+void ShapeEraserRect::mouseDrag(QMouseEvent* event)
 {
-    if (state == ShapeState::ready) {
+    if (tempState == ShapeState::ready) {
         return;
     }
     if (path.elementCount() <= 0) {  //这里不能判断isEmpty
-        if (state == ShapeState::sizing0) {
+        if (tempState == ShapeState::sizing0) {
             startPos = event->pos();
         }
-        if (state == ShapeState::sizing1) {
+        if (tempState == ShapeState::sizing1) {
             endPos = event->pos();
         }
-        else if (state == ShapeState::moving) {
+        else if (tempState == ShapeState::moving) {
             auto pos = event->pos();
             auto span = pos - pressPos;
             startPos += span;
@@ -140,6 +160,6 @@ void ShapeLineBase::mouseDrag(QMouseEvent* event)
         path.lineTo(event->position());
     }
     auto win = (WinBase*)parent();
-    win->winCanvas->update();
+    win->refreshBoard();
     event->accept();
 }
