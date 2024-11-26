@@ -2,54 +2,87 @@
 #include <QTransform>
 #include <numbers>
 
-#include "ShapeLine.h"
+#include "ShapeLineBase.h"
 #include "../App/App.h"
 #include "../Tool/ToolSub.h"
 #include "../Win/WinBase.h"
 #include "../Win/WinCanvas.h"
 
 
-ShapeLine::ShapeLine(QObject* parent) : ShapeLineBase(parent)
-{
-    auto win = (WinBase*)parent;
-    auto isTransparent = win->toolSub->getSelectState("lineTransparent");
-    color = win->toolSub->getColor();
-    if (isTransparent) {
-        color.setAlpha(128);
-    }
-    strokeWidth = win->toolSub->getStrokeWidth();
-}
-
-ShapeLine::~ShapeLine()
+ShapeLineBase::ShapeLineBase(QObject* parent) : ShapeBase(parent)
 {
 }
 
-void ShapeLine::paint(QPainter* painter)
+ShapeLineBase::~ShapeLineBase()
 {
-    QPen pen(color);
-    pen.setWidth(strokeWidth);
-    pen.setCapStyle(Qt::RoundCap);
-    pen.setJoinStyle(Qt::RoundJoin);
-    painter->setPen(pen);
-    painter->setBrush(Qt::NoBrush);
-    if (path.isEmpty()) {
-        painter->drawLine(startPos, endPos);
-    }
-    else {
-        painter->drawPath(path);
-    }
+}
 
-}
-void ShapeLine::paintDragger(QPainter* painter)
+void ShapeLineBase::resetDragger()
 {
-    if (path.isEmpty()) {
-        painter->setPen(QPen(QBrush(QColor(0, 0, 0)), 1));
-        painter->setBrush(Qt::NoBrush);
-        painter->drawRect(draggers[0]);
-        painter->drawRect(draggers[1]);
+    if (draggers.empty()) {
+        draggers.push_back(QRect());
+        draggers.push_back(QRect());
+    }
+    auto half{ draggerSize / 2 };
+    draggers[0].setRect(startPos.x() - half, startPos.y() - half, draggerSize, draggerSize);
+    draggers[1].setRect(endPos.x() - half, endPos.y() - half, draggerSize, draggerSize);
+}
+
+//void ShapeLineBase::paint(QPainter* painter)
+//{
+//    QPen pen(color);
+//    pen.setWidth(strokeWidth);
+//    pen.setCapStyle(Qt::RoundCap);
+//    pen.setJoinStyle(Qt::RoundJoin);
+//    painter->setPen(pen);
+//    painter->setBrush(Qt::NoBrush);
+//    if (path.isEmpty()) {
+//        painter->drawLine(startPos, endPos);
+//    }
+//    else {
+//        painter->drawPath(path);
+//    }
+//}
+//void ShapeLineBase::paintDragger(QPainter* painter)
+//{
+//    if (path.isEmpty()) {
+//        painter->setPen(QPen(QBrush(QColor(0, 0, 0)), 1));
+//        painter->setBrush(Qt::NoBrush);
+//        painter->drawRect(draggers[0]);
+//        painter->drawRect(draggers[1]);
+//    }
+//}
+void ShapeLineBase::mouseMove(QMouseEvent* event)
+{
+    if (state != ShapeState::ready) return;
+    if (!path.isEmpty()) return;
+    auto pos = event->pos();
+    hoverDraggerIndex = -1;
+    if (draggers[0].contains(pos)) {
+        hoverDraggerIndex = 0;
+        auto win = (WinBase*)parent();
+        win->updateCursor(Qt::SizeAllCursor);
+    }
+    else if (draggers[1].contains(pos)) {
+        hoverDraggerIndex = 1;
+        auto win = (WinBase*)parent();
+        win->updateCursor(Qt::SizeAllCursor);
+    }
+    if (hoverDraggerIndex == -1) {
+        double distance = std::abs(coeffA * pos.x() + coeffB * pos.y() + coeffC) / diffVal;
+        if (distance <= strokeWidth / 2) {
+            hoverDraggerIndex = 8;
+            auto win = (WinBase*)parent();
+            win->updateCursor(Qt::SizeAllCursor);
+        }
+    }
+    if (hoverDraggerIndex > -1) {
+        auto win = (WinBase*)parent();
+        win->refreshCanvas(this);
+        event->accept();
     }
 }
-void ShapeLine::mousePress(QMouseEvent* event)
+void ShapeLineBase::mousePress(QMouseEvent* event)
 {
     if (state == ShapeState::temp) {
         auto flag = event->modifiers() & Qt::ShiftModifier;
@@ -76,7 +109,7 @@ void ShapeLine::mousePress(QMouseEvent* event)
         event->accept();
     }
 }
-void ShapeLine::mouseRelease(QMouseEvent* event)
+void ShapeLineBase::mouseRelease(QMouseEvent* event)
 {
     if (path.isEmpty()) {
         if (state >= ShapeState::sizing0) {
@@ -99,7 +132,7 @@ void ShapeLine::mouseRelease(QMouseEvent* event)
         event->accept();
     }
 }
-void ShapeLine::mouseDrag(QMouseEvent* event)
+void ShapeLineBase::mouseDrag(QMouseEvent* event)
 {
     if (state == ShapeState::ready) {
         return;

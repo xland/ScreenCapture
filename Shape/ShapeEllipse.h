@@ -1,8 +1,8 @@
 #pragma once
 #include <QMouseEvent>
-#include "ShapeRect.h"
+#include "ShapeRectBase.h"
 
-class ShapeEllipse: public ShapeRect
+class ShapeEllipse: public ShapeRectBase
 {
 public:
     ShapeEllipse(QObject* parent = nullptr);

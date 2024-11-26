@@ -5,8 +5,11 @@
 #include "../Win/WinBase.h"
 #include "../Tool/ToolSub.h"
 
-ShapeEllipse::ShapeEllipse(QObject* parent) : ShapeRect(parent, "ellipseFill")
+ShapeEllipse::ShapeEllipse(QObject* parent) : ShapeRectBase(parent)
 {
+    auto win = (WinBase*)parent;
+    isFill = win->toolSub->getSelectState("ellipseFill");
+    strokeWidth = win->toolSub->getStrokeWidth();
 }
 
 ShapeEllipse::~ShapeEllipse()
@@ -29,13 +32,13 @@ void ShapeEllipse::mouseOnShape(QMouseEvent* event)
 {
     auto pos = event->pos();
     auto center = shape.center();
+    auto win = (WinBase*)parent();
     if (isFill) {
         double normalizedX = (pos.x() - center.x()) / static_cast<double>(shape.width() / 2);
         double normalizedY = (pos.y() - center.y()) / static_cast<double>(shape.height() / 2);
         auto flag = (normalizedX * normalizedX + normalizedY * normalizedY <= 1.0);
         if (flag) {
             hoverDraggerIndex = 8;
-            auto win = (WinBase*)parent();
             win->updateCursor(Qt::SizeAllCursor);
         }
     }
@@ -53,7 +56,6 @@ void ShapeEllipse::mouseOnShape(QMouseEvent* event)
             flag = (normalizedX * normalizedX + normalizedY * normalizedY <= 1.0);
             if (!flag) {
                 hoverDraggerIndex = 8;
-                auto win = (WinBase*)parent();
                 win->updateCursor(Qt::SizeAllCursor);
             }
         }

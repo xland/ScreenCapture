@@ -104,6 +104,12 @@
     <ClCompile Include="Win\WinBoard.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Shape\ShapeRectBase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Shape\ShapeLineBase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BtnType.h">
@@ -193,6 +199,12 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="Win\WinBoard.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Shape\ShapeRectBase.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Shape\ShapeLineBase.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>
