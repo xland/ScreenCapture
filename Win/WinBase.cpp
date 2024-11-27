@@ -173,16 +173,18 @@ void WinBase::refreshCanvas(ShapeBase* shape,bool force)
 
 std::pair<QImage*, QImage*> WinBase::createMosaicImg()
 {
-    auto winImg = new QImage(img.copy());
+    auto winImg = new QImage(img);
     {
         QPainter painter(winImg);
+        painter.setRenderHint(QPainter::Antialiasing, true);
+        painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
         for (int i = 0; i < shapes.size(); i++)
         {
             shapes[i]->paint(&painter);
         }
     }
     int mosaicRectSize{ 18 };
-    auto mosaicImg = new QImage(winImg->copy());
+    auto mosaicImg = new QImage(*winImg);
     QPainter painter(mosaicImg);
     QImage mosaicPixs = mosaicImg->scaled(mosaicImg->width() / mosaicRectSize,
         mosaicImg->height() / mosaicRectSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);

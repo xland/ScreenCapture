@@ -25,25 +25,13 @@ ShapeMosaicLine::~ShapeMosaicLine()
 void ShapeMosaicLine::paint(QPainter* painter)
 {
     if (state == ShapeState::ready) {
-        painter->drawImage(pathRect, imgPatch);
+        painter->drawImage(pathRect.topLeft(), imgPatch);
     }
     else {
-        QPainter winPainter(winImg);
-        winPainter.setCompositionMode(QPainter::CompositionMode_Clear);
-        QPen pen(Qt::transparent);
-        pen.setWidth(strokeWidth);
-        pen.setCapStyle(Qt::RoundCap);
-        pen.setJoinStyle(Qt::RoundJoin);
-        winPainter.setPen(pen);
-        winPainter.setBrush(Qt::NoBrush);
-        if (path.isEmpty()) {
-            winPainter.drawLine(startPos, endPos);
-        }
-        else {
-            winPainter.drawPath(path);
-        }
+        auto winImgTemp = winImg->copy();
+        clearPath(&winImgTemp);
         painter->drawImage(QPoint(0, 0), *mosaicImg);
-        painter->drawImage(QPoint(0, 0), *winImg);
+        painter->drawImage(QPoint(0, 0), winImgTemp);
     }
 }
 
@@ -56,6 +44,7 @@ void ShapeMosaicLine::mouseRelease(QMouseEvent* event)
     else {
         pathRect = path.boundingRect().adjusted(-strokeWidth, -strokeWidth, strokeWidth, strokeWidth);
     }
+    clearPath(winImg);
     auto win = (WinBase*)(parent());
     auto dpr = mosaicImg->devicePixelRatio();
     auto tarRect = QRectF(pathRect.topLeft() * dpr, pathRect.bottomRight() * dpr).toRect();
@@ -64,5 +53,22 @@ void ShapeMosaicLine::mouseRelease(QMouseEvent* event)
     painter.drawImage(QPoint(0, 0), winImg->copy(tarRect));
     delete mosaicImg;
     delete winImg;
+}
+
+void ShapeMosaicLine::clearPath(QImage* img)
+{
+    QPainter painter(img);
+    painter.setCompositionMode(QPainter::CompositionMode_Clear);
+    QPen pen(Qt::transparent);
+    pen.setWidth(strokeWidth);
+    pen.setCapStyle(Qt::RoundCap);
+    pen.setJoinStyle(Qt::RoundJoin);
+    painter.setPen(pen);
+    if (path.isEmpty()) {
+        painter.drawLine(startPos, endPos);
+    }
+    else {
+        painter.drawPath(path);
+    }
 }
 

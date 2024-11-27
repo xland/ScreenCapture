@@ -17,6 +17,8 @@ public:
     virtual void paint(QPainter* painter) override;
     void mouseRelease(QMouseEvent* event) override;
 private:
+    void clearPath(QImage* img);
+private:
     QImage imgPatch;
     QImage* winImg;
     QImage* mosaicImg;
