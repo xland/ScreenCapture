@@ -113,6 +113,12 @@
     <ClCompile Include="Shape\ShapeEraserRect.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Shape\ShapeMosaicRect.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Shape\ShapeMosaicLine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BtnType.h">
@@ -211,6 +217,12 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="Shape\ShapeEraserLine.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Shape\ShapeMosaicRect.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Shape\ShapeMosaicLine.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

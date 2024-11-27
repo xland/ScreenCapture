@@ -13,8 +13,6 @@ public:
     ShapeLine(QObject* parent = nullptr);
     ~ShapeLine();
     virtual void paint(QPainter* painter) override;
-public:
-protected:
 private:
-private:
+    QColor color{ Qt::red };
 };

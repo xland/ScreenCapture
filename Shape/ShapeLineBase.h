@@ -18,7 +18,6 @@ public:
     virtual void mousePress(QMouseEvent* event) override;
     virtual void mouseRelease(QMouseEvent* event) override;
 public:
-    QColor color{ Qt::red };
     qreal strokeWidth;
 protected:
     void resetDragger();
@@ -26,7 +25,6 @@ protected:
     QPointF startPos, endPos, pressPos;
     double coeffA, coeffB, coeffC, diffVal;
     QPainterPath path;
-private:
 private:
 
 };

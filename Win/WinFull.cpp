@@ -74,7 +74,7 @@ void WinFull::showToolSub()
 void WinFull::paintEvent(QPaintEvent* event)
 {    
     QPainter painter(this);
-    painter.drawImage(rect(), img);    
+    painter.drawImage(QPoint(0,0), img);
 }
 
 void WinFull::mousePressEvent(QMouseEvent* event)
@@ -122,7 +122,7 @@ void WinFull::initDesktopImg()
         if (pos.x() == 0 && pos.y() == 0)
         {
             qreal sf = screen->devicePixelRatio();
-            img = screen->grabWindow(0, x / sf, y / sf, w / sf, h / sf).toImage();
+            img = screen->grabWindow(0, x / sf, y / sf, w / sf, h / sf).toImage().convertToFormat(QImage::Format_ARGB32);
             break;
         }
     }

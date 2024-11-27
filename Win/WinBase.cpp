@@ -1,5 +1,6 @@
 ﻿#include <QEvent>
 #include <Windows.h>
+#include <QWindow>
 
 #include "WinBase.h"
 #include "WinCanvas.h"
@@ -14,12 +15,12 @@
 #include "../Shape/ShapeText.h"
 #include "../Shape/ShapeEraserRect.h"
 #include "../Shape/ShapeEraserLine.h"
-#include "../Shape/ShapeMosaic.h"
+#include "../Shape/ShapeMosaicRect.h"
+#include "../Shape/ShapeMosaicLine.h"
 
 
 WinBase::WinBase(QWidget *parent) : QWidget(parent)
 {
-
 }
 
 WinBase::~WinBase()
@@ -58,7 +59,13 @@ ShapeBase* WinBase::addShape()
         shape = new ShapeText(this);
     }
     else if (state == State::mosaic) {
-        shape = new ShapeMosaic(this);
+        auto isRect = toolSub->getSelectState("mosaicFill");
+        if (isRect) {
+            shape = new ShapeMosaicRect(this);
+        }
+        else {
+            shape = new ShapeMosaicLine(this);
+        }
     }
     else if (state == State::eraser) {
         auto isRect = toolSub->getSelectState("eraserFill");
@@ -146,6 +153,8 @@ void WinBase::initWindow()
     setFixedSize(w, h);
     show();
     SetWindowPos((HWND)winId(), nullptr, x, y, w, h, SWP_NOZORDER | SWP_SHOWWINDOW);
+    auto dpr = windowHandle()->devicePixelRatio();
+    img.setDevicePixelRatio(dpr);
 }
 void WinBase::updateCursor(Qt::CursorShape cur)
 {
@@ -153,13 +162,41 @@ void WinBase::updateCursor(Qt::CursorShape cur)
         setCursor(cur);
     }
 }
-
 void WinBase::refreshBoard()
 {
     winBoard->refresh();
 }
-
 void WinBase::refreshCanvas(ShapeBase* shape,bool force)
 {
     winCanvas->refresh(shape, force);
+}
+
+std::pair<QImage*, QImage*> WinBase::createMosaicImg()
+{
+    auto winImg = new QImage(img.copy());
+    {
+        QPainter painter(winImg);
+        for (int i = 0; i < shapes.size(); i++)
+        {
+            shapes[i]->paint(&painter);
+        }
+    }
+    int mosaicRectSize{ 18 };
+    auto mosaicImg = new QImage(winImg->copy());
+    QPainter painter(mosaicImg);
+    QImage mosaicPixs = mosaicImg->scaled(mosaicImg->width() / mosaicRectSize,
+        mosaicImg->height() / mosaicRectSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+    auto smallSize = mosaicRectSize / mosaicImg->devicePixelRatio();
+    painter.setPen(Qt::NoPen);
+    for (uint x = 0; x < mosaicPixs.width(); x++)
+    {
+        for (uint y = 0; y < mosaicPixs.height(); y++)
+        {
+            auto c = mosaicPixs.pixelColor(x, y);
+            painter.setBrush(c);
+            QRectF mRect(x * smallSize, y * smallSize, smallSize, smallSize);
+            painter.drawRect(mRect);
+        }
+    }
+    return {winImg,mosaicImg};
 }

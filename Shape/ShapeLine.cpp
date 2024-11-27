@@ -17,7 +17,6 @@ ShapeLine::ShapeLine(QObject* parent) : ShapeLineBase(parent)
     if (isTransparent) {
         color.setAlpha(128);
     }
-    strokeWidth = win->toolSub->getStrokeWidth();
 }
 
 ShapeLine::~ShapeLine()

@@ -5,13 +5,13 @@
 #include <QWindow>
 #include <numbers>
 
-#include "ShapeMosaic.h"
+#include "ShapeMosaicRect.h"
 #include "../App/App.h"
 #include "../Tool/ToolSub.h"
 #include "../Win/WinBase.h"
 #include "../Win/WinCanvas.h"
 
-ShapeMosaic::ShapeMosaic(QObject* parent) : ShapeBase(parent)
+ShapeMosaicRect::ShapeMosaicRect(QObject* parent) : ShapeRectBase(parent)
 {
     auto win = (WinBase*)parent;
     isRect = win->toolSub->getSelectState("eraserFill");
@@ -25,12 +25,12 @@ ShapeMosaic::ShapeMosaic(QObject* parent) : ShapeBase(parent)
     initMosaicBgImg();
 }
 
-ShapeMosaic::~ShapeMosaic()
+ShapeMosaicRect::~ShapeMosaicRect()
 {
 }
 
 
-void ShapeMosaic::initMosaicBgImg()
+void ShapeMosaicRect::initMosaicBgImg()
 {
     //auto start = QTime::currentTime();
     auto win = (WinBase*)parent();
@@ -66,14 +66,14 @@ void ShapeMosaic::initMosaicBgImg()
     //int elapsedMilliseconds = start.msecsTo(QTime::currentTime());
 }
 
-void ShapeMosaic::resetDragger()
+void ShapeMosaicRect::resetDragger()
 {
     auto half{ draggerSize / 2 };
     draggers[0].setRect(startPos.x() - half, startPos.y() - half, draggerSize, draggerSize);
     draggers[1].setRect(endPos.x() - half, endPos.y() - half, draggerSize, draggerSize);
 }
 
-void ShapeMosaic::paint(QPainter* painter)
+void ShapeMosaicRect::paint(QPainter* painter)
 {
     if (state == ShapeState::ready) {
         painter->drawImage(pathRect, imgPatch);
@@ -92,7 +92,7 @@ void ShapeMosaic::paint(QPainter* painter)
         painter->drawImage(QPoint(0, 0), winImg);
     }
 }
-void ShapeMosaic::paintDragger(QPainter* painter)
+void ShapeMosaicRect::paintDragger(QPainter* painter)
 {
     if (path.isEmpty()) {
         painter->setPen(QPen(QBrush(QColor(0, 0, 0)), 1));
@@ -101,7 +101,7 @@ void ShapeMosaic::paintDragger(QPainter* painter)
         painter->drawRect(draggers[1]);
     }
 }
-void ShapeMosaic::mouseMove(QMouseEvent* event)
+void ShapeMosaicRect::mouseMove(QMouseEvent* event)
 {
     if (state != ShapeState::ready) return;
     if (!path.isEmpty()) return;
@@ -131,7 +131,7 @@ void ShapeMosaic::mouseMove(QMouseEvent* event)
         event->accept();
     }
 }
-void ShapeMosaic::mousePress(QMouseEvent* event)
+void ShapeMosaicRect::mousePress(QMouseEvent* event)
 {
     if (state == ShapeState::temp) {
         auto flag = event->modifiers() & Qt::ShiftModifier;
@@ -154,7 +154,7 @@ void ShapeMosaic::mousePress(QMouseEvent* event)
         event->accept();
     }
 }
-void ShapeMosaic::mouseRelease(QMouseEvent* event)
+void ShapeMosaicRect::mouseRelease(QMouseEvent* event)
 {
     if (path.isEmpty()) {
         if (state >= ShapeState::sizing0) {
@@ -186,7 +186,7 @@ void ShapeMosaic::mouseRelease(QMouseEvent* event)
         event->accept();
     }
 }
-void ShapeMosaic::mouseDrag(QMouseEvent* event)
+void ShapeMosaicRect::mouseDrag(QMouseEvent* event)
 {
     if (state == ShapeState::ready) {
         return;

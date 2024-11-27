@@ -11,6 +11,8 @@
 
 ShapeLineBase::ShapeLineBase(QObject* parent) : ShapeBase(parent)
 {
+    auto win = (WinBase*)(parent);
+    strokeWidth = win->toolSub->getStrokeWidth();
 }
 
 ShapeLineBase::~ShapeLineBase()

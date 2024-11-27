@@ -11,8 +11,6 @@
 
 ShapeEraserLine::ShapeEraserLine(QObject* parent) : ShapeLineBase(parent)
 {
-    auto win = (WinBase*)(parent);
-    strokeWidth = win->toolSub->getStrokeWidth();
     isEraser = true;
 }
 
