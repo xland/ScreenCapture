@@ -18,7 +18,7 @@ public:
     void mouseRelease(QMouseEvent* event) override;
     void mousePress(QMouseEvent* event) override;
 private:
-    void clearPath(QImage* img);
+    void erasePath(QImage* img);
 private:
     QImage imgPatch;
     QImage* winImg;

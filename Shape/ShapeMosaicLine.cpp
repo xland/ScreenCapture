@@ -31,7 +31,7 @@ void ShapeMosaicLine::paint(QPainter* painter)
     }
     else {
         auto winImgTemp = winImg->copy();
-        clearPath(&winImgTemp);
+        erasePath(&winImgTemp);
         painter->drawImage(QPoint(0, 0), *mosaicImg);
         painter->drawImage(QPoint(0, 0), winImgTemp);
     }
@@ -46,7 +46,7 @@ void ShapeMosaicLine::mouseRelease(QMouseEvent* event)
     else {
         pathRect = path.boundingRect().adjusted(-strokeWidth, -strokeWidth, strokeWidth, strokeWidth);
     }
-    clearPath(winImg);
+    erasePath(winImg);
     auto win = (WinBase*)(parent());
     auto dpr = mosaicImg->devicePixelRatio();
     auto tarRect = QRectF(pathRect.topLeft() * dpr, pathRect.bottomRight() * dpr).toRect();
@@ -70,7 +70,7 @@ void ShapeMosaicLine::mousePress(QMouseEvent* event)
     ShapeLineBase::mousePress(event);
 }
 
-void ShapeMosaicLine::clearPath(QImage* img)
+void ShapeMosaicLine::erasePath(QImage* img)
 {
     QPainter painter(img);
     painter.setCompositionMode(QPainter::CompositionMode_Clear);
