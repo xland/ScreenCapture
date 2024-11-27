@@ -13,10 +13,12 @@
 
 ShapeMosaicLine::ShapeMosaicLine(QObject* parent) : ShapeLineBase(parent)
 {
+    
     auto win = (WinBase*)parent;
     auto imgPair = win->createMosaicImg();
     winImg = imgPair.first;
     mosaicImg = imgPair.second;
+
 }
 ShapeMosaicLine::~ShapeMosaicLine()
 {
@@ -53,6 +55,19 @@ void ShapeMosaicLine::mouseRelease(QMouseEvent* event)
     painter.drawImage(QPoint(0, 0), winImg->copy(tarRect));
     delete mosaicImg;
     delete winImg;
+}
+
+void ShapeMosaicLine::mousePress(QMouseEvent* event)
+{
+    if (path.isEmpty() && hoverDraggerIndex >= 0) {
+        imgPatch = QImage(0, 0);
+        auto win = (WinBase*)parent();
+        win->repaint();
+        auto imgPair = win->createMosaicImg();
+        winImg = imgPair.first;
+        mosaicImg = imgPair.second;
+    }
+    ShapeLineBase::mousePress(event);
 }
 
 void ShapeMosaicLine::clearPath(QImage* img)
