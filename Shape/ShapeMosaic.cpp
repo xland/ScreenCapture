@@ -52,9 +52,9 @@ void ShapeMosaic::initMosaicBgImg()
         Qt::SmoothTransformation);
     auto smallSize = mosaicRectSize / dpr;
     QPainter painter(&mosaicImg);
-    for (uint x = 0; x < imgTemp.width(); x++)
+    for (quint32 x = 0; x < imgTemp.width(); x++)
     {
-        for (uint y = 0; y < imgTemp.height(); y++)
+        for (quint32 y = 0; y < imgTemp.height(); y++)
         {
             auto c = imgTemp.pixelColor(x, y);
             painter.setBrush(c);

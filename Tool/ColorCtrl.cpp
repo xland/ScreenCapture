@@ -1,5 +1,6 @@
-#include <qpainter.h>
+#include <QPainter>
 #include <QMouseEvent>
+#include <QJsonArray>
 
 #include "ColorCtrl.h"
 #include "../App/App.h"

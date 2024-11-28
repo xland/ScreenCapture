@@ -102,10 +102,10 @@ void ShapeMosaicLine::createMosaicImg()
     QPainter painter(mosaicImg);
     painter.setPen(Qt::NoPen);
     //qDebug() << "\n create" << start.msecsTo(QTime::currentTime());
-    for (uint x = 0; x < mosaicPixs.width(); x++)
+    for (quint32 x = 0; x < mosaicPixs.width(); x++)
     {
         auto xPos = x * smallSize;
-        for (uint y = 0; y < mosaicPixs.height(); y++)
+        for (quint32 y = 0; y < mosaicPixs.height(); y++)
         {
             auto c = mosaicPixs.pixelColor(x, y);
             painter.setBrush(c);

@@ -1,9 +1,6 @@
 #pragma once
 
 #include <QWidget>
-#include <QJsonObject>
-#include <QJsonArray>
-#include <QJsonValue>
 
 
 class ColorCtrl  : public QWidget

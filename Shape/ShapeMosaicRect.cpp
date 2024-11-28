@@ -32,9 +32,9 @@ void ShapeMosaicRect::paint(QPainter* painter)
         auto dpr = ((WinBase*)parent())->windowHandle()->devicePixelRatio();
         auto smallSize = mosaicRectSize / dpr;
         painter->setPen(Qt::NoPen);
-        for (uint x = shape.left(); x < shape.right(); x += smallSize)
+        for (quint32 x = shape.left(); x < shape.right(); x += smallSize)
         {
-            for (uint y = shape.top(); y < shape.bottom(); y += smallSize)
+            for (quint32 y = shape.top(); y < shape.bottom(); y += smallSize)
             {
                 auto c = mosaicPixs.pixelColor(x / smallSize, y / smallSize);
                 painter->setBrush(c);
@@ -53,9 +53,9 @@ void ShapeMosaicRect::mouseRelease(QMouseEvent* event)
     auto dpr = ((WinBase*)parent())->windowHandle()->devicePixelRatio();
     auto smallSize = mosaicRectSize / dpr;
     painter.setPen(Qt::NoPen);
-    for (uint x = shape.left(); x < shape.right(); x += smallSize)
+    for (quint32 x = shape.left(); x < shape.right(); x += smallSize)
     {
-        for (uint y = shape.top(); y < shape.bottom(); y += smallSize)
+        for (quint32 y = shape.top(); y < shape.bottom(); y += smallSize)
         {
             auto c = mosaicPixs.pixelColor(x / smallSize, y / smallSize);
             painter.setBrush(c);

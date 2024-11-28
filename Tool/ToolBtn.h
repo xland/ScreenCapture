@@ -1,6 +1,6 @@
 #pragma once
-#include <qchar.h>
-#include <qstring.h>
+#include <QChar>
+#include <QString>
 
 #include "../App/State.h"
 

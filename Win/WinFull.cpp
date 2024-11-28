@@ -1,7 +1,5 @@
 #include <QApplication>
-#include <format>
-#include <Windowsx.h>
-#include <dwmapi.h>
+#include <Windows.h>
 #include <qscreen.h>
 #include <qimage.h>
 #include <qwindow.h>

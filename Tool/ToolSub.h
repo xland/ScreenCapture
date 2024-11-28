@@ -1,13 +1,7 @@
 ﻿#pragma once
-
-#include <QMainWindow>
-#include <QJsonDocument>
-#include <QJsonObject>
-#include <QJsonArray>
-#include <QJsonValue>
+#include <QWidget>
 
 #include "ToolBtn.h"
-
 
 class StrokeCtrl;
 class ColorCtrl;
