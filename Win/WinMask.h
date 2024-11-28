@@ -29,9 +29,8 @@ private:
 	void initWinRects();
 	void initWindow();
 private:
-	QPainterPath p;
 	QPoint posPress;
-	qreal maskStroke{ 1.8 };
+	qreal maskStroke{ 2.0 };
 	int mousePosState{ -1 };
 	std::vector<QRect> winRects;
 };

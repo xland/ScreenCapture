@@ -1,6 +1,5 @@
 #pragma once
 #include <QWidget>
-#include <QObject>
 
 #include "WinBase.h"
 
@@ -10,6 +9,7 @@ class WinMask;
 class ToolColorPos;
 class ToolMain;
 class ToolSub;
+class PixelInfo;
 class ShapeBase;
 
 class WinFull : public WinBase
@@ -27,6 +27,7 @@ public:
 public:
 	WinMask* winMask;
 	ToolColorPos* toolColorPos;
+	PixelInfo* pixelInfo;
 protected:
 	void paintEvent(QPaintEvent* event) override;
 	void mousePressEvent(QMouseEvent* event) override;

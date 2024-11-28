@@ -6,6 +6,7 @@
 #include "../Win/WinFull.h"
 #include "../Tool/ToolMain.h"
 #include "../Tool/ToolSub.h"
+#include "../Tool/PixelInfo.h"
 
 WinMask::WinMask(QWidget* parent) : QWidget(parent)
 {
@@ -41,6 +42,7 @@ void WinMask::mousePress(QMouseEvent* event)
     if (full->state == State::start)
     {
         full->state = State::mask;
+        full->pixelInfo->hide();
         event->accept();
         return;
     }
@@ -69,6 +71,7 @@ void WinMask::mouseDrag(QMouseEvent* event)
     if (full->state == State::mask)
     {
         maskRect.setCoords(posPress.x(), posPress.y(), pos.x(),pos.y());
+        maskRect = maskRect.normalized();
         update();
         return;
     }
@@ -95,7 +98,7 @@ void WinMask::mouseDrag(QMouseEvent* event)
 
 void WinMask::mouseRelease(QMouseEvent* event)
 {
-    maskRect = maskRect.normalized();
+    
     auto full = WinFull::get();
     if (full->state == State::mask)
     {
@@ -147,13 +150,16 @@ void WinMask::mouseMove(QMouseEvent* event)
 void WinMask::paintEvent(QPaintEvent* event)
 {
     QPainter painter(this);
+    painter.setRenderHint(QPainter::Antialiasing, true);
     auto winBase = (WinBase*)WinFull::get();
+    painter.setPen(Qt::NoPen);
+    painter.fillRect(rect(), QColor(0, 0, 0, 120));
     painter.setPen(QPen(QBrush(QColor(22, 119, 255)), maskStroke));
-    painter.setBrush(QBrush(QColor(0, 0, 0, 120)));
-    p.clear();
-    p.addRect(-16, -16, winBase->w + 16, winBase->h + 16);
-    p.addRect(maskRect);
-    painter.drawPath(p);
+    painter.setBrush(Qt::NoBrush);
+    painter.drawRect(maskRect.adjusted(-maskStroke,-maskStroke, maskStroke, maskStroke));
+    painter.setCompositionMode(QPainter::CompositionMode_Clear);
+    painter.setBrush(Qt::transparent);
+    painter.drawRect(maskRect);
 }
 void WinMask::changeMaskRect(const QPoint& pos)
 {
@@ -189,6 +195,7 @@ void WinMask::changeMaskRect(const QPoint& pos)
     {
         maskRect.setLeft(pos.x());
     }
+    maskRect = maskRect.normalized();
     update();
 }
 void WinMask::changeMousePosState(const int& x, const int& y)

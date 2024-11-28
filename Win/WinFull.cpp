@@ -11,6 +11,7 @@
 #include "../App/App.h"
 #include "../Tool/ToolMain.h"
 #include "../Tool/ToolSub.h"
+#include "../Tool/PixelInfo.h"
 
 namespace {
     WinFull* winFull;
@@ -30,7 +31,8 @@ void WinFull::init()
 {
     WinFull::dispose();
     winFull = new WinFull();
-    winFull->winMask = new WinMask(winFull);
+    winFull->winMask = new WinMask();
+    winFull->pixelInfo = new PixelInfo();
 }
 void WinFull::dispose()
 {
@@ -87,6 +89,7 @@ void WinFull::mouseMoveEvent(QMouseEvent* event)
     event->ignore();
     if (event->buttons() == Qt::NoButton) {
         winMask->mouseMove(event);
+        pixelInfo->mouseMove(event);
         mouseMoveOnShape(event);
     }
     else {
@@ -129,6 +132,11 @@ void WinFull::initDesktopImg()
 void WinFull::closeWin()
 {
     close();
+    if (pixelInfo) {
+        pixelInfo->close();
+        delete pixelInfo;
+        pixelInfo = nullptr;
+    }
     if (winMask) {
         winMask->close();
         delete winMask;
