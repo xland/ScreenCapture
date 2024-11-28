@@ -4,7 +4,6 @@
 #include <QPainter>
 #include <QObject>
 #include <QPainterPath>
-#include "ShapeBase.h"
 #include "ShapeLineBase.h"
 
 

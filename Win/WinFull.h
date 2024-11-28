@@ -6,7 +6,6 @@
 #include "WinBase.h"
 
 
-class WinBg;
 class WinCanvas;
 class WinMask;
 class ToolColorPos;

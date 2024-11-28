@@ -1,9 +1,7 @@
 #pragma once
 
-#include <QMouseEvent>
 #include <QPainter>
 #include <QObject>
-#include <QPainterPath>
 #include "ShapeLineBase.h"
 
 class ShapeLine:public ShapeLineBase

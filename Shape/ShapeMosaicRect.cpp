@@ -1,15 +1,8 @@
-﻿#include <qpainter.h>
-#include <QTransform>
-#include <QtConcurrent>
-#include <QFuture>
+﻿#include <QPainter>
 #include <QWindow>
-#include <numbers>
 
 #include "ShapeMosaicRect.h"
-#include "../App/App.h"
-#include "../Tool/ToolSub.h"
 #include "../Win/WinBase.h"
-#include "../Win/WinCanvas.h"
 
 ShapeMosaicRect::ShapeMosaicRect(QObject* parent) : ShapeRectBase(parent)
 {

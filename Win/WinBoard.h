@@ -2,7 +2,7 @@
 
 #include <QWidget>
 
-class ShapeBase;
+
 class WinBase;
 class WinBoard : public QWidget
 {

@@ -1,6 +1,5 @@
 #pragma once
 
-#include <QMouseEvent>
 #include <QPainter>
 #include <QObject>
 #include "ShapeRectBase.h"

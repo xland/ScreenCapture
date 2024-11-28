@@ -1,9 +1,5 @@
 ﻿#pragma once
-#include <string>
-#include <memory>
-#include <vector>
 #include <QFont>
-#include <QFontDatabase>
 #include <QJsonObject>
 
 

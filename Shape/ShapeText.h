@@ -3,7 +3,6 @@
 #include <QMouseEvent>
 #include <QPainter>
 #include <QObject>
-#include <QPainterPath>
 
 #include "ShapeBase.h"
 #include "ShapeTextInput.h"

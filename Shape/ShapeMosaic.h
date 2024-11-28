@@ -6,7 +6,6 @@
 #include <QPainterPath>
 #include "ShapeBase.h"
 
-class WinBg;
 class ShapeMosaic:public ShapeBase
 {
     Q_OBJECT
