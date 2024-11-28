@@ -15,7 +15,7 @@ class WinBase  : public QWidget
 {
 	Q_OBJECT
 public:
-	WinBase(QWidget* parent = nullptr);
+	WinBase(QWidget* parent = nullptr, Qt::WindowFlags = {0});
 	virtual ~WinBase();
 	virtual void showToolMain() {};
 	virtual void showToolSub() {};

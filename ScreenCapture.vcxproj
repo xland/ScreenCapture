@@ -134,6 +134,7 @@
     <ClCompile Include="QHotKey\qhotkey.cpp" />
     <ClCompile Include="QHotKey\qhotkey_win.cpp" />
     <ClCompile Include="App\Tray.cpp" />
+    <ClCompile Include="Tool\PixelInfo.cpp" />
     <ClCompile Include="Tool\StrokeCtrl.cpp" />
     <ClCompile Include="Tool\ToolBtn.cpp" />
     <ClCompile Include="Tool\ToolMain.cpp" />
@@ -172,6 +173,7 @@
     <ClInclude Include="Shape\ShapeState.h" />
     <QtMoc Include="Shape\ShapeText.h" />
     <QtMoc Include="Shape\ShapeTextInput.h" />
+    <QtMoc Include="Tool\PixelInfo.h" />
     <ClInclude Include="Tool\ToolBtn.h" />
     <QtMoc Include="Tool\ToolMain.h" />
     <QtMoc Include="Tool\ToolSub.h" />

@@ -30,7 +30,7 @@ void WinFull::init()
 {
     WinFull::dispose();
     winFull = new WinFull();
-    winFull->winMask = new WinMask();
+    winFull->winMask = new WinMask(winFull);
 }
 void WinFull::dispose()
 {

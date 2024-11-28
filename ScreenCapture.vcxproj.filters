@@ -119,6 +119,9 @@
     <ClCompile Include="Shape\ShapeMosaicLine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Tool\PixelInfo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BtnType.h">
@@ -223,6 +226,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="Shape\ShapeMosaicLine.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Tool\PixelInfo.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

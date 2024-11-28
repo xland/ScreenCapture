@@ -19,7 +19,7 @@
 #include "../Shape/ShapeMosaicLine.h"
 
 
-WinBase::WinBase(QWidget *parent) : QWidget(parent)
+WinBase::WinBase(QWidget *parent, Qt::WindowFlags flags) : QWidget(parent,flags)
 {
 }
 
@@ -149,7 +149,7 @@ void WinBase::initWindow()
     setMouseTracking(true);
     setAttribute(Qt::WA_OpaquePaintEvent);
     setAttribute(Qt::WA_NoSystemBackground);
-    setWindowFlags(Qt::FramelessWindowHint); //  | Qt::Tool | Qt::WindowStaysOnTopHint
+    setWindowFlags(Qt::FramelessWindowHint | Qt::Tool); //   | Qt::WindowStaysOnTopHint
     setFixedSize(w, h);
     show();
     SetWindowPos((HWND)winId(), nullptr, x, y, w, h, SWP_NOZORDER | SWP_SHOWWINDOW);
