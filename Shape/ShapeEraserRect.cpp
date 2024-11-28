@@ -11,7 +11,6 @@
 
 ShapeEraserRect::ShapeEraserRect(QObject* parent) : ShapeRectBase(parent)
 {
-    auto win = (WinBase*)parent;
     isFill = true;
     isEraser = true;
 }

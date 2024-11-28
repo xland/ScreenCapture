@@ -3,11 +3,8 @@
 #include <QMouseEvent>
 #include <QPainter>
 #include <QObject>
-#include <QPainterPath>
-#include "ShapeBase.h"
 #include "ShapeRectBase.h"
 
-class WinBg;
 class ShapeMosaicRect:public ShapeRectBase
 {
     Q_OBJECT
@@ -15,26 +12,11 @@ public:
     ShapeMosaicRect(QObject* parent = nullptr);
     ~ShapeMosaicRect();
     virtual void paint(QPainter* painter) override;
-    void paintDragger(QPainter* painter) override;
-    void mouseMove(QMouseEvent* event) override;
-    void mouseDrag(QMouseEvent* event) override;
-    void mousePress(QMouseEvent* event) override;
     void mouseRelease(QMouseEvent* event) override;
-public:
-    QColor color{ Qt::red };
-    qreal strokeWidth;
-    bool isRect;
-protected:
 private:
-    void initMosaicBgImg();
-    void resetDragger();
+    void paintMosicRects(QPainter* painter);
 private:
-    QPointF startPos,endPos,pressPos;
-    double coeffA,coeffB,coeffC,diffVal;
-    QPainterPath path;
-    bool isInitMosaic{ false };
     QImage imgPatch;
-    QImage winImg;
-    QImage mosaicImg;
-    QRect pathRect;
+    QImage mosaicPixs;
+    int mosaicRectSize{ 18 };
 };

@@ -180,7 +180,7 @@ void ToolMain::mouseMoveEvent(QMouseEvent* event)
         if (hoverIndex > -1)
         {
             auto pos = event->globalPosition();
-            QToolTip::showText(QPoint(pos.x(), pos.y()), btns[hoverIndex].tipText, this);
+            //QToolTip::showText(QPoint(pos.x(), pos.y()), btns[hoverIndex].tipText, this);
         }
     }
 }

@@ -7,7 +7,7 @@
 #include "ShapeBase.h"
 #include "ShapeLineBase.h"
 
-class WinBg;
+
 class ShapeMosaicLine:public ShapeLineBase
 {
     Q_OBJECT
@@ -19,7 +19,9 @@ public:
     void mousePress(QMouseEvent* event) override;
 private:
     void erasePath(QImage* img);
+    void createMosaicImg();
 private:
+    int mosaicRectSize{ 18 };
     QImage imgPatch;
     QImage* winImg;
     QImage* mosaicImg;

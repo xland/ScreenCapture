@@ -1,23 +1,14 @@
-﻿#include <qpainter.h>
-#include <QTransform>
-#include <QtConcurrent>
-#include <QFuture>
+﻿#include <QPainter>
 #include <QWindow>
-#include <numbers>
 
 #include "ShapeMosaicLine.h"
-#include "../App/App.h"
-#include "../Tool/ToolSub.h"
 #include "../Win/WinBase.h"
-#include "../Win/WinCanvas.h"
 
 ShapeMosaicLine::ShapeMosaicLine(QObject* parent) : ShapeLineBase(parent)
 {
     
     auto win = (WinBase*)parent;
-    auto imgPair = win->createMosaicImg();
-    winImg = imgPair.first;
-    mosaicImg = imgPair.second;
+    createMosaicImg();
 
 }
 ShapeMosaicLine::~ShapeMosaicLine()
@@ -30,10 +21,17 @@ void ShapeMosaicLine::paint(QPainter* painter)
         painter->drawImage(pathRect.topLeft(), imgPatch);
     }
     else {
-        auto winImgTemp = winImg->copy();
-        erasePath(&winImgTemp);
-        painter->drawImage(QPoint(0, 0), *mosaicImg);
-        painter->drawImage(QPoint(0, 0), winImgTemp);
+        if (path.isEmpty()) {
+            auto winImgTemp = winImg->copy();
+            erasePath(&winImgTemp);
+            painter->drawImage(QPoint(0, 0), *mosaicImg);
+            painter->drawImage(QPoint(0, 0), winImgTemp);
+        }
+        else {
+            erasePath(winImg);
+            painter->drawImage(QPoint(0, 0), *mosaicImg);
+            painter->drawImage(QPoint(0, 0), *winImg);
+        }
     }
 }
 
@@ -42,11 +40,11 @@ void ShapeMosaicLine::mouseRelease(QMouseEvent* event)
     ShapeLineBase::mouseRelease(event);
     if (path.isEmpty()) {
         pathRect = QRectF(startPos, endPos).normalized().adjusted(-strokeWidth, -strokeWidth, strokeWidth, strokeWidth);
+        erasePath(winImg);
     }
     else {
         pathRect = path.boundingRect().adjusted(-strokeWidth, -strokeWidth, strokeWidth, strokeWidth);
     }
-    erasePath(winImg);
     auto win = (WinBase*)(parent());
     auto dpr = mosaicImg->devicePixelRatio();
     auto tarRect = QRectF(pathRect.topLeft() * dpr, pathRect.bottomRight() * dpr).toRect();
@@ -63,9 +61,7 @@ void ShapeMosaicLine::mousePress(QMouseEvent* event)
         imgPatch = QImage(0, 0);
         auto win = (WinBase*)parent();
         win->repaint();
-        auto imgPair = win->createMosaicImg();
-        winImg = imgPair.first;
-        mosaicImg = imgPair.second;
+        createMosaicImg();
     }
     ShapeLineBase::mousePress(event);
 }
@@ -85,5 +81,39 @@ void ShapeMosaicLine::erasePath(QImage* img)
     else {
         painter.drawPath(path);
     }
+}
+
+void ShapeMosaicLine::createMosaicImg()
+{
+    auto win = (WinBase*)parent();
+    //auto start = QTime::currentTime();
+    winImg = new QImage(win->img);
+    {
+        QPainter painter(winImg);
+        for (int i = 0; i < win->shapes.size(); i++)
+        {
+            win->shapes[i]->paint(&painter);
+        }
+    }
+    QImage mosaicPixs = winImg->scaled(winImg->width() / mosaicRectSize,
+        winImg->height() / mosaicRectSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+    auto smallSize = mosaicRectSize / winImg->devicePixelRatio();
+    mosaicImg = new QImage(win->img);
+    QPainter painter(mosaicImg);
+    painter.setPen(Qt::NoPen);
+    //qDebug() << "\n create" << start.msecsTo(QTime::currentTime());
+    for (uint x = 0; x < mosaicPixs.width(); x++)
+    {
+        auto xPos = x * smallSize;
+        for (uint y = 0; y < mosaicPixs.height(); y++)
+        {
+            auto c = mosaicPixs.pixelColor(x, y);
+            painter.setBrush(c);
+            QRectF mRect(xPos, y * smallSize, smallSize, smallSize);
+            painter.drawRect(mRect);
+        }
+    }
+    //qDebug() << "\n create" << start.msecsTo(QTime::currentTime());
+    //return { winImg,mosaicImg };
 }
 

@@ -2,7 +2,6 @@
 
 #include <QWidget>
 #include <QMouseEvent>
-#include <QPainter>
 #include <QImage>
 
 #include "../App/State.h"
@@ -25,7 +24,6 @@ public:
 	void updateCursor(Qt::CursorShape cur);
 	void refreshBoard();
 	void refreshCanvas(ShapeBase* shape, bool force=false);
-	std::pair<QImage*, QImage*> createMosaicImg();
 public:
 	State state{ State::start };
 	std::vector<ShapeBase*> shapes;
