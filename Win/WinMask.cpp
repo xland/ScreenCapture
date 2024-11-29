@@ -1,5 +1,6 @@
 ﻿#include <QWindow>
 #include <dwmapi.h>
+#include <shellscalingapi.h>
 
 #include "WinMask.h"
 #include "../Win/WinBase.h"
@@ -124,11 +125,23 @@ void WinMask::mouseMove(QMouseEvent* event)
     {
         for (int i = 0; i < winRects.size(); i++)
         {
-            if (winRects[i].contains(pos)) {
-                if (maskRect != winRects[i]) {
-                    maskRect = winRects[i];
-                    update();
+            QList<QScreen*> screens = QGuiApplication::screens();
+            QPoint lt, br;
+            for (QScreen* screen : screens) {
+                auto g = screen->geometry();
+                auto ltT = winRects[i].topLeft() / screen->devicePixelRatio();
+                auto brT = winRects[i].bottomRight() / screen->devicePixelRatio();
+                if (screen->geometry().contains(ltT)) {
+                    lt = ltT;
                 }
+                if (screen->geometry().contains(brT)) {
+                    br = brT;
+                }
+            }
+            QRect tar(lt, br);
+            if (tar.contains(pos)) {
+                maskRect = tar;
+                update();
                 break;
             }
         }
@@ -315,12 +328,28 @@ void WinMask::initWinRects()
             if (rect.right - rect.left <= 6 || rect.bottom - rect.top <= 6) {
                 return TRUE;
             }
-            auto sf = winBase->windowHandle()->devicePixelRatio();
-            auto l{ (rect.left - winBase->x) / sf },
-                t{ (rect.top - winBase->y) / sf },
-                r{ (rect.right - winBase->x) / sf },
-                b{ (rect.bottom - winBase->y) / sf };
+
+            HMONITOR hMonitor = MonitorFromPoint({ rect.left, rect.top }, MONITOR_DEFAULTTONEAREST);
+            UINT dpiX = 0, dpiY = 0;
+            GetDpiForMonitor(hMonitor, MDT_EFFECTIVE_DPI, &dpiX, &dpiY);
+            auto dpr = dpiX / 96.0f;
+            auto l{ rect.left / dpr },t{ rect.top / dpr };
+
+            hMonitor = MonitorFromPoint({ rect.right, rect.bottom }, MONITOR_DEFAULTTONEAREST);
+            GetDpiForMonitor(hMonitor, MDT_EFFECTIVE_DPI, &dpiX, &dpiY);
+            dpr = dpiX / 96.0f;
+            auto r{ rect.right / dpr }, b{ rect.bottom / dpr };
             self->winRects.push_back(QRect(QPoint(l, t), QPoint(r, b)));
+
+            //QRect item;
+            //item.adjust(rect.left, rect.top, rect.right, rect.bottom);
+            //if (item.width() <= 6 || item.height() <= 6) {
+            //    return TRUE;
+            //}
+
+            //self->winRects.push_back(QRect(QPoint(rect.left, rect.top), QPoint(rect.right, rect.bottom)));
+
+
             return TRUE;
         }, (LPARAM)this);
 }

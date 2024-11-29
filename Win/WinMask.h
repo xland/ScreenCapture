@@ -32,5 +32,5 @@ private:
 	QPoint posPress;
 	qreal maskStroke{ 2.0 };
 	int mousePosState{ -1 };
-	std::vector<QRect> winRects;
+	QList<QRect> winRects;
 };
