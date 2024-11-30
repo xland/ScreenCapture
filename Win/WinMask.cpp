@@ -123,29 +123,17 @@ void WinMask::mouseMove(QMouseEvent* event)
     auto full = WinFull::get();
     if (full->state == State::start)
     {
+        event->accept();
+        auto dpr = 1;
         for (int i = 0; i < winRects.size(); i++)
         {
-            QList<QScreen*> screens = QGuiApplication::screens();
-            QPoint lt, br;
-            for (QScreen* screen : screens) {
-                auto g = screen->geometry();
-                auto ltT = winRects[i].topLeft() / screen->devicePixelRatio();
-                auto brT = winRects[i].bottomRight() / screen->devicePixelRatio();
-                if (screen->geometry().contains(ltT)) {
-                    lt = ltT;
-                }
-                if (screen->geometry().contains(brT)) {
-                    br = brT;
-                }
-            }
-            QRect tar(lt, br);
-            if (tar.contains(pos)) {
-                maskRect = tar;
+            if (winRects[i].contains(pos/dpr)) {
+                if (maskRect == winRects[i]) return;
+                maskRect = winRects[i];
                 update();
-                break;
+                return;
             }
         }
-        event->accept();
     }
     else if (full->state == State::tool)
     {
@@ -313,6 +301,23 @@ void WinMask::changeMousePosState2(const int& x, const int& y)
 }
 void WinMask::initWinRects()
 {
+    {
+        QList<QScreen*> screens = QGuiApplication::screens();
+        QSize sizeTemp(0, 0);
+        for (QScreen* screen : screens) {
+            auto s = screen->size() * screen->devicePixelRatio();
+            if (s.width() > sizeTemp.width() && s.height() > sizeTemp.height()) {
+                maxScreenDpr = screen->devicePixelRatio(); //使用大屏幕的dpr
+                sizeTemp = s;
+            }
+            else if (s.width() == sizeTemp.width() && s.height() == sizeTemp.height()) {
+                //如果屏幕尺寸相等，则使用小dpr
+                if (screen->devicePixelRatio() < maxScreenDpr) {
+                    maxScreenDpr = screen->devicePixelRatio();
+                }
+            }
+        }
+    }
     EnumWindows([](HWND hwnd, LPARAM lparam)
         {
             if (!hwnd) return TRUE;
@@ -328,28 +333,9 @@ void WinMask::initWinRects()
             if (rect.right - rect.left <= 6 || rect.bottom - rect.top <= 6) {
                 return TRUE;
             }
-
-            HMONITOR hMonitor = MonitorFromPoint({ rect.left, rect.top }, MONITOR_DEFAULTTONEAREST);
-            UINT dpiX = 0, dpiY = 0;
-            GetDpiForMonitor(hMonitor, MDT_EFFECTIVE_DPI, &dpiX, &dpiY);
-            auto dpr = dpiX / 96.0f;
-            auto l{ rect.left / dpr },t{ rect.top / dpr };
-
-            hMonitor = MonitorFromPoint({ rect.right, rect.bottom }, MONITOR_DEFAULTTONEAREST);
-            GetDpiForMonitor(hMonitor, MDT_EFFECTIVE_DPI, &dpiX, &dpiY);
-            dpr = dpiX / 96.0f;
-            auto r{ rect.right / dpr }, b{ rect.bottom / dpr };
-            self->winRects.push_back(QRect(QPoint(l, t), QPoint(r, b)));
-
-            //QRect item;
-            //item.adjust(rect.left, rect.top, rect.right, rect.bottom);
-            //if (item.width() <= 6 || item.height() <= 6) {
-            //    return TRUE;
-            //}
-
-            //self->winRects.push_back(QRect(QPoint(rect.left, rect.top), QPoint(rect.right, rect.bottom)));
-
-
+            QPoint lt(rect.left - winBase->x, rect.top - winBase->y);
+            QPoint rb(rect.right - winBase->x, rect.bottom - winBase->y);
+            self->winRects.push_back(QRectF(lt / self->maxScreenDpr, rb / self->maxScreenDpr));
             return TRUE;
         }, (LPARAM)this);
 }

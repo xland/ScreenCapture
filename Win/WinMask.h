@@ -19,7 +19,7 @@ public:
 	void mouseRelease(QMouseEvent* event);
 	void mouseMove(QMouseEvent* event);
 public:
-	QRect maskRect;
+	QRectF maskRect;
 protected:
 	void paintEvent(QPaintEvent* event) override;
 private:
@@ -32,5 +32,6 @@ private:
 	QPoint posPress;
 	qreal maskStroke{ 2.0 };
 	int mousePosState{ -1 };
-	QList<QRect> winRects;
+	QList<QRectF> winRects;
+	qreal maxScreenDpr;
 };
