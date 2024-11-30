@@ -147,6 +147,11 @@ void WinFull::closeWin()
         delete winCanvas;
         winCanvas = nullptr;
     }
+    if (winBoard) {
+        winBoard->close();
+        delete winBoard;
+        winBoard = nullptr;
+    }
     if (toolMain) {
         toolMain->close();
         delete toolMain;
