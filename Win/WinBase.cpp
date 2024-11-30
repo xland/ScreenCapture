@@ -150,6 +150,7 @@ void WinBase::initWindow()
     setAttribute(Qt::WA_OpaquePaintEvent);
     setAttribute(Qt::WA_NoSystemBackground);
     setWindowFlags(Qt::FramelessWindowHint); //    | Qt::Tool | Qt::WindowStaysOnTopHint
+    setAttribute(Qt::WA_QuitOnClose, false);
     setFixedSize(w, h);
     show();
     SetWindowPos((HWND)winId(), nullptr, x, y, w, h, SWP_NOZORDER | SWP_SHOWWINDOW);

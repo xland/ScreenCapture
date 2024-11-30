@@ -24,9 +24,8 @@ void WinBoard::initWindow()
     setFixedSize(winBase->w, winBase->h);
     show();
     auto hwnd = (HWND)winId();
+    SetWindowLong(hwnd, GWL_EXSTYLE, WS_EX_TOOLWINDOW | WS_EX_TRANSPARENT);
     SetWindowPos(hwnd, nullptr, winBase->x, winBase->y, winBase->w, winBase->h, SWP_NOZORDER | SWP_SHOWWINDOW);
-    LONG exStyle = GetWindowLong(hwnd, GWL_EXSTYLE);
-    SetWindowLong(hwnd, GWL_EXSTYLE, exStyle | WS_EX_TRANSPARENT);
 }
 
 void WinBoard::init(WinBase* winBase)

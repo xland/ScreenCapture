@@ -11,6 +11,7 @@
 
 WinMask::WinMask(QWidget* parent) : QWidget(parent)
 {
+    initMaxScreenDpr();
     initWinRects();
     initWindow();
 }
@@ -20,20 +21,40 @@ WinMask::~WinMask()
 }
 void WinMask::initWindow()
 {
-    auto winBase = (WinBase*)WinFull::get();
+    auto winBase = (WinBase*)WinFull::get();    
     setAutoFillBackground(false);
-    setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::Tool);
-    setAttribute(Qt::WA_QuitOnClose, false);
+    setMouseTracking(false);
     setAttribute(Qt::WA_OpaquePaintEvent);
     setAttribute(Qt::WA_NoSystemBackground);
+    setWindowFlags(Qt::FramelessWindowHint| Qt::WindowStaysOnTopHint);
+    setAttribute(Qt::WA_QuitOnClose, false);
     setAttribute(Qt::WA_TranslucentBackground, true);
     setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    setWindowState(Qt::WindowFullScreen);    
     setFixedSize(winBase->w, winBase->h);
     show();
     auto hwnd = (HWND)winId();
+    SetWindowLong(hwnd, GWL_EXSTYLE, WS_EX_TOOLWINDOW | WS_EX_TRANSPARENT);
     SetWindowPos(hwnd, nullptr, winBase->x, winBase->y, winBase->w, winBase->h, SWP_NOZORDER | SWP_SHOWWINDOW);
-    LONG exStyle = GetWindowLong(hwnd, GWL_EXSTYLE);
-    SetWindowLong(hwnd, GWL_EXSTYLE, exStyle | WS_EX_TRANSPARENT);
+}
+
+void WinMask::initMaxScreenDpr()
+{
+    QList<QScreen*> screens = QGuiApplication::screens();
+    QSize sizeTemp(0, 0);
+    for (QScreen* screen : screens) {
+        auto s = screen->size() * screen->devicePixelRatio();
+        if (s.width() > sizeTemp.width() && s.height() > sizeTemp.height()) {
+            maxScreenDpr = screen->devicePixelRatio(); //使用大屏幕的dpr
+            sizeTemp = s;
+        }
+        else if (s.width() == sizeTemp.width() && s.height() == sizeTemp.height()) {
+            //如果屏幕尺寸相等，则使用小dpr
+            if (screen->devicePixelRatio() < maxScreenDpr) {
+                maxScreenDpr = screen->devicePixelRatio();
+            }
+        }
+    }
 }
 
 void WinMask::mousePress(QMouseEvent* event)
@@ -124,12 +145,17 @@ void WinMask::mouseMove(QMouseEvent* event)
     if (full->state == State::start)
     {
         event->accept();
-        auto dpr = 1;
-        for (int i = 0; i < winRects.size(); i++)
+        POINT p;
+        GetCursorPos(&p);
+        for (int i = 0; i < winNativeRects.size(); i++)
         {
-            if (winRects[i].contains(pos/dpr)) {
-                if (maskRect == winRects[i]) return;
-                maskRect = winRects[i];
+            if (winNativeRects[i].contains(p.x,p.y)) {
+                if (mouseInRectIndex == i) return;
+                mouseInRectIndex = i;
+                auto winBase = (WinBase*)WinFull::get();
+                QPoint lt(winNativeRects[i].left() - winBase->x, winNativeRects[i].top() - winBase->y);
+                QPoint rb(winNativeRects[i].right() - winBase->x, winNativeRects[i].bottom() - winBase->y);
+                maskRect = QRectF(lt / maxScreenDpr, rb / maxScreenDpr);
                 update();
                 return;
             }
@@ -301,23 +327,6 @@ void WinMask::changeMousePosState2(const int& x, const int& y)
 }
 void WinMask::initWinRects()
 {
-    {
-        QList<QScreen*> screens = QGuiApplication::screens();
-        QSize sizeTemp(0, 0);
-        for (QScreen* screen : screens) {
-            auto s = screen->size() * screen->devicePixelRatio();
-            if (s.width() > sizeTemp.width() && s.height() > sizeTemp.height()) {
-                maxScreenDpr = screen->devicePixelRatio(); //使用大屏幕的dpr
-                sizeTemp = s;
-            }
-            else if (s.width() == sizeTemp.width() && s.height() == sizeTemp.height()) {
-                //如果屏幕尺寸相等，则使用小dpr
-                if (screen->devicePixelRatio() < maxScreenDpr) {
-                    maxScreenDpr = screen->devicePixelRatio();
-                }
-            }
-        }
-    }
     EnumWindows([](HWND hwnd, LPARAM lparam)
         {
             if (!hwnd) return TRUE;
@@ -333,9 +342,7 @@ void WinMask::initWinRects()
             if (rect.right - rect.left <= 6 || rect.bottom - rect.top <= 6) {
                 return TRUE;
             }
-            QPoint lt(rect.left - winBase->x, rect.top - winBase->y);
-            QPoint rb(rect.right - winBase->x, rect.bottom - winBase->y);
-            self->winRects.push_back(QRectF(lt / self->maxScreenDpr, rb / self->maxScreenDpr));
+            self->winNativeRects.push_back(QRect(QPoint(rect.left, rect.top), QPoint(rect.right, rect.bottom)));            
             return TRUE;
         }, (LPARAM)this);
 }

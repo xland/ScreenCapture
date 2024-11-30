@@ -28,10 +28,13 @@ private:
 	void changeMousePosState2(const int& x, const int& y);
 	void initWinRects();
 	void initWindow();
+	void initMaxScreenDpr();
 private:
 	QPoint posPress;
 	qreal maskStroke{ 2.0 };
 	int mousePosState{ -1 };
 	QList<QRectF> winRects;
+	QList<QRect> winNativeRects;
 	qreal maxScreenDpr;
+	int mouseInRectIndex{ -1 };
 };
