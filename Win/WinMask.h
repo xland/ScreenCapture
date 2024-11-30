@@ -28,7 +28,7 @@ private:
 	void changeMousePosState2(const int& x, const int& y);
 	void initWinRects();
 	void initWindow();
-	void initMaxScreenDpr();
+	//void initMaxScreenDpr();
 private:
 	QPoint posPress;
 	qreal maskStroke{ 2.0 };

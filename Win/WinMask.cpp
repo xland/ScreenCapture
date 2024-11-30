@@ -11,7 +11,7 @@
 
 WinMask::WinMask(QWidget* parent) : QWidget(parent)
 {
-    initMaxScreenDpr();
+    //initMaxScreenDpr();
     initWinRects();
     initWindow();
 }
@@ -38,24 +38,28 @@ void WinMask::initWindow()
     SetWindowPos(hwnd, nullptr, winBase->x, winBase->y, winBase->w, winBase->h, SWP_NOZORDER | SWP_SHOWWINDOW);
 }
 
-void WinMask::initMaxScreenDpr()
-{
-    QList<QScreen*> screens = QGuiApplication::screens();
-    QSize sizeTemp(0, 0);
-    for (QScreen* screen : screens) {
-        auto s = screen->size() * screen->devicePixelRatio();
-        if (s.width() > sizeTemp.width() && s.height() > sizeTemp.height()) {
-            maxScreenDpr = screen->devicePixelRatio(); //使用大屏幕的dpr
-            sizeTemp = s;
-        }
-        else if (s.width() == sizeTemp.width() && s.height() == sizeTemp.height()) {
-            //如果屏幕尺寸相等，则使用小dpr
-            if (screen->devicePixelRatio() < maxScreenDpr) {
-                maxScreenDpr = screen->devicePixelRatio();
-            }
-        }
-    }
-}
+//void WinMask::initMaxScreenDpr()
+//{
+//    QList<QScreen*> screens = QGuiApplication::screens();
+//    QSize sizeTemp(0, 0);
+//    for (QScreen* screen : screens) {
+//        auto s = screen->size() * screen->devicePixelRatio();
+//        if (s.width() > sizeTemp.width() && s.height() > sizeTemp.height()) {
+//            maxScreenDpr = screen->devicePixelRatio(); //使用大屏幕的dpr
+//            sizeTemp = s;
+//        }
+//        else if (s.width() == sizeTemp.width() && s.height() == sizeTemp.height()) {
+//            //如果屏幕尺寸相等，则使用小dpr
+//            //if (screen->devicePixelRatio() < maxScreenDpr) {
+//            //    maxScreenDpr = screen->devicePixelRatio();
+//            //}
+//            auto tl = screen->geometry().topLeft();
+//            if (tl.x() == 0 && tl.y() == 0) {
+//                maxScreenDpr = screen->devicePixelRatio();
+//            }
+//        }
+//    }
+//}
 
 void WinMask::mousePress(QMouseEvent* event)
 {
@@ -153,9 +157,10 @@ void WinMask::mouseMove(QMouseEvent* event)
                 if (mouseInRectIndex == i) return;
                 mouseInRectIndex = i;
                 auto winBase = (WinBase*)WinFull::get();
+                auto dpr = winBase->img.devicePixelRatio();
                 QPoint lt(winNativeRects[i].left() - winBase->x, winNativeRects[i].top() - winBase->y);
                 QPoint rb(winNativeRects[i].right() - winBase->x, winNativeRects[i].bottom() - winBase->y);
-                maskRect = QRectF(lt / maxScreenDpr, rb / maxScreenDpr);
+                maskRect = QRectF(lt / dpr, rb / dpr);
                 update();
                 return;
             }
