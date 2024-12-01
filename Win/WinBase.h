@@ -35,6 +35,7 @@ public:
 	WinCanvas* winCanvas;
 	WinBoard* winBoard;
 	QImage img;
+	qreal dpr{ 1.0 };
 protected:
 	void mousePressOnShape(QMouseEvent* event);
 	void mouseMoveOnShape(QMouseEvent* event);

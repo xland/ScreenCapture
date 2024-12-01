@@ -124,8 +124,9 @@ void WinFull::initDesktopImg()
         auto pos = screen->geometry().topLeft();
         if (pos.x() == 0 && pos.y() == 0)
         {
-            qreal sf = screen->devicePixelRatio();
-            img = screen->grabWindow(0, x / sf, y / sf, w / sf, h / sf).toImage().convertToFormat(QImage::Format_ARGB32);
+            dpr = screen->devicePixelRatio();
+            img = screen->grabWindow(0, x / dpr, y / dpr, w / dpr, h / dpr)
+                .toImage().convertToFormat(QImage::Format_ARGB32);
             break;
         }
     }

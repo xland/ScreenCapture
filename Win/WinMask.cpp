@@ -106,10 +106,60 @@ void WinMask::mouseMove(QMouseEvent* event)
             if (winNativeRects[i].contains(p.x,p.y)) {
                 if (mouseInRectIndex == i) return;
                 mouseInRectIndex = i;
+                //QPoint lt(winNativeRects[i].left() - father->x, winNativeRects[i].top() - father->y);
+                //QPoint rb(winNativeRects[i].right() - father->x, winNativeRects[i].bottom() - father->y);
+                //QPoint lt(winNativeRects[i].left(), winNativeRects[i].top());
+                //QPoint rb(winNativeRects[i].right(), winNativeRects[i].bottom());
+                //lt = mapFromGlobal(lt);
+                //rb = mapFromGlobal(rb);
+
+                auto rect = winNativeRects[i];
+                HMONITOR hMonitor = MonitorFromPoint({ rect.left(), rect.top()}, MONITOR_DEFAULTTONEAREST);
+                UINT dpiX = 0, dpiY = 0;
+                GetDpiForMonitor(hMonitor, MDT_EFFECTIVE_DPI, &dpiX, &dpiY);
+                auto dpr = dpiX / 96.0f;
+                auto l{ rect.left() / dpr }, t{ rect.top() / dpr };
+
+                hMonitor = MonitorFromPoint({ rect.right(), rect.bottom()}, MONITOR_DEFAULTTONEAREST);
+                GetDpiForMonitor(hMonitor, MDT_EFFECTIVE_DPI, &dpiX, &dpiY);
+                dpr = dpiX / 96.0f;
+                auto r{ rect.right() / dpr }, b{ rect.bottom() / dpr };
+                //auto lt = QPoint(l, t);
+                //auto rb = QPoint(r, b);
+                auto lt = mapFromGlobal(QPoint(l, t));
+                auto rb = mapFromGlobal(QPoint(r, b));
+                //QRect(QPoint(l, t), QPoint(r, b))
+
+
+                //注意，这里用的是主屏幕的dpr，不是窗口的dpr
+
+                /*
                 auto dpr = father->img.devicePixelRatio();
-                QPoint lt(winNativeRects[i].left() - father->x, winNativeRects[i].top() - father->y);
-                QPoint rb(winNativeRects[i].right() - father->x, winNativeRects[i].bottom() - father->y);
-                maskRect = QRectF(lt / dpr, rb / dpr);
+                int pArea;
+                auto screens = QGuiApplication::screens();
+                for (auto s : screens)
+                {
+                    auto geo = s->geometry();
+                    auto pos = geo.topLeft();
+                    if (pos.x() == 0 && pos.y() == 0)
+                    {
+                        auto pSize = s->size() * s->devicePixelRatio();                        
+                        pArea = pSize.width() * pSize.height();
+                        break;
+                    }
+                }
+                for (auto s:screens)
+                {
+                    auto sSize = s->size() * s->devicePixelRatio();
+                    auto sArea = sSize.width() * sSize.height();
+                    if (pArea <= sArea) {
+                        dpr = s->devicePixelRatio();
+                        pArea = sArea;
+                    }
+                }*/
+
+                //maskRect = QRectF(lt / dpr, rb / dpr);
+                maskRect = QRectF(lt, rb);
                 update();
                 return;
             }

@@ -18,10 +18,15 @@ void WinBaseLayer::init(WinBase* father)
 
 void WinBaseLayer::showEvent(QShowEvent * event)
 {
-    QWidget::showEvent(event);
+    
+    //QGuiApplication::primaryScreen()
+
     auto hwnd = (HWND)winId();
     SetWindowLong(hwnd, GWL_EXSTYLE, WS_EX_TOOLWINDOW | WS_EX_TRANSPARENT);
-    SetWindowPos(hwnd, nullptr, father->x, father->y, father->w, father->h, SWP_NOZORDER | SWP_SHOWWINDOW);
+    SetWindowPos(hwnd, nullptr, 
+        father->x, father->y, father->w, father->h, 
+        SWP_NOZORDER | SWP_SHOWWINDOW);
+    QWidget::showEvent(event);
 }
 void WinBaseLayer::initWindow()
 {
@@ -36,4 +41,7 @@ void WinBaseLayer::initWindow()
     setWindowState(Qt::WindowFullScreen);
     setFixedSize(father->w, father->h);
     show();
+    auto hwnd = (HWND)winId();
+    SetWindowLong(hwnd, GWL_EXSTYLE, WS_EX_TOOLWINDOW | WS_EX_TRANSPARENT);
+    SetWindowPos(hwnd, nullptr, father->x, father->y, father->w, father->h, SWP_NOZORDER | SWP_SHOWWINDOW);
 }

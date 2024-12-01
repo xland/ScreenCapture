@@ -153,15 +153,21 @@ void WinBase::initWindow()
     setAttribute(Qt::WA_QuitOnClose, false);
     setFixedSize(w, h);
     show();
+    //注意 这里必须用窗口的dpr来设置img的dpr，不能用首屏的dpr
     auto dpr = windowHandle()->devicePixelRatio();
     img.setDevicePixelRatio(dpr);
+    auto hwnd = (HWND)winId();
+    SetWindowPos(hwnd, nullptr, x, y, w, h, SWP_NOZORDER | SWP_SHOWWINDOW);
     updateCursor(Qt::CrossCursor);
 }
 void WinBase::showEvent(QShowEvent* event)
 {
-    QWidget::showEvent(event);
+    
+
+
     auto hwnd = (HWND)winId();
     SetWindowPos(hwnd, nullptr, x, y, w, h, SWP_NOZORDER | SWP_SHOWWINDOW);
+    QWidget::showEvent(event);
 }
 void WinBase::updateCursor(Qt::CursorShape cur)
 {
