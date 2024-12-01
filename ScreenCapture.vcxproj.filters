@@ -122,6 +122,9 @@
     <ClCompile Include="Tool\PixelInfo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Win\WinBaseLayer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BtnType.h">
@@ -229,6 +232,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="Tool\PixelInfo.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Win\WinBaseLayer.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

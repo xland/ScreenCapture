@@ -8,6 +8,7 @@
 
 class ToolMain;
 class ToolSub;
+class PixelInfo;
 class WinBoard;
 class WinCanvas;
 class ShapeBase;
@@ -30,6 +31,7 @@ public:
 	int x, y, w, h;
 	ToolMain* toolMain;
 	ToolSub* toolSub;
+	PixelInfo* pixelInfo;
 	WinCanvas* winCanvas;
 	WinBoard* winBoard;
 	QImage img;
@@ -39,5 +41,6 @@ protected:
 	void mouseDragOnShape(QMouseEvent* event);
 	void mouseReleaseOnShape(QMouseEvent* event);
 	void initWindow();
+	void showEvent(QShowEvent* event) override;
 private:
 };

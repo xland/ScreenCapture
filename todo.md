@@ -20,3 +20,66 @@
 - 橡皮擦选中矩形后，应该隐藏stroke
 - 得搞一套日志系统
 - 截图区域大小位置
+
+
+
+
+
+
+
+```
+#include <QApplication>
+#include <QBackingStore>
+#include <QWindow>
+#include <QPainter>
+#include <QRect>
+#include <QDebug>
+#include <windows.h>
+
+void drawContent(QBackingStore *backingStore, QWindow *window) {
+    QRect rect = window->geometry();
+    backingStore->beginPaint(rect);
+
+    QPainter painter(backingStore->paintDevice());
+    painter.setRenderHint(QPainter::Antialiasing);
+    painter.fillRect(rect, Qt::white);
+    painter.setBrush(Qt::green);
+    painter.drawEllipse(100, 100, 200, 200);
+    painter.end();
+
+    backingStore->endPaint();
+    backingStore->flush(rect);
+}
+
+int main(int argc, char *argv[]) {
+    QApplication app(argc, argv);
+
+    HWND hwnd = /* 原生窗口句柄 */;
+    if (!hwnd) {
+        qDebug() << "Failed to get native window handle!";
+        return -1;
+    }
+
+    QWindow *nativeWindow = QWindow::fromWinId(reinterpret_cast<WId>(hwnd));
+    QBackingStore *backingStore = new QBackingStore(nativeWindow);
+
+    nativeWindow->setGeometry(0, 0, 800, 600);
+    backingStore->resize(nativeWindow->size());
+
+    QObject::connect(nativeWindow, &QWindow::exposed, [&]() {
+        if (nativeWindow->isExposed()) {
+            drawContent(backingStore, nativeWindow);
+        }
+    });
+
+    nativeWindow->requestUpdate();
+    nativeWindow->show();
+
+    int result = app.exec();
+
+    delete backingStore;
+    delete nativeWindow;
+
+    return result;
+}
+```

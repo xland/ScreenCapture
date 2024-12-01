@@ -27,7 +27,6 @@ public:
 public:
 	WinMask* winMask;
 	ToolColorPos* toolColorPos;
-	PixelInfo* pixelInfo;
 protected:
 	void paintEvent(QPaintEvent* event) override;
 	void mousePressEvent(QMouseEvent* event) override;

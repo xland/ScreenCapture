@@ -1,22 +1,17 @@
 #pragma once
 
 #include <QWidget>
+#include "WinBaseLayer.h"
 
-
-class WinBase;
-class WinBoard : public QWidget
+class WinBoard : public WinBaseLayer
 {
 	Q_OBJECT
 public:
 	WinBoard(QWidget *parent = nullptr);
 	~WinBoard();
-	void init(WinBase* winBase);
 	void refresh();
-public:
-	WinBase* winBase;
 protected:
 	void paintEvent(QPaintEvent* event) override;
-	void initWindow();
 private:
 	bool refreshFlag{ false };
 };

@@ -153,10 +153,15 @@ void WinBase::initWindow()
     setAttribute(Qt::WA_QuitOnClose, false);
     setFixedSize(w, h);
     show();
-    SetWindowPos((HWND)winId(), nullptr, x, y, w, h, SWP_NOZORDER | SWP_SHOWWINDOW);
     auto dpr = windowHandle()->devicePixelRatio();
     img.setDevicePixelRatio(dpr);
     updateCursor(Qt::CrossCursor);
+}
+void WinBase::showEvent(QShowEvent* event)
+{
+    QWidget::showEvent(event);
+    auto hwnd = (HWND)winId();
+    SetWindowPos(hwnd, nullptr, x, y, w, h, SWP_NOZORDER | SWP_SHOWWINDOW);
 }
 void WinBase::updateCursor(Qt::CursorShape cur)
 {
