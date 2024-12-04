@@ -108,26 +108,28 @@ void WinMask::mouseMove(QMouseEvent* event)
                 mouseInRectIndex = i;
                 //QPoint lt(winNativeRects[i].left() - father->x, winNativeRects[i].top() - father->y);
                 //QPoint rb(winNativeRects[i].right() - father->x, winNativeRects[i].bottom() - father->y);
-                //QPoint lt(winNativeRects[i].left(), winNativeRects[i].top());
-                //QPoint rb(winNativeRects[i].right(), winNativeRects[i].bottom());
-                //lt = mapFromGlobal(lt);
-                //rb = mapFromGlobal(rb);
+                QPoint lt(winNativeRects[i].left(), winNativeRects[i].top());
+                QPoint rb(winNativeRects[i].right(), winNativeRects[i].bottom());
+                lt = mapFromGlobal(lt);
+                rb = mapFromGlobal(rb);
+                QScreen* s;
+                //s->mapBetween
 
-                auto rect = winNativeRects[i];
-                HMONITOR hMonitor = MonitorFromPoint({ rect.left(), rect.top()}, MONITOR_DEFAULTTONEAREST);
-                UINT dpiX = 0, dpiY = 0;
-                GetDpiForMonitor(hMonitor, MDT_EFFECTIVE_DPI, &dpiX, &dpiY);
-                auto dpr = dpiX / 96.0f;
-                auto l{ rect.left() / dpr }, t{ rect.top() / dpr };
+                //auto rect = winNativeRects[i];
+                //HMONITOR hMonitor = MonitorFromPoint({ rect.left(), rect.top()}, MONITOR_DEFAULTTONEAREST);
+                //UINT dpiX = 0, dpiY = 0;
+                //GetDpiForMonitor(hMonitor, MDT_EFFECTIVE_DPI, &dpiX, &dpiY);
+                //auto dpr = dpiX / 96.0f;
+                //auto l{ rect.left() / dpr }, t{ rect.top() / dpr };
 
-                hMonitor = MonitorFromPoint({ rect.right(), rect.bottom()}, MONITOR_DEFAULTTONEAREST);
-                GetDpiForMonitor(hMonitor, MDT_EFFECTIVE_DPI, &dpiX, &dpiY);
-                dpr = dpiX / 96.0f;
-                auto r{ rect.right() / dpr }, b{ rect.bottom() / dpr };
+                //hMonitor = MonitorFromPoint({ rect.right(), rect.bottom()}, MONITOR_DEFAULTTONEAREST);
+                //GetDpiForMonitor(hMonitor, MDT_EFFECTIVE_DPI, &dpiX, &dpiY);
+                //dpr = dpiX / 96.0f;
+                //auto r{ rect.right() / dpr }, b{ rect.bottom() / dpr };
                 //auto lt = QPoint(l, t);
                 //auto rb = QPoint(r, b);
-                auto lt = mapFromGlobal(QPoint(l, t));
-                auto rb = mapFromGlobal(QPoint(r, b));
+                //auto lt = mapFromGlobal(QPoint(l, t));
+                //auto rb = mapFromGlobal(QPoint(r, b));
                 //QRect(QPoint(l, t), QPoint(r, b))
 
 
