@@ -1,0 +1,27 @@
+set(SHAPE
+    ShapeBase.cpp
+    ShapeBase.h
+    ShapeRect.cpp
+    ShapeRect.h
+    ShapeEllipse.cpp
+    ShapeEllipse.h
+    ShapeArrow.cpp
+    ShapeArrow.h
+    ShapeNumber.cpp
+    ShapeNumber.h
+    ShapePen.cpp
+    ShapePen.h
+    ShapeLine.cpp
+    ShapeLine.h
+    ShapeText.cpp
+    ShapeText.h
+    ShapeEraser.cpp
+    ShapeEraser.h
+    ShapeEraserRect.cpp
+    ShapeEraserRect.h
+    ShapeMosaic.cpp
+    ShapeMosaic.h
+    ShapeMosaicRect.cpp
+    ShapeMosaicRect.h
+)
+target_sources(ScreenCapture PRIVATE ${SHAPE})
