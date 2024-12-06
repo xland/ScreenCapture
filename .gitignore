@@ -1,5 +1,5 @@
 /build/
-/res/RCa23748
-/res/res.aps
+/qt/
 /.vs/
-/out/
+*.TMP
+/enc_temp_folder/

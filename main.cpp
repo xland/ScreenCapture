@@ -1,21 +1,13 @@
-#include <Windows.h>
-#include <include/core/SkGraphics.h>
-#include <shellscalingapi.h>
-#include "App.h"
+#include <QtWidgets/QApplication>
 
-int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPTSTR lpCmdLine, _In_ int nCmdShow)
+#include "App/App.h"
+
+
+int main(int argc, char* argv[])
 {
-    HRESULT hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
-    SetProcessDpiAwareness(PROCESS_PER_MONITOR_DPI_AWARE);
-    App::Init(std::wstring(lpCmdLine));
-    MSG msg;
-    while (GetMessage(&msg, NULL, 0, 0))
-    {
-        TranslateMessage(&msg);
-        DispatchMessage(&msg);
-    }
-    App::Dispose();
-    CoUninitialize();
-    auto code = App::GetExitCode();
-    return code;
+    QApplication a(argc, argv);
+    App::init();
+    auto resut = a.exec();
+    App::dispose();
+    return resut;
 }
