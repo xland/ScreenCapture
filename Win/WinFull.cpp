@@ -52,16 +52,30 @@ void WinFull::showToolMain()
         toolMain = new ToolMain();
         toolMain->win = this;
     }
-    auto pos = winMask->maskRect.bottomRight();
-    qDebug() << "show tool \n" << pos;
-    pos.setX(pos.x() + x);
-    pos.setY(pos.y() + y);
-    qDebug() << pos;
-    pos = QCursor::pos();
-    qDebug() << pos;
-    toolMain->move(pos.x() - toolMain->width(),pos.y() + 6);
     toolMain->show();
     toolMain->raise();
+    auto pos = winMask->maskRect.bottomRight();
+    qDebug() << "show tool \n";
+    pos.setX(pos.x() + x);
+    pos.setY(pos.y() + y);
+    auto hwnd = (HWND)toolMain->winId();
+    SetWindowPos(hwnd, nullptr,pos.x() - toolMain->width()*dpr, pos.y() + 6*dpr, 0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_SHOWWINDOW);
+    //qDebug() << pos;
+    //pos = QCursor::pos();
+    //qDebug() << pos;
+    //POINT p;
+    //GetCursorPos(&p);
+    //qDebug() << p.x<<p.y;
+    //QPoint globalPos(p.x, p.y);  // Windows API 获取的坐标
+    //QPoint qtPos = mapFromGlobal(globalPos);
+    //qDebug() << qtPos.x()- this->geometry().x() << qtPos.y() - this->geometry().y();
+    //auto screens = QGuiApplication::screens();
+    //for (auto screen : screens)
+    //{
+    //    auto geo = screen->geometry();
+    //    qDebug() << geo;
+    //}
+    //toolMain->move(pos.x() - toolMain->width(),pos.y() + 6);
 }
 void WinFull::showToolSub()
 {
