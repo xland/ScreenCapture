@@ -162,12 +162,19 @@ void WinBase::initWindow()
 }
 void WinBase::showEvent(QShowEvent* event)
 {
-    
-
-
     auto hwnd = (HWND)winId();
     SetWindowPos(hwnd, nullptr, x, y, w, h, SWP_NOZORDER | SWP_SHOWWINDOW);
     QWidget::showEvent(event);
+    //auto screens = QGuiApplication::screens();
+    //for (auto screen : screens)
+    //{
+    //    auto pos = screen->geometry().topLeft();
+    //    if (pos.x() == 0 && pos.y() == 0)
+    //    {
+    //        this->setScreen(screen);
+    //        break;
+    //    }
+    //}
 }
 void WinBase::updateCursor(Qt::CursorShape cur)
 {

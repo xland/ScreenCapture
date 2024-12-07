@@ -16,4 +16,5 @@ public:
 protected:
 	void showEvent(QShowEvent* event) override;
 	void initWindow();
+	virtual void ready() {};
 };

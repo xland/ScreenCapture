@@ -53,8 +53,13 @@ void WinFull::showToolMain()
         toolMain->win = this;
     }
     auto pos = winMask->maskRect.bottomRight();
-    toolMain->move(pos.x() - toolMain->width(), pos.y() + 6);
+    qDebug() << "show tool \n" << pos;
+    pos.setX((pos.x() + x - toolMain->width())/dpr);
+    pos.setY((pos.y() + y + 6)/dpr);
+    qDebug() << pos;
+    toolMain->move(pos.x(),pos.y());
     toolMain->show();
+    toolMain->raise();
 }
 void WinFull::showToolSub()
 {
