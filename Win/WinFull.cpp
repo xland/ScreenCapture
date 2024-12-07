@@ -54,10 +54,12 @@ void WinFull::showToolMain()
     }
     auto pos = winMask->maskRect.bottomRight();
     qDebug() << "show tool \n" << pos;
-    pos.setX((pos.x() + x - toolMain->width())/dpr);
-    pos.setY((pos.y() + y + 6)/dpr);
+    pos.setX(pos.x() + x);
+    pos.setY(pos.y() + y);
     qDebug() << pos;
-    toolMain->move(pos.x(),pos.y());
+    pos = QCursor::pos();
+    qDebug() << pos;
+    toolMain->move(pos.x() - toolMain->width(),pos.y() + 6);
     toolMain->show();
     toolMain->raise();
 }
