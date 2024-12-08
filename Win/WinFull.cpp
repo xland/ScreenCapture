@@ -31,10 +31,11 @@ void WinFull::init()
 {
     WinFull::dispose();
     winFull = new WinFull();
-    winFull->winMask = new WinMask();
-    winFull->winMask->init(winFull);
-    winFull->winMask->initWinRects();
-    winFull->pixelInfo = new PixelInfo();
+    winFull->show();
+    //winFull->winMask = new WinMask();
+    //winFull->winMask->init(winFull);
+    //winFull->winMask->initWinRects();
+    //winFull->pixelInfo = new PixelInfo();
 }
 void WinFull::dispose()
 {

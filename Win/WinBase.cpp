@@ -19,7 +19,7 @@
 #include "../Shape/ShapeMosaicLine.h"
 
 
-WinBase::WinBase(QWidget *parent):QWidget(parent)
+WinBase::WinBase(QObject *parent):QObject(parent)
 {
 }
 
@@ -145,20 +145,10 @@ void WinBase::mouseReleaseOnShape(QMouseEvent* event)
 }
 void WinBase::initWindow()
 {
-    setAutoFillBackground(false);
-    setMouseTracking(true);
-    setAttribute(Qt::WA_OpaquePaintEvent);
-    setAttribute(Qt::WA_NoSystemBackground);
-    setWindowFlags(Qt::FramelessWindowHint); //    | Qt::Tool | Qt::WindowStaysOnTopHint
-    setAttribute(Qt::WA_QuitOnClose, false);
-    setFixedSize(w, h);
-    show();
-    //注意 这里必须用窗口的dpr来设置img的dpr，不能用首屏的dpr
-    auto dpr = windowHandle()->devicePixelRatio();
-    img.setDevicePixelRatio(dpr);
-    auto hwnd = (HWND)winId();
-    SetWindowPos(hwnd, nullptr, x, y, w, h, SWP_NOZORDER | SWP_SHOWWINDOW);
-    updateCursor(Qt::CrossCursor);
+    regWinClass();
+    auto exStyle = WS_EX_LAYERED;  //| WS_EX_TOPMOST | WS_EX_TOOLWINDOW
+    auto style = WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_POPUP;
+    hwnd = CreateWindowEx(exStyle,L"ScreenCapture", L"ScreenCapture",style,x, y, w, h, NULL, NULL, GetModuleHandle(NULL), static_cast<LPVOID>(this));
 }
 void WinBase::showEvent(QShowEvent* event)
 {
@@ -176,11 +166,97 @@ void WinBase::showEvent(QShowEvent* event)
     //    }
     //}
 }
+void WinBase::regWinClass()
+{
+    static WNDCLASSEX wcx{};
+    if (!wcx.lpfnWndProc) {
+        auto hinstance = GetModuleHandle(NULL);
+        wcx.cbSize = sizeof(wcx);
+        wcx.style = CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
+        wcx.lpfnWndProc = &WinBase::RouteWinMessage;
+        wcx.cbWndExtra = sizeof(WinBase*);
+        wcx.hInstance = hinstance;
+        wcx.hIcon = LoadIcon(hinstance, IDI_APPLICATION);
+        wcx.hCursor = LoadCursor(hinstance, IDC_ARROW);
+        wcx.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+        wcx.lpszClassName = L"ScreenCapture";
+    }
+    RegisterClassEx(&wcx);
+}
+LRESULT WinBase::RouteWinMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+    if (msg == WM_NCCREATE)
+    {
+        CREATESTRUCT* pCS = reinterpret_cast<CREATESTRUCT*>(lParam);
+        LPVOID pThis = pCS->lpCreateParams;
+        SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pThis));
+    }
+    auto obj = reinterpret_cast<WinBase*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
+    if(!obj) return DefWindowProc(hWnd, msg, wParam, lParam);
+    switch (msg)
+    {
+        case WM_NCCALCSIZE:
+        {
+            if (wParam == TRUE)
+            {
+                return false;
+            }
+            break;
+        }
+        case WM_LBUTTONDOWN:
+        {
+            IsMouseDown = true;
+            auto x = GET_X_LPARAM(lparam);
+            auto y = GET_Y_LPARAM(lparam);
+            return onMouseDown(x, y);
+        }
+        case WM_LBUTTONDBLCLK:
+        {
+            auto x = GET_X_LPARAM(lparam);
+            auto y = GET_Y_LPARAM(lparam);
+            return onDoubleClick(x, y);
+        }
+        case WM_LBUTTONUP:
+        {
+            IsMouseDown = false;
+            auto x = GET_X_LPARAM(lparam);
+            auto y = GET_Y_LPARAM(lparam);
+            return onMouseUp(x, y);
+        }
+        case WM_MOUSEMOVE:
+        {
+            auto x = GET_X_LPARAM(lparam);
+            auto y = GET_Y_LPARAM(lparam);
+            if (IsMouseDown) {
+                return onMouseDrag(x, y);
+            }
+            else {
+                return onMouseMove(x, y);
+            }
+        }
+        case WM_RBUTTONDOWN:
+        {
+            auto x = GET_X_LPARAM(lparam);
+            auto y = GET_Y_LPARAM(lparam);
+            onMouseDownRight(x, y);
+            return true;
+        }
+        default:
+        {
+            return obj->wndProc(hWnd, msg, wParam, lParam);
+        }
+    }
+    return DefWindowProc(hWnd, msg, wParam, lParam);
+}
+LRESULT WinBase::wndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+    return DefWindowProc(hWnd, msg, wParam, lParam);
+}
 void WinBase::updateCursor(Qt::CursorShape cur)
 {
-    if (cursor().shape() != cur) {
-        setCursor(cur);
-    }
+    //if (cursor().shape() != cur) {
+    //    setCursor(cur);
+    //}
 }
 void WinBase::refreshBoard()
 {
@@ -189,4 +265,31 @@ void WinBase::refreshBoard()
 void WinBase::refreshCanvas(ShapeBase* shape,bool force)
 {
     winCanvas->refresh(shape, force);
+}
+
+void WinBase::show()
+{
+    paint();
+    ShowWindow(hwnd, SW_SHOW);
+    UpdateWindow(hwnd);
+    SetCursor(LoadCursor(nullptr, IDC_ARROW));
+}
+
+void WinBase::paint()
+{
+    HDC hdc = GetDC(hwnd);
+    auto compDC = CreateCompatibleDC(NULL);
+    auto bitmap = CreateCompatibleBitmap(hdc, w, h);
+    DeleteObject(SelectObject(compDC, bitmap));
+
+    BITMAPINFO info = { sizeof(BITMAPINFOHEADER), w, 0 - h, 1, 32, BI_RGB, w * 4 * h, 0, 0, 0, 0 };
+    SetDIBits(hdc, bitmap, 0, h, img.bits(), &info, DIB_RGB_COLORS);
+    BLENDFUNCTION blend = { .BlendOp{AC_SRC_OVER}, .SourceConstantAlpha{255}, .AlphaFormat{AC_SRC_ALPHA} };
+    POINT pSrc = { 0, 0 };
+    SIZE sizeWnd = { w, h };
+    UpdateLayeredWindow(hwnd, hdc, NULL, &sizeWnd, compDC, &pSrc, NULL, &blend, ULW_ALPHA);
+    ReleaseDC(hwnd, hdc);
+
+    DeleteDC(compDC);
+    DeleteObject(bitmap);
 }

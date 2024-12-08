@@ -1,5 +1,5 @@
 #pragma once
-
+#include <Windows.h>
 #include <QWidget>
 #include <QMouseEvent>
 #include <QImage>
@@ -12,11 +12,11 @@ class PixelInfo;
 class WinBoard;
 class WinCanvas;
 class ShapeBase;
-class WinBase  : public QWidget
+class WinBase  : public QObject
 {
 	Q_OBJECT
 public:
-	WinBase(QWidget* parent = nullptr);
+	WinBase(QObject* parent = nullptr);
 	virtual ~WinBase();
 	virtual void showToolMain() {};
 	virtual void showToolSub() {};
@@ -25,6 +25,7 @@ public:
 	void updateCursor(Qt::CursorShape cur);
 	void refreshBoard();
 	void refreshCanvas(ShapeBase* shape, bool force=false);
+	void show();
 public:
 	State state{ State::start };
 	std::vector<ShapeBase*> shapes;
@@ -36,12 +37,16 @@ public:
 	WinBoard* winBoard;
 	QImage img;
 	qreal dpr{ 1.0 };
+	HWND hwnd;
 protected:
+	void paint();
 	void mousePressOnShape(QMouseEvent* event);
 	void mouseMoveOnShape(QMouseEvent* event);
 	void mouseDragOnShape(QMouseEvent* event);
 	void mouseReleaseOnShape(QMouseEvent* event);
 	void initWindow();
-	void showEvent(QShowEvent* event) override;
+	void regWinClass();
+	static LRESULT CALLBACK RouteWinMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+	LRESULT CALLBACK wndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 private:
 };
