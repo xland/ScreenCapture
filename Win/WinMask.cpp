@@ -86,14 +86,20 @@ void WinMask::mouseRelease(QMouseEvent* event)
     {
         father->state = State::tool;
         father->showToolMain();
+        img = QImage();  //196M -> 148M
+        qDebug() << "img release";
     }
     else if (father->state == State::tool)
     {
         father->showToolMain();
+        img = QImage();
+        qDebug() << "img release";
     }
     if (father->state > State::tool && mousePosState > 0) {
         father->showToolMain();
         father->showToolSub();
+        img = QImage();
+        qDebug() << "img release";
         return;
     }
 }
@@ -134,6 +140,10 @@ void WinMask::mouseMove(QMouseEvent* event)
 }
 void WinMask::paintEvent(QPaintEvent* event)
 {
+    if (img.isNull()) {
+        img = father->img.copy();
+        qDebug() << "img create";
+    }
     img.setDevicePixelRatio(1.0);
     img.fill(QColor(0, 0, 0, 120));
     QPainter p(&img);
@@ -148,10 +158,6 @@ void WinMask::paintEvent(QPaintEvent* event)
     QPainter painter(this);
     img.setDevicePixelRatio(father->dpr);
     painter.drawImage(0,0,img);
-}
-void WinMask::ready()
-{
-    img = father->img.copy();
 }
 void WinMask::changeMaskRect(const QPoint& pos)
 {

@@ -68,10 +68,10 @@ void PixelInfo::paintEvent(QPaintEvent* event)
     auto dpr = win->img.devicePixelRatio();
     QPoint pos = QCursor::pos();
     pos = win->mapFromGlobal(pos);
-    QRect tarRect((pos.x() - 20) * dpr, (pos.y() - 10) * dpr, 40 * dpr, 20 * dpr);
+    QRect tarRect((pos.x() - 20), (pos.y() - 10), 40, 20);
     {
         //放大镜
-        auto img = win->img.copy(tarRect);
+        auto img = win->grab(tarRect).toImage();
         img = img.scaled(200 * dpr, 100 * dpr);
         painter.drawImage(0, 0, img);
     }

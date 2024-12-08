@@ -22,7 +22,6 @@ public:
 	QRectF maskRect;
 protected:
 	void paintEvent(QPaintEvent* event) override;
-	void ready() override;
 private:
 	void changeMaskRect(const QPoint& pos);
 	void changeMousePosState(const int& x, const int& y);

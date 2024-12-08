@@ -25,7 +25,6 @@ void WinBaseLayer::showEvent(QShowEvent * event)
         SWP_NOZORDER | SWP_SHOWWINDOW);
     SetWindowLong(hwnd, GWL_EXSTYLE, WS_EX_TOOLWINDOW | WS_EX_TRANSPARENT);
     QWidget::showEvent(event);
-    ready();
     //this->setScreen(father->screen());
     //qDebug() << "\n  123" << this->geometry();
 }
