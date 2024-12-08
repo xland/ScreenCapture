@@ -3,12 +3,12 @@
 #include <shellscalingapi.h>
 
 #include "WinMask.h"
-#include "../Win/WinBase.h"
+#include "WinFull.h"
 #include "../Tool/ToolMain.h"
 #include "../Tool/ToolSub.h"
 #include "../Tool/PixelInfo.h"
 
-WinMask::WinMask(QWidget* parent) : WinBaseLayer(parent)
+WinMask::WinMask(QObject* parent) : WinBase(parent)
 {
 }
 
@@ -18,9 +18,10 @@ WinMask::~WinMask()
 
 void WinMask::mousePress(QMouseEvent* event)
 {
+    auto father = (WinFull*)parent();
     if (father->state == State::start)
     {
-        posPress = getNativeWinPos();
+        posPress = event->pos();
         father->state = State::mask;
         father->pixelInfo->hide();
         event->accept();
@@ -28,7 +29,7 @@ void WinMask::mousePress(QMouseEvent* event)
     }
     if (father->state == State::tool)
     {
-        posPress = getNativeWinPos();
+        posPress = event->pos();
         father->toolMain->hide();
         if (mousePosState != 0)
         {
@@ -38,7 +39,7 @@ void WinMask::mousePress(QMouseEvent* event)
         return;
     }
     if (father->state > State::tool && mousePosState > 0) {
-        posPress = getNativeWinPos();
+        posPress = event->pos();
         father->toolMain->hide();
         father->toolSub->hide();
         event->accept();
@@ -48,33 +49,34 @@ void WinMask::mousePress(QMouseEvent* event)
 
 void WinMask::mouseDrag(QMouseEvent* event)
 {
+    auto father = (WinFull*)parent();
     if (father->state == State::mask)
     {
-        auto pos = getNativeWinPos();
+        auto pos = event->pos();
         maskRect.setCoords(posPress.x(), posPress.y(), pos.x(),pos.y());
         maskRect = maskRect.normalized();
-        update();
+        //update();
         return;
     }
     if (father->state == State::tool)
     {
         if (mousePosState == 0)
         {
-            auto pos = getNativeWinPos();
+            auto pos = event->pos();
             auto span = pos - posPress;
             maskRect.moveTo(maskRect.topLeft() + span);
             posPress = pos;
-            update();
+            //update();
         }
         else
         {
-            auto pos = getNativeWinPos();
+            auto pos = event->pos();
             changeMaskRect(pos);
         }
         return;
     }
     if (father->state > State::tool && mousePosState > 0) {
-        auto pos = getNativeWinPos();
+        auto pos = event->pos();
         changeMaskRect(pos);
         return;
     }
@@ -82,6 +84,7 @@ void WinMask::mouseDrag(QMouseEvent* event)
 
 void WinMask::mouseRelease(QMouseEvent* event)
 {
+    auto father = (WinFull*)parent();
     if (father->state == State::mask)
     {
         father->state = State::tool;
@@ -106,7 +109,7 @@ void WinMask::mouseRelease(QMouseEvent* event)
 
 void WinMask::mouseMove(QMouseEvent* event)
 {
-    if (father->state == State::start)
+    /*if (father->state == State::start)
     {
         event->accept();    
         for (int i = 0; i < winNativeRects.size(); i++)
@@ -136,29 +139,29 @@ void WinMask::mouseMove(QMouseEvent* event)
             event->accept();
             return;
         }
-    }
+    }*/
 }
-void WinMask::paintEvent(QPaintEvent* event)
-{
-    if (img.isNull()) {
-        img = father->img.copy();
-        qDebug() << "img create";
-    }
-    img.setDevicePixelRatio(1.0);
-    img.fill(QColor(0, 0, 0, 120));
-    QPainter p(&img);
-    p.setRenderHint(QPainter::Antialiasing, true);
-    auto sw = maskStroke * father->dpr;
-    p.setPen(QPen(QBrush(QColor(22, 119, 255)), sw));
-    p.setBrush(Qt::NoBrush);
-    p.drawRect(maskRect.adjusted(-sw, -sw, sw, sw));
-    p.setCompositionMode(QPainter::CompositionMode_Clear);
-    p.setBrush(Qt::transparent);
-    p.drawRect(maskRect);
-    QPainter painter(this);
-    img.setDevicePixelRatio(father->dpr);
-    painter.drawImage(0,0,img);
-}
+//void WinMask::paintEvent(QPaintEvent* event)
+//{
+//    if (img.isNull()) {
+//        img = father->img.copy();
+//        qDebug() << "img create";
+//    }
+//    img.setDevicePixelRatio(1.0);
+//    img.fill(QColor(0, 0, 0, 120));
+//    QPainter p(&img);
+//    p.setRenderHint(QPainter::Antialiasing, true);
+//    auto sw = maskStroke * father->dpr;
+//    p.setPen(QPen(QBrush(QColor(22, 119, 255)), sw));
+//    p.setBrush(Qt::NoBrush);
+//    p.drawRect(maskRect.adjusted(-sw, -sw, sw, sw));
+//    p.setCompositionMode(QPainter::CompositionMode_Clear);
+//    p.setBrush(Qt::transparent);
+//    p.drawRect(maskRect);
+//    QPainter painter(this);
+//    img.setDevicePixelRatio(father->dpr);
+//    painter.drawImage(0,0,img);
+//}
 void WinMask::changeMaskRect(const QPoint& pos)
 {
     if (mousePosState == 1)
@@ -194,12 +197,13 @@ void WinMask::changeMaskRect(const QPoint& pos)
         maskRect.setLeft(pos.x());
     }
     maskRect = maskRect.normalized();
-    update();
+    //update();
 }
 void WinMask::changeMousePosState(const int& x, const int& y)
 {
     auto leftX = maskRect.topLeft().x(); auto topY = maskRect.topLeft().y();
     auto rightX = maskRect.bottomRight().x(); auto bottomY = maskRect.bottomRight().y();
+    auto father = (WinFull*)parent();
     if (maskRect.contains(x, y))
     {
         father->updateCursor(Qt::SizeAllCursor);
@@ -252,6 +256,7 @@ void WinMask::changeMousePosState2(const int& x, const int& y)
     auto x3{ maskRect.right() - maskStroke }, x4{ x3 + maskStroke * 3 };
     auto y1{ maskRect.y() - maskStroke }, y2{ y1 + maskStroke * 3 };
     auto y3{ maskRect.bottom() - maskStroke }, y4{ y3 + maskStroke * 3 };
+    auto father = (WinFull*)parent();
     if (x >= x1 && x <= x2 && y >= y1 && y <= y2) {
         father->updateCursor(Qt::SizeFDiagCursor);
         mousePosState = 1;
@@ -294,18 +299,7 @@ void WinMask::changeMousePosState2(const int& x, const int& y)
         mousePosState = -1;
     }
 }
-QPoint WinMask::getNativePos()
-{
-    POINT p;
-    GetCursorPos(&p);
-    return QPoint(p.x,p.y);
-}
-QPoint WinMask::getNativeWinPos()
-{
-    POINT p;
-    GetCursorPos(&p);
-    return QPoint(p.x-father->x, p.y-father->y);
-}
+
 void WinMask::initWinRects()
 {
     EnumWindows([](HWND hwnd, LPARAM lparam)
@@ -315,14 +309,15 @@ void WinMask::initWinRects()
             if (IsIconic(hwnd)) return TRUE;
             if (GetWindowTextLength(hwnd) < 1) return TRUE;
             auto self = (WinMask*)lparam;
-            if (hwnd == (HWND)self->winId()) return TRUE;
-            if (hwnd == (HWND)self->father->winId()) return TRUE;
+            if (hwnd == (HWND)self->hwnd) return TRUE;
+            auto father = (WinFull*)self->parent();
+            if (hwnd == father->hwnd) return TRUE;
             RECT rect;
             DwmGetWindowAttribute(hwnd, DWMWA_EXTENDED_FRAME_BOUNDS, &rect, sizeof(RECT));
             if (rect.right - rect.left <= 6 || rect.bottom - rect.top <= 6) {
                 return TRUE;
             }
-            self->winNativeRects.push_back(QRect(QPoint(rect.left, rect.top), QPoint(rect.right, rect.bottom)));
+            self->winNativeRects.push_back(QRect(QPoint(rect.left-self->x, rect.top-self->y), QPoint(rect.right-self->x, rect.bottom-self->y)));
             self->winHwnds.push_back(hwnd);
             return TRUE;
         }, (LPARAM)this);

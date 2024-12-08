@@ -5,7 +5,7 @@
 #include "ToolMain.h"
 #include "StrokeCtrl.h"
 #include "ColorCtrl.h"
-#include "../Win/WinBase.h"
+#include "../Win/WinBox.h"
 
 namespace {
 	std::map<State, std::vector<ToolBtn>> btns;

@@ -42,22 +42,22 @@ bool PixelInfo::posInScreen(const int& x, const int& y)
 
 void PixelInfo::mouseMove(QMouseEvent* event)
 {
-    if (isVisible()) {
-        QPoint pos = QCursor::pos();
-        if (posInScreen(pos.x() + width() + 10, pos.y() + height() + 10)) {
-            move(pos.x() + 10, pos.y() + 10);
-        }
-        else if(posInScreen(pos.x() - width() - 10, pos.y() + height() + 10)) {
-            move(pos.x() - 10 - width(), pos.y() + 10);
-        }
-        else if (posInScreen(pos.x() + width() + 10, pos.y() - height() - 10)) {
-            move(pos.x() + 10, pos.y() - height() - 10);
-        }
-        else if (posInScreen(pos.x() - width() - 10, pos.y() - height() - 10)) {
-            move(pos.x() - 10 - width(), pos.y() - height() - 10);
-        }
-        update();
-    }
+    //if (isVisible()) {
+    //    QPoint pos = QCursor::pos();
+    //    if (posInScreen(pos.x() + width() + 10, pos.y() + height() + 10)) {
+    //        move(pos.x() + 10, pos.y() + 10);
+    //    }
+    //    else if(posInScreen(pos.x() - width() - 10, pos.y() + height() + 10)) {
+    //        move(pos.x() - 10 - width(), pos.y() + 10);
+    //    }
+    //    else if (posInScreen(pos.x() + width() + 10, pos.y() - height() - 10)) {
+    //        move(pos.x() + 10, pos.y() - height() - 10);
+    //    }
+    //    else if (posInScreen(pos.x() - width() - 10, pos.y() - height() - 10)) {
+    //        move(pos.x() - 10 - width(), pos.y() - height() - 10);
+    //    }
+    //    update();
+    //}
 }
 
 void PixelInfo::paintEvent(QPaintEvent* event)
@@ -67,11 +67,11 @@ void PixelInfo::paintEvent(QPaintEvent* event)
     auto win = WinFull::get();
     auto dpr = win->img.devicePixelRatio();
     QPoint pos = QCursor::pos();
-    pos = win->mapFromGlobal(pos);
+    //pos = win->mapFromGlobal(pos);
     QRect tarRect((pos.x() - 20), (pos.y() - 10), 40, 20);
     {
         //放大镜
-        auto img = win->grab(tarRect).toImage();
+        auto img = win->grab(tarRect);
         img = img.scaled(200 * dpr, 100 * dpr);
         painter.drawImage(0, 0, img);
     }

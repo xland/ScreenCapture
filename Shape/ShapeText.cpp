@@ -6,7 +6,7 @@
 #include <QTextOption>
 
 #include "ShapeText.h"
-#include "../Win/WinBase.h"
+#include "../Win/WinBox.h"
 #include "../App/App.h"
 #include "../Tool/ToolSub.h"
 #include "../Win/WinCanvas.h"
@@ -14,7 +14,7 @@
 
 ShapeText::ShapeText(QObject* parent) : ShapeBase(parent)
 {
-    auto win = (WinBase*)parent;
+    auto win = (WinBox*)parent;
     //state = ShapeState::ready;
     color = win->toolSub->getColor();
     fontSize = win->toolSub->getStrokeWidth();
@@ -38,7 +38,7 @@ void ShapeText::adjustSize()
         size += QSize(6, 2);
     }
     textEdit->setFixedSize(size);
-    auto win = (WinBase*)parent();
+    auto win = (WinBox*)parent();
     win->refreshBoard();  //为什么要在board上画框
 }
 
@@ -66,14 +66,14 @@ void ShapeText::focusOut()
         state = ShapeState::temp;
     }
     state = ShapeState::ready;
-    auto win = (WinBase*)parent();
+    auto win = (WinBox*)parent();
     win->refreshBoard();
     textEdit->hide();
 }
 
 void ShapeText::focusIn()
 {
-    auto win = (WinBase*)parent();
+    auto win = (WinBox*)parent();
     win->refreshBoard();
     win->refreshCanvas(nullptr, true);
 }
@@ -110,7 +110,7 @@ void ShapeText::mouseMove(QMouseEvent* event)
     auto innerRect = rect.adjusted(3, 3, -3, -3);
     hoverDraggerIndex = -1;
     if (rect.contains(pos)) {
-        auto win = (WinBase*)parent();
+        auto win = (WinBox*)parent();
         if (innerRect.contains(pos)) {
             hoverDraggerIndex = 0;
             win->updateCursor(Qt::IBeamCursor);
@@ -153,7 +153,7 @@ void ShapeText::mouseRelease(QMouseEvent* event)
 {
     if (state >= ShapeState::sizing0) {
         state = ShapeState::ready;
-        auto win = (WinBase*)parent();
+        auto win = (WinBox*)parent();
         win->refreshCanvas(this,true);
         event->accept();
     }
@@ -166,7 +166,7 @@ void ShapeText::mouseDrag(QMouseEvent* event)
         auto p = textEdit->pos() + span;
 		textEdit->move(p.x(), p.y());
         pressPos = pos;
-        auto win = (WinBase*)parent();
+        auto win = (WinBox*)parent();
         win->refreshCanvas(this, true);
         event->accept();
     }

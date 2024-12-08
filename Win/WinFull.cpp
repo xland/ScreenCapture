@@ -17,7 +17,7 @@ namespace {
     WinFull* winFull;
 }
 
-WinFull::WinFull(QWidget* parent) : WinBase(parent)
+WinFull::WinFull(QObject* parent) : WinBox(parent)
 {
     initWinSizeByDesktopSize();
     initDesktopImg();
@@ -29,19 +29,12 @@ WinFull::~WinFull()
 }
 void WinFull::init()
 {
-    WinFull::dispose();
     winFull = new WinFull();
     winFull->show();
-    //winFull->winMask = new WinMask();
-    //winFull->winMask->init(winFull);
+    winFull->img = QImage();
+    winFull->winMask = new WinMask(winFull);
     //winFull->winMask->initWinRects();
     //winFull->pixelInfo = new PixelInfo();
-}
-void WinFull::dispose()
-{
-    if (winFull) {
-        winFull->closeWin();
-    }
 }
 WinFull* WinFull::get()
 {
@@ -64,52 +57,19 @@ void WinFull::showToolMain()
 void WinFull::showToolSub()
 {
     if (!toolSub) {
-        winBoard = new WinBoard();
-        winBoard->init(this);
-        winCanvas = new WinCanvas();
-        winCanvas->init(this);
-        winMask->raise();
-        toolMain->raise();
-        toolSub = new ToolSub();
-        toolSub->win = this;
+        //winBoard = new WinBoard();
+        //winBoard->init(this);
+        //winCanvas = new WinCanvas();
+        //winCanvas->init(this);
+        //winMask->raise();
+        //toolMain->raise();
+        //toolSub = new ToolSub();
+        //toolSub->win = this;
     }
     if (toolSub->isVisible()) {
         toolSub->hide();
     }
     toolSub->show();
-}
-void WinFull::paintEvent(QPaintEvent* event)
-{    
-    QPainter painter(this);
-    painter.drawImage(QPoint(0,0), img);
-}
-
-void WinFull::mousePressEvent(QMouseEvent* event)
-{
-    event->ignore();
-    winMask->mousePress(event);
-    mousePressOnShape(event);
-}
-
-void WinFull::mouseMoveEvent(QMouseEvent* event)
-{
-    event->ignore();
-    if (event->buttons() == Qt::NoButton) {
-        winMask->mouseMove(event);
-        pixelInfo->mouseMove(event);
-        mouseMoveOnShape(event);
-    }
-    else {
-        winMask->mouseDrag(event);
-        mouseDragOnShape(event);
-    }
-}
-
-void WinFull::mouseReleaseEvent(QMouseEvent* event)
-{
-    event->ignore();
-    winMask->mouseRelease(event);
-    mouseReleaseOnShape(event);
 }
 
 void WinFull::initWinSizeByDesktopSize()
@@ -137,26 +97,22 @@ void WinFull::initDesktopImg()
     }
 }
 
-void WinFull::closeWin()
+void WinFull::close()
 {
-    close();
     if (pixelInfo) {
         pixelInfo->close();
         delete pixelInfo;
         pixelInfo = nullptr;
     }
     if (winMask) {
-        winMask->close();
         delete winMask;
         winMask = nullptr;
     }
     if (winCanvas) {
-        winCanvas->close();
         delete winCanvas;
         winCanvas = nullptr;
     }
     if (winBoard) {
-        winBoard->close();
         delete winBoard;
         winBoard = nullptr;
     }
@@ -172,4 +128,41 @@ void WinFull::closeWin()
     }
     delete winFull;
     winFull = nullptr;
+}
+
+void WinFull::mousePress(QMouseEvent* event)
+{
+    event->ignore();
+    winMask->mousePress(event);
+    mousePressOnShape(event);
+}
+
+void WinFull::mousePressRight(QMouseEvent* event)
+{
+}
+
+void WinFull::mouseDBClick(QMouseEvent* event)
+{
+}
+
+void WinFull::mouseMove(QMouseEvent* event)
+{
+    event->ignore();
+    winMask->mouseMove(event);
+    pixelInfo->mouseMove(event);
+    mouseMoveOnShape(event);
+}
+
+void WinFull::mouseDrag(QMouseEvent* event)
+{
+    event->ignore();
+    winMask->mouseDrag(event);
+    mouseDragOnShape(event);
+}
+
+void WinFull::mouseRelease(QMouseEvent* event)
+{
+    event->ignore();
+    winMask->mouseRelease(event);
+    mouseReleaseOnShape(event);
 }

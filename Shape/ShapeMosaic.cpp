@@ -8,12 +8,12 @@
 #include "ShapeMosaic.h"
 #include "../App/App.h"
 #include "../Tool/ToolSub.h"
-#include "../Win/WinBase.h"
+#include "../Win/WinBox.h"
 #include "../Win/WinCanvas.h"
 
 ShapeMosaic::ShapeMosaic(QObject* parent) : ShapeBase(parent)
 {
-    auto win = (WinBase*)parent;
+    auto win = (WinBox*)parent;
     isRect = win->toolSub->getSelectState("eraserFill");
     if (isRect) {
         for (int i = 0; i < 8; i++)
@@ -33,9 +33,9 @@ ShapeMosaic::~ShapeMosaic()
 void ShapeMosaic::initMosaicBgImg()
 {
     //auto start = QTime::currentTime();
-    auto win = (WinBase*)parent();
-    winImg = win->grab().toImage().convertToFormat(QImage::Format_ARGB32);
-    auto dpr = win->windowHandle()->devicePixelRatio();
+    auto win = (WinBox*)parent();
+    winImg = win->grab().convertToFormat(QImage::Format_ARGB32);
+    auto dpr = win->dpr;
     winImg.setDevicePixelRatio(dpr);
     {
         QPainter winPainter(&winImg);
@@ -109,24 +109,24 @@ void ShapeMosaic::mouseMove(QMouseEvent* event)
     hoverDraggerIndex = -1;
     if (draggers[0].contains(pos)) {
         hoverDraggerIndex = 0;
-        auto win = (WinBase*)parent();
+        auto win = (WinBox*)parent();
         win->updateCursor(Qt::SizeAllCursor);
     }
     else if (draggers[1].contains(pos)) {
         hoverDraggerIndex = 1;
-        auto win = (WinBase*)parent();
+        auto win = (WinBox*)parent();
         win->updateCursor(Qt::SizeAllCursor);
     }
     if (hoverDraggerIndex == -1) {
         double distance = std::abs(coeffA * pos.x() + coeffB * pos.y() + coeffC) / diffVal;
         if (distance <= strokeWidth / 2) {
             hoverDraggerIndex = 8;
-            auto win = (WinBase*)parent();
+            auto win = (WinBox*)parent();
             win->updateCursor(Qt::SizeAllCursor);
         }
     }
     if (hoverDraggerIndex > -1) {
-        auto win = (WinBase*)parent();
+        auto win = (WinBox*)parent();
         win->refreshCanvas(this);
         event->accept();
     }
@@ -148,9 +148,8 @@ void ShapeMosaic::mousePress(QMouseEvent* event)
     if (path.isEmpty() && hoverDraggerIndex >= 0) {
         pressPos = event->pos().toPointF();
         state = (ShapeState)((int)ShapeState::sizing0 + hoverDraggerIndex);
-        auto win = (WinBase*)parent();
+        auto win = (WinBox*)parent();
         win->refreshCanvas(this);
-        win->update();
         event->accept();
     }
 }
@@ -170,8 +169,8 @@ void ShapeMosaic::mouseRelease(QMouseEvent* event)
     else {
         state = ShapeState::ready;
         pathRect = path.boundingRect().toRect().adjusted(-strokeWidth,-strokeWidth,strokeWidth,strokeWidth);
-        auto win = (WinBase*)(parent());
-        auto dpr = win->windowHandle()->devicePixelRatio();
+        auto win = (WinBox*)(parent());
+        auto dpr = win->dpr;
         auto tarRect = QRect(pathRect.topLeft()*dpr, pathRect.bottomRight()*dpr);
         imgPatch = mosaicImg.copy(tarRect);
         QPainter painter(&imgPatch);
@@ -208,7 +207,7 @@ void ShapeMosaic::mouseDrag(QMouseEvent* event)
     }
     else {
         path.lineTo(event->position());
-        auto win = (WinBase*)parent();
+        auto win = (WinBox*)parent();
         win->refreshCanvas(this, true);
         event->accept();
     }

@@ -122,7 +122,7 @@
     <ClCompile Include="Tool\PixelInfo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Win\WinBaseLayer.cpp">
+    <ClCompile Include="Win\WinBox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -234,7 +234,7 @@
     <QtMoc Include="Tool\PixelInfo.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="Win\WinBaseLayer.h">
+    <QtMoc Include="Win\WinBox.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

@@ -3,7 +3,7 @@
 #include <qtooltip.h>
 
 #include "../App/App.h"
-#include "../Win/WinBase.h"
+#include "../Win/WinBox.h"
 #include "ToolMain.h"
 #include "ToolSub.h"
 
@@ -160,7 +160,7 @@ void ToolMain::mousePressEvent(QMouseEvent* event)
         }
         else if (btn.name == "close")
         {
-            win->closeWin();
+            win->close();
             return;
         }
     }

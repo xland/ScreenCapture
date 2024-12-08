@@ -11,7 +11,7 @@
 
 #include "ToolBtn.h"
 
-class WinBase;
+class WinBox;
 class ToolMain : public QWidget
 {
 	Q_OBJECT
@@ -21,7 +21,7 @@ public:
 	static void InitData(const QJsonArray& arr,const QString& lang);
 public:
 	int selectIndex{ -1 };
-	WinBase* win;
+	WinBox* win;
 protected:
 	void paintEvent(QPaintEvent* event) override;
 	void mousePressEvent(QMouseEvent* event) override;

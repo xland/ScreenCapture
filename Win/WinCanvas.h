@@ -1,23 +1,22 @@
 #pragma once
 
-#include <QWidget>
+#include <QObject>
 #include <QTimer>
 
-#include "WinBaseLayer.h"
+#include "WinBase.h"
 
 class ShapeBase;
-class WinBaseLayer;
-class WinCanvas : public WinBaseLayer
+class WinCanvas : public WinBase
 {
 	Q_OBJECT
 public:
-	WinCanvas(QWidget *parent = nullptr);
+	WinCanvas(QObject* parent = nullptr);
 	~WinCanvas();
 	void refresh(ShapeBase* shape, bool forceUpdate = false);
 public:
 	ShapeBase* curShape;
 protected:
-	void paintEvent(QPaintEvent* event) override;
+
 private:
 	void onTimeout();
 	void initTimer();

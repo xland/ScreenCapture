@@ -2,12 +2,12 @@
 #include <QWindow>
 
 #include "ShapeMosaicLine.h"
-#include "../Win/WinBase.h"
+#include "../Win/WinBox.h"
 
 ShapeMosaicLine::ShapeMosaicLine(QObject* parent) : ShapeLineBase(parent)
 {
     
-    auto win = (WinBase*)parent;
+    auto win = (WinBox*)parent;
     createMosaicImg();
 
 }
@@ -60,7 +60,7 @@ void ShapeMosaicLine::mousePress(QMouseEvent* event)
     if (path.isEmpty() && hoverDraggerIndex >= 0) {
         imgPatch = QImage(0, 0);
         auto win = (WinBase*)parent();
-        win->repaint();
+        //win->repaint();
         createMosaicImg();
     }
     ShapeLineBase::mousePress(event);
@@ -85,7 +85,7 @@ void ShapeMosaicLine::erasePath(QImage* img)
 
 void ShapeMosaicLine::createMosaicImg()
 {
-    auto win = (WinBase*)parent();
+    auto win = (WinBox*)parent();
     //auto start = QTime::currentTime();
     winImg = new QImage(win->img);
     {

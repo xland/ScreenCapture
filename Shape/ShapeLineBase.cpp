@@ -5,13 +5,13 @@
 #include "ShapeLineBase.h"
 #include "../App/App.h"
 #include "../Tool/ToolSub.h"
-#include "../Win/WinBase.h"
+#include "../Win/WinBox.h"
 #include "../Win/WinCanvas.h"
 
 
 ShapeLineBase::ShapeLineBase(QObject* parent) : ShapeBase(parent)
 {
-    auto win = (WinBase*)(parent);
+    auto win = (WinBox*)(parent);
     strokeWidth = win->toolSub->getStrokeWidth();
 }
 
@@ -71,24 +71,24 @@ void ShapeLineBase::mouseMove(QMouseEvent* event)
     hoverDraggerIndex = -1;
     if (draggers[0].contains(pos)) {
         hoverDraggerIndex = 0;
-        auto win = (WinBase*)parent();
+        auto win = (WinBox*)parent();
         win->updateCursor(Qt::SizeAllCursor);
     }
     else if (draggers[1].contains(pos)) {
         hoverDraggerIndex = 1;
-        auto win = (WinBase*)parent();
+        auto win = (WinBox*)parent();
         win->updateCursor(Qt::SizeAllCursor);
     }
     if (hoverDraggerIndex == -1) {
         double distance = std::abs(coeffA * pos.x() + coeffB * pos.y() + coeffC) / diffVal;
         if (distance <= strokeWidth / 2) {
             hoverDraggerIndex = 8;
-            auto win = (WinBase*)parent();
+            auto win = (WinBox*)parent();
             win->updateCursor(Qt::SizeAllCursor);
         }
     }
     if (hoverDraggerIndex > -1) {
-        auto win = (WinBase*)parent();
+        auto win = (WinBox*)parent();
         win->refreshCanvas(this);
         event->accept();
     }
@@ -106,14 +106,14 @@ void ShapeLineBase::mousePress(QMouseEvent* event)
             path.moveTo(event->pos());
             path.lineTo(event->pos());
             state = ShapeState::sizing0;
-            auto win = (WinBase*)parent();
+            auto win = (WinBox*)parent();
             win->refreshCanvas(isEraser?nullptr:this,true);
         }
     }
     if (path.isEmpty() && hoverDraggerIndex >= 0) {
         pressPos = event->pos().toPointF();
         state = (ShapeState)((int)ShapeState::sizing0 + hoverDraggerIndex);
-        auto win = (WinBase*)parent();
+        auto win = (WinBox*)parent();
         win->refreshCanvas(isEraser ? nullptr : this, true);
         win->refreshBoard();
         event->accept();
@@ -130,7 +130,7 @@ void ShapeLineBase::mouseRelease(QMouseEvent* event)
             diffVal = std::sqrt(coeffA * coeffA + coeffB * coeffB);
             state = ShapeState::ready;
 
-            auto win = (WinBase*)parent();
+            auto win = (WinBox*)parent();
             win->refreshBoard();
             win->refreshCanvas(this,true);
             event->accept();
@@ -138,7 +138,7 @@ void ShapeLineBase::mouseRelease(QMouseEvent* event)
     }
     else {
         state = ShapeState::ready;
-        auto win = (WinBase*)parent();
+        auto win = (WinBox*)parent();
         win->refreshBoard();
         event->accept();
     }
@@ -166,7 +166,7 @@ void ShapeLineBase::mouseDrag(QMouseEvent* event)
     else {
         path.lineTo(event->position());
     }
-    auto win = (WinBase*)parent();
+    auto win = (WinBox*)parent();
     if (isEraser) {
         win->refreshBoard();
     }

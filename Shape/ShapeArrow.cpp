@@ -4,12 +4,12 @@
 #include "ShapeArrow.h"
 #include "../App/App.h"
 #include "../Tool/ToolSub.h"
-#include "../Win/WinBase.h"
+#include "../Win/WinBox.h"
 #include "../Win/WinCanvas.h"
 
 ShapeArrow::ShapeArrow(QObject* parent) : ShapeBase(parent)
 {
-    auto win = (WinBase*)parent;
+    auto win = (WinBox*)parent;
     isFill = win->toolSub->getSelectState("arrowFill");
     color = win->toolSub->getColor();
     arrowSize = win->toolSub->getStrokeWidth();
@@ -77,19 +77,19 @@ void ShapeArrow::mouseMove(QMouseEvent* event)
     hoverDraggerIndex = -1;
     if (draggers[0].contains(pos)) {
         hoverDraggerIndex = 0;
-        auto win = (WinBase*)parent();
+        auto win = (WinBox*)parent();
         win->updateCursor(Qt::SizeAllCursor);
     }
     else if (draggers[1].contains(pos)) {
         hoverDraggerIndex = 1;
-        auto win = (WinBase*)parent();
+        auto win = (WinBox*)parent();
         win->updateCursor(Qt::SizeAllCursor);
     }    
     if (hoverDraggerIndex == -1) {
         mouseOnShape(event);
     }
     if (hoverDraggerIndex > -1) {
-        auto win = (WinBase*)parent();
+        auto win = (WinBox*)parent();
         win->refreshCanvas(this);
         event->accept();
     }
@@ -104,7 +104,7 @@ void ShapeArrow::mousePress(QMouseEvent* event)
         pressPos = event->pos().toPointF();
         state = (ShapeState)((int)ShapeState::sizing0 + hoverDraggerIndex);
         event->accept();
-        auto win = (WinBase*)parent();
+        auto win = (WinBox*)parent();
         win->refreshBoard();
         win->refreshCanvas(this,true);
     }
@@ -114,7 +114,7 @@ void ShapeArrow::mouseRelease(QMouseEvent* event)
     if (state >= ShapeState::sizing0) {
         resetDragger();
         state = ShapeState::ready;
-        auto win = (WinBase*)parent();
+        auto win = (WinBox*)parent();
         win->refreshBoard();
         win->refreshCanvas(this,true);
         event->accept();
@@ -124,7 +124,7 @@ void ShapeArrow::mouseOnShape(QMouseEvent* event)
 {
     if (shape.containsPoint(event->pos(), Qt::WindingFill)) {
         hoverDraggerIndex = 8;
-        auto win = (WinBase*)parent();
+        auto win = (WinBox*)parent();
         win->updateCursor(Qt::SizeAllCursor);
     }
 }
@@ -157,7 +157,7 @@ void ShapeArrow::mouseDrag(QMouseEvent* event)
     //        shape.setWidth(shape.height());
     //    }
     //}
-    auto win = (WinBase*)parent();
+    auto win = (WinBox*)parent();
     win->refreshCanvas(this, true);
     event->accept();
 }

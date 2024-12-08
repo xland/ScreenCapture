@@ -1,23 +1,6 @@
-﻿#include <QEvent>
-#include <Windows.h>
-#include <QWindow>
-
+﻿#include <Windows.h>
+#include <windowsx.h>
 #include "WinBase.h"
-#include "WinCanvas.h"
-#include "WinBoard.h"
-#include "../Tool/ToolSub.h"
-#include "../Shape/ShapeBase.h"
-#include "../Shape/ShapeRect.h"
-#include "../Shape/ShapeEllipse.h"
-#include "../Shape/ShapeArrow.h"
-#include "../Shape/ShapeNumber.h"
-#include "../Shape/ShapeLine.h"
-#include "../Shape/ShapeText.h"
-#include "../Shape/ShapeEraserRect.h"
-#include "../Shape/ShapeEraserLine.h"
-#include "../Shape/ShapeMosaicRect.h"
-#include "../Shape/ShapeMosaicLine.h"
-
 
 WinBase::WinBase(QObject *parent):QObject(parent)
 {
@@ -25,148 +8,10 @@ WinBase::WinBase(QObject *parent):QObject(parent)
 
 WinBase::~WinBase()
 {
-    delete winCanvas;
 }
 
-ShapeBase* WinBase::addShape()
-{
-    for (auto it = shapes.begin(); it != shapes.end(); ) {
-        if ((*it)->state == ShapeState::temp) {
-            (*it)->deleteLater();
-            it = shapes.erase(it);
-        }
-        else {
-            ++it;
-        }
-    }
-    ShapeBase* shape;
-    if (state == State::rect) {
-        shape = new ShapeRect(this);
-    }
-    else if (state == State::ellipse) {
-        shape = new ShapeEllipse(this);
-    }
-    else if (state == State::arrow) {
-        shape = new ShapeArrow(this);
-    }
-    else if (state == State::number) {
-        shape = new ShapeNumber(this);
-    }
-    else if (state == State::line) {
-        shape = new ShapeLine(this);
-    }
-    else if (state == State::text) {
-        shape = new ShapeText(this);
-    }
-    else if (state == State::mosaic) {
-        auto isRect = toolSub->getSelectState("mosaicFill");
-        if (isRect) {
-            shape = new ShapeMosaicRect(this);
-        }
-        else {
-            shape = new ShapeMosaicLine(this);
-        }
-    }
-    else if (state == State::eraser) {
-        auto isRect = toolSub->getSelectState("eraserFill");
-        if (isRect) {
-            shape = new ShapeEraserRect(this);
-        }
-        else {
-            shape = new ShapeEraserLine(this);
-        }
-    }
-    else
-    {
-        return nullptr;
-    }
-    shapes.push_back(shape);
-    return shape;
-}
 
-void WinBase::mousePressOnShape(QMouseEvent* event)
-{
-    if (event->isAccepted()) return;
-    for (int i = shapes.size() - 1; i >= 0; i--)
-    {
-        if (event->isAccepted()) return;
-        shapes[i]->mousePress(event);
-    }
-    if (!event->isAccepted()) {
-        auto shape = addShape();
-        shape->mousePress(event); //不然新添加的Shape收不到鼠标按下事件
-    }
-}
-
-void WinBase::mouseMoveOnShape(QMouseEvent* event)
-{
-    if (event->isAccepted()) return;
-    for (int i = shapes.size() - 1; i >= 0; i--)
-    {
-        if (event->isAccepted()) return;
-        shapes[i]->mouseMove(event);
-    }
-    if (!event->isAccepted()) {
-        if (state == State::text) {
-            updateCursor(Qt::IBeamCursor);
-        }
-        else {
-            updateCursor(Qt::CrossCursor);
-        }
-        if (winCanvas) {
-            winCanvas->refresh(nullptr);
-        }
-    }
-}
-
-void WinBase::mouseDragOnShape(QMouseEvent* event)
-{
-    if (event->isAccepted()) return;
-    for (int i = shapes.size() - 1; i >= 0; i--)
-    {
-        if (event->isAccepted()) return;
-        shapes[i]->mouseDrag(event);
-    }
-}
-
-void WinBase::mouseReleaseOnShape(QMouseEvent* event)
-{
-    if (event->isAccepted()) return;
-    for (int i = shapes.size() - 1; i >= 0; i--)
-    {
-        if (event->isAccepted()) return;
-        shapes[i]->mouseRelease(event);
-    }
-    if (winCanvas && !event->isAccepted()) {
-        if (state != State::text) {
-            winCanvas->refresh(nullptr);
-        }
-    }
-}
 void WinBase::initWindow()
-{
-    regWinClass();
-    auto exStyle = WS_EX_LAYERED;  //| WS_EX_TOPMOST | WS_EX_TOOLWINDOW
-    auto style = WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_POPUP;
-    hwnd = CreateWindowEx(exStyle,L"ScreenCapture", L"ScreenCapture",style,x, y, w, h, NULL, NULL, GetModuleHandle(NULL), static_cast<LPVOID>(this));
-}
-void WinBase::showEvent(QShowEvent* event)
-{
-    auto hwnd = (HWND)winId();
-    SetWindowPos(hwnd, nullptr, x, y, w, h, SWP_NOZORDER | SWP_SHOWWINDOW);
-    QWidget::showEvent(event);
-    //auto screens = QGuiApplication::screens();
-    //for (auto screen : screens)
-    //{
-    //    auto pos = screen->geometry().topLeft();
-    //    if (pos.x() == 0 && pos.y() == 0)
-    //    {
-    //        this->setScreen(screen);
-    //        break;
-    //    }
-    //}
-}
-void WinBase::regWinClass()
 {
     static WNDCLASSEX wcx{};
     if (!wcx.lpfnWndProc) {
@@ -182,6 +27,9 @@ void WinBase::regWinClass()
         wcx.lpszClassName = L"ScreenCapture";
     }
     RegisterClassEx(&wcx);
+    auto exStyle = WS_EX_LAYERED;  //| WS_EX_TOPMOST | WS_EX_TOOLWINDOW
+    auto style = WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_POPUP;
+    hwnd = CreateWindowEx(exStyle,L"ScreenCapture", L"ScreenCapture",style,x, y, w, h, NULL, NULL, GetModuleHandle(NULL), static_cast<LPVOID>(this));
 }
 LRESULT WinBase::RouteWinMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -205,67 +53,58 @@ LRESULT WinBase::RouteWinMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPar
         }
         case WM_LBUTTONDOWN:
         {
-            IsMouseDown = true;
-            auto x = GET_X_LPARAM(lparam);
-            auto y = GET_Y_LPARAM(lparam);
-            return onMouseDown(x, y);
+            auto e = createMouseEvent(lParam);
+            obj->mousePress(&e);
+            break;
         }
         case WM_LBUTTONDBLCLK:
         {
-            auto x = GET_X_LPARAM(lparam);
-            auto y = GET_Y_LPARAM(lparam);
-            return onDoubleClick(x, y);
+            auto e = createMouseEvent(lParam);
+            obj->mouseDBClick(&e);
+            break;
         }
         case WM_LBUTTONUP:
         {
-            IsMouseDown = false;
-            auto x = GET_X_LPARAM(lparam);
-            auto y = GET_Y_LPARAM(lparam);
-            return onMouseUp(x, y);
+            auto e = createMouseEvent(lParam);
+            obj->mouseRelease(&e);
+            break;
         }
         case WM_MOUSEMOVE:
         {
-            auto x = GET_X_LPARAM(lparam);
-            auto y = GET_Y_LPARAM(lparam);
-            if (IsMouseDown) {
-                return onMouseDrag(x, y);
+            auto e = createMouseEvent(lParam);
+            if (wParam & MK_LBUTTON) {
+                obj->mouseDrag(&e);
             }
             else {
-                return onMouseMove(x, y);
+                obj->mouseMove(&e);
             }
+            break;
         }
         case WM_RBUTTONDOWN:
         {
-            auto x = GET_X_LPARAM(lparam);
-            auto y = GET_Y_LPARAM(lparam);
-            onMouseDownRight(x, y);
-            return true;
+            auto e = createMouseEvent(lParam);
+            obj->mousePressRight(&e);
+            break;
         }
         default:
         {
-            return obj->wndProc(hWnd, msg, wParam, lParam);
+            return DefWindowProc(hWnd, msg, wParam, lParam);
         }
     }
     return DefWindowProc(hWnd, msg, wParam, lParam);
 }
-LRESULT WinBase::wndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+QMouseEvent WinBase::createMouseEvent(LPARAM& lParam)
 {
-    return DefWindowProc(hWnd, msg, wParam, lParam);
+    auto x = GET_X_LPARAM(lParam);
+    auto y = GET_Y_LPARAM(lParam);
+    auto isCtrl = GetKeyState(VK_CONTROL) & 0x8000;
+    auto isShift = GetKeyState(VK_SHIFT) & 0x8000;
+    Qt::KeyboardModifiers mf = Qt::NoModifier;
+    if (isCtrl) mf = Qt::ControlModifier;
+    if (isShift) mf = mf | Qt::ShiftModifier;
+    return QMouseEvent(QEvent::MouseButtonPress, QPoint(x, y), QPoint(x, y),Qt::LeftButton, Qt::LeftButton, mf);
 }
-void WinBase::updateCursor(Qt::CursorShape cur)
-{
-    //if (cursor().shape() != cur) {
-    //    setCursor(cur);
-    //}
-}
-void WinBase::refreshBoard()
-{
-    winBoard->refresh();
-}
-void WinBase::refreshCanvas(ShapeBase* shape,bool force)
-{
-    winCanvas->refresh(shape, force);
-}
+
 
 void WinBase::show()
 {

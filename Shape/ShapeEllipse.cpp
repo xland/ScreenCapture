@@ -2,12 +2,12 @@
 
 #include "ShapeEllipse.h"
 #include "../App/App.h"
-#include "../Win/WinBase.h"
+#include "../Win/WinBox.h"
 #include "../Tool/ToolSub.h"
 
 ShapeEllipse::ShapeEllipse(QObject* parent) : ShapeRectBase(parent)
 {
-    auto win = (WinBase*)parent;
+    auto win = (WinBox*)parent;
     isFill = win->toolSub->getSelectState("ellipseFill");
     color = win->toolSub->getColor();
     strokeWidth = win->toolSub->getStrokeWidth();
@@ -33,7 +33,7 @@ void ShapeEllipse::mouseOnShape(QMouseEvent* event)
 {
     auto pos = event->pos();
     auto center = shape.center();
-    auto win = (WinBase*)parent();
+    auto win = (WinBox*)parent();
     if (isFill) {
         double normalizedX = (pos.x() - center.x()) / static_cast<double>(shape.width() / 2);
         double normalizedY = (pos.y() - center.y()) / static_cast<double>(shape.height() / 2);

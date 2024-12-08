@@ -5,7 +5,7 @@
 #include "ShapeNumber.h"
 #include "../App/App.h"
 #include "../Tool/ToolSub.h"
-#include "../Win/WinBase.h"
+#include "../Win/WinBox.h"
 #include "../Win/WinCanvas.h"
 
 namespace {
@@ -15,7 +15,7 @@ namespace {
 
 ShapeNumber::ShapeNumber(QObject* parent) : ShapeBase(parent)
 {
-    auto win = (WinBase*)parent;
+    auto win = (WinBox*)parent;
     draggers.push_back(QRect());
     isFill = win->toolSub->getSelectState("numberFill");
     color = win->toolSub->getColor();
@@ -87,14 +87,14 @@ void ShapeNumber::mouseMove(QMouseEvent* event)
     hoverDraggerIndex = -1;
     if (draggers[0].contains(pos)) {
         hoverDraggerIndex = 0;
-        auto win = (WinBase*)parent();
+        auto win = (WinBox*)parent();
         win->updateCursor(Qt::SizeAllCursor);
     }   
     if (hoverDraggerIndex == -1) {
         mouseOnShape(event);
     }
     if (hoverDraggerIndex > -1) {
-        auto win = (WinBase*)parent();
+        auto win = (WinBox*)parent();
         win->refreshCanvas(this);
         event->accept();
     }
@@ -109,7 +109,7 @@ void ShapeNumber::mousePress(QMouseEvent* event)
         pressPos = event->pos().toPointF();
         state = (ShapeState)((int)ShapeState::sizing0 + hoverDraggerIndex);
         event->accept();
-        auto win = (WinBase*)parent();
+        auto win = (WinBox*)parent();
         win->refreshBoard();
         win->refreshCanvas(this,true);
     }
@@ -119,7 +119,7 @@ void ShapeNumber::mouseRelease(QMouseEvent* event)
     if (state >= ShapeState::sizing0) {
         resetDragger();
         state = ShapeState::ready;
-        auto win = (WinBase*)parent();
+        auto win = (WinBox*)parent();
         win->refreshBoard();
         win->refreshCanvas(this,true);
         event->accept();
@@ -129,7 +129,7 @@ void ShapeNumber::mouseOnShape(QMouseEvent* event)
 {
     if (shape.contains(event->pos())) {
         hoverDraggerIndex = 8;
-        auto win = (WinBase*)parent();
+        auto win = (WinBox*)parent();
         win->updateCursor(Qt::SizeAllCursor);
     }
 }
@@ -150,7 +150,7 @@ void ShapeNumber::mouseDrag(QMouseEvent* event)
         endPos+=span;
         pressPos = pos;
     }
-    auto win = (WinBase*)parent();
+    auto win = (WinBox*)parent();
     win->refreshCanvas(this, true);
     event->accept();
 }

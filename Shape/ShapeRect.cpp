@@ -3,12 +3,12 @@
 #include "ShapeRect.h"
 #include "../App/App.h"
 #include "../Tool/ToolSub.h"
-#include "../Win/WinBase.h"
+#include "../Win/WinBox.h"
 #include "../Win/WinCanvas.h"
 
 ShapeRect::ShapeRect(QObject* parent) : ShapeRectBase(parent)
 {
-    auto win = (WinBase*)parent;
+    auto win = (WinBox*)parent;
     isFill = win->toolSub->getSelectState("rectFill");    
     color = win->toolSub->getColor();
     strokeWidth = win->toolSub->getStrokeWidth();

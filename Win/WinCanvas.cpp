@@ -5,7 +5,7 @@
 #include "WinBase.h"
 #include "../Shape/ShapeBase.h"
 
-WinCanvas::WinCanvas(QWidget *parent) : WinBaseLayer(parent)
+WinCanvas::WinCanvas(QObject *parent) : WinBase(parent)
 {
     initTimer();
 }
@@ -19,7 +19,7 @@ void WinCanvas::refresh(ShapeBase* shape, bool forceUpdate)
     if (shape) {
         if (shape != curShape) {
             curShape = shape;
-            update();
+            //update();
             return;
 		}        
     }
@@ -30,28 +30,28 @@ void WinCanvas::refresh(ShapeBase* shape, bool forceUpdate)
         }
     }
     if (forceUpdate) {
-        update();
+        //update();
     }
 }
 
-void WinCanvas::paintEvent(QPaintEvent* event)
-{
-    if (!curShape) return;
-    QPainter painter(this);
-    painter.setRenderHint(QPainter::Antialiasing, true);
-    painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
-    painter.setRenderHint(QPainter::TextAntialiasing, true);
-    if (curShape->state >= ShapeState::sizing0 && !curShape->isEraser) {
-        curShape->paint(&painter);
-    }
-    else {
-        curShape->paintDragger(&painter);
-    }
-}
+//void WinCanvas::paintEvent(QPaintEvent* event)
+//{
+//    if (!curShape) return;
+//    QPainter painter(this);
+//    painter.setRenderHint(QPainter::Antialiasing, true);
+//    painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
+//    painter.setRenderHint(QPainter::TextAntialiasing, true);
+//    if (curShape->state >= ShapeState::sizing0 && !curShape->isEraser) {
+//        curShape->paint(&painter);
+//    }
+//    else {
+//        curShape->paintDragger(&painter);
+//    }
+//}
 
 void WinCanvas::onTimeout()
 {
-    update();
+    //update();
 }
 
 void WinCanvas::initTimer()

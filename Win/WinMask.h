@@ -1,17 +1,17 @@
 #pragma once
 
-#include <QWidget>
+#include <QObject>
 #include <QImage>
 #include <QPainter>
 #include <QPaintEvent>
 
-#include "WinBaseLayer.h"
+#include "WinBase.h"
 
-class WinMask  : public WinBaseLayer
+class WinMask  : public WinBase
 {
 	Q_OBJECT
 public:
-	WinMask(QWidget* parent = nullptr);
+	WinMask(QObject* parent = nullptr);
 	~WinMask();
 	void initWinRects();
 	void mousePress(QMouseEvent* event);
@@ -21,13 +21,10 @@ public:
 public:
 	QRectF maskRect;
 protected:
-	void paintEvent(QPaintEvent* event) override;
 private:
 	void changeMaskRect(const QPoint& pos);
 	void changeMousePosState(const int& x, const int& y);
 	void changeMousePosState2(const int& x, const int& y);
-	QPoint getNativePos();
-	QPoint getNativeWinPos();
 private:
 	QImage img;
 	QPoint posPress;

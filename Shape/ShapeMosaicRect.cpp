@@ -2,12 +2,12 @@
 #include <QWindow>
 
 #include "ShapeMosaicRect.h"
-#include "../Win/WinBase.h"
+#include "../Win/WinBox.h"
 
 ShapeMosaicRect::ShapeMosaicRect(QObject* parent) : ShapeRectBase(parent)
 {
     isFill = true;
-    auto win = ((WinBase*)parent);
+    auto win = ((WinBox*)parent);
     QImage winImg(win->img);
     QPainter painter(&winImg);
     for (int i = 0; i < win->shapes.size(); i++)
@@ -29,7 +29,7 @@ void ShapeMosaicRect::paint(QPainter* painter)
         painter->drawImage(shape.topLeft(), imgPatch);
     }
     else {
-        auto dpr = ((WinBase*)parent())->windowHandle()->devicePixelRatio();
+        auto dpr = ((WinBase*)parent())->dpr;
         auto smallSize = mosaicRectSize / dpr;
         painter->setPen(Qt::NoPen);
         for (quint32 x = shape.left(); x < shape.right(); x += smallSize)
@@ -50,7 +50,7 @@ void ShapeMosaicRect::mouseRelease(QMouseEvent* event)
     ShapeRectBase::mouseRelease(event);
     imgPatch = QImage(shape.size(), QImage::Format_ARGB32);
     QPainter painter(&imgPatch);
-    auto dpr = ((WinBase*)parent())->windowHandle()->devicePixelRatio();
+    auto dpr = ((WinBase*)parent())->dpr;
     auto smallSize = mosaicRectSize / dpr;
     painter.setPen(Qt::NoPen);
     for (quint32 x = shape.left(); x < shape.right(); x += smallSize)

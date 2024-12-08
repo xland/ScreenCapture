@@ -1,7 +1,5 @@
 #pragma once
-#include <QWidget>
-#include <QScreen>
-#include "WinBase.h"
+#include "WinBox.h"
 
 
 class WinCanvas;
@@ -12,26 +10,27 @@ class ToolSub;
 class PixelInfo;
 class ShapeBase;
 
-class WinFull : public WinBase
+class WinFull : public WinBox
 {
 	Q_OBJECT
 public:
-	WinFull(QWidget* parent = nullptr);
+	WinFull(QObject* parent = nullptr);
 	~WinFull();
 	static void init();
-	static void dispose();
 	static WinFull* get();
 	void showToolMain() override;
 	void showToolSub() override;
-	void closeWin() override;
+	void close() override;
 public:
 	WinMask* winMask;
 	ToolColorPos* toolColorPos;
 protected:
-	void paintEvent(QPaintEvent* event) override;
-	void mousePressEvent(QMouseEvent* event) override;
-	void mouseMoveEvent(QMouseEvent* event) override;
-	void mouseReleaseEvent(QMouseEvent* event) override;
+	void mousePress(QMouseEvent* event) override;
+	void mousePressRight(QMouseEvent* event) override;
+	void mouseDBClick(QMouseEvent* event) override;
+	void mouseMove(QMouseEvent* event) override;
+	void mouseDrag(QMouseEvent* event) override;
+	void mouseRelease(QMouseEvent* event) override;
 private:
 	void initWinSizeByDesktopSize();
 	void initDesktopImg();

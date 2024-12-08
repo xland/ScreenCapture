@@ -35,7 +35,6 @@ QFont* App::getIconFont()
 }
 void App::dispose()
 {
-    WinFull::dispose();
     tray.reset();
     hotkey.reset();
     iconFont.reset();
