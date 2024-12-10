@@ -1,6 +1,7 @@
 ﻿#include <Windows.h>
 #include <windowsx.h>
 #include "WinBase.h"
+#include "../App/Util.h"
 
 WinBase::WinBase(QObject *parent):QObject(parent)
 {
@@ -53,25 +54,25 @@ LRESULT WinBase::RouteWinMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPar
         }
         case WM_LBUTTONDOWN:
         {
-            auto e = createMouseEvent(lParam, QEvent::MouseButtonPress);
+            auto e = Util::createMouseEvent(lParam, QEvent::MouseButtonPress);
             obj->mousePress(&e);
             break;
         }
         case WM_LBUTTONDBLCLK:
         {
-            auto e = createMouseEvent(lParam,QEvent::MouseButtonDblClick);
+            auto e = Util::createMouseEvent(lParam,QEvent::MouseButtonDblClick);
             obj->mouseDBClick(&e);
             break;
         }
         case WM_LBUTTONUP:
         {
-            auto e = createMouseEvent(lParam, QEvent::MouseButtonRelease);
+            auto e = Util::createMouseEvent(lParam, QEvent::MouseButtonRelease);
             obj->mouseRelease(&e);
             break;
         }
         case WM_MOUSEMOVE:
         {
-            auto e = createMouseEvent(lParam, QEvent::MouseMove);
+            auto e = Util::createMouseEvent(lParam, QEvent::MouseMove);
             if (wParam & MK_LBUTTON) {
                 obj->mouseDrag(&e);
             }
@@ -82,7 +83,7 @@ LRESULT WinBase::RouteWinMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPar
         }
         case WM_RBUTTONDOWN:
         {
-            auto e = createMouseEvent(lParam, QEvent::MouseButtonPress, Qt::MouseButton::RightButton);
+            auto e = Util::createMouseEvent(lParam, QEvent::MouseButtonPress, Qt::MouseButton::RightButton);
             obj->mousePressRight(&e);
             break;
         }
@@ -104,21 +105,15 @@ QImage WinBase::grab(const QRect& rect)
 {
     return img.copy(rect);
 }
+void WinBase::move(const int& x, const int& y)
+{
+    this->x = x;
+    this->y = y;
+    SetWindowPos(hwnd, nullptr, x, y, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
+}
 void WinBase::releaseImg()
 {
     img = QImage();
-}
-QMouseEvent WinBase::createMouseEvent(const LPARAM& lParam, const QEvent::Type& type, const Qt::MouseButton& btn)
-{
-    auto x = GET_X_LPARAM(lParam);
-    auto y = GET_Y_LPARAM(lParam);
-    auto isCtrl = GetKeyState(VK_CONTROL) & 0x8000;
-    auto isShift = GetKeyState(VK_SHIFT) & 0x8000;
-    Qt::KeyboardModifiers mf = Qt::NoModifier;
-    if (isCtrl) mf = Qt::ControlModifier;
-    if (isShift) mf = mf | Qt::ShiftModifier;
-    QPointF p(x, y);
-    return QMouseEvent(QEvent::MouseButtonPress, p, p,btn, btn, mf);
 }
 
 

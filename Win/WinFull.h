@@ -16,7 +16,6 @@ public:
 	WinFull(QObject* parent = nullptr);
 	~WinFull();
 	static void init();
-	static WinFull* get();
 	void showToolMain() override;
 	void showToolSub() override;
 	void close() override;

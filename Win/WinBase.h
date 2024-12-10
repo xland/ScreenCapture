@@ -17,6 +17,8 @@ public:
 	void releaseImg();
 	QImage grab() { return QImage(); };
 	QImage grab(const QRect& rect);
+
+	void move(const int& x, const int& y);
 public:
 	int x, y, w, h;
 	QImage img;
@@ -27,12 +29,12 @@ protected:
 	static LRESULT CALLBACK RouteWinMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 	void initSizeByWin(WinBase* win);
 
-	virtual void mousePress(QMouseEvent* event) = 0;
+	virtual void mousePress(QMouseEvent* event){};
 	virtual void mousePressRight(QMouseEvent* event) {};
 	virtual void mouseDBClick(QMouseEvent* event) {};
-	virtual void mouseMove(QMouseEvent* event) = 0;
-	virtual void mouseDrag(QMouseEvent* event) = 0;
-	virtual void mouseRelease(QMouseEvent* event) = 0;
+	virtual void mouseMove(QMouseEvent* event){};
+	virtual void mouseDrag(QMouseEvent* event){};
+	virtual void mouseRelease(QMouseEvent* event){};
 private:
-	static QMouseEvent createMouseEvent(const LPARAM& lParam,const QEvent::Type& type,const Qt::MouseButton& btn = Qt::MouseButton::LeftButton);
+	
 };

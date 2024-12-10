@@ -90,7 +90,7 @@ void WinFull::initDesktopImg()
 void WinFull::close()
 {
     if (pixelInfo) {
-        pixelInfo->close();
+        //pixelInfo->close();
     }
     if (winMask) {
         delete winMask;
@@ -136,7 +136,7 @@ void WinFull::mouseMove(QMouseEvent* event)
 {
     event->ignore();
     //winMask->mouseMove(event);
-    //if(pixelInfo) pixelInfo->mouseMove(event);
+    if(pixelInfo) pixelInfo->mouseMove(event);
     //mouseMoveOnShape(event);
 }
 

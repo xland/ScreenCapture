@@ -19,6 +19,7 @@ namespace {
     std::unique_ptr<QFont> iconFont;
     std::unique_ptr<QHotkey> hotkey;
     std::unique_ptr<Tray> tray;
+    QList<QRect> screens;
 
 }
 void App::init()
@@ -26,13 +27,13 @@ void App::init()
     initConfig();
     start();
 }
-App* App::get()
-{
-    return app.get();
-}
 QFont* App::getIconFont()
 {
     return iconFont.get();
+}
+QList<QRect>* App::getScreens()
+{
+    return &screens;
 }
 void App::dispose()
 {
@@ -43,6 +44,7 @@ void App::dispose()
 }
 void App::start()
 {
+    initScreens();
     WinFull::init();
 }
 void App::initConfig()
@@ -106,4 +108,18 @@ void App::initTray(const QJsonObject& obj, const QString& lang)
     if (obj["tray"].isObject()) {
         tray = std::make_unique<Tray>(obj["tray"].toObject(), lang);
     }
+}
+void App::initScreens() {
+    screens.clear();
+    EnumDisplayMonitors(NULL, NULL, [](HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMonitor, LPARAM lParam)
+        {
+            MONITORINFO info;
+            info.cbSize = sizeof(MONITORINFO);
+            GetMonitorInfo(hMonitor, &info);
+            auto self = (QList<QRect>*)lParam;
+            QPoint leftTop(info.rcMonitor.left,info.rcMonitor.top);
+            QPoint rightBottom(info.rcMonitor.right,info.rcMonitor.bottom);
+            self->push_back(QRect(leftTop, rightBottom));
+            return TRUE;
+        }, (LPARAM)&screens);
 }
