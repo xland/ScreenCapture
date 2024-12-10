@@ -16,7 +16,7 @@
 WinFull::WinFull(QObject* parent) : WinBox(parent)
 {
     initWinSizeByDesktopSize();
-    initDesktopImg();
+    //initDesktopImg();
     initWindow(false);
     show();
 }
@@ -27,8 +27,8 @@ WinFull::~WinFull()
 void WinFull::init()
 {
     auto winFull = new WinFull();
-    winFull->winMask = new WinMask(winFull);
-    winFull->pixelInfo = new PixelInfo(winFull);
+    //winFull->winMask = new WinMask(winFull);
+    //winFull->pixelInfo = new PixelInfo(winFull);
 }
 void WinFull::showToolMain()
 {
@@ -80,7 +80,6 @@ void WinFull::initDesktopImg()
         if (pos.x() == 0 && pos.y() == 0)
         {
             dpr = screen->devicePixelRatio();
-            auto a = this;
             img = screen->grabWindow(0, x / dpr, y / dpr, w / dpr, h / dpr)
                 .toImage().convertToFormat(QImage::Format_ARGB32);
             break;
@@ -92,8 +91,6 @@ void WinFull::close()
 {
     if (pixelInfo) {
         pixelInfo->close();
-        delete pixelInfo;
-        pixelInfo = nullptr;
     }
     if (winMask) {
         delete winMask;
@@ -138,9 +135,9 @@ void WinFull::mouseDBClick(QMouseEvent* event)
 void WinFull::mouseMove(QMouseEvent* event)
 {
     event->ignore();
-    winMask->mouseMove(event);
-    pixelInfo->mouseMove(event);
-    mouseMoveOnShape(event);
+    //winMask->mouseMove(event);
+    //if(pixelInfo) pixelInfo->mouseMove(event);
+    //mouseMoveOnShape(event);
 }
 
 void WinFull::mouseDrag(QMouseEvent* event)

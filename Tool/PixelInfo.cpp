@@ -98,4 +98,10 @@ void PixelInfo::paintEvent(QPaintEvent* event)
     painter.drawRect(rect());
 }
 
+void PixelInfo::closeEvent(QCloseEvent* event)
+{
+    win->releaseImg();
+    deleteLater();
+}
+
 

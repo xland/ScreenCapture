@@ -13,7 +13,9 @@ public:
 	void mouseMove(QMouseEvent* event);
 protected:
 	void paintEvent(QPaintEvent* event) override;
-	bool posInScreen(const int& x,const int& y);
+	void closeEvent(QCloseEvent* event) override;
+private:
+	bool posInScreen(const int& x, const int& y);
 private:
 	WinFull* win;
 	QPoint nativePos;

@@ -14,6 +14,7 @@ public:
 	WinBase(QObject* parent = nullptr);
 	virtual ~WinBase();
 	void show();
+	void releaseImg();
 	QImage grab() { return QImage(); };
 	QImage grab(const QRect& rect);
 public:
@@ -24,7 +25,6 @@ protected:
 	void initWindow(bool isTransparent=true);
 	void paint();
 	static LRESULT CALLBACK RouteWinMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-	void releaseImg();
 	void initSizeByWin(WinBase* win);
 
 	virtual void mousePress(QMouseEvent* event) = 0;

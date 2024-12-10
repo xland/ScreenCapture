@@ -29,7 +29,8 @@ void WinMask::mousePress(QMouseEvent* event)
     {
         posPress = event->pos();
         win->state = State::mask;
-        win->pixelInfo->hide();
+        win->pixelInfo->close();
+        win->pixelInfo = nullptr;
         event->accept();
         return;
     }
@@ -90,20 +91,20 @@ void WinMask::mouseDrag(QMouseEvent* event)
 
 void WinMask::mouseRelease(QMouseEvent* event)
 {
-    auto father = (WinFull*)parent();
-    if (father->state == State::mask)
+    auto win = (WinFull*)parent();
+    if (win->state == State::mask)
     {
-        father->state = State::tool;
-        father->showToolMain();
+        win->state = State::tool;
+        win->showToolMain();
         update(true);
     }
-    else if (father->state == State::tool)
+    else if (win->state == State::tool)
     {
-        father->showToolMain();
+        win->showToolMain();
     }
-    if (father->state > State::tool && mousePosState > 0) {
-        father->showToolMain();
-        father->showToolSub();
+    if (win->state > State::tool && mousePosState > 0) {
+        win->showToolMain();
+        win->showToolSub();
         return;
     }
 }
