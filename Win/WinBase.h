@@ -17,7 +17,7 @@ public:
 	void releaseImg();
 	QImage grab() { return QImage(); };
 	QImage grab(const QRect& rect);
-
+	void raise();
 	void move(const int& x, const int& y);
 public:
 	int x, y, w, h;

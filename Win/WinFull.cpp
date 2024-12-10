@@ -16,7 +16,7 @@
 WinFull::WinFull(QObject* parent) : WinBox(parent)
 {
     initWinSizeByDesktopSize();
-    //initDesktopImg();
+    initDesktopImg();
     initWindow(false);
     show();
 }
@@ -27,14 +27,13 @@ WinFull::~WinFull()
 void WinFull::init()
 {
     auto winFull = new WinFull();
-    //winFull->winMask = new WinMask(winFull);
-    //winFull->pixelInfo = new PixelInfo(winFull);
+    winFull->winMask = new WinMask(winFull);
+    winFull->pixelInfo = new PixelInfo(winFull);
 }
 void WinFull::showToolMain()
 {
     if (!toolMain) {
-        toolMain = new ToolMain();
-        toolMain->win = this;
+        toolMain = new ToolMain(this);
     }
     toolMain->show();
     toolMain->raise();
@@ -47,14 +46,11 @@ void WinFull::showToolMain()
 void WinFull::showToolSub()
 {
     if (!toolSub) {
-        //winBoard = new WinBoard();
-        //winBoard->init(this);
-        //winCanvas = new WinCanvas();
-        //winCanvas->init(this);
-        //winMask->raise();
-        //toolMain->raise();
-        //toolSub = new ToolSub();
-        //toolSub->win = this;
+        winBoard = new WinBoard(this);
+        winCanvas = new WinCanvas(this);
+        winMask->raise();
+        toolMain->raise();
+        toolSub = new ToolSub(this);
     }
     if (toolSub->isVisible()) {
         toolSub->hide();
@@ -135,9 +131,9 @@ void WinFull::mouseDBClick(QMouseEvent* event)
 void WinFull::mouseMove(QMouseEvent* event)
 {
     event->ignore();
-    //winMask->mouseMove(event);
+    winMask->mouseMove(event);
     if(pixelInfo) pixelInfo->mouseMove(event);
-    //mouseMoveOnShape(event);
+    mouseMoveOnShape(event);
 }
 
 void WinFull::mouseDrag(QMouseEvent* event)

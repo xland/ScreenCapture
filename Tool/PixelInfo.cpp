@@ -74,7 +74,7 @@ void PixelInfo::paintEvent(QPaintEvent* event)
     auto dpr = windowHandle()->devicePixelRatio();
     QRect tarRect((nativePos.x() - 20), (nativePos.y() - 10), 40, 20);
     auto img = win->img.copy(tarRect);
-    painter.drawImage(0, 0, img.scaled(200 * dpr, 100 * dpr));
+    painter.drawImage(QRect(0,0,200,100),img);
     //十字架准星
     QPainterPath path;
     path.addRect(QRect(0, 46, 200, 8));

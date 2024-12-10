@@ -12,7 +12,7 @@ namespace {
 	std::vector<std::tuple<int, int, int>> btnSpanIndexs;
 }
 
-ToolSub::ToolSub(QWidget *parent) : QWidget(parent)
+ToolSub::ToolSub(WinBox* win, QWidget *parent) : QWidget(parent),win{win}
 {
 	strokeCtrl = new StrokeCtrl(this);
 	colorCtrl = new ColorCtrl(this);

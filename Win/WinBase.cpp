@@ -105,6 +105,11 @@ QImage WinBase::grab(const QRect& rect)
 {
     return img.copy(rect);
 }
+
+void WinBase::raise()
+{
+    SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+}
 void WinBase::move(const int& x, const int& y)
 {
     this->x = x;

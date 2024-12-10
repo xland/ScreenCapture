@@ -10,7 +10,7 @@
 
 WinMask::WinMask(QObject* parent) : WinBase(parent)
 {
-    //initWinRects();
+    initWinRects();
     auto winFull = (WinFull*)parent;
     maskStroke = maskStroke * winFull->dpr;
     initSizeByWin(winFull);
@@ -29,7 +29,7 @@ void WinMask::mousePress(QMouseEvent* event)
     {
         posPress = event->pos();
         win->state = State::mask;
-        //win->pixelInfo->close();
+        win->pixelInfo->close();
         win->pixelInfo = nullptr;
         event->accept();
         return;
@@ -113,7 +113,6 @@ void WinMask::mouseMove(QMouseEvent* event)
 {
     auto father = (WinFull*)parent();
     auto pos = event->pos();
-    qDebug() << "pos mouse move:" << pos.x() << pos.y();
     if (father->state == State::start)
     {
         event->accept();    
@@ -145,7 +144,6 @@ void WinMask::mouseMove(QMouseEvent* event)
 }
 void WinMask::update(bool isMouseup)
 {
-    return;
     if (img.isNull()) {
         auto father = (WinFull*)parent(); 
         img = QImage(w, h, QImage::Format_ARGB32);

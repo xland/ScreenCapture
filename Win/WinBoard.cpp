@@ -4,10 +4,15 @@
 
 #include "WinBoard.h"
 #include "WinBase.h"
+#include "WinFull.h"
 #include "../Shape/ShapeBase.h"
 
 WinBoard::WinBoard(QObject *parent) : WinBase(parent)
 {
+    auto winFull = (WinFull*)parent;
+    initSizeByWin(winFull);
+    initWindow();
+    show();
 }
 
 WinBoard::~WinBoard()

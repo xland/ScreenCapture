@@ -13,10 +13,9 @@ std::vector<ToolBtn> btns;
 std::vector<unsigned> spliterIndexs;
 }
 
-ToolMain::ToolMain(QWidget* parent) : QWidget(parent)
+ToolMain::ToolMain(WinBox* win, QWidget* parent) : QWidget(parent),win{win}
 {
     setFixedSize(btns.size()*btnW + 8, 32);
-    //setCursor(Qt::PointingHandCursor);
     setMouseTracking(true);
     setVisible(false);
     setAutoFillBackground(false);
