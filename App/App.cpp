@@ -19,6 +19,7 @@ namespace {
     std::unique_ptr<QFont> iconFont;
     std::unique_ptr<QHotkey> hotkey;
     std::unique_ptr<Tray> tray;
+
 }
 void App::init()
 {

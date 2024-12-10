@@ -29,7 +29,7 @@ void ShapeMosaicRect::paint(QPainter* painter)
         painter->drawImage(shape.topLeft(), imgPatch);
     }
     else {
-        auto dpr = ((WinBase*)parent())->dpr;
+        auto dpr = 1.5; //todo
         auto smallSize = mosaicRectSize / dpr;
         painter->setPen(Qt::NoPen);
         for (quint32 x = shape.left(); x < shape.right(); x += smallSize)
@@ -50,7 +50,7 @@ void ShapeMosaicRect::mouseRelease(QMouseEvent* event)
     ShapeRectBase::mouseRelease(event);
     imgPatch = QImage(shape.size(), QImage::Format_ARGB32);
     QPainter painter(&imgPatch);
-    auto dpr = ((WinBase*)parent())->dpr;
+    auto dpr = 1.5; //todo
     auto smallSize = mosaicRectSize / dpr;
     painter.setPen(Qt::NoPen);
     for (quint32 x = shape.left(); x < shape.right(); x += smallSize)

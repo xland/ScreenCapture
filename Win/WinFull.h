@@ -4,7 +4,6 @@
 
 class WinCanvas;
 class WinMask;
-class ToolColorPos;
 class ToolMain;
 class ToolSub;
 class PixelInfo;
@@ -22,8 +21,8 @@ public:
 	void showToolSub() override;
 	void close() override;
 public:
+	qreal dpr{ 1.0 };
 	WinMask* winMask;
-	ToolColorPos* toolColorPos;
 protected:
 	void mousePress(QMouseEvent* event) override;
 	void mousePressRight(QMouseEvent* event) override;

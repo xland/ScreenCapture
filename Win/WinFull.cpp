@@ -13,15 +13,12 @@
 #include "../Tool/ToolSub.h"
 #include "../Tool/PixelInfo.h"
 
-namespace {
-    WinFull* winFull;
-}
-
 WinFull::WinFull(QObject* parent) : WinBox(parent)
 {
     initWinSizeByDesktopSize();
     initDesktopImg();
-    initWindow();
+    initWindow(false);
+    show();
 }
 WinFull::~WinFull()
 {
@@ -29,16 +26,9 @@ WinFull::~WinFull()
 }
 void WinFull::init()
 {
-    winFull = new WinFull();
-    winFull->show();
-    winFull->img = QImage();
+    auto winFull = new WinFull();
     winFull->winMask = new WinMask(winFull);
-    //winFull->winMask->initWinRects();
-    //winFull->pixelInfo = new PixelInfo();
-}
-WinFull* WinFull::get()
-{
-    return winFull;
+    winFull->pixelInfo = new PixelInfo(winFull);
 }
 void WinFull::showToolMain()
 {
@@ -90,6 +80,7 @@ void WinFull::initDesktopImg()
         if (pos.x() == 0 && pos.y() == 0)
         {
             dpr = screen->devicePixelRatio();
+            auto a = this;
             img = screen->grabWindow(0, x / dpr, y / dpr, w / dpr, h / dpr)
                 .toImage().convertToFormat(QImage::Format_ARGB32);
             break;
@@ -126,8 +117,7 @@ void WinFull::close()
         delete toolSub;
         toolSub = nullptr;
     }
-    delete winFull;
-    winFull = nullptr;
+    deleteLater();
 }
 
 void WinFull::mousePress(QMouseEvent* event)

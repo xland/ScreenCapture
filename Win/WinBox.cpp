@@ -88,7 +88,7 @@ void WinBox::mousePressOnShape(QMouseEvent* event)
     }
     if (!event->isAccepted()) {
         auto shape = addShape();
-        shape->mousePress(event); //²»È»ĞÂÌí¼ÓµÄShapeÊÕ²»µ½Êó±ê°´ÏÂÊÂ¼ş
+        shape->mousePress(event); //ä¸ç„¶æ–°æ·»åŠ çš„Shapeæ”¶ä¸åˆ°é¼ æ ‡æŒ‰ä¸‹äº‹ä»¶
     }
 }
 

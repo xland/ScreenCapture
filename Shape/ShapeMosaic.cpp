@@ -35,7 +35,7 @@ void ShapeMosaic::initMosaicBgImg()
     //auto start = QTime::currentTime();
     auto win = (WinBox*)parent();
     winImg = win->grab().convertToFormat(QImage::Format_ARGB32);
-    auto dpr = win->dpr;
+    auto dpr = 1.5; //todo
     winImg.setDevicePixelRatio(dpr);
     {
         QPainter winPainter(&winImg);
@@ -170,7 +170,7 @@ void ShapeMosaic::mouseRelease(QMouseEvent* event)
         state = ShapeState::ready;
         pathRect = path.boundingRect().toRect().adjusted(-strokeWidth,-strokeWidth,strokeWidth,strokeWidth);
         auto win = (WinBox*)(parent());
-        auto dpr = win->dpr;
+        auto dpr = 1.5; //todo
         auto tarRect = QRect(pathRect.topLeft()*dpr, pathRect.bottomRight()*dpr);
         imgPatch = mosaicImg.copy(tarRect);
         QPainter painter(&imgPatch);

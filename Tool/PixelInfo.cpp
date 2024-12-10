@@ -1,4 +1,5 @@
 #include <QMouseEvent>
+#include <QWindow>
 #include <QPainter>
 #include <QScreen>
 #include <QPainterPath>
@@ -7,7 +8,7 @@
 #include "PixelInfo.h"
 #include "../Win/WinFull.h"
 
-PixelInfo::PixelInfo(QWidget* parent) : QWidget(parent)
+PixelInfo::PixelInfo(WinFull* win, QWidget* parent) : QWidget(parent),win{win}
 {
     setAutoFillBackground(false);
     setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::Tool);
@@ -42,39 +43,38 @@ bool PixelInfo::posInScreen(const int& x, const int& y)
 
 void PixelInfo::mouseMove(QMouseEvent* event)
 {
-    //if (isVisible()) {
-    //    QPoint pos = QCursor::pos();
-    //    if (posInScreen(pos.x() + width() + 10, pos.y() + height() + 10)) {
-    //        move(pos.x() + 10, pos.y() + 10);
-    //    }
-    //    else if(posInScreen(pos.x() - width() - 10, pos.y() + height() + 10)) {
-    //        move(pos.x() - 10 - width(), pos.y() + 10);
-    //    }
-    //    else if (posInScreen(pos.x() + width() + 10, pos.y() - height() - 10)) {
-    //        move(pos.x() + 10, pos.y() - height() - 10);
-    //    }
-    //    else if (posInScreen(pos.x() - width() - 10, pos.y() - height() - 10)) {
-    //        move(pos.x() - 10 - width(), pos.y() - height() - 10);
-    //    }
-    //    update();
-    //}
+    if (isVisible()) {
+        QPoint pos = QCursor::pos();
+        if (posInScreen(pos.x() + width() + 10, pos.y() + height() + 10)) {
+            move(pos.x() + 10, pos.y() + 10);
+        }
+        else if(posInScreen(pos.x() - width() - 10, pos.y() + height() + 10)) {
+            move(pos.x() - 10 - width(), pos.y() + 10);
+        }
+        else if (posInScreen(pos.x() + width() + 10, pos.y() - height() - 10)) {
+            move(pos.x() + 10, pos.y() - height() - 10);
+        }
+        else if (posInScreen(pos.x() - width() - 10, pos.y() - height() - 10)) {
+            move(pos.x() - 10 - width(), pos.y() - height() - 10);
+        }
+        nativePos = event->pos();
+        update();
+    }
 }
 
 void PixelInfo::paintEvent(QPaintEvent* event)
 {
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
-    auto win = WinFull::get();
-    auto dpr = win->img.devicePixelRatio();
-    QPoint pos = QCursor::pos();
-    //pos = win->mapFromGlobal(pos);
-    QRect tarRect((pos.x() - 20), (pos.y() - 10), 40, 20);
-    {
-        //放大镜
-        auto img = win->grab(tarRect);
-        img = img.scaled(200 * dpr, 100 * dpr);
-        painter.drawImage(0, 0, img);
-    }
+    //信息框背景
+    painter.setPen(Qt::NoPen);
+    painter.setBrush(QColor(0, 0, 0, 168));
+    painter.drawRect(rect());
+    //放大后的目标矩形区域的图像
+    auto dpr = windowHandle()->devicePixelRatio();
+    QRect tarRect((nativePos.x() - 20), (nativePos.y() - 10), 40, 20);
+    auto img = win->img.copy(tarRect);
+    painter.drawImage(0, 0, img.scaled(200 * dpr, 100 * dpr));
     //十字架准星
     QPainterPath path;
     path.addRect(QRect(0, 46, 200, 8));
@@ -82,23 +82,20 @@ void PixelInfo::paintEvent(QPaintEvent* event)
     painter.setPen(Qt::NoPen);
     painter.setBrush(QColor(22, 119, 255, 110));
     painter.drawPath(path);
-    //边框
-    painter.setPen(QPen(QColor(0,0,0,168), 1));
-    painter.setBrush(Qt::NoBrush);
-    painter.drawRect(QRect(0, 0,200,100));
-    //信息框背景
-    painter.setBrush(QColor(0, 0, 0, 168));
-    painter.drawRect(QRect(0, 100, 200, 80));
     //信息框信息
     painter.setBrush(Qt::NoBrush);
     painter.setPen(Qt::white);
     QFont font = painter.font();
     font.setPointSize(8);
     painter.setFont(font);
-    auto tarColor = win->img.pixelColor(pos.x() * dpr, pos.y() * dpr);
-    painter.drawText(QPoint(8, 118), QString("POS (Ctrl+P) : X:%1 Y:%2").arg(std::round(pos.x()*dpr)).arg(std::round(pos.y()*dpr)));
+    auto tarColor = img.pixelColor(img.rect().center());
+    painter.drawText(QPoint(8, 118), QString("POS (Ctrl+P) : X:%1 Y:%2").arg(nativePos.x()).arg(nativePos.y()));
     painter.drawText(QPoint(8, 138), QString("RGB (Ctrl+R) : %1,%2,%3").arg(tarColor.red()).arg(tarColor.green()).arg(tarColor.blue()));
     painter.drawText(QPoint(8, 158), QString("HEX (Ctrl+H) : %1").arg(tarColor.name().toUpper()));
+    //边框
+    painter.setPen(QPen(QColor(0, 0, 0, 168), 1));
+    painter.setBrush(Qt::NoBrush);
+    painter.drawRect(rect());
 }
 
 

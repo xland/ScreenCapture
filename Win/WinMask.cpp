@@ -10,6 +10,12 @@
 
 WinMask::WinMask(QObject* parent) : WinBase(parent)
 {
+    initWinRects();
+    auto winFull = (WinFull*)parent;
+    maskStroke = maskStroke * winFull->dpr;
+    initSizeByWin(winFull);
+    initWindow();
+    show();
 }
 
 WinMask::~WinMask()
@@ -23,14 +29,14 @@ void WinMask::mousePress(QMouseEvent* event)
     {
         posPress = event->pos();
         father->state = State::mask;
-        father->pixelInfo->hide();
+        //father->pixelInfo->hide();
         event->accept();
         return;
     }
     if (father->state == State::tool)
     {
         posPress = event->pos();
-        father->toolMain->hide();
+        //father->toolMain->hide();
         if (mousePosState != 0)
         {
             changeMaskRect(posPress);
@@ -40,8 +46,8 @@ void WinMask::mousePress(QMouseEvent* event)
     }
     if (father->state > State::tool && mousePosState > 0) {
         posPress = event->pos();
-        father->toolMain->hide();
-        father->toolSub->hide();
+        //father->toolMain->hide();
+        //father->toolSub->hide();
         event->accept();
         return;
     }
@@ -55,7 +61,7 @@ void WinMask::mouseDrag(QMouseEvent* event)
         auto pos = event->pos();
         maskRect.setCoords(posPress.x(), posPress.y(), pos.x(),pos.y());
         maskRect = maskRect.normalized();
-        //update();
+        update();
         return;
     }
     if (father->state == State::tool)
@@ -66,7 +72,7 @@ void WinMask::mouseDrag(QMouseEvent* event)
             auto span = pos - posPress;
             maskRect.moveTo(maskRect.topLeft() + span);
             posPress = pos;
-            //update();
+            update();
         }
         else
         {
@@ -89,38 +95,33 @@ void WinMask::mouseRelease(QMouseEvent* event)
     {
         father->state = State::tool;
         father->showToolMain();
-        img = QImage();  //196M -> 148M
-        qDebug() << "img release";
+        update(true);
     }
     else if (father->state == State::tool)
     {
         father->showToolMain();
-        img = QImage();
-        qDebug() << "img release";
     }
     if (father->state > State::tool && mousePosState > 0) {
         father->showToolMain();
         father->showToolSub();
-        img = QImage();
-        qDebug() << "img release";
         return;
     }
 }
 
 void WinMask::mouseMove(QMouseEvent* event)
 {
-    /*if (father->state == State::start)
+    auto father = (WinFull*)parent();
+    auto pos = event->pos();
+    qDebug() << "pos mouse move:" << pos.x() << pos.y();
+    if (father->state == State::start)
     {
         event->accept();    
         for (int i = 0; i < winNativeRects.size(); i++)
         {
-            if (winNativeRects[i].contains(getNativePos())) {
+            if (winNativeRects[i].contains(event->pos())) {
                 if (mouseInRectIndex == i) return;
                 mouseInRectIndex = i;
-                auto& winRect = winNativeRects[i];
-                QPoint lt(winNativeRects[i].left()-father->x, winNativeRects[i].top()-father->y);
-                QPoint rb(winNativeRects[i].right()-father->x, winNativeRects[i].bottom()-father->y);
-                maskRect = QRectF(lt, rb);
+                maskRect = winNativeRects[i];
                 update();
                 return;
             }
@@ -128,40 +129,60 @@ void WinMask::mouseMove(QMouseEvent* event)
     }
     else if (father->state == State::tool)
     {
-        auto pos = getNativeWinPos();
+        auto pos = event->pos();
         changeMousePosState(pos.x(), pos.y());
         event->accept();
     }
     else if (father->state > State::tool) {
-        auto pos = getNativeWinPos();
+        auto pos = event->pos();
         changeMousePosState2(pos.x(), pos.y());
         if (mousePosState != -1) {
             event->accept();
             return;
         }
-    }*/
+    }
 }
-//void WinMask::paintEvent(QPaintEvent* event)
-//{
-//    if (img.isNull()) {
-//        img = father->img.copy();
-//        qDebug() << "img create";
-//    }
-//    img.setDevicePixelRatio(1.0);
-//    img.fill(QColor(0, 0, 0, 120));
-//    QPainter p(&img);
-//    p.setRenderHint(QPainter::Antialiasing, true);
-//    auto sw = maskStroke * father->dpr;
-//    p.setPen(QPen(QBrush(QColor(22, 119, 255)), sw));
-//    p.setBrush(Qt::NoBrush);
-//    p.drawRect(maskRect.adjusted(-sw, -sw, sw, sw));
-//    p.setCompositionMode(QPainter::CompositionMode_Clear);
-//    p.setBrush(Qt::transparent);
-//    p.drawRect(maskRect);
-//    QPainter painter(this);
-//    img.setDevicePixelRatio(father->dpr);
-//    painter.drawImage(0,0,img);
-//}
+void WinMask::update(bool isMouseup)
+{
+    if (img.isNull()) {
+        auto father = (WinFull*)parent(); 
+        img = QImage(w, h, QImage::Format_ARGB32);
+    }
+    //绘制半透明和透明区域
+    img.fill(QColor(0, 0, 0, 120));
+    QPainter p(&img);
+    p.setRenderHint(QPainter::Antialiasing, true);
+    p.setCompositionMode(QPainter::CompositionMode_Clear);
+    p.setBrush(Qt::transparent);
+    p.drawRect(maskRect);
+    //绘制透明区域的边框
+    p.setCompositionMode(QPainter::CompositionMode_SourceOver);
+    QColor borderColor(22, 119, 255);
+    p.setPen(QPen(QBrush(borderColor), maskStroke));
+    p.setBrush(Qt::NoBrush);
+    p.drawRect(maskRect);
+    //绘制边框上的拖动圆点
+    if (isMouseup) {
+        p.setBrush(borderColor);
+        p.setPen(Qt::NoPen);
+        auto r = 2 * maskStroke;
+        auto hw{ maskRect.width() / 2 };
+        auto hh{ maskRect.height() / 2 };
+        p.drawEllipse(maskRect.topLeft(), r, r);
+        p.drawEllipse(QPointF(maskRect.left()+ hw, maskRect.top()), r, r);
+        p.drawEllipse(maskRect.topRight(), r, r);
+        p.drawEllipse(QPointF(maskRect.right(), maskRect.top()+ hh), r, r);
+        p.drawEllipse(maskRect.bottomRight(), r, r);
+        p.drawEllipse(QPointF(maskRect.left() + hw, maskRect.bottom()), r, r);
+        p.drawEllipse(maskRect.bottomLeft(), r, r);
+        p.drawEllipse(QPointF(maskRect.left(), maskRect.top() + hh), r, r);
+    }
+    paint();
+    p.end();
+    if (isMouseup) {
+        releaseImg();
+    }
+}
 void WinMask::changeMaskRect(const QPoint& pos)
 {
     if (mousePosState == 1)
@@ -197,7 +218,7 @@ void WinMask::changeMaskRect(const QPoint& pos)
         maskRect.setLeft(pos.x());
     }
     maskRect = maskRect.normalized();
-    //update();
+    update();
 }
 void WinMask::changeMousePosState(const int& x, const int& y)
 {

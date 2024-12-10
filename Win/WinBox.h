@@ -15,7 +15,7 @@ class WinBox : public WinBase
 
 public:
 	WinBox(QObject* parent = nullptr);
-	~WinBox();
+	virtual ~WinBox();
 	void updateCursor(const Qt::CursorShape& cur);
 	void refreshBoard();
 	void refreshCanvas(ShapeBase* shape, bool force = false);

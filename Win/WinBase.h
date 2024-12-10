@@ -15,15 +15,17 @@ public:
 	virtual ~WinBase();
 	void show();
 	QImage grab() { return QImage(); };
-	QImage grab(const QRect& rect) { return QImage(); };
+	QImage grab(const QRect& rect);
 public:
 	int x, y, w, h;
 	QImage img;
-	qreal dpr{ 1.0 };
 	HWND hwnd;
 protected:
-	void initWindow();
+	void initWindow(bool isTransparent=true);
+	void paint();
 	static LRESULT CALLBACK RouteWinMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+	void releaseImg();
+	void initSizeByWin(WinBase* win);
 
 	virtual void mousePress(QMouseEvent* event) = 0;
 	virtual void mousePressRight(QMouseEvent* event) {};
@@ -32,6 +34,5 @@ protected:
 	virtual void mouseDrag(QMouseEvent* event) = 0;
 	virtual void mouseRelease(QMouseEvent* event) = 0;
 private:
-	void paint();
-	static QMouseEvent createMouseEvent(LPARAM& lParam);
+	static QMouseEvent createMouseEvent(const LPARAM& lParam,const QEvent::Type& type,const Qt::MouseButton& btn = Qt::MouseButton::LeftButton);
 };

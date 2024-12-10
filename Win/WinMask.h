@@ -18,6 +18,7 @@ public:
 	void mouseDrag(QMouseEvent* event);
 	void mouseRelease(QMouseEvent* event);
 	void mouseMove(QMouseEvent* event);
+	void update(bool isMouseup=false);
 public:
 	QRectF maskRect;
 protected:
@@ -26,7 +27,6 @@ private:
 	void changeMousePosState(const int& x, const int& y);
 	void changeMousePosState2(const int& x, const int& y);
 private:
-	QImage img;
 	QPoint posPress;
 	qreal maskStroke{ 2.0 };
 	int mousePosState{ -1 };
