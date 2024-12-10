@@ -11,6 +11,8 @@ WinCanvas::WinCanvas(QObject *parent) : WinBase(parent)
     initTimer();
     auto winFull = (WinFull*)parent;
     initSizeByWin(winFull);
+    img = QImage(w, h, QImage::Format_ARGB32);
+
     initWindow();
     show();
 }
@@ -24,7 +26,7 @@ void WinCanvas::refresh(ShapeBase* shape, bool forceUpdate)
     if (shape) {
         if (shape != curShape) {
             curShape = shape;
-            //update();
+            update();
             return;
 		}        
     }
@@ -35,28 +37,13 @@ void WinCanvas::refresh(ShapeBase* shape, bool forceUpdate)
         }
     }
     if (forceUpdate) {
-        //update();
+        update();
     }
 }
 
-//void WinCanvas::paintEvent(QPaintEvent* event)
-//{
-//    if (!curShape) return;
-//    QPainter painter(this);
-//    painter.setRenderHint(QPainter::Antialiasing, true);
-//    painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
-//    painter.setRenderHint(QPainter::TextAntialiasing, true);
-//    if (curShape->state >= ShapeState::sizing0 && !curShape->isEraser) {
-//        curShape->paint(&painter);
-//    }
-//    else {
-//        curShape->paintDragger(&painter);
-//    }
-//}
-
 void WinCanvas::onTimeout()
 {
-    //update();
+    update();
 }
 
 void WinCanvas::initTimer()
@@ -65,4 +52,19 @@ void WinCanvas::initTimer()
     timer->setInterval(800);
     timer->setSingleShot(true);
     connect(timer, &QTimer::timeout, this, &WinCanvas::onTimeout);
+}
+
+void WinCanvas::update()
+{
+    if (!curShape) return;
+    QPainter painter(&img);
+    painter.setRenderHint(QPainter::Antialiasing, true);
+    painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
+    painter.setRenderHint(QPainter::TextAntialiasing, true);
+    if (curShape->state >= ShapeState::sizing0 && !curShape->isEraser) {
+        curShape->paint(&painter);
+    }
+    else {
+        curShape->paintDragger(&painter);
+    }
 }

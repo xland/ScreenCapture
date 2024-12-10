@@ -20,6 +20,7 @@ protected:
 private:
 	void onTimeout();
 	void initTimer();
+	void update();
 private:
 	QTimer* timer;
 };
