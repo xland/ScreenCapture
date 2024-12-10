@@ -16,7 +16,7 @@ std::vector<unsigned> spliterIndexs;
 ToolMain::ToolMain(QWidget* parent) : QWidget(parent)
 {
     setFixedSize(btns.size()*btnW + 8, 32);
-    setCursor(Qt::PointingHandCursor);
+    //setCursor(Qt::PointingHandCursor);
     setMouseTracking(true);
     setVisible(false);
     setAutoFillBackground(false);
@@ -170,6 +170,7 @@ void ToolMain::mousePressEvent(QMouseEvent* event)
 
 void ToolMain::mouseMoveEvent(QMouseEvent* event)
 {
+    QGuiApplication::setOverrideCursor(Qt::PointingHandCursor);
     auto x = event->pos().x() - 4;
     auto index{ x / (int)btnW };
     if (index >= btns.size())index = -1;
@@ -192,5 +193,6 @@ void ToolMain::leaveEvent(QEvent* event)
         hoverIndex = -1;
         update();
     }
+    QGuiApplication::restoreOverrideCursor();
     QWidget::leaveEvent(event);
 }

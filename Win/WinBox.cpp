@@ -139,6 +139,8 @@ void WinBox::mouseReleaseOnShape(QMouseEvent* event)
 }
 void WinBox::updateCursor(const Qt::CursorShape& cur)
 {
+    QGuiApplication::setOverrideCursor(cur);
+    //QGuiApplication::overrideCursor()
     //if (cursor().shape() != cur) {
     //    setCursor(cur);
     //}

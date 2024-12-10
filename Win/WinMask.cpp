@@ -24,19 +24,19 @@ WinMask::~WinMask()
 
 void WinMask::mousePress(QMouseEvent* event)
 {
-    auto father = (WinFull*)parent();
-    if (father->state == State::start)
+    auto win = (WinFull*)parent();
+    if (win->state == State::start)
     {
         posPress = event->pos();
-        father->state = State::mask;
-        //father->pixelInfo->hide();
+        win->state = State::mask;
+        win->pixelInfo->hide();
         event->accept();
         return;
     }
-    if (father->state == State::tool)
+    if (win->state == State::tool)
     {
         posPress = event->pos();
-        //father->toolMain->hide();
+        win->toolMain->hide();
         if (mousePosState != 0)
         {
             changeMaskRect(posPress);
@@ -44,10 +44,10 @@ void WinMask::mousePress(QMouseEvent* event)
         event->accept();
         return;
     }
-    if (father->state > State::tool && mousePosState > 0) {
+    if (win->state > State::tool && mousePosState > 0) {
         posPress = event->pos();
-        //father->toolMain->hide();
-        //father->toolSub->hide();
+        win->toolMain->hide();
+        win->toolSub->hide();
         event->accept();
         return;
     }
@@ -165,7 +165,7 @@ void WinMask::update(bool isMouseup)
     if (isMouseup) {
         p.setBrush(borderColor);
         p.setPen(Qt::NoPen);
-        auto r = 2 * maskStroke;
+        auto r{ 1.5 * maskStroke };
         auto hw{ maskRect.width() / 2 };
         auto hh{ maskRect.height() / 2 };
         p.drawEllipse(maskRect.topLeft(), r, r);
@@ -224,50 +224,49 @@ void WinMask::changeMousePosState(const int& x, const int& y)
 {
     auto leftX = maskRect.topLeft().x(); auto topY = maskRect.topLeft().y();
     auto rightX = maskRect.bottomRight().x(); auto bottomY = maskRect.bottomRight().y();
-    auto father = (WinFull*)parent();
     if (maskRect.contains(x, y))
     {
-        father->updateCursor(Qt::SizeAllCursor);
+        QGuiApplication::setOverrideCursor(Qt::SizeAllCursor);
         mousePosState = 0;
     }
     else if (x < leftX && y < topY)
     {
-        father->updateCursor(Qt::SizeFDiagCursor);
+        QGuiApplication::setOverrideCursor(Qt::SizeFDiagCursor);
         mousePosState = 1;
     }
     else if (x >= leftX && x < rightX && y < topY)
     {
-        father->updateCursor(Qt::SizeVerCursor);
+        QGuiApplication::setOverrideCursor(Qt::SizeVerCursor);
         mousePosState = 2;
     }
     else if (x >= rightX && y < topY)
     {
-        father->updateCursor(Qt::SizeBDiagCursor);
+        QGuiApplication::setOverrideCursor(Qt::SizeBDiagCursor);
         mousePosState = 3;
     }
     else if (x >= rightX && y >= topY && y < bottomY)
     {
-        father->updateCursor(Qt::SizeHorCursor);
+        QGuiApplication::setOverrideCursor(Qt::SizeHorCursor);
         mousePosState = 4;
     }
     else if (x >= rightX && y >= bottomY)
     {
-        father->updateCursor(Qt::SizeFDiagCursor);
+        QGuiApplication::setOverrideCursor(Qt::SizeFDiagCursor);
         mousePosState = 5;
     }
     else if (x >= leftX && x < rightX && y >= bottomY)
     {
-        father->updateCursor(Qt::SizeVerCursor);
+        QGuiApplication::setOverrideCursor(Qt::SizeVerCursor);
         mousePosState = 6;
     }
     else if (x < leftX && y >= bottomY)
     {
-        father->updateCursor(Qt::SizeBDiagCursor);
+        QGuiApplication::setOverrideCursor(Qt::SizeBDiagCursor);
         mousePosState = 7;
     }
     else if (x < leftX && y < bottomY && y >= topY)
     {
-        father->updateCursor(Qt::SizeHorCursor);
+        QGuiApplication::setOverrideCursor(Qt::SizeHorCursor);
         mousePosState = 8;
     }
 }
@@ -277,46 +276,46 @@ void WinMask::changeMousePosState2(const int& x, const int& y)
     auto x3{ maskRect.right() - maskStroke }, x4{ x3 + maskStroke * 3 };
     auto y1{ maskRect.y() - maskStroke }, y2{ y1 + maskStroke * 3 };
     auto y3{ maskRect.bottom() - maskStroke }, y4{ y3 + maskStroke * 3 };
-    auto father = (WinFull*)parent();
     if (x >= x1 && x <= x2 && y >= y1 && y <= y2) {
-        father->updateCursor(Qt::SizeFDiagCursor);
+        QGuiApplication::setOverrideCursor(Qt::SizeFDiagCursor);
         mousePosState = 1;
     }
     else if (x >= x2 && x <= x3 && y >= y1 && y <= y2) {
-        father->updateCursor(Qt::SizeVerCursor);
+        QGuiApplication::setOverrideCursor(Qt::SizeVerCursor);
         mousePosState = 2;
     }
     else if (x >= x3 && x <= x4 && y >= y1 && y <= y2)
     {
-        father->updateCursor(Qt::SizeBDiagCursor);
+        QGuiApplication::setOverrideCursor(Qt::SizeBDiagCursor);
         mousePosState = 3;
     }
     else if (x >= x3 && x <= x4 && y >= y2 && y <= y3)
     {
-        father->updateCursor(Qt::SizeHorCursor);
+        QGuiApplication::setOverrideCursor(Qt::SizeHorCursor);
         mousePosState = 4;
     }
     else if (x >= x3 && x <= x4 && y >= y3 && y <= y4)
     {
-        father->updateCursor(Qt::SizeFDiagCursor);
+        QGuiApplication::setOverrideCursor(Qt::SizeFDiagCursor);
         mousePosState = 5;
     }
     else if (x >= x2 && x <= x3 && y >= y3 && y <= y4)
     {
-        father->updateCursor(Qt::SizeVerCursor);
+        QGuiApplication::setOverrideCursor(Qt::SizeVerCursor);
         mousePosState = 6;
     }
     else if (x >= x1 && x <= x2 && y >= y3 && y <= y4)
     {
-        father->updateCursor(Qt::SizeBDiagCursor);
+        QGuiApplication::setOverrideCursor(Qt::SizeBDiagCursor);
         mousePosState = 7;
     }
     else if (x >= x1 && x <= x2 && y >= y2 && y <= y3)
     {
-        father->updateCursor(Qt::SizeHorCursor);
+        QGuiApplication::setOverrideCursor(Qt::SizeHorCursor);
         mousePosState = 8;
     }
     else {
+        QGuiApplication::restoreOverrideCursor();
         mousePosState = -1;
     }
 }

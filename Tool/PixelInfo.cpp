@@ -66,7 +66,7 @@ void PixelInfo::paintEvent(QPaintEvent* event)
 {
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
-    //信息框背景
+    //背景
     painter.setPen(Qt::NoPen);
     painter.setBrush(QColor(0, 0, 0, 168));
     painter.drawRect(rect());
@@ -82,7 +82,7 @@ void PixelInfo::paintEvent(QPaintEvent* event)
     painter.setPen(Qt::NoPen);
     painter.setBrush(QColor(22, 119, 255, 110));
     painter.drawPath(path);
-    //信息框信息
+    //文字信息
     painter.setBrush(Qt::NoBrush);
     painter.setPen(Qt::white);
     QFont font = painter.font();
