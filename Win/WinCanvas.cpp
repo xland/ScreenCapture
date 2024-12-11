@@ -11,8 +11,6 @@ WinCanvas::WinCanvas(QObject *parent) : WinBase(parent)
     initTimer();
     auto winFull = (WinFull*)parent;
     initSizeByWin(winFull);
-    img = QImage(w, h, QImage::Format_ARGB32);
-
     initWindow();
     show();
 }
@@ -57,6 +55,10 @@ void WinCanvas::initTimer()
 void WinCanvas::update()
 {
     if (!curShape) return;
+    if (img.isNull()) {
+        img = QImage(w, h, QImage::Format_ARGB32);
+    }
+    img.fill(Qt::transparent);
     QPainter painter(&img);
     painter.setRenderHint(QPainter::Antialiasing, true);
     painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
@@ -67,4 +69,5 @@ void WinCanvas::update()
     else {
         curShape->paintDragger(&painter);
     }
+    paint();
 }

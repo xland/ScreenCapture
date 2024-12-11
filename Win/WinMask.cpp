@@ -145,7 +145,6 @@ void WinMask::mouseMove(QMouseEvent* event)
 void WinMask::update(bool isMouseup)
 {
     if (img.isNull()) {
-        auto father = (WinFull*)parent(); 
         img = QImage(w, h, QImage::Format_ARGB32);
     }
     //绘制半透明和透明区域

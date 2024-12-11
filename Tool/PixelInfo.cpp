@@ -24,6 +24,7 @@ PixelInfo::PixelInfo(WinFull* win, QWidget* parent) : QWidget(parent),win{win}
     auto hwnd = (HWND)winId();
     LONG exStyle = GetWindowLong(hwnd, GWL_EXSTYLE);
     SetWindowLong(hwnd, GWL_EXSTYLE, exStyle | WS_EX_TRANSPARENT);
+    //16毫秒
 }
 
 PixelInfo::~PixelInfo()
