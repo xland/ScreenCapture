@@ -10,10 +10,10 @@
 
 WinMask::WinMask(QObject* parent) : WinBase(parent)
 {
-    initWinRects();
     auto winFull = (WinFull*)parent;
-    maskStroke = maskStroke * winFull->dpr;
     initSizeByWin(winFull);
+    initWinRects();
+    maskStroke = maskStroke * winFull->dpr;
     initWindow();
     show();
 }

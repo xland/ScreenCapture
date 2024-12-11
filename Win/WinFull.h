@@ -32,5 +32,6 @@ protected:
 private:
 	void initWinSizeByDesktopSize();
 	void initDesktopImg();
+	void initDesktopImgNative();
 };
 

@@ -16,7 +16,8 @@
 WinFull::WinFull(QObject* parent) : WinBox(parent)
 {
     initWinSizeByDesktopSize();
-    initDesktopImg();
+    //initDesktopImg();
+    initDesktopImgNative();
     initWindow(false);
     show();
 }
@@ -82,6 +83,24 @@ void WinFull::initDesktopImg()
         }
     }
 }
+
+void WinFull::initDesktopImgNative()
+{
+
+    HDC hScreen = GetDC(NULL);
+    HDC hDC = CreateCompatibleDC(hScreen);
+    HBITMAP hBitmap = CreateCompatibleBitmap(hScreen, w, h);
+    DeleteObject(SelectObject(hDC, hBitmap));
+    BOOL bRet = BitBlt(hDC, 0, 0, w, h, hScreen, x, y, SRCCOPY);
+    img = QImage(w, h, QImage::Format_ARGB32);
+    BITMAPINFO info = { sizeof(BITMAPINFOHEADER), (long)w, 0 - (long)h, 1, 32, BI_RGB, (DWORD)w * 4*h, 0, 0, 0, 0 };
+    GetDIBits(hDC, hBitmap, 0, h, img.bits(), &info, DIB_RGB_COLORS);
+    DeleteDC(hDC);
+    DeleteObject(hBitmap);
+    ReleaseDC(NULL, hScreen);
+}
+
+
 
 void WinFull::close()
 {
