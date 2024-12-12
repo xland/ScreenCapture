@@ -56,12 +56,11 @@ void WinCanvas::update()
 {
     if (!curShape) return;
     if (img.isNull()) {
-        img = QImage(w, h, QImage::Format_ARGB32);
+        img = QImage(w, h, QImage::Format_ARGB32_Premultiplied);
     }
     img.fill(Qt::transparent);
     QPainter painter(&img);
     painter.setRenderHint(QPainter::Antialiasing, true);
-    painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
     painter.setRenderHint(QPainter::TextAntialiasing, true);
     if (curShape->state >= ShapeState::sizing0 && !curShape->isEraser) {
         curShape->paint(&painter);

@@ -26,11 +26,10 @@ void WinBoard::refresh()
 
 void WinBoard::update()
 {
-    img = QImage(w, h, QImage::Format_ARGB32);
+    img = QImage(w, h, QImage::Format_ARGB32_Premultiplied);
     img.fill(Qt::transparent);
     QPainter painter(&img);
     painter.setRenderHint(QPainter::Antialiasing, true);
-    painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
     painter.setRenderHint(QPainter::TextAntialiasing, true);
     auto winFull = (WinFull*)parent();
     for (auto shape : winFull->shapes)

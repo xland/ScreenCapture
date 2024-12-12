@@ -46,6 +46,7 @@ void ShapeText::createTextEdit()
 {
     textEdit = new ShapeTextInput();
     QFont font = textEdit->font();
+    font.setStyleStrategy(QFont::PreferAntialias);
     font.setPointSize(fontSize);
     font.setWeight(bold ? QFont::Bold : QFont::Normal);
     font.setItalic(italic);

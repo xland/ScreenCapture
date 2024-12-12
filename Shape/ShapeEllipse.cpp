@@ -1,4 +1,5 @@
 #include <qpainter.h>
+#include <QPen>
 
 #include "ShapeEllipse.h"
 #include "../App/App.h"
@@ -24,7 +25,9 @@ void ShapeEllipse::paint(QPainter* painter)
         painter->setPen(Qt::NoPen);
     }
     else {
-        painter->setPen(QPen(QBrush(color), strokeWidth));
+        QPen pen(color);
+        pen.setWidthF(strokeWidth);
+        painter->setPen(pen);
         painter->setBrush(Qt::NoBrush);
     }
 	painter->drawEllipse(shape);
