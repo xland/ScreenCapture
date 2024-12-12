@@ -132,11 +132,14 @@ void WinBase::move(const int& x, const int& y)
 }
 void WinBase::close()
 {
+    releaseImg();
     PostMessage(hwnd, WM_CLOSE, 0, 0);
 }
 void WinBase::releaseImg()
 {
-    img = QImage();
+    if (!img.isNull()) {
+        img = QImage();
+    }
 }
 void WinBase::show()
 {
