@@ -98,7 +98,6 @@ LRESULT WinBase::RouteWinMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPar
         case WM_DESTROY: 
         {
             isDestroyed = true;
-            obj->deleteLater();
             break;
         }
         default:
@@ -132,8 +131,8 @@ void WinBase::move(const int& x, const int& y)
 }
 void WinBase::close()
 {
-    releaseImg();
     PostMessage(hwnd, WM_CLOSE, 0, 0);
+    deleteLater();
 }
 void WinBase::releaseImg()
 {
