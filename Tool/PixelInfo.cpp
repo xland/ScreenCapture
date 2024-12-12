@@ -3,6 +3,7 @@
 #include <QPainter>
 #include <QScreen>
 #include <QPainterPath>
+#include <QFontDatabase>
 #include <Windows.h>
 
 #include "PixelInfo.h"
@@ -17,14 +18,10 @@ PixelInfo::PixelInfo(WinFull* win, QWidget* parent) : QWidget(parent),win{win}
     setAttribute(Qt::WA_NoSystemBackground);
     setAttribute(Qt::WA_TranslucentBackground, true);
     setAttribute(Qt::WA_TransparentForMouseEvents, true);
-    setFixedSize(200, 170);
-    QPoint pos = QCursor::pos();
-    move(pos.x() + 10, pos.y() + 10);
-    show();
+    setFixedSize(180, 170);
     auto hwnd = (HWND)winId();
     LONG exStyle = GetWindowLong(hwnd, GWL_EXSTYLE);
     SetWindowLong(hwnd, GWL_EXSTYLE, exStyle | WS_EX_TRANSPARENT);
-    //16毫秒
 }
 
 PixelInfo::~PixelInfo()
@@ -44,23 +41,28 @@ bool PixelInfo::posInScreen(const int& x, const int& y)
 
 void PixelInfo::mouseMove(QMouseEvent* event)
 {
-    if (isVisible()) {
+    if (win->state == State::start) {
         QPoint pos = QCursor::pos();
-        if (posInScreen(pos.x() + width() + 10, pos.y() + height() + 10)) {
-            move(pos.x() + 10, pos.y() + 10);
+        int span{ 10 };
+        if (posInScreen(pos.x() + width() + span, pos.y() + height() + span)) {
+            move(pos.x() + span, pos.y() + span);
         }
-        else if(posInScreen(pos.x() - width() - 10, pos.y() + height() + 10)) {
-            move(pos.x() - 10 - width(), pos.y() + 10);
+        else if (posInScreen(pos.x() - width() - span, pos.y() + height() + span)) {
+            move(pos.x() - span - width(), pos.y() + span);
         }
-        else if (posInScreen(pos.x() + width() + 10, pos.y() - height() - 10)) {
-            move(pos.x() + 10, pos.y() - height() - 10);
+        else if (posInScreen(pos.x() + width() + span, pos.y() - height() - span)) {
+            move(pos.x() + span, pos.y() - height() - span);
         }
-        else if (posInScreen(pos.x() - width() - 10, pos.y() - height() - 10)) {
-            move(pos.x() - 10 - width(), pos.y() - height() - 10);
+        else if (posInScreen(pos.x() - width() - span, pos.y() - height() - span)) {
+            move(pos.x() - span - width(), pos.y() - height() - span);
         }
         nativePos = event->pos();
         update();
+        if (!isVisible()) {
+            show();
+        }
     }
+
 }
 
 void PixelInfo::paintEvent(QPaintEvent* event)
@@ -72,27 +74,25 @@ void PixelInfo::paintEvent(QPaintEvent* event)
     painter.setBrush(QColor(0, 0, 0, 168));
     painter.drawRect(rect());
     //放大后的目标矩形区域的图像
-    auto dpr = windowHandle()->devicePixelRatio();
-    QRect tarRect((nativePos.x() - 20), (nativePos.y() - 10), 40, 20);
+    QRect tarRect((nativePos.x() - 20), (nativePos.y() - 10), 36, 20);
     auto img = win->img.copy(tarRect);
-    painter.drawImage(QRect(0,0,200,100),img);
+    painter.drawImage(QRect(0,0,180,100),img);
     //十字架准星
     QPainterPath path;
-    path.addRect(QRect(0, 46, 200, 8));
-    path.addRect(QRect(96, 0, 8, 100));
+    path.addRect(QRect(0, 46, 180, 8));
+    path.addRect(QRect(86, 0, 8, 100));
     painter.setPen(Qt::NoPen);
     painter.setBrush(QColor(22, 119, 255, 110));
     painter.drawPath(path);
     //文字信息
     painter.setBrush(Qt::NoBrush);
     painter.setPen(Qt::white);
-    QFont font = painter.font();
-    font.setPointSize(8);
+    QFont font("微软雅黑", 8);
     painter.setFont(font);
     auto tarColor = img.pixelColor(img.rect().center());
-    painter.drawText(QPoint(8, 118), QString("POS (Ctrl+P) : X:%1 Y:%2").arg(nativePos.x()).arg(nativePos.y()));
+    painter.drawText(QPoint(8, 118), QString("HEX (Ctrl+H) : %1").arg(tarColor.name().toUpper()));
     painter.drawText(QPoint(8, 138), QString("RGB (Ctrl+R) : %1,%2,%3").arg(tarColor.red()).arg(tarColor.green()).arg(tarColor.blue()));
-    painter.drawText(QPoint(8, 158), QString("HEX (Ctrl+H) : %1").arg(tarColor.name().toUpper()));
+    painter.drawText(QPoint(8, 158), QString("POS (Ctrl+P) : X:%1 Y:%2").arg(nativePos.x()).arg(nativePos.y()));
     //边框
     painter.setPen(QPen(QColor(0, 0, 0, 168), 1));
     painter.setBrush(Qt::NoBrush);

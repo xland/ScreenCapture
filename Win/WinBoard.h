@@ -11,7 +11,7 @@ public:
 	~WinBoard();
 	void refresh();
 protected:
-	//void paintEvent(QPaintEvent* event) override;
+	void update();
 private:
 	bool refreshFlag{ false };
 };

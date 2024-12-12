@@ -149,6 +149,8 @@ void WinFull::mouseDBClick(QMouseEvent* event)
 
 void WinFull::mouseMove(QMouseEvent* event)
 {
+
+    QGuiApplication::setOverrideCursor(Qt::CrossCursor);
     event->ignore();
     winMask->mouseMove(event);
     if(pixelInfo) pixelInfo->mouseMove(event);
