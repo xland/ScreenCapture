@@ -45,7 +45,7 @@ void ShapeText::adjustSize()
 void ShapeText::createTextEdit()
 {
     textEdit = new ShapeTextInput();
-    QFont font = textEdit->font();
+    QFont font("微软雅黑");
     font.setStyleStrategy(QFont::PreferAntialias);
     font.setPointSize(fontSize);
     font.setWeight(bold ? QFont::Bold : QFont::Normal);

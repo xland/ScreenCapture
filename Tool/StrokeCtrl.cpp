@@ -85,5 +85,5 @@ void StrokeCtrl::setTip()
     qreal x = getSliderXPos() - 10;
     auto pos = mapToGlobal(QPoint(x, -30));
     setToolTip(QString::number(value()));
-    QToolTip::showText(pos, QString::number(value()), this);
+    //QToolTip::showText(pos, QString::number(value()), this);
 }

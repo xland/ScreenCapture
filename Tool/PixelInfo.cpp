@@ -41,7 +41,7 @@ bool PixelInfo::posInScreen(const int& x, const int& y)
 
 void PixelInfo::mouseMove(QMouseEvent* event)
 {
-    if (isVisible()) {
+    if (win->state == State::start) {
         QPoint pos = QCursor::pos();
         int span{ 10 };
         if (posInScreen(pos.x() + width() + span, pos.y() + height() + span)) {

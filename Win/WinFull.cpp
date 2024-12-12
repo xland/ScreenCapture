@@ -133,21 +133,15 @@ void WinFull::mousePress(QMouseEvent* event)
     mousePressOnShape(event);
 }
 
-void WinFull::mousePressRight(QMouseEvent* event)
-{
-}
-
-void WinFull::mouseDBClick(QMouseEvent* event)
-{
-}
-
 void WinFull::mouseMove(QMouseEvent* event)
 {
 
     QGuiApplication::setOverrideCursor(Qt::CrossCursor);
     event->ignore();
     winMask->mouseMove(event);
-    if(pixelInfo) pixelInfo->mouseMove(event);
+    if (pixelInfo) {
+        pixelInfo->mouseMove(event);
+    }
     mouseMoveOnShape(event);
 }
 
