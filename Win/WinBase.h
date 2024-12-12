@@ -19,6 +19,7 @@ public:
 	QImage grab(const QRect& rect);
 	void raise();
 	void move(const int& x, const int& y);
+	virtual void close();
 public:
 	int x, y, w, h;
 	QImage img;

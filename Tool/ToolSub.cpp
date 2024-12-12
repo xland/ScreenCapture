@@ -12,27 +12,17 @@ namespace {
 	std::vector<std::tuple<int, int, int>> btnSpanIndexs;
 }
 
-ToolSub::ToolSub(WinBox* win, QWidget *parent) : QWidget(parent),win{win}
+ToolSub::ToolSub(WinBox* win) : ToolBase(win)
 {
 	strokeCtrl = new StrokeCtrl(this);
 	colorCtrl = new ColorCtrl(this);
-	setCursor(Qt::PointingHandCursor);
-	setMouseTracking(true);
-	setVisible(false);
-	setAutoFillBackground(false);
-	setAttribute(Qt::WA_TranslucentBackground, true);
-	setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::Tool);
-	setAttribute(Qt::WA_QuitOnClose, false);
-	setAttribute(Qt::WA_OpaquePaintEvent);
-	setAttribute(Qt::WA_NoSystemBackground);
-	setAttribute(Qt::WA_Hover);
 }
 
 ToolSub::~ToolSub()
 {
 }
 
-void ToolSub::InitData(const QJsonObject& obj, const QString& lang)
+void ToolSub::initData(const QJsonObject& obj, const QString& lang)
 {
 	if (obj["rect"].isArray()) {
 		auto arr = obj["rect"].toArray();
@@ -68,6 +58,42 @@ void ToolSub::InitData(const QJsonObject& obj, const QString& lang)
 	}
 }
 
+std::vector<ToolBtn> ToolSub::makeBtns(const QJsonArray& arr, const QString& lang)
+{
+	std::vector<ToolBtn> btns;
+	for (const QJsonValue& val : arr)
+	{
+		ToolBtn btn;
+		btn.name = val["name"].toString();
+		btn.tipText = val[lang].toString();
+		if (btn.name == "strokeCtrl") {
+			btn.min = val["min"].toInt();
+			btn.max = val["max"].toInt();
+			btn.value = val["value"].toInt();
+			btns.push_back(std::move(btn));
+			continue;
+		}
+		else if (btn.name == "colorCtrl") {
+			btn.selectedIndex = val["selectedIndex"].toInt();
+			btns.push_back(std::move(btn));
+			continue;
+		}
+		btn.selected = val["selectDefault"].toBool(false);
+		{
+			bool ok;
+			uint codePoint = val["icon"].toString().toUInt(&ok, 16);
+			if (ok) {
+				btn.icon = QChar(codePoint);
+			}
+			else {
+				qWarning() << "转换失败";
+			}
+		}
+		btns.push_back(std::move(btn));
+	}
+	return btns;
+}
+
 bool ToolSub::getSelectState(const QString& btnName)
 {
 	auto& values = btns[win->state];
@@ -92,21 +118,12 @@ int ToolSub::getStrokeWidth()
 
 void ToolSub::paintEvent(QPaintEvent* event)
 {
-	auto font = App::getIconFont();
-	font->setPixelSize(15);
-
-	QPainter painter(this);
-	painter.setRenderHint(QPainter::Antialiasing, true);
-	painter.setRenderHint(QPainter::TextAntialiasing, true);
-	painter.setFont(*font);
-
-	painter.setPen(Qt::GlobalColor::white);
-	painter.setBrush(Qt::GlobalColor::white);
-	painter.drawRect(rect().adjusted(0, 10, 0, 0));
+	auto painter = getPainter();
+	painter->drawRect(rect().adjusted(0, 10, 0, 0));//与主工具条有10像素的间隙
 	
 	QPolygon triangle;
 	triangle << QPoint(triangleX, 6) << QPoint(triangleX-4, 10) << QPoint(triangleX+4, 10);
-	painter.drawPolygon(triangle);
+	painter->drawPolygon(triangle); //有个小三角形指向主工具条的按钮
 
 	auto& values = btns[win->state];
 	int x = 4;
@@ -121,23 +138,14 @@ void ToolSub::paintEvent(QPaintEvent* event)
 		else{
 			QRect rect(x, 10, btnW, 32);
 			if (values[i].selected) {
-				rect.adjust(2, 4, -2, -4);
-				painter.setPen(Qt::NoPen);
-				painter.setBrush(QColor(228, 238, 255));
-				painter.drawRoundedRect(rect, 6, 6);
-				painter.setPen(QColor(9, 88, 217));
+				paintBtn(values[i].icon, QColor(9, 88, 217), QColor(228, 238, 255), rect, painter.get());
 			}
 			else if (hoverIndex == i) {
-				rect.adjust(2, 4, -2, -4);
-				painter.setPen(Qt::NoPen);
-				painter.setBrush(QColor(228, 238, 255));
-				painter.drawRoundedRect(rect, 6, 6);
-				painter.setPen(QColor(33, 33, 33));
+				paintBtn(values[i].icon, QColor(33, 33, 33), QColor(228, 238, 255), rect, painter.get());
 			}
 			else {
-				painter.setPen(QColor(33, 33, 33));
-			}			
-			painter.drawText(rect, Qt::AlignCenter, values[i].icon);
+				paintBtn(values[i].icon, QColor(33, 33, 33), Qt::white, rect, painter.get());
+			}
 			x += btnW;
 		}
 	}
@@ -168,14 +176,6 @@ void ToolSub::mouseMoveEvent(QMouseEvent* event)
 	}
 	if (hoverIndex != tempIndex) {
 		hoverIndex = tempIndex;
-		update();
-	}
-}
-
-void ToolSub::leaveEvent(QEvent* event)
-{
-	if (hoverIndex != -1) {
-		hoverIndex = -1;
 		update();
 	}
 }
@@ -230,40 +230,4 @@ void ToolSub::showEvent(QShowEvent* event)
 		move(pos.x(), pos.y());
 	}
 	QWidget::showEvent(event);
-}
-
-std::vector<ToolBtn> ToolSub::makeBtns(const QJsonArray& arr, const QString& lang)
-{
-	std::vector<ToolBtn> btns;
-	for (const QJsonValue& val:arr)
-	{
-		ToolBtn btn;
-		btn.name = val["name"].toString();
-		btn.tipText = val[lang].toString();
-		if (btn.name == "strokeCtrl") {
-			btn.min = val["min"].toInt();
-			btn.max = val["max"].toInt();
-			btn.value = val["value"].toInt();
-			btns.push_back(std::move(btn));
-			continue;
-		}
-		else if (btn.name == "colorCtrl") {
-			btn.selectedIndex = val["selectedIndex"].toInt();
-			btns.push_back(std::move(btn));
-			continue;
-		}
-		btn.selected = val["selectDefault"].toBool(false);
-		{
-			bool ok;
-			uint codePoint = val["icon"].toString().toUInt(&ok, 16);
-			if (ok) {
-				btn.icon = QChar(codePoint);
-			}
-			else {
-				qWarning() << "转换失败";
-			}
-		}
-		btns.push_back(std::move(btn));
-	}	
-	return btns;
 }

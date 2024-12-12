@@ -41,7 +41,7 @@ bool PixelInfo::posInScreen(const int& x, const int& y)
 
 void PixelInfo::mouseMove(QMouseEvent* event)
 {
-    if (win->state == State::start) {
+    if (isVisible()) {
         QPoint pos = QCursor::pos();
         int span{ 10 };
         if (posInScreen(pos.x() + width() + span, pos.y() + height() + span)) {
@@ -62,7 +62,6 @@ void PixelInfo::mouseMove(QMouseEvent* event)
             show();
         }
     }
-
 }
 
 void PixelInfo::paintEvent(QPaintEvent* event)
@@ -101,6 +100,7 @@ void PixelInfo::paintEvent(QPaintEvent* event)
 
 void PixelInfo::closeEvent(QCloseEvent* event)
 {
+    win->pixelInfo = nullptr;
     win->releaseImg();
     deleteLater();
 }

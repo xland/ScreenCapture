@@ -41,7 +41,10 @@ LRESULT WinBase::RouteWinMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPar
         SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pThis));
     }
     auto obj = reinterpret_cast<WinBase*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
-    if(!obj) return DefWindowProc(hWnd, msg, wParam, lParam);
+    static bool isDestroyed{ false };
+    if (!obj || isDestroyed) {
+        return DefWindowProc(hWnd, msg, wParam, lParam);
+    }
     switch (msg)
     {
         case WM_NCCALCSIZE:
@@ -87,6 +90,17 @@ LRESULT WinBase::RouteWinMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPar
             obj->mousePressRight(&e);
             break;
         }
+        case WM_CLOSE: 
+        {
+            DestroyWindow(hWnd);
+            break;
+        }
+        case WM_DESTROY: 
+        {
+            isDestroyed = true;
+            obj->deleteLater();
+            break;
+        }
         default:
         {
             return DefWindowProc(hWnd, msg, wParam, lParam);
@@ -116,12 +130,14 @@ void WinBase::move(const int& x, const int& y)
     this->y = y;
     SetWindowPos(hwnd, nullptr, x, y, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
 }
+void WinBase::close()
+{
+    PostMessage(hwnd, WM_CLOSE, 0, 0);
+}
 void WinBase::releaseImg()
 {
     img = QImage();
 }
-
-
 void WinBase::show()
 {
     paint();
@@ -129,7 +145,6 @@ void WinBase::show()
     UpdateWindow(hwnd);
     SetCursor(LoadCursor(nullptr, IDC_ARROW));
 }
-
 void WinBase::paint()
 {
     if (img.isNull()) return;

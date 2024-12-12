@@ -21,7 +21,6 @@ public:
 	void refreshCanvas(ShapeBase* shape, bool force = false);
 	virtual void showToolMain()=0;
 	virtual void showToolSub()=0;
-	virtual void close()=0;
 public:
 	State state{ State::start };
 	std::vector<ShapeBase*> shapes;

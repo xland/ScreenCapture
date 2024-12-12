@@ -136,6 +136,7 @@
     <ClCompile Include="App\Tray.cpp" />
     <ClCompile Include="Tool\PixelInfo.cpp" />
     <ClCompile Include="Tool\StrokeCtrl.cpp" />
+    <ClCompile Include="Tool\ToolBase.cpp" />
     <ClCompile Include="Tool\ToolBtn.cpp" />
     <ClCompile Include="Tool\ToolMain.cpp" />
     <ClCompile Include="Tool\ToolSub.cpp" />
@@ -176,6 +177,7 @@
     <QtMoc Include="Shape\ShapeText.h" />
     <QtMoc Include="Shape\ShapeTextInput.h" />
     <QtMoc Include="Tool\PixelInfo.h" />
+    <QtMoc Include="Tool\ToolBase.h" />
     <ClInclude Include="Tool\ToolBtn.h" />
     <QtMoc Include="Tool\ToolMain.h" />
     <QtMoc Include="Tool\ToolSub.h" />

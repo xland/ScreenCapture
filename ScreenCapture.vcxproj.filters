@@ -125,6 +125,9 @@
     <ClCompile Include="Win\WinBox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Tool\ToolBase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BtnType.h">
@@ -235,6 +238,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="Win\WinBox.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Tool\ToolBase.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

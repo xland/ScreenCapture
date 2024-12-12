@@ -7,30 +7,20 @@
 #include "ToolMain.h"
 #include "ToolSub.h"
 
-namespace
-{
-std::vector<ToolBtn> btns;
-std::vector<unsigned> spliterIndexs;
+namespace{
+    std::vector<ToolBtn> btns;
+    std::vector<unsigned> spliterIndexs;
 }
 
-ToolMain::ToolMain(WinBox* win, QWidget* parent) : QWidget(parent),win{win}
+ToolMain::ToolMain(WinBox* win) : ToolBase(win)
 {
-    setFixedSize(btns.size()*btnW + 8, 32);
-    setMouseTracking(true);
-    setVisible(false);
-    setAutoFillBackground(false);
-    setAttribute(Qt::WA_TranslucentBackground, true);
-    setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint| Qt::Tool);
-    setAttribute(Qt::WA_QuitOnClose, false);
-    setAttribute(Qt::WA_OpaquePaintEvent);
-    setAttribute(Qt::WA_NoSystemBackground);
-    setAttribute(Qt::WA_Hover);
+    setFixedSize(btns.size() * btnW + 8, 32);
 }
 ToolMain::~ToolMain()
 {
 }
 
-void ToolMain::InitData(const QJsonArray& arr, const QString& lang)
+void ToolMain::initData(const QJsonArray& arr, const QString& lang)
 {
     int index{ 0 };
     for (const QJsonValue& val : arr)
@@ -99,44 +89,25 @@ void ToolMain::InitData(const QJsonArray& arr, const QString& lang)
 
 void ToolMain::paintEvent(QPaintEvent* event)
 {
-    auto font = App::getIconFont();
-    font->setPixelSize(15);
-    QPainter painter(this);
-    painter.setRenderHint(QPainter::Antialiasing, true);
-    painter.setRenderHint(QPainter::TextAntialiasing, true);
-    painter.setFont(*font);
-    painter.setPen(Qt::GlobalColor::white);
-    painter.setBrush(Qt::GlobalColor::white);
-    painter.drawRect(rect());
+    auto painter = getPainter();
+    painter->drawRect(rect());
     for (int i = 0; i < btns.size(); i++)
     {
         QRect rect(4 + i * btnW, 0, btnW, height());
-        if (i == selectIndex)
-        {
-            rect.adjust(2, 4, -2, -4);
-            painter.setPen(Qt::NoPen);
-            painter.setBrush(QColor(228, 238, 255));
-            painter.drawRoundedRect(rect, 6, 6);
-            painter.setPen(QColor(9, 88, 217));
+        if (i == selectIndex) {
+            paintBtn(btns[i].icon, QColor(9, 88, 217), QColor(228, 238, 255), rect, painter.get());
         }
-        else if (i == hoverIndex)
-        {
-            rect.adjust(2, 4, -2, -4);
-            painter.setPen(Qt::NoPen);
-            painter.setBrush(QColor(238, 238, 238));
-            painter.drawRoundedRect(rect, 6, 6);
-            painter.setPen(QColor(33, 33, 33));
+        else if (hoverIndex == i) {
+            paintBtn(btns[i].icon, QColor(33, 33, 33), QColor(228, 238, 255), rect, painter.get());
         }
-        else
-        {
-            painter.setPen(QColor(33, 33, 33));
+        else {
+            paintBtn(btns[i].icon, QColor(33, 33, 33), Qt::white, rect, painter.get());
         }
-        painter.drawText(rect, Qt::AlignCenter, btns[i].icon);
     }
-    painter.setPen(QColor(190, 190, 190));
+    painter->setPen(QColor(190, 190, 190));
     for (int i = 0; i < spliterIndexs.size(); i++)
     {
-        painter.drawLine(4 + spliterIndexs[i] * btnW + 0.5, 9, 4 + spliterIndexs[i] * btnW + 0.5, height() - 9);
+        painter->drawLine(4 + spliterIndexs[i] * btnW + 0.5, 9, 4 + spliterIndexs[i] * btnW + 0.5, height() - 9);
     }
 }
 
@@ -183,15 +154,4 @@ void ToolMain::mouseMoveEvent(QMouseEvent* event)
             //QToolTip::showText(QPoint(pos.x(), pos.y()), btns[hoverIndex].tipText, this);
         }
     }
-}
-
-void ToolMain::leaveEvent(QEvent* event)
-{
-    if (hoverIndex != -1)
-    {
-        hoverIndex = -1;
-        update();
-    }
-    QGuiApplication::restoreOverrideCursor();
-    QWidget::leaveEvent(event);
 }

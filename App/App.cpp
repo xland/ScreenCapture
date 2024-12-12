@@ -20,7 +20,6 @@ namespace {
     std::unique_ptr<QHotkey> hotkey;
     std::unique_ptr<Tray> tray;
     QList<QRect> screens;
-
 }
 void App::init()
 {
@@ -94,10 +93,10 @@ void App::initHotKey(const QJsonObject& obj)
 void App::initTool(const QJsonObject& obj, const QString& lang)
 {
     if (obj["toolMain"].isArray()) {
-        ToolMain::InitData(obj["toolMain"].toArray(), lang);
+        ToolMain::initData(obj["toolMain"].toArray(), lang);
     }
     if (obj["toolSub"].isObject()) {
-        ToolSub::InitData(obj["toolSub"].toObject(), lang);
+        ToolSub::initData(obj["toolSub"].toObject(), lang);
     }
     if (obj["colorCtrl"].isObject()) {
         ColorCtrl::InitData(obj["colorCtrl"].toObject(), lang);

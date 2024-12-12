@@ -37,7 +37,8 @@ void WinFull::showToolMain()
         toolMain = new ToolMain(this);
     }
     toolMain->show();
-    toolMain->raise();
+    toolMain->raise();  
+    //todo 确认会不会闪一下
     auto pos = winMask->maskRect.bottomRight();
     pos.setX(pos.x() + x);
     pos.setY(pos.y() + y);
@@ -50,7 +51,7 @@ void WinFull::showToolSub()
     if (!toolSub) {
         winBoard = new WinBoard(this);
         winCanvas = new WinCanvas(this);
-        winMask->raise();
+        winMask->raise();  //todo 确认会不会闪一下
         toolMain->raise();
         toolSub = new ToolSub(this);
     }
@@ -105,31 +106,24 @@ void WinFull::initDesktopImgNative()
 void WinFull::close()
 {
     if (pixelInfo) {
-        //pixelInfo->close();
+        pixelInfo->close();
     }
     if (winMask) {
-        delete winMask;
-        winMask = nullptr;
+        winMask->close();
     }
     if (winCanvas) {
-        delete winCanvas;
-        winCanvas = nullptr;
+        winCanvas->close();
     }
     if (winBoard) {
-        delete winBoard;
-        winBoard = nullptr;
+        winBoard->close();
     }
     if (toolMain) {
         toolMain->close();
-        delete toolMain;
-        toolMain = nullptr;
     }
     if (toolSub) {
         toolSub->close();
-        delete toolSub;
-        toolSub = nullptr;
     }
-    deleteLater();
+    WinBase::close();
 }
 
 void WinFull::mousePress(QMouseEvent* event)
