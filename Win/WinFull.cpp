@@ -42,6 +42,7 @@ void WinFull::showToolMain()
     pos.setX(pos.x() + x);
     pos.setY(pos.y() + y);
     auto hwnd = (HWND)toolMain->winId();
+    auto dpr = toolMain->windowHandle()->devicePixelRatio();
     SetWindowPos(hwnd, nullptr,pos.x() - toolMain->width()*dpr, pos.y() + 6*dpr, 0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_SHOWWINDOW);
 }
 void WinFull::showToolSub()
@@ -86,7 +87,6 @@ void WinFull::initDesktopImg()
 
 void WinFull::initDesktopImgNative()
 {
-
     HDC hScreen = GetDC(NULL);
     HDC hDC = CreateCompatibleDC(hScreen);
     HBITMAP hBitmap = CreateCompatibleBitmap(hScreen, w, h);

@@ -26,9 +26,7 @@ void WinBoard::refresh()
 
 void WinBoard::update()
 {
-    if (img.isNull()) {
-        img = QImage(w, h, QImage::Format_ARGB32);
-    }
+    img = QImage(w, h, QImage::Format_ARGB32);
     img.fill(Qt::transparent);
     QPainter painter(&img);
     painter.setRenderHint(QPainter::Antialiasing, true);
@@ -42,4 +40,6 @@ void WinBoard::update()
         }
     }
     paint();
+    painter.end();
+    releaseImg();
 }
