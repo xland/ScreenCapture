@@ -68,25 +68,19 @@ void ShapeLineBase::mouseMove(QMouseEvent* event)
     hoverDraggerIndex = -1;
     if (draggers[0].contains(pos)) {
         hoverDraggerIndex = 0;
-        auto win = (WinBox*)parent();
-        win->updateCursor(Qt::SizeAllCursor);
     }
     else if (draggers[1].contains(pos)) {
         hoverDraggerIndex = 1;
-        auto win = (WinBox*)parent();
-        win->updateCursor(Qt::SizeAllCursor);
     }
-    if (hoverDraggerIndex == -1) {
+    else {
         double distance = std::abs(coeffA * pos.x() + coeffB * pos.y() + coeffC) / diffVal;
         if (distance <= strokeWidth / 2) {
             hoverDraggerIndex = 8;
-            auto win = (WinBox*)parent();
-            win->updateCursor(Qt::SizeAllCursor);
         }
     }
     if (hoverDraggerIndex > -1) {
-        auto win = (WinBox*)parent();
-        win->refreshCanvas(this);
+        QGuiApplication::setOverrideCursor(Qt::SizeAllCursor);
+        showDragger();
         event->accept();
     }
 }
@@ -103,16 +97,14 @@ void ShapeLineBase::mousePress(QMouseEvent* event)
             path.moveTo(event->pos());
             path.lineTo(event->pos());
             state = ShapeState::sizing0;
-            auto win = (WinBox*)parent();
-            win->refreshCanvas(isEraser?nullptr:this,true);
+            paintingStart();
+            event->accept();
         }
     }
     if (path.isEmpty() && hoverDraggerIndex >= 0) {
         pressPos = event->pos().toPointF();
         state = (ShapeState)((int)ShapeState::sizing0 + hoverDraggerIndex);
-        auto win = (WinBox*)parent();
-        win->refreshCanvas(isEraser ? nullptr : this, true);
-        win->refreshBoard();
+        paintingStart();
         event->accept();
     }
 }
@@ -120,23 +112,17 @@ void ShapeLineBase::mouseRelease(QMouseEvent* event)
 {
     if (path.isEmpty()) {
         if (state >= ShapeState::sizing0) {
-            resetDragger();
             coeffA = startPos.y() - endPos.y();
             coeffB = endPos.x() - startPos.x();
             coeffC = startPos.x() * endPos.y() - endPos.x() * startPos.y();
             diffVal = std::sqrt(coeffA * coeffA + coeffB * coeffB);
-            state = ShapeState::ready;
-
-            auto win = (WinBox*)parent();
-            win->refreshBoard();
-            win->refreshCanvas(this,true);
+            resetDragger();
+            showDragger();
             event->accept();
         }
     }
     else {
-        state = ShapeState::ready;
-        auto win = (WinBox*)parent();
-        win->refreshBoard();
+        paintOnBoard();
         event->accept();
     }
 }
@@ -163,12 +149,6 @@ void ShapeLineBase::mouseDrag(QMouseEvent* event)
     else {
         path.lineTo(event->position());
     }
-    auto win = (WinBox*)parent();
-    if (isEraser) {
-        win->refreshBoard();
-    }
-    else {
-        win->refreshCanvas(this, true);
-    }
+    painting();
     event->accept();
 }

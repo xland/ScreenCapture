@@ -19,6 +19,7 @@ public:
     virtual void mouseRelease(QMouseEvent* event) = 0;
 protected:
     void showDragger();
+    void paintOnBoard();
     void painting();
     void prepareDraggers(const int& size);
     void paintingStart();

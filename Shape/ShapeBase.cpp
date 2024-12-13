@@ -6,7 +6,6 @@
 
 ShapeBase::ShapeBase(QObject* parent):QObject(parent)
 {
-	//App::getFullCanvas()->curShape = this;
 }
 
 ShapeBase::~ShapeBase()
@@ -22,6 +21,15 @@ void ShapeBase::showDragger()
 	}
 	win->winCanvas->curShape = this;
 	win->winCanvas->paintDragger();
+}
+
+void ShapeBase::paintOnBoard()
+{
+	auto win = (WinBox*)parent();
+	if (state != ShapeState::ready) {
+		state = ShapeState::ready;
+		win->winBoard->refresh();
+	}
 }
 
 void ShapeBase::painting()

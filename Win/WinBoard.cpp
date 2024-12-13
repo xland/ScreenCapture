@@ -4,13 +4,13 @@
 
 #include "WinBoard.h"
 #include "WinBase.h"
-#include "WinFull.h"
+#include "WinBox.h"
 #include "../Shape/ShapeBase.h"
 
 WinBoard::WinBoard(QObject *parent) : WinBase(parent)
 {
-    auto winFull = (WinFull*)parent;
-    initSizeByWin(winFull);
+    auto win = (WinBox*)parent;
+    initSizeByWin(win);
     initWindow();
     show();
 }
@@ -26,7 +26,7 @@ void WinBoard::refresh()
     QPainter painter(&img);
     painter.setRenderHint(QPainter::Antialiasing, true);
     painter.setRenderHint(QPainter::TextAntialiasing, true);
-    auto winFull = (WinFull*)parent();
+    auto winFull = (WinBox*)parent();
     for (auto shape : winFull->shapes)
     {
         if (shape->isEraser || shape->state == ShapeState::ready) {
