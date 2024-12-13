@@ -32,5 +32,4 @@ private:
 	int mousePosState{ -1 };
 	QList<QRect> winNativeRects;
 	QList<HWND> winHwnds;
-	int mouseInRectIndex{ -1 };
 };

@@ -111,15 +111,14 @@ void WinMask::mouseRelease(QMouseEvent* event)
 void WinMask::mouseMove(QMouseEvent* event)
 {
     auto father = (WinFull*)parent();
-    auto pos = event->pos();
     if (father->state == State::start)
     {
-        event->accept();    
+        event->accept();
+        QGuiApplication::setOverrideCursor(Qt::CrossCursor);
         for (int i = 0; i < winNativeRects.size(); i++)
         {
             if (winNativeRects[i].contains(event->pos())) {
-                if (mouseInRectIndex == i) return;
-                mouseInRectIndex = i;
+                if (maskRect == winNativeRects[i]) return;
                 maskRect = winNativeRects[i];
                 update();
                 return;

@@ -135,14 +135,17 @@ void WinFull::mousePress(QMouseEvent* event)
 
 void WinFull::mouseMove(QMouseEvent* event)
 {
-
-    QGuiApplication::setOverrideCursor(Qt::CrossCursor);
     event->ignore();
     winMask->mouseMove(event);
-    if (pixelInfo) {
+    if (pixelInfo && !event->isAccepted()) {
         pixelInfo->mouseMove(event);
     }
-    mouseMoveOnShape(event);
+    if (!event->isAccepted()) {
+        mouseMoveOnShape(event);
+    }
+    if (!event->isAccepted()) {
+        QGuiApplication::setOverrideCursor(Qt::CrossCursor);
+    }
 }
 
 void WinFull::mouseDrag(QMouseEvent* event)
