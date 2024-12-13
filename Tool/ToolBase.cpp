@@ -26,11 +26,18 @@ ToolBase::ToolBase(WinBox* win, QWidget* parent) : QWidget(parent),win{win}
     setAttribute(Qt::WA_OpaquePaintEvent);
     setAttribute(Qt::WA_NoSystemBackground);
     setAttribute(Qt::WA_Hover);
+    setCursor(Qt::PointingHandCursor);
 }
 ToolBase::~ToolBase()
 {
 }
 
+
+void ToolBase::enterEvent(QEnterEvent* event)
+{
+    QGuiApplication::setOverrideCursor(Qt::PointingHandCursor);
+    QWidget::enterEvent(event);
+}
 
 void ToolBase::leaveEvent(QEvent* event)
 {

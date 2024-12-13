@@ -140,7 +140,6 @@ void ToolMain::mousePressEvent(QMouseEvent* event)
 
 void ToolMain::mouseMoveEvent(QMouseEvent* event)
 {
-    QGuiApplication::setOverrideCursor(Qt::PointingHandCursor);
     auto x = event->pos().x() - 4;
     auto index{ x / (int)btnW };
     if (index >= btns.size())index = -1;

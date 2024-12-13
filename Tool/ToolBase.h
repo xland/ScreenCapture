@@ -22,6 +22,7 @@ public:
 	int selectIndex{ -1 };
 	WinBox* win;
 protected:
+	void enterEvent(QEnterEvent* event) override;
 	void leaveEvent(QEvent* event) override;
 	void closeEvent(QCloseEvent* event) override;
 	std::shared_ptr<QPainter> getPainter();

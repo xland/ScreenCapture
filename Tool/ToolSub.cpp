@@ -161,7 +161,6 @@ void ToolSub::mousePressEvent(QMouseEvent* event)
 
 void ToolSub::mouseMoveEvent(QMouseEvent* event)
 {
-	QGuiApplication::setOverrideCursor(Qt::PointingHandCursor);
 	auto x = event->pos().x();
 	auto tempIndex{ -1 };
 	for (auto& item:btnSpanIndexs)
@@ -229,5 +228,4 @@ void ToolSub::showEvent(QShowEvent* event)
 		triangleX = x;
 		move(pos.x(), pos.y());
 	}
-	QWidget::showEvent(event);
 }
