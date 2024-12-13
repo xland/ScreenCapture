@@ -17,6 +17,11 @@ public:
     virtual void mouseDrag(QMouseEvent* event) = 0;
     virtual void mousePress(QMouseEvent* event) = 0;
     virtual void mouseRelease(QMouseEvent* event) = 0;
+protected:
+    void showDragger();
+    void painting();
+    void prepareDraggers(const int& size);
+    void paintingStart();
 public:
     int draggerSize{ 8 };
     ShapeState state{ ShapeState::temp };

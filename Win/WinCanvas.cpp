@@ -8,7 +8,6 @@
 
 WinCanvas::WinCanvas(QObject *parent) : WinBase(parent)
 {
-    initTimer();
     auto winFull = (WinFull*)parent;
     initSizeByWin(winFull);
     initWindow();
@@ -19,54 +18,28 @@ WinCanvas::~WinCanvas()
 {
 }
 
-void WinCanvas::refresh(ShapeBase* shape, bool forceUpdate)
+void WinCanvas::paintShape()
 {
-    if (shape) {
-        if (shape != curShape) {
-            curShape = shape;
-            update();
-            return;
-		}        
-    }
-    else {
-        if (shape != curShape) {
-            curShape = shape;
-            timer->start();
-        }
-    }
-    if (forceUpdate) {
-        update();
-    }
-}
-
-void WinCanvas::onTimeout()
-{
-    update();
-}
-
-void WinCanvas::initTimer()
-{
-    timer = new QTimer(this);
-    timer->setInterval(800);
-    timer->setSingleShot(true);
-    connect(timer, &QTimer::timeout, this, &WinCanvas::onTimeout);
-}
-
-void WinCanvas::update()
-{
-    if (!curShape) return;
-    if (img.isNull()) {
-        img = QImage(w, h, QImage::Format_ARGB32_Premultiplied);
-    }
-    img.fill(Qt::transparent);
-    QPainter painter(&img);
-    painter.setRenderHint(QPainter::Antialiasing, true);
-    painter.setRenderHint(QPainter::TextAntialiasing, true);
-    if (curShape->state >= ShapeState::sizing0 && !curShape->isEraser) {
-        curShape->paint(&painter);
-    }
-    else {
-        curShape->paintDragger(&painter);
-    }
+    auto p = getPainter();
+    curShape->paint(p.get());
     paint();
+}
+
+void WinCanvas::paintDragger()
+{
+    initImg();
+    auto p = getPainter();
+    curShape->paintDragger(p.get());
+    paint();
+    p->end();
+    releaseImg();
+}
+
+std::shared_ptr<QPainter> WinCanvas::getPainter()
+{
+    img.fill(Qt::transparent);
+    auto p = std::make_shared<QPainter>(&img);
+    p->setRenderHint(QPainter::Antialiasing, true);
+    p->setRenderHint(QPainter::TextAntialiasing, true);
+    return p;
 }

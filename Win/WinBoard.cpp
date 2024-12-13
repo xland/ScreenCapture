@@ -21,11 +21,6 @@ WinBoard::~WinBoard()
 
 void WinBoard::refresh()
 {
-    update();
-}
-
-void WinBoard::update()
-{
     img = QImage(w, h, QImage::Format_ARGB32_Premultiplied);
     img.fill(Qt::transparent);
     QPainter painter(&img);

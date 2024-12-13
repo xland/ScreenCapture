@@ -16,10 +16,7 @@ ShapeMosaic::ShapeMosaic(QObject* parent) : ShapeBase(parent)
     auto win = (WinBox*)parent;
     isRect = win->toolSub->getSelectState("eraserFill");
     if (isRect) {
-        for (int i = 0; i < 8; i++)
-        {
-            draggers.push_back(QRect());
-        }
+        prepareDraggers(8);
     }
     strokeWidth = win->toolSub->getStrokeWidth();
     initMosaicBgImg();

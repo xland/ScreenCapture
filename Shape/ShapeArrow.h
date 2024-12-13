@@ -18,7 +18,6 @@ public:
     void mouseDrag(QMouseEvent* event) override;
     void mousePress(QMouseEvent* event) override;
     void mouseRelease(QMouseEvent* event) override;
-    virtual void mouseOnShape(QMouseEvent* event);
 public:
     QPolygonF shape;
     bool isFill{ false };

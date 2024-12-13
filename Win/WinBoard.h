@@ -10,8 +10,6 @@ public:
 	WinBoard(QObject *parent = nullptr);
 	~WinBoard();
 	void refresh();
-protected:
-	void update();
 private:
 	bool refreshFlag{ false };
 };

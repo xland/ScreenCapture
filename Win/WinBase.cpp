@@ -147,6 +147,12 @@ void WinBase::show()
     UpdateWindow(hwnd);
     SetCursor(LoadCursor(nullptr, IDC_ARROW));
 }
+void WinBase::initImg()
+{
+    if (img.isNull()) {
+        img = QImage(w, h, QImage::Format_ARGB32_Premultiplied);
+    }
+}
 void WinBase::paint()
 {
     if (img.isNull()) return;

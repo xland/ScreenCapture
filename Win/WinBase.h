@@ -14,6 +14,7 @@ public:
 	WinBase(QObject* parent = nullptr);
 	virtual ~WinBase();
 	void show();
+	void initImg();
 	void releaseImg();
 	QImage grab() { return QImage(); };
 	QImage grab(const QRect& rect);

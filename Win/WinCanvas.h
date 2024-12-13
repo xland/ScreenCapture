@@ -12,15 +12,13 @@ class WinCanvas : public WinBase
 public:
 	WinCanvas(QObject* parent = nullptr);
 	~WinCanvas();
-	void refresh(ShapeBase* shape, bool forceUpdate = false);
+	void paintDragger();
+	void paintShape();
 public:
 	ShapeBase* curShape;
 protected:
 
 private:
-	void onTimeout();
-	void initTimer();
-	void update();
+	std::shared_ptr<QPainter> getPainter();
 private:
-	QTimer* timer;
 };

@@ -16,7 +16,7 @@ namespace {
 ShapeNumber::ShapeNumber(QObject* parent) : ShapeBase(parent)
 {
     auto win = (WinBox*)parent;
-    draggers.push_back(QRect());
+    prepareDraggers(1);
     isFill = win->toolSub->getSelectState("numberFill");
     color = win->toolSub->getColor();
     val = ++numVal;

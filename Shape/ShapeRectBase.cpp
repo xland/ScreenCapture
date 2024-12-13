@@ -16,12 +16,7 @@ ShapeRectBase::~ShapeRectBase()
 
 void ShapeRectBase::resetDragger()
 {
-    if (draggers.empty()) {
-        for (int i = 0; i < 8; i++)
-        {
-            draggers.push_back(QRect());
-        }
-    }
+    prepareDraggers(8);
     auto x{ shape.x() },y{ shape.y() },w{ shape.width() },h{ shape.height() };
     draggers[0].setRect(x - draggerSize / 2, y - draggerSize / 2, draggerSize, draggerSize);
     draggers[1].setRect(x + w / 2 - draggerSize / 2, y - draggerSize / 2, draggerSize, draggerSize);

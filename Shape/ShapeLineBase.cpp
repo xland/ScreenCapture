@@ -21,10 +21,7 @@ ShapeLineBase::~ShapeLineBase()
 
 void ShapeLineBase::resetDragger()
 {
-    if (draggers.empty()) {
-        draggers.push_back(QRect());
-        draggers.push_back(QRect());
-    }
+    prepareDraggers(2);
     auto half{ draggerSize / 2 };
     draggers[0].setRect(startPos.x() - half, startPos.y() - half, draggerSize, draggerSize);
     draggers[1].setRect(endPos.x() - half, endPos.y() - half, draggerSize, draggerSize);
