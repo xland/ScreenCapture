@@ -94,7 +94,7 @@ void ShapeArrow::mousePress(QMouseEvent* event)
         hoverDraggerIndex = 1;
     }
     if (hoverDraggerIndex >= 0) {
-        pressPos = event->pos().toPointF();
+        pressPos = event->position();
         state = (ShapeState)((int)ShapeState::sizing0 + hoverDraggerIndex);
         paintingStart();
         event->accept();

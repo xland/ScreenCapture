@@ -89,7 +89,7 @@ void ShapeLineBase::mousePress(QMouseEvent* event)
     if (state == ShapeState::temp) {
         auto flag = event->modifiers() & Qt::ShiftModifier;
         if (flag) {
-            startPos = event->pos().toPointF();
+            startPos = event->position();
             endPos = startPos;
             hoverDraggerIndex = 1;
         }
@@ -102,7 +102,7 @@ void ShapeLineBase::mousePress(QMouseEvent* event)
         }
     }
     if (path.isEmpty() && hoverDraggerIndex >= 0) {
-        pressPos = event->pos().toPointF();
+        pressPos = event->position();
         state = (ShapeState)((int)ShapeState::sizing0 + hoverDraggerIndex);
         paintingStart();
         event->accept();
