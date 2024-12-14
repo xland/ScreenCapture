@@ -27,11 +27,11 @@ ShapeTextInput* ShapeTextInput::create(ShapeText* parent)
 	font.setWeight(parent->bold ? QFont::Bold : QFont::Normal);
 	font.setItalic(parent->italic);
 	textEdit->setFont(font);
-	QString style{ "color:%1;background:transparent;margin:1px;padding:2px;caret-color:%1;" };
+	QString style{ "color:%1;background:transparent;margin:1px;padding:2px;caret-color:%1;"};
 	style = style.arg(parent->color.name());
 	textEdit->textInputCursorColor = parent->color;
 	textEdit->setStyleSheet(style);
-	connect(textEdit->document(), &QTextDocument::contentsChanged, parent, &ShapeText::adjustSize);
+	connect(textEdit->document(), &QTextDocument::contentsChanged, textEdit, &ShapeTextInput::adjustSize);
 	connect(textEdit, &ShapeTextInput::focusOut, parent, &ShapeText::focusOut);
 	connect(textEdit, &ShapeTextInput::focusIn, parent, &ShapeText::focusIn);
 	return textEdit;
@@ -39,13 +39,26 @@ ShapeTextInput* ShapeTextInput::create(ShapeText* parent)
 
 void ShapeTextInput::moveTo(const QPoint& pos)
 {
-	move(pos + QPoint(-10, -10));
+	move(pos);
 	show();
 	setFocus();
-	setText("123");
+	setText("");
 	raise();
 }
 
+void ShapeTextInput::adjustSize()
+{
+	auto doc = document();
+	doc->adjustSize();
+	auto size = doc->size().toSize();
+	if (doc->isEmpty()) {
+		size += QSize(8, 6);
+	}
+	else {
+		size += QSize(6, 2);
+	}
+	setFixedSize(size);
+}
 
 void ShapeTextInput::focusOutEvent(QFocusEvent * event)
 {

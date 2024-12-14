@@ -23,9 +23,9 @@ WinBox::~WinBox()
 {
 }
 
-ShapeBase* WinBox::addShape()
+void WinBox::clearTempShape()
 {
-    for (auto it = shapes.begin(); it != shapes.end(); ) {
+    for (auto it = shapes.begin(); it != shapes.end();) {
         if ((*it)->state == ShapeState::temp) {
             (*it)->deleteLater();
             it = shapes.erase(it);
@@ -34,6 +34,11 @@ ShapeBase* WinBox::addShape()
             ++it;
         }
     }
+}
+
+ShapeBase* WinBox::addShape()
+{
+    clearTempShape();
     ShapeBase* shape;
     if (state == State::rect) {
         shape = new ShapeRect(this);
@@ -150,3 +155,5 @@ void WinBox::refreshCanvas(ShapeBase* shape, bool force)
 {
     //winCanvas->refresh(shape, force);
 }
+
+

@@ -13,7 +13,6 @@ class ShapeText:public ShapeBase
 public:
     ShapeText(QObject* parent = nullptr);
     ~ShapeText();
-    void adjustSize();
     void focusOut();
     void focusIn();
 public:

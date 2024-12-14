@@ -22,6 +22,7 @@ private:
 	void focusOutEvent(QFocusEvent* event) override;
 	void focusInEvent(QFocusEvent* event) override;
 	void paintEvent(QPaintEvent* event) override;
+	void adjustSize();
 private:
 	bool showTextInputCursor{ true };
 };

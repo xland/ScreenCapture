@@ -101,8 +101,6 @@ void WinFull::initDesktopImgNative()
     ReleaseDC(NULL, hScreen);
 }
 
-
-
 void WinFull::close()
 {
     if (pixelInfo) {

@@ -7,6 +7,7 @@
 
 #include "ShapeText.h"
 #include "../Win/WinBox.h"
+#include "../Win/WinBoard.h"
 #include "../App/App.h"
 #include "../Tool/ToolSub.h"
 #include "../Win/WinCanvas.h"
@@ -15,7 +16,8 @@
 ShapeText::ShapeText(QObject* parent) : ShapeBase(parent)
 {
     auto win = (WinBox*)parent;
-    //state = ShapeState::ready;
+    //要自己控制删除策略，不然第二个实例创建时，第一个实例的blur还没有触发，会导致第一个实例被删除
+    state = ShapeState::ready; 
     color = win->toolSub->getColor();
     fontSize = win->toolSub->getStrokeWidth();
     bold = win->toolSub->getSelectState("bold");
@@ -27,38 +29,26 @@ ShapeText::~ShapeText()
     delete textEdit;
 }
 
-void ShapeText::adjustSize()
-{
-    textEdit->document()->adjustSize();
-    auto size = textEdit->document()->size().toSize();
-    if (textEdit->document()->isEmpty()) {
-        size += QSize(8, 6); 
-    }
-    else {
-        size += QSize(6, 2);
-    }
-    textEdit->setFixedSize(size);
-    auto win = (WinBox*)parent();
-    win->refreshBoard();  //为什么要在board上画框
-}
+
 
 void ShapeText::focusOut()
 {
     auto text = textEdit->document()->toPlainText().trimmed();
     if (text.isEmpty()) {
         state = ShapeState::temp;
+        auto win = (WinBox*)parent();
+        win->clearTempShape();
+        return;
     }
-    state = ShapeState::ready;
-    auto win = (WinBox*)parent();
-    win->refreshBoard();
     textEdit->hide();
+    paintOnBoard();
 }
 
 void ShapeText::focusIn()
 {
-    auto win = (WinBox*)parent();
-    win->refreshBoard();
-    win->refreshCanvas(nullptr, true);
+    //auto win = (WinBox*)parent();
+    //win->refreshBoard();
+    //win->refreshCanvas(nullptr, true);
 }
 
 void ShapeText::paint(QPainter* painter)
@@ -131,12 +121,12 @@ void ShapeText::mousePress(QMouseEvent* event)
 }
 void ShapeText::mouseRelease(QMouseEvent* event)
 {
-    if (state >= ShapeState::sizing0) {
-        state = ShapeState::ready;
-        auto win = (WinBox*)parent();
-        win->refreshCanvas(this,true);
-        event->accept();
-    }
+    //if (state >= ShapeState::sizing0) {
+    //    state = ShapeState::ready;
+    //    auto win = (WinBox*)parent();
+    //    win->refreshCanvas(this,true);
+    //    event->accept();
+    //}
 }
 void ShapeText::mouseDrag(QMouseEvent* event)
 {

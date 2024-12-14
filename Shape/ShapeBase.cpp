@@ -28,8 +28,8 @@ void ShapeBase::paintOnBoard()
 	auto win = (WinBox*)parent();
 	if (state != ShapeState::ready) {
 		state = ShapeState::ready;
-		win->winBoard->refresh();
 	}
+	win->winBoard->refresh();
 }
 
 void ShapeBase::painting()

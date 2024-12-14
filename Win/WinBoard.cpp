@@ -26,8 +26,8 @@ void WinBoard::refresh(bool releaseFlag)
     QPainter p(&img);
     p.setRenderHint(QPainter::Antialiasing, true);
     p.setRenderHint(QPainter::TextAntialiasing, true);
-    auto winFull = (WinBox*)parent();
-    for (auto shape : winFull->shapes)
+    auto win = (WinBox*)parent();
+    for (auto shape : win->shapes)
     {
         if (shape->isEraser || shape->state == ShapeState::ready) {
             shape->paint(&p);
