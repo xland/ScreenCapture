@@ -18,11 +18,11 @@ public:
     virtual void mousePress(QMouseEvent* event) = 0;
     virtual void mouseRelease(QMouseEvent* event) = 0;
 protected:
+    virtual void paintOnBoard();
+    virtual void painting();
+    virtual void paintingStart();
     void showDragger();
-    void paintOnBoard();
-    void painting();
     void prepareDraggers(const int& size);
-    void paintingStart();
 public:
     int draggerSize{ 8 };
     ShapeState state{ ShapeState::temp };

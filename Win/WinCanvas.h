@@ -14,6 +14,7 @@ public:
 	~WinCanvas();
 	void paintDragger();
 	void paintShape();
+	void clear();
 public:
 	ShapeBase* curShape;
 protected:

@@ -10,6 +10,10 @@ class ShapeEraserLine:public ShapeLineBase
 public:
     ShapeEraserLine(QObject* parent = nullptr);
     ~ShapeEraserLine();
-    virtual void paint(QPainter* painter) override;
+    void paint(QPainter* painter) override;
 public:
+protected:
+    void paintingStart() override;
+    void paintOnBoard() override;
+    void painting() override;
 };

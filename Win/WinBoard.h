@@ -9,7 +9,7 @@ class WinBoard : public WinBase
 public:
 	WinBoard(QObject *parent = nullptr);
 	~WinBoard();
-	void refresh();
+	void refresh(bool releaseFlag=true);
 private:
 	bool refreshFlag{ false };
 };

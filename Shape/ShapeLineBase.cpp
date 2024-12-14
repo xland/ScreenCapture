@@ -48,7 +48,7 @@ void ShapeLineBase::paintDragger(QPainter* painter)
             transform.translate(startPos.x(), startPos.y());
             transform.rotate(-angle);
             borderShape = transform.map(borderShape);
-            pen.setStyle(Qt::CustomDashLine);
+            pen.setStyle(Qt::CustomDashLine);  //为橡皮擦区域画虚线
             pen.setDashPattern({ 3,3 });
             painter->setPen(pen);
             painter->drawPolygon(borderShape);

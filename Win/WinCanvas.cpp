@@ -25,6 +25,14 @@ void WinCanvas::paintShape()
     paint();
 }
 
+void WinCanvas::clear()
+{
+    initImg();
+    img.fill(Qt::transparent);
+    paint();
+    releaseImg();
+}
+
 void WinCanvas::paintDragger()
 {
     initImg();

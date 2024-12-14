@@ -19,21 +19,24 @@ WinBoard::~WinBoard()
 {
 }
 
-void WinBoard::refresh()
+void WinBoard::refresh(bool releaseFlag)
 {
-    img = QImage(w, h, QImage::Format_ARGB32_Premultiplied);
+    initImg();
     img.fill(Qt::transparent);
-    QPainter painter(&img);
-    painter.setRenderHint(QPainter::Antialiasing, true);
-    painter.setRenderHint(QPainter::TextAntialiasing, true);
+    QPainter p(&img);
+    p.setRenderHint(QPainter::Antialiasing, true);
+    p.setRenderHint(QPainter::TextAntialiasing, true);
     auto winFull = (WinBox*)parent();
     for (auto shape : winFull->shapes)
     {
         if (shape->isEraser || shape->state == ShapeState::ready) {
-            shape->paint(&painter);
+            shape->paint(&p);
         }
     }
     paint();
-    painter.end();
-    releaseImg();
+    p.end();
+    if (releaseFlag) {
+        releaseImg();
+    }
+    
 }
