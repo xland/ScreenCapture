@@ -113,7 +113,6 @@ void WinMask::mouseMove(QMouseEvent* event)
     auto father = (WinFull*)parent();
     if (father->state == State::start)
     {
-        event->accept();
         QGuiApplication::setOverrideCursor(Qt::CrossCursor);
         for (int i = 0; i < winNativeRects.size(); i++)
         {

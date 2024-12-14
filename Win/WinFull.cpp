@@ -144,7 +144,12 @@ void WinFull::mouseMove(QMouseEvent* event)
         mouseMoveOnShape(event);
     }
     if (!event->isAccepted()) {
-        QGuiApplication::setOverrideCursor(Qt::CrossCursor);
+        if (state == State::text) {
+            QGuiApplication::setOverrideCursor(Qt::IBeamCursor);
+        }
+        else {
+            QGuiApplication::setOverrideCursor(Qt::CrossCursor);
+        }
     }
 }
 

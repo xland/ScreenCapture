@@ -13,13 +13,9 @@ class ShapeText:public ShapeBase
 public:
     ShapeText(QObject* parent = nullptr);
     ~ShapeText();
-    virtual void paint(QPainter* painter) override;
-    void paintDragger(QPainter* painter) override;
-    void paintBorder(QPainter* painter);
-    void mouseMove(QMouseEvent* event) override;
-    void mouseDrag(QMouseEvent* event) override;
-    void mousePress(QMouseEvent* event) override;
-    void mouseRelease(QMouseEvent* event) override;
+    void adjustSize();
+    void focusOut();
+    void focusIn();
 public:
     QColor color{ Qt::red };
     qreal fontSize;
@@ -27,11 +23,14 @@ public:
     bool italic;
     QString textVal;
 protected:
+    virtual void paint(QPainter* painter) override;
+    void paintDragger(QPainter* painter) override;
+    void paintBorder(QPainter* painter);
+    void mouseMove(QMouseEvent* event) override;
+    void mouseDrag(QMouseEvent* event) override;
+    void mousePress(QMouseEvent* event) override;
+    void mouseRelease(QMouseEvent* event) override;
 private:
-    void adjustSize();
-    void createTextEdit();
-    void focusOut();
-    void focusIn();
 private:
     QPointF startPos,endPos,pressPos;
     ShapeTextInput* textEdit;

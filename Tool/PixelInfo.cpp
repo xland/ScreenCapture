@@ -86,7 +86,8 @@ void PixelInfo::paintEvent(QPaintEvent* event)
     //文字信息
     painter.setBrush(Qt::NoBrush);
     painter.setPen(Qt::white);
-    QFont font("微软雅黑", 8);
+    auto font = painter.font();
+    font.setPixelSize(8);
     painter.setFont(font);
     auto tarColor = img.pixelColor(img.rect().center());
     painter.drawText(QPoint(8, 118), QString("HEX (Ctrl+H) : %1").arg(tarColor.name().toUpper()));

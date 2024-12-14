@@ -23,7 +23,7 @@ namespace {
 }
 void App::init()
 {
-    QFont font("微软雅黑");
+    QFont font("Microsoft YaHei",12);
     qApp->setFont(font);
     initConfig();
     start();

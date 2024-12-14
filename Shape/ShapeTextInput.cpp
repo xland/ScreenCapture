@@ -1,5 +1,6 @@
 ﻿#include <QPainter>
 #include "ShapeTextInput.h"
+#include "ShapeText.h"
 
 ShapeTextInput::ShapeTextInput(QWidget* parent) : QTextEdit(parent)
 {
@@ -16,6 +17,35 @@ ShapeTextInput::ShapeTextInput(QWidget* parent) : QTextEdit(parent)
 
 ShapeTextInput::~ShapeTextInput()
 {}
+
+ShapeTextInput* ShapeTextInput::create(ShapeText* parent)
+{
+	auto textEdit = new ShapeTextInput(); //不能把QObject设置为QWidget的parent
+	auto font = textEdit->font();
+	font.setStyleStrategy(QFont::PreferAntialias);
+	font.setPointSize(parent->fontSize);
+	font.setWeight(parent->bold ? QFont::Bold : QFont::Normal);
+	font.setItalic(parent->italic);
+	textEdit->setFont(font);
+	QString style{ "color:%1;background:transparent;margin:1px;padding:2px;caret-color:%1;" };
+	style = style.arg(parent->color.name());
+	textEdit->textInputCursorColor = parent->color;
+	textEdit->setStyleSheet(style);
+	connect(textEdit->document(), &QTextDocument::contentsChanged, parent, &ShapeText::adjustSize);
+	connect(textEdit, &ShapeTextInput::focusOut, parent, &ShapeText::focusOut);
+	connect(textEdit, &ShapeTextInput::focusIn, parent, &ShapeText::focusIn);
+	return textEdit;
+}
+
+void ShapeTextInput::moveTo(const QPoint& pos)
+{
+	move(pos + QPoint(-10, -10));
+	show();
+	setFocus();
+	setText("123");
+	raise();
+}
+
 
 void ShapeTextInput::focusOutEvent(QFocusEvent * event)
 {

@@ -3,6 +3,7 @@
 #include <QObject>
 #include <qtextedit.h>
 
+class ShapeText;
 class ShapeTextInput  : public QTextEdit
 {
 	Q_OBJECT
@@ -10,6 +11,8 @@ class ShapeTextInput  : public QTextEdit
 public:
 	ShapeTextInput(QWidget* parent = nullptr);
 	~ShapeTextInput();
+	static ShapeTextInput* create(ShapeText* parent);
+	void moveTo(const QPoint& pos);
 signals:
 	void focusOut();
 	void focusIn();

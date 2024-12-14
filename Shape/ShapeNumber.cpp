@@ -69,7 +69,8 @@ void ShapeNumber::paint(QPainter* painter)
         painter->setPen(color);
     }
     QRectF rect(startPos.x() - r, startPos.y() - r, 2 * r, 2 * r);
-    QFont font("微软雅黑", r / 4 * 3);
+    auto font = painter->font();
+    font.setPointSizeF(r / 4 * 3);
     painter->setFont(font);
     painter->drawText(rect, Qt::AlignCenter, QString::number(val));
 }

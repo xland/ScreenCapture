@@ -42,24 +42,6 @@ void ShapeText::adjustSize()
     win->refreshBoard();  //为什么要在board上画框
 }
 
-void ShapeText::createTextEdit()
-{
-    textEdit = new ShapeTextInput();
-    QFont font("微软雅黑");
-    font.setStyleStrategy(QFont::PreferAntialias);
-    font.setPointSize(fontSize);
-    font.setWeight(bold ? QFont::Bold : QFont::Normal);
-    font.setItalic(italic);
-    textEdit->setFont(font);
-    QString style{ "color:%1;background:transparent;margin:1px;padding:2px;caret-color:%1;" };
-    style = style.arg(color.name());
-    textEdit->textInputCursorColor = color;
-    textEdit->setStyleSheet(style);
-    connect(textEdit->document(), &QTextDocument::contentsChanged, this, &ShapeText::adjustSize);
-    connect(textEdit, &ShapeTextInput::focusOut, this, &ShapeText::focusOut);
-	connect(textEdit, &ShapeTextInput::focusIn, this, &ShapeText::focusIn);
-}
-
 void ShapeText::focusOut()
 {
     auto text = textEdit->document()->toPlainText().trimmed();
@@ -127,11 +109,8 @@ void ShapeText::mouseMove(QMouseEvent* event)
 void ShapeText::mousePress(QMouseEvent* event)
 {
     if (!textEdit) {
-        createTextEdit();
-        textEdit->move(event->pos() + QPoint(-10, -10));
-        textEdit->show();
-        textEdit->setFocus();
-        textEdit->setText("");
+        textEdit = ShapeTextInput::create(this);
+        textEdit->moveTo(QCursor::pos() + QPoint(-10, -10));
         event->accept();
         return;
     }
