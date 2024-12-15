@@ -13,6 +13,7 @@ public:
 	~ShapeTextInput();
 	static ShapeTextInput* create(ShapeText* parent);
 	void moveTo(const QPoint& pos);
+	QRect getNativeRect();
 signals:
 	void focusOut();
 	void focusIn();
@@ -25,4 +26,5 @@ private:
 	void adjustSize();
 private:
 	bool showTextInputCursor{ true };
+	ShapeText* parent;
 };

@@ -24,7 +24,6 @@ public:
 protected:
     virtual void paint(QPainter* painter) override;
     void paintDragger(QPainter* painter) override;
-    void paintBorder(QPainter* painter);
     void mouseMove(QMouseEvent* event) override;
     void mouseDrag(QMouseEvent* event) override;
     void mousePress(QMouseEvent* event) override;

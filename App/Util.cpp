@@ -1,4 +1,4 @@
-#include <Windows.h>
+﻿#include <Windows.h>
 #include <windowsx.h>
 #include "Util.h"
 
@@ -18,8 +18,8 @@ QMouseEvent Util::createMouseEvent(const int& x, const int& y, const QEvent::Typ
     if (isShift) mf = mf | Qt::ShiftModifier;
     QPointF p(x, y);
     POINT pos;
-    GetCursorPos(&pos);
-    QPointF g(pos.x, pos.y);
+    GetCursorPos(&pos);  //比ClientToScreen 效率要高
+    QPointF g(pos.x, pos.y);  //todo 不应该用QPointF
     return QMouseEvent(QEvent::MouseButtonPress, p, g, btn, btn, mf);
 }
 

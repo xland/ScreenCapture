@@ -7,6 +7,7 @@
 #include <QWindow>
 
 #include "ShapeText.h"
+#include "../Win/WinBase.h"
 #include "../Win/WinBox.h"
 #include "../Win/WinBoard.h"
 #include "../App/App.h"
@@ -30,8 +31,6 @@ ShapeText::~ShapeText()
     delete textEdit;
 }
 
-
-
 void ShapeText::focusOut()
 {
     auto text = textEdit->document()->toPlainText().trimmed();
@@ -42,6 +41,7 @@ void ShapeText::focusOut()
         return;
     }
     paintOnBoard();
+    textEdit->hide();
 }
 
 void ShapeText::focusIn()
@@ -66,45 +66,41 @@ void ShapeText::paint(QPainter* painter)
     QRect rect(QPoint(rectNative.left + 12, rectNative.top + 12), QPoint(rectNative.right, rectNative.bottom));
 
     auto text = textEdit->document()->toPlainText();
-    painter->drawText(rect, Qt::AlignLeft, text);
-    textEdit->hide();
+    painter->drawText(rect, text);
 }
 void ShapeText::paintDragger(QPainter* painter)
 {
-    if (!textEdit->isVisible()) {
-        paintBorder(painter);
-    }
-}
-void ShapeText::paintBorder(QPainter* painter)
-{
     QPen pen;
     pen.setColor(color);
-    pen.setStyle(Qt::DashLine);
-    pen.setDashOffset(1);
-    pen.setDashPattern({ 1, 2 });
+    pen.setStyle(Qt::CustomDashLine);
+    pen.setDashPattern({ 3, 3 });
     pen.setWidth(1);
     painter->setPen(pen);
     painter->setBrush(Qt::NoBrush);
-    auto rect = textEdit->geometry().adjusted(4,4,-4,-4);
+    auto win = (WinBox*)parent();
+    auto rect = textEdit->getNativeRect();
     painter->drawRect(rect);
 }
+
 void ShapeText::mouseMove(QMouseEvent* event)
 {
-    auto pos = event->pos();
-    auto rect = textEdit->geometry();
+    auto pos = event->position().toPoint();
+    auto win = (WinBox*)parent();
+    auto rect = textEdit->getNativeRect();
     auto innerRect = rect.adjusted(3, 3, -3, -3);
     hoverDraggerIndex = -1;
     if (rect.contains(pos)) {
-        auto win = (WinBox*)parent();
         if (innerRect.contains(pos)) {
             hoverDraggerIndex = 0;
-            win->updateCursor(Qt::IBeamCursor);
+            QGuiApplication::setOverrideCursor(Qt::IBeamCursor);
         }
         else {
             hoverDraggerIndex = 8;
-            win->updateCursor(Qt::SizeAllCursor);
+            QGuiApplication::setOverrideCursor(Qt::SizeAllCursor);
         }
-        win->refreshCanvas(this);
+        if (!textEdit->isVisible()) {
+            showDragger();
+        }        
         event->accept();
     }
 }

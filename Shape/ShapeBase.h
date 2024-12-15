@@ -17,11 +17,11 @@ public:
     virtual void mouseDrag(QMouseEvent* event) = 0;
     virtual void mousePress(QMouseEvent* event) = 0;
     virtual void mouseRelease(QMouseEvent* event) = 0;
+    void showDragger();
 protected:
     virtual void paintOnBoard();
     virtual void painting();
     virtual void paintingStart();
-    void showDragger();
     void prepareDraggers(const int& size);
 public:
     int draggerSize{ 8 };

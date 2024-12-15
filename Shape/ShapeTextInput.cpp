@@ -1,4 +1,7 @@
 ﻿#include <QPainter>
+#include <Windows.h>
+#include "../Win/WinBox.h"
+
 #include "ShapeTextInput.h"
 #include "ShapeText.h"
 
@@ -21,6 +24,7 @@ ShapeTextInput::~ShapeTextInput()
 ShapeTextInput* ShapeTextInput::create(ShapeText* parent)
 {
 	auto textEdit = new ShapeTextInput(); //不能把QObject设置为QWidget的parent
+	textEdit->parent = parent;
 	auto font = textEdit->font();
 	font.setStyleStrategy(QFont::PreferAntialias);
 	font.setPointSize(parent->fontSize);
@@ -46,6 +50,18 @@ void ShapeTextInput::moveTo(const QPoint& pos)
 	raise();
 }
 
+QRect ShapeTextInput::getNativeRect()
+{
+	RECT rect;
+	GetWindowRect((HWND)winId(), &rect);
+	POINT lt{ .x{rect.left},.y{rect.top} };
+	POINT rb{ .x{rect.right},.y{rect.bottom} };
+	auto win = (WinBox*)parent->parent();
+	ScreenToClient(win->hwnd,&lt);
+	ScreenToClient(win->hwnd,&rb);
+	return QRect(QPoint(lt.x, lt.y), QPoint(rb.x, rb.y));
+}
+
 void ShapeTextInput::adjustSize()
 {
 	auto doc = document();
@@ -58,6 +74,7 @@ void ShapeTextInput::adjustSize()
 		size += QSize(6, 2);
 	}
 	setFixedSize(size);
+	//parent->showDragger();
 }
 
 void ShapeTextInput::focusOutEvent(QFocusEvent * event)
@@ -92,7 +109,7 @@ void ShapeTextInput::paintEvent(QPaintEvent* event)
 		pen.setStyle(Qt::CustomDashLine);
 		pen.setDashPattern({ 3,3 });
 		painter.setPen(pen);
-		painter.drawRect(1, 1, viewport()->width()-2, viewport()->height() - 2);
+		painter.drawRect(0, 0, viewport()->width(), viewport()->height());
 	}
 	showTextInputCursor = !showTextInputCursor;
 }
