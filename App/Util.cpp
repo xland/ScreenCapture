@@ -2,13 +2,6 @@
 #include <windowsx.h>
 #include "Util.h"
 
-//void Util::setCursor(QWidget* widget, Qt::CursorShape cursor)
-//{
-//    if (widget->cursor().shape() != Qt::CrossCursor) {
-//        widget->setCursor(Qt::CrossCursor);
-//    }
-//}
-
 QMouseEvent Util::createMouseEvent(const int& x, const int& y, const QEvent::Type& type, const Qt::MouseButton& btn)
 {
     auto isCtrl = GetKeyState(VK_CONTROL) & 0x8000;

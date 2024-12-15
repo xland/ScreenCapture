@@ -31,7 +31,7 @@ ShapeTextInput* ShapeTextInput::create(ShapeText* parent)
 	font.setWeight(parent->bold ? QFont::Bold : QFont::Normal);
 	font.setItalic(parent->italic);
 	textEdit->setFont(font);
-	QString style{ "color:%1;background:transparent;margin:1px;padding:2px;caret-color:%1;"};
+	QString style{"color:%1;background:transparent;margin:1px;padding:2px;"};
 	style = style.arg(parent->color.name());
 	textEdit->textInputCursorColor = parent->color;
 	textEdit->setStyleSheet(style);
@@ -45,8 +45,7 @@ void ShapeTextInput::moveTo(const QPoint& pos)
 {
 	move(pos);
 	show();
-	setFocus();
-	setText("");
+	setText(""); //触发一次adjustSize
 	raise();
 }
 
@@ -74,7 +73,6 @@ void ShapeTextInput::adjustSize()
 		size += QSize(6, 2);
 	}
 	setFixedSize(size);
-	//parent->showDragger();
 }
 
 void ShapeTextInput::focusOutEvent(QFocusEvent * event)
