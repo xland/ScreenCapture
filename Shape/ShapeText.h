@@ -31,7 +31,7 @@ protected:
     void mouseRelease(QMouseEvent* event) override;
 private:
 private:
-    QPointF startPos,endPos,pressPos;
+    QPointF pressPos;
     ShapeTextInput* textEdit;
     qreal rotate{45};
 };

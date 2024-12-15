@@ -4,6 +4,7 @@
 #include <numbers>
 #include <QTextCharFormat>
 #include <QTextOption>
+#include <QWindow>
 
 #include "ShapeText.h"
 #include "../Win/WinBox.h"
@@ -40,7 +41,6 @@ void ShapeText::focusOut()
         win->clearTempShape();
         return;
     }
-    textEdit->hide();
     paintOnBoard();
 }
 
@@ -53,9 +53,21 @@ void ShapeText::focusIn()
 
 void ShapeText::paint(QPainter* painter)
 {
-    if (!textEdit->isVisible()) {
-        this->textEdit->render(painter, textEdit->pos());
-    }   
+    painter->setBrush(Qt::NoBrush);
+    painter->setPen(color);
+
+    auto font = textEdit->font();
+    font.setPointSizeF(font.pointSizeF() * textEdit->windowHandle()->devicePixelRatio());
+    painter->setFont(font);
+
+    RECT rectNative;
+    auto hwnd = (HWND)textEdit->winId();
+    GetWindowRect(hwnd, &rectNative);
+    QRect rect(QPoint(rectNative.left + 12, rectNative.top + 12), QPoint(rectNative.right, rectNative.bottom));
+
+    auto text = textEdit->document()->toPlainText();
+    painter->drawText(rect, Qt::AlignLeft, text);
+    textEdit->hide();
 }
 void ShapeText::paintDragger(QPainter* painter)
 {
@@ -99,6 +111,7 @@ void ShapeText::mouseMove(QMouseEvent* event)
 void ShapeText::mousePress(QMouseEvent* event)
 {
     if (!textEdit) {
+        pressPos = event->position();
         textEdit = ShapeTextInput::create(this);
         textEdit->moveTo(QCursor::pos() + QPoint(-10, -10));
         event->accept();
