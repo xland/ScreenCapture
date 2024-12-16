@@ -26,8 +26,6 @@ protected:
     QPainterPath pathStroker;  //描边路径
     QPainterPathStroker stroker; 
     QPointF pressPos;
-    QPointF startPos, endPos;
-    double coeffA, coeffB, coeffC, diffVal;
     bool isStraight{ false };
 private:
 };

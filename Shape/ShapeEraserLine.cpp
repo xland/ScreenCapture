@@ -22,7 +22,7 @@ ShapeEraserLine::~ShapeEraserLine()
 void ShapeEraserLine::paint(QPainter* painter)
 {
     painter->save();
-    painter->setCompositionMode(QPainter::CompositionMode_Clear);
+    painter->setCompositionMode(QPainter::CompositionMode_Clear); //橡皮擦模式
     QPainterPath path1 = stroker.createStroke(path);
     painter->setPen(Qt::NoPen);
     painter->setBrush(Qt::transparent);
@@ -44,8 +44,7 @@ void ShapeEraserLine::paintingStart()
 void ShapeEraserLine::paintOnBoard()
 {
     auto win = (WinBox*)parent();
-    win->winBoard->refresh(false);
-    win->winBoard->releaseImg(); //绘制完成，清空内存
+    win->winBoard->refresh(); //此处释放了图像
 }
 
 void ShapeEraserLine::painting()

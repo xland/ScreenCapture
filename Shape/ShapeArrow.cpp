@@ -106,6 +106,7 @@ void ShapeArrow::mouseRelease(QMouseEvent* event)
 {
     if (shape.isEmpty()) { //鼠标按下，没有拖拽，随即释放
         deleteLater();
+        event->accept();
         return;
     }
     if (state >= ShapeState::sizing0) {

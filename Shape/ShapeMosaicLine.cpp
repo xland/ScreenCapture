@@ -39,7 +39,7 @@ void ShapeMosaicLine::mouseRelease(QMouseEvent* event)
 {
     ShapeLineBase::mouseRelease(event);
     if (path.isEmpty()) {
-        pathRect = QRectF(startPos, endPos).normalized().adjusted(-strokeWidth, -strokeWidth, strokeWidth, strokeWidth);
+        //pathRect = QRectF(startPos, endPos).normalized().adjusted(-strokeWidth, -strokeWidth, strokeWidth, strokeWidth);
         erasePath(winImg);
     }
     else {
@@ -76,7 +76,7 @@ void ShapeMosaicLine::erasePath(QImage* img)
     pen.setJoinStyle(Qt::RoundJoin);
     painter.setPen(pen);
     if (path.isEmpty()) {
-        painter.drawLine(startPos, endPos);
+        //painter.drawLine(startPos, endPos);
     }
     else {
         painter.drawPath(path);

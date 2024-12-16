@@ -22,6 +22,7 @@ ShapeLineBase::ShapeLineBase(QObject* parent) : ShapeBase(parent)
 ShapeLineBase::~ShapeLineBase()
 {
 }
+
 void ShapeLineBase::paintDragger(QPainter* painter)
 {
     QPen pen;
@@ -75,6 +76,11 @@ void ShapeLineBase::mousePress(QMouseEvent* event)
 void ShapeLineBase::mouseRelease(QMouseEvent* event)
 {
     if (state < ShapeState::sizing0) return;
+    if (path.isEmpty()) {
+        deleteLater();
+        event->accept();
+        return;
+    }
     if (state == ShapeState::sizing0) {
         QPainterPath tempPath;
         auto ele = pathStart.elementAt(pathStart.elementCount() - 1);
