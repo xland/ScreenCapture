@@ -48,7 +48,7 @@ void ShapeLineBase::mouseMove(QMouseEvent* event)
     }
     if (hoverDraggerIndex > -1) {
         QGuiApplication::setOverrideCursor(Qt::SizeAllCursor);
-        showDragger();  //todo 这里有问题
+        showDragger();
         event->accept();
     }
 }
@@ -99,6 +99,7 @@ void ShapeLineBase::mouseRelease(QMouseEvent* event)
     draggers[1].setRect(endPos.x - half, endPos.y - half, draggerSize, draggerSize);
     showDragger();
     paintOnBoard();
+    pathStroker = stroker.createStroke(path);
     event->accept();
 }
 void ShapeLineBase::mouseDrag(QMouseEvent* event)

@@ -15,6 +15,10 @@ ShapeBase::~ShapeBase()
 void ShapeBase::showDragger()
 {
 	auto win = (WinBox*)parent();
+	if (state == ShapeState::ready && this == win->winCanvas->curShape) {
+		//避免鼠标在ready的shape上移动的时候不断的重绘
+		return;
+	}
 	if (state != ShapeState::ready) {
 		state = ShapeState::ready;
 		win->winBoard->refresh();
@@ -50,6 +54,7 @@ void ShapeBase::prepareDraggers(const int& size)
 
 void ShapeBase::paintingStart()
 {
+	//ready状态的shape，鼠标按下
 	auto win = (WinBox*)parent();
 	win->winCanvas->initImg();
 	win->winCanvas->curShape = this;
@@ -59,6 +64,7 @@ void ShapeBase::paintingStart()
 
 void ShapeBase::paintingPrepare()
 {
+	//temp状态的shape,鼠标按下
 	auto win = (WinBox*)parent();
 	win->winCanvas->initImg();
 	win->winCanvas->curShape = this;

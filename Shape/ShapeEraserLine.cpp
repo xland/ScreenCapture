@@ -21,47 +21,17 @@ ShapeEraserLine::~ShapeEraserLine()
 
 void ShapeEraserLine::paint(QPainter* painter)
 {
-    QPen pen(Qt::transparent);
-    pen.setWidth(strokeWidth);
-    pen.setCapStyle(Qt::RoundCap);
-    pen.setJoinStyle(Qt::RoundJoin);
-    painter->setPen(pen);
-    painter->setBrush(Qt::NoBrush);
     painter->save();
     painter->setCompositionMode(QPainter::CompositionMode_Clear);
-    if (path.isEmpty()) {
-        painter->drawLine(startPos, endPos);
-    }
-    else {
-        painter->drawPath(path);
+    QPainterPath path1 = stroker.createStroke(path);
+    painter->setPen(Qt::NoPen);
+    painter->setBrush(Qt::transparent);
+    painter->drawPath(path1);
+    if (state == ShapeState::sizing0) {
+        QPainterPath path2 = stroker.createStroke(pathStart);
+        painter->drawPath(path2);
     }
     painter->restore();
-}
-
-void ShapeEraserLine::paintDragger(QPainter* painter)
-{
-    QPen pen;
-    pen.setColor(Qt::black);
-    pen.setWidth(1);
-    painter->setBrush(Qt::NoBrush);
-    QLineF line(startPos, endPos);
-    auto length = line.length();
-    auto angle = line.angle();
-    auto half = strokeWidth / 2;
-    QPolygonF borderShape;
-    borderShape.append(QPointF(-half, -half));
-    borderShape.append(QPointF(length + half, -half));
-    borderShape.append(QPointF(length + half, half));
-    borderShape.append(QPointF(-half, half));
-    borderShape.append(QPointF(-half, -half));
-    QTransform transform;
-    transform.translate(startPos.x(), startPos.y());
-    transform.rotate(-angle);
-    borderShape = transform.map(borderShape);
-    pen.setStyle(Qt::CustomDashLine);  //为橡皮擦区域画虚线
-    pen.setDashPattern({ 3,3 });
-    painter->setPen(pen);
-    painter->drawPolygon(borderShape);
 }
 
 void ShapeEraserLine::paintingStart()
