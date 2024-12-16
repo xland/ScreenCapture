@@ -18,14 +18,12 @@ public:
     void mouseDrag(QMouseEvent* event) override;
     void mousePress(QMouseEvent* event) override;
     void mouseRelease(QMouseEvent* event) override;
-    virtual void mouseOnShape(QMouseEvent* event);
 public:
     QPainterPath shape;
     bool isFill{ false };
     QColor color{ Qt::red };
 protected:
 private:
-    void resetDragger();
     void resetShape();
 private:
     QPointF startPos, endPos,pressPos;

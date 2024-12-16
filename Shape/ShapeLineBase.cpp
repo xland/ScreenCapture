@@ -142,9 +142,7 @@ void ShapeLineBase::mouseDrag(QMouseEvent* event)
         }
         else {
             auto span = pos - pressPos;
-            QTransform transform;
-            transform.translate(span.x(), span.y());
-            path = transform.map(path);
+            path.translate(span);
             pressPos = pos;
         }
     }

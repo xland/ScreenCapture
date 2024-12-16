@@ -26,12 +26,6 @@ ShapeNumber::~ShapeNumber()
 {
 }
 
-void ShapeNumber::resetDragger()
-{
-    auto half{ draggerSize / 2 };    
-    draggers[0].setRect(endPos.x() - half, endPos.y() - half, draggerSize, draggerSize);
-}
-
 void ShapeNumber::resetShape()
 {
     //startPos圆心；endPos箭头顶点
@@ -87,12 +81,12 @@ void ShapeNumber::mouseMove(QMouseEvent* event)
     hoverDraggerIndex = -1;
     if (draggers[0].contains(pos)) {
         hoverDraggerIndex = 0;
-        QGuiApplication::setOverrideCursor(Qt::SizeAllCursor);
-    }   
-    if (hoverDraggerIndex == -1) {
-        mouseOnShape(event);
+    }
+    else if(shape.contains(pos)) {
+        hoverDraggerIndex = 8;
     }
     if (hoverDraggerIndex > -1) {
+        QGuiApplication::setOverrideCursor(Qt::SizeAllCursor);
         showDragger();
         event->accept();
     }
@@ -101,9 +95,11 @@ void ShapeNumber::mousePress(QMouseEvent* event)
 {
     if (state == ShapeState::temp) {
         startPos = event->position();
-        hoverDraggerIndex = 0;
+        state = ShapeState::sizing0;
+        paintingPrepare();
+        event->accept();
     }
-    if (hoverDraggerIndex >= 0) {
+    else if (hoverDraggerIndex >= 0) {
         pressPos = event->position();
         state = (ShapeState)((int)ShapeState::sizing0 + hoverDraggerIndex);
         paintingStart();
@@ -112,8 +108,14 @@ void ShapeNumber::mousePress(QMouseEvent* event)
 }
 void ShapeNumber::mouseRelease(QMouseEvent* event)
 {
+    if (shape.isEmpty()) { //鼠标按下，没有拖拽，随即释放
+        deleteLater();
+        event->accept();
+        return;
+    }
     if (state >= ShapeState::sizing0) {
-        resetDragger();
+        auto half{ draggerSize / 2 };
+        draggers[0].setRect(endPos.x() - half, endPos.y() - half, draggerSize, draggerSize);
         showDragger();
         event->accept();
     }
@@ -138,12 +140,4 @@ void ShapeNumber::mouseDrag(QMouseEvent* event)
     }
     painting();
     event->accept();
-}
-void ShapeNumber::mouseOnShape(QMouseEvent* event)
-{
-    if (shape.contains(event->pos())) {
-        hoverDraggerIndex = 8;
-        auto win = (WinBox*)parent();
-        win->updateCursor(Qt::SizeAllCursor);
-    }
 }
