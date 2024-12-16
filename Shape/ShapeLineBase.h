@@ -20,11 +20,11 @@ public:
 public:
     qreal strokeWidth;
 protected:
-    void resetDragger();
 protected:
-    QPointF startPos, endPos, pressPos;
-    double coeffA, coeffB, coeffC, diffVal;
     QPainterPath path;
+    QPointF pressPos;
+    QPointF startPos, endPos;
+    double coeffA, coeffB, coeffC, diffVal;
+    bool isStraight{ false };
 private:
-
 };

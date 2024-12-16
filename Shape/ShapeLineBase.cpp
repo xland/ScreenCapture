@@ -18,17 +18,9 @@ ShapeLineBase::ShapeLineBase(QObject* parent) : ShapeBase(parent)
 ShapeLineBase::~ShapeLineBase()
 {
 }
-
-void ShapeLineBase::resetDragger()
-{
-    prepareDraggers(2);
-    auto half{ draggerSize / 2 };
-    draggers[0].setRect(startPos.x() - half, startPos.y() - half, draggerSize, draggerSize);
-    draggers[1].setRect(endPos.x() - half, endPos.y() - half, draggerSize, draggerSize);
-}
 void ShapeLineBase::paintDragger(QPainter* painter)
 {
-    if (path.isEmpty() && !draggers.empty()) {
+    if (isStraight) {
         QPen pen;
         pen.setColor(Qt::black);
         pen.setWidth(1);
@@ -87,21 +79,14 @@ void ShapeLineBase::mouseMove(QMouseEvent* event)
 void ShapeLineBase::mousePress(QMouseEvent* event)
 {
     if (state == ShapeState::temp) {
-        auto flag = event->modifiers() & Qt::ShiftModifier;
-        if (flag) {
-            startPos = event->position();
-            endPos = startPos;
-            hoverDraggerIndex = 1;
-        }
-        else {
-            path.moveTo(event->pos());
-            path.lineTo(event->pos());
-            state = ShapeState::sizing0;
-            paintingStart();
-            event->accept();
-        }
+        pressPos = event->position();
+        isStraight = event->modifiers() & Qt::ShiftModifier;
+        state = (ShapeState)((int)ShapeState::sizing0 + 1);
+        path.moveTo(pressPos);
+        paintingPrepare();
+        event->accept();
     }
-    if (path.isEmpty() && hoverDraggerIndex >= 0) {
+    else if (isStraight && hoverDraggerIndex >= 0) {
         pressPos = event->position();
         state = (ShapeState)((int)ShapeState::sizing0 + hoverDraggerIndex);
         paintingStart();
@@ -110,44 +95,53 @@ void ShapeLineBase::mousePress(QMouseEvent* event)
 }
 void ShapeLineBase::mouseRelease(QMouseEvent* event)
 {
-    if (path.isEmpty()) {
-        if (state >= ShapeState::sizing0) {
-            coeffA = startPos.y() - endPos.y();
-            coeffB = endPos.x() - startPos.x();
-            coeffC = startPos.x() * endPos.y() - endPos.x() * startPos.y();
-            diffVal = std::sqrt(coeffA * coeffA + coeffB * coeffB);
-            resetDragger();
-            showDragger();
-            event->accept();
-        }
+    if (state < ShapeState::sizing0) return;
+    if (isStraight) {
+        auto startPos = path.elementAt(0);
+        auto endPos = path.elementAt(1);
+        coeffA = startPos.y - endPos.y;
+        coeffB = endPos.x - startPos.x;
+        coeffC = startPos.x * endPos.y - endPos.x * startPos.y;
+        diffVal = std::sqrt(coeffA * coeffA + coeffB * coeffB);
+        //prepare dragger
+        prepareDraggers(2);
+        auto half{ draggerSize / 2 };
+        draggers[0].setRect(startPos.x - half, startPos.y - half, draggerSize, draggerSize);
+        draggers[1].setRect(endPos.x - half, endPos.y - half, draggerSize, draggerSize);
+        showDragger();
     }
     else {
         paintOnBoard();
-        event->accept();
     }
+    event->accept();
 }
 void ShapeLineBase::mouseDrag(QMouseEvent* event)
 {
-    if (state == ShapeState::ready) {
-        return;
-    }
-    if (path.elementCount() <= 0) {  //这里不能判断isEmpty
+    if (state == ShapeState::ready) return;
+    auto pos = event->position();
+    if (isStraight) {
         if (state == ShapeState::sizing0) {
-            startPos = event->pos();
+            path.setElementPositionAt(0, pos.x(), pos.y());
         }
-        if (state == ShapeState::sizing1) {
-            endPos = event->pos();
+        else if (state == ShapeState::sizing1) {
+            if (path.elementCount() < 2) {
+                path.lineTo(pos);
+            }
+            else {
+                path.setElementPositionAt(1, pos.x(), pos.y());
+            }            
         }
         else if (state == ShapeState::moving) {
-            auto pos = event->pos();
             auto span = pos - pressPos;
-            startPos += span;
-            endPos += span;
+            auto startPos = path.elementAt(0);
+            auto endPos = path.elementAt(1);
+            path.setElementPositionAt(0, startPos.x+span.x(), startPos.y+span.y());
+            path.setElementPositionAt(1, endPos.x+span.x(), endPos.y+span.y());
             pressPos = pos;
         }
     }
     else {
-        path.lineTo(event->position());
+        path.lineTo(pos);
     }
     painting();
     event->accept();

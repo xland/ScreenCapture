@@ -56,3 +56,10 @@ void ShapeBase::paintingStart()
 	win->winCanvas->paintShape();
 	win->winBoard->refresh();
 }
+
+void ShapeBase::paintingPrepare()
+{
+	auto win = (WinBox*)parent();
+	win->winCanvas->initImg();
+	win->winCanvas->curShape = this;
+}

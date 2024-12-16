@@ -91,17 +91,23 @@ void ShapeArrow::mousePress(QMouseEvent* event)
 {
     if (state == ShapeState::temp) {
         startPos = event->position();
-        hoverDraggerIndex = 1;
+        state = (ShapeState)((int)ShapeState::sizing0 + 1);
+        paintingPrepare();
+        event->accept();
     }
-    if (hoverDraggerIndex >= 0) {
+    else if(hoverDraggerIndex >= 0) {
         pressPos = event->position();
-        state = (ShapeState)((int)ShapeState::sizing0 + hoverDraggerIndex);
         paintingStart();
+        state = (ShapeState)((int)ShapeState::sizing0 + hoverDraggerIndex);
         event->accept();
     }
 }
 void ShapeArrow::mouseRelease(QMouseEvent* event)
 {
+    if (shape.isEmpty()) { //鼠标按下，没有拖拽，随即释放
+        deleteLater();
+        return;
+    }
     if (state >= ShapeState::sizing0) {
         resetDragger();
         showDragger();

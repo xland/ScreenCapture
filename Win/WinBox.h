@@ -24,7 +24,7 @@ public:
 	virtual void showToolSub()=0;
 public:
 	State state{ State::start };
-	std::vector<ShapeBase*> shapes;
+	QList<ShapeBase*> shapes;
 	ToolMain* toolMain;
 	ToolSub* toolSub;
 	PixelInfo* pixelInfo;

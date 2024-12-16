@@ -25,6 +25,7 @@ WinBox::~WinBox()
 
 void WinBox::clearTempShape()
 {
+    //应该把deleteLater放到具体的类里，然后
     for (auto it = shapes.begin(); it != shapes.end();) {
         if ((*it)->state == ShapeState::temp) {
             (*it)->deleteLater();
@@ -38,7 +39,6 @@ void WinBox::clearTempShape()
 
 ShapeBase* WinBox::addShape()
 {
-    clearTempShape();
     ShapeBase* shape;
     if (state == State::rect) {
         shape = new ShapeRect(this);
@@ -80,6 +80,9 @@ ShapeBase* WinBox::addShape()
     {
         return nullptr;
     }
+    connect(shape, &QObject::destroyed, [this](QObject* obj) { 
+        shapes.removeOne(obj); //先执行析构函数，再执行此方法
+    });
     shapes.push_back(shape);
     return shape;
 }

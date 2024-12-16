@@ -31,7 +31,7 @@ void ShapeLine::paint(QPainter* painter)
     pen.setJoinStyle(Qt::RoundJoin);
     painter->setPen(pen);
     painter->setBrush(Qt::NoBrush);
-    if (path.isEmpty()) {
+    if (path.elementCount() <= 0) {
         painter->drawLine(startPos, endPos);
     }
     else {
