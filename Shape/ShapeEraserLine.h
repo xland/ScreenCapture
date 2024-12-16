@@ -11,6 +11,7 @@ public:
     ShapeEraserLine(QObject* parent = nullptr);
     ~ShapeEraserLine();
     void paint(QPainter* painter) override;
+    void paintDragger(QPainter* painter) override;
 public:
 protected:
     void paintingStart() override;

@@ -38,6 +38,32 @@ void ShapeEraserLine::paint(QPainter* painter)
     painter->restore();
 }
 
+void ShapeEraserLine::paintDragger(QPainter* painter)
+{
+    QPen pen;
+    pen.setColor(Qt::black);
+    pen.setWidth(1);
+    painter->setBrush(Qt::NoBrush);
+    QLineF line(startPos, endPos);
+    auto length = line.length();
+    auto angle = line.angle();
+    auto half = strokeWidth / 2;
+    QPolygonF borderShape;
+    borderShape.append(QPointF(-half, -half));
+    borderShape.append(QPointF(length + half, -half));
+    borderShape.append(QPointF(length + half, half));
+    borderShape.append(QPointF(-half, half));
+    borderShape.append(QPointF(-half, -half));
+    QTransform transform;
+    transform.translate(startPos.x(), startPos.y());
+    transform.rotate(-angle);
+    borderShape = transform.map(borderShape);
+    pen.setStyle(Qt::CustomDashLine);  //为橡皮擦区域画虚线
+    pen.setDashPattern({ 3,3 });
+    painter->setPen(pen);
+    painter->drawPolygon(borderShape);
+}
+
 void ShapeEraserLine::paintingStart()
 {
     auto win = (WinBox*)parent();

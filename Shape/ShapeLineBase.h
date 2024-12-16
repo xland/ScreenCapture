@@ -22,6 +22,9 @@ public:
 protected:
 protected:
     QPainterPath path;
+    QPainterPath pathStart;
+    QPainterPath pathStroker;  //描边路径
+    QPainterPathStroker stroker; 
     QPointF pressPos;
     QPointF startPos, endPos;
     double coeffA, coeffB, coeffC, diffVal;
