@@ -11,7 +11,7 @@ class ShapeLineBase:public ShapeBase
     Q_OBJECT
 public:
     ShapeLineBase(QObject* parent = nullptr);
-    ~ShapeLineBase();
+    virtual ~ShapeLineBase();
     virtual void paintDragger(QPainter* painter) override;
     virtual void mouseMove(QMouseEvent* event) override;
     virtual void mouseDrag(QMouseEvent* event) override;

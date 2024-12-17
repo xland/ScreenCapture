@@ -36,9 +36,7 @@ void ShapeText::focusOut()
     qDebug() << "focusOut" << textEdit->winId();
     auto text = textEdit->document()->toPlainText().trimmed();
     if (text.isEmpty()) {
-        state = ShapeState::temp;
-        auto win = (WinBox*)parent();
-        win->clearTempShape();
+        deleteLater();
         return;
     }
     paintOnBoard();

@@ -19,7 +19,6 @@ public:
 	void updateCursor(const Qt::CursorShape& cur);
 	void refreshBoard();
 	void refreshCanvas(ShapeBase* shape, bool force = false);
-	void clearTempShape();
 	virtual void showToolMain()=0;
 	virtual void showToolSub()=0;
 public:

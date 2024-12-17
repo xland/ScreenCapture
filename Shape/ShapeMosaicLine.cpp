@@ -1,15 +1,13 @@
 ﻿#include <QPainter>
 #include <QWindow>
+#include <QTime>
 
 #include "ShapeMosaicLine.h"
 #include "../Win/WinBox.h"
 
 ShapeMosaicLine::ShapeMosaicLine(QObject* parent) : ShapeLineBase(parent)
 {
-    
-    auto win = (WinBox*)parent;
     createMosaicImg();
-
 }
 ShapeMosaicLine::~ShapeMosaicLine()
 {
@@ -21,38 +19,55 @@ void ShapeMosaicLine::paint(QPainter* painter)
         painter->drawImage(pathRect.topLeft(), imgPatch);
     }
     else {
-        if (path.isEmpty()) {
-            auto winImgTemp = winImg->copy();
-            erasePath(&winImgTemp);
-            painter->drawImage(QPoint(0, 0), *mosaicImg);
-            painter->drawImage(QPoint(0, 0), winImgTemp);
-        }
-        else {
-            erasePath(winImg);
-            painter->drawImage(QPoint(0, 0), *mosaicImg);
-            painter->drawImage(QPoint(0, 0), *winImg);
-        }
+        erasePath(winImg);
+        painter->drawImage(QPoint(0, 0), *mosaicImg);//先画马赛克图
+        painter->drawImage(QPoint(0, 0), *winImg); //再画擦除后的背景图,这样擦除部分就会显示马赛克图像了
     }
 }
 
 void ShapeMosaicLine::mouseRelease(QMouseEvent* event)
 {
-    ShapeLineBase::mouseRelease(event);
+    if (state < ShapeState::sizing0) return;
     if (path.isEmpty()) {
-        //pathRect = QRectF(startPos, endPos).normalized().adjusted(-strokeWidth, -strokeWidth, strokeWidth, strokeWidth);
-        erasePath(winImg);
+        deleteLater();
+        event->accept();
+        return;
     }
-    else {
-        pathRect = path.boundingRect().adjusted(-strokeWidth, -strokeWidth, strokeWidth, strokeWidth);
-    }
-    auto win = (WinBase*)(parent());
-    auto dpr = mosaicImg->devicePixelRatio();
-    auto tarRect = QRectF(pathRect.topLeft() * dpr, pathRect.bottomRight() * dpr).toRect();
-    imgPatch = mosaicImg->copy(tarRect);
+
+    ShapeLineBase::mouseRelease(event);
+    pathRect = path.boundingRect().adjusted(-strokeWidth, -strokeWidth, strokeWidth, strokeWidth);
+    imgPatch = mosaicImg->copy(pathRect.toRect());
     QPainter painter(&imgPatch);
-    painter.drawImage(QPoint(0, 0), winImg->copy(tarRect));
+    painter.drawImage(QPoint(0, 0), winImg->copy(pathRect.toRect()));
     delete mosaicImg;
     delete winImg;
+
+    if (state == ShapeState::sizing0) {
+        QPainterPath tempPath;
+        auto ele = pathStart.elementAt(pathStart.elementCount() - 1);
+        tempPath.moveTo(ele.x, ele.y);
+        for (int i = pathStart.elementCount() - 2; i >= 0; --i)
+        {
+            auto ele = pathStart.elementAt(i);
+            tempPath.lineTo(ele.x, ele.y);
+        }
+        pathStart.clear();
+        for (size_t i = 0; i < path.elementCount(); i++)
+        {
+            auto ele = path.elementAt(i);
+            tempPath.lineTo(ele.x, ele.y);
+        }
+        path = tempPath;
+    }
+    auto startPos = path.elementAt(0);
+    auto endPos = path.elementAt(path.elementCount() - 1);
+    auto half{ draggerSize / 2 };
+    draggers[0].setRect(startPos.x - half, startPos.y - half, draggerSize, draggerSize);
+    draggers[1].setRect(endPos.x - half, endPos.y - half, draggerSize, draggerSize);
+    showDragger();
+    paintOnBoard();
+    pathStroker = stroker.createStroke(path);
+    event->accept();
 }
 
 void ShapeMosaicLine::mousePress(QMouseEvent* event)
@@ -68,6 +83,7 @@ void ShapeMosaicLine::mousePress(QMouseEvent* event)
 
 void ShapeMosaicLine::erasePath(QImage* img)
 {
+    //擦除拍照得到的背景图
     QPainter painter(img);
     painter.setCompositionMode(QPainter::CompositionMode_Clear);
     QPen pen(Qt::transparent);
@@ -75,19 +91,25 @@ void ShapeMosaicLine::erasePath(QImage* img)
     pen.setCapStyle(Qt::RoundCap);
     pen.setJoinStyle(Qt::RoundJoin);
     painter.setPen(pen);
-    if (path.isEmpty()) {
-        //painter.drawLine(startPos, endPos);
-    }
-    else {
-        painter.drawPath(path);
-    }
+    painter.drawPath(path);
 }
 
 void ShapeMosaicLine::createMosaicImg()
 {
     auto win = (WinBox*)parent();
     //auto start = QTime::currentTime();
-    winImg = new QImage(win->img);
+    HDC hScreen = GetDC(NULL);
+    HDC hDC = CreateCompatibleDC(hScreen);
+    HBITMAP hBitmap = CreateCompatibleBitmap(hScreen, win->w, win->h);
+    DeleteObject(SelectObject(hDC, hBitmap));
+    PrintWindow(win->hwnd, hDC, PW_RENDERFULLCONTENT); //给窗口拍照，注意是窗口，不是屏幕
+    winImg = new QImage(win->w, win->h, QImage::Format_ARGB32);
+    BITMAPINFO info = { sizeof(BITMAPINFOHEADER), (long)win->w, 0 - (long)win->h, 1, 32, BI_RGB, (DWORD)win->w * 4 * win->h, 0, 0, 0, 0 };
+    GetDIBits(hDC, hBitmap, 0, win->h, winImg->bits(), &info, DIB_RGB_COLORS);
+    DeleteDC(hDC);
+    DeleteObject(hBitmap);
+    ReleaseDC(NULL, hScreen);
+    //auto ss = start.msecsTo(QTime::currentTime());
     {
         QPainter painter(winImg);
         for (int i = 0; i < win->shapes.size(); i++)
@@ -95,25 +117,23 @@ void ShapeMosaicLine::createMosaicImg()
             win->shapes[i]->paint(&painter);
         }
     }
+    //ss = start.msecsTo(QTime::currentTime());
+    //qDebug() << "\n create" << ss;
     QImage mosaicPixs = winImg->scaled(winImg->width() / mosaicRectSize,
         winImg->height() / mosaicRectSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-    auto smallSize = mosaicRectSize / winImg->devicePixelRatio();
-    mosaicImg = new QImage(win->img);
+    mosaicImg = new QImage(*winImg);
     QPainter painter(mosaicImg);
     painter.setPen(Qt::NoPen);
-    //qDebug() << "\n create" << start.msecsTo(QTime::currentTime());
     for (quint32 x = 0; x < mosaicPixs.width(); x++)
     {
-        auto xPos = x * smallSize;
+        auto xPos = x * mosaicRectSize;
         for (quint32 y = 0; y < mosaicPixs.height(); y++)
         {
             auto c = mosaicPixs.pixelColor(x, y);
             painter.setBrush(c);
-            QRectF mRect(xPos, y * smallSize, smallSize, smallSize);
+            QRectF mRect(xPos, y * mosaicRectSize, mosaicRectSize, mosaicRectSize);
             painter.drawRect(mRect);
         }
     }
-    //qDebug() << "\n create" << start.msecsTo(QTime::currentTime());
-    //return { winImg,mosaicImg };
 }
 

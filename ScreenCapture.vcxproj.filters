@@ -89,9 +89,6 @@
     <ClCompile Include="Shape\ShapeTextInput.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Shape\ShapeMosaic.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Win\WinCanvas.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -202,9 +199,6 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="Shape\ShapeTextInput.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="Shape\ShapeMosaic.h">
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="Win\WinCanvas.h">

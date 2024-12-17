@@ -23,20 +23,6 @@ WinBox::~WinBox()
 {
 }
 
-void WinBox::clearTempShape()
-{
-    //应该把deleteLater放到具体的类里，然后
-    for (auto it = shapes.begin(); it != shapes.end();) {
-        if ((*it)->state == ShapeState::temp) {
-            (*it)->deleteLater();
-            it = shapes.erase(it);
-        }
-        else {
-            ++it;
-        }
-    }
-}
-
 ShapeBase* WinBox::addShape()
 {
     ShapeBase* shape;
