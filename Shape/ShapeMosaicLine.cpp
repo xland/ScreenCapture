@@ -18,10 +18,16 @@ void ShapeMosaicLine::paint(QPainter* painter)
     if (state == ShapeState::ready) {
         painter->drawImage(pathRect.topLeft(), imgPatch);
     }
+    else if(state == ShapeState::moving){
+        auto tempImg = winImg.copy();
+        erasePath(&tempImg);
+        painter->drawImage(QPoint(0, 0), mosaicImg);
+        painter->drawImage(QPoint(0, 0), tempImg);
+    }
     else {
         erasePath(&winImg);
         painter->drawImage(QPoint(0, 0), mosaicImg);//先画马赛克图
-        painter->drawImage(QPoint(0, 0), winImg); //再画擦除后的背景图,这样擦除部分就会显示马赛克图像了
+        painter->drawImage(QPoint(0, 0), winImg);   //再画擦除后的背景图,这样擦除部分就会显示马赛克图像了
     }
 }
 
@@ -33,12 +39,17 @@ void ShapeMosaicLine::mouseRelease(QMouseEvent* event)
         event->accept();
         return;
     }
-
-    ShapeLineBase::mouseRelease(event);
     pathRect = path.boundingRect().adjusted(-strokeWidth, -strokeWidth, strokeWidth, strokeWidth);
     imgPatch = mosaicImg.copy(pathRect.toRect());
     QPainter painter(&imgPatch);
-    painter.drawImage(QPoint(0, 0), winImg.copy(pathRect.toRect()));
+    if (state == ShapeState::moving) {
+        auto tempImg = winImg.copy();
+        erasePath(&tempImg);
+        painter.drawImage(QPoint(0, 0), tempImg.copy(pathRect.toRect()));
+    }
+    else {
+        painter.drawImage(QPoint(0, 0), winImg.copy(pathRect.toRect()));
+    }
     mosaicImg = QImage(0,0);
     winImg = QImage(0, 0);
 
@@ -95,15 +106,14 @@ void ShapeMosaicLine::mousePress(QMouseEvent* event)
 
 void ShapeMosaicLine::erasePath(QImage* img)
 {
-    //擦除拍照得到的背景图
-    QPainter painter(img);
-    painter.setCompositionMode(QPainter::CompositionMode_Clear);
+    QPainter p(img);
+    p.setCompositionMode(QPainter::CompositionMode_Clear);
     QPen pen(Qt::transparent);
     pen.setWidth(strokeWidth);
     pen.setCapStyle(Qt::RoundCap);
     pen.setJoinStyle(Qt::RoundJoin);
-    painter.setPen(pen);
-    painter.drawPath(path);
+    p.setPen(pen);
+    p.drawPath(path);
 }
 
 void ShapeMosaicLine::createMosaicImg()
