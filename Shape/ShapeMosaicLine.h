@@ -23,7 +23,7 @@ private:
 private:
     int mosaicRectSize{ 18 };
     QImage imgPatch;
-    QImage* winImg;
-    QImage* mosaicImg;
+    QImage winImg;
+    QImage mosaicImg;
     QRectF pathRect;
 };
