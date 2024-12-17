@@ -17,6 +17,7 @@ ShapeTextInput::ShapeTextInput(QWidget* parent) : QTextEdit(parent)
 	setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
+
 }
 
 ShapeTextInput::~ShapeTextInput()
@@ -36,9 +37,21 @@ ShapeTextInput* ShapeTextInput::create(ShapeText* parent)
 	style = style.arg(parent->color.name());
 	textEdit->textInputCursorColor = parent->color;
 	textEdit->setStyleSheet(style);
-	connect(textEdit->document(), &QTextDocument::contentsChanged, textEdit, &ShapeTextInput::adjustSize);
+	auto doc = textEdit->document();
+	connect(doc, &QTextDocument::contentsChanged, textEdit, &ShapeTextInput::adjustSize);
 	connect(textEdit, &ShapeTextInput::focusOut, parent, &ShapeText::focusOut);
 	connect(textEdit, &ShapeTextInput::focusIn, parent, &ShapeText::focusIn);
+
+	connect(qApp, &QGuiApplication::focusWindowChanged, [textEdit](QWindow* focusWindow) {
+		if (textEdit->parent->state == ShapeState::temp) return;
+		if (!textEdit->isVisible()) return;
+		auto handle = textEdit->windowHandle();
+		if (focusWindow != handle) {
+			textEdit->hide();
+			emit textEdit->focusOut();
+		}
+	});
+
 	return textEdit;
 }
 
@@ -46,7 +59,8 @@ void ShapeTextInput::moveTo(const QPoint& pos)
 {
 	move(pos);
 	show();
-	setText(""); //触发一次adjustSize
+	setText("123"); //触发一次adjustSize
+	setFocus();
 	raise();
 }
 
@@ -76,21 +90,30 @@ void ShapeTextInput::adjustSize()
 	setFixedSize(size);
 }
 
-void ShapeTextInput::focusOutEvent(QFocusEvent * event)
-{
-	QTextEdit::focusOutEvent(event);
-	QTextCursor cursor = textCursor();
-	cursor.clearSelection();
-	setTextCursor(cursor);
-	hide();
-	emit focusOut();
-}
+//void ShapeTextInput::focusOutEvent(QFocusEvent * event)
+//{
+//	qDebug() << "allen";
+//	qDebug() << "allen";
+//	auto r = event->reason();
+//	qDebug() << r;
+//	auto tar = qApp->focusWindowChanged;
+//	if (r == Qt::MouseFocusReason || r == Qt::ActiveWindowFocusReason) {
+//		QTextCursor cursor = textCursor();
+//		cursor.clearSelection();
+//		setTextCursor(cursor);
+//	}
+//	else {
+//		QTextEdit::focusOutEvent(event);
+//		hide();
+//		emit focusOut();
+//	}
+//}
 
-void ShapeTextInput::focusInEvent(QFocusEvent* event)
-{
-	QTextEdit::focusInEvent(event);
-	emit focusIn();
-}
+//void ShapeTextInput::focusInEvent(QFocusEvent* event)
+//{
+//	QTextEdit::focusInEvent(event);
+//	//emit focusIn();
+//}
 
 void ShapeTextInput::paintEvent(QPaintEvent* event)
 {

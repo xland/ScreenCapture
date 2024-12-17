@@ -20,8 +20,9 @@ signals:
 public:
 	QColor textInputCursorColor;
 private:
-	void focusOutEvent(QFocusEvent* event) override;
-	void focusInEvent(QFocusEvent* event) override;
+	//void focusOutEvent(QFocusEvent* event) override;
+	//void focusOutEvent(QWindow* focusWindow);
+	//void focusInEvent(QFocusEvent* event) override;
 	void paintEvent(QPaintEvent* event) override;
 	void adjustSize();
 private:
