@@ -3,12 +3,13 @@
 
 #include "ShapeMosaicRect.h"
 #include "../Win/WinBox.h"
+#include "../App/Util.h"
 
 ShapeMosaicRect::ShapeMosaicRect(QObject* parent) : ShapeRectBase(parent)
 {
     isFill = true;
-    auto win = ((WinBox*)parent);
-    QImage winImg(win->img);
+    auto win = (WinBox*)parent;
+    auto winImg = Util::printWindow(win);
     QPainter painter(&winImg);
     for (int i = 0; i < win->shapes.size(); i++)
     {
@@ -29,16 +30,14 @@ void ShapeMosaicRect::paint(QPainter* painter)
         painter->drawImage(shape.topLeft(), imgPatch);
     }
     else {
-        auto dpr = 1.5; //todo
-        auto smallSize = mosaicRectSize / dpr;
         painter->setPen(Qt::NoPen);
-        for (quint32 x = shape.left(); x < shape.right(); x += smallSize)
+        for (quint32 x = shape.left(); x < shape.right(); x += mosaicRectSize)
         {
-            for (quint32 y = shape.top(); y < shape.bottom(); y += smallSize)
+            for (quint32 y = shape.top(); y < shape.bottom(); y += mosaicRectSize)
             {
-                auto c = mosaicPixs.pixelColor(x / smallSize, y / smallSize);
+                auto c = mosaicPixs.pixelColor(x / mosaicRectSize, y / mosaicRectSize);
                 painter->setBrush(c);
-                QRect mRect(x, y, smallSize + 1, smallSize + 1);
+                QRect mRect(x, y, mosaicRectSize, mosaicRectSize);
                 painter->drawRect(mRect);
             }
         }
@@ -47,25 +46,19 @@ void ShapeMosaicRect::paint(QPainter* painter)
 
 void ShapeMosaicRect::mouseRelease(QMouseEvent* event)
 {
-    ShapeRectBase::mouseRelease(event);
+    
     imgPatch = QImage(shape.size().toSize(), QImage::Format_ARGB32);
     QPainter painter(&imgPatch);
-    auto dpr = 1.5; //todo
-    auto smallSize = mosaicRectSize / dpr;
     painter.setPen(Qt::NoPen);
-    for (quint32 x = shape.left(); x < shape.right(); x += smallSize)
+    for (quint32 x = shape.left(); x < shape.right(); x += mosaicRectSize)
     {
-        for (quint32 y = shape.top(); y < shape.bottom(); y += smallSize)
+        for (quint32 y = shape.top(); y < shape.bottom(); y += mosaicRectSize)
         {
-            auto c = mosaicPixs.pixelColor(x / smallSize, y / smallSize);
+            auto c = mosaicPixs.pixelColor(x / mosaicRectSize, y / mosaicRectSize);
             painter.setBrush(c);
-            QRect mRect(x- shape.left(), y- shape.top(), smallSize + 1, smallSize + 1);
+            QRect mRect(x- shape.left(), y- shape.top(), mosaicRectSize, mosaicRectSize);
             painter.drawRect(mRect);
         }
     }
-}
-
-void ShapeMosaicRect::paintMosicRects(QPainter* painter)
-{
-
+    ShapeRectBase::mouseRelease(event);
 }

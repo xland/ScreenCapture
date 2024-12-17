@@ -4,6 +4,7 @@
 
 #include "ShapeMosaicLine.h"
 #include "../Win/WinBox.h"
+#include "../App/Util.h"
 
 ShapeMosaicLine::ShapeMosaicLine(QObject* parent) : ShapeLineBase(parent)
 {
@@ -120,17 +121,7 @@ void ShapeMosaicLine::createMosaicImg()
 {
     auto win = (WinBox*)parent();
     //auto start = QTime::currentTime();
-    HDC hScreen = GetDC(NULL);
-    HDC hDC = CreateCompatibleDC(hScreen);
-    HBITMAP hBitmap = CreateCompatibleBitmap(hScreen, win->w, win->h);
-    DeleteObject(SelectObject(hDC, hBitmap));
-    PrintWindow(win->hwnd, hDC, PW_RENDERFULLCONTENT); //给窗口拍照，注意是窗口，不是屏幕
-    winImg = QImage(win->w, win->h, QImage::Format_ARGB32);
-    BITMAPINFO info = { sizeof(BITMAPINFOHEADER), (long)win->w, 0 - (long)win->h, 1, 32, BI_RGB, (DWORD)win->w * 4 * win->h, 0, 0, 0, 0 };
-    GetDIBits(hDC, hBitmap, 0, win->h, winImg.bits(), &info, DIB_RGB_COLORS);
-    DeleteDC(hDC);
-    DeleteObject(hBitmap);
-    ReleaseDC(NULL, hScreen);
+    winImg = Util::printWindow(win);
     //auto ss = start.msecsTo(QTime::currentTime());
     {
         QPainter painter(&winImg);

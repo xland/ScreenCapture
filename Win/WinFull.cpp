@@ -12,12 +12,12 @@
 #include "../Tool/ToolMain.h"
 #include "../Tool/ToolSub.h"
 #include "../Tool/PixelInfo.h"
+#include "../App/Util.h"
 
 WinFull::WinFull(QObject* parent) : WinBox(parent)
 {
     initWinSizeByDesktopSize();
-    //initDesktopImg();
-    initDesktopImgNative();
+    img = Util::printScreen(x, y, w, h);
     initWindow(false);
     show();
 }
@@ -67,38 +67,6 @@ void WinFull::initWinSizeByDesktopSize()
     y = GetSystemMetrics(SM_YVIRTUALSCREEN);
     w = GetSystemMetrics(SM_CXVIRTUALSCREEN);
     h = GetSystemMetrics(SM_CYVIRTUALSCREEN);
-}
-
-void WinFull::initDesktopImg()
-{
-    //需要提前拍照，不然把自己也拍进来了
-    auto screens = QGuiApplication::screens();
-    for (auto screen : screens)
-    {
-        auto pos = screen->geometry().topLeft();
-        if (pos.x() == 0 && pos.y() == 0)
-        {
-            dpr = screen->devicePixelRatio();
-            img = screen->grabWindow(0, x / dpr, y / dpr, w / dpr, h / dpr)
-                .toImage().convertToFormat(QImage::Format_ARGB32);
-            break;
-        }
-    }
-}
-
-void WinFull::initDesktopImgNative()
-{
-    HDC hScreen = GetDC(NULL);
-    HDC hDC = CreateCompatibleDC(hScreen);
-    HBITMAP hBitmap = CreateCompatibleBitmap(hScreen, w, h);
-    DeleteObject(SelectObject(hDC, hBitmap));
-    BOOL bRet = BitBlt(hDC, 0, 0, w, h, hScreen, x, y, SRCCOPY);
-    img = QImage(w, h, QImage::Format_ARGB32);
-    BITMAPINFO info = { sizeof(BITMAPINFOHEADER), (long)w, 0 - (long)h, 1, 32, BI_RGB, (DWORD)w * 4*h, 0, 0, 0, 0 };
-    GetDIBits(hDC, hBitmap, 0, h, img.bits(), &info, DIB_RGB_COLORS);
-    DeleteDC(hDC);
-    DeleteObject(hBitmap);
-    ReleaseDC(NULL, hScreen);
 }
 
 void WinFull::close()

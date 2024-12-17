@@ -14,7 +14,6 @@ public:
     virtual void paint(QPainter* painter) override;
     void mouseRelease(QMouseEvent* event) override;
 private:
-    void paintMosicRects(QPainter* painter);
 private:
     QImage imgPatch;
     QImage mosaicPixs;

@@ -29,7 +29,5 @@ protected:
 	void mouseRelease(QMouseEvent* event) override;
 private:
 	void initWinSizeByDesktopSize();
-	void initDesktopImg();
-	void initDesktopImgNative();
 };
 

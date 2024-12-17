@@ -1,6 +1,7 @@
 ﻿#include <Windows.h>
 #include <windowsx.h>
 #include "Util.h"
+#include "../Win/WinBox.h"
 
 QMouseEvent Util::createMouseEvent(const QEvent::Type& type, const Qt::MouseButton& btn)
 {
@@ -28,6 +29,39 @@ QMouseEvent Util::createMouseEvent(const LPARAM& lParam, const QEvent::Type& typ
     QPointF p(x, y);
     POINT pos;
     GetCursorPos(&pos);  //比ClientToScreen 效率要高
-    QPointF g(pos.x, pos.y);  //todo 不应该用QPointF
+    QPointF g(pos.x, pos.y);
     return QMouseEvent(type, p, g, btn, btn, mf);
+}
+
+QImage Util::printWindow(WinBox* win)
+{
+
+    HDC hScreen = GetDC(NULL);
+    HDC hDC = CreateCompatibleDC(hScreen);
+    HBITMAP hBitmap = CreateCompatibleBitmap(hScreen, win->w, win->h);
+    DeleteObject(SelectObject(hDC, hBitmap));
+    PrintWindow(win->hwnd, hDC, PW_RENDERFULLCONTENT);
+    auto img = QImage(win->w, win->h, QImage::Format_ARGB32);
+    BITMAPINFO info = { sizeof(BITMAPINFOHEADER), (long)win->w, 0 - (long)win->h, 1, 32, BI_RGB, (DWORD)win->w * 4 * win->h, 0, 0, 0, 0 };
+    GetDIBits(hDC, hBitmap, 0, win->h, img.bits(), &info, DIB_RGB_COLORS);
+    DeleteDC(hDC);
+    DeleteObject(hBitmap);
+    ReleaseDC(NULL, hScreen);
+    return img;
+}
+
+QImage Util::printScreen(const int& x, const int& y, const int& w, const int& h)
+{
+    HDC hScreen = GetDC(NULL);
+    HDC hDC = CreateCompatibleDC(hScreen);
+    HBITMAP hBitmap = CreateCompatibleBitmap(hScreen, w, h);
+    DeleteObject(SelectObject(hDC, hBitmap));
+    BOOL bRet = BitBlt(hDC, 0, 0, w, h, hScreen, x, y, SRCCOPY);
+    auto img = QImage(w, h, QImage::Format_ARGB32);
+    BITMAPINFO info = { sizeof(BITMAPINFOHEADER), (long)w, 0 - (long)h, 1, 32, BI_RGB, (DWORD)w * 4 * h, 0, 0, 0, 0 };
+    GetDIBits(hDC, hBitmap, 0, h, img.bits(), &info, DIB_RGB_COLORS);
+    DeleteDC(hDC);
+    DeleteObject(hBitmap);
+    ReleaseDC(NULL, hScreen);
+    return img;
 }
