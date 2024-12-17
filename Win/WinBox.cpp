@@ -140,9 +140,5 @@ void WinBox::refreshBoard()
 {
     winBoard->refresh();
 }
-void WinBox::refreshCanvas(ShapeBase* shape, bool force)
-{
-    //winCanvas->refresh(shape, force);
-}
 
 

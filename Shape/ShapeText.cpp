@@ -33,39 +33,29 @@ ShapeText::~ShapeText()
 
 void ShapeText::focusOut()
 {
-    qDebug() << "focusOut" << textEdit->winId();
     auto text = textEdit->document()->toPlainText().trimmed();
     if (text.isEmpty()) {
         deleteLater();
         return;
     }
     paintOnBoard();
-    textEdit->hide();
 }
 
 void ShapeText::focusIn()
 {
     //auto win = (WinBox*)parent();
-    //win->refreshBoard();
-    //win->refreshCanvas(nullptr, true);
+    //win->winCanvas->clear();
 }
 
 void ShapeText::paint(QPainter* painter)
 {
-    painter->setBrush(Qt::NoBrush);
-    painter->setPen(color);
-
-    auto font = textEdit->font();
-    font.setPointSizeF(font.pointSizeF() * textEdit->windowHandle()->devicePixelRatio());
-    painter->setFont(font);
-
+    if (textEdit->isVisible()) return;
     RECT rectNative;
     auto hwnd = (HWND)textEdit->winId();
     GetWindowRect(hwnd, &rectNative);
-    QRect rect(QPoint(rectNative.left + 12, rectNative.top + 12), QPoint(rectNative.right, rectNative.bottom));
-
-    auto text = textEdit->document()->toPlainText();
-    painter->drawText(rect, text);
+    auto img = textEdit->grab().toImage();
+    QRectF rect(QPointF(rectNative.left, rectNative.top), QPointF(rectNative.right, rectNative.bottom));
+    painter->drawImage(rect, img);
 }
 void ShapeText::paintDragger(QPainter* painter)
 {
@@ -78,6 +68,7 @@ void ShapeText::paintDragger(QPainter* painter)
     painter->setBrush(Qt::NoBrush);
     auto win = (WinBox*)parent();
     auto rect = textEdit->getNativeRect();
+    rect.adjust(2, -2, -4, -4);
     painter->drawRect(rect);
 }
 
@@ -98,9 +89,14 @@ void ShapeText::mouseMove(QMouseEvent* event)
             QGuiApplication::setOverrideCursor(Qt::SizeAllCursor);
         }
         if (!textEdit->isVisible()) {
-            showDragger();
+            textEdit->show();
         }        
         event->accept();
+    }
+    else {
+        if (textEdit->isVisible()&& !textEdit->hasFocus()) {
+            textEdit->hide();
+        }
     }
 }
 void ShapeText::mousePress(QMouseEvent* event)
@@ -113,26 +109,22 @@ void ShapeText::mousePress(QMouseEvent* event)
         return;
     }
     if (hoverDraggerIndex == 0) {
-        textEdit->show();
-        textEdit->setFocus();
-        auto cursorPos = textEdit->mapFromGlobal(event->pos());
-		auto cursor = textEdit->cursorForPosition(cursorPos);
-		textEdit->setTextCursor(cursor);
+        state = ShapeState::sizing0;
         event->accept();
     }else if(hoverDraggerIndex == 8){
-        textEdit->show();
-        textEdit->setFocus();
-		pressPos = event->pos();
+        pressPos = QCursor::pos();
 		state = ShapeState::moving;
+        textEdit->setFocus();
 		event->accept();
 	}
 }
 void ShapeText::mouseRelease(QMouseEvent* event)
 {
-    //if (state >= ShapeState::sizing0) {
-    //    state = ShapeState::ready;
-    //    auto win = (WinBox*)parent();
-    //    win->refreshCanvas(this,true);
+    //if (hoverDraggerIndex == 0) {
+    //    auto cursorPos = textEdit->mapFromGlobal(QCursor::pos());
+    //    auto cursor = textEdit->cursorForPosition(cursorPos);
+    //    textEdit->setTextCursor(cursor);
+    //    //textEdit->setFocus();
     //    event->accept();
     //}
 }
@@ -144,8 +136,6 @@ void ShapeText::mouseDrag(QMouseEvent* event)
         auto p = textEdit->pos() + span;
 		textEdit->move(p.x(), p.y());
         pressPos = pos;
-        auto win = (WinBox*)parent();
-        win->refreshCanvas(this, true);
         event->accept();
     }
 }

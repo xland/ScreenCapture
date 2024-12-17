@@ -16,6 +16,7 @@ ShapeTextInput::ShapeTextInput(QWidget* parent) : QTextEdit(parent)
 	setLineWrapMode(QTextEdit::NoWrap);
 	setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
 }
 
 ShapeTextInput::~ShapeTextInput()
@@ -31,7 +32,7 @@ ShapeTextInput* ShapeTextInput::create(ShapeText* parent)
 	font.setWeight(parent->bold ? QFont::Bold : QFont::Normal);
 	font.setItalic(parent->italic);
 	textEdit->setFont(font);
-	QString style{"color:%1;background:transparent;margin:1px;padding:2px;"};
+	QString style{"color:%1;background:transparent;margin:0px;padding:2px;"};
 	style = style.arg(parent->color.name());
 	textEdit->textInputCursorColor = parent->color;
 	textEdit->setStyleSheet(style);
@@ -58,7 +59,7 @@ QRect ShapeTextInput::getNativeRect()
 	auto win = (WinBox*)parent->parent();
 	ScreenToClient(win->hwnd,&lt);
 	ScreenToClient(win->hwnd,&rb);
-	return QRect(QPoint(lt.x, lt.y), QPoint(rb.x, rb.y));
+	return QRect(QPoint(lt.x, lt.y+8), QPoint(rb.x, rb.y));
 }
 
 void ShapeTextInput::adjustSize()
@@ -67,7 +68,7 @@ void ShapeTextInput::adjustSize()
 	doc->adjustSize();
 	auto size = doc->size().toSize();
 	if (doc->isEmpty()) {
-		size += QSize(8, 6);
+		size += QSize(8, 4);
 	}
 	else {
 		size += QSize(6, 2);
@@ -78,6 +79,10 @@ void ShapeTextInput::adjustSize()
 void ShapeTextInput::focusOutEvent(QFocusEvent * event)
 {
 	QTextEdit::focusOutEvent(event);
+	QTextCursor cursor = textCursor();
+	cursor.clearSelection();
+	setTextCursor(cursor);
+	hide();
 	emit focusOut();
 }
 
@@ -96,18 +101,18 @@ void ShapeTextInput::paintEvent(QPaintEvent* event)
 		painter.setBrush(Qt::NoBrush);
 		QPen pen;
 		pen.setColor(textInputCursorColor);
-		pen.setWidth(1);
+		pen.setWidthF(1);
 		painter.setPen(pen);
 		if (showTextInputCursor)
 		{
-			auto span = document()->toPlainText() == "" ? -1 : -4;
-			auto cr = cursorRect().adjusted(0,1,0,span);
+			auto span = document()->toPlainText() == "" ? -1 : -2;
+			auto cr = cursorRect().adjusted(0,2,0,span);
 			painter.drawLine(cr.topLeft(),cr.bottomLeft());
 		}
 		pen.setStyle(Qt::CustomDashLine);
 		pen.setDashPattern({ 3,3 });
 		painter.setPen(pen);
-		painter.drawRect(0, 0, viewport()->width(), viewport()->height());
+		painter.drawRect(1, 1, viewport()->width()-2, viewport()->height()-2);
 	}
 	showTextInputCursor = !showTextInputCursor;
 }

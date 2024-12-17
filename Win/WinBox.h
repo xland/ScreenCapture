@@ -18,7 +18,6 @@ public:
 	virtual ~WinBox();
 	void updateCursor(const Qt::CursorShape& cur);
 	void refreshBoard();
-	void refreshCanvas(ShapeBase* shape, bool force = false);
 	virtual void showToolMain()=0;
 	virtual void showToolSub()=0;
 public:

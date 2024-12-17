@@ -27,6 +27,7 @@ void WinCanvas::paintShape()
 
 void WinCanvas::clear()
 {
+    curShape = nullptr;
     initImg();
     img.fill(Qt::transparent);
     paint();
