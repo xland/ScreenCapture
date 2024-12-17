@@ -34,7 +34,7 @@ void ShapeEllipse::paint(QPainter* painter)
 }
 void ShapeEllipse::mouseOnShape(QMouseEvent* event)
 {
-    auto pos = event->pos();
+    auto pos = event->position();
     auto center = shape.center();
     auto win = (WinBox*)parent();
     if (isFill) {
@@ -49,7 +49,7 @@ void ShapeEllipse::mouseOnShape(QMouseEvent* event)
     else {
         float half{ strokeWidth / 2.f };
         QRectF outerRect = shape.adjusted(-half, -half, half, half);
-        int spanX{ pos.x() - center.x() }, spanY{ pos.y() - center.y() };
+        qreal spanX{ pos.x() - center.x() }, spanY{ pos.y() - center.y() };
         float normalizedX = spanX / static_cast<double>(outerRect.width() / 2);
         float normalizedY = spanY / static_cast<double>(outerRect.height() / 2);
         auto flag = (normalizedX * normalizedX + normalizedY * normalizedY <= 1.0);

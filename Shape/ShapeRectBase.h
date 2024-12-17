@@ -19,11 +19,11 @@ public:
     virtual void mouseRelease(QMouseEvent* event) override;
     virtual void mouseOnShape(QMouseEvent* event);
 public:
-    QRect shape;
+    QRectF shape;
     bool isFill{ false };
     int strokeWidth{ 2 };
 protected:
-    QPoint topLeft, rightBottom, pressPos;
+    QPointF topLeft, rightBottom, pressPos;
 private:
     void resetDragger();
 private:

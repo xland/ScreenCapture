@@ -18,14 +18,15 @@ void ShapeRectBase::resetDragger()
 {
     prepareDraggers(8);
     auto x{ shape.x() },y{ shape.y() },w{ shape.width() },h{ shape.height() };
-    draggers[0].setRect(x - draggerSize / 2, y - draggerSize / 2, draggerSize, draggerSize);
-    draggers[1].setRect(x + w / 2 - draggerSize / 2, y - draggerSize / 2, draggerSize, draggerSize);
-    draggers[2].setRect(x + w - draggerSize / 2, y - draggerSize / 2, draggerSize, draggerSize);
-    draggers[3].setRect(x + w - draggerSize / 2, y + h / 2 - draggerSize / 2, draggerSize, draggerSize);
-    draggers[4].setRect(x + w - draggerSize / 2, y + h - draggerSize / 2, draggerSize, draggerSize);
-    draggers[5].setRect(x + w / 2 - draggerSize / 2, y + h - draggerSize / 2, draggerSize, draggerSize);
-    draggers[6].setRect(x - draggerSize / 2, y + h - draggerSize / 2, draggerSize, draggerSize);
-    draggers[7].setRect(x - draggerSize / 2, y + h / 2 - draggerSize / 2, draggerSize, draggerSize);
+    auto half{ draggerSize / 2 };
+    draggers[0].setRect(x - half, y - half, draggerSize, draggerSize);
+    draggers[1].setRect(x + w / 2 - half, y - half, draggerSize, draggerSize);
+    draggers[2].setRect(x + w - half, y - half, draggerSize, draggerSize);
+    draggers[3].setRect(x + w - half, y + h / 2 - half, draggerSize, draggerSize);
+    draggers[4].setRect(x + w - half, y + h - half, draggerSize, draggerSize);
+    draggers[5].setRect(x + w / 2 - half, y + h - half, draggerSize, draggerSize);
+    draggers[6].setRect(x - half, y + h - half, draggerSize, draggerSize);
+    draggers[7].setRect(x - half, y + h / 2 - half, draggerSize, draggerSize);
 }
 void ShapeRectBase::paintDragger(QPainter* painter)
 {
@@ -37,12 +38,6 @@ void ShapeRectBase::paintDragger(QPainter* painter)
     for (int i = 0; i < draggers.size(); i++)
     {
         painter->drawRect(draggers[i]);
-    }
-    if (isEraser) {        
-        pen.setStyle(Qt::CustomDashLine);
-        pen.setDashPattern({3,3});
-        painter->setPen(pen);
-        painter->drawRect(shape);
     }
 }
 void ShapeRectBase::mouseMove(QMouseEvent* event)
@@ -93,21 +88,29 @@ void ShapeRectBase::mouseMove(QMouseEvent* event)
 void ShapeRectBase::mousePress(QMouseEvent* event)
 {
     if (state == ShapeState::temp) {
-        shape.setTopLeft(event->pos());
-        shape.setBottomRight(event->pos());
-        hoverDraggerIndex = 4;
+        state = (ShapeState)((int)ShapeState::sizing0 + 4);
+        pressPos = event->position();
+        topLeft = pressPos;
+        rightBottom = pressPos;
+        paintingPrepare();
+        event->accept();
     }
-    if (hoverDraggerIndex >= 0) {
+    else if (hoverDraggerIndex >= 0) {
         state = (ShapeState)((int)ShapeState::sizing0 + hoverDraggerIndex);
+        pressPos = event->position();
         topLeft = shape.topLeft();
         rightBottom = shape.bottomRight();
-        pressPos = event->pos(); 
         paintingStart();
         event->accept();
     }
 }
 void ShapeRectBase::mouseRelease(QMouseEvent* event)
 {
+    if (shape.isEmpty()) { //鼠标按下，没有拖拽，随即释放
+        deleteLater();
+        event->accept();
+        return;
+    }
     if (state >= ShapeState::sizing0) {
         resetDragger();
         showDragger();
@@ -120,48 +123,40 @@ void ShapeRectBase::mouseDrag(QMouseEvent* event)
     if (state == ShapeState::ready) {
         return;
     }
+    auto pos = event->position();
     if (state == ShapeState::sizing0) {
-        auto pos = event->pos();
         shape.setCoords(pos.x(), pos.y(), rightBottom.x(), rightBottom.y());
         shape = shape.normalized();
     }
     else if (state == ShapeState::sizing1) {
-        auto pos = event->pos();
         shape.setCoords(topLeft.x(), pos.y(), rightBottom.x(), rightBottom.y());
         shape = shape.normalized();
     }
     else if (state == ShapeState::sizing2) {
-        auto pos = event->pos();
         shape.setCoords(topLeft.x(), pos.y(), pos.x(), rightBottom.y());
         shape = shape.normalized();
     }
     else if (state == ShapeState::sizing3) {
-        auto pos = event->pos();
         shape.setCoords(topLeft.x(), topLeft.y(), pos.x(), rightBottom.y());
         shape = shape.normalized();
     }
     else if (state == ShapeState::sizing4) {
-        auto pos = event->pos();
         shape.setCoords(topLeft.x(), topLeft.y(),pos.x(), pos.y());
         shape = shape.normalized();
     }
     else if (state == ShapeState::sizing5) {
-        auto pos = event->pos();
         shape.setCoords(topLeft.x(), topLeft.y(), rightBottom.x(), pos.y());
         shape = shape.normalized();
     }
     else if (state == ShapeState::sizing6) {
-        auto pos = event->pos();
         shape.setCoords(pos.x(), topLeft.y(), rightBottom.x(), pos.y());
         shape = shape.normalized();
     }
     else if (state == ShapeState::sizing7) {
-        auto pos = event->pos();
         shape.setCoords(pos.x(), topLeft.y(), rightBottom.x(), rightBottom.y());
         shape = shape.normalized();
     }
     else if (state == ShapeState::moving) {
-        auto pos = event->pos();
         auto span = pos - pressPos;
         shape.translate(span);
         pressPos = pos;
@@ -179,7 +174,7 @@ void ShapeRectBase::mouseDrag(QMouseEvent* event)
 }
 void ShapeRectBase::mouseOnShape(QMouseEvent* event)
 {
-    auto pos = event->pos();
+    auto pos = event->position();
     if (isFill) {
         if (shape.contains(pos)) {
             hoverDraggerIndex = 8;

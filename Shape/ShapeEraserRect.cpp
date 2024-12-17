@@ -37,9 +37,8 @@ void ShapeEraserRect::paintDragger(QPainter* painter)
 	QPen pen;
 	pen.setColor(Qt::black);
 	pen.setWidth(1);
-	pen.setStyle(Qt::DashLine);
-	pen.setDashOffset(1);
-	pen.setDashPattern({ 1, 2 });
+    pen.setStyle(Qt::CustomDashLine);
+    pen.setDashPattern({ 3,3 });
 	painter->setPen(pen);
     painter->setBrush(Qt::NoBrush);
 	painter->drawRect(shape);

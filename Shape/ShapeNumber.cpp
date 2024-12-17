@@ -87,7 +87,6 @@ void ShapeNumber::mouseMove(QMouseEvent* event)
     }
     if (hoverDraggerIndex > -1) {
         QGuiApplication::setOverrideCursor(Qt::SizeAllCursor);
-        showDragger();
         event->accept();
     }
 }
