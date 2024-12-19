@@ -1,6 +1,7 @@
 ﻿#include <QPainter>
 #include <Windows.h>
 #include <QTimer>
+#include <QWindow>
 #include "../Win/WinBox.h"
 
 #include "ShapeTextInput.h"
@@ -47,17 +48,9 @@ ShapeTextInput* ShapeTextInput::create(ShapeText* parent)
 	auto doc = textEdit->document();
 	connect(doc, &QTextDocument::contentsChanged, textEdit, &ShapeTextInput::adjustSize);
 	connect(textEdit, &ShapeTextInput::focusOut, parent, &ShapeText::focusOut);
-	connect(textEdit, &ShapeTextInput::focusIn, parent, &ShapeText::focusIn);
+	//connect(textEdit, &ShapeTextInput::focusIn, parent, &ShapeText::focusIn);
 
-	//connect(qApp, &QGuiApplication::focusWindowChanged, [textEdit](QWindow* focusWindow) {
-	//	if (textEdit->parent->state == ShapeState::temp) return;
-	//	if (!textEdit->isVisible()) return;
-	//	auto handle = textEdit->windowHandle();
-	//	if (focusWindow != handle) {
-	//		textEdit->hide();
-	//		emit textEdit->focusOut();
-	//	}
-	//});
+
 
 	return textEdit;
 }
@@ -87,10 +80,6 @@ void ShapeTextInput::adjustSize()
 {
 	qDebug() << "adjustSize";
 	auto doc = document();
-	auto text = doc->toPlainText().trimmed();
-	if (text.isEmpty()) {
-		parent->state = ShapeState::temp;
-	}
 	doc->adjustSize();
 	auto size = doc->size().toSize();
 	size += QSize(8, 4);

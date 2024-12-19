@@ -3,6 +3,7 @@
 #include <QMouseEvent>
 #include <QPainter>
 #include <QObject>
+#include <QWindow>
 
 #include "ShapeBase.h"
 #include "ShapeTextInput.h"
@@ -13,6 +14,7 @@ class ShapeText:public ShapeBase
 public:
     ShapeText(QObject* parent = nullptr);
     ~ShapeText();
+    //void focusOut(QWindow* focusWindow);
     void focusOut();
     void focusIn();
 public:
