@@ -1,5 +1,6 @@
 ﻿#include <QPainter>
 #include <Windows.h>
+#include <QTimer>
 #include "../Win/WinBox.h"
 
 #include "ShapeTextInput.h"
@@ -16,8 +17,14 @@ ShapeTextInput::ShapeTextInput(QWidget* parent) : QTextEdit(parent)
 	setLineWrapMode(QTextEdit::NoWrap);
 	setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	setAttribute(Qt::WA_TransparentForMouseEvents, false);
 
 
+	//auto timer = new QTimer(this);
+	//QObject::connect(timer, &QTimer::timeout, [this]() {
+	//	update();
+	//});
+	//timer->start(1000);
 }
 
 ShapeTextInput::~ShapeTextInput()
@@ -33,24 +40,24 @@ ShapeTextInput* ShapeTextInput::create(ShapeText* parent)
 	font.setWeight(parent->bold ? QFont::Bold : QFont::Normal);
 	font.setItalic(parent->italic);
 	textEdit->setFont(font);
-	QString style{"color:%1;background:transparent;margin:0px;padding:2px;"};
+	QString style{"QTextEdit{color:%1;margin:0px;padding:2px;background:transparent;}"};
 	style = style.arg(parent->color.name());
-	textEdit->textInputCursorColor = parent->color;
 	textEdit->setStyleSheet(style);
+	
 	auto doc = textEdit->document();
 	connect(doc, &QTextDocument::contentsChanged, textEdit, &ShapeTextInput::adjustSize);
 	connect(textEdit, &ShapeTextInput::focusOut, parent, &ShapeText::focusOut);
 	connect(textEdit, &ShapeTextInput::focusIn, parent, &ShapeText::focusIn);
 
-	connect(qApp, &QGuiApplication::focusWindowChanged, [textEdit](QWindow* focusWindow) {
-		if (textEdit->parent->state == ShapeState::temp) return;
-		if (!textEdit->isVisible()) return;
-		auto handle = textEdit->windowHandle();
-		if (focusWindow != handle) {
-			textEdit->hide();
-			emit textEdit->focusOut();
-		}
-	});
+	//connect(qApp, &QGuiApplication::focusWindowChanged, [textEdit](QWindow* focusWindow) {
+	//	if (textEdit->parent->state == ShapeState::temp) return;
+	//	if (!textEdit->isVisible()) return;
+	//	auto handle = textEdit->windowHandle();
+	//	if (focusWindow != handle) {
+	//		textEdit->hide();
+	//		emit textEdit->focusOut();
+	//	}
+	//});
 
 	return textEdit;
 }
@@ -59,7 +66,7 @@ void ShapeTextInput::moveTo(const QPoint& pos)
 {
 	move(pos);
 	show();
-	setText("123"); //触发一次adjustSize
+	setText(""); //触发一次adjustSize
 	setFocus();
 	raise();
 }
@@ -78,36 +85,24 @@ QRect ShapeTextInput::getNativeRect()
 
 void ShapeTextInput::adjustSize()
 {
+	qDebug() << "adjustSize";
 	auto doc = document();
+	auto text = doc->toPlainText().trimmed();
+	if (text.isEmpty()) {
+		parent->state = ShapeState::temp;
+	}
 	doc->adjustSize();
 	auto size = doc->size().toSize();
-	if (doc->isEmpty()) {
-		size += QSize(8, 4);
-	}
-	else {
-		size += QSize(6, 2);
-	}
+	size += QSize(8, 4);
 	setFixedSize(size);
 }
 
-//void ShapeTextInput::focusOutEvent(QFocusEvent * event)
-//{
-//	qDebug() << "allen";
-//	qDebug() << "allen";
-//	auto r = event->reason();
-//	qDebug() << r;
-//	auto tar = qApp->focusWindowChanged;
-//	if (r == Qt::MouseFocusReason || r == Qt::ActiveWindowFocusReason) {
-//		QTextCursor cursor = textCursor();
-//		cursor.clearSelection();
-//		setTextCursor(cursor);
-//	}
-//	else {
-//		QTextEdit::focusOutEvent(event);
-//		hide();
-//		emit focusOut();
-//	}
-//}
+void ShapeTextInput::focusOutEvent(QFocusEvent * event)
+{
+	qDebug() << "focusOutEvent";
+	hide();
+	emit focusOut();
+}
 
 //void ShapeTextInput::focusInEvent(QFocusEvent* event)
 //{
@@ -121,21 +116,23 @@ void ShapeTextInput::paintEvent(QPaintEvent* event)
 	if (isVisible()) {
 		QPainter painter(viewport());
 		painter.setRenderHint(QPainter::Antialiasing, true);
-		painter.setBrush(Qt::NoBrush);
+		painter.setBrush(QColor(0, 0, 0, 8)); // 半透明背景
+		painter.setPen(Qt::NoPen);
+		painter.drawRect(rect());
+
 		QPen pen;
-		pen.setColor(textInputCursorColor);
-		pen.setWidthF(1);
+		pen.setColor(parent->color);
+		pen.setWidth(1);
 		painter.setPen(pen);
-		if (showTextInputCursor)
-		{
-			auto span = document()->toPlainText() == "" ? -1 : -2;
-			auto cr = cursorRect().adjusted(0,2,0,span);
-			painter.drawLine(cr.topLeft(),cr.bottomLeft());
+		painter.setBrush(Qt::NoBrush);
+		if (hasFocus() && showTextInputCursor) {
+			auto cr = cursorRect();
+			painter.drawLine(cr.topLeft(), cr.bottomLeft());
 		}
+		showTextInputCursor = !showTextInputCursor;		
 		pen.setStyle(Qt::CustomDashLine);
 		pen.setDashPattern({ 3,3 });
 		painter.setPen(pen);
 		painter.drawRect(1, 1, viewport()->width()-2, viewport()->height()-2);
 	}
-	showTextInputCursor = !showTextInputCursor;
 }

@@ -19,6 +19,7 @@ ShapeText::ShapeText(QObject* parent) : ShapeBase(parent)
 {
     auto win = (WinBox*)parent;
     //要自己控制删除策略，不然第二个实例创建时，第一个实例的blur还没有触发，会导致第一个实例被删除
+    //state = ShapeState::ready;
     color = win->toolSub->getColor();
     fontSize = win->toolSub->getStrokeWidth();
     bold = win->toolSub->getSelectState("bold");
@@ -27,13 +28,14 @@ ShapeText::ShapeText(QObject* parent) : ShapeBase(parent)
 
 ShapeText::~ShapeText()
 {
-    /*delete textEdit;*/
+    delete textEdit;
 }
 
 void ShapeText::focusOut()
 {
-    auto text = textEdit->document()->toPlainText().trimmed();
+    auto text = textEdit->document()->toPlainText();
     if (text.isEmpty()) {
+        state = ShapeState::temp;
         deleteLater();
         return;
     }
@@ -87,17 +89,17 @@ void ShapeText::mouseMove(QMouseEvent* event)
             hoverDraggerIndex = 8;
             QGuiApplication::setOverrideCursor(Qt::SizeAllCursor);
         }
-        if (!textEdit->isVisible()) {
+/*        if (!textEdit->isVisible()) {
             textEdit->show();
             textEdit->setFocus();
             textEdit->raise();
-        }        
+        } */       
         event->accept();
     }
     else {
-        if (textEdit->isVisible()&& !textEdit->hasFocus()) {
-            textEdit->hide();
-        }
+        //if (textEdit->isVisible()&& !textEdit->hasFocus()) {
+        //    textEdit->hide();
+        //}
     }
 }
 void ShapeText::mousePress(QMouseEvent* event)
@@ -115,7 +117,7 @@ void ShapeText::mousePress(QMouseEvent* event)
     }else if(hoverDraggerIndex == 8){
         pressPos = QCursor::pos();
 		state = ShapeState::moving;
-        textEdit->setFocus();
+        //textEdit->setFocus();
 		event->accept();
 	}
 }

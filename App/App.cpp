@@ -1,4 +1,5 @@
 #include <QFile>
+#include <QApplication>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
@@ -23,6 +24,7 @@ namespace {
 }
 void App::init()
 {
+    //qApp->setCursorFlashTime(0);
     QFont font("Microsoft YaHei",12);
     qApp->setFont(font);
     initConfig();
