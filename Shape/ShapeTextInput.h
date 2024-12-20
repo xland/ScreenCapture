@@ -17,6 +17,7 @@ protected:
 	void focusOutEvent(QFocusEvent* event) override;
 	void paintEvent(QPaintEvent* event) override;
 	void focusInEvent(QFocusEvent* event) override;
+	void mouseMoveEvent(QMouseEvent* event) override;
 private:
 private:
 	bool showTextInputCursor{ true };

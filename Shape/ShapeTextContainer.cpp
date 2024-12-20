@@ -15,17 +15,18 @@ ShapeTextContainer::ShapeTextContainer(ShapeText* shapeText, QWidget* parent) : 
 	setAttribute(Qt::WA_QuitOnClose, false);
 	setAttribute(Qt::WA_OpaquePaintEvent);
 	setAttribute(Qt::WA_NoSystemBackground);
-	setAttribute(Qt::WA_TransparentForMouseEvents, false);
+	setMouseTracking(true);
 
 	shapeTextInput = new ShapeTextInput(shapeText,this);
 	QVBoxLayout* layout = new QVBoxLayout(this);
-	layout->setContentsMargins(3, 3, 3,3);
+	layout->setContentsMargins(2,2,2,2);
 	layout->setSpacing(0);
 	layout->addWidget(shapeTextInput);
 	setLayout(layout);
 
 	connect(shapeTextInput->document(), &QTextDocument::contentsChanged, this, &ShapeTextContainer::adjustSize);
-	setCursor(Qt::SizeAllCursor);
+	shapeTextInput->setText("123");  //触发一次adjustSize
+	shapeTextInput->setFocus();
 	move(QCursor::pos() + QPoint(-10, -10));
 	show();
 	raise();
@@ -51,7 +52,7 @@ void ShapeTextContainer::adjustSize()
 {
 	auto doc = shapeTextInput->document();
 	doc->adjustSize();
-	setFixedSize(doc->size().toSize()+QSize(6,6));
+	setFixedSize(doc->size().toSize()+QSize(4,4));
 }
 
 void ShapeTextContainer::paintEvent(QPaintEvent* event)
@@ -70,6 +71,11 @@ void ShapeTextContainer::paintEvent(QPaintEvent* event)
 	pen.setWidth(1);
 	painter.setPen(pen);
 	painter.setBrush(Qt::NoBrush);
-	QRectF rect(2, 2, width() - 4, height() - 4);
+	QRectF rect(1, 1, width() - 2, height() - 2);
 	painter.drawRect(rect);
+}
+
+void ShapeTextContainer::mouseMoveEvent(QMouseEvent* event)
+{
+	QGuiApplication::setOverrideCursor(Qt::SizeAllCursor);
 }

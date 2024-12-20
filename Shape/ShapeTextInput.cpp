@@ -10,16 +10,10 @@
 ShapeTextInput::ShapeTextInput(ShapeText* shapeText, QWidget* parent) : QTextEdit(parent),shapeText{shapeText}
 {
 	setAttribute(Qt::WA_TranslucentBackground, true);
-	setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
-	setAttribute(Qt::WA_QuitOnClose, false);
-	setAttribute(Qt::WA_OpaquePaintEvent);
-	setAttribute(Qt::WA_NoSystemBackground);
-
 	setFrameStyle(QFrame::NoFrame);
 	setLineWrapMode(QTextEdit::NoWrap);
 	setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-	setAttribute(Qt::WA_TransparentForMouseEvents, false);
 
 	auto f = font();
 	f.setStyleStrategy(QFont::PreferAntialias);
@@ -27,10 +21,9 @@ ShapeTextInput::ShapeTextInput(ShapeText* shapeText, QWidget* parent) : QTextEdi
 	f.setWeight(shapeText->bold ? QFont::Bold : QFont::Normal);
 	f.setItalic(shapeText->italic);
 	setFont(f);
-	QString style{ "QTextEdit{color:%1;margin:0px;padding:0px;background:transparent;}" };
+	QString style{"color:%1;margin:0px;padding:0px;background:transparent;"};
 	style = style.arg(shapeText->color.name());
 	setStyleSheet(style);
-	setText("");  //触发一次adjustSize
 }
 
 ShapeTextInput::~ShapeTextInput()
@@ -51,11 +44,21 @@ void ShapeTextInput::focusInEvent(QFocusEvent* event)
 	shapeText->focusIn();
 }
 
+void ShapeTextInput::mouseMoveEvent(QMouseEvent* event)
+{
+	QTextEdit::mouseMoveEvent(event);
+	QGuiApplication::setOverrideCursor(Qt::IBeamCursor);
+}
+
 void ShapeTextInput::paintEvent(QPaintEvent* event)
 {
 	QTextEdit::paintEvent(event);
 	QPainter painter(viewport());
 	painter.setRenderHint(QPainter::Antialiasing, true);
+	painter.setBrush(QColor(0, 99, 0, 16));
+	painter.setPen(Qt::NoPen);
+	painter.drawRect(rect());
+
 	QPen pen;
 	pen.setColor(shapeText->color);
 	pen.setWidth(1);

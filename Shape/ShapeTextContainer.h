@@ -2,6 +2,7 @@
 
 #include <QObject>
 #include <QWidget>
+#include <QMouseEvent>
 
 class ShapeText;
 class ShapeTextInput;
@@ -18,6 +19,7 @@ public:
 	bool painting{ false };
 protected:
 	void paintEvent(QPaintEvent* event) override;
+	void mouseMoveEvent(QMouseEvent* event) override;
 private:
 	void adjustSize();
 private:
