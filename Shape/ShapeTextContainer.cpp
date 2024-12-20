@@ -14,7 +14,7 @@ ShapeTextContainer::ShapeTextContainer(ShapeText* shapeText, QWidget* parent) : 
 	setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::Tool);
 	setAttribute(Qt::WA_InputMethodEnabled, true);
 	setAttribute(Qt::WA_QuitOnClose, false);
-	setAttribute(Qt::WA_OpaquePaintEvent);
+	setAttribute(Qt::WA_OpaquePaintEvent, false);
 	setAttribute(Qt::WA_NoSystemBackground);
 	setFocusPolicy(Qt::StrongFocus);
 	setMouseTracking(true);
@@ -64,7 +64,7 @@ void ShapeTextContainer::paintEvent(QPaintEvent* event)
 	if (painting) return;
 	QPainter painter(this);
 	painter.setRenderHint(QPainter::Antialiasing, true);
-	painter.setBrush(QColor(0, 0, 0,6));
+	painter.setBrush(QColor(0, 0, 0,1));
 	painter.setPen(Qt::NoPen);
 	painter.drawRect(rect());
 	QPen pen;

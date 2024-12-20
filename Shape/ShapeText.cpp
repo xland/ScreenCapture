@@ -56,6 +56,7 @@ void ShapeText::paint(QPainter* painter)
     auto hwnd = (HWND)container->winId();
     GetWindowRect(hwnd, &rectNative);
     auto img = container->grab().toImage();
+
     QRectF rect(QPointF(rectNative.left, rectNative.top), QPointF(rectNative.right, rectNative.bottom));
     painter->drawImage(rect, img);
     container->painting = false;

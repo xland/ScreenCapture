@@ -32,11 +32,16 @@ ShapeTextInput::~ShapeTextInput()
 
 void ShapeTextInput::focusOutEvent(QFocusEvent * event)
 {
-	qDebug() << "focusOutEvent";
+	QTextEdit::focusOutEvent(event);
 	if (creating) {
 		return;
 	}
-	shapeText->focusOut();
+	auto cursor = textCursor();
+	cursor.clearSelection();
+	setTextCursor(cursor);
+	shapeText->paintOnBoard();
+	auto p = (ShapeTextContainer*)parent();
+	p->hide();
 }
 
 void ShapeTextInput::focusInEvent(QFocusEvent* event)
@@ -56,9 +61,9 @@ void ShapeTextInput::paintEvent(QPaintEvent* event)
 	QTextEdit::paintEvent(event);
 	QPainter painter(viewport());
 	painter.setRenderHint(QPainter::Antialiasing, true);
-	//painter.setBrush(QColor(0, 99, 0, 16));
-	//painter.setPen(Qt::NoPen);
-	//painter.drawRect(rect());
+	painter.setBrush(QColor(0, 0, 0, 1));
+	painter.setPen(Qt::NoPen);
+	painter.drawRect(rect());
 
 	QPen pen;
 	pen.setColor(shapeText->color);
