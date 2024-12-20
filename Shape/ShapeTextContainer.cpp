@@ -94,9 +94,11 @@ void ShapeTextContainer::mousePressEvent(QMouseEvent* event)
 {
 	pressPos = QCursor::pos();
 	isPress = true;
+	shapeTextInput->setFocus();
 }
 
 void ShapeTextContainer::mouseReleaseEvent(QMouseEvent* event)
 {
 	isPress = false;
+	shapeTextInput->setFocus();
 }

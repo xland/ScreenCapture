@@ -17,6 +17,8 @@ public:
 public:
 	bool creating{ true };
 	bool painting{ false };
+	ShapeTextInput* shapeTextInput;
+	bool isPress{ false };
 protected:
 	void paintEvent(QPaintEvent* event) override;
 	void mouseMoveEvent(QMouseEvent* event) override;
@@ -26,7 +28,5 @@ private:
 	void adjustSize();
 private:
 	ShapeText* shapeText;
-	ShapeTextInput* shapeTextInput;
 	QPointF pressPos;
-	bool isPress{ false };
 };

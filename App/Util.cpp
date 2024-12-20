@@ -35,7 +35,6 @@ QMouseEvent Util::createMouseEvent(const LPARAM& lParam, const QEvent::Type& typ
 
 QImage Util::printWindow(WinBox* win)
 {
-
     HDC hScreen = GetDC(NULL);
     HDC hDC = CreateCompatibleDC(hScreen);
     HBITMAP hBitmap = CreateCompatibleBitmap(hScreen, win->w, win->h);
@@ -65,3 +64,23 @@ QImage Util::printScreen(const int& x, const int& y, const int& w, const int& h)
     ReleaseDC(NULL, hScreen);
     return img;
 }
+
+
+//QImage Util::printScreen(const int& x, const int& y, const int& w, const int& h)
+//{
+//    auto screens = QGuiApplication::screens();
+//    for (int i = 0; i < screens.count(); i++) {
+//        auto screen = screens[i];
+//        QRect _screenRect = screen->geometry();
+//        if (_screenRect.x() == 0 && _screenRect.y() == 0) {
+//            auto dpr = screen->devicePixelRatio();
+//            auto img = screen->grabWindow(0,
+//                x / dpr,
+//                y / dpr,
+//                w / dpr,
+//                h / dpr).toImage();
+//            //img.save("allen123.png");
+//            return img;
+//        }
+//    }
+//}

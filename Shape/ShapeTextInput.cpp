@@ -3,6 +3,7 @@
 #include <QTimer>
 #include <QWindow>
 #include "../Win/WinBox.h"
+#include "../Win/WinBoard.h"
 
 #include "ShapeTextInput.h"
 #include "ShapeText.h"
@@ -33,6 +34,7 @@ ShapeTextInput::~ShapeTextInput()
 void ShapeTextInput::focusOutEvent(QFocusEvent * event)
 {
 	QTextEdit::focusOutEvent(event);
+	auto p = (ShapeTextContainer*)parent();
 	if (creating) {
 		return;
 	}
@@ -40,14 +42,12 @@ void ShapeTextInput::focusOutEvent(QFocusEvent * event)
 	cursor.clearSelection();
 	setTextCursor(cursor);
 	shapeText->paintOnBoard();
-	auto p = (ShapeTextContainer*)parent();
 	p->hide();
 }
 
 void ShapeTextInput::focusInEvent(QFocusEvent* event)
 {
 	QTextEdit::focusInEvent(event);
-	shapeText->focusIn();
 }
 
 void ShapeTextInput::mouseMoveEvent(QMouseEvent* event)

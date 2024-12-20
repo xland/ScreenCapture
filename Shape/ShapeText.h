@@ -14,8 +14,6 @@ class ShapeText:public ShapeBase
 public:
     ShapeText(QObject* parent = nullptr);
     ~ShapeText();
-    void focusOut();
-    void focusIn();
 public:
     QColor color{ Qt::red };
     qreal fontSize;
@@ -31,6 +29,5 @@ protected:
     void mouseRelease(QMouseEvent* event) override;
 private:
 private:
-    QPointF pressPos;
     ShapeTextContainer* container;
 };
