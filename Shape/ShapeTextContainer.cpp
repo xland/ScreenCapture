@@ -25,7 +25,7 @@ ShapeTextContainer::ShapeTextContainer(ShapeText* shapeText, QWidget* parent) : 
 	setLayout(layout);
 
 	connect(shapeTextInput->document(), &QTextDocument::contentsChanged, this, &ShapeTextContainer::adjustSize);
-	shapeTextInput->setText("123");  //触发一次adjustSize
+	shapeTextInput->setText("");  //触发一次adjustSize
 	shapeTextInput->setFocus();
 	move(QCursor::pos() + QPoint(-10, -10));
 	show();

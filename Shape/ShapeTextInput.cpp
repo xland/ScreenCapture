@@ -55,9 +55,9 @@ void ShapeTextInput::paintEvent(QPaintEvent* event)
 	QTextEdit::paintEvent(event);
 	QPainter painter(viewport());
 	painter.setRenderHint(QPainter::Antialiasing, true);
-	painter.setBrush(QColor(0, 99, 0, 16));
-	painter.setPen(Qt::NoPen);
-	painter.drawRect(rect());
+	//painter.setBrush(QColor(0, 99, 0, 16));
+	//painter.setPen(Qt::NoPen);
+	//painter.drawRect(rect());
 
 	QPen pen;
 	pen.setColor(shapeText->color);
