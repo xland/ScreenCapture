@@ -19,12 +19,16 @@ ShapeTextContainer::ShapeTextContainer(ShapeText* shapeText, QWidget* parent) : 
 
 	shapeTextInput = new ShapeTextInput(shapeText,this);
 	QVBoxLayout* layout = new QVBoxLayout(this);
-	layout->setContentsMargins(2, 2, 2, 2);
+	layout->setContentsMargins(3, 3, 3,3);
 	layout->setSpacing(0);
 	layout->addWidget(shapeTextInput);
 	setLayout(layout);
 
 	connect(shapeTextInput->document(), &QTextDocument::contentsChanged, this, &ShapeTextContainer::adjustSize);
+	setCursor(Qt::SizeAllCursor);
+	move(QCursor::pos() + QPoint(-10, -10));
+	show();
+	raise();
 }
 
 ShapeTextContainer::~ShapeTextContainer()
@@ -47,7 +51,7 @@ void ShapeTextContainer::adjustSize()
 {
 	auto doc = shapeTextInput->document();
 	doc->adjustSize();
-	setFixedSize(doc->size().toSize());
+	setFixedSize(doc->size().toSize()+QSize(6,6));
 }
 
 void ShapeTextContainer::paintEvent(QPaintEvent* event)
@@ -55,15 +59,17 @@ void ShapeTextContainer::paintEvent(QPaintEvent* event)
 	QWidget::paintEvent(event);
 	if (painting) return;
 	QPainter painter(this);
-	painter.setBrush(QColor(0, 0, 0, 6));
+	painter.setRenderHint(QPainter::Antialiasing, true);
+	painter.setBrush(QColor(0, 0, 0,6));
 	painter.setPen(Qt::NoPen);
 	painter.drawRect(rect());
 	QPen pen;
 	pen.setColor(shapeText->color);
 	pen.setStyle(Qt::CustomDashLine);
 	pen.setDashPattern({ 3,3 });
+	pen.setWidth(1);
 	painter.setPen(pen);
 	painter.setBrush(Qt::NoBrush);
-	QRect rect(1, 1, width() - 2, height() - 2);
+	QRectF rect(2, 2, width() - 4, height() - 4);
 	painter.drawRect(rect);
 }

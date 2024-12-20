@@ -27,7 +27,7 @@ ShapeTextInput::ShapeTextInput(ShapeText* shapeText, QWidget* parent) : QTextEdi
 	f.setWeight(shapeText->bold ? QFont::Bold : QFont::Normal);
 	f.setItalic(shapeText->italic);
 	setFont(f);
-	QString style{ "QTextEdit{color:%1;margin:0px;padding:2px;background:transparent;}" };
+	QString style{ "QTextEdit{color:%1;margin:0px;padding:0px;background:transparent;}" };
 	style = style.arg(shapeText->color.name());
 	setStyleSheet(style);
 	setText("");  //触发一次adjustSize
@@ -56,9 +56,6 @@ void ShapeTextInput::paintEvent(QPaintEvent* event)
 	QTextEdit::paintEvent(event);
 	QPainter painter(viewport());
 	painter.setRenderHint(QPainter::Antialiasing, true);
-	painter.setBrush(QColor(0, 0, 0, 0)); // 半透明背景
-	painter.setPen(Qt::NoPen);
-	painter.drawRect(rect());
 	QPen pen;
 	pen.setColor(shapeText->color);
 	pen.setWidth(1);
@@ -68,10 +65,6 @@ void ShapeTextInput::paintEvent(QPaintEvent* event)
 		auto cr = cursorRect();
 		painter.drawLine(cr.topLeft(), cr.bottomLeft());
 	}
-	pen.setStyle(Qt::CustomDashLine);
-	pen.setDashPattern({ 3,3 });
-	painter.setPen(pen);
-	painter.drawRect(1, 1, viewport()->width() - 2, viewport()->height() - 2);
 	if (showTextInputCursor && creating) {
 		//输入光标第一次闪烁之后，才算成功创建
 		//不然，第一次创建输入框没问题，第二次创建输入框时，会导致第二次创建的输入框马上进入focusOut

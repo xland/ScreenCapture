@@ -6,7 +6,7 @@
 #include <QWindow>
 
 #include "ShapeBase.h"
-#include "ShapeTextInput.h"
+#include "ShapeTextContainer.h"
 
 class ShapeText:public ShapeBase
 {
@@ -32,6 +32,5 @@ protected:
 private:
 private:
     QPointF pressPos;
-    ShapeTextInput* textEdit;
-    qreal rotate{45};
+    ShapeTextContainer* container;
 };

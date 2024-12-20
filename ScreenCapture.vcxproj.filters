@@ -125,6 +125,9 @@
     <ClCompile Include="Tool\ToolBase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Shape\ShapeTextContainer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BtnType.h">
@@ -235,6 +238,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="Tool\ToolBase.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Shape\ShapeTextContainer.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

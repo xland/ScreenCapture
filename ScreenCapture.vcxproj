@@ -127,6 +127,7 @@
     <ClCompile Include="Shape\ShapeRect.cpp" />
     <ClCompile Include="Shape\ShapeRectBase.cpp" />
     <ClCompile Include="Shape\ShapeText.cpp" />
+    <ClCompile Include="Shape\ShapeTextContainer.cpp" />
     <ClCompile Include="Shape\ShapeTextInput.cpp" />
     <ClCompile Include="Tool\ColorCtrl.cpp" />
     <ClCompile Include="main.cpp" />
@@ -176,6 +177,7 @@
     <QtMoc Include="Shape\ShapeTextInput.h" />
     <QtMoc Include="Tool\PixelInfo.h" />
     <QtMoc Include="Tool\ToolBase.h" />
+    <QtMoc Include="Shape\ShapeTextContainer.h" />
     <ClInclude Include="Tool\ToolBtn.h" />
     <QtMoc Include="Tool\ToolMain.h" />
     <QtMoc Include="Tool\ToolSub.h" />
