@@ -11,10 +11,12 @@
 ShapeTextContainer::ShapeTextContainer(ShapeText* shapeText, QWidget* parent) : QWidget(parent),shapeText{shapeText}
 {
 	setAttribute(Qt::WA_TranslucentBackground, true);
-	setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
+	setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::Tool);
+	setAttribute(Qt::WA_InputMethodEnabled, true);
 	setAttribute(Qt::WA_QuitOnClose, false);
 	setAttribute(Qt::WA_OpaquePaintEvent);
 	setAttribute(Qt::WA_NoSystemBackground);
+	setFocusPolicy(Qt::StrongFocus);
 	setMouseTracking(true);
 
 	shapeTextInput = new ShapeTextInput(shapeText,this);
@@ -30,6 +32,7 @@ ShapeTextContainer::ShapeTextContainer(ShapeText* shapeText, QWidget* parent) : 
 	move(QCursor::pos() + QPoint(-10, -10));
 	show();
 	raise();
+	activateWindow();
 }
 
 ShapeTextContainer::~ShapeTextContainer()
@@ -78,4 +81,22 @@ void ShapeTextContainer::paintEvent(QPaintEvent* event)
 void ShapeTextContainer::mouseMoveEvent(QMouseEvent* event)
 {
 	QGuiApplication::setOverrideCursor(Qt::SizeAllCursor);
+	if (isPress) {
+		auto pos = QCursor::pos();
+		auto span = pos - pressPos;
+		auto p = mapToGlobal(QPoint(0, 0)) + span;
+		move(p.x(), p.y());
+		pressPos = pos;
+	}
+}
+
+void ShapeTextContainer::mousePressEvent(QMouseEvent* event)
+{
+	pressPos = QCursor::pos();
+	isPress = true;
+}
+
+void ShapeTextContainer::mouseReleaseEvent(QMouseEvent* event)
+{
+	isPress = false;
 }

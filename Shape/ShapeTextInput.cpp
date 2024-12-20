@@ -13,7 +13,8 @@ ShapeTextInput::ShapeTextInput(ShapeText* shapeText, QWidget* parent) : QTextEdi
 	setFrameStyle(QFrame::NoFrame);
 	setLineWrapMode(QTextEdit::NoWrap);
 	setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff); 
+	setFocusPolicy(Qt::StrongFocus);
 
 	auto f = font();
 	f.setStyleStrategy(QFont::PreferAntialias);

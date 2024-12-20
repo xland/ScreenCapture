@@ -20,9 +20,13 @@ public:
 protected:
 	void paintEvent(QPaintEvent* event) override;
 	void mouseMoveEvent(QMouseEvent* event) override;
+	void mousePressEvent(QMouseEvent* event) override;
+	void mouseReleaseEvent(QMouseEvent* event) override;
 private:
 	void adjustSize();
 private:
 	ShapeText* shapeText;
 	ShapeTextInput* shapeTextInput;
+	QPointF pressPos;
+	bool isPress{ false };
 };
