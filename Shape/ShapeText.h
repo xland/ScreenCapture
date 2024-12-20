@@ -14,7 +14,6 @@ class ShapeText:public ShapeBase
 public:
     ShapeText(QObject* parent = nullptr);
     ~ShapeText();
-    //void focusOut(QWindow* focusWindow);
     void focusOut();
     void focusIn();
 public:

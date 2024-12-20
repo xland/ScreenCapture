@@ -1,7 +1,7 @@
 #pragma once
 
 #include <QObject>
-#include <qtextedit.h>
+#include <QTextEdit>
 
 class ShapeText;
 class ShapeTextInput  : public QTextEdit
@@ -9,23 +9,16 @@ class ShapeTextInput  : public QTextEdit
 	Q_OBJECT
 
 public:
-	ShapeTextInput(QWidget* parent = nullptr);
+	ShapeTextInput(ShapeText* shapeText, QWidget* parent = nullptr);
 	~ShapeTextInput();
-	static ShapeTextInput* create(ShapeText* parent);
-	void moveTo(const QPoint& pos);
-	QRect getNativeRect();
-signals:
-	void focusOut();
-	void focusIn();
 public:
-	QColor textInputCursorColor;
-private:
+	bool creating{ true };
+protected:
 	void focusOutEvent(QFocusEvent* event) override;
-	//void focusOutEvent(QWindow* focusWindow);
-	//void focusInEvent(QFocusEvent* event) override;
 	void paintEvent(QPaintEvent* event) override;
-	void adjustSize();
+	void focusInEvent(QFocusEvent* event) override;
+private:
 private:
 	bool showTextInputCursor{ true };
-	ShapeText* parent;
+	ShapeText* shapeText;
 };

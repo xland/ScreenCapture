@@ -23,17 +23,6 @@ ShapeText::ShapeText(QObject* parent) : ShapeBase(parent)
     fontSize = win->toolSub->getStrokeWidth();
     bold = win->toolSub->getSelectState("bold");
     italic = win->toolSub->getSelectState("italic");
-    //connect(qApp, &QGuiApplication::focusWindowChanged, this, &ShapeText::focusOut);
-        
-        //{
-        ////if (textEdit->parent->state == ShapeState::temp) return;
-        ////if (!textEdit->isVisible()) return;
-        //auto handle = textEdit->winId();
-        //if (!focusWindow || focusWindow->winId() != handle) {
-        //    textEdit->hide();
-        //    emit textEdit->focusOut();
-        //}
-        //});
 }
 
 ShapeText::~ShapeText()
@@ -41,51 +30,36 @@ ShapeText::~ShapeText()
     delete textEdit;
 }
 
-//void ShapeText::focusOut(QWindow* focusWindow)
-//{
-//    if (!textEdit->hasFocus() &&(!focusWindow || focusWindow->winId() != textEdit->winId())) {
-//        qDebug() << "focusOut";
-//        //auto text = textEdit->document()->toPlainText();
-//        //if (text.isEmpty()) {
-//        //    state = ShapeState::temp;
-//        //    deleteLater();
-//        //    return;
-//        //}
-//        //textEdit->hide();
-//        //paintOnBoard();
-//    }
-//}
-
 void ShapeText::focusOut()
 {
     auto text = textEdit->document()->toPlainText();
     if (text.isEmpty()) {
-        QTimer::singleShot(660, [this]() {
-
-            state = ShapeState::temp;
-            deleteLater();
-        });
+        state = ShapeState::temp;
+        deleteLater();
         return;
     }
-    textEdit->hide();
+    
     paintOnBoard();
+    textEdit->hide();
 }
 
 void ShapeText::focusIn()
 {
-    //auto win = (WinBox*)parent();
-    //win->winCanvas->clear();
+    state = ShapeState::temp;
+    auto win = (WinBox*)parent();
+    win->winBoard->refresh();
 }
 
 void ShapeText::paint(QPainter* painter)
 {
-    if (textEdit->isVisible()) return;
+    textEdit->painting = true;
     RECT rectNative;
     auto hwnd = (HWND)textEdit->winId();
     GetWindowRect(hwnd, &rectNative);
     auto img = textEdit->grab().toImage();
     QRectF rect(QPointF(rectNative.left, rectNative.top), QPointF(rectNative.right, rectNative.bottom));
     painter->drawImage(rect, img);
+    textEdit->painting = false;
 }
 void ShapeText::paintDragger(QPainter* painter)
 {
@@ -106,28 +80,24 @@ void ShapeText::mouseMove(QMouseEvent* event)
     auto pos = event->position().toPoint();
     auto win = (WinBox*)parent();
     auto rect = textEdit->getNativeRect();
-    auto innerRect = rect.adjusted(3, 3, -3, -3);
+    auto outerRect = rect.adjusted(-3, -3, 3, 3);
     hoverDraggerIndex = -1;
-    if (rect.contains(pos)) {
-        if (innerRect.contains(pos)) {
-            hoverDraggerIndex = 0;
-            QGuiApplication::setOverrideCursor(Qt::IBeamCursor);
-        }
-        else {
+    if (outerRect.contains(pos)) {
+        if (!rect.contains(pos)) {
             hoverDraggerIndex = 8;
             QGuiApplication::setOverrideCursor(Qt::SizeAllCursor);
         }
-/*        if (!textEdit->isVisible()) {
+        else if (!textEdit->isVisible()) {
             textEdit->show();
             textEdit->setFocus();
             textEdit->raise();
-        } */       
+        }        
         event->accept();
     }
     else {
-        //if (textEdit->isVisible()&& !textEdit->hasFocus()) {
-        //    textEdit->hide();
-        //}
+        if (textEdit->isVisible()&& !textEdit->hasFocus()) {
+            textEdit->hide();
+        }
     }
 }
 void ShapeText::mousePress(QMouseEvent* event)
@@ -141,13 +111,12 @@ void ShapeText::mousePress(QMouseEvent* event)
         event->accept();
         return;
     }
-    if (hoverDraggerIndex == 0) {
-        state = ShapeState::sizing0;
-        event->accept();
-    }else if(hoverDraggerIndex == 8){
+    if(hoverDraggerIndex == 8){
         pressPos = QCursor::pos();
 		state = ShapeState::moving;
-        //textEdit->setFocus();
+        textEdit->show();
+        textEdit->setFocus();
+        textEdit->raise();
 		event->accept();
 	}
 }
