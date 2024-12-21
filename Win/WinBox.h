@@ -16,7 +16,6 @@ class WinBox : public WinBase
 public:
 	WinBox(QObject* parent = nullptr);
 	virtual ~WinBox();
-	void updateCursor(const Qt::CursorShape& cur);
 	void refreshBoard();
 	virtual void showToolMain()=0;
 	virtual void showToolSub()=0;
@@ -35,4 +34,6 @@ protected:
 	void mouseDragOnShape(QMouseEvent* event);
 	void mouseReleaseOnShape(QMouseEvent* event);
 	void removeShape() override;
+	void mouseDBClick(QMouseEvent* event) override;
+	void mousePressRight(QMouseEvent* event) override;
 };

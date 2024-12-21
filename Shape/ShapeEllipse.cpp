@@ -36,14 +36,13 @@ void ShapeEllipse::mouseOnShape(QMouseEvent* event)
 {
     auto pos = event->position();
     auto center = shape.center();
-    auto win = (WinBox*)parent();
     if (isFill) {
         double normalizedX = (pos.x() - center.x()) / static_cast<double>(shape.width() / 2);
         double normalizedY = (pos.y() - center.y()) / static_cast<double>(shape.height() / 2);
         auto flag = (normalizedX * normalizedX + normalizedY * normalizedY <= 1.0);
         if (flag) {
             hoverDraggerIndex = 8;
-            win->updateCursor(Qt::SizeAllCursor);
+            QGuiApplication::setOverrideCursor(Qt::SizeAllCursor);
         }
     }
     else {
@@ -60,7 +59,7 @@ void ShapeEllipse::mouseOnShape(QMouseEvent* event)
             flag = (normalizedX * normalizedX + normalizedY * normalizedY <= 1.0);
             if (!flag) {
                 hoverDraggerIndex = 8;
-                win->updateCursor(Qt::SizeAllCursor);
+                QGuiApplication::setOverrideCursor(Qt::SizeAllCursor);
             }
         }
     }

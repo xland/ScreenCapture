@@ -96,10 +96,10 @@ void WinBox::mouseMoveOnShape(QMouseEvent* event)
     }
     if (!event->isAccepted()) {
         if (state == State::text) {
-            updateCursor(Qt::IBeamCursor);
+            QGuiApplication::setOverrideCursor(Qt::IBeamCursor);
         }
         else {
-            updateCursor(Qt::CrossCursor);
+            QGuiApplication::setOverrideCursor(Qt::CrossCursor);
         }
     }
 }
@@ -138,13 +138,13 @@ void WinBox::removeShape()
     }
     
 }
-void WinBox::updateCursor(const Qt::CursorShape& cur)
+void WinBox::mouseDBClick(QMouseEvent* event)
 {
-    QGuiApplication::setOverrideCursor(cur);
-    //QGuiApplication::overrideCursor()
-    //if (cursor().shape() != cur) {
-    //    setCursor(cur);
-    //}
+    qApp->quit();
+}
+void WinBox::mousePressRight(QMouseEvent* event)
+{
+    qApp->quit();
 }
 void WinBox::refreshBoard()
 {
