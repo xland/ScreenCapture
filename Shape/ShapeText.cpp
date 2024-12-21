@@ -66,42 +66,25 @@ void ShapeText::mouseMove(QMouseEvent* event)
 {
     auto pos = event->position().toPoint();
     auto win = (WinBox*)parent();
-    auto inner = container->getNativeRect();
-    auto rect = inner.adjusted(-2,-2,2,2);
     hoverDraggerIndex = -1;
-    if (!container->isVisible()) {
-        if (rect.contains(pos)) {
-            if (inner.contains(pos)) {
-                hoverDraggerIndex = 0;
-            }
-            else {
-                hoverDraggerIndex = 8;
-                QGuiApplication::setOverrideCursor(Qt::SizeAllCursor);
-            }
-            state = ShapeState::temp;
-			win->winBoard->refresh();
-            container->show();
-            container->raise();
-            //container->shapeTextInput->setFocus(Qt::FocusReason::MouseFocusReason);
-            QTimer::singleShot(100, container->shapeTextInput, [this]() {
-                container->shapeTextInput->setFocus(Qt::FocusReason::MouseFocusReason);
-                });
-            event->accept();
+    if (container->isVisible()) {
+        if (!container->shapeTextInput->hasFocus()) {
+            paintOnBoard();
+            container->hide();
         }
     }
     else {
-        if (container->isVisible() && !container->shapeTextInput->hasFocus()) {
-            paintOnBoard();
-            container->hide();
+        if (container->ctrlRect.contains(pos)) {
+            state = ShapeState::temp;
+            win->winBoard->refresh();
+            container->show();
+            container->raise();
+            event->accept();
         }
     }
 }
 void ShapeText::mousePress(QMouseEvent* event)
 {
-    if (container && container->isVisible()) {
-        paintOnBoard();
-        container->hide();
-    }
     if (!container) {
         container = new ShapeTextContainer(this);
         state = ShapeState::sizing0;
@@ -116,8 +99,4 @@ void ShapeText::mousePress(QMouseEvent* event)
 void ShapeText::mouseRelease(QMouseEvent* event)
 {
     state = ShapeState::ready;
-}
-void ShapeText::mouseDrag(QMouseEvent* event)
-{
-
 }

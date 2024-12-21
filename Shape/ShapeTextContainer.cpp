@@ -23,7 +23,7 @@ ShapeTextContainer::ShapeTextContainer(ShapeText* shapeText, QWidget* parent) : 
 
 	shapeTextInput = new ShapeTextInput(shapeText,this);
 	QVBoxLayout* layout = new QVBoxLayout(this);
-	layout->setContentsMargins(2,2,2,2);
+	layout->setContentsMargins(3,3,3,3);
 	layout->setSpacing(0);
 	layout->addWidget(shapeTextInput);
 	setLayout(layout);
@@ -41,23 +41,24 @@ ShapeTextContainer::~ShapeTextContainer()
 {
 }
 
-QRect ShapeTextContainer::getNativeRect()
+void ShapeTextContainer::setNativeRect()
 {
-	RECT rect;
-	GetWindowRect((HWND)winId(), &rect);
-	POINT lt{ .x{rect.left},.y{rect.top} };
-	POINT rb{ .x{rect.right},.y{rect.bottom} };
+	RECT r;
+	GetWindowRect((HWND)winId(), &r);
+	POINT lt{ .x{r.left},.y{r.top} };
+	POINT rb{ .x{r.right},.y{r.bottom} };
 	auto win = (WinBox*)shapeText->parent();
 	ScreenToClient(win->hwnd,&lt);
 	ScreenToClient(win->hwnd,&rb);
-	return QRect(QPoint(lt.x, lt.y+8), QPoint(rb.x, rb.y));
+	ctrlRect = QRect(QPoint(lt.x, lt.y+8), QPoint(rb.x, rb.y));
 }
 
 void ShapeTextContainer::adjustSize()
 {
 	auto doc = shapeTextInput->document();
 	doc->adjustSize();
-	setFixedSize(doc->size().toSize()+QSize(4,4));
+	setFixedSize(doc->size().toSize()+QSize(6,6));
+	setNativeRect();
 }
 
 void ShapeTextContainer::paintEvent(QPaintEvent* event)
@@ -96,25 +97,10 @@ void ShapeTextContainer::mousePressEvent(QMouseEvent* event)
 {
 	pressPos = QCursor::pos();
 	isPress = true;
-	shapeTextInput->creating = true;
-	qDebug() << "mousePressEvent";
 }
 
 void ShapeTextContainer::mouseReleaseEvent(QMouseEvent* event)
 {
+	setNativeRect();
 	isPress = false;
-	shapeTextInput->creating = false;
-}
-
-void ShapeTextContainer::enterEvent(QEnterEvent* event)
-{
-	auto win = (WinBox*)shapeText->parent();
-	win->winBoard->refresh();
-	shapeTextInput->creating = true;
-	shapeTextInput->setFocus();
-}
-
-void ShapeTextContainer::leaveEvent(QEvent* event)
-{
-	shapeTextInput->creating = false;
 }

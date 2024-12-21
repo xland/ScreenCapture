@@ -34,6 +34,7 @@ ShapeTextInput::~ShapeTextInput()
 void ShapeTextInput::focusOutEvent(QFocusEvent* event)
 {	
 	event->ignore();
+	//不能在这里直接paintOnBoard，因为鼠标按下准备拖动时，会触发focusOut，导致输入框消失
 	QTimer::singleShot(20, this, [this, event]() {
 		auto p = (ShapeTextContainer*)parent();
 		if (p->isPress) return;
@@ -41,28 +42,20 @@ void ShapeTextInput::focusOutEvent(QFocusEvent* event)
 		auto cursor = textCursor();
 		cursor.clearSelection();
 		setTextCursor(cursor);
+		shapeText->paintOnBoard();
+		p->hide();
+		if (document()->toPlainText().trimmed().isEmpty()) 
+		{ 
+			shapeText->deleteLater(); 
+		}
 	});
-
-
-
-
-	//不能在这里paintOnBoard，因为鼠标按下准备拖动时，会触发focusOut，导致输入框消失
-	//shapeText->paintOnBoard();
-	//auto p = (ShapeTextContainer*)parent();
-	//p->hide();
-	//event->ignore();
 }
 
-//void ShapeTextInput::focusInEvent(QFocusEvent* event)
-//{
-//	QTextEdit::focusInEvent(event);
-//}
-
-//void ShapeTextInput::mouseMoveEvent(QMouseEvent* event)
-//{
-//	QTextEdit::mouseMoveEvent(event);
-//	QGuiApplication::setOverrideCursor(Qt::IBeamCursor);
-//}
+void ShapeTextInput::mouseMoveEvent(QMouseEvent* event)
+{
+	QTextEdit::mouseMoveEvent(event);
+	QGuiApplication::setOverrideCursor(Qt::IBeamCursor);
+}
 
 void ShapeTextInput::paintEvent(QPaintEvent* event)
 {
@@ -81,11 +74,6 @@ void ShapeTextInput::paintEvent(QPaintEvent* event)
 	if (hasFocus() && showTextInputCursor) {
 		auto cr = cursorRect();
 		painter.drawLine(cr.topLeft(), cr.bottomLeft());
-	}
-	if (showTextInputCursor && creating) {
-		//输入光标第一次闪烁之后，才算成功创建
-		//不然，第一次创建输入框没问题，第二次创建输入框时，会导致第二次创建的输入框马上进入focusOut
-		creating = false;
 	}
 	showTextInputCursor = !showTextInputCursor;
 }

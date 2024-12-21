@@ -14,7 +14,7 @@ public:
     virtual void paint(QPainter* painter) = 0;
     virtual void paintDragger(QPainter* painter) = 0;
     virtual void mouseMove(QMouseEvent* event) = 0;
-    virtual void mouseDrag(QMouseEvent* event) = 0;
+    virtual void mouseDrag(QMouseEvent* event) {};
     virtual void mousePress(QMouseEvent* event) = 0;
     virtual void mouseRelease(QMouseEvent* event) {};
     virtual void paintOnBoard();

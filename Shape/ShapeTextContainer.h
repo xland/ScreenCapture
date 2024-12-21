@@ -13,21 +13,20 @@ class ShapeTextContainer  : public QWidget
 public:
 	ShapeTextContainer(ShapeText* shapeText, QWidget* parent = nullptr);
 	~ShapeTextContainer();
-	QRect getNativeRect();
 public:
-	bool creating{ true };
+	//bool creating{ true };
 	bool painting{ false };
 	ShapeTextInput* shapeTextInput;
 	bool isPress{ false };
+	QRect ctrlRect;
 protected:
 	void paintEvent(QPaintEvent* event) override;
 	void mouseMoveEvent(QMouseEvent* event) override;
 	void mousePressEvent(QMouseEvent* event) override;
 	void mouseReleaseEvent(QMouseEvent* event) override;
-	void enterEvent(QEnterEvent* event) override;
-	void leaveEvent(QEvent* event) override;
 private:
 	void adjustSize();
+	void setNativeRect();
 private:
 	ShapeText* shapeText;
 	QPointF pressPos;
