@@ -128,6 +128,16 @@ void WinBox::mouseReleaseOnShape(QMouseEvent* event)
     //    }
     //}
 }
+void WinBox::removeShape()
+{
+    if (winCanvas->curShape) {
+        shapes.removeOne(winCanvas->curShape);
+		winCanvas->curShape->deleteLater();
+        winBoard->refresh();
+        winCanvas->clear();
+    }
+    
+}
 void WinBox::updateCursor(const Qt::CursorShape& cur)
 {
     QGuiApplication::setOverrideCursor(cur);

@@ -37,6 +37,7 @@ protected:
 	virtual void mouseMove(QMouseEvent* event){};
 	virtual void mouseDrag(QMouseEvent* event){};
 	virtual void mouseRelease(QMouseEvent* event){};
+	virtual void removeShape() {};
 private:
 	
 };

@@ -59,19 +59,19 @@ LRESULT WinBase::RouteWinMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPar
         {
             auto e = Util::createMouseEvent(lParam, QEvent::MouseButtonPress);
             obj->mousePress(&e);
-            break;
+            return 0;
         }
         case WM_LBUTTONDBLCLK:
         {
             auto e = Util::createMouseEvent(lParam,QEvent::MouseButtonDblClick);
             obj->mouseDBClick(&e);
-            break;
+            return 0;
         }
         case WM_LBUTTONUP:
         {
             auto e = Util::createMouseEvent(lParam, QEvent::MouseButtonRelease);
             obj->mouseRelease(&e);
-            break;
+            return 0;
         }
         case WM_MOUSEMOVE:
         {
@@ -82,22 +82,31 @@ LRESULT WinBase::RouteWinMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPar
             else {
                 obj->mouseMove(&e);
             }
-            break;
+            return 0;
         }
         case WM_RBUTTONDOWN:
         {
             auto e = Util::createMouseEvent(lParam, QEvent::MouseButtonPress, Qt::MouseButton::RightButton);
             obj->mousePressRight(&e);
-            break;
+            return 0;
         }
         case WM_CLOSE: 
         {
             DestroyWindow(hWnd);
-            break;
+            return 0;
         }
         case WM_DESTROY: 
         {
             isDestroyed = true;
+            return 0;
+        }
+        case WM_KEYDOWN:
+        {
+            if (wParam == VK_BACK || wParam == VK_DELETE)
+            {
+                obj->removeShape();
+                return 0;
+            }
             break;
         }
         default:

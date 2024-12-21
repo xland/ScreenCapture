@@ -44,24 +44,6 @@ void ShapeText::paint(QPainter* painter)
     painter->drawImage(rect, img);
     container->painting = false;
 }
-void ShapeText::paintDragger(QPainter* painter)
-{
-    RECT rectNative;
-    auto hwnd = (HWND)container->winId();
-    GetWindowRect(hwnd, &rectNative);
-    auto img = container->grab().toImage();
-    QRectF rect(QPointF(rectNative.left, rectNative.top), QPointF(rectNative.right, rectNative.bottom));
-    painter->drawImage(rect, img);
-
-    QPen pen;
-    pen.setColor(color);
-    pen.setStyle(Qt::CustomDashLine);
-    pen.setDashPattern({ 3, 3 });
-    pen.setWidth(1);
-    painter->setPen(pen);
-    painter->setBrush(Qt::NoBrush);
-    painter->drawRect(rect);
-}
 void ShapeText::mouseMove(QMouseEvent* event)
 {
     auto pos = event->position().toPoint();
@@ -77,6 +59,8 @@ void ShapeText::mouseMove(QMouseEvent* event)
         if (container->ctrlRect.contains(pos)) {
             state = ShapeState::temp;
             win->winBoard->refresh();
+            win->winCanvas->clear();
+            win->winCanvas->curShape = this;
             container->show();
             container->raise();
             event->accept();

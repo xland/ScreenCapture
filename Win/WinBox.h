@@ -34,4 +34,5 @@ protected:
 	void mouseMoveOnShape(QMouseEvent* event);
 	void mouseDragOnShape(QMouseEvent* event);
 	void mouseReleaseOnShape(QMouseEvent* event);
+	void removeShape() override;
 };
