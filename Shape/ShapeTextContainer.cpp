@@ -5,6 +5,7 @@
 
 #include "ShapeTextInput.h"
 #include "../Win/WinBox.h"
+#include "../Win/WinBoard.h"
 #include "ShapeTextContainer.h"
 #include "ShapeText.h"
 
@@ -18,6 +19,7 @@ ShapeTextContainer::ShapeTextContainer(ShapeText* shapeText, QWidget* parent) : 
 	setAttribute(Qt::WA_NoSystemBackground);
 	setFocusPolicy(Qt::StrongFocus);
 	setMouseTracking(true);
+	setAttribute(Qt::WA_Hover);
 
 	shapeTextInput = new ShapeTextInput(shapeText,this);
 	QVBoxLayout* layout = new QVBoxLayout(this);
@@ -94,11 +96,25 @@ void ShapeTextContainer::mousePressEvent(QMouseEvent* event)
 {
 	pressPos = QCursor::pos();
 	isPress = true;
-	shapeTextInput->setFocus();
+	shapeTextInput->creating = true;
+	qDebug() << "mousePressEvent";
 }
 
 void ShapeTextContainer::mouseReleaseEvent(QMouseEvent* event)
 {
 	isPress = false;
+	shapeTextInput->creating = false;
+}
+
+void ShapeTextContainer::enterEvent(QEnterEvent* event)
+{
+	auto win = (WinBox*)shapeText->parent();
+	win->winBoard->refresh();
+	shapeTextInput->creating = true;
 	shapeTextInput->setFocus();
+}
+
+void ShapeTextContainer::leaveEvent(QEvent* event)
+{
+	shapeTextInput->creating = false;
 }

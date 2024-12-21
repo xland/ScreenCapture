@@ -31,30 +31,38 @@ ShapeTextInput::ShapeTextInput(ShapeText* shapeText, QWidget* parent) : QTextEdi
 ShapeTextInput::~ShapeTextInput()
 {}
 
-void ShapeTextInput::focusOutEvent(QFocusEvent * event)
-{
-	QTextEdit::focusOutEvent(event);
-	auto p = (ShapeTextContainer*)parent();
-	if (creating) {
-		return;
-	}
-	auto cursor = textCursor();
-	cursor.clearSelection();
-	setTextCursor(cursor);
-	shapeText->paintOnBoard();
-	p->hide();
+void ShapeTextInput::focusOutEvent(QFocusEvent* event)
+{	
+	event->ignore();
+	QTimer::singleShot(20, this, [this, event]() {
+		auto p = (ShapeTextContainer*)parent();
+		if (p->isPress) return;
+		QTextEdit::focusOutEvent(event);
+		auto cursor = textCursor();
+		cursor.clearSelection();
+		setTextCursor(cursor);
+	});
+
+
+
+
+	//不能在这里paintOnBoard，因为鼠标按下准备拖动时，会触发focusOut，导致输入框消失
+	//shapeText->paintOnBoard();
+	//auto p = (ShapeTextContainer*)parent();
+	//p->hide();
+	//event->ignore();
 }
 
-void ShapeTextInput::focusInEvent(QFocusEvent* event)
-{
-	QTextEdit::focusInEvent(event);
-}
+//void ShapeTextInput::focusInEvent(QFocusEvent* event)
+//{
+//	QTextEdit::focusInEvent(event);
+//}
 
-void ShapeTextInput::mouseMoveEvent(QMouseEvent* event)
-{
-	QTextEdit::mouseMoveEvent(event);
-	QGuiApplication::setOverrideCursor(Qt::IBeamCursor);
-}
+//void ShapeTextInput::mouseMoveEvent(QMouseEvent* event)
+//{
+//	QTextEdit::mouseMoveEvent(event);
+//	QGuiApplication::setOverrideCursor(Qt::IBeamCursor);
+//}
 
 void ShapeTextInput::paintEvent(QPaintEvent* event)
 {

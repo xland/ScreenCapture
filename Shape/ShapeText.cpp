@@ -4,6 +4,7 @@
 #include <numbers>
 #include <QTextCharFormat>
 #include <QTextOption>
+#include <QTimer>
 
 #include "ShapeText.h"
 #include "ShapeTextInput.h"
@@ -45,34 +46,48 @@ void ShapeText::paint(QPainter* painter)
 }
 void ShapeText::paintDragger(QPainter* painter)
 {
-    //QPen pen;
-    //pen.setColor(color);
-    //pen.setStyle(Qt::CustomDashLine);
-    //pen.setDashPattern({ 3, 3 });
-    //pen.setWidth(1);
-    //painter->setPen(pen);
-    //painter->setBrush(Qt::NoBrush);
-    //auto win = (WinBox*)parent();
-    //auto rect = textEdit->getNativeRect();
-    //rect.adjust(2, -2, -4, -4);
-    //painter->drawRect(rect);
+    RECT rectNative;
+    auto hwnd = (HWND)container->winId();
+    GetWindowRect(hwnd, &rectNative);
+    auto img = container->grab().toImage();
+    QRectF rect(QPointF(rectNative.left, rectNative.top), QPointF(rectNative.right, rectNative.bottom));
+    painter->drawImage(rect, img);
+
+    QPen pen;
+    pen.setColor(color);
+    pen.setStyle(Qt::CustomDashLine);
+    pen.setDashPattern({ 3, 3 });
+    pen.setWidth(1);
+    painter->setPen(pen);
+    painter->setBrush(Qt::NoBrush);
+    painter->drawRect(rect);
 }
 void ShapeText::mouseMove(QMouseEvent* event)
 {
     auto pos = event->position().toPoint();
     auto win = (WinBox*)parent();
-    auto rect = container->getNativeRect();
+    auto inner = container->getNativeRect();
+    auto rect = inner.adjusted(-2,-2,2,2);
     hoverDraggerIndex = -1;
-    if (rect.contains(pos)) {
-        if (!container->isVisible()) {
+    if (!container->isVisible()) {
+        if (rect.contains(pos)) {
+            if (inner.contains(pos)) {
+                hoverDraggerIndex = 0;
+            }
+            else {
+                hoverDraggerIndex = 8;
+                QGuiApplication::setOverrideCursor(Qt::SizeAllCursor);
+            }
             state = ShapeState::temp;
-            auto win = (WinBox*)parent();
-            win->winBoard->refresh();
+			win->winBoard->refresh();
             container->show();
             container->raise();
-            state = ShapeState::ready;
-        }        
-        event->accept();
+            //container->shapeTextInput->setFocus(Qt::FocusReason::MouseFocusReason);
+            QTimer::singleShot(100, container->shapeTextInput, [this]() {
+                container->shapeTextInput->setFocus(Qt::FocusReason::MouseFocusReason);
+                });
+            event->accept();
+        }
     }
     else {
         if (container->isVisible() && !container->shapeTextInput->hasFocus()) {
@@ -83,20 +98,26 @@ void ShapeText::mouseMove(QMouseEvent* event)
 }
 void ShapeText::mousePress(QMouseEvent* event)
 {
+    if (container && container->isVisible()) {
+        paintOnBoard();
+        container->hide();
+    }
     if (!container) {
         container = new ShapeTextContainer(this);
-        //state = ShapeState::sizing0;
+        state = ShapeState::sizing0;
         event->accept();
         return;
     }
     if(hoverDraggerIndex == 8){
-		//state = ShapeState::moving;
+		state = ShapeState::moving;
 		event->accept();
 	}
 }
 void ShapeText::mouseRelease(QMouseEvent* event)
 {
+    state = ShapeState::ready;
 }
 void ShapeText::mouseDrag(QMouseEvent* event)
 {
+
 }
