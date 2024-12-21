@@ -59,6 +59,7 @@ void WinMask::mouseDrag(QMouseEvent* event)
     if (father->state == State::mask)
     {
         auto pos = event->pos();
+		if (pos == posPress) return;
         maskRect.setCoords(posPress.x(), posPress.y(), pos.x(),pos.y());
         maskRect = maskRect.normalized();
         update();

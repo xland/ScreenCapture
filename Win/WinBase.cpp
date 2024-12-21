@@ -59,7 +59,18 @@ LRESULT WinBase::RouteWinMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPar
         {
             auto e = Util::createMouseEvent(lParam, QEvent::MouseButtonPress);
             obj->mousePress(&e);
-            return 0;
+            break;
+        }
+        case WM_MOUSEMOVE:
+        {
+            auto e = Util::createMouseEvent(lParam, QEvent::MouseMove);
+            if (wParam & MK_LBUTTON) {
+                obj->mouseDrag(&e);
+            }
+            else {
+                obj->mouseMove(&e);
+            }
+            break;
         }
         case WM_LBUTTONDBLCLK:
         {
@@ -71,18 +82,7 @@ LRESULT WinBase::RouteWinMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPar
         {
             auto e = Util::createMouseEvent(lParam, QEvent::MouseButtonRelease);
             obj->mouseRelease(&e);
-            return 0;
-        }
-        case WM_MOUSEMOVE:
-        {
-            auto e = Util::createMouseEvent(lParam, QEvent::MouseMove);
-            if (wParam & MK_LBUTTON) {
-                obj->mouseDrag(&e);
-            }
-            else {
-                obj->mouseMove(&e);
-            }
-            return 0;
+            break;
         }
         case WM_RBUTTONDOWN:
         {
