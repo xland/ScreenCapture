@@ -26,6 +26,8 @@ private:
 	void changeMaskRect(const QPoint& pos);
 	void changeMousePosState(const int& x, const int& y);
 	void changeMousePosState2(const int& x, const int& y);
+	void paintMaskRectInfo(QPainter& p);
+	void paintMaskRectBorder(QPainter& p);
 private:
 	QPoint posPress;
 	qreal maskStroke{ 2.0 };

@@ -152,28 +152,8 @@ void WinMask::update(bool isMouseup)
     p.setCompositionMode(QPainter::CompositionMode_Clear);
     p.setBrush(Qt::transparent);
     p.drawRect(maskRect);
-    //绘制透明区域的边框
-    p.setCompositionMode(QPainter::CompositionMode_SourceOver);
-    QColor borderColor(22, 119, 255);
-    p.setPen(QPen(QBrush(borderColor), maskStroke));
-    p.setBrush(Qt::NoBrush);
-    p.drawRect(maskRect);
-    //绘制边框上的拖动圆点
-    if (isMouseup) {
-        p.setBrush(borderColor);
-        p.setPen(Qt::NoPen);
-        auto r{ 1.5 * maskStroke };
-        auto hw{ maskRect.width() / 2 };
-        auto hh{ maskRect.height() / 2 };
-        p.drawEllipse(maskRect.topLeft(), r, r);
-        p.drawEllipse(QPointF(maskRect.left()+ hw, maskRect.top()), r, r);
-        p.drawEllipse(maskRect.topRight(), r, r);
-        p.drawEllipse(QPointF(maskRect.right(), maskRect.top()+ hh), r, r);
-        p.drawEllipse(maskRect.bottomRight(), r, r);
-        p.drawEllipse(QPointF(maskRect.left() + hw, maskRect.bottom()), r, r);
-        p.drawEllipse(maskRect.bottomLeft(), r, r);
-        p.drawEllipse(QPointF(maskRect.left(), maskRect.top() + hh), r, r);
-    }
+	paintMaskRectBorder(p);
+    paintMaskRectInfo(p);
     paint();
     p.end();
     if (isMouseup) {
@@ -314,6 +294,55 @@ void WinMask::changeMousePosState2(const int& x, const int& y)
     else {
         QGuiApplication::restoreOverrideCursor();
         mousePosState = -1;
+    }
+}
+
+void WinMask::paintMaskRectInfo(QPainter& p)
+{
+    //绘制截图区域位置和大小
+    auto text = QString("X:%1 Y:%2 W:%3 H:%4")
+        .arg(maskRect.x()).arg(maskRect.y())
+        .arg(maskRect.width()).arg(maskRect.height());
+    auto font = p.font();
+    font.setPointSizeF(12.f);
+    p.setFont(font);
+    QFontMetrics fm(font);
+    QRect textRect = fm.boundingRect(text);
+    int w = textRect.width();
+    int h = textRect.height();
+    QRect rect(maskRect.x(), maskRect.y() - h - 12, w + 16, h + 8);
+    p.setBrush(QColor(0, 0, 0, 120));
+    p.setPen(Qt::NoPen);
+    p.drawRect(rect);
+    p.setPen(QPen(QBrush(Qt::white), 1));
+    p.setBrush(Qt::NoBrush);
+    p.drawText(rect, Qt::AlignCenter, text);
+}
+
+void WinMask::paintMaskRectBorder(QPainter& p)
+{
+    //绘制透明区域的边框
+    p.setCompositionMode(QPainter::CompositionMode_SourceOver);
+    QColor borderColor(22, 119, 255);
+    p.setPen(QPen(QBrush(borderColor), maskStroke));
+    p.setBrush(Qt::NoBrush);
+    p.drawRect(maskRect);
+    auto win = (WinFull*)parent();
+    if (win->state == State::tool) {
+        //绘制边框上的拖动圆点
+        p.setBrush(borderColor);
+        p.setPen(Qt::NoPen);
+        auto r{ 2 * maskStroke };
+        auto hw{ maskRect.width() / 2 };
+        auto hh{ maskRect.height() / 2 };
+        p.drawEllipse(maskRect.topLeft(), r, r);
+        p.drawEllipse(QPointF(maskRect.left() + hw, maskRect.top()), r, r);
+        p.drawEllipse(maskRect.topRight(), r, r);
+        p.drawEllipse(QPointF(maskRect.right(), maskRect.top() + hh), r, r);
+        p.drawEllipse(maskRect.bottomRight(), r, r);
+        p.drawEllipse(QPointF(maskRect.left() + hw, maskRect.bottom()), r, r);
+        p.drawEllipse(maskRect.bottomLeft(), r, r);
+        p.drawEllipse(QPointF(maskRect.left(), maskRect.top() + hh), r, r);
     }
 }
 
