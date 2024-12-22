@@ -96,7 +96,7 @@ void WinMask::mouseRelease(QMouseEvent* event)
     {
         win->state = State::tool;
         win->showToolMain();
-        update(true);
+        update();
     }
     else if (win->state == State::tool)
     {
@@ -140,7 +140,7 @@ void WinMask::mouseMove(QMouseEvent* event)
         }
     }
 }
-void WinMask::update(bool isMouseup)
+void WinMask::update()
 {
     if (img.isNull()) {
         img = QImage(w, h, QImage::Format_ARGB32_Premultiplied);
@@ -156,7 +156,8 @@ void WinMask::update(bool isMouseup)
     paintMaskRectInfo(p);
     paint();
     p.end();
-    if (isMouseup) {
+    auto win = (WinFull*)parent();
+    if (win->state == State::tool) {
         releaseImg();
     }
 }

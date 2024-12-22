@@ -18,7 +18,7 @@ public:
 	void mouseDrag(QMouseEvent* event);
 	void mouseRelease(QMouseEvent* event);
 	void mouseMove(QMouseEvent* event);
-	void update(bool isMouseup=false);
+	void update();
 public:
 	QRectF maskRect;
 protected:
