@@ -21,6 +21,7 @@ public:
 	void close() override;
 	void saveToClipboard() override;
 	void saveToFile() override;
+	void pinImg();
 public:
 	qreal dpr{ 1.0 };
 	WinMask* winMask;
@@ -31,5 +32,6 @@ protected:
 	void mouseRelease(QMouseEvent* event) override;
 private:
 	void initWinSizeByDesktopSize();
+	QImage getCutImg();
 };
 

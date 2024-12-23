@@ -4,6 +4,7 @@
 
 #include "../App/App.h"
 #include "../Win/WinBox.h"
+#include "../Win/WinFull.h"
 #include "ToolMain.h"
 #include "ToolSub.h"
 
@@ -207,6 +208,12 @@ void ToolMain::mousePressEvent(QMouseEvent* event)
         {
             if (btn.enable) {
                 win->redo();
+            }
+        }
+        else if (btn.name == "pin")
+        {
+            if (btn.enable) {
+                ((WinFull*)win)->pinImg();
             }
         }
         else if (btn.name == "close")

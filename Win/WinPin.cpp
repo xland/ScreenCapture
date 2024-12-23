@@ -1,10 +1,17 @@
 #include "WinPin.h"
 
-WinPin::WinPin(QObject *parent) : WinBox(parent)
-{}
+WinPin::WinPin(const QImage&& img, QObject* parent) : WinBox(parent)
+{
+	this->img = img;
+}
 
 WinPin::~WinPin()
 {}
+
+void WinPin::init()
+{
+
+}
 
 void WinPin::showToolMain()
 {

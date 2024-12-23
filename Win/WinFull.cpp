@@ -8,6 +8,7 @@
 #include <QStandardPaths>
 
 #include "WinFull.h"
+#include "WinPin.h"
 #include "WinMask.h"
 #include "WinBoard.h"
 #include "WinCanvas.h"
@@ -96,7 +97,7 @@ void WinFull::close()
     WinBase::close();
 }
 
-void WinFull::saveToClipboard()
+QImage WinFull::getCutImg()
 {
     QImage tar;
     {
@@ -111,7 +112,12 @@ void WinFull::saveToClipboard()
     {
         shape->paint(&p);
     }
-    QApplication::clipboard()->setImage(tar);
+	return tar; 
+}
+
+void WinFull::saveToClipboard()
+{
+    QApplication::clipboard()->setImage(getCutImg());
     close();
 }
 
@@ -124,21 +130,13 @@ void WinFull::saveToFile()
     {
         return;
     }
-    QImage tar;
-    {
-        auto img = Util::printWindow(this);
-        tar = img.copy(winMask->maskRect);
-    }
-    QPainter p(&tar);
-    p.translate(0 - winMask->maskRect.left(), 0 - winMask->maskRect.top());
-    p.setRenderHint(QPainter::Antialiasing, true);
-    p.setRenderHint(QPainter::TextAntialiasing, true);
-    for (auto shape : shapes)
-    {
-        shape->paint(&p);
-    }
-    tar.save(filePath);
+    getCutImg().save(filePath);
     close();
+}
+
+void WinFull::pinImg()
+{
+	auto winPin = new WinPin(getCutImg());
 }
 
 void WinFull::mousePress(QMouseEvent* event)

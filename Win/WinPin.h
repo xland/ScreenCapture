@@ -8,8 +8,9 @@ class WinPin  : public WinBox
 	Q_OBJECT
 
 public:
-	WinPin(QObject *parent = nullptr);
+	WinPin(const QImage&& img, QObject *parent = nullptr);
 	~WinPin();
+	static void init();
 	void showToolMain() override;
 	void showToolSub() override;
 	void saveToClipboard() override;
