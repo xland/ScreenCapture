@@ -16,3 +16,5 @@
 - 工具栏上的tooltip现在还没显示
 - 鼠标移动时不断调用QGuiApplication::setOverrideCursor值不值得优化
 - 拖拽出截图区域后，窗口收不到WM_KEYDOWN消息
+- 当显示子工具条时，按Esc键，子工具条消失。
+- 

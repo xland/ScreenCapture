@@ -231,10 +231,6 @@ void ToolSub::showEvent(QShowEvent* event)
 		triangleX = x;
 		move(pos.x(), pos.y());
 	}
-	//QTimer::singleShot(20, this, [this, event]() {
-	//	setFocus();
-	//	auto hasf = hasFocus();
-	//	});
 }
 
 void ToolSub::keyPressEvent(QKeyEvent* event)

@@ -69,10 +69,7 @@ void WinMask::mouseDrag(QMouseEvent* event)
     {
         if (mousePosState == 0)
         {
-            auto pos = event->pos();
-            auto span = pos - posPress;
-            maskRect.moveTo(maskRect.topLeft() + span);
-            posPress = pos;
+            moveMaskRect(event->pos());
             update();
         }
         else
@@ -312,7 +309,13 @@ void WinMask::paintMaskRectInfo(QPainter& p)
     QRect textRect = fm.boundingRect(text);
     int w = textRect.width();
     int h = textRect.height();
-    QRect rect(maskRect.x(), maskRect.y() - h - 12, w + 16, h + 8);
+
+	auto y = maskRect.y() - h - 12;
+    auto x = maskRect.x() + 4;
+	if (y < 0) y = maskRect.y() + 4;
+    QRect rect(x, y, w + 16, h + 8);
+
+
     p.setBrush(QColor(0, 0, 0, 120));
     p.setPen(Qt::NoPen);
     p.drawRect(rect);
@@ -346,6 +349,17 @@ void WinMask::paintMaskRectBorder(QPainter& p)
         p.drawEllipse(maskRect.bottomLeft(), r, r);
         p.drawEllipse(QPointF(maskRect.left(), maskRect.top() + hh), r, r);
     }
+}
+
+void WinMask::moveMaskRect(const QPoint& pos)
+{
+	auto span = pos - posPress;
+	auto target = maskRect.topLeft()+span;
+	posPress = pos;
+	if (target.x() < 0 || target.y()<0) return;
+	if (target.x() + maskRect.width() > w || target.y() + maskRect.height() > h) return;
+    maskRect.moveTo(maskRect.topLeft() + span);
+	update();
 }
 
 void WinMask::initWinRects()
