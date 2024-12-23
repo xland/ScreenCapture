@@ -15,6 +15,17 @@ namespace{
 ToolMain::ToolMain(WinBox* win) : ToolBase(win)
 {
     setFixedSize(btns.size() * btnW + 8, 32);
+    for (auto& btn : btns)
+    {
+        if (btn.name == "undo")
+        {
+            btn.enable = false;
+        }
+        if (btn.name == "redo")
+        {
+            btn.enable = false;
+        }
+    }
 }
 ToolMain::~ToolMain()
 {
@@ -87,6 +98,47 @@ void ToolMain::initData(const QJsonArray& arr, const QString& lang)
     }
 }
 
+void ToolMain::setBtnEnable(const QString& name, bool flag)
+{
+	for (auto& btn : btns)
+	{
+		if (btn.name == name)
+		{
+            if (btn.enable != flag) {
+				btn.enable = flag;
+				update();
+            }
+			break;
+		}
+	}
+}
+
+void ToolMain::setBtnEnable(bool undo, bool redo)
+{
+    bool flag{ false };
+    for (auto& btn : btns)
+    {
+        if (btn.name == "undo")
+        {
+            if (btn.enable != undo) {
+                btn.enable = undo;
+				flag = true;
+            }
+        }
+        if (btn.name == "redo")
+        {
+            if (btn.enable != redo) {
+                btn.enable = redo;
+                flag = true;
+            }
+        }
+    }
+    if (flag)
+    {
+        update();
+    }
+}
+
 void ToolMain::paintEvent(QPaintEvent* event)
 {
     auto painter = getPainter();
@@ -94,15 +146,22 @@ void ToolMain::paintEvent(QPaintEvent* event)
     for (int i = 0; i < btns.size(); i++)
     {
         QRect rect(4 + i * btnW, 0, btnW, height());
-        if (i == selectIndex) {
-            paintBtn(btns[i].icon, QColor(9, 88, 217), QColor(228, 238, 255), rect, painter.get());
-        }
-        else if (hoverIndex == i) {
-            paintBtn(btns[i].icon, QColor(33, 33, 33), QColor(228, 238, 255), rect, painter.get());
+		if (btns[i].enable)
+		{
+            if (i == selectIndex) {
+                paintBtn(btns[i].icon, QColor(9, 88, 217), QColor(228, 238, 255), rect, painter.get());
+            }
+            else if (hoverIndex == i) {
+                paintBtn(btns[i].icon, QColor(33, 33, 33), QColor(228, 238, 255), rect, painter.get());
+            }
+            else {
+                paintBtn(btns[i].icon, QColor(33, 33, 33), Qt::white, rect, painter.get());
+            }
         }
         else {
-            paintBtn(btns[i].icon, QColor(33, 33, 33), Qt::white, rect, painter.get());
+            paintBtn(btns[i].icon, QColor(180, 180, 180), Qt::white, rect, painter.get());
         }
+
     }
     painter->setPen(QColor(190, 190, 190));
     for (int i = 0; i < spliterIndexs.size(); i++)
@@ -118,6 +177,7 @@ void ToolMain::mousePressEvent(QMouseEvent* event)
     {
         selectIndex = -1;
         win->state = State::tool;
+        update();
     }
     else
     {
@@ -127,25 +187,33 @@ void ToolMain::mousePressEvent(QMouseEvent* event)
             win->state = btn.state;
             selectIndex = hoverIndex;
             win->showToolSub();
+            update();
         }
         else if (btn.name == "clipboard")
         {
             win->saveToClipboard();
-            return;
         }
         else if (btn.name == "save")
         {
             win->saveToFile();
-            return;
+        }
+        else if (btn.name == "undo")
+        {
+            if (btn.enable) {
+                win->undo();
+            }            
+        }
+        else if (btn.name == "redo")
+        {
+            if (btn.enable) {
+                win->redo();
+            }
         }
         else if (btn.name == "close")
         {
             win->close();
-            return;
         }
     }
-    update();
-    return;
 }
 
 void ToolMain::mouseMoveEvent(QMouseEvent* event)

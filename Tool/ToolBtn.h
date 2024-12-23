@@ -11,6 +11,7 @@ public:
 	~ToolBtn() = default;
 public:
 	bool selected;
+	bool enable{true};
 	QChar icon;
 	QString tipText;
 	State state;

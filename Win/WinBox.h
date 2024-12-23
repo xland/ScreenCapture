@@ -20,6 +20,8 @@ public:
 	virtual void showToolSub()=0;
 	virtual void saveToClipboard() = 0;
 	virtual void saveToFile() = 0;
+	void undo();
+	void redo();
 	void keyEscPress() override;
 public:
 	State state{ State::start };
@@ -38,4 +40,5 @@ protected:
 	void removeShape() override;
 	void mouseDBClick(QMouseEvent* event) override;
 	void mousePressRight(QMouseEvent* event) override;
+private:
 };

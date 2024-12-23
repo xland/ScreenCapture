@@ -17,6 +17,8 @@ public:
 	ToolMain(WinBox* win);
 	~ToolMain();
 	static void initData(const QJsonArray& arr, const QString& lang);
+	void setBtnEnable(const QString& name,bool flag=true);
+	void setBtnEnable(bool undo,bool redo);
 public:
 protected:
 	void paintEvent(QPaintEvent* event) override;

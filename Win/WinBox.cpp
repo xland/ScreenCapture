@@ -14,6 +14,7 @@
 #include "../Shape/ShapeMosaicRect.h"
 #include "../Shape/ShapeMosaicLine.h"
 #include "../Tool/ToolSub.h"
+#include "../Tool/ToolMain.h"
 
 WinBox::WinBox(QObject* parent) : WinBase(parent)
 {
@@ -141,6 +142,30 @@ void WinBox::removeShape()
 void WinBox::mouseDBClick(QMouseEvent* event)
 {
     qApp->quit();
+}
+void WinBox::undo()
+{
+    for (int i = shapes.size() - 1; i >= 0; i--)
+    {
+        if (shapes[i]->state != ShapeState::hidden) {
+			shapes[i]->state = ShapeState::hidden;
+			winBoard->refresh();
+            winCanvas->clear();
+			break;
+        }
+    }
+}
+void WinBox::redo()
+{
+    for (int i = 0; i <shapes.size(); i++)
+    {
+        if (shapes[i]->state == ShapeState::hidden) {
+            shapes[i]->state = ShapeState::ready;
+            winBoard->refresh();
+            winCanvas->clear();
+            break;
+        }
+    }
 }
 void WinBox::keyEscPress()
 {

@@ -6,6 +6,7 @@
 #include "WinBase.h"
 #include "WinBox.h"
 #include "../Shape/ShapeBase.h"
+#include "../Tool/ToolMain.h"
 
 WinBoard::WinBoard(QObject *parent) : WinBase(parent)
 {
@@ -27,16 +28,25 @@ void WinBoard::refresh(bool releaseFlag)
     p.setRenderHint(QPainter::Antialiasing, true);
     p.setRenderHint(QPainter::TextAntialiasing, true);
     auto win = (WinBox*)parent();
+    bool enableRedo{ false };
+    bool enableUndo{ false };
     for (auto shape : win->shapes)
     {
-        if (shape->isEraser || shape->state == ShapeState::ready) {
-            shape->paint(&p);
+        if (shape->state == ShapeState::hidden) {
+			enableRedo = true;
+        }
+        else
+        {
+            if (shape->isEraser || shape->state == ShapeState::ready) {
+                shape->paint(&p);
+                enableUndo = true;
+            }
         }
     }
     paint();
     p.end();
     if (releaseFlag) {
         releaseImg();
+        win->toolMain->setBtnEnable(enableUndo, enableRedo);
     }
-    
 }

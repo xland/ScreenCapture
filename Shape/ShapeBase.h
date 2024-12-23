@@ -19,15 +19,16 @@ public:
     virtual void mouseRelease(QMouseEvent* event) {};
     virtual void paintOnBoard();
     void showDragger();
-protected:
-    virtual void painting();
-    virtual void paintingStart();
-    virtual void paintingPrepare();
-    void prepareDraggers(const int& size);
 public:
     int draggerSize{ 8 };
     ShapeState state{ ShapeState::temp };
     int hoverDraggerIndex{ -1 };
     std::vector<QRect> draggers;
     bool isEraser{ false };
+protected:
+    virtual void painting();
+    virtual void paintingStart();
+    virtual void paintingPrepare();
+    void prepareDraggers(const int& size);
+
 };

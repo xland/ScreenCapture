@@ -119,7 +119,7 @@ void WinFull::saveToFile()
 {
     QString desktopPath = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
     auto filePath = QDir::cleanPath(desktopPath + QDir::separator() + "Img" + QDateTime::currentDateTime().toString("yyyyMMddhhmmsszzz") + ".png");
-    filePath = QFileDialog::getSaveFileName(nullptr, tr("保存文件"), filePath, "ScreenCapture (*.png)");
+    filePath = QFileDialog::getSaveFileName(toolMain, tr("保存文件"), filePath, "ScreenCapture (*.png)");
     if (filePath.isEmpty())
     {
         return;

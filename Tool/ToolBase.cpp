@@ -22,7 +22,7 @@ ToolBase::ToolBase(WinBox* win, QWidget* parent) : QWidget(parent),win{win}
     setAutoFillBackground(false);
     setAttribute(Qt::WA_TranslucentBackground, true);
     setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::Tool);
-    setAttribute(Qt::WA_QuitOnClose, false);
+    //setAttribute(Qt::WA_QuitOnClose, false);
     setAttribute(Qt::WA_OpaquePaintEvent);
     setAttribute(Qt::WA_NoSystemBackground);
     setAttribute(Qt::WA_Hover);
