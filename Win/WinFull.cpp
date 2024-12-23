@@ -112,13 +112,14 @@ void WinFull::saveToClipboard()
         shape->paint(&p);
     }
     QApplication::clipboard()->setImage(tar);
+    close();
 }
 
 void WinFull::saveToFile()
 {
     QString desktopPath = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
     auto filePath = QDir::cleanPath(desktopPath + QDir::separator() + "Img" + QDateTime::currentDateTime().toString("yyyyMMddhhmmsszzz") + ".png");
-    filePath = QFileDialog::getSaveFileName(nullptr, tr("保存文件"), filePath, "HikLink Image (*.png)");
+    filePath = QFileDialog::getSaveFileName(nullptr, tr("保存文件"), filePath, "ScreenCapture (*.png)");
     if (filePath.isEmpty())
     {
         return;
@@ -137,6 +138,7 @@ void WinFull::saveToFile()
         shape->paint(&p);
     }
     tar.save(filePath);
+    close();
 }
 
 void WinFull::mousePress(QMouseEvent* event)
