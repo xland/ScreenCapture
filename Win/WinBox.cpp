@@ -150,9 +150,5 @@ void WinBox::mousePressRight(QMouseEvent* event)
 {
     qApp->quit();
 }
-void WinBox::refreshBoard()
-{
-    winBoard->refresh();
-}
 
 

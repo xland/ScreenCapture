@@ -16,9 +16,10 @@ class WinBox : public WinBase
 public:
 	WinBox(QObject* parent = nullptr);
 	virtual ~WinBox();
-	void refreshBoard();
 	virtual void showToolMain()=0;
 	virtual void showToolSub()=0;
+	virtual void saveToClipboard() = 0;
+	virtual void saveToFile() = 0;
 	void keyEscPress() override;
 public:
 	State state{ State::start };

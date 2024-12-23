@@ -12,6 +12,8 @@ public:
 	~WinPin();
 	void showToolMain() override;
 	void showToolSub() override;
+	void saveToClipboard() override;
+	void saveToFile() override;
 	void close() override;
 protected:
 	void mousePress(QMouseEvent* event) override;

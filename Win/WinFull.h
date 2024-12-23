@@ -19,6 +19,8 @@ public:
 	void showToolMain() override;
 	void showToolSub() override;
 	void close() override;
+	void saveToClipboard() override;
+	void saveToFile() override;
 public:
 	qreal dpr{ 1.0 };
 	WinMask* winMask;

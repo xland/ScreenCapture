@@ -3,11 +3,13 @@
 #include <qscreen.h>
 #include <qimage.h>
 #include <qwindow.h>
+#include <QClipboard>
 
 #include "WinFull.h"
 #include "WinMask.h"
 #include "WinBoard.h"
 #include "WinCanvas.h"
+#include "../Shape/ShapeBase.h"
 #include "../App/App.h"
 #include "../Tool/ToolMain.h"
 #include "../Tool/ToolSub.h"
@@ -90,6 +92,28 @@ void WinFull::close()
         toolSub->close();
     }
     WinBase::close();
+}
+
+void WinFull::saveToClipboard()
+{
+    QImage tar;
+    {
+        auto img = Util::printWindow(this);
+        tar = img.copy(winMask->maskRect);
+    }
+    QPainter p(&tar);
+    p.translate(0 - winMask->maskRect.left(), 0 - winMask->maskRect.top());
+    p.setRenderHint(QPainter::Antialiasing, true);
+    p.setRenderHint(QPainter::TextAntialiasing, true);
+    for (auto shape : shapes)
+    {
+        shape->paint(&p);
+    }
+    QApplication::clipboard()->setImage(tar);
+}
+
+void WinFull::saveToFile()
+{
 }
 
 void WinFull::mousePress(QMouseEvent* event)

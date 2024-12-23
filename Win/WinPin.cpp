@@ -14,6 +14,14 @@ void WinPin::showToolSub()
 {
 }
 
+void WinPin::saveToClipboard()
+{
+}
+
+void WinPin::saveToFile()
+{
+}
+
 void WinPin::close()
 {
 }

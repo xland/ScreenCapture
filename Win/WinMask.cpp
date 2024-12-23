@@ -340,13 +340,13 @@ void WinMask::paintMaskRectBorder(QPainter& p)
         auto r{ 2 * maskStroke };
         auto hw{ maskRect.width() / 2 };
         auto hh{ maskRect.height() / 2 };
-        p.drawEllipse(maskRect.topLeft(), r, r);
+        p.drawEllipse(maskRect.topLeft().toPointF(), r, r);
         p.drawEllipse(QPointF(maskRect.left() + hw, maskRect.top()), r, r);
-        p.drawEllipse(maskRect.topRight(), r, r);
+        p.drawEllipse(maskRect.topRight().toPointF(), r, r);
         p.drawEllipse(QPointF(maskRect.right(), maskRect.top() + hh), r, r);
-        p.drawEllipse(maskRect.bottomRight(), r, r);
+        p.drawEllipse(maskRect.bottomRight().toPointF(), r, r);
         p.drawEllipse(QPointF(maskRect.left() + hw, maskRect.bottom()), r, r);
-        p.drawEllipse(maskRect.bottomLeft(), r, r);
+        p.drawEllipse(maskRect.bottomLeft().toPointF(), r, r);
         p.drawEllipse(QPointF(maskRect.left(), maskRect.top() + hh), r, r);
     }
 }

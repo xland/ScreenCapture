@@ -20,7 +20,7 @@ public:
 	void mouseMove(QMouseEvent* event);
 	void update();
 public:
-	QRectF maskRect;
+	QRect maskRect;
 protected:
 private:
 	void changeMaskRect(const QPoint& pos);

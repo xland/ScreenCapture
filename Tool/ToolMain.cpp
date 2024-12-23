@@ -128,6 +128,16 @@ void ToolMain::mousePressEvent(QMouseEvent* event)
             selectIndex = hoverIndex;
             win->showToolSub();
         }
+        else if (btn.name == "clipboard")
+        {
+            win->saveToClipboard();
+            return;
+        }
+        else if (btn.name == "save")
+        {
+            win->saveToFile();
+            return;
+        }
         else if (btn.name == "close")
         {
             win->close();
