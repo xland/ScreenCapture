@@ -142,6 +142,10 @@ void WinBox::mouseDBClick(QMouseEvent* event)
 {
     qApp->quit();
 }
+void WinBox::keyEscPress()
+{
+    qApp->quit();
+}
 void WinBox::mousePressRight(QMouseEvent* event)
 {
     qApp->quit();

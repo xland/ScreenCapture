@@ -19,6 +19,7 @@ public:
 	void refreshBoard();
 	virtual void showToolMain()=0;
 	virtual void showToolSub()=0;
+	void keyEscPress() override;
 public:
 	State state{ State::start };
 	QList<ShapeBase*> shapes;

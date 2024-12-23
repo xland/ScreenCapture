@@ -23,6 +23,7 @@ protected:
 	void mousePressEvent(QMouseEvent* event) override;
 	void mouseMoveEvent(QMouseEvent* event) override;
 	void showEvent(QShowEvent* event) override;
+	void keyPressEvent(QKeyEvent* event) override;
 private:
 	static std::vector<ToolBtn> makeBtns(const QJsonArray& arr, const QString& lang);
 private:

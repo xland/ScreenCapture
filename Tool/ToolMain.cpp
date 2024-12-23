@@ -154,3 +154,10 @@ void ToolMain::mouseMoveEvent(QMouseEvent* event)
         }
     }
 }
+
+void ToolMain::keyPressEvent(QKeyEvent* event)
+{
+    if (event->key() == Qt::Key_Escape) {
+        win->keyEscPress();
+    }
+}

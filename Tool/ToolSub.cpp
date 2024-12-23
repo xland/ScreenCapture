@@ -1,4 +1,5 @@
 ﻿#include <tuple>
+#include <QTimer>
 
 #include "../App/App.h"
 #include "ToolSub.h"
@@ -149,6 +150,7 @@ void ToolSub::paintEvent(QPaintEvent* event)
 			x += btnW;
 		}
 	}
+	setFocus();
 }
 
 void ToolSub::mousePressEvent(QMouseEvent* event)
@@ -181,6 +183,7 @@ void ToolSub::mouseMoveEvent(QMouseEvent* event)
 
 void ToolSub::showEvent(QShowEvent* event)
 {
+	ToolBase::showEvent(event);
 	auto values = btns[win->state];
 	auto w{ 4 };
 	bool strokeFlag{ false }, colorFlag{ false };
@@ -227,5 +230,16 @@ void ToolSub::showEvent(QShowEvent* event)
 	else {
 		triangleX = x;
 		move(pos.x(), pos.y());
+	}
+	//QTimer::singleShot(20, this, [this, event]() {
+	//	setFocus();
+	//	auto hasf = hasFocus();
+	//	});
+}
+
+void ToolSub::keyPressEvent(QKeyEvent* event)
+{
+	if (event->key() == Qt::Key_Escape) {
+		hide();
 	}
 }

@@ -64,7 +64,7 @@ LRESULT WinBase::RouteWinMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPar
             }
             else if (wParam == VK_ESCAPE)
             {
-                obj->mousePressRight(nullptr);
+                obj->keyEscPress();
                 return 0;
             }
             break;

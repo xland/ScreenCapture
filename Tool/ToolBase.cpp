@@ -27,6 +27,7 @@ ToolBase::ToolBase(WinBox* win, QWidget* parent) : QWidget(parent),win{win}
     setAttribute(Qt::WA_NoSystemBackground);
     setAttribute(Qt::WA_Hover);
     setCursor(Qt::PointingHandCursor);
+    setFocusPolicy(Qt::FocusPolicy::StrongFocus);
 }
 ToolBase::~ToolBase()
 {
@@ -53,6 +54,14 @@ void ToolBase::leaveEvent(QEvent* event)
 void ToolBase::closeEvent(QCloseEvent* event)
 {
     deleteLater();
+}
+
+void ToolBase::showEvent(QShowEvent* event)
+{
+    QWidget::showEvent(event);
+    //用qt的setFocus始终无法使ToolSub聚焦
+    auto wid = (HWND)winId();
+    SetFocus(wid);
 }
 
 std::shared_ptr<QPainter> ToolBase::getPainter()

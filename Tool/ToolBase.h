@@ -25,6 +25,7 @@ protected:
 	void enterEvent(QEnterEvent* event) override;
 	void leaveEvent(QEvent* event) override;
 	void closeEvent(QCloseEvent* event) override;
+	void showEvent(QShowEvent* event) override;
 	std::shared_ptr<QPainter> getPainter();
 	void paintBtn(const QChar& icon,const QColor& frontColor,const QColor& bgColor,QRect& rect, QPainter* p);
 protected:

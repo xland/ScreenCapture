@@ -58,6 +58,7 @@ void WinFull::showToolSub()
         toolSub->hide();
     }
     toolSub->show();
+    toolSub->raise();
 }
 
 void WinFull::initWinSizeByDesktopSize()
@@ -131,3 +132,4 @@ void WinFull::mouseRelease(QMouseEvent* event)
     winMask->mouseRelease(event);
     mouseReleaseOnShape(event);
 }
+

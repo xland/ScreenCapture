@@ -33,6 +33,7 @@ protected:
 
 	virtual void mousePress(QMouseEvent* event){};
 	virtual void mousePressRight(QMouseEvent* event) {};
+	virtual void keyEscPress() {};
 	virtual void mouseDBClick(QMouseEvent* event) {};
 	virtual void mouseMove(QMouseEvent* event){};
 	virtual void mouseDrag(QMouseEvent* event){};

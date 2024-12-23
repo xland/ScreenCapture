@@ -19,6 +19,7 @@ PixelInfo::PixelInfo(WinFull* win, QWidget* parent) : QWidget(parent),win{win}
     setAttribute(Qt::WA_TranslucentBackground, true);
     setAttribute(Qt::WA_TransparentForMouseEvents, true);
     setFixedSize(180, 170);
+    setFocusPolicy(Qt::NoFocus);
     auto hwnd = (HWND)winId();
     LONG exStyle = GetWindowLong(hwnd, GWL_EXSTYLE);
     SetWindowLong(hwnd, GWL_EXSTYLE, exStyle | WS_EX_TRANSPARENT);

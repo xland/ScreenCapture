@@ -15,6 +15,7 @@ StrokeCtrl::StrokeCtrl(QWidget *parent):QSlider(parent)
     setAttribute(Qt::WA_Hover);
     setMouseTracking(true);
     setFixedSize(84, 32);
+    setFocusPolicy(Qt::NoFocus);
 }
 
 StrokeCtrl::~StrokeCtrl()
