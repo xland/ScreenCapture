@@ -4,6 +4,8 @@
 #include <qimage.h>
 #include <qwindow.h>
 #include <QClipboard>
+#include <QFileDialog>
+#include <QStandardPaths>
 
 #include "WinFull.h"
 #include "WinMask.h"
@@ -114,6 +116,27 @@ void WinFull::saveToClipboard()
 
 void WinFull::saveToFile()
 {
+    QString desktopPath = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
+    auto filePath = QDir::cleanPath(desktopPath + QDir::separator() + "Img" + QDateTime::currentDateTime().toString("yyyyMMddhhmmsszzz") + ".png");
+    filePath = QFileDialog::getSaveFileName(nullptr, tr("保存文件"), filePath, "HikLink Image (*.png)");
+    if (filePath.isEmpty())
+    {
+        return;
+    }
+    QImage tar;
+    {
+        auto img = Util::printWindow(this);
+        tar = img.copy(winMask->maskRect);
+    }
+    QPainter p(&tar);
+    p.translate(0 - winMask->maskRect.left(), 0 - winMask->maskRect.top());
+    p.setRenderHint(QPainter::Antialiasing, true);
+    p.setRenderHint(QPainter::TextAntialiasing, true);
+    for (auto shape : shapes)
+    {
+        shape->paint(&p);
+    }
+    tar.save(filePath);
 }
 
 void WinFull::mousePress(QMouseEvent* event)
