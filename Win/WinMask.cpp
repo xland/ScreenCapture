@@ -301,8 +301,9 @@ void WinMask::changeMousePosState2(const int& x, const int& y)
 void WinMask::paintMaskRectInfo(QPainter& p)
 {
     //绘制截图区域位置和大小
-    auto text = QString("X:%1 Y:%2 W:%3 H:%4")
+    auto text = QString("X:%1 Y:%2 R:%3 B:%4 W:%5 H:%6")
         .arg(maskRect.x()).arg(maskRect.y())
+        .arg(maskRect.right()).arg(maskRect.bottom())
         .arg(maskRect.width()).arg(maskRect.height());
     auto font = p.font();
     font.setPointSizeF(12.f);

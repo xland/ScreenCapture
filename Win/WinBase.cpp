@@ -55,6 +55,20 @@ LRESULT WinBase::RouteWinMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPar
             }
             break;
         }
+        case WM_KEYDOWN:
+        {
+            if (wParam == VK_BACK || wParam == VK_DELETE)
+            {
+                obj->removeShape();
+                return 0;
+            }
+            else if (wParam == VK_ESCAPE)
+            {
+                obj->mousePressRight(nullptr);
+                return 0;
+            }
+            break;
+        }
         case WM_LBUTTONDOWN:
         {
             auto e = Util::createMouseEvent(lParam, QEvent::MouseButtonPress);
@@ -99,15 +113,6 @@ LRESULT WinBase::RouteWinMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPar
         {
             isDestroyed = true;
             return 0;
-        }
-        case WM_KEYDOWN:
-        {
-            if (wParam == VK_BACK || wParam == VK_DELETE)
-            {
-                obj->removeShape();
-                return 0;
-            }
-            break;
         }
         default:
         {

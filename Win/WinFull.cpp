@@ -37,8 +37,7 @@ void WinFull::showToolMain()
         toolMain = new ToolMain(this);
     }
     toolMain->show();
-    toolMain->raise();  
-    //todo 确认会不会闪一下
+    toolMain->raise(); 
     auto pos = winMask->maskRect.bottomRight();
     pos.setX(pos.x() + x);
     pos.setY(pos.y() + y);

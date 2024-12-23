@@ -19,8 +19,6 @@
 ShapeText::ShapeText(QObject* parent) : ShapeBase(parent)
 {
     auto win = (WinBox*)parent;
-    //要自己控制删除策略，不然第二个实例创建时，第一个实例的blur还没有触发，会导致第一个实例被删除
-    //state = ShapeState::ready;
     color = win->toolSub->getColor();
     fontSize = win->toolSub->getStrokeWidth();
     bold = win->toolSub->getSelectState("bold");
