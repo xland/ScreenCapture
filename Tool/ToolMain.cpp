@@ -4,6 +4,7 @@
 
 #include "../App/App.h"
 #include "../Win/WinBox.h"
+#include "../Win/WinPin.h"
 #include "../Win/WinFull.h"
 #include "ToolMain.h"
 #include "ToolSub.h"
@@ -213,7 +214,7 @@ void ToolMain::mousePressEvent(QMouseEvent* event)
         else if (btn.name == "pin")
         {
             if (btn.enable) {
-                ((WinFull*)win)->pinImg();
+				WinPin::init((WinFull*)win);
             }
         }
         else if (btn.name == "close")

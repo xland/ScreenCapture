@@ -1,5 +1,7 @@
 ﻿#include <Windows.h>
 #include <windowsx.h>
+#include <dwmapi.h>
+
 #include "WinBase.h"
 #include "../App/Util.h"
 
@@ -29,8 +31,11 @@ void WinBase::initWindow(bool isTransparent)
         RegisterClassEx(&wcx);
     }
     auto exStyle = isTransparent ? (WS_EX_LAYERED | WS_EX_TRANSPARENT | WS_EX_TOOLWINDOW | WS_EX_TOPMOST) : (WS_EX_LAYERED); //WS_EX_TOPMOST
-    auto style = WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_POPUP;
+    auto style = WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
     hwnd = CreateWindowEx(exStyle,L"ScreenCapture", L"ScreenCapture",style,x, y, w, h, NULL, NULL, GetModuleHandle(NULL), static_cast<LPVOID>(this));
+    BOOL attrib = TRUE;
+    DwmSetWindowAttribute(hwnd, DWMWA_TRANSITIONS_FORCEDISABLED, &attrib, sizeof(attrib));//移除窗口打开与关闭时的动画效果
+
 }
 LRESULT WinBase::RouteWinMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {

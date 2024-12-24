@@ -134,11 +134,6 @@ void WinFull::saveToFile()
     close();
 }
 
-void WinFull::pinImg()
-{
-	auto winPin = new WinPin(getCutImg());
-}
-
 void WinFull::mousePress(QMouseEvent* event)
 {
     event->ignore();

@@ -47,7 +47,7 @@ void ShapeMosaicRect::paint(QPainter* painter)
 void ShapeMosaicRect::mouseRelease(QMouseEvent* event)
 {
     
-    imgPatch = QImage(shape.size().toSize(), QImage::Format_ARGB32);
+    imgPatch = QImage(shape.size().toSize(), QImage::Format_ARGB32_Premultiplied);
     QPainter painter(&imgPatch);
     painter.setPen(Qt::NoPen);
     for (quint32 x = shape.left(); x < shape.right(); x += mosaicRectSize)
