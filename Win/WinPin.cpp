@@ -40,10 +40,29 @@ void WinPin::init(WinFull* full)
 
 void WinPin::showToolMain()
 {
+    if (!toolMain) {
+        toolMain = new ToolMain(this);
+    }
+    QPoint pos{ x + padding, y + h };
+    auto hwnd = (HWND)toolMain->winId();
+    auto dpr = toolMain->windowHandle()->devicePixelRatio();
+    SetWindowPos(hwnd, nullptr, pos.x(), pos.y() + 6 * dpr, 0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_SHOWWINDOW);
+    toolMain->show();
 }
 
 void WinPin::showToolSub()
 {
+    if (!toolSub) {
+        winBoard = new WinBoard(this);
+        winCanvas = new WinCanvas(this);
+        toolMain->raise();
+        toolSub = new ToolSub(this);
+    }
+    if (toolSub->isVisible()) {
+        toolSub->hide();
+    }
+    toolSub->show();
+    toolSub->raise();
 }
 
 void WinPin::saveToClipboard()
@@ -74,7 +93,17 @@ void WinPin::close()
 void WinPin::mousePress(QMouseEvent* event)
 {
     event->ignore();
-    PostMessage(hwnd, WM_SYSCOMMAND, SC_MOVE | HTCAPTION, 0);
+    if (toolSub && toolSub->isVisible()) {
+
+    }
+    else {
+        needShowToolMain = toolMain->isVisible();
+        if (needShowToolMain) {
+            toolMain->hide();
+        }
+        SetCapture(hwnd);
+        posPress = event->pos();
+    }
 }
 
 void WinPin::mousePressRight(QMouseEvent* event)
@@ -86,14 +115,7 @@ void WinPin::mousePressRight(QMouseEvent* event)
         auto flag = action->isChecked();
         if (flag)
         {
-            if (!toolMain) {
-                toolMain = new ToolMain(this);
-            }
-			QPoint pos{ x+padding, y + h };
-            auto hwnd = (HWND)toolMain->winId();
-            auto dpr = toolMain->windowHandle()->devicePixelRatio();
-            SetWindowPos(hwnd, nullptr, pos.x(), pos.y() + 6 * dpr, 0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_SHOWWINDOW);
-            toolMain->show();
+            showToolMain();
         }
 	}
     else if (action->text() == "退出")
@@ -116,12 +138,18 @@ void WinPin::mouseDrag(QMouseEvent* event)
 {
     event->ignore();
     //mouseDragOnShape(event);
+	auto span = event->pos() - posPress;
+    SetWindowPos(hwnd, NULL, x + span.x(), y + span.y(),0, 0, SWP_NOSIZE | SWP_NOZORDER);
 }
 
 void WinPin::mouseRelease(QMouseEvent* event)
 {
     event->ignore();
-    mouseReleaseOnShape(event);
+    //mouseReleaseOnShape(event);
+    ReleaseCapture();
+    if (needShowToolMain) {
+        showToolMain();
+    }
 }
 
 QImage WinPin::prepareImg(WinFull* full)

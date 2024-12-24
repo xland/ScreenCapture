@@ -27,5 +27,8 @@ protected:
 	void mouseRelease(QMouseEvent* event) override;
 private:
 	static QImage prepareImg(WinFull* full);
+private:
+	bool needShowToolMain{ false };
 	QMenu contextMenu;
+	QPoint posPress;
 };
