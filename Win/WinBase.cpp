@@ -16,20 +16,18 @@ WinBase::~WinBase()
 
 void WinBase::initWindow(bool isTransparent)
 {
-    static WNDCLASSEX wcx{};
-    if (!wcx.lpfnWndProc) {
-        auto hinstance = GetModuleHandle(NULL);
-        wcx.cbSize = sizeof(wcx);
-        wcx.style = CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
-        wcx.lpfnWndProc = &WinBase::RouteWinMessage;
-        wcx.cbWndExtra = sizeof(WinBase*);
-        wcx.hInstance = hinstance;
-        wcx.hIcon = LoadIcon(hinstance, IDI_APPLICATION);
-        wcx.hCursor = LoadCursor(hinstance, IDC_ARROW);
-        wcx.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
-        wcx.lpszClassName = L"ScreenCapture";
-        RegisterClassEx(&wcx);
-    }
+    WNDCLASSEX wcx{};
+    auto hinstance = GetModuleHandle(NULL);
+    wcx.cbSize = sizeof(wcx);
+    wcx.style = CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
+    wcx.lpfnWndProc = &WinBase::RouteWinMessage;
+    wcx.cbWndExtra = sizeof(WinBase*);
+    wcx.hInstance = hinstance;
+    wcx.hIcon = LoadIcon(hinstance, IDI_APPLICATION);
+    wcx.hCursor = LoadCursor(hinstance, IDC_ARROW);
+    wcx.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+    wcx.lpszClassName = L"ScreenCapture";
+    auto flag = RegisterClassEx(&wcx);
     auto exStyle = isTransparent ? (WS_EX_LAYERED | WS_EX_TRANSPARENT | WS_EX_TOOLWINDOW | WS_EX_TOPMOST) : (WS_EX_LAYERED); //WS_EX_TOPMOST
     auto style = WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
     hwnd = CreateWindowEx(exStyle,L"ScreenCapture", L"ScreenCapture",style,x, y, w, h, NULL, NULL, GetModuleHandle(NULL), static_cast<LPVOID>(this));
@@ -46,8 +44,8 @@ LRESULT WinBase::RouteWinMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPar
         SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pThis));
     }
     auto obj = reinterpret_cast<WinBase*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
-    static bool isDestroyed{ false };
-    if (!obj || isDestroyed) {
+    //static bool isDestroyed{ false };
+    if (!obj ) { //|| isDestroyed
         return DefWindowProc(hWnd, msg, wParam, lParam);
     }
     switch (msg)
@@ -58,6 +56,11 @@ LRESULT WinBase::RouteWinMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPar
             {
                 return false;
             }
+            break;
+        }
+        case WM_MOVE: {
+            obj->x = LOWORD(lParam);
+            obj->y = HIWORD(lParam);
             break;
         }
         case WM_KEYDOWN:
@@ -116,7 +119,8 @@ LRESULT WinBase::RouteWinMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPar
         }
         case WM_DESTROY: 
         {
-            isDestroyed = true;
+            //isDestroyed = true;
+			SetWindowLongPtr(hWnd, GWLP_USERDATA, 0);
             return 0;
         }
         default:

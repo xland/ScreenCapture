@@ -1,14 +1,21 @@
 #include "WinPin.h"
 #include "WinFull.h"
 #include "WinMask.h"
+#include "WinBoard.h"
+#include "WinCanvas.h"
+#include "../Tool/ToolMain.h"
+#include "../Tool/ToolSub.h"
 
 WinPin::WinPin(QObject* parent) : WinBox(parent)
 {
-	
+    contextMenu.addAction("工具栏");
+    contextMenu.addAction("退出");
 }
 
 WinPin::~WinPin()
-{}
+{
+   
+}
 
 void WinPin::init(WinFull* full)
 {
@@ -41,16 +48,41 @@ void WinPin::saveToFile()
 
 void WinPin::close()
 {
+    if (winCanvas) {
+        winCanvas->close();
+    }
+    if (winBoard) {
+        winBoard->close();
+    }
+    if (toolMain) {
+        toolMain->close();
+    }
+    if (toolSub) {
+        toolSub->close();
+    }
+    WinBase::close();
 }
 
 void WinPin::mousePress(QMouseEvent* event)
 {
     event->ignore();
-    mousePressOnShape(event);
+    PostMessage(hwnd, WM_SYSCOMMAND, SC_MOVE | HTCAPTION, 0);
+    //pressPos = event->pos();
+    //mousePressOnShape(event);
 }
 
 void WinPin::mousePressRight(QMouseEvent* event)
 {
+    QAction* action = contextMenu.exec(QCursor::pos());
+	if (!action) return;
+    if (action->text() == "工具栏")
+    {
+        action->setChecked(true);
+	}
+    else if (action->text() == "退出")
+    {
+        close();
+    }
 }
 
 void WinPin::mouseDBClick(QMouseEvent* event)
@@ -60,13 +92,13 @@ void WinPin::mouseDBClick(QMouseEvent* event)
 void WinPin::mouseMove(QMouseEvent* event)
 {
     event->ignore();
-    mouseMoveOnShape(event);
+    //mouseMoveOnShape(event);
 }
 
 void WinPin::mouseDrag(QMouseEvent* event)
 {
     event->ignore();
-    mouseDragOnShape(event);
+    //mouseDragOnShape(event);
 }
 
 void WinPin::mouseRelease(QMouseEvent* event)

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QWidget>
+#include <QMenu>
 #include "WinBox.h"
 
 class WinFull;
@@ -26,4 +27,5 @@ protected:
 	void mouseRelease(QMouseEvent* event) override;
 private:
 	static QImage prepareImg(WinFull* full);
+	QMenu contextMenu;
 };
