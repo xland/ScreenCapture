@@ -1,5 +1,5 @@
 ﻿#include <tuple>
-#include <QTimer>
+#include <QPainterPath>
 
 #include "../App/App.h"
 #include "ToolSub.h"
@@ -120,11 +120,16 @@ int ToolSub::getStrokeWidth()
 void ToolSub::paintEvent(QPaintEvent* event)
 {
 	auto painter = getPainter();
-	painter->drawRect(rect().adjusted(0, 10, 0, 0));//与主工具条有10像素的间隙
-	
-	QPolygon triangle;
-	triangle << QPoint(triangleX, 6) << QPoint(triangleX-4, 10) << QPoint(triangleX+4, 10);
-	painter->drawPolygon(triangle); //有个小三角形指向主工具条的按钮
+	QPainterPath path;
+	path.moveTo(border, 10);
+	path.lineTo(triangleX-4, 10);
+	path.lineTo(triangleX, 6);
+	path.lineTo(triangleX + 4, 10);
+	path.lineTo(width()- border, 10);
+	path.lineTo(width()- border, height()- border);
+	path.lineTo(border, height()- border);
+	path.lineTo(border, 10);
+	painter->drawPath(path); //有个小三角形指向主工具条的按钮
 
 	auto& values = btns[win->state];
 	int x = 4;

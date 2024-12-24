@@ -143,8 +143,8 @@ void ToolMain::setBtnEnable(bool undo, bool redo)
 
 void ToolMain::paintEvent(QPaintEvent* event)
 {
-    auto painter = getPainter();
-    painter->drawRect(rect());
+    auto painter = getPainter(); 
+    painter->drawRect(rect().toRectF().adjusted(border,border,-border,-border));
     for (int i = 0; i < btns.size(); i++)
     {
         QRect rect(4 + i * btnW, 0, btnW, height());
@@ -163,7 +163,6 @@ void ToolMain::paintEvent(QPaintEvent* event)
         else {
             paintBtn(btns[i].icon, QColor(180, 180, 180), Qt::white, rect, painter.get());
         }
-
     }
     painter->setPen(QColor(190, 190, 190));
     for (int i = 0; i < spliterIndexs.size(); i++)

@@ -1,3 +1,5 @@
+#include <QWindow>
+
 #include "WinPin.h"
 #include "WinFull.h"
 #include "WinMask.h"
@@ -6,10 +8,14 @@
 #include "../Tool/ToolMain.h"
 #include "../Tool/ToolSub.h"
 
+namespace{
+    static int padding{ 8 };
+}
+
 WinPin::WinPin(QObject* parent) : WinBox(parent)
 {
     auto action = contextMenu.addAction("工具栏");
-    action->setCheckable(true); // 设置为可选
+    action->setCheckable(true);
     action->setChecked(false);
     contextMenu.addAction("退出");
 }
@@ -23,8 +29,8 @@ void WinPin::init(WinFull* full)
 {
     auto winPin = new WinPin();
     winPin->img = prepareImg(full);
-    winPin->x = full->x + full->winMask->maskRect.left() - 8;
-    winPin->y = full->y + full->winMask->maskRect.top() - 8;
+    winPin->x = full->x + full->winMask->maskRect.left() - padding;
+    winPin->y = full->y + full->winMask->maskRect.top() - padding;
     winPin->w = winPin->img.width();
     winPin->h = winPin->img.height();
     winPin->initWindow(false);
@@ -77,7 +83,18 @@ void WinPin::mousePressRight(QMouseEvent* event)
 	if (!action) return;
     if (action->text() == "工具栏")
     {
-        action->setChecked(true);
+        auto flag = action->isChecked();
+        if (flag)
+        {
+            if (!toolMain) {
+                toolMain = new ToolMain(this);
+            }
+			QPoint pos{ x+padding, y + h };
+            auto hwnd = (HWND)toolMain->winId();
+            auto dpr = toolMain->windowHandle()->devicePixelRatio();
+            SetWindowPos(hwnd, nullptr, pos.x(), pos.y() + 6 * dpr, 0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_SHOWWINDOW);
+            toolMain->show();
+        }
 	}
     else if (action->text() == "退出")
     {
@@ -109,7 +126,6 @@ void WinPin::mouseRelease(QMouseEvent* event)
 
 QImage WinPin::prepareImg(WinFull* full)
 {
-    auto padding{ 8 };
     auto tarImg = full->getCutImg();
     auto bgImg = QImage(tarImg.size() + QSize(padding * 2, padding * 2), QImage::Format_ARGB32_Premultiplied);
     bgImg.fill(Qt::transparent);

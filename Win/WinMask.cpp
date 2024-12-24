@@ -328,7 +328,7 @@ void WinMask::paintMaskRectBorder(QPainter& p)
 {
     //绘制透明区域的边框
     p.setCompositionMode(QPainter::CompositionMode_SourceOver);
-    QColor borderColor(22, 119, 255);
+    QColor borderColor(22, 118, 255);
     p.setPen(QPen(QBrush(borderColor), maskStroke));
     p.setBrush(Qt::NoBrush);
     p.drawRect(maskRect);

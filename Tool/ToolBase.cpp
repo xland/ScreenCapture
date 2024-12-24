@@ -72,7 +72,10 @@ std::shared_ptr<QPainter> ToolBase::getPainter()
     painter->setRenderHint(QPainter::Antialiasing, true);
     painter->setRenderHint(QPainter::TextAntialiasing, true);
     painter->setFont(*font);
-    painter->setPen(Qt::white);
+    QPen pen;
+    pen.setColor(QColor(22, 118, 255));
+    pen.setWidthF(border);
+    painter->setPen(pen);
     painter->setBrush(Qt::white);
     return painter;
 }

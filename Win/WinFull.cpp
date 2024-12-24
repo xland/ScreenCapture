@@ -40,15 +40,15 @@ void WinFull::showToolMain()
 {
     if (!toolMain) {
         toolMain = new ToolMain(this);
-    }
-    toolMain->show();
-    toolMain->raise(); 
+    } 
     auto pos = winMask->maskRect.bottomRight();
     pos.setX(pos.x() + x);
     pos.setY(pos.y() + y);
     auto hwnd = (HWND)toolMain->winId();
     auto dpr = toolMain->windowHandle()->devicePixelRatio();
     SetWindowPos(hwnd, nullptr,pos.x() - toolMain->width()*dpr, pos.y() + 6*dpr, 0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_SHOWWINDOW);
+    toolMain->show();
+    toolMain->raise();
 }
 void WinFull::showToolSub()
 {

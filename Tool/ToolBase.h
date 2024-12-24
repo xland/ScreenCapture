@@ -31,5 +31,6 @@ protected:
 protected:
 	int hoverIndex{ -1 };
 	qreal btnW{ 32 };
+	qreal border{ 0.8 };
 private:
 };
