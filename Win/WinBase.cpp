@@ -20,7 +20,7 @@ void WinBase::initWindow(bool isTransparent)
     auto hinstance = GetModuleHandle(NULL);
     wcx.cbSize = sizeof(wcx);
     wcx.style = CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
-    wcx.lpfnWndProc = &WinBase::RouteWinMessage;
+    wcx.lpfnWndProc = &WinBase::routeWinMsg;
     wcx.cbWndExtra = sizeof(WinBase*);
     wcx.hInstance = hinstance;
     wcx.hIcon = LoadIcon(hinstance, IDI_APPLICATION);
@@ -31,104 +31,109 @@ void WinBase::initWindow(bool isTransparent)
     auto exStyle = isTransparent ? (WS_EX_LAYERED | WS_EX_TRANSPARENT | WS_EX_TOOLWINDOW | WS_EX_TOPMOST) : (WS_EX_LAYERED); //WS_EX_TOPMOST
     auto style = WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
     hwnd = CreateWindowEx(exStyle,L"ScreenCapture", L"ScreenCapture",style,x, y, w, h, NULL, NULL, GetModuleHandle(NULL), static_cast<LPVOID>(this));
+    SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
     BOOL attrib = TRUE;
     DwmSetWindowAttribute(hwnd, DWMWA_TRANSITIONS_FORCEDISABLED, &attrib, sizeof(attrib));//移除窗口打开与关闭时的动画效果
 
 }
-LRESULT WinBase::RouteWinMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+LRESULT WinBase::routeWinMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-    if (msg == WM_NCCREATE)
-    {
-        CREATESTRUCT* pCS = reinterpret_cast<CREATESTRUCT*>(lParam);
-        LPVOID pThis = pCS->lpCreateParams;
-        SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pThis));
-    }
     auto obj = reinterpret_cast<WinBase*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
-    //static bool isDestroyed{ false };
-    if (!obj ) { //|| isDestroyed
+    if (!obj ) {
         return DefWindowProc(hWnd, msg, wParam, lParam);
     }
     switch (msg)
     {
         case WM_NCCALCSIZE:
         {
-            if (wParam == TRUE)
-            {
-                return false;
+            if (wParam == TRUE) {
+                NCCALCSIZE_PARAMS* pncsp = reinterpret_cast<NCCALCSIZE_PARAMS*>(lParam);
+                pncsp->rgrc[0] = pncsp->rgrc[1]; //窗口客户区覆盖整个窗口
+                return 0; //确认改变窗口客户区
             }
-            break;
+            return DefWindowProc(hWnd, msg, wParam, lParam);
         }
-        case WM_MOVE: {
-            obj->x = LOWORD(lParam);
-            obj->y = HIWORD(lParam);
-            break;
-        }
-        case WM_KEYDOWN:
-        {
-            if (wParam == VK_BACK || wParam == VK_DELETE)
-            {
-                obj->removeShape();
-                return 0;
-            }
-            else if (wParam == VK_ESCAPE)
-            {
-                obj->keyEscPress();
-                return 0;
-            }
-            break;
-        }
-        case WM_LBUTTONDOWN:
-        {
-            auto e = Util::createMouseEvent(lParam, QEvent::MouseButtonPress);
-            obj->mousePress(&e);
-            break;
-        }
-        case WM_MOUSEMOVE:
-        {
-            auto e = Util::createMouseEvent(lParam, QEvent::MouseMove);
-            if (wParam & MK_LBUTTON) {
-                obj->mouseDrag(&e);
-            }
-            else {
-                obj->mouseMove(&e);
-            }
-            break;
-        }
-        case WM_LBUTTONDBLCLK:
-        {
-            auto e = Util::createMouseEvent(lParam,QEvent::MouseButtonDblClick);
-            obj->mouseDBClick(&e);
-            return 0;
-        }
-        case WM_LBUTTONUP:
-        {
-            auto e = Util::createMouseEvent(lParam, QEvent::MouseButtonRelease);
-            obj->mouseRelease(&e);
-            break;
-        }
-        case WM_RBUTTONDOWN:
-        {
-            auto e = Util::createMouseEvent(lParam, QEvent::MouseButtonPress, Qt::MouseButton::RightButton);
-            obj->mousePressRight(&e);
-            return 0;
-        }
-        case WM_CLOSE: 
+        case WM_CLOSE:
         {
             DestroyWindow(hWnd);
             return 0;
         }
-        case WM_DESTROY: 
+        case WM_DESTROY:
         {
-            //isDestroyed = true;
-			SetWindowLongPtr(hWnd, GWLP_USERDATA, 0);
+            SetWindowLongPtr(hWnd, GWLP_USERDATA, 0);
+            UnregisterClass(L"ScreenCapture", nullptr);
             return 0;
         }
-        default:
-        {
-            return DefWindowProc(hWnd, msg, wParam, lParam);
-        }
+	    default:
+	    {
+		    return obj->processWinMsg(msg, wParam, lParam);
+	    }
     }
-    return DefWindowProc(hWnd, msg, wParam, lParam);
+}
+LRESULT WinBase::processWinMsg(UINT msg, WPARAM wParam, LPARAM lParam)
+{
+    switch (msg)
+    {
+    case WM_MOVE: {
+        x = LOWORD(lParam);
+        y = HIWORD(lParam);
+        break;
+    }
+    case WM_KEYDOWN:
+    {
+        if (wParam == VK_BACK || wParam == VK_DELETE)
+        {
+            removeShape();
+            return 0;
+        }
+        else if (wParam == VK_ESCAPE)
+        {
+            keyEscPress();
+            return 0;
+        }
+        break;
+    }
+    case WM_LBUTTONDOWN:
+    {
+        auto e = Util::createMouseEvent(lParam, QEvent::MouseButtonPress);
+        mousePress(&e);
+        break;
+    }
+    case WM_MOUSEMOVE:
+    {
+        auto e = Util::createMouseEvent(lParam, QEvent::MouseMove);
+        if (wParam & MK_LBUTTON) {
+            mouseDrag(&e);
+        }
+        else {
+            mouseMove(&e);
+        }
+        break;
+    }
+    case WM_LBUTTONDBLCLK:
+    {
+        auto e = Util::createMouseEvent(lParam, QEvent::MouseButtonDblClick);
+        mouseDBClick(&e);
+        return 0;
+    }
+    case WM_LBUTTONUP:
+    {
+        auto e = Util::createMouseEvent(lParam, QEvent::MouseButtonRelease);
+        mouseRelease(&e);
+        break;
+    }
+    case WM_RBUTTONDOWN:
+    {
+        auto e = Util::createMouseEvent(lParam, QEvent::MouseButtonPress, Qt::MouseButton::RightButton);
+        mousePressRight(&e);
+        return 0;
+    }
+    default:
+    {
+        return DefWindowProc(hwnd, msg, wParam, lParam);
+    }
+    }
+    return 0;
 }
 void WinBase::initSizeByWin(WinBase* win)
 {

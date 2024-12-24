@@ -8,7 +8,9 @@
 
 WinPin::WinPin(QObject* parent) : WinBox(parent)
 {
-    contextMenu.addAction("工具栏");
+    auto action = contextMenu.addAction("工具栏");
+    action->setCheckable(true); // 设置为可选
+    action->setChecked(false);
     contextMenu.addAction("退出");
 }
 
@@ -67,8 +69,6 @@ void WinPin::mousePress(QMouseEvent* event)
 {
     event->ignore();
     PostMessage(hwnd, WM_SYSCOMMAND, SC_MOVE | HTCAPTION, 0);
-    //pressPos = event->pos();
-    //mousePressOnShape(event);
 }
 
 void WinPin::mousePressRight(QMouseEvent* event)
@@ -116,9 +116,10 @@ QImage WinPin::prepareImg(WinFull* full)
     QPainter p(&bgImg);
     p.setRenderHint(QPainter::Antialiasing);
     p.setPen(Qt::NoPen);
+    QColor c(88, 88, 88, 88);
     {
         QRadialGradient gradient(QPointF(padding, padding), padding);
-        gradient.setColorAt(0.0, QColor(88, 88, 88, 88));
+        gradient.setColorAt(0.0, c);
         gradient.setColorAt(1.0, Qt::transparent);
         p.setBrush(gradient);
         p.drawRect(0, 0, padding, padding);
@@ -126,41 +127,41 @@ QImage WinPin::prepareImg(WinFull* full)
     {
         QLinearGradient gradient(0, 0, 0, padding);
         gradient.setColorAt(0.0, Qt::transparent);
-        gradient.setColorAt(1.0, QColor(88, 88, 88, 88));
+        gradient.setColorAt(1.0, c);
         p.setBrush(gradient);
         p.drawRect(padding, 0, tarImg.width(), padding);
     }
     {
         QRadialGradient gradient(QPointF(padding + tarImg.width(), padding), padding);
-        gradient.setColorAt(0.0, QColor(88, 88, 88, 88));
+        gradient.setColorAt(0.0, c);
         gradient.setColorAt(1.0, Qt::transparent);
         p.setBrush(gradient);
         p.drawRect(padding + tarImg.width(), 0, padding, padding);
     }
     {
         QLinearGradient gradient(padding + tarImg.width(), 0, bgImg.width(), 0);
-        gradient.setColorAt(0.0, QColor(88, 88, 88, 88));
+        gradient.setColorAt(0.0, c);
         gradient.setColorAt(1.0, Qt::transparent);
         p.setBrush(gradient);
         p.drawRect(padding+ tarImg.width(), padding, padding, tarImg.height());
     }
     {
         QRadialGradient gradient(QPointF(padding + tarImg.width(), padding + tarImg.height()), padding);
-        gradient.setColorAt(0.0, QColor(88, 88, 88, 88));
+        gradient.setColorAt(0.0, c);
         gradient.setColorAt(1.0, Qt::transparent);
         p.setBrush(gradient);
         p.drawRect(padding + tarImg.width(), padding + tarImg.height(), padding, padding);
     }
     {
         QLinearGradient gradient(padding, padding+ tarImg.height(), padding, bgImg.height());
-        gradient.setColorAt(0.0, QColor(88, 88, 88, 88));
+        gradient.setColorAt(0.0, c);
         gradient.setColorAt(1.0, Qt::transparent);
         p.setBrush(gradient);
         p.drawRect(padding, padding + tarImg.height(), tarImg.width(), padding);
     }
     {
         QRadialGradient gradient(QPointF(padding, padding + tarImg.height()), padding);
-        gradient.setColorAt(0.0, QColor(88, 88, 88, 88));
+        gradient.setColorAt(0.0, c);
         gradient.setColorAt(1.0, Qt::transparent);
         p.setBrush(gradient);
         p.drawRect(0, padding + tarImg.height(), padding, padding);
@@ -168,7 +169,7 @@ QImage WinPin::prepareImg(WinFull* full)
     {
         QLinearGradient gradient(0, 0, padding, 0);
         gradient.setColorAt(0.0, Qt::transparent);
-        gradient.setColorAt(1.0, QColor(88, 88, 88, 88));
+        gradient.setColorAt(1.0, c);
         p.setBrush(gradient);
         p.drawRect(0, padding, padding, tarImg.height());
     }

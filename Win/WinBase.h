@@ -28,7 +28,6 @@ public:
 protected:
 	void initWindow(bool isTransparent=true);
 	void paint();
-	static LRESULT CALLBACK RouteWinMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 	void initSizeByWin(WinBase* win);
 
 	virtual void mousePress(QMouseEvent* event){};
@@ -40,5 +39,6 @@ protected:
 	virtual void mouseRelease(QMouseEvent* event){};
 	virtual void removeShape() {};
 private:
-	
+	static LRESULT CALLBACK routeWinMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+	LRESULT CALLBACK processWinMsg(UINT msg, WPARAM wParam, LPARAM lParam);
 };
