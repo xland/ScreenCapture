@@ -179,6 +179,7 @@ void ToolMain::mousePressEvent(QMouseEvent* event)
         selectIndex = -1;
         win->state = State::tool;
         update();
+        win->toolSub->hide();
     }
     else
     {

@@ -14,10 +14,12 @@ namespace{
 
 WinPin::WinPin(QObject* parent) : WinBox(parent)
 {
-    auto action = contextMenu.addAction("工具栏");
-    action->setCheckable(true);
-    action->setChecked(false);
-    contextMenu.addAction("退出");
+	action1.setText("工具栏（Ctrl+T）");
+    action1.setCheckable(true);
+    action1.setChecked(false);
+	action2.setText("退出（Esc）");
+	contextMenu.addAction(&action1);
+	contextMenu.addAction(&action2);
 }
 
 WinPin::~WinPin()
@@ -90,6 +92,21 @@ void WinPin::close()
     WinBase::close();
 }
 
+void WinPin::ctrlTPress()
+{
+    auto flag = !action1.isChecked();
+	action1.setChecked(flag);
+	if (flag)
+	{
+		showToolMain();
+	}
+	else
+	{
+        if (toolMain) toolMain->hide();
+		if (toolSub) toolSub->hide();
+	}
+}
+
 void WinPin::mousePress(QMouseEvent* event)
 {
     event->ignore();
@@ -112,7 +129,7 @@ void WinPin::mousePressRight(QMouseEvent* event)
 {
     QAction* action = contextMenu.exec(QCursor::pos());
 	if (!action) return;
-    if (action->text() == "工具栏")
+    if (action == &action1)
     {
         auto flag = action->isChecked();
         if (flag)
@@ -120,7 +137,7 @@ void WinPin::mousePressRight(QMouseEvent* event)
             showToolMain();
         }
 	}
-    else if (action->text() == "退出")
+    else if (action == &action2)
     {
         close();
     }

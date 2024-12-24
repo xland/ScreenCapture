@@ -90,6 +90,11 @@ LRESULT WinBase::processWinMsg(UINT msg, WPARAM wParam, LPARAM lParam)
         {
             keyEscPress();
             return 0;
+        }else if (wParam == 'T') {
+            if ((GetKeyState(VK_CONTROL) & 0x8000) != 0) {
+				ctrlTPress();
+				return 0;
+            }
         }
         break;
     }

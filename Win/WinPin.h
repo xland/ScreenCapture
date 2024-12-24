@@ -2,6 +2,7 @@
 
 #include <QWidget>
 #include <QMenu>
+#include <QAction>
 #include "WinBox.h"
 
 class WinFull;
@@ -18,6 +19,7 @@ public:
 	void saveToClipboard() override;
 	void saveToFile() override;
 	void close() override;
+	void ctrlTPress() override;
 protected:
 	void mousePress(QMouseEvent* event) override;
 	void mousePressRight(QMouseEvent* event) override;
@@ -30,5 +32,7 @@ private:
 private:
 	bool needShowToolMain{ false };
 	QMenu contextMenu;
+	QAction action1;
+	QAction action2;
 	QPoint posPress;
 };
