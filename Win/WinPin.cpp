@@ -97,9 +97,11 @@ void WinPin::mousePress(QMouseEvent* event)
 
     }
     else {
-        needShowToolMain = toolMain->isVisible();
-        if (needShowToolMain) {
-            toolMain->hide();
+        if (toolMain) {
+            needShowToolMain = toolMain->isVisible();
+            if (needShowToolMain) {
+                toolMain->hide();
+            }
         }
         SetCapture(hwnd);
         posPress = event->pos();
@@ -138,17 +140,21 @@ void WinPin::mouseDrag(QMouseEvent* event)
 {
     event->ignore();
     //mouseDragOnShape(event);
-	auto span = event->pos() - posPress;
-    SetWindowPos(hwnd, NULL, x + span.x(), y + span.y(),0, 0, SWP_NOSIZE | SWP_NOZORDER);
+    if (GetCapture() == hwnd) {
+        auto span = event->pos() - posPress;
+        SetWindowPos(hwnd, NULL, x + span.x(), y + span.y(), 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+    }
 }
 
 void WinPin::mouseRelease(QMouseEvent* event)
 {
     event->ignore();
     //mouseReleaseOnShape(event);
-    ReleaseCapture();
-    if (needShowToolMain) {
-        showToolMain();
+    if (GetCapture() == hwnd) {
+        ReleaseCapture();
+        if (needShowToolMain) {
+            showToolMain();
+        }
     }
 }
 
