@@ -38,7 +38,6 @@ protected:
 	virtual void mouseDrag(QMouseEvent* event){};
 	virtual void mouseRelease(QMouseEvent* event){};
 	virtual void removeShape() {};
-	virtual void activate() {};
 private:
 	static LRESULT CALLBACK routeWinMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 	LRESULT CALLBACK processWinMsg(UINT msg, WPARAM wParam, LPARAM lParam);

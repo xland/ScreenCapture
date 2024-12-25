@@ -213,22 +213,6 @@ void WinPin::mouseRelease(QMouseEvent* event)
     }
 }
 
-void WinPin::activate()
-{
-    if (winBoard) {
-        SetWindowPos(winBoard->hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
-    }
-    if (winCanvas) {
-        SetWindowPos(winCanvas->hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
-    }
-    if (toolMain && toolMain->isVisible()) {
-        toolMain->raise();
-    }
-    if (toolSub && toolSub->isVisible()) {
-        toolSub->raise();
-    }
-}
-
 QImage WinPin::prepareImg(WinFull* full)
 {
     auto tarImg = full->getCutImg();

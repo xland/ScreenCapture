@@ -147,13 +147,6 @@ LRESULT WinBase::processWinMsg(UINT msg, WPARAM wParam, LPARAM lParam)
         mousePressRight(&e);
         return 0;
     }
-    case WM_ACTIVATE:
-    {
-        if (LOWORD(wParam) != WA_INACTIVE) {
-            activate();
-        }        
-        return 0;
-    }
     default:
     {
         return DefWindowProc(hwnd, msg, wParam, lParam);
