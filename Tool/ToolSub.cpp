@@ -264,7 +264,7 @@ void ToolSub::showEvent(QShowEvent* event)
 void ToolSub::keyPressEvent(QKeyEvent* event)
 {
 	if (event->key() == Qt::Key_Escape) {
-		hide();
+		win->hideTools();
 	}else if (event->key() == Qt::Key_T && (event->modifiers() & Qt::ControlModifier)) {
 		win->hideTools();
 	}

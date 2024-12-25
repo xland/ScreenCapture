@@ -244,7 +244,7 @@ void ToolMain::mouseMoveEvent(QMouseEvent* event)
 void ToolMain::keyPressEvent(QKeyEvent* event)
 {
     if (event->key() == Qt::Key_Escape) {
-        win->keyEscPress();
+        win->hideTools();
     }
     else if (event->key() == Qt::Key_T && (event->modifiers() & Qt::ControlModifier)) {
         win->hideTools();
