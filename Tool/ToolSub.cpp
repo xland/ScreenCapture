@@ -120,15 +120,16 @@ int ToolSub::getStrokeWidth()
 void ToolSub::paintEvent(QPaintEvent* event)
 {
 	auto painter = getPainter();
+	const int span{ 8 };
 	QPainterPath path;
-	path.moveTo(border, 10);
-	path.lineTo(triangleX-4, 10);
-	path.lineTo(triangleX, 6);
-	path.lineTo(triangleX + 4, 10);
-	path.lineTo(width()- border, 10);
+	path.moveTo(border, span);
+	path.lineTo(triangleX-4, span);
+	path.lineTo(triangleX, 4);
+	path.lineTo(triangleX + 4, span);
+	path.lineTo(width()- border, span);
 	path.lineTo(width()- border, height()- border);
 	path.lineTo(border, height()- border);
-	path.lineTo(border, 10);
+	path.lineTo(border, span);
 	painter->drawPath(path); //有个小三角形指向主工具条的按钮
 
 	auto& values = btns[win->state];
@@ -142,7 +143,7 @@ void ToolSub::paintEvent(QPaintEvent* event)
 			x += strokeCtrl->width();
 		}
 		else{
-			QRect rect(x, 10, btnW, 32);
+			QRect rect(x, 8, btnW, 32);
 			if (values[i].selected) {
 				paintBtn(values[i].icon, QColor(9, 88, 217), QColor(228, 238, 255), rect, painter.get());
 			}
@@ -196,7 +197,7 @@ void ToolSub::showEvent(QShowEvent* event)
 	{
 		if (values[i].name == "colorCtrl") {
 			colorCtrl->selectedIndex = values[i].selectedIndex;
-			colorCtrl->move(w, 10);
+			colorCtrl->move(w, 8);
 			colorCtrl->show();
 			w += colorCtrl->width();
 			colorFlag = true;
@@ -206,7 +207,7 @@ void ToolSub::showEvent(QShowEvent* event)
 			strokeCtrl->setMinimum(values[i].min);
 			strokeCtrl->setValue(values[i].value);
 			strokeCtrl->setToolTip(QString::number(values[i].value));
-			strokeCtrl->move(w, 10);
+			strokeCtrl->move(w, 8);
 			strokeCtrl->show();
 			w += strokeCtrl->width();
 			strokeFlag = true;
@@ -217,7 +218,7 @@ void ToolSub::showEvent(QShowEvent* event)
 		}
 	}
 	w += 4;
-	setFixedSize(w, 42);
+	setFixedSize(w, 40);
 	if (!strokeFlag) {
 		strokeCtrl->hide();
 	}

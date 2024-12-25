@@ -173,8 +173,13 @@ void WinBox::keyEscPress()
 }
 void WinBox::hideTools()
 {
-	if (toolMain) toolMain->hide();
-	if (toolSub) toolSub->hide();
+    if (toolMain) {
+        toolMain->hide();
+        toolMain->selectIndex = -1;
+    }
+    if (toolSub) {
+        toolSub->hide();
+    }
 	state = State::start;
 }
 void WinBox::mousePressRight(QMouseEvent* event)

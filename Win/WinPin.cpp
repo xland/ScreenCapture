@@ -42,8 +42,7 @@ void WinPin::showToolMain()
     }
     QPoint pos{ x + padding, y + h };
     auto hwnd = (HWND)toolMain->winId();
-    auto dpr = toolMain->windowHandle()->devicePixelRatio();
-    SetWindowPos(hwnd, nullptr, pos.x(), pos.y() + 6 * dpr, 0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_SHOWWINDOW);
+    SetWindowPos(hwnd, nullptr, pos.x(), pos.y(), 0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_SHOWWINDOW);
     toolMain->show();
     state = State::tool;
 }
@@ -104,7 +103,7 @@ void WinPin::mousePress(QMouseEvent* event)
 {
     event->ignore();
     if (toolSub && toolSub->isVisible()) {
-
+        mousePressOnShape(event);
     }
     else {
         if (toolMain) {
@@ -151,13 +150,21 @@ void WinPin::mouseDBClick(QMouseEvent* event)
 void WinPin::mouseMove(QMouseEvent* event)
 {
     event->ignore();
-    //mouseMoveOnShape(event);
+    mouseMoveOnShape(event); //todo 这里其实可以显示PixelInfo
+    if (!event->isAccepted()) {
+        if (state == State::text) {
+            QGuiApplication::setOverrideCursor(Qt::IBeamCursor);
+        }
+        else {
+            QGuiApplication::setOverrideCursor(Qt::CrossCursor);
+        }
+    }
 }
 
 void WinPin::mouseDrag(QMouseEvent* event)
 {
     event->ignore();
-    //mouseDragOnShape(event);
+    mouseDragOnShape(event);
     if (GetCapture() == hwnd) {
         auto span = event->pos() - posPress;
         SetWindowPos(hwnd, NULL, x + span.x(), y + span.y(), 0, 0, SWP_NOSIZE | SWP_NOZORDER);
@@ -167,7 +174,7 @@ void WinPin::mouseDrag(QMouseEvent* event)
 void WinPin::mouseRelease(QMouseEvent* event)
 {
     event->ignore();
-    //mouseReleaseOnShape(event);
+    mouseReleaseOnShape(event);
     if (GetCapture() == hwnd) {
         ReleaseCapture();
         if (needShowToolMain) {
