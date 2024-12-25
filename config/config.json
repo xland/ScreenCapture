@@ -118,13 +118,13 @@
         "name": "rectFill",
         "icon": "e602",
         "selectDefault": false,
-        "zhcn": "",
-        "en": ""
+        "zhcn": "填充矩形",
+        "en": "Filled Rect"
       },
       {
         "name": "strokeCtrl",
-        "zhcn": "",
-        "en": "",
+        "zhcn": "线条粗细",
+        "en": "stroke width",
         "value": 3,
         "min": 1,
         "max": 20
@@ -139,13 +139,13 @@
         "name": "ellipseFill",
         "icon": "e600",
         "selectDefault": false,
-        "zhcn": "",
-        "en": ""
+        "zhcn": "填充椭圆",
+        "en": "Filled Ellipse"
       },
       {
         "name": "strokeCtrl",
-        "zhcn": "",
-        "en": "",
+        "zhcn": "线条粗细",
+        "en": "Stroke Width",
         "value": 3,
         "min": 1,
         "max": 20
@@ -160,13 +160,13 @@
         "name": "arrowFill",
         "selectDefault": true,
         "icon": "e604",
-        "zhcn": "",
-        "en": ""
+        "zhcn": "填充箭头",
+        "en": "Filled Arrow"
       },
       {
         "name": "strokeCtrl",
-        "zhcn": "",
-        "en": "",
+        "zhcn": "线条粗细",
+        "en": "Stroke Width",
         "value": 18,
         "min": 12,
         "max": 60
@@ -181,8 +181,8 @@
         "name": "numberFill",
         "selectDefault": true,
         "icon": "e605",
-        "zhcn": "",
-        "en": ""
+        "zhcn": "填充标号",
+        "en": "Filled Number"
       },
       {
         "name": "colorCtrl",
@@ -194,13 +194,13 @@
         "name": "lineTransparent",
         "selectDefault": false,
         "icon": "e607",
-        "zhcn": "",
-        "en": ""
+        "zhcn": "半透明线条",
+        "en": "Translucent Line"
       },
       {
         "name": "strokeCtrl",
-        "zhcn": "",
-        "en": "",
+        "zhcn": "线条粗细",
+        "en": "Stroke Width",
         "value": 12,
         "min": 6,
         "max": 160
@@ -215,20 +215,20 @@
         "name": "bold",
         "selectDefault": false,
         "icon": "e634",
-        "zhcn": "",
-        "en": ""
+        "zhcn": "粗体",
+        "en": "Bold"
       },
       {
         "name": "italic",
         "selectDefault": false,
         "icon": "e682",
-        "zhcn": "",
-        "en": ""
+        "zhcn": "斜体",
+        "en": "Italics"
       },
       {
         "name": "strokeCtrl",
-        "zhcn": "",
-        "en": "",
+        "zhcn": "字体大小",
+        "en": "Font Size",
         "value": 16,
         "min": 8,
         "max": 60
@@ -248,8 +248,8 @@
       },
       {
         "name": "strokeCtrl",
-        "zhcn": "",
-        "en": "",
+        "zhcn": "线条粗细",
+        "en": "Stroke Width",
         "value": 26,
         "min": 16,
         "max": 80
@@ -260,14 +260,14 @@
         "name": "eraserFill",
         "icon": "e602",
         "selectDefault": false,
-        "zhcn": "",
-        "en": ""
+        "zhcn": "矩形橡皮擦",
+        "en": "Rectangle Eraser"
       },
       {
         "name": "strokeCtrl",
         "value": 16,
-        "zhcn": "",
-        "en": "",
+        "zhcn": "线条粗细",
+        "en": "Stroke Width",
         "min": 12,
         "max": 60
       }

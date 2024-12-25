@@ -1,7 +1,7 @@
-﻿#include <Windows.h>
-#include <windowsx.h>
+﻿
 #include "Util.h"
 #include "../Win/WinBox.h"
+#pragma comment(lib, "comctl32.lib")
 
 QMouseEvent Util::createMouseEvent(const QEvent::Type& type, const Qt::MouseButton& btn)
 {
@@ -64,8 +64,6 @@ QImage Util::printScreen(const int& x, const int& y, const int& w, const int& h)
     ReleaseDC(NULL, hScreen);
     return img;
 }
-
-
 //QImage Util::printScreen(const int& x, const int& y, const int& w, const int& h)
 //{
 //    auto screens = QGuiApplication::screens();

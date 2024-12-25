@@ -1,6 +1,7 @@
 #include <QPainter>
 #include <QMouseEvent>
 #include <QJsonArray>
+#include <QToolTip>
 
 #include "ColorCtrl.h"
 #include "../App/App.h"
@@ -97,6 +98,11 @@ void ColorCtrl::mouseMoveEvent(QMouseEvent* event)
 	if (index != hoverIndex) {
 		hoverIndex = index;
 		update();
+		if (hoverIndex > -1)
+		{
+			auto pos = event->globalPosition();
+			QToolTip::showText(QPoint(pos.x(), pos.y()), colorTips[hoverIndex], this);
+		}
 	}
 }
 

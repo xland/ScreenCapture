@@ -3,6 +3,7 @@
 #include <qtooltip.h>
 
 #include "../App/App.h"
+#include "../App/Util.h"
 #include "../Win/WinBox.h"
 #include "../Win/WinPin.h"
 #include "../Win/WinFull.h"
@@ -236,7 +237,7 @@ void ToolMain::mouseMoveEvent(QMouseEvent* event)
         if (hoverIndex > -1)
         {
             auto pos = event->globalPosition();
-            //QToolTip::showText(QPoint(pos.x(), pos.y()), btns[hoverIndex].tipText, this);
+            QToolTip::showText(QPoint(pos.x(), pos.y()), btns[hoverIndex].tipText, this);
         }
     }
 }

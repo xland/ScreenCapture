@@ -5,6 +5,7 @@
 #include <QJsonArray>
 #include <QJsonValue>
 #include <QFontDatabase>
+#include <QToolTip>
 
 #include "App.h"
 #include "Tray.h"
@@ -27,6 +28,8 @@ void App::init()
     //qApp->setCursorFlashTime(0);
     QFont font("Microsoft YaHei",12);
     qApp->setFont(font);
+    QFont tooltipFont("Arial", 10);
+    QToolTip::setFont(tooltipFont);
     initConfig();
     start();
 }

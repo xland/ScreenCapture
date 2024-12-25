@@ -1,4 +1,7 @@
 #pragma once
+#include <Windows.h>
+#include <windowsx.h>
+#include <commctrl.h>
 #include <QMouseEvent>
 #include <QImage>
 

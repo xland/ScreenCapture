@@ -1,4 +1,5 @@
 ﻿#include <tuple>
+#include <QToolTip>
 #include <QPainterPath>
 
 #include "../App/App.h"
@@ -188,6 +189,12 @@ void ToolSub::mouseMoveEvent(QMouseEvent* event)
 	}
 	if (hoverIndex != tempIndex) {
 		hoverIndex = tempIndex;
+		if (hoverIndex > -1)
+		{
+			auto& values = btns[win->state];
+			auto pos = event->globalPosition();
+			QToolTip::showText(QPoint(pos.x(), pos.y()), values[hoverIndex].tipText, this);
+		}
 		update();
 	}
 }
