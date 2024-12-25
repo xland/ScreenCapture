@@ -165,7 +165,10 @@ void ToolSub::mousePressEvent(QMouseEvent* event)
 	if (hoverIndex < 0) return;
 	auto& values = btns[win->state];
 	values[hoverIndex].selected = !values[hoverIndex].selected;
-	if (win->state == State::eraser || win->state == State::mosaic) {
+	if (win->state == State::rect ||
+		win->state == State::ellipse ||
+		win->state == State::mosaic ||
+		win->state == State::eraser) {
 		if (hoverIndex == 0) {
 			strokeCtrl->setEnabled(!values[hoverIndex].selected);
 		}
@@ -192,8 +195,7 @@ void ToolSub::mouseMoveEvent(QMouseEvent* event)
 		if (hoverIndex > -1)
 		{
 			auto& values = btns[win->state];
-			auto pos = event->globalPosition();
-			QToolTip::showText(QPoint(pos.x(), pos.y()), values[hoverIndex].tipText, this);
+			QToolTip::showText(event->globalPosition().toPoint(), values[hoverIndex].tipText, this);
 		}
 		update();
 	}
@@ -218,7 +220,7 @@ void ToolSub::showEvent(QShowEvent* event)
 			strokeCtrl->setMaximum(values[i].max);
 			strokeCtrl->setMinimum(values[i].min);
 			strokeCtrl->setValue(values[i].value);
-			strokeCtrl->setToolTip(QString::number(values[i].value));
+			strokeCtrl->tipInfo = values[i].tipText;
 			strokeCtrl->setEnabled(true);
 			strokeCtrl->move(w, 8);
 			strokeCtrl->show();
@@ -251,7 +253,10 @@ void ToolSub::showEvent(QShowEvent* event)
 		move(pos.x(), pos.y());
 	}
 
-	if (win->state == State::eraser || win->state == State::mosaic) {
+	if (win->state == State::rect || 
+		win->state == State::ellipse || 
+		win->state == State::mosaic ||
+		win->state == State::eraser) {
 		strokeCtrl->setEnabled(!values[0].selected);
 	}
 }

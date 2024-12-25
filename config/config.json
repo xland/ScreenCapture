@@ -123,8 +123,8 @@
       },
       {
         "name": "strokeCtrl",
-        "zhcn": "线条粗细",
-        "en": "stroke width",
+        "zhcn": "线条粗细: ",
+        "en": "Stroke Width: ",
         "value": 3,
         "min": 1,
         "max": 20
@@ -144,8 +144,8 @@
       },
       {
         "name": "strokeCtrl",
-        "zhcn": "线条粗细",
-        "en": "Stroke Width",
+        "zhcn": "线条粗细: ",
+        "en": "Stroke Width: ",
         "value": 3,
         "min": 1,
         "max": 20
@@ -165,8 +165,8 @@
       },
       {
         "name": "strokeCtrl",
-        "zhcn": "线条粗细",
-        "en": "Stroke Width",
+        "zhcn": "箭头大小: ",
+        "en": "Arrow Size: ",
         "value": 18,
         "min": 12,
         "max": 60
@@ -199,8 +199,8 @@
       },
       {
         "name": "strokeCtrl",
-        "zhcn": "线条粗细",
-        "en": "Stroke Width",
+        "zhcn": "线条粗细: ",
+        "en": "Stroke Width: ",
         "value": 12,
         "min": 6,
         "max": 160
@@ -227,8 +227,8 @@
       },
       {
         "name": "strokeCtrl",
-        "zhcn": "字体大小",
-        "en": "Font Size",
+        "zhcn": "字体大小: ",
+        "en": "Font Size: ",
         "value": 16,
         "min": 8,
         "max": 60
@@ -248,8 +248,8 @@
       },
       {
         "name": "strokeCtrl",
-        "zhcn": "线条粗细",
-        "en": "Stroke Width",
+        "zhcn": "线条粗细: ",
+        "en": "Stroke Width: ",
         "value": 26,
         "min": 16,
         "max": 80
@@ -266,8 +266,8 @@
       {
         "name": "strokeCtrl",
         "value": 16,
-        "zhcn": "线条粗细",
-        "en": "Stroke Width",
+        "zhcn": "线条粗细: ",
+        "en": "Stroke Width: ",
         "min": 12,
         "max": 60
       }

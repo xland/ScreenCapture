@@ -236,8 +236,7 @@ void ToolMain::mouseMoveEvent(QMouseEvent* event)
         repaint();
         if (hoverIndex > -1)
         {
-            auto pos = event->globalPosition();
-            QToolTip::showText(QPoint(pos.x(), pos.y()), btns[hoverIndex].tipText, this);
+            QToolTip::showText(event->globalPosition().toPoint(), btns[hoverIndex].tipText, this);
         }
     }
 }

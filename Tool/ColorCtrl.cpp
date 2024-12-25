@@ -100,8 +100,7 @@ void ColorCtrl::mouseMoveEvent(QMouseEvent* event)
 		update();
 		if (hoverIndex > -1)
 		{
-			auto pos = event->globalPosition();
-			QToolTip::showText(QPoint(pos.x(), pos.y()), colorTips[hoverIndex], this);
+			QToolTip::showText(event->globalPosition().toPoint(), colorTips[hoverIndex], this);
 		}
 	}
 }

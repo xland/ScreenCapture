@@ -61,6 +61,7 @@ void StrokeCtrl::mouseMoveEvent(QMouseEvent* event)
     if (event->buttons() & Qt::LeftButton) {
         setPosByMouse(event->pos());
     }
+    QToolTip::showText(event->globalPosition().toPoint(), tipInfo + QString::number(value()), this);
     event->ignore();
 }
 
@@ -90,6 +91,5 @@ void StrokeCtrl::setTip()
 {
     qreal x = getSliderXPos() - 10;
     auto pos = mapToGlobal(QPoint(x, -30));
-    setToolTip(QString::number(value()));
-    //QToolTip::showText(pos, QString::number(value()), this);
+    QToolTip::showText(pos,tipInfo + QString::number(value()), this);
 }
