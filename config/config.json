@@ -1,6 +1,18 @@
 {
   "defaultLang": "en",
   "hotKey": "Ctrl+Alt+Z",
+  "winPin": [
+    {
+      "name": "toolBar",
+      "zhcn": "工具栏（Ctrl+T）",
+      "en": "Toolbar（Ctrl+T）"
+    },
+    {
+      "name": "quit",
+      "zhcn": "退出（Esc）",
+      "en": "Quit（Esc）"
+    }
+  ],
   "icon": {
     "fontPath": "./config/iconfont.ttf",
     "fontName": "iconfont"

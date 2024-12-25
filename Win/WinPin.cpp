@@ -10,6 +10,7 @@
 
 namespace{
     static int padding{ 8 };
+    std::map<QString, std::wstring> menuItems;
 }
 
 WinPin::WinPin(QObject* parent) : WinBox(parent)
@@ -20,6 +21,17 @@ WinPin::WinPin(QObject* parent) : WinBox(parent)
 WinPin::~WinPin()
 {
    
+}
+
+void WinPin::initData(const QJsonArray& arr, const QString& lang)
+{
+    for (const QJsonValue& val : arr)
+    {
+        menuItems.insert({
+            val["name"].toString(),
+            val[lang].toString("").toStdWString() 
+            });
+    }
 }
 
 void WinPin::init(WinFull* full)
@@ -122,8 +134,8 @@ void WinPin::mousePressRight(QMouseEvent* event)
 {
     HMENU hMenu = CreatePopupMenu();
     auto flag = state == State::start;
-    AppendMenu(hMenu, flag ? MF_UNCHECKED : MF_CHECKED, 1001, L"工具栏（Ctrl+T）");
-    AppendMenu(hMenu, MF_STRING, 1002, L"退出（Esc）");
+    AppendMenu(hMenu, flag ? MF_UNCHECKED : MF_CHECKED, 1001, menuItems["toolBar"].data());
+    AppendMenu(hMenu, MF_STRING, 1002, menuItems["quit"].data());
     auto pos = event->pos();
     int cmd = TrackPopupMenu(hMenu, TPM_RETURNCMD | TPM_NONOTIFY, x+pos.x(), y+pos.y(), 0, hwnd, NULL);
     if (cmd == 1001) {

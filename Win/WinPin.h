@@ -13,6 +13,7 @@ class WinPin  : public WinBox
 public:
 	WinPin(QObject *parent = nullptr);
 	~WinPin();
+	static void initData(const QJsonArray& arr, const QString& lang);
 	static void init(WinFull* full);
 	void showToolMain() override;
 	void showToolSub() override;

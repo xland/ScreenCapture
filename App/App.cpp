@@ -11,6 +11,7 @@
 #include "Tray.h"
 #include "../QHotKey/qhotkey.h"
 #include "../Win/WinFull.h"
+#include "../Win/WinPin.h"
 
 #include "../Tool/ToolMain.h"
 #include "../Tool/ToolSub.h"
@@ -73,6 +74,7 @@ void App::initConfig()
     initFont(jsonObject);
     initTool(jsonObject, lang);  
     initTray(jsonObject, lang);
+    initPin(jsonObject, lang);
 }
 void App::initFont(const QJsonObject& obj)
 {
@@ -113,6 +115,12 @@ void App::initTray(const QJsonObject& obj, const QString& lang)
 {
     if (obj["tray"].isObject()) {
         tray = std::make_unique<Tray>(obj["tray"].toObject(), lang);
+    }
+}
+void App::initPin(const QJsonObject& obj, const QString& lang)
+{
+    if (obj["winPin"].isArray()) {
+        WinPin::initData(obj["winPin"].toArray(), lang);
     }
 }
 void App::initScreens() {
