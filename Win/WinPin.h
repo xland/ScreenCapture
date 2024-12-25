@@ -31,8 +31,5 @@ private:
 	static QImage prepareImg(WinFull* full);
 private:
 	bool needShowToolMain{ false };
-	QMenu contextMenu;
-	QAction action1;
-	QAction action2;
 	QPoint posPress;
 };

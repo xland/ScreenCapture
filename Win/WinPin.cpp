@@ -14,12 +14,7 @@ namespace{
 
 WinPin::WinPin(QObject* parent) : WinBox(parent)
 {
-	action1.setText("工具栏（Ctrl+T）");
-    action1.setCheckable(true);
-    action1.setChecked(false);
-	action2.setText("退出（Esc）");
-	contextMenu.addAction(&action1);
-	contextMenu.addAction(&action2);
+
 }
 
 WinPin::~WinPin()
@@ -50,6 +45,7 @@ void WinPin::showToolMain()
     auto dpr = toolMain->windowHandle()->devicePixelRatio();
     SetWindowPos(hwnd, nullptr, pos.x(), pos.y() + 6 * dpr, 0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_SHOWWINDOW);
     toolMain->show();
+    state = State::tool;
 }
 
 void WinPin::showToolSub()
@@ -94,16 +90,13 @@ void WinPin::close()
 
 void WinPin::ctrlTPress()
 {
-    auto flag = !action1.isChecked();
-	action1.setChecked(flag);
-	if (flag)
+	if (state == State::start)
 	{
 		showToolMain();
 	}
 	else
 	{
-        if (toolMain) toolMain->hide();
-		if (toolSub) toolSub->hide();
+        hideTools();
 	}
 }
 
@@ -127,20 +120,28 @@ void WinPin::mousePress(QMouseEvent* event)
 
 void WinPin::mousePressRight(QMouseEvent* event)
 {
-    QAction* action = contextMenu.exec(QCursor::pos());
-	if (!action) return;
-    if (action == &action1)
-    {
-        auto flag = action->isChecked();
-        if (flag)
-        {
-            showToolMain();
-        }
-	}
-    else if (action == &action2)
-    {
+    HMENU hMenu = CreatePopupMenu();
+    auto flag = state == State::start;
+    AppendMenu(hMenu, flag ? MF_UNCHECKED : MF_CHECKED, 1001, L"工具栏（Ctrl+T）");
+    AppendMenu(hMenu, MF_STRING, 1002, L"退出（Esc）");
+    auto pos = event->pos();
+    int cmd = TrackPopupMenu(hMenu, TPM_RETURNCMD | TPM_NONOTIFY, x+pos.x(), y+pos.y(), 0, hwnd, NULL);
+    if (cmd == 1001) {
+       if (state == State::start)
+       {
+           showToolMain();
+           state = State::tool;
+	   }
+       else
+       {
+           hideTools();
+           state = State::start;
+       }
+    }
+    else if (cmd == 1002) {
         close();
     }
+    DestroyMenu(hMenu);
 }
 
 void WinPin::mouseDBClick(QMouseEvent* event)

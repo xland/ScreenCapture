@@ -29,7 +29,7 @@ void WinMask::mousePress(QMouseEvent* event)
     {
         posPress = event->pos();
         win->state = State::mask;
-        win->pixelInfo->close();
+        if(win->pixelInfo) win->pixelInfo->close();
         event->accept();
         return;
     }

@@ -171,6 +171,12 @@ void WinBox::keyEscPress()
 {
     qApp->quit();
 }
+void WinBox::hideTools()
+{
+	if (toolMain) toolMain->hide();
+	if (toolSub) toolSub->hide();
+	state = State::start;
+}
 void WinBox::mousePressRight(QMouseEvent* event)
 {
     qApp->quit();

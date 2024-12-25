@@ -243,6 +243,6 @@ void ToolSub::keyPressEvent(QKeyEvent* event)
 	if (event->key() == Qt::Key_Escape) {
 		hide();
 	}else if (event->key() == Qt::Key_T && (event->modifiers() & Qt::ControlModifier)) {
-		//QMessageBox::information(this, "Key Pressed", "Ctrl + T was pressed!");
+		win->hideTools();
 	}
 }
