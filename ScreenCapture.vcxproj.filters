@@ -130,9 +130,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BtnType.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="App\App.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -245,13 +242,6 @@
     </QtMoc>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="CMakeLists.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="CMakeLists.txt.user.e836a79" />
-    <None Include="CMakePresets.json" />
-    <None Include="CMakeUserPresets.json" />
-    <None Include="CppProperties.json" />
     <None Include="licence" />
     <None Include="ReadMe.md" />
     <None Include="todo.md" />
