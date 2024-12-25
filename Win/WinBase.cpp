@@ -28,7 +28,14 @@ void WinBase::initWindow(bool isTransparent)
     wcx.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
     wcx.lpszClassName = L"ScreenCapture";
     auto flag = RegisterClassEx(&wcx);
+#ifdef DEBUG
     auto exStyle = isTransparent ? (WS_EX_LAYERED | WS_EX_TRANSPARENT | WS_EX_TOOLWINDOW | WS_EX_TOPMOST) : (WS_EX_LAYERED); //WS_EX_TOPMOST
+#else
+    auto exStyle = WS_EX_LAYERED | WS_EX_TOPMOST | WS_EX_TOOLWINDOW | WS_EX_NOACTIVATE;
+    if (isTransparent) exStyle = exStyle | WS_EX_TRANSPARENT;
+#endif // DEBUG
+
+    
     auto style = WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
     hwnd = CreateWindowEx(exStyle,L"ScreenCapture", L"ScreenCapture",style,x, y, w, h, NULL, NULL, GetModuleHandle(NULL), static_cast<LPVOID>(this));
     SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
@@ -52,6 +59,13 @@ LRESULT WinBase::routeWinMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
                 return 0; //确认改变窗口客户区
             }
             return DefWindowProc(hWnd, msg, wParam, lParam);
+        }
+        case WM_WINDOWPOSCHANGING: {
+            WINDOWPOS* pPos = (WINDOWPOS*)lParam;
+            if (!(pPos->flags & SWP_NOZORDER)) {
+                pPos->flags |= SWP_NOZORDER; // 禁止改变 Z 序
+            }
+            return 0;
         }
         case WM_CLOSE:
         {
@@ -102,7 +116,7 @@ LRESULT WinBase::processWinMsg(UINT msg, WPARAM wParam, LPARAM lParam)
     {
         auto e = Util::createMouseEvent(lParam, QEvent::MouseButtonPress);
         mousePress(&e);
-        break;
+        return 0;
     }
     case WM_MOUSEMOVE:
     {
@@ -125,12 +139,19 @@ LRESULT WinBase::processWinMsg(UINT msg, WPARAM wParam, LPARAM lParam)
     {
         auto e = Util::createMouseEvent(lParam, QEvent::MouseButtonRelease);
         mouseRelease(&e);
-        break;
+        return 0;
     }
     case WM_RBUTTONDOWN:
     {
         auto e = Util::createMouseEvent(lParam, QEvent::MouseButtonPress, Qt::MouseButton::RightButton);
         mousePressRight(&e);
+        return 0;
+    }
+    case WM_ACTIVATE:
+    {
+        if (LOWORD(wParam) != WA_INACTIVE) {
+            activate();
+        }        
         return 0;
     }
     default:

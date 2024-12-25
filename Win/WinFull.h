@@ -30,6 +30,7 @@ protected:
 	void mouseMove(QMouseEvent* event) override;
 	void mouseDrag(QMouseEvent* event) override;
 	void mouseRelease(QMouseEvent* event) override;
+	void activate() override;
 private:
 	void initWinSizeByDesktopSize();
 };
