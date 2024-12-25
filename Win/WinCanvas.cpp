@@ -3,13 +3,16 @@
 
 #include "WinCanvas.h"
 #include "WinBase.h"
-#include "WinFull.h"
+#include "WinBox.h"
 #include "../Shape/ShapeBase.h"
 
 WinCanvas::WinCanvas(QObject *parent) : WinBase(parent)
 {
-    auto winFull = (WinFull*)parent;
-    initSizeByWin(winFull);
+    auto win = (WinBox*)parent;
+    x = win->x;
+    y = win->y;
+    w = win->w;
+    h = win->h;
     initWindow();
     show();
 }

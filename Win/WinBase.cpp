@@ -140,13 +140,6 @@ LRESULT WinBase::processWinMsg(UINT msg, WPARAM wParam, LPARAM lParam)
     }
     return 0;
 }
-void WinBase::initSizeByWin(WinBase* win)
-{
-    x = win->x;
-    y = win->y;
-    w = win->w;
-    h = win->h;
-}
 QImage WinBase::grab(const QRect& rect)
 {
     return img.copy(rect);

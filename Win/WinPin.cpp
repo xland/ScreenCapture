@@ -155,7 +155,11 @@ void WinPin::mouseMove(QMouseEvent* event)
         if (state == State::text) {
             QGuiApplication::setOverrideCursor(Qt::IBeamCursor);
         }
-        else {
+        else if(state == State::start) {
+            QGuiApplication::setOverrideCursor(Qt::SizeAllCursor);
+        }
+        else
+        {
             QGuiApplication::setOverrideCursor(Qt::CrossCursor);
         }
     }
@@ -164,9 +168,15 @@ void WinPin::mouseMove(QMouseEvent* event)
 void WinPin::mouseDrag(QMouseEvent* event)
 {
     event->ignore();
+    auto pos = event->pos();
+    //todo 
+	//if (pos.x() <= padding || pos.y() <= padding || pos.x() >= w - padding || pos.y() >= h - padding)
+	//{
+	//	return;
+	//}
     mouseDragOnShape(event);
     if (GetCapture() == hwnd) {
-        auto span = event->pos() - posPress;
+        auto span = pos - posPress;
         SetWindowPos(hwnd, NULL, x + span.x(), y + span.y(), 0, 0, SWP_NOSIZE | SWP_NOZORDER);
     }
 }

@@ -28,7 +28,6 @@ public:
 protected:
 	void initWindow(bool isTransparent=true);
 	void paint();
-	void initSizeByWin(WinBase* win);
 
 	virtual void mousePress(QMouseEvent* event){};
 	virtual void mousePressRight(QMouseEvent* event) {};
