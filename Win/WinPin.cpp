@@ -39,6 +39,7 @@ void WinPin::showToolMain()
 {
     if (!toolMain) {
         toolMain = new ToolMain(this);
+        toolMain->setBtnEnable(QString{"pin"}, false);
     }
     QPoint pos{ x + padding, y + h };
     auto hwnd = (HWND)toolMain->winId();
@@ -177,7 +178,14 @@ void WinPin::mouseDrag(QMouseEvent* event)
     mouseDragOnShape(event);
     if (GetCapture() == hwnd) {
         auto span = pos - posPress;
-        SetWindowPos(hwnd, NULL, x + span.x(), y + span.y(), 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+        auto xx{ x + span.x() }, yy{ y + span.y() };
+        SetWindowPos(hwnd, NULL, xx, yy, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+        if (winBoard) {
+            SetWindowPos(winBoard->hwnd, NULL, xx, yy, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+        }
+        if (winCanvas) {
+            SetWindowPos(winCanvas->hwnd, NULL, xx, yy, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+        }
     }
 }
 
