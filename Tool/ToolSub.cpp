@@ -164,6 +164,11 @@ void ToolSub::mousePressEvent(QMouseEvent* event)
 	if (hoverIndex < 0) return;
 	auto& values = btns[win->state];
 	values[hoverIndex].selected = !values[hoverIndex].selected;
+	if (win->state == State::eraser || win->state == State::mosaic) {
+		if (hoverIndex == 0) {
+			strokeCtrl->setEnabled(!values[hoverIndex].selected);
+		}
+	}
 	update();
 }
 
@@ -190,7 +195,7 @@ void ToolSub::mouseMoveEvent(QMouseEvent* event)
 void ToolSub::showEvent(QShowEvent* event)
 {
 	ToolBase::showEvent(event);
-	auto values = btns[win->state];
+	auto& values = btns[win->state];
 	auto w{ 4 };
 	bool strokeFlag{ false }, colorFlag{ false };
 	for (int i = 0; i < values.size(); i++)
@@ -207,6 +212,7 @@ void ToolSub::showEvent(QShowEvent* event)
 			strokeCtrl->setMinimum(values[i].min);
 			strokeCtrl->setValue(values[i].value);
 			strokeCtrl->setToolTip(QString::number(values[i].value));
+			strokeCtrl->setEnabled(true);
 			strokeCtrl->move(w, 8);
 			strokeCtrl->show();
 			w += strokeCtrl->width();
@@ -236,6 +242,10 @@ void ToolSub::showEvent(QShowEvent* event)
 	else {
 		triangleX = x;
 		move(pos.x(), pos.y());
+	}
+
+	if (win->state == State::eraser || win->state == State::mosaic) {
+		strokeCtrl->setEnabled(!values[0].selected);
 	}
 }
 

@@ -32,7 +32,12 @@ void StrokeCtrl::paintEvent(QPaintEvent* event)
     qreal x = getSliderXPos();
     QRect rect(x, y-4, 8, 8);
     painter.setPen(Qt::NoPen);
-    painter.setBrush(QColor(120,120,120));
+    if (isEnabled()) {
+        painter.setBrush(QColor(120, 120, 120));
+    }
+    else {
+        painter.setBrush(QColor(220, 220, 220));
+    }    
     painter.drawEllipse(rect);
 }
 

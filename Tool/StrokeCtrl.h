@@ -10,6 +10,7 @@ class StrokeCtrl:public QSlider
 public:
 	StrokeCtrl(QWidget *parent = nullptr);
 	~StrokeCtrl();
+
 protected:
 	void paintEvent(QPaintEvent* event) override;
 	void wheelEvent(QWheelEvent* event) override;

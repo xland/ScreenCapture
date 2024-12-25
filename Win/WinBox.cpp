@@ -175,7 +175,6 @@ void WinBox::hideTools()
 {
     if (toolMain) {
         toolMain->hide();
-        toolMain->selectIndex = -1;
     }
     if (toolSub) {
         toolSub->hide();

@@ -65,6 +65,12 @@ void ToolBase::showEvent(QShowEvent* event)
     SetFocus(wid);
 }
 
+void ToolBase::hideEvent(QHideEvent* event)
+{
+    selectIndex = -1;
+    hoverIndex = -1;
+}
+
 std::shared_ptr<QPainter> ToolBase::getPainter()
 {
     auto font = App::getIconFont();
