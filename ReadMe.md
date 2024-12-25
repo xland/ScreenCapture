@@ -113,10 +113,5 @@ Whether there is any topic to talk about, whether it is related to this product 
 
 无论有没有要聊的话题，无论是不是与此产品有关的话题，都很开心能认识你。
 
-## Licenses（版权）
-
-This project is under the [MIT license](./licence).
-
-
 ## Stargazers over time
 [![Stargazers over time](https://starchart.cc/xland/ScreenCapture.svg?variant=adaptive)](https://starchart.cc/xland/ScreenCapture)
