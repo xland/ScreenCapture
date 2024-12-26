@@ -29,15 +29,16 @@ void WinBase::initWindow(bool isTransparent)
     wcx.lpszClassName = L"ScreenCapture";
     auto flag = RegisterClassEx(&wcx);
 #ifdef DEBUG
-    auto exStyle = isTransparent ? (WS_EX_LAYERED | WS_EX_TRANSPARENT | WS_EX_TOOLWINDOW | WS_EX_TOPMOST) : (WS_EX_LAYERED); //WS_EX_TOPMOST
+    auto exStyle = WS_EX_LAYERED;
 #else
-    auto exStyle = WS_EX_LAYERED | WS_EX_TOPMOST | WS_EX_TOOLWINDOW | WS_EX_NOACTIVATE;
-    if (isTransparent) exStyle = exStyle | WS_EX_TRANSPARENT;
-#endif // DEBUG
-
-    
+    auto exStyle = WS_EX_LAYERED | WS_EX_TOOLWINDOW | WS_EX_TOPMOST;
+#endif    
+    if (isTransparent) exStyle = exStyle | WS_EX_TRANSPARENT | WS_EX_NOACTIVATE;
     auto style = WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
     hwnd = CreateWindowEx(exStyle,L"ScreenCapture", L"ScreenCapture",style,x, y, w, h, NULL, NULL, GetModuleHandle(NULL), static_cast<LPVOID>(this));
+    //if (isTransparent) {
+    //    EnableWindow(hwnd, FALSE);
+    //}
     SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
     BOOL attrib = TRUE;
     DwmSetWindowAttribute(hwnd, DWMWA_TRANSITIONS_FORCEDISABLED, &attrib, sizeof(attrib));//移除窗口打开与关闭时的动画效果
@@ -95,20 +96,35 @@ LRESULT WinBase::processWinMsg(UINT msg, WPARAM wParam, LPARAM lParam)
     }
     case WM_KEYDOWN:
     {
-        if (wParam == VK_BACK || wParam == VK_DELETE)
-        {
+        if (wParam == VK_BACK || wParam == VK_DELETE) {
             removeShape();
             return 0;
         }
-        else if (wParam == VK_ESCAPE)
-        {
+        else if (wParam == VK_ESCAPE) {
             keyEscPress();
             return 0;
-        }else if (wParam == 'T') {
+        }
+        else if (wParam == 'T') {
             if ((GetKeyState(VK_CONTROL) & 0x8000) != 0) {
 				ctrlTPress();
 				return 0;
             }
+        }
+        else if (wParam == VK_LEFT) {
+            moveByKey(0);
+            return 0;
+        }
+        else if (wParam == VK_UP) {
+            moveByKey(1);
+            return 0;
+        }
+        else if (wParam == VK_RIGHT) {
+            moveByKey(2);
+            return 0;
+        }
+        else if (wParam == VK_DOWN) {
+            moveByKey(3);
+            return 0;
         }
         break;
     }

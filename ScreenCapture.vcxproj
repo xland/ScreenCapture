@@ -192,7 +192,7 @@
     <None Include="licence" />
     <None Include="ReadMe.md" />
     <None Include="todo.md" />
-    <None Include="高亮窗口.md" />
+    <None Include="doc\高亮窗口.md" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="config\iconfont.ttf" />

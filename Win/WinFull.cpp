@@ -175,3 +175,5 @@ void WinFull::mouseRelease(QMouseEvent* event)
     mouseReleaseOnShape(event);
 }
 
+
+

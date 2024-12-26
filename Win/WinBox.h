@@ -23,7 +23,7 @@ public:
 	void undo();
 	void redo();
 	void keyEscPress() override;
-	void hideTools();
+	void hideTools(State state=State::start);
 public:
 	State state{ State::start };
 	QList<ShapeBase*> shapes;

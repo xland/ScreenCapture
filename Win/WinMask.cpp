@@ -24,7 +24,26 @@ WinMask::WinMask(QObject* parent) : WinBase(parent)
 WinMask::~WinMask()
 {
 }
-
+void WinMask::moveByKey(const int& key)
+{
+    auto win = (WinFull*)parent();
+    if (win->state == State::start) {
+        POINT point;
+        GetCursorPos(&point);
+        if (key == 0) SetCursorPos(point.x - 1, point.y);
+        else if (key == 1) SetCursorPos(point.x, point.y - 1);
+        else if (key == 2) SetCursorPos(point.x + 1, point.y);
+        else if (key == 3) SetCursorPos(point.x, point.y + 1);
+    }
+    else {
+        if (key == 0) maskRect.translate(-1, 0);
+        else if (key == 1) maskRect.translate(0, -1);
+        else if (key == 2) maskRect.translate(1, 0);
+        else if (key == 3) maskRect.translate(0, 1);
+        win->showToolMain();
+        update();
+    }
+}
 void WinMask::mousePress(QMouseEvent* event)
 {
     auto win = (WinFull*)parent();

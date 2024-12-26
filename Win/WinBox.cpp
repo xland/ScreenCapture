@@ -171,7 +171,7 @@ void WinBox::keyEscPress()
 {
     qApp->quit();
 }
-void WinBox::hideTools()
+void WinBox::hideTools(State state)
 {
     if (toolMain) {
         toolMain->hide();
@@ -179,7 +179,7 @@ void WinBox::hideTools()
     if (toolSub) {
         toolSub->hide();
     }
-	state = State::start;
+	this->state = state;
 }
 void WinBox::mousePressRight(QMouseEvent* event)
 {

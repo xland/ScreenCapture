@@ -4,6 +4,8 @@
 
 #include "../App/App.h"
 #include "../Win/WinBox.h"
+#include "../Win/WinFull.h"
+#include "../Win/WinMask.h"
 #include "ToolBase.h"
 #include "ToolSub.h"
 
@@ -95,4 +97,45 @@ void ToolBase::paintBtn(const QChar& icon, const QColor& frontColor, const QColo
     p->drawRoundedRect(rect, 6, 6);
     p->setPen(frontColor);
     p->drawText(rect, Qt::AlignCenter, icon);
+}
+void ToolBase::keyPressEvent(QKeyEvent* event)
+{
+    if (event->key() == Qt::Key_Escape) {
+        win->hideTools();
+    }
+    else if (event->key() == Qt::Key_T && (event->modifiers() & Qt::ControlModifier)) {
+        win->hideTools();
+    }
+    else if (event->key() == Qt::Key_Left) {
+        if (auto w = qobject_cast<WinFull*>(win)) 
+        {
+            SetFocus(w->winMask->hwnd);
+            w->hideTools(State::mask);
+            w->winMask->moveByKey(0);
+        }
+    }
+    else if (event->key() == Qt::Key_Up) {
+        if (auto w = qobject_cast<WinFull*>(win))
+        {
+            SetFocus(w->winMask->hwnd);
+            w->hideTools(State::mask);
+            w->winMask->moveByKey(1);
+        }
+    }
+    else if (event->key() == Qt::Key_Right) {
+        if (auto w = qobject_cast<WinFull*>(win))
+        {
+            SetFocus(w->winMask->hwnd);
+            w->hideTools(State::mask);
+            w->winMask->moveByKey(2);
+        }
+    }
+    else if (event->key() == Qt::Key_Down) {
+        if (auto w = qobject_cast<WinFull*>(win))
+        {
+            SetFocus(w->winMask->hwnd);
+            w->hideTools(State::mask);
+            w->winMask->moveByKey(3);
+        }
+    }
 }
