@@ -106,6 +106,12 @@ void ToolBase::keyPressEvent(QKeyEvent* event)
     else if (event->key() == Qt::Key_T && (event->modifiers() & Qt::ControlModifier)) {
         win->hideTools();
     }
+    else if (event->key() == Qt::Key_S && (event->modifiers() & Qt::ControlModifier)) {
+        win->saveToFile();
+    }
+    else if (event->key() == Qt::Key_C && (event->modifiers() & Qt::ControlModifier)) {
+        win->saveToClipboard();
+    }
     else if (event->key() == Qt::Key_Left) {
         if (auto w = qobject_cast<WinFull*>(win)) 
         {
