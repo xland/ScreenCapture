@@ -88,12 +88,14 @@ void PixelInfo::paintEvent(QPaintEvent* event)
     painter.setBrush(Qt::NoBrush);
     painter.setPen(Qt::white);
     auto font = painter.font();
-    font.setPointSizeF(8.0);
+    font.setPointSizeF(7.0);
     painter.setFont(font);
     auto tarColor = img.pixelColor(img.rect().center());
-    painter.drawText(QPoint(8, 118), QString("HEX (Ctrl+H) : %1").arg(tarColor.name().toUpper()));
-    painter.drawText(QPoint(8, 138), QString("RGB (Ctrl+R) : %1,%2,%3").arg(tarColor.red()).arg(tarColor.green()).arg(tarColor.blue()));
-    painter.drawText(QPoint(8, 158), QString("POS (Ctrl+P) : X:%1 Y:%2").arg(nativePos.x()).arg(nativePos.y()));
+    painter.drawText(QPoint(8, 114), QString("HEX (Ctrl+H) : %1").arg(tarColor.name().toUpper()));
+    painter.drawText(QPoint(8, 130), QString("RGB (Ctrl+R) : %1,%2,%3").arg(tarColor.red()).arg(tarColor.green()).arg(tarColor.blue()));
+    QColor cmyk = tarColor.toCmyk();
+    painter.drawText(QPoint(8, 146), QString("CMYK (Ctrl+Y) : %1,%2,%3,%4").arg(cmyk.cyan()).arg(cmyk.magenta()).arg(cmyk.yellow()).arg(cmyk.black()));
+    painter.drawText(QPoint(8, 162), QString("POS (Ctrl+P) : X:%1 Y:%2").arg(nativePos.x()).arg(nativePos.y()));
     //边框
     painter.setPen(QPen(QColor(0, 0, 0, 168), 1));
     painter.setBrush(Qt::NoBrush);
