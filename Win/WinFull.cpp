@@ -117,7 +117,7 @@ QImage WinFull::getCutImg()
 
 void WinFull::saveToClipboard()
 {
-    QApplication::clipboard()->setImage(getCutImg());
+    Util::imgToClipboard(getCutImg());
     close();
 }
 

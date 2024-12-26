@@ -1,10 +1,16 @@
 #include <QWindow>
+#include <QFileDialog>
+#include <QStandardPaths>
+#include <QApplication>
+#include <QClipboard>
 
 #include "WinPin.h"
 #include "WinFull.h"
 #include "WinMask.h"
 #include "WinBoard.h"
 #include "WinCanvas.h"
+#include "../Shape/ShapeBase.h"
+#include "../App/Util.h"
 #include "../Tool/ToolMain.h"
 #include "../Tool/ToolSub.h"
 
@@ -77,10 +83,46 @@ void WinPin::showToolSub()
 
 void WinPin::saveToClipboard()
 {
+    QImage tar;
+    {
+        auto img = Util::printWindow(this);
+        tar = img.copy(QRect(padding, padding, w - padding * 2, h - padding * 2));
+    }
+    QPainter p(&tar);
+    p.setRenderHint(QPainter::Antialiasing, true);
+    p.setRenderHint(QPainter::TextAntialiasing, true);
+    for (auto shape : shapes)
+    {
+        shape->paint(&p);
+    }
+    Util::imgToClipboard(tar);
+    close();
 }
 
 void WinPin::saveToFile()
 {
+    QString desktopPath = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
+    auto filePath = QDir::cleanPath(desktopPath + QDir::separator() + "Img" + QDateTime::currentDateTime().toString("yyyyMMddhhmmsszzz") + ".png");
+    filePath = QFileDialog::getSaveFileName(toolMain, tr("保存文件"), filePath, "ScreenCapture (*.png)");
+    if (filePath.isEmpty())
+    {
+        return;
+    }
+
+    QImage tar;
+    {
+        auto img = Util::printWindow(this);
+        tar = img.copy(QRect(padding,padding,w-padding*2,h-padding*2));
+    }
+    QPainter p(&tar);
+    p.setRenderHint(QPainter::Antialiasing, true);
+    p.setRenderHint(QPainter::TextAntialiasing, true);
+    for (auto shape : shapes)
+    {
+        shape->paint(&p);
+    }
+    tar.save(filePath);
+    close();
 }
 
 void WinPin::close()

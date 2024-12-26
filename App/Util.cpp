@@ -1,4 +1,4 @@
-﻿
+﻿#include <QMessageBox>
 #include "Util.h"
 #include "../Win/WinBox.h"
 #pragma comment(lib, "comctl32.lib")
@@ -63,6 +63,27 @@ QImage Util::printScreen(const int& x, const int& y, const int& w, const int& h)
     DeleteObject(hBitmap);
     ReleaseDC(NULL, hScreen);
     return img;
+}
+void Util::imgToClipboard(const QImage& img)
+{
+    auto width = img.width();
+    auto height = img.height();
+    HDC screenDC = GetDC(nullptr);
+    HDC memoryDC = CreateCompatibleDC(screenDC);
+    HBITMAP hBitmap = CreateCompatibleBitmap(screenDC, width, height);
+    DeleteObject(SelectObject(memoryDC, hBitmap));
+    BITMAPINFO bmi = { sizeof(BITMAPINFOHEADER), width, 0 - height, 1, 32, BI_RGB, width * 4 * height, 0, 0, 0, 0 };
+    SetDIBitsToDevice(memoryDC, 0, 0, width, height, 0, 0, 0, height, img.bits(), &bmi, DIB_RGB_COLORS);
+    if (!OpenClipboard(nullptr)) {
+        QMessageBox::warning(NULL, "Error", "Failed to open clipboard when save to clipboard.", QMessageBox::StandardButton::Ok);
+        return;
+    }
+    EmptyClipboard();
+    SetClipboardData(CF_BITMAP, hBitmap);
+    CloseClipboard();
+    ReleaseDC(nullptr, screenDC);
+    DeleteDC(memoryDC);
+    DeleteObject(hBitmap);
 }
 //QImage Util::printScreen(const int& x, const int& y, const int& w, const int& h)
 //{
