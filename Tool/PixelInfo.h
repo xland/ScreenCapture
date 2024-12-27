@@ -2,21 +2,21 @@
 
 #include <QWidget>
 
-class WinFull;
+class WinBox;
 class PixelInfo  : public QWidget
 {
 	Q_OBJECT
 
 public:
-	PixelInfo(WinFull* win, QWidget* parent=nullptr);
+	PixelInfo(WinBox* win, QWidget* parent=nullptr);
 	~PixelInfo();
-	void mouseMove(QMouseEvent* event);
+	void mouseMove(const QPoint& nativePos);
 protected:
 	void paintEvent(QPaintEvent* event) override;
 	void closeEvent(QCloseEvent* event) override;
 private:
 	bool posInScreen(const int& x, const int& y);
 private:
-	WinFull* win;
+	WinBox* win;
 	QPoint nativePos;
 };

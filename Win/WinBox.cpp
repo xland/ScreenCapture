@@ -181,11 +181,11 @@ void WinBox::hideTools(State state)
         toolSub->hide();
     }
 	this->state = state;
-    //if (state == State::start) {
-    //    if (!pixelInfo) {
-    //        pixelInfo = new PixelInfo(this);
-    //    }
-    //}
+    if (state == State::start) {
+        if (!pixelInfo) {
+            pixelInfo = new PixelInfo(this);
+        }
+    }
 }
 void WinBox::mousePressRight(QMouseEvent* event)
 {

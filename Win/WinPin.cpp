@@ -13,6 +13,7 @@
 #include "../App/Util.h"
 #include "../Tool/ToolMain.h"
 #include "../Tool/ToolSub.h"
+#include "../Tool/PixelInfo.h"
 
 namespace{
     std::map<QString, std::wstring> menuItems;
@@ -49,6 +50,7 @@ void WinPin::init(WinFull* full)
     winPin->h = winPin->img.height();
     winPin->initWindow(false);
     winPin->show();
+    winPin->pixelInfo = new PixelInfo(winPin);
     full->close();
 }
 
@@ -156,6 +158,7 @@ void WinPin::ctrlTPress()
 void WinPin::mousePress(QMouseEvent* event)
 {
     event->ignore();
+    if (pixelInfo)pixelInfo->hide();
     if (toolSub && toolSub->isVisible()) {
         mousePressOnShape(event);
     }
@@ -203,8 +206,16 @@ void WinPin::mouseDBClick(QMouseEvent* event)
 
 void WinPin::mouseMove(QMouseEvent* event)
 {
+    trackMouse();
     event->ignore();
-    mouseMoveOnShape(event); //todo 这里其实可以显示PixelInfo
+    if (state == State::start && pixelInfo) {
+        SetCapture(hwnd);
+        auto pos = event->pos();
+        QPoint p(pos.x() + x, pos.y() + y);
+        pixelInfo->mouseMove(p);
+        return;
+    }
+    mouseMoveOnShape(event);
     if (!event->isAccepted()) {
         if (state == State::text) {
             QGuiApplication::setOverrideCursor(Qt::IBeamCursor);
@@ -252,6 +263,23 @@ void WinPin::mouseRelease(QMouseEvent* event)
             showToolMain();
         }
     }
+}
+
+bool WinPin::processOtherMsg(UINT msg, WPARAM wParam, LPARAM lParam)
+{
+    switch (msg)
+    {
+        case WM_MOVE: {
+            x = LOWORD(lParam); 
+            y = HIWORD(lParam);
+            return true;
+        }
+        case WM_MOUSELEAVE: {
+            if(pixelInfo)pixelInfo->hide();
+            untrackMouse();
+        }
+    }
+    return false;
 }
 
 void WinPin::prepareImg(WinFull* full)
@@ -320,5 +348,27 @@ void WinPin::prepareImg(WinFull* full)
         p.drawRect(0, padding, padding, tarImg.height());
     }
 	p.drawImage(padding, padding, tarImg);
+}
+
+void WinPin::trackMouse()
+{
+    if (!isTrackMouseEvent) {
+        TRACKMOUSEEVENT tme = {};
+        tme.cbSize = sizeof(TRACKMOUSEEVENT);
+        tme.dwFlags = TME_HOVER | TME_LEAVE;
+        tme.hwndTrack = hwnd;
+        tme.dwHoverTime = 1;
+        isTrackMouseEvent = TrackMouseEvent(&tme);
+    }
+}
+
+void WinPin::untrackMouse()
+{
+    TRACKMOUSEEVENT tme = {};
+    tme.cbSize = sizeof(TRACKMOUSEEVENT);
+    tme.dwFlags = TME_CANCEL | TME_HOVER | TME_LEAVE;
+    tme.hwndTrack = hwnd;
+    TrackMouseEvent(&tme);
+    isTrackMouseEvent = false;
 }
 

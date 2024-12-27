@@ -40,6 +40,7 @@ protected:
 	virtual void removeShape() {};
 	virtual void moveByKey(const int& key) {};
 	virtual void copyColor(const int& key) {};
+	virtual bool processOtherMsg(UINT msg, WPARAM wParam, LPARAM lParam) { return false; };
 private:
 	static LRESULT CALLBACK routeWinMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 	LRESULT CALLBACK processWinMsg(UINT msg, WPARAM wParam, LPARAM lParam);

@@ -7,10 +7,10 @@
 #include <Windows.h>
 
 #include "PixelInfo.h"
-#include "../Win/WinFull.h"
+#include "../Win/WinBox.h"
 #include "../App/Util.h"
 
-PixelInfo::PixelInfo(WinFull* win, QWidget* parent) : QWidget(parent),win{win}
+PixelInfo::PixelInfo(WinBox* win, QWidget* parent) : QWidget(parent),win{win}
 {
     setAutoFillBackground(false);
     setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::Tool);
@@ -41,28 +41,26 @@ bool PixelInfo::posInScreen(const int& x, const int& y)
     return false;
 }
 
-void PixelInfo::mouseMove(QMouseEvent* event)
+void PixelInfo::mouseMove(const QPoint& nativePos)
 {
-    if (win->state == State::start) {
-        QPoint pos = QCursor::pos();
-        int span{ 10 };
-        if (posInScreen(pos.x() + width() + span, pos.y() + height() + span)) {
-            move(pos.x() + span, pos.y() + span);
-        }
-        else if (posInScreen(pos.x() - width() - span, pos.y() + height() + span)) {
-            move(pos.x() - span - width(), pos.y() + span);
-        }
-        else if (posInScreen(pos.x() + width() + span, pos.y() - height() - span)) {
-            move(pos.x() + span, pos.y() - height() - span);
-        }
-        else if (posInScreen(pos.x() - width() - span, pos.y() - height() - span)) {
-            move(pos.x() - span - width(), pos.y() - height() - span);
-        }
-        nativePos = event->pos();
-        update();
-        if (!isVisible()) {
-            show();
-        }
+    QPoint pos = QCursor::pos();
+    int span{ 10 };
+    if (posInScreen(pos.x() + width() + span, pos.y() + height() + span)) {
+        move(pos.x() + span, pos.y() + span);
+    }
+    else if (posInScreen(pos.x() - width() - span, pos.y() + height() + span)) {
+        move(pos.x() - span - width(), pos.y() + span);
+    }
+    else if (posInScreen(pos.x() + width() + span, pos.y() - height() - span)) {
+        move(pos.x() + span, pos.y() - height() - span);
+    }
+    else if (posInScreen(pos.x() - width() - span, pos.y() - height() - span)) {
+        move(pos.x() - span - width(), pos.y() - height() - span);
+    }
+    this->nativePos = nativePos;
+    update();
+    if (!isVisible()) {
+        show();
     }
 }
 
@@ -75,8 +73,6 @@ void PixelInfo::paintEvent(QPaintEvent* event)
     painter.setBrush(QColor(0, 0, 0, 168));
     painter.drawRect(rect());
     //放大后的目标矩形区域的图像
-    //QRect tarRect((nativePos.x() - 20), (nativePos.y() - 10), 36, 20);
-    //auto img = win->img.copy(tarRect);
     auto img = Util::printScreen(nativePos.x() - 20, nativePos.y() - 10, 36, 20);
     painter.drawImage(QRect(0,0,180,100),img);//放大了5倍
     //十字架准星

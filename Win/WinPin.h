@@ -28,9 +28,13 @@ protected:
 	void mouseMove(QMouseEvent* event) override;
 	void mouseDrag(QMouseEvent* event) override;
 	void mouseRelease(QMouseEvent* event) override;
+	bool processOtherMsg(UINT msg, WPARAM wParam, LPARAM lParam) override;
 private:
 	void prepareImg(WinFull* full);
+	void trackMouse();
+	void untrackMouse();
 private:
+	bool isTrackMouseEvent{ false };
 	bool needShowToolMain{ false };
 	QPoint posPress;
 };

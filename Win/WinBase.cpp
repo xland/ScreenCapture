@@ -34,7 +34,7 @@ void WinBase::initWindow(bool isTransparent)
     auto exStyle = WS_EX_LAYERED | WS_EX_TOOLWINDOW | WS_EX_TOPMOST;
 #endif    
     if (isTransparent) exStyle = exStyle | WS_EX_TRANSPARENT | WS_EX_NOACTIVATE;
-    auto style = WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
+    auto style = WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_POPUP;
     hwnd = CreateWindowEx(exStyle,L"ScreenCapture", L"ScreenCapture",style,x, y, w, h, NULL, NULL, GetModuleHandle(NULL), static_cast<LPVOID>(this));
     //if (isTransparent) {
     //    EnableWindow(hwnd, FALSE);
@@ -89,10 +89,6 @@ LRESULT WinBase::processWinMsg(UINT msg, WPARAM wParam, LPARAM lParam)
 {
     switch (msg)
     {
-    case WM_MOVE: {
-        x = LOWORD(lParam); y = HIWORD(lParam);
-        break;
-    }
     case WM_KEYDOWN:
     {
         if(processKeyDown(wParam)) return 0;
@@ -135,6 +131,7 @@ LRESULT WinBase::processWinMsg(UINT msg, WPARAM wParam, LPARAM lParam)
     }
     default:
     {
+        if (processOtherMsg(msg, wParam, lParam)) return 0;
         return DefWindowProc(hwnd, msg, wParam, lParam);
     }
     }

@@ -146,12 +146,12 @@ void WinFull::mouseMove(QMouseEvent* event)
 {
     event->ignore();
     winMask->mouseMove(event);
-    if (pixelInfo && !event->isAccepted()) {
-        pixelInfo->mouseMove(event);
+    if (event->isAccepted()) return;
+    if (state == State::start && pixelInfo) {
+        pixelInfo->mouseMove(event->pos());
+        return;
     }
-    if (!event->isAccepted()) {
-        mouseMoveOnShape(event);
-    }
+    mouseMoveOnShape(event);
     if (!event->isAccepted()) {
         if (state == State::text) {
             QGuiApplication::setOverrideCursor(Qt::IBeamCursor);

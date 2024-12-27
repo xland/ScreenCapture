@@ -6,6 +6,8 @@
 - 有的时候del无法删除元素
 - Ctrl+T之后应该显示PixlInfo
 - 鼠标移出Pin窗口，要触发release事件，不然一直处于拖动改变shape状态
+- Pin窗口也应该显示PixInfo
+- Pin窗口必须是TopMost
 
 
 - 通过命令行截图
