@@ -15,6 +15,7 @@
 #include "../Shape/ShapeMosaicLine.h"
 #include "../Tool/ToolSub.h"
 #include "../Tool/ToolMain.h"
+#include "../Tool/PixelInfo.h"
 
 WinBox::WinBox(QObject* parent) : WinBase(parent)
 {
@@ -180,10 +181,19 @@ void WinBox::hideTools(State state)
         toolSub->hide();
     }
 	this->state = state;
+    //if (state == State::start) {
+    //    if (!pixelInfo) {
+    //        pixelInfo = new PixelInfo(this);
+    //    }
+    //}
 }
 void WinBox::mousePressRight(QMouseEvent* event)
 {
     qApp->quit();
+}
+
+void WinBox::copyColor(const int& key)
+{
 }
 
 

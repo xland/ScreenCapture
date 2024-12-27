@@ -25,6 +25,7 @@ WinFull::WinFull(QObject* parent) : WinBox(parent)
     img = Util::printScreen(x, y, w, h);
     initWindow(false);
     show();
+    releaseImg();
 }
 WinFull::~WinFull()
 {
@@ -174,6 +175,3 @@ void WinFull::mouseRelease(QMouseEvent* event)
     winMask->mouseRelease(event);
     mouseReleaseOnShape(event);
 }
-
-
-
