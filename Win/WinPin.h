@@ -21,6 +21,7 @@ public:
 	void saveToFile() override;
 	void close() override;
 	void ctrlTPress() override;
+	void moveByKey(const int& key);
 protected:
 	void mousePress(QMouseEvent* event) override;
 	void mousePressRight(QMouseEvent* event) override;

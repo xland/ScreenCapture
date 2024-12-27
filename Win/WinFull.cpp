@@ -36,6 +36,7 @@ void WinFull::init()
     auto winFull = new WinFull();
     winFull->winMask = new WinMask(winFull);
     winFull->pixelInfo = new PixelInfo(winFull);
+    SetFocus(winFull->hwnd);
 }
 void WinFull::showToolMain()
 {
@@ -174,4 +175,23 @@ void WinFull::mouseRelease(QMouseEvent* event)
     event->ignore();
     winMask->mouseRelease(event);
     mouseReleaseOnShape(event);
+}
+void WinFull::moveByKey(const int& key)
+{
+    if (state == State::start) {
+        POINT point;
+        GetCursorPos(&point);
+        if (key == 0) SetCursorPos(point.x - 1, point.y);
+        else if (key == 1) SetCursorPos(point.x, point.y - 1);
+        else if (key == 2) SetCursorPos(point.x + 1, point.y);
+        else if (key == 3) SetCursorPos(point.x, point.y + 1);
+    }
+    else {
+        if (key == 0) winMask->maskRect.translate(-1, 0);
+        else if (key == 1) winMask->maskRect.translate(0, -1);
+        else if (key == 2) winMask->maskRect.translate(1, 0);
+        else if (key == 3) winMask->maskRect.translate(0, 1);
+        showToolMain();
+        winMask->update();
+    }
 }

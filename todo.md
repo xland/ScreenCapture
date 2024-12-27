@@ -6,8 +6,8 @@
 - 有的时候del无法删除元素
 - Ctrl+T之后应该显示PixlInfo
 - 鼠标移出Pin窗口，要触发release事件，不然一直处于拖动改变shape状态
-- Pin窗口也应该显示PixInfo
 - Pin窗口必须是TopMost
+- 拷贝颜色信息位置信息
 
 
 - 通过命令行截图
@@ -30,5 +30,6 @@
 - pin窗口也可以显示PixInfo
 - Pin窗口获取像素值
 - Qt写入剪切板会内存泄漏
+- Pin窗口PixInfo显示在右下时，定位有点问题
 - hsv color
 - 

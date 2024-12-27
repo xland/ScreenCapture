@@ -52,6 +52,7 @@ void WinPin::init(WinFull* full)
     winPin->show();
     winPin->pixelInfo = new PixelInfo(winPin);
     full->close();
+    SetFocus(winPin->hwnd);
 }
 
 void WinPin::showToolMain()
@@ -65,6 +66,7 @@ void WinPin::showToolMain()
     SetWindowPos(hwnd, nullptr, pos.x(), pos.y(), 0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_SHOWWINDOW);
     toolMain->show();
     state = State::tool;
+    if (pixelInfo) pixelInfo->close();
 }
 
 void WinPin::showToolSub()
@@ -195,6 +197,7 @@ void WinPin::mousePressRight(QMouseEvent* event)
        }
     }
     else if (cmd == 1002) {
+        if (pixelInfo) pixelInfo->close();
         close();
     }
     DestroyMenu(hMenu);
@@ -209,19 +212,20 @@ void WinPin::mouseMove(QMouseEvent* event)
     trackMouse();
     event->ignore();
     if (state == State::start && pixelInfo) {
-        SetCapture(hwnd);
         auto pos = event->pos();
-        QPoint p(pos.x() + x, pos.y() + y);
-        pixelInfo->mouseMove(p);
+        if (pos.x() > padding && pos.y() > padding && pos.x() < w - padding && pos.y() < h - padding) {
+            QGuiApplication::setOverrideCursor(Qt::SizeAllCursor);
+            pixelInfo->mouseMove(pos);
+        }
+        else {
+            pixelInfo->hide();
+        }
         return;
     }
     mouseMoveOnShape(event);
     if (!event->isAccepted()) {
         if (state == State::text) {
             QGuiApplication::setOverrideCursor(Qt::IBeamCursor);
-        }
-        else if(state == State::start) {
-            QGuiApplication::setOverrideCursor(Qt::SizeAllCursor);
         }
         else
         {
@@ -234,11 +238,6 @@ void WinPin::mouseDrag(QMouseEvent* event)
 {
     event->ignore();
     auto pos = event->pos();
-    //todo 
-	//if (pos.x() <= padding || pos.y() <= padding || pos.x() >= w - padding || pos.y() >= h - padding)
-	//{
-	//	return;
-	//}
     mouseDragOnShape(event);
     if (GetCapture() == hwnd) {
         auto span = pos - posPress;
@@ -281,7 +280,17 @@ bool WinPin::processOtherMsg(UINT msg, WPARAM wParam, LPARAM lParam)
     }
     return false;
 }
-
+void WinPin::moveByKey(const int& key)
+{
+    if (state == State::start) {
+        POINT point;
+        GetCursorPos(&point);
+        if (key == 0) SetCursorPos(point.x - 1, point.y);
+        else if (key == 1) SetCursorPos(point.x, point.y - 1);
+        else if (key == 2) SetCursorPos(point.x + 1, point.y);
+        else if (key == 3) SetCursorPos(point.x, point.y + 1);
+    }
+}
 void WinPin::prepareImg(WinFull* full)
 {
     auto tarImg = full->getCutImg();

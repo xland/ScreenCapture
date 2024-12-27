@@ -21,6 +21,7 @@ public:
 	void close() override;
 	void saveToClipboard() override;
 	void saveToFile() override;
+	void moveByKey(const int& key) override;
 	QImage getCutImg();
 public:
 	qreal dpr{ 1.0 };

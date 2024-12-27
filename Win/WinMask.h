@@ -19,7 +19,6 @@ public:
 	void mouseRelease(QMouseEvent* event);
 	void mouseMove(QMouseEvent* event);
 	void update();
-	void moveByKey(const int& key) override;
 public:
 	QRect maskRect;
 protected:

@@ -115,33 +115,33 @@ void ToolBase::keyPressEvent(QKeyEvent* event)
     else if (event->key() == Qt::Key_Left) {
         if (auto w = qobject_cast<WinFull*>(win)) 
         {
-            SetFocus(w->winMask->hwnd);
+            SetFocus(w->hwnd);
             w->hideTools(State::mask);
-            w->winMask->moveByKey(0);
+            w->moveByKey(0);
         }
     }
     else if (event->key() == Qt::Key_Up) {
         if (auto w = qobject_cast<WinFull*>(win))
         {
-            SetFocus(w->winMask->hwnd);
+            SetFocus(w->hwnd);
             w->hideTools(State::mask);
-            w->winMask->moveByKey(1);
+            w->moveByKey(1);
         }
     }
     else if (event->key() == Qt::Key_Right) {
         if (auto w = qobject_cast<WinFull*>(win))
         {
-            SetFocus(w->winMask->hwnd);
+            SetFocus(w->hwnd);
             w->hideTools(State::mask);
-            w->winMask->moveByKey(2);
+            w->moveByKey(2);
         }
     }
     else if (event->key() == Qt::Key_Down) {
         if (auto w = qobject_cast<WinFull*>(win))
         {
-            SetFocus(w->winMask->hwnd);
+            SetFocus(w->hwnd);
             w->hideTools(State::mask);
-            w->winMask->moveByKey(3);
+            w->moveByKey(3);
         }
     }
 }

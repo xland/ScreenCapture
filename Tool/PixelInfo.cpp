@@ -73,7 +73,7 @@ void PixelInfo::paintEvent(QPaintEvent* event)
     painter.setBrush(QColor(0, 0, 0, 168));
     painter.drawRect(rect());
     //放大后的目标矩形区域的图像
-    auto img = Util::printScreen(nativePos.x() - 20, nativePos.y() - 10, 36, 20);
+    auto img = Util::printScreen(nativePos.x()+win->x - 20, nativePos.y()+win->y - 10, 36, 20);
     painter.drawImage(QRect(0,0,180,100),img);//放大了5倍
     //十字架准星
     QPainterPath path;
@@ -93,7 +93,7 @@ void PixelInfo::paintEvent(QPaintEvent* event)
     painter.drawText(QPoint(8, 130), QString("RGB (Ctrl+R) : %1,%2,%3").arg(tarColor.red()).arg(tarColor.green()).arg(tarColor.blue()));
     QColor cmyk = tarColor.toCmyk();
     painter.drawText(QPoint(8, 146), QString("CMYK (Ctrl+K) : %1,%2,%3,%4").arg(cmyk.cyan()).arg(cmyk.magenta()).arg(cmyk.yellow()).arg(cmyk.black()));
-    painter.drawText(QPoint(8, 162), QString("POS (Ctrl+P) : X:%1 Y:%2").arg(nativePos.x()).arg(nativePos.y()));
+    painter.drawText(QPoint(8, 162), QString("POS (Ctrl+P) : X:%1 Y:%2").arg(nativePos.x()-win->padding).arg(nativePos.y()-win->padding));
     //边框
     painter.setPen(QPen(QColor(0, 0, 0, 168), 1));
     painter.setBrush(Qt::NoBrush);
