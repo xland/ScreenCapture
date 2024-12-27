@@ -29,7 +29,6 @@
 - pin win右键菜单可以用Qt技术实现? (不存在大小的问题)(要点两次才会出现)
 - pin窗口也可以显示PixInfo
 - Pin窗口获取像素值
-- Qt写入剪切板会内存泄漏
 - Pin窗口PixInfo显示在右下时，定位有点问题
 - hsv color
 - 
