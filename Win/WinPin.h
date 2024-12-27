@@ -29,7 +29,7 @@ protected:
 	void mouseDrag(QMouseEvent* event) override;
 	void mouseRelease(QMouseEvent* event) override;
 private:
-	static QImage prepareImg(WinFull* full);
+	void prepareImg(WinFull* full);
 private:
 	bool needShowToolMain{ false };
 	QPoint posPress;

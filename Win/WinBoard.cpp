@@ -25,12 +25,15 @@ WinBoard::~WinBoard()
 
 void WinBoard::refresh(bool releaseFlag)
 {
+    auto win = (WinBox*)parent();
     initImg();
     img.fill(Qt::transparent);
     QPainter p(&img);
+    if (win->padding > 0) {
+        p.setClipRect(win->padding, win->padding, w - 2 * win->padding, h - 2 * win->padding);
+    }
     p.setRenderHint(QPainter::Antialiasing, true);
     p.setRenderHint(QPainter::TextAntialiasing, true);
-    auto win = (WinBox*)parent();
     bool enableRedo{ false };
     bool enableUndo{ false };
     for (auto shape : win->shapes)

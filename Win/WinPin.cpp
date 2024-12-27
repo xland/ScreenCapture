@@ -15,13 +15,12 @@
 #include "../Tool/ToolSub.h"
 
 namespace{
-    static int padding{ 8 };
     std::map<QString, std::wstring> menuItems;
 }
 
 WinPin::WinPin(QObject* parent) : WinBox(parent)
 {
-
+    padding = 8;
 }
 
 WinPin::~WinPin()
@@ -43,9 +42,9 @@ void WinPin::initData(const QJsonArray& arr, const QString& lang)
 void WinPin::init(WinFull* full)
 {
     auto winPin = new WinPin();
-    winPin->img = prepareImg(full);
-    winPin->x = full->x + full->winMask->maskRect.left() - padding;
-    winPin->y = full->y + full->winMask->maskRect.top() - padding;
+    winPin->prepareImg(full);
+    winPin->x = full->x + full->winMask->maskRect.left() - winPin->padding;
+    winPin->y = full->y + full->winMask->maskRect.top() - winPin->padding;
     winPin->w = winPin->img.width();
     winPin->h = winPin->img.height();
     winPin->initWindow(false);
@@ -255,12 +254,12 @@ void WinPin::mouseRelease(QMouseEvent* event)
     }
 }
 
-QImage WinPin::prepareImg(WinFull* full)
+void WinPin::prepareImg(WinFull* full)
 {
     auto tarImg = full->getCutImg();
-    auto bgImg = QImage(tarImg.size() + QSize(padding * 2, padding * 2), QImage::Format_ARGB32_Premultiplied);
-    bgImg.fill(Qt::transparent);
-    QPainter p(&bgImg);
+    img = QImage(tarImg.size() + QSize(padding * 2, padding * 2), QImage::Format_ARGB32_Premultiplied);
+    img.fill(Qt::transparent);
+    QPainter p(&img);
     p.setRenderHint(QPainter::Antialiasing);
     p.setPen(Qt::NoPen);
     QColor c(88, 88, 88, 88);
@@ -286,7 +285,7 @@ QImage WinPin::prepareImg(WinFull* full)
         p.drawRect(padding + tarImg.width(), 0, padding, padding);
     }
     {
-        QLinearGradient gradient(padding + tarImg.width(), 0, bgImg.width(), 0);
+        QLinearGradient gradient(padding + tarImg.width(), 0, img.width(), 0);
         gradient.setColorAt(0.0, c);
         gradient.setColorAt(1.0, Qt::transparent);
         p.setBrush(gradient);
@@ -300,7 +299,7 @@ QImage WinPin::prepareImg(WinFull* full)
         p.drawRect(padding + tarImg.width(), padding + tarImg.height(), padding, padding);
     }
     {
-        QLinearGradient gradient(padding, padding+ tarImg.height(), padding, bgImg.height());
+        QLinearGradient gradient(padding, padding+ tarImg.height(), padding, img.height());
         gradient.setColorAt(0.0, c);
         gradient.setColorAt(1.0, Qt::transparent);
         p.setBrush(gradient);
@@ -321,6 +320,5 @@ QImage WinPin::prepareImg(WinFull* full)
         p.drawRect(0, padding, padding, tarImg.height());
     }
 	p.drawImage(padding, padding, tarImg);
-	return bgImg;
 }
 

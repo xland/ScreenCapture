@@ -51,6 +51,10 @@ std::shared_ptr<QPainter> WinCanvas::getPainter()
 {
     img.fill(Qt::transparent);
     auto p = std::make_shared<QPainter>(&img);
+    auto win = (WinBox*)parent();
+    if (win->padding > 0) {
+        p->setClipRect(win->padding, win->padding, w - 2 * win->padding, h - 2 * win->padding);
+    }
     p->setRenderHint(QPainter::Antialiasing, true);
     p->setRenderHint(QPainter::TextAntialiasing, true);
     return p;

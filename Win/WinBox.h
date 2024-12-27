@@ -32,6 +32,7 @@ public:
 	PixelInfo* pixelInfo;
 	WinCanvas* winCanvas;
 	WinBoard* winBoard;
+	qint16 padding{ 0 };
 protected:
 	ShapeBase* addShape();
 	void mousePressOnShape(QMouseEvent* event);
