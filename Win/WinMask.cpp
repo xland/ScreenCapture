@@ -1,6 +1,7 @@
 ﻿#include <QWindow>
 #include <dwmapi.h>
 #include <shellscalingapi.h>
+#include <QTimer>
 
 #include "WinMask.h"
 #include "WinFull.h"
@@ -49,8 +50,7 @@ void WinMask::mousePress(QMouseEvent* event)
     }
     if (win->state > State::tool && mousePosState > 0) {
         posPress = event->pos();
-        win->toolMain->hide();
-        win->toolSub->hide();
+        win->hideTools(win->state);
         event->accept();
         return;
     }
@@ -92,20 +92,11 @@ void WinMask::mouseDrag(QMouseEvent* event)
 void WinMask::mouseRelease(QMouseEvent* event)
 {
     auto win = (WinFull*)parent();
-    if (win->state == State::mask)
+    if (win->state == State::mask || (win->state >= State::tool && !win->toolMain->isVisible()) )
     {
         win->state = State::tool;
         win->showToolMain();
         update();
-    }
-    else if (win->state == State::tool)
-    {
-        win->showToolMain();
-    }
-    if (win->state > State::tool && mousePosState > 0) {
-        win->showToolMain();
-        win->showToolSub();
-        return;
     }
 }
 
