@@ -1,17 +1,15 @@
 ﻿- 按住Shift键，画马赛克线条时，拖拽会扫过一大片区域
 - 主工具栏要保持在屏幕内，动态调整位置
 - maskRect的info信息在多屏情况下，仅判断y>0，可能会显示不全
-- 两个工具栏都显示的时候，改变mask大小，子工具栏位置有问题
 - Ctrl+Z,Ctrl+Y
 - 有的时候del无法删除元素
-- Ctrl+T之后应该显示PixlInfo
 - 鼠标移出Pin窗口，要触发release事件，不然一直处于拖动改变shape状态
-- Pin窗口必须是TopMost
 - 拷贝颜色信息位置信息
 - Pin窗口不能写字
 - full会画到mask上面
 - 改变mask到顶部  toolbar不会出现在底部
 - Pin窗口双击写入剪切板
+- 高亮窗口又不对了
 
 
 
