@@ -100,6 +100,7 @@ void WinPin::saveToClipboard()
     }
     Util::imgToClipboard(tar);
     close();
+
 }
 
 void WinPin::saveToFile()
@@ -141,6 +142,9 @@ void WinPin::close()
     }
     if (toolSub) {
         toolSub->close();
+    }
+    if (pixelInfo) {
+        pixelInfo->close();
     }
     WinBase::close();
 }
@@ -197,7 +201,6 @@ void WinPin::mousePressRight(QMouseEvent* event)
        }
     }
     else if (cmd == 1002) {
-        if (pixelInfo) pixelInfo->close();
         close();
     }
     DestroyMenu(hMenu);
@@ -205,6 +208,7 @@ void WinPin::mousePressRight(QMouseEvent* event)
 
 void WinPin::mouseDBClick(QMouseEvent* event)
 {
+    saveToClipboard();
 }
 
 void WinPin::mouseMove(QMouseEvent* event)
@@ -243,7 +247,7 @@ void WinPin::mouseDrag(QMouseEvent* event)
         auto span = pos - posPress;
         auto xx{ x + span.x() }, yy{ y + span.y() };
         SetWindowPos(hwnd, NULL, xx, yy, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
-        x = xx;
+        x = xx;  //不能在WM_MOVE处理，因为那里不够及时，会造成窗口高速闪烁的问题
         y = yy;
         if (winBoard) {
             SetWindowPos(winBoard->hwnd, NULL, xx, yy, 0, 0, SWP_NOSIZE | SWP_NOZORDER);

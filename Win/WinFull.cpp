@@ -170,6 +170,14 @@ void WinFull::mouseRelease(QMouseEvent* event)
     winMask->mouseRelease(event);
     mouseReleaseOnShape(event);
 }
+void WinFull::mouseDBClick(QMouseEvent* event)
+{
+    saveToClipboard();
+}
+void WinFull::mousePressRight(QMouseEvent* event)
+{
+    qApp->quit();
+}
 void WinFull::moveByKey(const int& key)
 {
     if (state == State::start) {

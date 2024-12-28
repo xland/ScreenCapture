@@ -260,3 +260,9 @@ void ToolSub::showEvent(QShowEvent* event)
 		strokeCtrl->setEnabled(!values[0].selected);
 	}
 }
+
+void ToolSub::closeEvent(QCloseEvent* event)
+{
+	deleteLater();
+	win->toolSub = nullptr;
+}

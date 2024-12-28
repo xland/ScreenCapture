@@ -54,11 +54,6 @@ void ToolBase::leaveEvent(QEvent* event)
     QWidget::leaveEvent(event);
 }
 
-void ToolBase::closeEvent(QCloseEvent* event)
-{
-    deleteLater();
-}
-
 void ToolBase::showEvent(QShowEvent* event)
 {
     QWidget::showEvent(event);

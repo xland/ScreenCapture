@@ -300,3 +300,9 @@ void ToolMain::mouseMoveEvent(QMouseEvent* event)
         }
     }
 }
+
+void ToolMain::closeEvent(QCloseEvent* event)
+{
+    deleteLater();
+    win->toolMain = nullptr;
+}

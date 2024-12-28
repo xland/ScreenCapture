@@ -25,6 +25,7 @@ protected:
 	void paintEvent(QPaintEvent* event) override;
 	void mousePressEvent(QMouseEvent* event) override;
 	void mouseMoveEvent(QMouseEvent* event) override;
+	void closeEvent(QCloseEvent* event) override;
 private:
 	bool topFlag{false};
 };

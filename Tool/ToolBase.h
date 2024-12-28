@@ -24,7 +24,6 @@ public:
 protected:
 	void enterEvent(QEnterEvent* event) override;
 	void leaveEvent(QEvent* event) override;
-	void closeEvent(QCloseEvent* event) override;
 	void showEvent(QShowEvent* event) override;
 	void hideEvent(QHideEvent* event) override;
 	void keyPressEvent(QKeyEvent* event) override;

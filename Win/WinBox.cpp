@@ -140,10 +140,6 @@ void WinBox::removeShape()
     }
     
 }
-void WinBox::mouseDBClick(QMouseEvent* event)
-{
-    qApp->quit();
-}
 void WinBox::undo()
 {
     for (int i = shapes.size() - 1; i >= 0; i--)
@@ -187,10 +183,7 @@ void WinBox::hideTools(State state)
         }
     }
 }
-void WinBox::mousePressRight(QMouseEvent* event)
-{
-    qApp->quit();
-}
+
 
 void WinBox::copyColor(const int& key)
 {

@@ -91,6 +91,6 @@ void PixelInfo::paintEvent(QPaintEvent* event)
 
 void PixelInfo::closeEvent(QCloseEvent* event)
 {
-    win->pixelInfo = nullptr;
     deleteLater();
+    win->pixelInfo = nullptr;
 }
