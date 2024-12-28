@@ -281,6 +281,8 @@ bool WinPin::processOtherMsg(UINT msg, WPARAM wParam, LPARAM lParam)
         case WM_MOUSELEAVE: {
             if(pixelInfo)pixelInfo->hide();
             untrackMouse();
+            //auto e = Util::createMouseEvent(lParam, QEvent::MouseButtonRelease);
+            //mouseReleaseOnShape(&e);
         }
     }
     return false;

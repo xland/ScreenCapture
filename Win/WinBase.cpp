@@ -3,6 +3,7 @@
 #include <dwmapi.h>
 
 #include "WinBase.h"
+#include "WinPin.h"
 #include "../App/Util.h"
 
 WinBase::WinBase(QObject *parent):QObject(parent)
@@ -30,9 +31,13 @@ void WinBase::initWindow(bool isTransparent)
     auto flag = RegisterClassEx(&wcx);
 #ifdef DEBUG
     auto exStyle = WS_EX_LAYERED;
+    if (qobject_cast<WinPin*>(this)) {
+        exStyle = exStyle | WS_EX_TOPMOST;
+    }
 #else
     auto exStyle = WS_EX_LAYERED | WS_EX_TOOLWINDOW | WS_EX_TOPMOST;
-#endif    
+#endif
+
     if (isTransparent) exStyle = exStyle | WS_EX_TRANSPARENT | WS_EX_NOACTIVATE;
     auto style = WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_POPUP;
     hwnd = CreateWindowEx(exStyle,L"ScreenCapture", L"ScreenCapture",style,x, y, w, h, NULL, NULL, GetModuleHandle(NULL), static_cast<LPVOID>(this));
