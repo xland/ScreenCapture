@@ -14,5 +14,7 @@ public:
 	static QImage printWindow(WinBox* win);
 	static QImage printScreen(const int& x, const int& y, const int& w, const int& h);
 	static void imgToClipboard(const QImage& img);
+	static bool posInScreen(const int& x, const int& y);
+	static QScreen* getScreen(const int& x, const int& y);
 };
 

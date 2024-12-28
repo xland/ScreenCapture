@@ -85,6 +85,26 @@ void Util::imgToClipboard(const QImage& img)
     DeleteDC(memoryDC);
     DeleteObject(hBitmap);
 }
+bool Util::posInScreen(const int& x, const int& y)
+{
+    QList<QScreen*> screens = QGuiApplication::screens();
+    for (QScreen* screen : screens) {
+        if (screen->geometry().contains(x, y)) {
+            return true;
+        }
+    }
+    return false;
+}
+QScreen* Util::getScreen(const int& x, const int& y)
+{
+    QList<QScreen*> screens = QGuiApplication::screens();
+    for (QScreen* screen : screens) {
+        if (screen->geometry().contains(x, y)) {
+            return screen;
+        }
+    }
+    return nullptr;
+}
 //QImage Util::printScreen(const int& x, const int& y, const int& w, const int& h)
 //{
 //    auto screens = QGuiApplication::screens();

@@ -30,31 +30,20 @@ PixelInfo::~PixelInfo()
 {
 }
 
-bool PixelInfo::posInScreen(const int& x, const int& y)
-{
-    QList<QScreen*> screens = QGuiApplication::screens();
-    for (QScreen* screen : screens) {
-        if (screen->geometry().contains(x, y)) {
-            return true;
-        }
-    }
-    return false;
-}
-
 void PixelInfo::mouseMove(const QPoint& nativePos)
 {
     QPoint pos = QCursor::pos();
     int span{ 10 };
-    if (posInScreen(pos.x() + width() + span, pos.y() + height() + span)) {
+    if (Util::posInScreen(pos.x() + width() + span, pos.y() + height() + span)) {
         move(pos.x() + span, pos.y() + span);
     }
-    else if (posInScreen(pos.x() - width() - span, pos.y() + height() + span)) {
+    else if (Util::posInScreen(pos.x() - width() - span, pos.y() + height() + span)) {
         move(pos.x() - span - width(), pos.y() + span);
     }
-    else if (posInScreen(pos.x() + width() + span, pos.y() - height() - span)) {
+    else if (Util::posInScreen(pos.x() + width() + span, pos.y() - height() - span)) {
         move(pos.x() + span, pos.y() - height() - span);
     }
-    else if (posInScreen(pos.x() - width() - span, pos.y() - height() - span)) {
+    else if (Util::posInScreen(pos.x() - width() - span, pos.y() - height() - span)) {
         move(pos.x() - span - width(), pos.y() - height() - span);
     }
     this->nativePos = nativePos;

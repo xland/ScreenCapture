@@ -11,6 +11,7 @@ public:
 	static QList<QRect>* getScreens();
 	static void dispose();
 	static void start();
+	static QRect* getScreen(const int& x, const int& y);
 public:
 private:
 	static void initConfig();

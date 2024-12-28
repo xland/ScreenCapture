@@ -137,3 +137,14 @@ void App::initScreens() {
             return TRUE;
         }, (LPARAM)&screens);
 }
+
+QRect* App::getScreen(const int& x, const int& y)
+{
+    for (size_t i = 0; i < screens.size(); i++)
+    {
+        if (screens[i].contains(x, y)) {
+            return &screens[i];
+        }
+    }
+    return nullptr;
+}

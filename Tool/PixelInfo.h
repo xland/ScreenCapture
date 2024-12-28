@@ -15,7 +15,6 @@ protected:
 	void paintEvent(QPaintEvent* event) override;
 	void closeEvent(QCloseEvent* event) override;
 private:
-	bool posInScreen(const int& x, const int& y);
 private:
 	WinBox* win;
 	QPoint nativePos;

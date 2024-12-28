@@ -34,6 +34,8 @@ WinFull::~WinFull()
 void WinFull::init()
 {
     auto winFull = new WinFull();
+    winFull->winBoard = new WinBoard(winFull);
+    winFull->winCanvas = new WinCanvas(winFull);
     winFull->winMask = new WinMask(winFull);
     winFull->pixelInfo = new PixelInfo(winFull);
     SetFocus(winFull->hwnd);
@@ -43,21 +45,13 @@ void WinFull::showToolMain()
     if (!toolMain) {
         toolMain = new ToolMain(this);
     } 
-    auto pos = winMask->maskRect.bottomRight();
-    pos.setX(pos.x() + x);
-    pos.setY(pos.y() + y);
-    auto hwnd = (HWND)toolMain->winId();
-    auto dpr = toolMain->windowHandle()->devicePixelRatio();
-    SetWindowPos(hwnd, nullptr,pos.x() - toolMain->width()*dpr, pos.y() + 6*dpr, 0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_SHOWWINDOW);
+    toolMain->confirmPos();
     toolMain->show();
     toolMain->raise();
 }
 void WinFull::showToolSub()
 {
     if (!toolSub) {
-        winBoard = new WinBoard(this);
-        winCanvas = new WinCanvas(this);
-        winMask->raise();  //todo 确认会不会闪一下
         toolMain->raise();
         toolSub = new ToolSub(this);
     }

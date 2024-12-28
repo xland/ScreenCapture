@@ -50,6 +50,8 @@ void WinPin::init(WinFull* full)
     winPin->h = winPin->img.height();
     winPin->initWindow(false);
     winPin->show();
+    winPin->winBoard = new WinBoard(winPin);
+    winPin->winCanvas = new WinCanvas(winPin);
     winPin->pixelInfo = new PixelInfo(winPin);
     full->close();
     SetFocus(winPin->hwnd);
@@ -72,8 +74,6 @@ void WinPin::showToolMain()
 void WinPin::showToolSub()
 {
     if (!toolSub) {
-        winBoard = new WinBoard(this);
-        winCanvas = new WinCanvas(this);
         toolMain->raise();
         toolSub = new ToolSub(this);
     }
