@@ -243,11 +243,17 @@ void WinPin::mouseDrag(QMouseEvent* event)
         auto span = pos - posPress;
         auto xx{ x + span.x() }, yy{ y + span.y() };
         SetWindowPos(hwnd, NULL, xx, yy, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+        x = xx;
+        y = yy;
         if (winBoard) {
             SetWindowPos(winBoard->hwnd, NULL, xx, yy, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+            winBoard->x = xx;
+            winBoard->y = yy;
         }
         if (winCanvas) {
             SetWindowPos(winCanvas->hwnd, NULL, xx, yy, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+            winCanvas->x = xx;
+            winCanvas->y = yy;
         }
     }
 }
@@ -268,11 +274,6 @@ bool WinPin::processOtherMsg(UINT msg, WPARAM wParam, LPARAM lParam)
 {
     switch (msg)
     {
-        case WM_MOVE: {
-            x = LOWORD(lParam); 
-            y = HIWORD(lParam);
-            return true;
-        }
         case WM_MOUSELEAVE: {
             if(pixelInfo)pixelInfo->hide();
             untrackMouse();

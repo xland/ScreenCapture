@@ -11,6 +11,8 @@
 - Pin窗口不能写字
 - full会画到mask上面
 - 改变mask  toolbar定位不准
+- 拖动Pin窗口时会震动闪烁
+- Pin窗口双击写入剪切板
 
 
 

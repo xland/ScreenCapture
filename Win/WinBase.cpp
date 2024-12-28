@@ -86,6 +86,11 @@ LRESULT WinBase::processWinMsg(UINT msg, WPARAM wParam, LPARAM lParam)
 {
     switch (msg)
     {
+    //case WM_MOVE: {
+    //    x = LOWORD(lParam); 
+    //    y = HIWORD(lParam);
+    //    return 0;
+    //}
     case WM_KEYDOWN:
     {
         if(processKeyDown(wParam)) return 0;
