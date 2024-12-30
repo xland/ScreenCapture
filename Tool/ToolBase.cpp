@@ -101,6 +101,18 @@ void ToolBase::keyPressEvent(QKeyEvent* event)
     else if (event->key() == Qt::Key_Delete) {
         win->removeShape();
     }
+    else if (event->key() == Qt::Key_Left) {
+        win->moveByKey(0);
+    }
+    else if (event->key() == Qt::Key_Up) {
+        win->moveByKey(1);
+    }
+    else if (event->key() == Qt::Key_Right) {
+        win->moveByKey(2);
+    }
+    else if (event->key() == Qt::Key_Down) {
+        win->moveByKey(3);
+    }
     else if (event->key() == Qt::Key_T && (event->modifiers() & Qt::ControlModifier)) {
         win->hideTools();
     }
@@ -121,37 +133,5 @@ void ToolBase::keyPressEvent(QKeyEvent* event)
     }
     else if (event->key() == Qt::Key_P && (event->modifiers() & Qt::ControlModifier)) {
         win->copyColor(3);
-    }
-    else if (event->key() == Qt::Key_Left) {
-        if (auto w = qobject_cast<WinFull*>(win)) 
-        {
-            SetFocus(w->hwnd);
-            w->hideTools(w->state);
-            w->moveByKey(0);
-        }
-    }
-    else if (event->key() == Qt::Key_Up) {
-        if (auto w = qobject_cast<WinFull*>(win))
-        {
-            SetFocus(w->hwnd);
-            w->hideTools(w->state);
-            w->moveByKey(1);
-        }
-    }
-    else if (event->key() == Qt::Key_Right) {
-        if (auto w = qobject_cast<WinFull*>(win))
-        {
-            SetFocus(w->hwnd);
-            w->hideTools(w->state);
-            w->moveByKey(2);
-        }
-    }
-    else if (event->key() == Qt::Key_Down) {
-        if (auto w = qobject_cast<WinFull*>(win))
-        {
-            SetFocus(w->hwnd);
-            w->hideTools(w->state);
-            w->moveByKey(3);
-        }
     }
 }

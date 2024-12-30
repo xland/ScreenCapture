@@ -21,7 +21,7 @@ public:
 	void saveToFile() override;
 	void close() override;
 	void ctrlTPress() override;
-	void moveByKey(const int& key);
+	void moveByKey(const int& key) override;
 	void copyColor(const int& key) override;
 protected:
 	void mousePress(QMouseEvent* event) override;

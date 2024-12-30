@@ -181,6 +181,8 @@ void WinFull::moveByKey(const int& key)
         else if (key == 3) SetCursorPos(point.x, point.y + 1);
     }
     else {
+        SetFocus(hwnd);
+        hideTools(state);
         if (key == 0) winMask->maskRect.translate(-1, 0);
         else if (key == 1) winMask->maskRect.translate(0, -1);
         else if (key == 2) winMask->maskRect.translate(1, 0);

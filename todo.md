@@ -2,7 +2,6 @@
 - 主工具栏要保持在屏幕内，动态调整位置
 - maskRect的info信息在多屏情况下，仅判断y>0，可能会显示不全
 - Ctrl+Z,Ctrl+Y
-- 有的时候del无法删除元素
 - 鼠标移出Pin窗口，要触发release事件，不然一直处于拖动改变shape状态
 - Pin 移入ShapeText区域 会不断的重绘ShapeText
 - Pin 隐藏子工具栏后 dragger也得隐藏
