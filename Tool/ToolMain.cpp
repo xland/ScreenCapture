@@ -5,6 +5,7 @@
 
 #include "../App/App.h"
 #include "../App/Util.h"
+#include "../App/NativeRect.h"
 #include "../Win/WinBox.h"
 #include "../Win/WinPin.h"
 #include "../Win/WinFull.h"
@@ -153,20 +154,20 @@ void ToolMain::confirmPos()
     auto top{ full->y + full->winMask->maskRect.bottom() + 6*dpr };
     //三个缝隙高度和两个工具条高度
     auto heightSpan = 6 * dpr * 3 + height() * dpr * 2;
-    auto screen = App::getScreen(full->x + full->winMask->maskRect.right(), full->y + full->winMask->maskRect.bottom() + heightSpan);
+    auto screen = NativeRect::getScreenByPos(full->x + full->winMask->maskRect.right(), full->y + full->winMask->maskRect.bottom() + heightSpan);
     if (screen) { //工具条右下角在屏幕内
         topFlag = false;
         //工具条左上角不在屏幕内
-        if (!App::getScreen(left, top)) {
+        if (!NativeRect::getScreenByPos(left, top)) {
             left = screen->left();
         }
     }
     else { //工具条右下角不在屏幕内
         topFlag = true;
         //判断屏幕顶部是否有足够的空间，工具条是否可以在CutRect右上角
-        screen = App::getScreen(full->x + full->winMask->maskRect.right(), full->y + full->winMask->maskRect.top() - heightSpan);
+        screen = NativeRect::getScreenByPos(full->x + full->winMask->maskRect.right(), full->y + full->winMask->maskRect.top() - heightSpan);
         if (screen) { //工具条右上角在屏幕内  
-            if (App::getScreen(left, full->y + full->winMask->maskRect.top() - heightSpan)) { //工具条左上角在屏幕内
+            if (NativeRect::getScreenByPos(left, full->y + full->winMask->maskRect.top() - heightSpan)) { //工具条左上角在屏幕内
                 top = full->y + full->winMask->maskRect.top() - 6*dpr - height()*dpr;
             }
             else { //工具条左上角不在屏幕中
@@ -175,11 +176,11 @@ void ToolMain::confirmPos()
             }
         }
         else { //工具条右上角不在屏幕内，此时屏幕顶部和屏幕底部都没有足够的空间，工具条只能显示在截图区域内            
-            if (App::getScreen(left, full->y + full->winMask->maskRect.bottom() - heightSpan)) { //工具条左上角在屏幕内
+            if (NativeRect::getScreenByPos(left, full->y + full->winMask->maskRect.bottom() - heightSpan)) { //工具条左上角在屏幕内
                 top = full->y + full->winMask->maskRect.bottom() - 6*dpr - height()*dpr;
             }
             else { //工具条左上角不在屏幕中，得到截图区域所在屏幕
-                screen = App::getScreen(full->x + full->winMask->maskRect.right(), full->y + full->winMask->maskRect.bottom());
+                screen = NativeRect::getScreenByPos(full->x + full->winMask->maskRect.right(), full->y + full->winMask->maskRect.bottom());
                 if (screen) {
                     left = screen->left();
                     top = full->y + full->winMask->maskRect.bottom() - 6*dpr - height()*dpr;

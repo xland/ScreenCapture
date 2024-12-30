@@ -9,6 +9,7 @@
 
 #include "App.h"
 #include "Tray.h"
+#include "NativeRect.h"
 #include "../QHotKey/qhotkey.h"
 #include "../Win/WinFull.h"
 #include "../Win/WinPin.h"
@@ -23,6 +24,7 @@ namespace {
     std::unique_ptr<QHotkey> hotkey;
     std::unique_ptr<Tray> tray;
     QList<QRect> screens;
+    QList<QRect> windows;
 }
 void App::init()
 {
@@ -51,7 +53,7 @@ void App::dispose()
 }
 void App::start()
 {
-    initScreens();
+    NativeRect::init();
     WinFull::init();
 }
 void App::initConfig()
@@ -123,28 +125,5 @@ void App::initPin(const QJsonObject& obj, const QString& lang)
         WinPin::initData(obj["winPin"].toArray(), lang);
     }
 }
-void App::initScreens() {
-    screens.clear();
-    EnumDisplayMonitors(NULL, NULL, [](HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMonitor, LPARAM lParam)
-        {
-            MONITORINFO info;
-            info.cbSize = sizeof(MONITORINFO);
-            GetMonitorInfo(hMonitor, &info);
-            auto self = (QList<QRect>*)lParam;
-            QPoint leftTop(info.rcMonitor.left,info.rcMonitor.top);
-            QPoint rightBottom(info.rcMonitor.right,info.rcMonitor.bottom);
-            self->push_back(QRect(leftTop, rightBottom));
-            return TRUE;
-        }, (LPARAM)&screens);
-}
 
-QRect* App::getScreen(const int& x, const int& y)
-{
-    for (size_t i = 0; i < screens.size(); i++)
-    {
-        if (screens[i].contains(x, y)) {
-            return &screens[i];
-        }
-    }
-    return nullptr;
-}
+

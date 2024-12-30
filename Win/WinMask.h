@@ -13,7 +13,6 @@ class WinMask  : public WinBase
 public:
 	WinMask(QObject* parent = nullptr);
 	~WinMask();
-	void initWinRects();
 	void mousePress(QMouseEvent* event);
 	void mouseDrag(QMouseEvent* event);
 	void mouseRelease(QMouseEvent* event);
@@ -33,6 +32,4 @@ private:
 	QPoint posPress;
 	qreal maskStroke{ 2.0 };
 	int mousePosState{ -1 };
-	QList<QRect> winNativeRects;
-	QList<HWND> winHwnds;
 };

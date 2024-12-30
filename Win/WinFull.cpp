@@ -7,13 +7,14 @@
 #include <QFileDialog>
 #include <QStandardPaths>
 
+#include "../App/App.h"
+#include "../App/NativeRect.h"
 #include "WinFull.h"
 #include "WinPin.h"
 #include "WinMask.h"
 #include "WinBoard.h"
 #include "WinCanvas.h"
 #include "../Shape/ShapeBase.h"
-#include "../App/App.h"
 #include "../Tool/ToolMain.h"
 #include "../Tool/ToolSub.h"
 #include "../Tool/PixelInfo.h"
@@ -21,7 +22,9 @@
 
 WinFull::WinFull(QObject* parent) : WinBox(parent)
 {
-    initWinSizeByDesktopSize();
+    auto rect = NativeRect::getDesktopRect();
+    x = rect.x(); y = rect.y();
+    w = rect.width();h = rect.height();
     img = Util::printScreen(x, y, w, h);
     initWindow(false);
     show();
@@ -60,14 +63,6 @@ void WinFull::showToolSub()
     }
     toolSub->show();
     toolSub->raise();
-}
-
-void WinFull::initWinSizeByDesktopSize()
-{
-    x = GetSystemMetrics(SM_XVIRTUALSCREEN);
-    y = GetSystemMetrics(SM_YVIRTUALSCREEN);
-    w = GetSystemMetrics(SM_CXVIRTUALSCREEN);
-    h = GetSystemMetrics(SM_CYVIRTUALSCREEN);
 }
 
 void WinFull::close()

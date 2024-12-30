@@ -11,10 +11,8 @@
 WinBoard::WinBoard(QObject *parent) : WinBase(parent)
 {
     auto win = (WinBox*)parent;
-    x = win->x;
-    y = win->y;
-    w = win->w;
-    h = win->h;
+    x = win->x; y = win->y;
+    w = win->w; h = win->h;
     initWindow();
     show();
 }

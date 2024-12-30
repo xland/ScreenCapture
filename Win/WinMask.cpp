@@ -5,6 +5,7 @@
 
 #include "WinMask.h"
 #include "WinFull.h"
+#include "../App/NativeRect.h"
 #include "../Tool/ToolMain.h"
 #include "../Tool/ToolSub.h"
 #include "../Tool/PixelInfo.h"
@@ -12,11 +13,8 @@
 WinMask::WinMask(QObject* parent) : WinBase(parent)
 {
     auto win = (WinFull*)parent;
-    x = win->x;
-    y = win->y;
-    w = win->w;
-    h = win->h;
-    initWinRects();
+    x = win->x; y = win->y;
+    w = win->w; h = win->h;
     maskStroke = maskStroke * win->dpr;
     initWindow();
     show();
@@ -106,11 +104,12 @@ void WinMask::mouseMove(QMouseEvent* event)
     if (father->state == State::start)
     {
         QGuiApplication::setOverrideCursor(Qt::CrossCursor);
-        for (int i = 0; i < winNativeRects.size(); i++)
+        auto& rects = NativeRect::getWinRects();
+        for (int i = 0; i < rects.size(); i++)
         {
-            if (winNativeRects[i].contains(event->pos())) {
-                if (maskRect == winNativeRects[i]) return;
-                maskRect = winNativeRects[i];
+            if (rects[i].contains(event->pos())) {
+                if (maskRect == rects[i]) return;
+                maskRect = rects[i];
                 update();
                 return;
             }
@@ -354,29 +353,6 @@ void WinMask::moveMaskRect(const QPoint& pos)
 	if (target.x() + maskRect.width() > w || target.y() + maskRect.height() > h) return;
     maskRect.moveTo(maskRect.topLeft() + span);
 	update();
-}
-
-void WinMask::initWinRects()
-{
-    EnumWindows([](HWND hwnd, LPARAM lparam)
-        {
-            if (!hwnd) return TRUE;
-            if (!IsWindowVisible(hwnd)) return TRUE;
-            if (IsIconic(hwnd)) return TRUE;
-            if (GetWindowTextLength(hwnd) < 1) return TRUE;
-            auto self = (WinMask*)lparam;
-            if (hwnd == (HWND)self->hwnd) return TRUE;
-            auto father = (WinFull*)self->parent();
-            if (hwnd == father->hwnd) return TRUE;
-            RECT rect;
-            DwmGetWindowAttribute(hwnd, DWMWA_EXTENDED_FRAME_BOUNDS, &rect, sizeof(RECT));
-            if (rect.right - rect.left <= 6 || rect.bottom - rect.top <= 6) {
-                return TRUE;
-            }
-            self->winNativeRects.push_back(QRect(QPoint(rect.left-self->x, rect.top-self->y), QPoint(rect.right-self->x, rect.bottom-self->y)));
-            self->winHwnds.push_back(hwnd);
-            return TRUE;
-        }, (LPARAM)this);
 }
 
 
