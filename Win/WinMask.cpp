@@ -190,29 +190,29 @@ void WinMask::changeMaskRect(const QPoint& pos)
 }
 void WinMask::changeMousePosState(const int& x, const int& y)
 {
-    auto leftX = maskRect.topLeft().x(); auto topY = maskRect.topLeft().y();
-    auto rightX = maskRect.bottomRight().x(); auto bottomY = maskRect.bottomRight().y();
-    if (maskRect.contains(x, y))
+    auto leftX = maskRect.left(); auto topY = maskRect.top();
+    auto rightX = maskRect.right(); auto bottomY = maskRect.bottom();
+    if (x>leftX+1 && y>topY+1 && x<rightX-1 && y<bottomY-1) //不然截图区域上顶天，下顶地的时候没法改变高度
     {
         QGuiApplication::setOverrideCursor(Qt::SizeAllCursor);
         mousePosState = 0;
     }
-    else if (x < leftX && y < topY)
+    else if (x <= leftX && y <= topY)
     {
         QGuiApplication::setOverrideCursor(Qt::SizeFDiagCursor);
         mousePosState = 1;
     }
-    else if (x >= leftX && x < rightX && y < topY)
+    else if (x >= leftX && x <= rightX && y <= topY)
     {
         QGuiApplication::setOverrideCursor(Qt::SizeVerCursor);
         mousePosState = 2;
     }
-    else if (x >= rightX && y < topY)
+    else if (x >= rightX && y <= topY)
     {
         QGuiApplication::setOverrideCursor(Qt::SizeBDiagCursor);
         mousePosState = 3;
     }
-    else if (x >= rightX && y >= topY && y < bottomY)
+    else if (x >= rightX && y >= topY && y <= bottomY)
     {
         QGuiApplication::setOverrideCursor(Qt::SizeHorCursor);
         mousePosState = 4;
@@ -222,17 +222,17 @@ void WinMask::changeMousePosState(const int& x, const int& y)
         QGuiApplication::setOverrideCursor(Qt::SizeFDiagCursor);
         mousePosState = 5;
     }
-    else if (x >= leftX && x < rightX && y >= bottomY)
+    else if (x >= leftX && x <= rightX && y >= bottomY)
     {
         QGuiApplication::setOverrideCursor(Qt::SizeVerCursor);
         mousePosState = 6;
     }
-    else if (x < leftX && y >= bottomY)
+    else if (x <= leftX && y >= bottomY)
     {
         QGuiApplication::setOverrideCursor(Qt::SizeBDiagCursor);
         mousePosState = 7;
     }
-    else if (x < leftX && y < bottomY && y >= topY)
+    else if (x <= leftX && y <= bottomY && y >= topY)
     {
         QGuiApplication::setOverrideCursor(Qt::SizeHorCursor);
         mousePosState = 8;
@@ -287,7 +287,6 @@ void WinMask::changeMousePosState2(const int& x, const int& y)
         mousePosState = -1;
     }
 }
-
 void WinMask::paintMaskRectInfo(QPainter& p)
 {
     //绘制截图区域位置和大小
