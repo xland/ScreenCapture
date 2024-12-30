@@ -20,6 +20,7 @@ public:
 	virtual void showToolSub()=0;
 	virtual void saveToClipboard() = 0;
 	virtual void saveToFile() = 0;
+	void removeShape() override;
 	void undo();
 	void redo();
 	void keyEscPress() override;
@@ -39,6 +40,5 @@ protected:
 	void mouseMoveOnShape(QMouseEvent* event);
 	void mouseDragOnShape(QMouseEvent* event);
 	void mouseReleaseOnShape(QMouseEvent* event);
-	void removeShape() override;
 private:
 };

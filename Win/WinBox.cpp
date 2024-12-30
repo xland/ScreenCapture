@@ -140,8 +140,7 @@ void WinBox::removeShape()
 		winCanvas->curShape->deleteLater();
         winBoard->refresh();
         winCanvas->clear();
-    }
-    
+    }    
 }
 void WinBox::undo()
 {

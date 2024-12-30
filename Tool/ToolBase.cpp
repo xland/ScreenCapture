@@ -98,6 +98,9 @@ void ToolBase::keyPressEvent(QKeyEvent* event)
     if (event->key() == Qt::Key_Escape) {
         win->hideTools();
     }
+    else if (event->key() == Qt::Key_Delete) {
+        win->removeShape();
+    }
     else if (event->key() == Qt::Key_T && (event->modifiers() & Qt::ControlModifier)) {
         win->hideTools();
     }

@@ -4,9 +4,6 @@
 - Ctrl+Z,Ctrl+Y
 - 有的时候del无法删除元素
 - 鼠标移出Pin窗口，要触发release事件，不然一直处于拖动改变shape状态
-- 用键盘移动cutRect后，鼠标样式有问题  state == tool。
-
-- 写完字之后鼠标光标的样式
 - Pin 移入ShapeText区域 会不断的重绘ShapeText
 - Pin 隐藏子工具栏后 dragger也得隐藏
 
