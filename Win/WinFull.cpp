@@ -192,3 +192,17 @@ void WinFull::moveByKey(const int& key)
         winMask->update();
     }
 }
+void WinFull::copyColor(const int& key)
+{
+    if (key == 3) {
+        POINT pos;
+        GetCursorPos(&pos);
+        std::wstring tarStr = QString("%1,%2").arg(pos.x).arg(pos.y).toStdWString();
+        Util::setClipboardText(tarStr);
+        close();
+        return;
+    }
+    winMask->close();
+    Util::copyColor(key);
+    close();
+}

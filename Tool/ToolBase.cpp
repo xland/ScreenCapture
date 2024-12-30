@@ -107,6 +107,18 @@ void ToolBase::keyPressEvent(QKeyEvent* event)
     else if (event->key() == Qt::Key_C && (event->modifiers() & Qt::ControlModifier)) {
         win->saveToClipboard();
     }
+    else if (event->key() == Qt::Key_H && (event->modifiers() & Qt::ControlModifier)) {
+        win->copyColor(0);
+    }
+    else if (event->key() == Qt::Key_R && (event->modifiers() & Qt::ControlModifier)) {
+        win->copyColor(1);
+    }
+    else if (event->key() == Qt::Key_K && (event->modifiers() & Qt::ControlModifier)) {
+        win->copyColor(2);
+    }
+    else if (event->key() == Qt::Key_P && (event->modifiers() & Qt::ControlModifier)) {
+        win->copyColor(3);
+    }
     else if (event->key() == Qt::Key_Left) {
         if (auto w = qobject_cast<WinFull*>(win)) 
         {

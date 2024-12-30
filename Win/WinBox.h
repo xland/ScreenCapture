@@ -40,6 +40,5 @@ protected:
 	void mouseDragOnShape(QMouseEvent* event);
 	void mouseReleaseOnShape(QMouseEvent* event);
 	void removeShape() override;
-	void copyColor(const int& key) override;
 private:
 };

@@ -105,6 +105,48 @@ QScreen* Util::getScreen(const int& x, const int& y)
     }
     return nullptr;
 }
+void Util::setClipboardText(const std::wstring& text) {
+    OpenClipboard(NULL);
+    EmptyClipboard();
+    size_t len = (text.size() + 1) * sizeof(wchar_t);
+    HANDLE copyHandle = GlobalAlloc(GMEM_MOVEABLE | GMEM_DDESHARE, len);
+    if (copyHandle == NULL)
+    {
+        MessageBox(NULL, L"Failed to alloc clipboard memory.", L"Error", MB_OK | MB_ICONERROR);
+        CloseClipboard();
+        return; // 处理错误
+    }
+    byte* copyData = reinterpret_cast<byte*>(GlobalLock(copyHandle));
+    if (copyData) {
+        memcpy(copyData, text.data(), len);
+    }
+    GlobalUnlock(copyHandle);
+    SetClipboardData(CF_UNICODETEXT, copyHandle);
+    CloseClipboard();
+}
+
+void Util::copyColor(const int& key)
+{
+    std::wstring tarStr;
+    HDC hdcScreen = GetDC(NULL);
+    POINT pos;
+    GetCursorPos(&pos);
+    COLORREF colorNative = GetPixel(hdcScreen, pos.x, pos.y);
+    ReleaseDC(NULL, hdcScreen);
+    if (key == 0) {
+        QColor color(GetRValue(colorNative), GetGValue(colorNative), GetBValue(colorNative));
+        tarStr = color.name().toUpper().toStdWString();
+    }
+    else if (key == 1) {
+        tarStr = QString("%1,%2,%3").arg(GetRValue(colorNative)).arg(GetGValue(colorNative)).arg(GetBValue(colorNative)).toStdWString();
+    }
+    else if (key == 2) {
+        QColor cmyk(GetRValue(colorNative), GetGValue(colorNative), GetBValue(colorNative));
+        tarStr = QString("%1,%2,%3,%4").arg(cmyk.cyan()).arg(cmyk.magenta()).arg(cmyk.yellow()).arg(cmyk.black()).toStdWString();
+    }
+    Util::setClipboardText(tarStr);
+}
+
 //QImage Util::printScreen(const int& x, const int& y, const int& w, const int& h)
 //{
 //    auto screens = QGuiApplication::screens();

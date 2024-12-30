@@ -5,8 +5,8 @@
 - 有的时候del无法删除元素
 - 鼠标移出Pin窗口，要触发release事件，不然一直处于拖动改变shape状态
 - 拷贝颜色信息位置信息
-- 改变mask到顶部  toolbar不会出现在底部
-- 拖动改变Pin窗口时，应该同时改变ShapeText的位置
+- 用键盘移动cutRect后，鼠标样式有问题  state == tool。
+
 - 写完字之后鼠标光标的样式
 - Pin 移入ShapeText区域 会不断的重绘ShapeText
 - Pin 隐藏子工具栏后 dragger也得隐藏
@@ -35,3 +35,4 @@
 - Pin窗口PixInfo显示在右下时，定位有点问题
 - hsv color
 - 文本框可以拖出Pin窗口
+- 改变mask到顶部  toolbar不会出现在底部

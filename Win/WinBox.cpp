@@ -2,6 +2,9 @@
 #include "WinCanvas.h"
 #include "WinBoard.h"
 
+#include "WinFull.h"
+#include "WinMask.h"
+#include "../App/Util.h"
 #include "../Shape/ShapeBase.h"
 #include "../Shape/ShapeRect.h"
 #include "../Shape/ShapeEllipse.h"
@@ -182,11 +185,6 @@ void WinBox::hideTools(State state)
             pixelInfo = new PixelInfo(this);
         }
     }
-}
-
-
-void WinBox::copyColor(const int& key)
-{
 }
 
 

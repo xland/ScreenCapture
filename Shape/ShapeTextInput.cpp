@@ -69,7 +69,7 @@ void ShapeTextInput::paintEvent(QPaintEvent* event)
 
 	QPen pen;
 	pen.setColor(shapeText->color);
-	pen.setWidth(1);
+	pen.setWidthF(1.6);
 	painter.setPen(pen);
 	painter.setBrush(Qt::NoBrush);
 	if (hasFocus() && showTextInputCursor) {

@@ -33,7 +33,8 @@ protected:
 	void mouseRelease(QMouseEvent* event) override;
 	void mouseDBClick(QMouseEvent* event) override;
 	void mousePressRight(QMouseEvent* event) override;
+	void copyColor(const int& key) override;
 private:
-	void initWinSizeByDesktopSize();
+
 };
 

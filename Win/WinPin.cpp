@@ -303,6 +303,21 @@ void WinPin::moveByKey(const int& key)
         else if (key == 3) SetCursorPos(point.x, point.y + 1);
     }
 }
+
+void WinPin::copyColor(const int& key)
+{
+    if (key == 3) {
+        POINT pos;
+        GetCursorPos(&pos);
+        std::wstring tarStr = QString("%1,%2").arg(pos.x-x).arg(pos.y-y).toStdWString();
+        Util::setClipboardText(tarStr);
+        close();
+        return;
+    }
+    Util::copyColor(key);
+    close();
+}
+
 void WinPin::prepareImg(WinFull* full)
 {
     auto tarImg = full->getCutImg();
