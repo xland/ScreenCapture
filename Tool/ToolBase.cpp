@@ -123,7 +123,7 @@ void ToolBase::keyPressEvent(QKeyEvent* event)
         if (auto w = qobject_cast<WinFull*>(win)) 
         {
             SetFocus(w->hwnd);
-            w->hideTools(State::mask);
+            w->hideTools(w->state);
             w->moveByKey(0);
         }
     }
@@ -131,7 +131,7 @@ void ToolBase::keyPressEvent(QKeyEvent* event)
         if (auto w = qobject_cast<WinFull*>(win))
         {
             SetFocus(w->hwnd);
-            w->hideTools(State::mask);
+            w->hideTools(w->state);
             w->moveByKey(1);
         }
     }
@@ -139,7 +139,7 @@ void ToolBase::keyPressEvent(QKeyEvent* event)
         if (auto w = qobject_cast<WinFull*>(win))
         {
             SetFocus(w->hwnd);
-            w->hideTools(State::mask);
+            w->hideTools(w->state);
             w->moveByKey(2);
         }
     }
@@ -147,7 +147,7 @@ void ToolBase::keyPressEvent(QKeyEvent* event)
         if (auto w = qobject_cast<WinFull*>(win))
         {
             SetFocus(w->hwnd);
-            w->hideTools(State::mask);
+            w->hideTools(w->state);
             w->moveByKey(3);
         }
     }

@@ -50,19 +50,16 @@ void WinFull::showToolMain()
     } 
     toolMain->confirmPos();
     toolMain->show();
-    toolMain->raise();
 }
 void WinFull::showToolSub()
 {
     if (!toolSub) {
-        toolMain->raise();
         toolSub = new ToolSub(this);
     }
     if (toolSub->isVisible()) {
         toolSub->hide();
     }
     toolSub->show();
-    toolSub->raise();
 }
 
 void WinFull::close()
