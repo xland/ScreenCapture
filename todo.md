@@ -4,7 +4,6 @@
 - Ctrl+Z,Ctrl+Y
 - 有的时候del无法删除元素
 - 鼠标移出Pin窗口，要触发release事件，不然一直处于拖动改变shape状态
-- 拷贝颜色信息位置信息
 - 用键盘移动cutRect后，鼠标样式有问题  state == tool。
 
 - 写完字之后鼠标光标的样式

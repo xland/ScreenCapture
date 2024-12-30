@@ -217,15 +217,17 @@ void WinPin::mouseMove(QMouseEvent* event)
 {
     trackMouse();
     event->ignore();
-    if (state == State::start && pixelInfo) {
+    if (pixelInfo) {
         auto pos = event->pos();
-        if (pos.x() > padding && pos.y() > padding && pos.x() < w - padding && pos.y() < h - padding) {
-            QGuiApplication::setOverrideCursor(Qt::SizeAllCursor);
+        if (pos.x() > padding && pos.y() > padding && pos.x() < w - padding && pos.y() < h - padding) {            
             pixelInfo->mouseMove(pos);
         }
         else {
             pixelInfo->hide();
         }
+    }
+    if (state <= State::tool) {
+        QGuiApplication::setOverrideCursor(Qt::SizeAllCursor);
         return;
     }
     mouseMoveOnShape(event);
