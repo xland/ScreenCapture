@@ -11,6 +11,7 @@
 #include "../Win/WinBase.h"
 #include "../Win/WinBox.h"
 #include "../Win/WinBoard.h"
+#include "../Win/WinPin.h"
 #include "../App/App.h"
 #include "../Tool/ToolSub.h"
 #include "../Win/WinCanvas.h"
@@ -37,8 +38,10 @@ void ShapeText::paint(QPainter* painter)
     auto hwnd = (HWND)container->winId();
     GetWindowRect(hwnd, &rectNative);
     auto img = container->grab().toImage();
-
-    QRectF rect(QPointF(rectNative.left, rectNative.top), QPointF(rectNative.right, rectNative.bottom));
+    auto win = (WinBox*)parent();
+    QPointF tl(rectNative.left - win->x, rectNative.top - win->y);
+    QPointF rb(rectNative.right - win->x, rectNative.bottom - win->y);
+    QRectF rect(tl,rb);
     painter->drawImage(rect, img);
     container->painting = false;
 }

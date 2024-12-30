@@ -37,5 +37,5 @@ private:
 private:
 	bool isTrackMouseEvent{ false };
 	bool needShowToolMain{ false };
-	QPoint posPress;
+	QPointF posPress;
 };

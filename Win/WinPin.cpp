@@ -10,6 +10,8 @@
 #include "WinBoard.h"
 #include "WinCanvas.h"
 #include "../Shape/ShapeBase.h"
+#include "../Shape/ShapeText.h"
+#include "../Shape/ShapeTextContainer.h"
 #include "../App/Util.h"
 #include "../Tool/ToolMain.h"
 #include "../Tool/ToolSub.h"
@@ -176,7 +178,7 @@ void WinPin::mousePress(QMouseEvent* event)
             }
         }
         SetCapture(hwnd);
-        posPress = event->pos();
+        posPress = event->position();
     }
 }
 
@@ -241,23 +243,15 @@ void WinPin::mouseMove(QMouseEvent* event)
 void WinPin::mouseDrag(QMouseEvent* event)
 {
     event->ignore();
-    auto pos = event->pos();
     mouseDragOnShape(event);
     if (GetCapture() == hwnd) {
-        auto span = pos - posPress;
-        auto xx{ x + span.x() }, yy{ y + span.y() };
-        SetWindowPos(hwnd, NULL, xx, yy, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
-        x = xx;  //不能在WM_MOVE处理，因为那里不够及时，会造成窗口高速闪烁的问题
-        y = yy;
+        auto pos = event->globalPosition() - posPress;
+        SetWindowPos(hwnd, NULL, pos.x(), pos.y(), 0, 0, SWP_NOSIZE | SWP_NOZORDER);
         if (winBoard) {
-            SetWindowPos(winBoard->hwnd, NULL, xx, yy, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
-            winBoard->x = xx;
-            winBoard->y = yy;
+            SetWindowPos(winBoard->hwnd, NULL, pos.x(), pos.y(), 0, 0, SWP_NOSIZE | SWP_NOZORDER);
         }
         if (winCanvas) {
-            SetWindowPos(winCanvas->hwnd, NULL, xx, yy, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
-            winCanvas->x = xx;
-            winCanvas->y = yy;
+            SetWindowPos(winCanvas->hwnd, NULL, pos.x(), pos.y(), 0, 0, SWP_NOSIZE | SWP_NOZORDER);
         }
     }
 }
@@ -270,6 +264,17 @@ void WinPin::mouseRelease(QMouseEvent* event)
         ReleaseCapture();
         if (needShowToolMain) {
             showToolMain();
+        }
+        auto span = event->globalPosition() - posPress;
+        for (size_t i = 0; i < shapes.size(); i++)
+        {
+            auto shapeText = qobject_cast<ShapeText*>(shapes[i]);
+            if (shapeText) {
+                auto hwnd = (HWND)shapeText->container->winId();
+                auto xx = x + shapeText->container->ctrlRect.x();
+                auto yy = y + shapeText->container->ctrlRect.y()-8;
+                SetWindowPos(hwnd, nullptr, xx, yy, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
+            }
         }
     }
 }

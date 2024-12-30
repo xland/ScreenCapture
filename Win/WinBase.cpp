@@ -30,10 +30,8 @@ void WinBase::initWindow(bool isTransparent)
     wcx.lpszClassName = L"ScreenCapture";
     auto flag = RegisterClassEx(&wcx);
 #ifdef DEBUG
-    auto exStyle = WS_EX_LAYERED;
-    if (qobject_cast<WinPin*>(this)) {
-        exStyle = exStyle | WS_EX_TOPMOST;
-    }
+    //auto exStyle = WS_EX_LAYERED;
+    auto exStyle = WS_EX_LAYERED | WS_EX_TOOLWINDOW | WS_EX_TOPMOST;
 #else
     auto exStyle = WS_EX_LAYERED | WS_EX_TOOLWINDOW | WS_EX_TOPMOST;
 #endif
@@ -91,6 +89,12 @@ LRESULT WinBase::processWinMsg(UINT msg, WPARAM wParam, LPARAM lParam)
 {
     switch (msg)
     {
+
+    case WM_MOVE: {
+        x = LOWORD(lParam);
+        y = HIWORD(lParam);
+        return 0;
+    }
     case WM_KEYDOWN:
     {
         if(processKeyDown(wParam)) return 0;

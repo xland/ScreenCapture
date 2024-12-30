@@ -44,6 +44,7 @@ void ShapeTextInput::focusOutEvent(QFocusEvent* event)
 		setTextCursor(cursor);
 		shapeText->paintOnBoard();
 		p->hide();
+
 		if (document()->toPlainText().trimmed().isEmpty()) 
 		{ 
 			shapeText->deleteLater(); 

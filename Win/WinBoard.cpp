@@ -49,8 +49,10 @@ void WinBoard::refresh(bool releaseFlag)
     }
     paint();
     p.end();
-    if (releaseFlag) {
+    if (releaseFlag) {        
         releaseImg();
-        win->toolMain->setBtnEnable(enableUndo, enableRedo);
+        if (win->toolMain) {
+            win->toolMain->setBtnEnable(enableUndo, enableRedo);
+        }
     }
 }

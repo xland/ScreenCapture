@@ -19,6 +19,7 @@ public:
     qreal fontSize;
     bool bold;
     bool italic;
+    ShapeTextContainer* container;
 protected:
     void paint(QPainter* painter) override;
     void mouseMove(QMouseEvent* event) override;
@@ -26,5 +27,4 @@ protected:
     void mouseRelease(QMouseEvent* event) override;
 private:
 private:
-    ShapeTextContainer* container;
 };
