@@ -283,14 +283,13 @@ void WinPin::mouseRelease(QMouseEvent* event)
 
 bool WinPin::processOtherMsg(UINT msg, WPARAM wParam, LPARAM lParam)
 {
-    switch (msg)
-    {
-        case WM_MOUSELEAVE: {
-            if(pixelInfo)pixelInfo->hide();
-            untrackMouse();
-            //auto e = Util::createMouseEvent(lParam, QEvent::MouseButtonRelease);
-            //mouseReleaseOnShape(&e);
-        }
+    if (WinBox::processOtherMsg(msg, wParam, lParam)) {
+        return true;
+    }
+    else if (msg == WM_MOUSELEAVE) {
+        if (pixelInfo)pixelInfo->hide();
+        untrackMouse();
+        return true;
     }
     return false;
 }

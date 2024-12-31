@@ -3,8 +3,8 @@
 - maskRect的info信息在多屏情况下，仅判断y>0，可能会显示不全
 - Ctrl+Z,Ctrl+Y
 - 鼠标移出Pin窗口，要触发release事件，不然一直处于拖动改变shape状态
-- Pin 移入ShapeText区域 会不断的重绘ShapeText
 - Pin 隐藏子工具栏后 dragger也得隐藏
+- WinFull 不需要CTRL T吗
 
 
 

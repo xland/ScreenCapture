@@ -95,11 +95,6 @@ LRESULT WinBase::processWinMsg(UINT msg, WPARAM wParam, LPARAM lParam)
         y = HIWORD(lParam);
         return 0;
     }
-    case WM_KEYDOWN:
-    {
-        if(processKeyDown(wParam)) return 0;
-        break;
-    }
     case WM_LBUTTONDOWN:
     {
         auto e = Util::createMouseEvent(lParam, QEvent::MouseButtonPress);
@@ -142,64 +137,6 @@ LRESULT WinBase::processWinMsg(UINT msg, WPARAM wParam, LPARAM lParam)
     }
     }
     return 0;
-}
-bool WinBase::processKeyDown(WPARAM wParam)
-{
-    if (wParam == VK_BACK || wParam == VK_DELETE) {
-        removeShape();
-        return true;
-    }
-    else if (wParam == VK_ESCAPE) {
-        keyEscPress();
-        return true;
-    }
-    else if (wParam == 'T') {
-        if ((GetKeyState(VK_CONTROL) & 0x8000) != 0) {
-            ctrlTPress();
-            return true;
-        }
-    }
-    else if (wParam == 'H') {
-        if ((GetKeyState(VK_CONTROL) & 0x8000) != 0) {
-            copyColor(0);
-            return true;
-        }
-    }
-    else if (wParam == 'R') {
-        if ((GetKeyState(VK_CONTROL) & 0x8000) != 0) {
-            copyColor(1);
-            return true;
-        }
-    }
-    else if (wParam == 'K') {
-        if ((GetKeyState(VK_CONTROL) & 0x8000) != 0) {
-            copyColor(2);
-            return true;
-        }
-    }
-    else if (wParam == 'P') {
-        if ((GetKeyState(VK_CONTROL) & 0x8000) != 0) {
-            copyColor(3);
-            return true;
-        }
-    }
-    else if (wParam == VK_LEFT) {
-        moveByKey(0);
-        return true;
-    }
-    else if (wParam == VK_UP) {
-        moveByKey(1);
-        return true;
-    }
-    else if (wParam == VK_RIGHT) {
-        moveByKey(2);
-        return true;
-    }
-    else if (wParam == VK_DOWN) {
-        moveByKey(3);
-        return true;
-    }
-    return false;
 }
 QImage WinBase::grab(const QRect& rect)
 {

@@ -113,25 +113,33 @@ void ToolBase::keyPressEvent(QKeyEvent* event)
     else if (event->key() == Qt::Key_Down) {
         win->moveByKey(3);
     }
-    else if (event->key() == Qt::Key_T && (event->modifiers() & Qt::ControlModifier)) {
-        win->hideTools();
-    }
-    else if (event->key() == Qt::Key_S && (event->modifiers() & Qt::ControlModifier)) {
-        win->saveToFile();
-    }
-    else if (event->key() == Qt::Key_C && (event->modifiers() & Qt::ControlModifier)) {
-        win->saveToClipboard();
-    }
-    else if (event->key() == Qt::Key_H && (event->modifiers() & Qt::ControlModifier)) {
-        win->copyColor(0);
-    }
-    else if (event->key() == Qt::Key_R && (event->modifiers() & Qt::ControlModifier)) {
-        win->copyColor(1);
-    }
-    else if (event->key() == Qt::Key_K && (event->modifiers() & Qt::ControlModifier)) {
-        win->copyColor(2);
-    }
-    else if (event->key() == Qt::Key_P && (event->modifiers() & Qt::ControlModifier)) {
-        win->copyColor(3);
+    else if (event->modifiers() & Qt::ControlModifier) {
+        if (event->key() == Qt::Key_T) {
+            win->hideTools();
+        }
+        else if (event->key() == Qt::Key_Z) {
+            win->undo();
+        }
+        else if (event->key() == Qt::Key_Y) {
+            win->redo();
+        }
+        else if (event->key() == Qt::Key_S) {
+            win->saveToFile();
+        }
+        else if (event->key() == Qt::Key_C) {
+            win->saveToClipboard();
+        }
+        else if (event->key() == Qt::Key_H) {
+            win->copyColor(0);
+        }
+        else if (event->key() == Qt::Key_R) {
+            win->copyColor(1);
+        }
+        else if (event->key() == Qt::Key_K) {
+            win->copyColor(2);
+        }
+        else if (event->key() == Qt::Key_P) {
+            win->copyColor(3);
+        }
     }
 }
