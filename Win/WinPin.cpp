@@ -1,3 +1,4 @@
+#include <windowsx.h>
 #include <QWindow>
 #include <QFileDialog>
 #include <QStandardPaths>
@@ -291,8 +292,57 @@ bool WinPin::processOtherMsg(UINT msg, WPARAM wParam, LPARAM lParam)
         untrackMouse();
         return true;
     }
+    else if (msg == WM_MOUSEWHEEL) {
+        int delta = GET_WHEEL_DELTA_WPARAM(wParam);
+        onMouseWheel(delta);
+        return true;
+    }
     return false;
 }
+
+void WinPin::onMouseWheel(const int& delta)
+{
+    if (state == State::start) {
+        float scale;
+        if (delta > 0) {
+            scale = 1.1;
+        }
+        else {
+            scale = 0.9;
+        }
+        //imgRect.setXYWH(padding, padding, imgRect.width() * scale, imgRect.height() * scale);
+        //auto tm = ToolMain::Get();
+        //float w1, h1;
+        //if (imgRect.width() < tm->ToolRect.width()) {
+        //    w1 = tm->ToolRect.width() + padding * 2;
+        //}
+        //else {
+        //    w1 = imgRect.width() + padding * 2;
+        //}
+        //h1 = imgRect.height() + padding * 2 + tm->ToolRect.height() * 2 + tm->MarginTop * 2;
+        //x = x - (w1 - w) / 2;
+        //y = y - (h1 - h) / 2;
+        //w = w1;
+        //h = h1;
+
+        SetWindowPos(hwnd, nullptr, x, y, w, h, SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_FRAMECHANGED);
+        //DeleteDC(hCompatibleDC);
+        //DeleteObject(bottomHbitmap);
+        //HDC hdc = GetDC(hwnd);
+        //hCompatibleDC = CreateCompatibleDC(NULL);
+        //bottomHbitmap = CreateCompatibleBitmap(hdc, w, h);
+        //DeleteObject(SelectObject(hCompatibleDC, bottomHbitmap));
+        //ReleaseDC(hwnd, hdc);
+        //initCanvas();
+        //Refresh();
+        return;
+    }
+    //Recorder::Get()->OnMouseWheel(delta);
+    //return false;
+}
+
+
+
 void WinPin::moveByKey(const int& key)
 {
     POINT point;

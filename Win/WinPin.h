@@ -35,6 +35,7 @@ private:
 	void prepareImg(WinFull* full);
 	void trackMouse();
 	void untrackMouse();
+	void onMouseWheel(const int& delta);
 private:
 	bool isTrackMouseEvent{ false };
 	bool needShowToolMain{ false };
