@@ -154,6 +154,9 @@
     <ClInclude Include="App\NativeRect.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="App\Res.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="QHotKey\qhotkey.h">
@@ -261,5 +264,10 @@
     <Image Include="config\logo.ico">
       <Filter>Resource Files</Filter>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="App\Res.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

@@ -22,6 +22,7 @@ Tray::Tray(const QJsonObject& obj, const QString& lang, QObject *parent) : QObje
     trayIcon->show();
 
     menu = new QMenu();
+
     QJsonArray arr = obj["menu"].toArray();
     for (const QJsonValue& val:arr)
     {
@@ -33,6 +34,9 @@ Tray::Tray(const QJsonObject& obj, const QString& lang, QObject *parent) : QObje
         else if (name == "about") {
             connect(action, SIGNAL(triggered()), qApp, SLOT(quit()));
         }
+        connect(action, &QAction::hovered, []() {
+            QGuiApplication::setOverrideCursor(Qt::ArrowCursor);
+        });
         menu->addAction(action);
     }
     trayIcon->setContextMenu(menu);

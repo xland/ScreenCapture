@@ -163,6 +163,7 @@
     <QtMoc Include="Shape\ShapeBase.h" />
     <QtMoc Include="Shape\ShapeArrow.h" />
     <ClInclude Include="App\NativeRect.h" />
+    <ClInclude Include="App\Res.h" />
     <ClInclude Include="Shape\ShapeEllipse.h" />
     <QtMoc Include="Shape\ShapeRect.h" />
     <QtMoc Include="Shape\ShapeNumber.h" />
@@ -201,6 +202,9 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="config\logo.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="App\Res.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">
