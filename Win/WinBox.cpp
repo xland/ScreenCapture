@@ -246,6 +246,9 @@ void WinBox::hideTools(State state)
     if (toolSub) {
         toolSub->hide();
     }
+    if (winCanvas->curShape) {
+        winCanvas->clear();
+    }
 	this->state = state;
     if (state == State::start) {
         if (!pixelInfo) {
