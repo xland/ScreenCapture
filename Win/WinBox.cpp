@@ -147,36 +147,6 @@ bool WinBox::processOtherMsg(UINT msg, WPARAM wParam, LPARAM lParam)
             keyEscPress();
             return true;
         }
-        else if (wParam == 'T') {
-            if ((GetKeyState(VK_CONTROL) & 0x8000) != 0) {
-                ctrlTPress();
-                return true;
-            }
-        }
-        else if (wParam == 'H') {
-            if ((GetKeyState(VK_CONTROL) & 0x8000) != 0) {
-                copyColor(0);
-                return true;
-            }
-        }
-        else if (wParam == 'R') {
-            if ((GetKeyState(VK_CONTROL) & 0x8000) != 0) {
-                copyColor(1);
-                return true;
-            }
-        }
-        else if (wParam == 'K') {
-            if ((GetKeyState(VK_CONTROL) & 0x8000) != 0) {
-                copyColor(2);
-                return true;
-            }
-        }
-        else if (wParam == 'P') {
-            if ((GetKeyState(VK_CONTROL) & 0x8000) != 0) {
-                copyColor(3);
-                return true;
-            }
-        }
         else if (wParam == VK_LEFT) {
             moveByKey(0);
             return true;
@@ -192,6 +162,36 @@ bool WinBox::processOtherMsg(UINT msg, WPARAM wParam, LPARAM lParam)
         else if (wParam == VK_DOWN) {
             moveByKey(3);
             return true;
+        }
+        else if ((GetKeyState(VK_CONTROL) & 0x8000) != 0) {
+            if (wParam == 'T') {
+                ctrlTPress();
+                return true;
+            }
+            else if (wParam == 'Z') {
+                undo();
+                return true;
+            }
+            else if (wParam == 'Y') {
+                redo();
+                return true;
+            }
+            else if (wParam == 'H') {
+                copyColor(0);
+                return true;
+            }
+            else if (wParam == 'R') {
+                copyColor(1);
+                return true;
+            }
+            else if (wParam == 'K') {
+                copyColor(2);
+                return true;
+            }
+            else if (wParam == 'P') {
+                copyColor(3);
+                return true;
+            }
         }
         break;
     }
