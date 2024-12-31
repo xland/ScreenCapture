@@ -30,8 +30,7 @@ void WinBase::initWindow(bool isTransparent)
     wcx.lpszClassName = L"ScreenCapture";
     auto flag = RegisterClassEx(&wcx);
 #ifdef DEBUG
-    //auto exStyle = WS_EX_LAYERED;
-    auto exStyle = WS_EX_LAYERED | WS_EX_TOOLWINDOW; // | WS_EX_TOPMOST
+    auto exStyle = WS_EX_LAYERED | WS_EX_TOOLWINDOW;
 #else
     auto exStyle = WS_EX_LAYERED | WS_EX_TOOLWINDOW | WS_EX_TOPMOST;
 #endif

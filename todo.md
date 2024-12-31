@@ -1,10 +1,12 @@
 ﻿- 按住Shift键，画马赛克线条时，拖拽会扫过一大片区域
-- 主工具栏要保持在屏幕内，动态调整位置
-- maskRect的info信息在多屏情况下，仅判断y>0，可能会显示不全
-- 鼠标移出Pin窗口，要触发release事件，不然一直处于拖动改变shape状态
-- Pin 隐藏子工具栏后 dragger也得隐藏
-- WinFull 不需要CTRL T吗
-
+- 不显示托盘图标，截图完成随即退出
+- 命令行截取指定区域
+- 命令行得到截图响应
+- release tooltip看上去怪怪的
+- 日志
+- release 托盘图标
+- release 退出应用
+- tray about
 
 
 - 通过命令行截图
@@ -30,3 +32,7 @@
 - hsv color
 - 文本框可以拖出Pin窗口
 - 改变mask到顶部  toolbar不会出现在底部
+
+- maskRect的info信息在多屏情况下，仅判断y>0，可能会显示不全
+- 鼠标移出Pin窗口，要触发release事件，不然一直处于拖动改变shape状态
+- WinFull 不需要CTRL T吗

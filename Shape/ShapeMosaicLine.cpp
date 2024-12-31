@@ -19,7 +19,7 @@ void ShapeMosaicLine::paint(QPainter* painter)
     if (state == ShapeState::ready) {
         painter->drawImage(pathRect.topLeft(), imgPatch);
     }
-    else if(state == ShapeState::moving){
+    else if(state == ShapeState::moving || isStraight){
         auto tempImg = winImg.copy();
         erasePath(&tempImg);
         painter->drawImage(QPoint(0, 0), mosaicImg);
@@ -43,7 +43,7 @@ void ShapeMosaicLine::mouseRelease(QMouseEvent* event)
     pathRect = path.boundingRect().adjusted(-strokeWidth, -strokeWidth, strokeWidth, strokeWidth);
     imgPatch = mosaicImg.copy(pathRect.toRect());
     QPainter painter(&imgPatch);
-    if (state == ShapeState::moving) {
+    if (state == ShapeState::moving || isStraight) {
         auto tempImg = winImg.copy();
         erasePath(&tempImg);
         painter.drawImage(QPoint(0, 0), tempImg.copy(pathRect.toRect()));

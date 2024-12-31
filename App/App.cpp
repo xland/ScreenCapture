@@ -29,9 +29,9 @@ namespace {
 void App::init()
 {
     //qApp->setCursorFlashTime(0);
-    QFont font("Microsoft YaHei",12);
+    QFont font("Microsoft YaHei",9);
     qApp->setFont(font);
-    QFont tooltipFont("Arial", 10);
+    QFont tooltipFont("Arial", 9);
     QToolTip::setFont(tooltipFont);
     initConfig();
     start();
@@ -74,7 +74,8 @@ void App::initConfig()
     auto lang = jsonObject["defaultLang"].toString();
     initHotKey(jsonObject);
     initFont(jsonObject);
-    initTool(jsonObject, lang);  
+    initTool(jsonObject, lang);
+    qDebug() << "init tray";
     initTray(jsonObject, lang);
     initPin(jsonObject, lang);
 }

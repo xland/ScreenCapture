@@ -18,7 +18,7 @@
     "fontName": "iconfont"
   },
   "tray": {
-    "iconPath": "./config/logo.ico",
+    "iconPath": "config/logo.ico",
     "menu": [
       {
         "name": "about",
