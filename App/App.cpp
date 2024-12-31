@@ -6,6 +6,8 @@
 #include <QJsonValue>
 #include <QFontDatabase>
 #include <QToolTip>
+#include <QSharedMemory>
+#include <QMessageBox>
 
 #include "App.h"
 #include "Tray.h"
@@ -25,10 +27,12 @@ namespace {
     std::unique_ptr<Tray> tray;
     QList<QRect> screens;
     QList<QRect> windows;
+    QSharedMemory* smSingleApp;
 }
 void App::init()
 {
     //qApp->setCursorFlashTime(0);
+    
     QFont font("Microsoft YaHei",9);
     qApp->setFont(font);
     QFont tooltipFont("Arial", 9);
@@ -50,11 +54,30 @@ void App::dispose()
     hotkey.reset();
     iconFont.reset();
     app.reset();
+    if (smSingleApp->isAttached()) {
+        smSingleApp->detach();
+    }        
 }
 void App::start()
 {
     NativeRect::init();
     WinFull::init();
+}
+bool App::singleAppLock()
+{
+    smSingleApp = new QSharedMemory("ScreenCapture", qApp);
+    bool flag{ false };
+    if (smSingleApp->attach(QSharedMemory::ReadOnly)) {
+        smSingleApp->detach();
+        flag = false;
+    }
+    else if (smSingleApp->create(1)) {
+        flag = true;
+    }
+    if (!flag) {
+        QMessageBox::warning(nullptr, "Warning", "ScreenCapture is already running.");
+    }    
+    return flag;
 }
 void App::initConfig()
 {
@@ -125,5 +148,3 @@ void App::initPin(const QJsonObject& obj, const QString& lang)
         WinPin::initData(obj["winPin"].toArray(), lang);
     }
 }
-
-

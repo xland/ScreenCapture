@@ -6,7 +6,7 @@
 - 日志
 - release 托盘图标
 - release 退出应用
-- tray about
+- 进程单例
 
 
 - 通过命令行截图
