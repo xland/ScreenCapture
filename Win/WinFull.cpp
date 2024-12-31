@@ -47,6 +47,7 @@ void WinFull::showToolMain()
 {
     if (!toolMain) {
         toolMain = new ToolMain(this);
+        toolMain->setBtnEnable(QString{ "pin" }, true);
     } 
     toolMain->confirmPos();
     toolMain->show();
