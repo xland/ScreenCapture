@@ -131,6 +131,9 @@
     <ClCompile Include="App\NativeRect.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="App\About.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App\App.h">
@@ -247,6 +250,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="Shape\ShapeTextContainer.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="App\About.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

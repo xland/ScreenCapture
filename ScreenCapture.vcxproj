@@ -113,6 +113,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="App\About.cpp" />
     <ClCompile Include="App\App.cpp" />
     <ClCompile Include="App\NativeRect.cpp" />
     <ClCompile Include="Shape\ShapeArrow.cpp" />
@@ -151,6 +152,7 @@
     <ClCompile Include="Win\WinPin.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <QtMoc Include="App\About.h" />
     <ClInclude Include="App\App.h" />
     <ClInclude Include="App\Util.h" />
     <QtMoc Include="Win\WinBox.h" />
