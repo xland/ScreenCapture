@@ -75,7 +75,6 @@ void App::initConfig()
     initHotKey(jsonObject);
     initFont(jsonObject);
     initTool(jsonObject, lang);
-    qDebug() << "init tray";
     initTray(jsonObject, lang);
     initPin(jsonObject, lang);
 }

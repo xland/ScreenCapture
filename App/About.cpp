@@ -1,7 +1,11 @@
+#include <QGuiApplication>
 #include "About.h"
+
 
 About::About(QWidget* parent):QWidget(parent)
 {
+    setMouseTracking(true);
+    setAttribute(Qt::WA_Hover);
     setAttribute(Qt::WA_QuitOnClose, false);
     QTextEdit* textEdit = new QTextEdit(this);
     QString htmlText = R"(<html><head><style>
@@ -20,4 +24,13 @@ p { line-height: 1.5; }
     setLayout(layout);
     setFixedSize(500, 160);
     show();
+}
+
+void About::enterEvent(QEnterEvent* event)
+{
+    QGuiApplication::setOverrideCursor(Qt::ArrowCursor);
+}
+
+void About::leaveEvent(QEvent* event)
+{
 }
