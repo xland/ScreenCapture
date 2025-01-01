@@ -10,7 +10,6 @@
 #include <QMessageBox>
 
 #include "../Lib/QHotKey/qhotkey.h"
-#include "spdlog/spdlog.h"
 #include "spdlog/sinks/rotating_file_sink.h"
 
 #include "App.h"

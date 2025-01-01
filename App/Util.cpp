@@ -35,11 +35,12 @@ QMouseEvent Util::createMouseEvent(const LPARAM& lParam, const QEvent::Type& typ
 
 QImage Util::printWindow(WinBox* win)
 {
-    HDC hScreen = GetDC(NULL);
+    HDC hScreen = GetDC(win->hwnd);
     HDC hDC = CreateCompatibleDC(hScreen);
     HBITMAP hBitmap = CreateCompatibleBitmap(hScreen, win->w, win->h);
     DeleteObject(SelectObject(hDC, hBitmap));
-    PrintWindow(win->hwnd, hDC, PW_RENDERFULLCONTENT);
+    auto flag = PrintWindow(win->hwnd, hDC, PW_RENDERFULLCONTENT);
+    spdlog::info("PrintWindow {}",flag);
     auto img = QImage(win->w, win->h, QImage::Format_ARGB32);
     BITMAPINFO info = { sizeof(BITMAPINFOHEADER), (long)win->w, 0 - (long)win->h, 1, 32, BI_RGB, (DWORD)win->w * 4 * win->h, 0, 0, 0, 0 };
     GetDIBits(hDC, hBitmap, 0, win->h, img.bits(), &info, DIB_RGB_COLORS);

@@ -122,6 +122,7 @@ void ShapeMosaicLine::createMosaicImg()
     auto win = (WinBox*)parent();
     //auto start = QTime::currentTime();
     winImg = Util::printWindow(win);
+    winImg.save("allen123.png");
     //auto ss = start.msecsTo(QTime::currentTime());
     {
         QPainter painter(&winImg);

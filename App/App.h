@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include <QFont>
 #include <QJsonObject>
-
+#include "spdlog/spdlog.h"
 
 class App
 {

@@ -64,11 +64,11 @@ void WinPin::showToolMain()
 {
     if (!toolMain) {
         toolMain = new ToolMain(this);
-        toolMain->setBtnEnable(QString{"pin"}, false);
     }
     QPoint pos{ x + padding, y + h };
     auto hwnd = (HWND)toolMain->winId();
     SetWindowPos(hwnd, nullptr, pos.x(), pos.y(), 0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_SHOWWINDOW);
+    toolMain->setBtnEnable(QString{ "pin" }, false);
     toolMain->show();
     state = State::tool;
     if (pixelInfo) pixelInfo->close();

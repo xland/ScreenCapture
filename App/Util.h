@@ -4,6 +4,7 @@
 #include <commctrl.h>
 #include <QMouseEvent>
 #include <QImage>
+#include "spdlog/spdlog.h"
 
 class WinBox;
 class Util
