@@ -134,6 +134,12 @@
     <ClCompile Include="App\About.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Lib\DWMCapture\d3d_device.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\DWMCapture\DWMCapture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App\App.h">
@@ -209,6 +215,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Lib\spdlog\formatter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\DWMCapture\d3d_device.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\DWMCapture\DWMCapture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\DWMCapture\types.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -118,6 +118,8 @@
     <ClCompile Include="App\About.cpp" />
     <ClCompile Include="App\App.cpp" />
     <ClCompile Include="App\NativeRect.cpp" />
+    <ClCompile Include="Lib\DWMCapture\d3d_device.cpp" />
+    <ClCompile Include="Lib\DWMCapture\DWMCapture.cpp" />
     <ClCompile Include="Shape\ShapeArrow.cpp" />
     <ClCompile Include="Shape\ShapeBase.cpp" />
     <ClCompile Include="Shape\ShapeEllipse.cpp" />
@@ -168,6 +170,9 @@
     <QtMoc Include="Shape\ShapeArrow.h" />
     <ClInclude Include="App\NativeRect.h" />
     <ClInclude Include="App\Res.h" />
+    <ClInclude Include="Lib\DWMCapture\d3d_device.h" />
+    <ClInclude Include="Lib\DWMCapture\DWMCapture.h" />
+    <ClInclude Include="Lib\DWMCapture\types.h" />
     <ClInclude Include="Lib\spdlog\async.h" />
     <ClInclude Include="Lib\spdlog\async_logger-inl.h" />
     <ClInclude Include="Lib\spdlog\async_logger.h" />

@@ -1,6 +1,7 @@
 ﻿#include <QMessageBox>
 #include "Util.h"
 #include "../Win/WinBox.h"
+#include "../Lib/DWMCapture/DWMCapture.h"
 #pragma comment(lib, "comctl32.lib")
 
 QMouseEvent Util::createMouseEvent(const QEvent::Type& type, const Qt::MouseButton& btn)
@@ -47,6 +48,36 @@ QImage Util::printWindow(WinBox* win)
     DeleteDC(hDC);
     DeleteObject(hBitmap);
     ReleaseDC(NULL, hScreen);
+    return img;
+}
+
+QImage Util::printWindow2(WinBox* win)
+{
+    //auto dwmCapture = new DWMCapture();
+    //auto hr = dwmCapture->Init();
+    //if (FAILED(hr)) {
+    //    delete dwmCapture;
+    //}
+    //BOX* box = nullptr;
+    //CAPTURE_DATA* data = new CAPTURE_DATA();
+    //dwmCapture->CaptureWindow(win->hwnd, box, data);
+
+
+
+    HDC hdcSrc = GetWindowDC(win->hwnd);
+    HDC hdcDest = CreateCompatibleDC(hdcSrc);
+    HBITMAP hBitmap = CreateCompatibleBitmap(hdcSrc, win->w, win->h);
+    auto hOld = SelectObject(hdcDest, hBitmap);
+    BitBlt(hdcDest, 0, 0, win->w, win->h, hdcSrc, 0, 0, SRCCOPY);
+
+    auto img = QImage(win->w, win->h, QImage::Format_ARGB32);
+    BITMAPINFO info = { sizeof(BITMAPINFOHEADER), (long)win->w, 0 - (long)win->h, 1, 32, BI_RGB, (DWORD)win->w * 4 * win->h, 0, 0, 0, 0 };
+    GetDIBits(hdcDest, hBitmap, 0, win->h, img.bits(), &info, DIB_RGB_COLORS);
+
+    SelectObject(hdcDest, hOld);
+    DeleteDC(hdcDest);
+    DeleteObject(hBitmap);
+    ReleaseDC(win->hwnd, hdcSrc);
     return img;
 }
 
