@@ -5,12 +5,12 @@
     {
       "name": "toolBar",
       "zhcn": "工具栏（Ctrl+T）",
-      "en": "Toolbar（Ctrl+T）"
+      "en": "Toolbar (Ctrl+T)"
     },
     {
       "name": "quit",
       "zhcn": "退出（Esc）",
-      "en": "Quit（Esc）"
+      "en": "Quit (Esc)"
     }
   ],
   "icon": {
@@ -23,12 +23,12 @@
       {
         "name": "about",
         "zhcn": "关于",
-        "en": "about"
+        "en": "About"
       },
       {
         "name": "quit",
         "zhcn": "退出",
-        "en": "quit"
+        "en": "Quit"
       }
     ]
   },
@@ -37,49 +37,49 @@
       "name": "rect",
       "icon": "e8e8",
       "zhcn": "矩形",
-      "en": "rect"
+      "en": "Rect"
     },
     {
       "name": "ellipse",
       "icon": "e6bc",
       "zhcn": "圆形",
-      "en": "ellipse"
+      "en": "Eellipse"
     },
     {
       "name": "arrow",
       "icon": "e603",
       "zhcn": "箭头",
-      "en": "arrow"
+      "en": "Arrow"
     },
     {
       "name": "number",
       "icon": "e776",
       "zhcn": "标号",
-      "en": "number"
+      "en": "Number"
     },
     {
       "name": "line",
       "icon": "e601",
       "zhcn": "线条",
-      "en": "pen"
+      "en": "Pen"
     },
     {
       "name": "text",
       "icon": "e6ec",
       "zhcn": "文本",
-      "en": "text"
+      "en": "Text"
     },
     {
       "name": "mosaic",
       "icon": "e82e",
       "zhcn": "马赛克",
-      "en": "mosaic"
+      "en": "Mosaic"
     },
     {
       "name": "eraser",
       "icon": "e6be",
       "zhcn": "橡皮擦",
-      "en": "eraser"
+      "en": "Eraser"
     },
     {
       "name": "splitter"
@@ -88,13 +88,13 @@
       "name": "undo",
       "icon": "ed85",
       "zhcn": "撤销",
-      "en": "undo"
+      "en": "Undo"
     },
     {
       "name": "redo",
       "icon": "ed8a",
       "zhcn": "重做",
-      "en": "redo"
+      "en": "Redo"
     },
     {
       "name": "splitter"
@@ -103,25 +103,25 @@
       "name": "pin",
       "icon": "e6a3",
       "zhcn": "钉住",
-      "en": "pin"
+      "en": "Pin"
     },
     {
       "name": "clipboard",
       "icon": "e87f",
       "zhcn": "保存到剪切板",
-      "en": "save to clipboard"
+      "en": "Save to Clipboard"
     },
     {
       "name": "save",
       "icon": "e6c0",
       "zhcn": "保存",
-      "en": "save to disk"
+      "en": "Save to Disk"
     },
     {
       "name": "close",
       "icon": "e6e7",
       "zhcn": "关闭",
-      "en": "close"
+      "en": "Close"
     }
   ],
   "toolSub": {
@@ -135,7 +135,7 @@
       },
       {
         "name": "strokeCtrl",
-        "zhcn": "线条粗细: ",
+        "zhcn": "线条粗细：",
         "en": "Stroke Width: ",
         "value": 3,
         "min": 1,
@@ -156,7 +156,7 @@
       },
       {
         "name": "strokeCtrl",
-        "zhcn": "线条粗细: ",
+        "zhcn": "线条粗细：",
         "en": "Stroke Width: ",
         "value": 3,
         "min": 1,
@@ -177,7 +177,7 @@
       },
       {
         "name": "strokeCtrl",
-        "zhcn": "箭头大小: ",
+        "zhcn": "箭头大小：",
         "en": "Arrow Size: ",
         "value": 18,
         "min": 12,
@@ -211,7 +211,7 @@
       },
       {
         "name": "strokeCtrl",
-        "zhcn": "线条粗细: ",
+        "zhcn": "线条粗细：",
         "en": "Stroke Width: ",
         "value": 12,
         "min": 6,
@@ -239,7 +239,7 @@
       },
       {
         "name": "strokeCtrl",
-        "zhcn": "字体大小: ",
+        "zhcn": "字体大小：",
         "en": "Font Size: ",
         "value": 16,
         "min": 8,
@@ -260,7 +260,7 @@
       },
       {
         "name": "strokeCtrl",
-        "zhcn": "线条粗细: ",
+        "zhcn": "线条粗细：",
         "en": "Stroke Width: ",
         "value": 26,
         "min": 16,
@@ -278,7 +278,7 @@
       {
         "name": "strokeCtrl",
         "value": 16,
-        "zhcn": "线条粗细: ",
+        "zhcn": "线条粗细：",
         "en": "Stroke Width: ",
         "min": 12,
         "max": 60
