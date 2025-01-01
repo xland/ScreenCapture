@@ -91,7 +91,7 @@ void ShapeLineBase::mouseRelease(QMouseEvent* event)
             tempPath.lineTo(ele.x, ele.y);
         }
         pathStart.clear();
-        for (size_t i = 0; i < path.elementCount(); i++)
+        for (int i = 0; i < path.elementCount(); i++)
         {
             auto ele = path.elementAt(i);
             tempPath.lineTo(ele.x, ele.y);

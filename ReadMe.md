@@ -95,17 +95,17 @@ The hotkey is Ctrl+Alt+A
 ## Sponsorship（赞助）
 
 
-<img src="./doc/alipay.jpg" style="width:160px;height:160px;" /><br />
+<img src="./Doc/alipay.jpg" style="width:160px;height:160px;" /><br />
 alipay(支付宝支付)
 
 
-<img src="./doc/wechat.png" style="width:160px;height:160px;" /><br />
+<img src="./Doc/wechat.png" style="width:160px;height:160px;" /><br />
 wechat(微信支付)
 
 
 ## Author（作者）
 
-<img src="./doc/author.jpg" style="width:160px;height:160px;" />
+<img src="./Doc/author.jpg" style="width:160px;height:160px;" />
 
 Author's Wechat QR code（作者微信）
 

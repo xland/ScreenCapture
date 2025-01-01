@@ -70,6 +70,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>$(ProjectDir)Lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies>dwmapi.lib;shcore.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -79,6 +80,7 @@
     <ClCompile>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <PreprocessorDefinitions>DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir)Lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies>dwmapi.lib;shcore.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -133,8 +135,8 @@
     <ClCompile Include="Shape\ShapeTextInput.cpp" />
     <ClCompile Include="Tool\ColorCtrl.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="QHotKey\qhotkey.cpp" />
-    <ClCompile Include="QHotKey\qhotkey_win.cpp" />
+    <ClCompile Include="Lib\QHotKey\qhotkey.cpp" />
+    <ClCompile Include="Lib\QHotKey\qhotkey_win.cpp" />
     <ClCompile Include="App\Tray.cpp" />
     <ClCompile Include="Tool\PixelInfo.cpp" />
     <ClCompile Include="Tool\StrokeCtrl.cpp" />
@@ -166,6 +168,23 @@
     <QtMoc Include="Shape\ShapeArrow.h" />
     <ClInclude Include="App\NativeRect.h" />
     <ClInclude Include="App\Res.h" />
+    <ClInclude Include="Lib\spdlog\async.h" />
+    <ClInclude Include="Lib\spdlog\async_logger-inl.h" />
+    <ClInclude Include="Lib\spdlog\async_logger.h" />
+    <ClInclude Include="Lib\spdlog\common-inl.h" />
+    <ClInclude Include="Lib\spdlog\common.h" />
+    <ClInclude Include="Lib\spdlog\formatter.h" />
+    <ClInclude Include="Lib\spdlog\fwd.h" />
+    <ClInclude Include="Lib\spdlog\logger-inl.h" />
+    <ClInclude Include="Lib\spdlog\logger.h" />
+    <ClInclude Include="Lib\spdlog\mdc.h" />
+    <ClInclude Include="Lib\spdlog\pattern_formatter-inl.h" />
+    <ClInclude Include="Lib\spdlog\pattern_formatter.h" />
+    <ClInclude Include="Lib\spdlog\spdlog-inl.h" />
+    <ClInclude Include="Lib\spdlog\spdlog.h" />
+    <ClInclude Include="Lib\spdlog\stopwatch.h" />
+    <ClInclude Include="Lib\spdlog\tweakme.h" />
+    <ClInclude Include="Lib\spdlog\version.h" />
     <ClInclude Include="Shape\ShapeEllipse.h" />
     <QtMoc Include="Shape\ShapeRect.h" />
     <QtMoc Include="Shape\ShapeNumber.h" />
@@ -186,24 +205,24 @@
     <QtMoc Include="Tool\ToolMain.h" />
     <QtMoc Include="Tool\ToolSub.h" />
     <QtMoc Include="Win\WinPin.h" />
-    <QtMoc Include="QHotKey\qhotkey_p.h" />
-    <QtMoc Include="QHotKey\qhotkey.h" />
+    <QtMoc Include="Lib\QHotKey\qhotkey_p.h" />
+    <QtMoc Include="Lib\QHotKey\qhotkey.h" />
     <ClInclude Include="App\State.h" />
     <QtMoc Include="Win\WinFull.h" />
     <QtMoc Include="App\Tray.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="config\config.json" />
+    <None Include="Config\config.json" />
     <None Include="licence" />
     <None Include="ReadMe.md" />
     <None Include="todo.md" />
-    <None Include="doc\高亮窗口.md" />
+    <None Include="Doc\高亮窗口.md" />
   </ItemGroup>
   <ItemGroup>
-    <Font Include="config\iconfont.ttf" />
+    <Font Include="Config\iconfont.ttf" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="config\logo.ico" />
+    <Image Include="Config\logo.ico" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="App\Res.rc" />

@@ -78,7 +78,7 @@ void NativeRect::initDesktopRect()
 
 const QRect* NativeRect::getScreenByPos(const int& x, const int& y)
 {
-    for (size_t i = 0; i < screenRects.size(); i++)
+    for (int i = 0; i < screenRects.size(); i++)
     {
         if (screenRects[i].contains(x, y)) {
             return &screenRects[i];

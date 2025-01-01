@@ -9,10 +9,13 @@
 #include <QSharedMemory>
 #include <QMessageBox>
 
+#include "../Lib/QHotKey/qhotkey.h"
+#include "spdlog/spdlog.h"
+#include "spdlog/sinks/rotating_file_sink.h"
+
 #include "App.h"
 #include "Tray.h"
 #include "NativeRect.h"
-#include "../QHotKey/qhotkey.h"
 #include "../Win/WinFull.h"
 #include "../Win/WinPin.h"
 
@@ -31,22 +34,18 @@ namespace {
 }
 void App::init()
 {
-    //qApp->setCursorFlashTime(0);
-    
+    //qApp->setCursorFlashTime(0);    
     QFont font("Microsoft YaHei",9);
     qApp->setFont(font);
     QFont tooltipFont("Arial", 9);
     QToolTip::setFont(tooltipFont);
+    initLog();
     initConfig();
     start();
 }
 QFont* App::getIconFont()
 {
     return iconFont.get();
-}
-QList<QRect>* App::getScreens()
-{
-    return &screens;
 }
 void App::dispose()
 {
@@ -81,7 +80,7 @@ bool App::singleAppLock()
 }
 void App::initConfig()
 {
-    QFile file("./config/config.json");
+    QFile file("./Config/config.json");
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         qWarning() << "无法打开文件:" << file.errorString();
         return;
@@ -147,4 +146,13 @@ void App::initPin(const QJsonObject& obj, const QString& lang)
     if (obj["winPin"].isArray()) {
         WinPin::initData(obj["winPin"].toArray(), lang);
     }
+}
+
+void App::initLog()
+{
+    auto logger = spdlog::rotating_logger_mt("logger", "Logs/log.txt", 1024000, 2); //1000K,最多2个文件
+    spdlog::set_default_logger(logger);
+    spdlog::set_level(spdlog::level::trace);
+    spdlog::flush_on(spdlog::level::trace);
+    spdlog::info("logger setted");
 }

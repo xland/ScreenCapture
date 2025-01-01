@@ -21,7 +21,7 @@ ColorCtrl::ColorCtrl(QWidget *parent) : QWidget(parent)
 	setAttribute(Qt::WA_Hover);
 	setMouseTracking(true);
 	setFocusPolicy(Qt::NoFocus);
-	auto w{ colorValues.size() * itemWidth };
+	int w{ (int)colorValues.size() * itemWidth };
 	setFixedSize(w, 32);
 }
 
