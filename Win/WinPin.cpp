@@ -176,8 +176,8 @@ void WinPin::mousePress(QMouseEvent* event)
 
 void WinPin::mousePressRight(QMouseEvent* event)
 {
-    HMENU hMenu = CreatePopupMenu();
     auto flag = state == State::start;
+    HMENU hMenu = CreatePopupMenu();
     AppendMenu(hMenu, flag ? MF_UNCHECKED : MF_CHECKED, 1001, menuItems["toolBar"].data());
     AppendMenu(hMenu, MF_STRING, 1002, menuItems["quit"].data());
     auto pos = event->pos();

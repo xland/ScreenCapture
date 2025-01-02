@@ -21,6 +21,11 @@
     "iconPath": "Config/logo.ico",
     "menu": [
       {
+        "name": "start",
+        "zhcn": "截图",
+        "en": "Capture"
+      },
+      {
         "name": "about",
         "zhcn": "关于",
         "en": "About"

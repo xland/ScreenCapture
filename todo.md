@@ -7,6 +7,7 @@
 - release 托盘图标
 - release 退出应用
 - 鼠标滚轮放大钉图窗口
+- Tray Menu用原生的
 
 
 - 通过命令行截图

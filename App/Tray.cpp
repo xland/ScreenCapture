@@ -46,6 +46,11 @@ Tray::Tray(const QJsonObject& obj, const QString& lang, QObject *parent) : QObje
                 about->raise();
                 });
         }
+        else if (name == "start") {
+            connect(action, &QAction::triggered, []() {
+                App::start();
+                });
+        }
         connect(action, &QAction::hovered, []() {
             QGuiApplication::setOverrideCursor(Qt::ArrowCursor);
         });

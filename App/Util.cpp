@@ -1,8 +1,8 @@
 ﻿#include <QMessageBox>
 #include "Util.h"
 #include "../Win/WinBox.h"
-#include "../Lib/DWMCapture/DWMCapture.h"
-#pragma comment(lib, "comctl32.lib")
+
+
 
 QMouseEvent Util::createMouseEvent(const QEvent::Type& type, const Qt::MouseButton& btn)
 {
