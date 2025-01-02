@@ -28,7 +28,6 @@ WinFull::WinFull(QObject* parent) : WinBox(parent)
     img = Util::printScreen(x, y, w, h);
     initWindow(false);
     show();
-    releaseImg();
 }
 WinFull::~WinFull()
 {
@@ -88,11 +87,7 @@ void WinFull::close()
 
 QImage WinFull::getCutImg()
 {
-    QImage tar;
-    {
-        auto img = Util::printWindow(this);
-        tar = img.copy(winMask->maskRect);
-    }
+    QImage tar = img.copy(winMask->maskRect);
     QPainter p(&tar);
     p.translate(0 - winMask->maskRect.left(), 0 - winMask->maskRect.top());
     p.setRenderHint(QPainter::Antialiasing, true);

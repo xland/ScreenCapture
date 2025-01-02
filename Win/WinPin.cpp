@@ -89,11 +89,7 @@ void WinPin::showToolSub()
 
 void WinPin::saveToClipboard()
 {
-    QImage tar;
-    {
-        auto img = Util::printWindow(this);
-        tar = img.copy(QRect(padding, padding, w - padding * 2, h - padding * 2));
-    }
+    QImage tar = img.copy(QRect(padding, padding, w - padding * 2, h - padding * 2));
     QPainter p(&tar);
     p.setRenderHint(QPainter::Antialiasing, true);
     p.setRenderHint(QPainter::TextAntialiasing, true);
@@ -115,12 +111,7 @@ void WinPin::saveToFile()
     {
         return;
     }
-
-    QImage tar;
-    {
-        auto img = Util::printWindow(this);
-        tar = img.copy(QRect(padding,padding,w-padding*2,h-padding*2));
-    }
+	QImage tar = img.copy(QRect(padding, padding, w - padding * 2, h - padding * 2));
     QPainter p(&tar);
     p.setRenderHint(QPainter::Antialiasing, true);
     p.setRenderHint(QPainter::TextAntialiasing, true);
