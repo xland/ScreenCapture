@@ -51,8 +51,8 @@ void ShapeMosaicLine::mouseRelease(QMouseEvent* event)
     else {
         painter.drawImage(QPoint(0, 0), winImg.copy(pathRect.toRect()));
     }
-    mosaicImg = QImage(0,0);
-    winImg = QImage(0, 0);
+    mosaicImg = QImage();
+    winImg = QImage();
 
     if (state == ShapeState::sizing0) {
         QPainterPath tempPath;
@@ -93,7 +93,7 @@ void ShapeMosaicLine::mousePress(QMouseEvent* event)
         event->accept();
     }
     else if (hoverDraggerIndex >= 0) {
-        imgPatch = QImage(0, 0);
+        imgPatch = QImage();
         createMosaicImg();
         pressPos = event->position();
         state = (ShapeState)((int)ShapeState::sizing0 + hoverDraggerIndex);
