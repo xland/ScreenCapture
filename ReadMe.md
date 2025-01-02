@@ -2,7 +2,7 @@ The next major version (2.2.0) is developed in the main branch.
 
 The last stable version is available in the [2.1.x](https://github.com/xland/ScreenCapture/tree/2.1.x) branch.
 
-![](./doc/banner.png)
+![](./Doc/banner.png)
 
 ## Features（特性）
 
