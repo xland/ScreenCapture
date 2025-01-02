@@ -1,5 +1,6 @@
 /build/
 /qt/
+/Logs/
 /.vs/
 *.TMP
 /enc_temp_folder/

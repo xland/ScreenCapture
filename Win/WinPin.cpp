@@ -64,11 +64,11 @@ void WinPin::showToolMain()
 {
     if (!toolMain) {
         toolMain = new ToolMain(this);
-        toolMain->setBtnEnable(QString{"pin"}, false);
     }
     QPoint pos{ x + padding, y + h };
     auto hwnd = (HWND)toolMain->winId();
     SetWindowPos(hwnd, nullptr, pos.x(), pos.y(), 0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_SHOWWINDOW);
+    toolMain->setBtnEnable(QString{ "pin" }, false);
     toolMain->show();
     state = State::tool;
     if (pixelInfo) pixelInfo->close();
@@ -260,7 +260,7 @@ void WinPin::mouseRelease(QMouseEvent* event)
             showToolMain();
         }
         auto span = event->globalPosition() - posPress;
-        for (size_t i = 0; i < shapes.size(); i++)
+        for (int i = 0; i < shapes.size(); i++)
         {
             auto shapeText = qobject_cast<ShapeText*>(shapes[i]);
             if (shapeText) {
@@ -296,10 +296,10 @@ void WinPin::onMouseWheel(const int& delta)
     if (state == State::start) {
         float scale;
         if (delta > 0) {
-            scale = 1.1;
+            scale = 1.1f;
         }
         else {
-            scale = 0.9;
+            scale = 0.9f;
         }
         //imgRect.setXYWH(padding, padding, imgRect.width() * scale, imgRect.height() * scale);
         //auto tm = ToolMain::Get();

@@ -64,7 +64,7 @@ void ShapeMosaicLine::mouseRelease(QMouseEvent* event)
             tempPath.lineTo(ele.x, ele.y);
         }
         pathStart.clear();
-        for (size_t i = 0; i < path.elementCount(); i++)
+        for (int i = 0; i < path.elementCount(); i++)
         {
             auto ele = path.elementAt(i);
             tempPath.lineTo(ele.x, ele.y);
@@ -137,10 +137,10 @@ void ShapeMosaicLine::createMosaicImg()
     mosaicImg = QImage(winImg);
     QPainter painter(&mosaicImg);
     painter.setPen(Qt::NoPen);
-    for (quint32 x = 0; x < mosaicPixs.width(); x++)
+    for (int x = 0; x < mosaicPixs.width(); x++)
     {
         auto xPos = x * mosaicRectSize;
-        for (quint32 y = 0; y < mosaicPixs.height(); y++)
+        for (int y = 0; y < mosaicPixs.height(); y++)
         {
             auto c = mosaicPixs.pixelColor(x, y);
             painter.setBrush(c);
