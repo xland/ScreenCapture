@@ -86,7 +86,7 @@ C:\Users\[UserName]\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startu
 #  :  Win
 The hotkey is Ctrl+Alt+A 
 */
-^!A::Run A_ScriptDir "ScreenCapture.exe"
+^!A::Run "path/to/ScreenCapture.exe"
 ```
 - Double Click the `.ahk` file,then you can start the `ScreenCapture.exe` by press `Ctrl+Alt+A`.
 - The `.ahk` script will be executed when the system startup.
