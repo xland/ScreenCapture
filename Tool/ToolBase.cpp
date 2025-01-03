@@ -30,8 +30,8 @@ ToolBase::ToolBase(WinBox* win, QWidget* parent) : QWidget(parent),win{win}
     setAttribute(Qt::WA_NoSystemBackground);
     setAttribute(Qt::WA_Hover);
     setCursor(Qt::PointingHandCursor);
-    setFocusPolicy(Qt::FocusPolicy::StrongFocus);
-    //setWindowFlag(Qt::WindowDoesNotAcceptFocus);   //右键Pin菜单，要点两次才会出现
+    //setFocusPolicy(Qt::FocusPolicy::StrongFocus);
+    setWindowFlag(Qt::WindowDoesNotAcceptFocus);   //右键Pin菜单，要点两次才会出现
 }
 ToolBase::~ToolBase()
 {
@@ -96,8 +96,9 @@ void ToolBase::paintBtn(const QChar& icon, const QColor& frontColor, const QColo
 }
 void ToolBase::keyPressEvent(QKeyEvent* event)
 {
+    event->ignore();
     if (event->key() == Qt::Key_Escape) {
-        win->hideTools();
+        win->escPress();
     }
     else if (event->key() == Qt::Key_Delete) {
         win->removeShape();

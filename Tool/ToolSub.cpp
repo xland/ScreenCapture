@@ -203,7 +203,6 @@ void ToolSub::mouseMoveEvent(QMouseEvent* event)
 
 void ToolSub::showEvent(QShowEvent* event)
 {
-	ToolBase::showEvent(event);
 	auto& values = btns[win->state];
 	auto w{ 4 };
 	bool strokeFlag{ false }, colorFlag{ false };

@@ -291,6 +291,11 @@ bool WinPin::processOtherMsg(UINT msg, WPARAM wParam, LPARAM lParam)
     return false;
 }
 
+void WinPin::escPress()
+{
+	close();
+}
+
 void WinPin::onMouseWheel(const int& delta)
 {
     if (state == State::start) {

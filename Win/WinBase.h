@@ -38,5 +38,4 @@ protected:
 private:
 	static LRESULT CALLBACK routeWinMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 	LRESULT CALLBACK processWinMsg(UINT msg, WPARAM wParam, LPARAM lParam);
-	bool processKeyDown(WPARAM wParam);
 };

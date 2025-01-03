@@ -164,7 +164,7 @@ void WinFull::mouseDBClick(QMouseEvent* event)
 }
 void WinFull::mousePressRight(QMouseEvent* event)
 {
-    qApp->quit();
+	escPress();
 }
 void WinFull::moveByKey(const int& key)
 {
@@ -200,4 +200,15 @@ void WinFull::copyColor(const int& key)
     winMask->close();
     Util::copyColor(key);
     close();
+}
+
+void WinFull::escPress()
+{
+	if (state > State::start) {
+        hideTools();
+        SetFocus(hwnd);
+	}
+    else {
+        close();
+    }
 }

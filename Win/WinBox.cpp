@@ -144,7 +144,7 @@ bool WinBox::processOtherMsg(UINT msg, WPARAM wParam, LPARAM lParam)
             return true;
         }
         else if (wParam == VK_ESCAPE) {
-            keyEscPress();
+            escPress();
             return true;
         }
         else if (wParam == VK_LEFT) {
@@ -233,10 +233,6 @@ void WinBox::redo()
             break;
         }
     }
-}
-void WinBox::keyEscPress()
-{
-    qApp->quit();
 }
 void WinBox::hideTools(State state)
 {

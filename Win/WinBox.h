@@ -25,8 +25,8 @@ public:
 	void removeShape();
 	void undo();
 	void redo();
-	void keyEscPress();
 	void hideTools(State state=State::start);
+	virtual void escPress() = 0;
 public:
 	State state{ State::start };
 	QList<ShapeBase*> shapes;

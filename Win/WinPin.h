@@ -31,6 +31,7 @@ protected:
 	void mouseDrag(QMouseEvent* event) override;
 	void mouseRelease(QMouseEvent* event) override;
 	bool processOtherMsg(UINT msg, WPARAM wParam, LPARAM lParam) override;
+	void escPress() override;
 private:
 	void prepareImg(WinFull* full);
 	void trackMouse();

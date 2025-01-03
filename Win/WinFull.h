@@ -34,6 +34,7 @@ protected:
 	void mouseDBClick(QMouseEvent* event) override;
 	void mousePressRight(QMouseEvent* event) override;
 	void copyColor(const int& key) override;
+	void escPress() override;
 private:
 
 };
