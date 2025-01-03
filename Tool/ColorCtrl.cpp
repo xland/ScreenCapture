@@ -5,6 +5,7 @@
 
 #include "ColorCtrl.h"
 #include "../App/App.h"
+#include "../App/Font.h"
 
 namespace {
 	QChar colorIcon;
@@ -30,7 +31,7 @@ ColorCtrl::~ColorCtrl()
 
 }
 
-void ColorCtrl::InitData(const QJsonObject& obj, const QString& lang)
+void ColorCtrl::initData(const QJsonObject& obj, const QString& lang)
 {
 	defaultSelectedIndex = obj["defaultSelectedIndex"].toInt();
 	bool ok;
@@ -57,7 +58,7 @@ QColor ColorCtrl::getColor()
 
 void ColorCtrl::paintEvent(QPaintEvent * event)
 {
-	auto font = App::getIconFont();
+	auto font = Font::icon();
 	font->setPixelSize(15);
 
 	QPainter painter(this);

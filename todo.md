@@ -8,6 +8,7 @@
 - release 退出应用
 - 鼠标滚轮放大钉图窗口
 - Tray Menu用原生的
+- App	::initTool不用提前做，留下ConfigJSON就好
 
 
 - 通过命令行截图

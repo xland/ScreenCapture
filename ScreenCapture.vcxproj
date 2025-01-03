@@ -118,6 +118,8 @@
     <ClCompile Include="App\About.cpp" />
     <ClCompile Include="App\App.cpp" />
     <ClCompile Include="App\NativeRect.cpp" />
+    <ClCompile Include="App\Logger.cpp" />
+    <ClCompile Include="App\Font.cpp" />
     <ClCompile Include="Shape\ShapeArrow.cpp" />
     <ClCompile Include="Shape\ShapeBase.cpp" />
     <ClCompile Include="Shape\ShapeEllipse.cpp" />
@@ -168,6 +170,7 @@
     <QtMoc Include="Shape\ShapeArrow.h" />
     <ClInclude Include="App\NativeRect.h" />
     <ClInclude Include="App\Res.h" />
+    <ClInclude Include="App\Font.h" />
     <ClInclude Include="Lib\spdlog\async.h" />
     <ClInclude Include="Lib\spdlog\async_logger-inl.h" />
     <ClInclude Include="Lib\spdlog\async_logger.h" />
@@ -185,6 +188,7 @@
     <ClInclude Include="Lib\spdlog\stopwatch.h" />
     <ClInclude Include="Lib\spdlog\tweakme.h" />
     <ClInclude Include="Lib\spdlog\version.h" />
+    <QtMoc Include="App\Logger.h" />
     <ClInclude Include="Shape\ShapeEllipse.h" />
     <QtMoc Include="Shape\ShapeRect.h" />
     <QtMoc Include="Shape\ShapeNumber.h" />
@@ -213,7 +217,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Config\config.json" />
-    <None Include="licence" />
     <None Include="ReadMe.md" />
     <None Include="todo.md" />
     <None Include="Doc\高亮窗口.md" />

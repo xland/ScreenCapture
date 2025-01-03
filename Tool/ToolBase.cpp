@@ -3,6 +3,7 @@
 #include <qtooltip.h>
 
 #include "../App/App.h"
+#include "../App/Font.h"
 #include "../Win/WinBox.h"
 #include "../Win/WinFull.h"
 #include "../Win/WinMask.h"
@@ -70,7 +71,7 @@ void ToolBase::hideEvent(QHideEvent* event)
 
 std::shared_ptr<QPainter> ToolBase::getPainter()
 {
-    auto font = App::getIconFont();
+    auto font = Font::icon();
     font->setPixelSize(15);
     auto painter = std::make_shared<QPainter>(this);
     painter->setRenderHint(QPainter::Antialiasing, true);
