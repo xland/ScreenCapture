@@ -37,7 +37,7 @@ void WinBase::initWindow(bool isTransparent)
 
     if (isTransparent) exStyle = exStyle | WS_EX_TRANSPARENT | WS_EX_NOACTIVATE;
     auto style = WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_POPUP;
-    hwnd = CreateWindowEx(exStyle,L"ScreenCapture", L"ScreenCapture",style,x, y, w, h, NULL, NULL, GetModuleHandle(NULL), static_cast<LPVOID>(this));
+    hwnd = CreateWindowEx(exStyle,L"ScreenCapture", L"ScreenCapture",style,x, y, w, h, NULL, NULL, hinstance, static_cast<LPVOID>(this));
     SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
     BOOL attrib = TRUE;
     DwmSetWindowAttribute(hwnd, DWMWA_TRANSITIONS_FORCEDISABLED, &attrib, sizeof(attrib));//移除窗口打开与关闭时的动画效果
