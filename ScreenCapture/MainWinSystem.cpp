@@ -6,6 +6,7 @@
 #include <atlbase.h>
 #include <Gdiplus.h> 
 #include <format>
+#include <chrono>
 
 /// <summary>
 /// 0 undefined
