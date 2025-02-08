@@ -134,10 +134,19 @@
     <ClCompile Include="App\About.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Lib\DWMCapture\d3d_device.cpp">
+    <ClCompile Include="App\Logger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Lib\DWMCapture\DWMCapture.cpp">
+    <ClCompile Include="App\Font.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="WinNew\Bg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="WinNew\Box.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="WinNew\Canvas.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -217,13 +226,7 @@
     <ClInclude Include="Lib\spdlog\formatter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Lib\DWMCapture\d3d_device.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Lib\DWMCapture\DWMCapture.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Lib\DWMCapture\types.h">
+    <ClInclude Include="App\Font.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -321,9 +324,20 @@
     <QtMoc Include="App\About.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="App\Logger.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="WinNew\Bg.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="WinNew\Box.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="WinNew\Canvas.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
-    <None Include="licence" />
     <None Include="ReadMe.md" />
     <None Include="todo.md" />
     <None Include="Config\config.json" />

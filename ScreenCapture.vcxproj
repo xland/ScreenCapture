@@ -36,13 +36,13 @@
     <Import Project="$(QtMsBuild)\qt_defaults.props" />
   </ImportGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="QtSettings">
-    <QtInstall>6.8.0_msvc2022_64</QtInstall>
-    <QtModules>core;gui;widgets;concurrent</QtModules>
+    <QtInstall>6.8.2_msvc2022_64</QtInstall>
+    <QtModules>core;gui;widgets;concurrent;opengl;openglwidgets</QtModules>
     <QtBuildConfig>debug</QtBuildConfig>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="QtSettings">
-    <QtInstall>6.8.0_msvc2022_64</QtInstall>
-    <QtModules>core;gui;widgets;concurrent</QtModules>
+    <QtInstall>6.8.2_msvc2022_64</QtInstall>
+    <QtModules>core;gui;widgets;concurrent;opengl;openglwidgets</QtModules>
     <QtBuildConfig>release</QtBuildConfig>
   </PropertyGroup>
   <Target Name="QtMsBuildNotFound" BeforeTargets="CustomBuild;ClCompile" Condition="!Exists('$(QtMsBuild)\qt.targets') or !Exists('$(QtMsBuild)\qt.props')">
@@ -147,7 +147,10 @@
     <ClCompile Include="Tool\ToolMain.cpp" />
     <ClCompile Include="Tool\ToolSub.cpp" />
     <ClCompile Include="App\Util.cpp" />
+    <ClCompile Include="WinNew\Box.cpp" />
+    <ClCompile Include="WinNew\Canvas.cpp" />
     <ClCompile Include="Win\WinBase.cpp" />
+    <ClCompile Include="WinNew\Bg.cpp" />
     <ClCompile Include="Win\WinBoard.cpp" />
     <ClCompile Include="Win\WinBox.cpp" />
     <ClCompile Include="Win\WinCanvas.cpp" />
@@ -156,6 +159,9 @@
     <ClCompile Include="Win\WinPin.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <QtMoc Include="WinNew\Canvas.h" />
+    <QtMoc Include="WinNew\Box.h" />
+    <QtMoc Include="WinNew\Bg.h" />
     <QtMoc Include="App\About.h" />
     <ClInclude Include="App\App.h" />
     <ClInclude Include="App\Util.h" />

@@ -7,6 +7,7 @@
 #include <QFileDialog>
 #include <QStandardPaths>
 
+
 #include "../App/App.h"
 #include "../App/NativeRect.h"
 #include "WinFull.h"

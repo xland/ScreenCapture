@@ -12,7 +12,7 @@
 #include "Logger.h"
 #include "NativeRect.h"
 #include "Font.h"
-#include "../Win/WinFull.h"
+#include "../WinNew/Box.h"
 #include "../Win/WinPin.h"
 #include "../Lib/QHotKey/qhotkey.h"
 #include "../Tool/ToolMain.h"
@@ -41,7 +41,7 @@ void App::dispose()
 void App::start()
 {
     NativeRect::init();
-    WinFull::init();
+    Win::Box::init();
 }
 bool App::singleAppLock()
 {
