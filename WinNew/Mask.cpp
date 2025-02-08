@@ -5,10 +5,10 @@
 
 #include "Box.h"
 #include "Mask.h"
+#include "Magnifier.h"
 #include "../App/NativeRect.h"
 #include "../Tool/ToolMain.h"
 #include "../Tool/ToolSub.h"
-#include "../Tool/PixelInfo.h"
 
 namespace Win {
     Mask::Mask(QObject* parent) : QObject(parent),box{(Box*)parent}
@@ -25,7 +25,7 @@ namespace Win {
         {
             posPress = event->pos();
             box->state = State::mask;
-            if (box->pixelInfo) box->pixelInfo->close();
+            if (box->magnifier) box->magnifier->close();
             event->accept();
             return;
         }
