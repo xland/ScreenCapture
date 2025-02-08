@@ -55,7 +55,6 @@ namespace Win {
 
     void Magnifier::paintEvent(QPaintEvent* event)
     {
-
         POINT pos;
         GetCursorPos(&pos);
 
@@ -66,7 +65,7 @@ namespace Win {
         painter.setBrush(QColor(0, 0, 0, 168));
         painter.drawRect(rect());
         //放大后的目标矩形区域的图像
-        auto img = box->bg->grabImg(pos.x + box->x - 20, pos.y + box->y - 10, 36, 20);
+        auto img = box->bg->grabImg(pos.x - box->bg->x - 20, pos.y - box->bg->y - 10, 36, 20);
         painter.drawImage(QRect(0, 0, 180, 100), img);//放大了5倍
         //十字架准星
         QPainterPath path;
@@ -86,7 +85,7 @@ namespace Win {
         painter.drawText(QPoint(8, 130), QString("RGB (Ctrl+R) : %1,%2,%3").arg(tarColor.red()).arg(tarColor.green()).arg(tarColor.blue()));
         QColor cmyk = tarColor.toCmyk();
         painter.drawText(QPoint(8, 146), QString("CMYK (Ctrl+K) : %1,%2,%3,%4").arg(cmyk.cyan()).arg(cmyk.magenta()).arg(cmyk.yellow()).arg(cmyk.black()));
-        painter.drawText(QPoint(8, 162), QString("POS (Ctrl+P) : X:%1 Y:%2").arg(pos.x - box->padding).arg(pos.y - box->padding));
+        painter.drawText(QPoint(8, 162), QString("POS (Ctrl+P) : X:%1 Y:%2").arg(pos.x - box->bg->padding).arg(pos.y - box->bg->padding));
         //边框
         painter.setPen(QPen(QColor(0, 0, 0, 168), 1));
         painter.setBrush(Qt::NoBrush);

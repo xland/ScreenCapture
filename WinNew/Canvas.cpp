@@ -58,9 +58,9 @@ namespace Win {
 		painter.fillRect(QRect(0,0,width(),height()), Qt::transparent);
         painter.setRenderHint(QPainter::Antialiasing, true);
 
-		if (box->state == State::start) {
-			return;
-		}
+		//if (box->state == State::start) {
+		//	return;
+		//}
 
         painter.setBrush(QColor(0, 0, 0, 120));
         QPainterPath path;

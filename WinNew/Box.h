@@ -21,7 +21,6 @@ namespace Win
 		Canvas* canvas;
 		Magnifier* magnifier;
 		State state{ State::start };
-		int x{0}, y{ 0 }, padding{ 0 };
 	private:
 	};
 }

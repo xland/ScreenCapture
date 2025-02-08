@@ -21,8 +21,8 @@ namespace Win
     void Bg::fullWindow()
     {
         auto& rect = NativeRect::getDesktopRect();
-		auto x = rect.x();
-        auto y = rect.y();
+		x = rect.x();
+        y = rect.y();
         auto w = rect.width();
         auto h = rect.height();
 		img = Util::printScreen(x, y, w, h);
