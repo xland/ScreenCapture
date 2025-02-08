@@ -150,6 +150,7 @@
     <ClCompile Include="WinNew\Box.cpp" />
     <ClCompile Include="WinNew\Canvas.cpp" />
     <ClCompile Include="WinNew\Magnifier.cpp" />
+    <ClCompile Include="WinNew\Mask.cpp" />
     <ClCompile Include="Win\WinBase.cpp" />
     <ClCompile Include="WinNew\Bg.cpp" />
     <ClCompile Include="Win\WinBoard.cpp" />
@@ -160,6 +161,7 @@
     <ClCompile Include="Win\WinPin.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <QtMoc Include="WinNew\Mask.h" />
     <QtMoc Include="WinNew\Magnifier.h" />
     <QtMoc Include="WinNew\Canvas.h" />
     <QtMoc Include="WinNew\Box.h" />
