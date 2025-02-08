@@ -55,8 +55,8 @@ namespace Win {
     {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         QPainter painter(this);
-		painter.fillRect(QRect(0,0,width(),height()), Qt::transparent);
         painter.setRenderHint(QPainter::Antialiasing, true);
+        //painter.fillRect(QRect(0,0,width(),height()), Qt::transparent);
 
 		//if (box->state == State::start) {
 		//	return;

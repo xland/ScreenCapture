@@ -4,6 +4,7 @@
 #include "Bg.h"
 #include "Canvas.h"
 #include "Magnifier.h"
+#include "Mask.h"
 #include "../App/State.h"
 
 namespace Win
@@ -20,8 +21,11 @@ namespace Win
 		Bg* bg;
 		Canvas* canvas;
 		Magnifier* magnifier;
+		Mask* mask;
 		State state{ State::start };
 	private:
+		void initWins();
+
 	};
 }
 

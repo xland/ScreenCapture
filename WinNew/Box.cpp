@@ -14,10 +14,17 @@ namespace Win
 	void Box::init()
 	{
 		auto box = new Win::Box(qApp);
-		box->bg = new Win::Bg(box);
-		box->bg->fullWindow();
-		box->canvas = new Win::Canvas(box);
-		box->canvas->fullWindow();
-		box->magnifier = new Win::Magnifier(box);
+		box->initWins();
+	}
+	void Box::initWins()
+	{
+		bg = new Win::Bg(this);
+		bg->fullWindow();
+		canvas = new Win::Canvas(this);
+		canvas->fullWindow();
+		magnifier = new Win::Magnifier(this);
+
+
+		mask = new Mask(this);
 	}
 }
