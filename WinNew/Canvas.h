@@ -9,12 +9,13 @@
 
 namespace Win
 {
+	class Box;
 	class Canvas : public QOpenGLWindow, protected QOpenGLFunctions
 	{
 		Q_OBJECT
 
 	public:
-		Canvas();
+		Canvas(Box* box);
 		~Canvas();
 		void fullWindow();
 	protected:
@@ -28,5 +29,6 @@ namespace Win
 		bool isPressed = false;
 		QPoint posPress;
 		QRect rectMask;
+		Box* box;
 	};
 }

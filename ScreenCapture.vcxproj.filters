@@ -149,6 +149,9 @@
     <ClCompile Include="WinNew\Canvas.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="WinNew\Magnifier.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App\App.h">
@@ -334,6 +337,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="WinNew\Canvas.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="WinNew\Magnifier.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

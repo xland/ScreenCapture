@@ -41,7 +41,7 @@ void App::dispose()
 void App::start()
 {
     NativeRect::init();
-    Win::Box::init();
+	Win::Box::init();
 }
 bool App::singleAppLock()
 {

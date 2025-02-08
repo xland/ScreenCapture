@@ -7,7 +7,7 @@
 
 namespace Win
 {
-    Bg::Bg() : QWidget(nullptr)
+    Bg::Bg(Box* box) : QWidget(nullptr), box{box}
     {
         setWindowFlags(Qt::FramelessWindowHint);
         setAttribute(Qt::WA_DeleteOnClose);
@@ -34,6 +34,11 @@ namespace Win
         //注意 这里必须用窗口的dpr来设置img的dpr，不能用主屏的dpr，此操作必须最后执行
         auto dpr = windowHandle()->devicePixelRatio();
         img.setDevicePixelRatio(dpr);
+    }
+
+    QImage Bg::grabImg(const int& x, const int& y, const int& w, const int& h)
+    {
+        return img.copy(x, y, w, h);
     }
 
     void Bg::paintEvent(QPaintEvent* event)

@@ -11,12 +11,15 @@
 #include <versionhelpers.h>
 #include <QWindow>
 #include "Canvas.h"
+#include "Box.h"
+#include "Magnifier.h"
 #include "../App/Util.h"
+#include "../App/State.h"
 #include "../App/NativeRect.h"
 
 namespace Win {
     // 注意：必须使用QOpenGLWindow，不能使用QOpenGLWideget
-    Canvas::Canvas() : QOpenGLWindow()
+	Canvas::Canvas(Box* box) : QOpenGLWindow(), box{ box }
     {
         setFlags(Qt::FramelessWindowHint | Qt::Tool);		 
     }
@@ -54,6 +57,11 @@ namespace Win {
         QPainter painter(this);
 		painter.fillRect(QRect(0,0,width(),height()), Qt::transparent);
         painter.setRenderHint(QPainter::Antialiasing, true);
+
+		if (box->state == State::start) {
+			return;
+		}
+
         painter.setBrush(QColor(0, 0, 0, 120));
         QPainterPath path;
         path.addRect(-1, -1, width() + 1, height() + 1);
@@ -63,6 +71,7 @@ namespace Win {
         painter.setPen(QPen(QBrush(borderColor), 2));
         painter.setBrush(Qt::NoBrush);
         painter.drawRect(rectMask);
+
     }
 
     void Canvas::mousePressEvent(QMouseEvent* event)
@@ -84,6 +93,9 @@ namespace Win {
             rectMask.setCoords(posPress.x(), posPress.y(), pos.x(), pos.y());
             rectMask = rectMask.normalized();
 		    update(rectMask);
+        }
+        else {
+			box->magnifier->mouseMove();
         }
     }
 
