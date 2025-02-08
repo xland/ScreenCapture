@@ -42,7 +42,7 @@ namespace Win {
         }
         if (box->state > State::tool && mousePosState > 0) {
             posPress = event->pos();
-            win->hideTools(win->state);
+            box->hideTools(box->state);
             event->accept();
             return;
         }

@@ -19,6 +19,9 @@ namespace Win
 		Box(QObject* parent);
 		~Box();
 		static void init();
+		void showToolMain();
+		void showToolSub();
+		void hideTools(State state = State::start);
 	public:
 		Bg* bg;
 		Canvas* canvas;
