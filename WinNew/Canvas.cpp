@@ -47,7 +47,11 @@ namespace Win {
 
     void Canvas::initializeGL()
     {
+        //QSurfaceFormat format;
+        //format.setSamples(4);
+        //QSurfaceFormat::setDefaultFormat(format);
         initializeOpenGLFunctions();
+        //glEnable(GL_MULTISAMPLE);
         glClearColor(0.f, 0.f, 0.f, 0.f);  // 设置清空颜色（背景色）
     }
 
@@ -56,46 +60,37 @@ namespace Win {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         QPainter painter(this);
         painter.setRenderHint(QPainter::Antialiasing, true);
-        //painter.fillRect(QRect(0,0,width(),height()), Qt::transparent);
+		box->mask->paint(painter);
 
-		//if (box->state == State::start) {
-		//	return;
-		//}
-
-        painter.setBrush(QColor(0, 0, 0, 120));
-        QPainterPath path;
-        path.addRect(-1, -1, width() + 1, height() + 1);
-        path.addRect(rectMask);
-        painter.drawPath(path);
-        QColor borderColor(22, 118, 255);
-        painter.setPen(QPen(QBrush(borderColor), 2));
-        painter.setBrush(Qt::NoBrush);
-        painter.drawRect(rectMask);
-
+        //painter.setBrush(QColor(0, 0, 0, 120));
+        //QPainterPath path;
+        //path.addRect(-1, -1, width() + 1, height() + 1);
+        //path.addRect(rectMask);
+        //painter.drawPath(path);
+        //QColor borderColor(22, 118, 255);
+        //painter.setPen(QPen(QBrush(borderColor), 2));
+        //painter.setBrush(Qt::NoBrush);
+        //painter.drawRect(rectMask);
     }
 
     void Canvas::mousePressEvent(QMouseEvent* event)
     {
-        isPressed = true;
-        posPress = event->pos();
+        box->mask->mousePress(event);
     }
 
     void Canvas::mouseReleaseEvent(QMouseEvent* event)
     {
-        isPressed = false;
+        box->mask->mouseRelease(event);
     }
 
     void Canvas::mouseMoveEvent(QMouseEvent* event)
     {
-        if (isPressed)
+        if (event->buttons() & Qt::LeftButton)
         {
-            auto pos = event->pos();
-            rectMask.setCoords(posPress.x(), posPress.y(), pos.x(), pos.y());
-            rectMask = rectMask.normalized();
-		    update(rectMask);
+			box->mask->mouseDrag(event);
         }
         else {
-			box->magnifier->mouseMove();
+            box->mask->mouseMove(event);
         }
     }
 
@@ -103,5 +98,4 @@ namespace Win {
     {
         this->deleteLater();
     }
-
 }

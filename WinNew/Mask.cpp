@@ -1,9 +1,8 @@
 ﻿#include <QWindow>
-#include <dwmapi.h>
-#include <shellscalingapi.h>
-#include <QTimer>
+#include <QPainterPath>
 
 #include "Box.h"
+#include "Canvas.h"
 #include "Mask.h"
 #include "Magnifier.h"
 #include "../App/NativeRect.h"
@@ -11,14 +10,12 @@
 #include "../Tool/ToolSub.h"
 
 namespace Win {
-    Mask::Mask(QObject* parent) : QObject(parent),box{(Box*)parent}
+    Mask::Mask(QObject* parent):QObject(parent),box{(Box*)parent}
     {
     }
-
     Mask::~Mask()
     {
     }
-
     void Mask::mousePress(QMouseEvent* event)
     {
         if (box->state == State::start)
@@ -32,7 +29,7 @@ namespace Win {
         if (box->state == State::tool)
         {
             posPress = event->pos();
-            box->toolMain->hide();
+            //box->toolMain->hide();
             if (mousePosState != 0)
             {
                 changeMaskRect(posPress);
@@ -47,7 +44,6 @@ namespace Win {
             return;
         }
     }
-
     void Mask::mouseDrag(QMouseEvent* event)
     {
         if (box->state == State::mask)
@@ -56,7 +52,7 @@ namespace Win {
             if (pos == posPress) return;
             maskRect.setCoords(posPress.x(), posPress.y(), pos.x(), pos.y());
             maskRect = maskRect.normalized();
-            update();
+            box->canvas->update();
             return;
         }
         if (box->state == State::tool)
@@ -64,7 +60,7 @@ namespace Win {
             if (mousePosState == 0)
             {
                 moveMaskRect(event->pos());
-                update();
+                box->canvas->update();
             }
             else
             {
@@ -79,17 +75,15 @@ namespace Win {
             return;
         }
     }
-
     void Mask::mouseRelease(QMouseEvent* event)
     {
         if (box->state == State::mask || (box->state >= State::tool && !box->toolMain->isVisible()))
         {
             box->state = State::tool;
             box->showToolMain();
-            update();
+            box->canvas->update();
         }
     }
-
     void Mask::mouseMove(QMouseEvent* event)
     {
         if (box->state == State::start)
@@ -101,7 +95,7 @@ namespace Win {
                 if (rects[i].contains(event->pos())) {
                     if (maskRect == rects[i]) return;
                     maskRect = rects[i];
-                    update();
+                    box->canvas->update();
                     return;
                 }
             }
@@ -121,25 +115,11 @@ namespace Win {
             }
         }
     }
-    void Mask::update()
+    void Mask::paint(QPainter& p)
     {
-        if (img.isNull()) {
-            img = QImage(w, h, QImage::Format_ARGB32_Premultiplied);
-        }
-        //绘制半透明和透明区域
-        img.fill(QColor(0, 0, 0, 120));
-        QPainter p(&img);
-        p.setRenderHint(QPainter::Antialiasing, true);
-        p.setCompositionMode(QPainter::CompositionMode_Clear);
-        p.setBrush(Qt::transparent);
-        p.drawRect(maskRect);
+		paintMask(p);
         paintMaskRectBorder(p);
-        paintMaskRectInfo(p);
-        paint();
-        p.end();
-        if (box->state == State::tool) {
-            releaseImg();
-        }
+		paintMaskRectInfo(p);
     }
     void Mask::changeMaskRect(const QPoint& pos)
     {
@@ -176,7 +156,6 @@ namespace Win {
             maskRect.setLeft(pos.x());
         }
         maskRect = maskRect.normalized();
-        update();
     }
     void Mask::changeMousePosState(const int& x, const int& y)
     {
@@ -277,6 +256,15 @@ namespace Win {
             mousePosState = -1;
         }
     }
+    void Mask::paintMask(QPainter& p)
+    {
+        p.setBrush(QColor(0, 0, 0, 120));
+        QPainterPath path;
+        auto& rect = NativeRect::getDesktopRect();
+        path.addRect(-1, -1, rect.width() + 1, rect.height() + 1);
+        path.addRect(maskRect);
+        p.drawPath(path);
+    }
     void Mask::paintMaskRectInfo(QPainter& p)
     {
         //绘制截图区域位置和大小
@@ -285,7 +273,7 @@ namespace Win {
             .arg(maskRect.right()).arg(maskRect.bottom())
             .arg(maskRect.width()).arg(maskRect.height());
         auto font = p.font();
-        font.setPointSizeF(12.f);
+        font.setPointSizeF(8.f);
         p.setFont(font);
         QFontMetrics fm(font);
         QRect textRect = fm.boundingRect(text);
@@ -336,11 +324,12 @@ namespace Win {
     {
         auto span = pos - posPress;
         auto target = maskRect.topLeft() + span;
-        posPress = pos;
         if (target.x() < 0 || target.y() < 0) return;
-        if (target.x() + maskRect.width() > w || target.y() + maskRect.height() > h) return;
+        posPress = pos;
+        auto& rect = NativeRect::getDesktopRect();
+        if (target.x() + maskRect.width() > rect.width() || target.y() + maskRect.height() > rect.height()) return;
         maskRect.moveTo(maskRect.topLeft() + span);
-        update();
+        box->canvas->update();
     }
 }
 

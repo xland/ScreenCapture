@@ -17,7 +17,7 @@ namespace Win {
 		void mouseDrag(QMouseEvent* event);
 		void mouseRelease(QMouseEvent* event);
 		void mouseMove(QMouseEvent* event);
-		void update();
+		void paint(QPainter& p);
 	public:
 		QRect maskRect;
 	protected:
@@ -25,6 +25,8 @@ namespace Win {
 		void changeMaskRect(const QPoint& pos);
 		void changeMousePosState(const int& x, const int& y);
 		void changeMousePosState2(const int& x, const int& y);
+
+		void paintMask(QPainter& p);
 		void paintMaskRectInfo(QPainter& p);
 		void paintMaskRectBorder(QPainter& p);
 		void moveMaskRect(const QPoint& pos);

@@ -7,7 +7,7 @@ namespace {
 
 void Font::initData(const QJsonObject& obj)
 {
-    QFont font("Microsoft YaHei", 9);
+    QFont font("Microsoft YaHei Light", 9);
     qApp->setFont(font);
     QString fontPath = obj["fontPath"].toString();
     auto result = QFontDatabase::addApplicationFont(fontPath);
