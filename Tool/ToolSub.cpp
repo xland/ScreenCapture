@@ -7,14 +7,14 @@
 #include "ToolMain.h"
 #include "StrokeCtrl.h"
 #include "ColorCtrl.h"
-#include "../Win/WinBox.h"
+#include "../WinNew/Box.h"
 
 namespace {
 	std::map<State, std::vector<ToolBtn>> btns;
 	std::vector<std::tuple<int, int, int>> btnSpanIndexs;
 }
 
-ToolSub::ToolSub(WinBox* win) : ToolBase(win)
+ToolSub::ToolSub(Win::Box* win) : ToolBase(win)
 {
 	strokeCtrl = new StrokeCtrl(this);
 	colorCtrl = new ColorCtrl(this);

@@ -18,7 +18,7 @@ namespace{
     std::vector<unsigned> spliterIndexs;
 }
 
-ToolMain::ToolMain(WinBox* win) : ToolBase(win)
+ToolMain::ToolMain(Win::Box* win) : ToolBase(win)
 {
     setFixedSize(btns.size() * btnW + 8, 32);
     for (auto& btn : btns)

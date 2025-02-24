@@ -6,7 +6,7 @@
 #include "../App/Font.h"
 #include "../Win/WinBox.h"
 #include "../Win/WinFull.h"
-#include "../Win/WinMask.h"
+#include "../WinNew/WinMask.h"
 #include "ToolBase.h"
 #include "ToolSub.h"
 
@@ -18,7 +18,7 @@ namespace
     std::vector<std::tuple<int, int, int>> btnSpanIndexs;
 }
 
-ToolBase::ToolBase(WinBox* win, QWidget* parent) : QWidget(parent),win{win}
+ToolBase::ToolBase(Win::Box* win, QWidget* parent) : QWidget(parent),win{win}
 {
     setMouseTracking(true);
     setVisible(false);

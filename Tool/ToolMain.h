@@ -9,12 +9,12 @@
 #include "ToolBase.h"
 #include "ToolBtn.h"
 
-class WinBox;
+class Win::Box;
 class ToolMain : public ToolBase
 {
 	Q_OBJECT
 public:
-	ToolMain(WinBox* win);
+	ToolMain(Win::Box* win);
 	~ToolMain();
 	static void initData(const QJsonArray& arr, const QString& lang);
 	void setBtnEnable(const QString& name,bool flag=true);
