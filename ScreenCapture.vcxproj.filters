@@ -53,19 +53,19 @@
     <ClCompile Include="App\Font.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="WinNew\Bg.cpp">
+    <ClCompile Include="Win\Bg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="WinNew\Box.cpp">
+    <ClCompile Include="Win\Box.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="WinNew\Canvas.cpp">
+    <ClCompile Include="Win\Canvas.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="WinNew\Magnifier.cpp">
+    <ClCompile Include="Win\Magnifier.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="WinNew\Mask.cpp">
+    <ClCompile Include="Win\Mask.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -156,19 +156,19 @@
     <QtMoc Include="App\Logger.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="WinNew\Bg.h">
+    <QtMoc Include="Win\Bg.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="WinNew\Box.h">
+    <QtMoc Include="Win\Box.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="WinNew\Canvas.h">
+    <QtMoc Include="Win\Canvas.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="WinNew\Magnifier.h">
+    <QtMoc Include="Win\Magnifier.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="WinNew\Mask.h">
+    <QtMoc Include="Win\Mask.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

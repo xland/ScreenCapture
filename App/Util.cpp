@@ -2,7 +2,6 @@
 #include <dwmapi.h>
 #include <versionhelpers.h>
 #include "Util.h"
-#include "../Win/WinBox.h"
 
 
 

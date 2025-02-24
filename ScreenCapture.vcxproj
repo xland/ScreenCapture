@@ -131,18 +131,18 @@
     <ClCompile Include="Lib\QHotKey\qhotkey_win.cpp" />
     <ClCompile Include="App\Tray.cpp" />
     <ClCompile Include="App\Util.cpp" />
-    <ClCompile Include="WinNew\Box.cpp" />
-    <ClCompile Include="WinNew\Canvas.cpp" />
-    <ClCompile Include="WinNew\Magnifier.cpp" />
-    <ClCompile Include="WinNew\Mask.cpp" />
-    <ClCompile Include="WinNew\Bg.cpp" />
+    <ClCompile Include="Win\Box.cpp" />
+    <ClCompile Include="Win\Canvas.cpp" />
+    <ClCompile Include="Win\Magnifier.cpp" />
+    <ClCompile Include="Win\Mask.cpp" />
+    <ClCompile Include="Win\Bg.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <QtMoc Include="WinNew\Mask.h" />
-    <QtMoc Include="WinNew\Magnifier.h" />
-    <QtMoc Include="WinNew\Canvas.h" />
-    <QtMoc Include="WinNew\Box.h" />
-    <QtMoc Include="WinNew\Bg.h" />
+    <QtMoc Include="Win\Mask.h" />
+    <QtMoc Include="Win\Magnifier.h" />
+    <QtMoc Include="Win\Canvas.h" />
+    <QtMoc Include="Win\Box.h" />
+    <QtMoc Include="Win\Bg.h" />
     <QtMoc Include="App\About.h" />
     <ClInclude Include="App\App.h" />
     <ClInclude Include="App\Util.h" />

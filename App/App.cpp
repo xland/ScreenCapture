@@ -12,7 +12,7 @@
 #include "Logger.h"
 #include "NativeRect.h"
 #include "Font.h"
-#include "../WinNew/Box.h"
+#include "../Win/Box.h"
 #include "../Lib/QHotKey/qhotkey.h"
 //#include "../Win/WinPin.h"
 //#include "../Tool/ToolMain.h"
