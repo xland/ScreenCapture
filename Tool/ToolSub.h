@@ -11,7 +11,7 @@ class ToolSub : public ToolBase
 	Q_OBJECT
 
 public:
-	ToolSub(Box* win);
+	ToolSub(Box* box);
 	~ToolSub();
 	static void initData(const QJsonObject& obj, const QString& lang);
 	bool getSelectState(const QString& btnName);

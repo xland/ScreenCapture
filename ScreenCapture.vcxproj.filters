@@ -68,6 +68,24 @@
     <ClCompile Include="Win\Mask.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Tool\ToolBase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Tool\ToolBtn.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Tool\ToolMain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Tool\ToolSub.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Tool\StrokeCtrl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Tool\ColorCtrl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App\App.h">
@@ -139,6 +157,9 @@
     <ClInclude Include="App\Font.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Tool\ToolBtn.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="Lib\QHotKey\qhotkey.h">
@@ -169,6 +190,21 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="Win\Mask.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Tool\ToolBase.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Tool\ToolMain.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Tool\ToolSub.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Tool\StrokeCtrl.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Tool\ColorCtrl.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

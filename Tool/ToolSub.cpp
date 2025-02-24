@@ -7,14 +7,14 @@
 #include "ToolMain.h"
 #include "StrokeCtrl.h"
 #include "ColorCtrl.h"
-#include "../WinNew/Box.h"
+#include "../Win/Box.h"
 
 namespace {
 	std::map<State, std::vector<ToolBtn>> btns;
 	std::vector<std::tuple<int, int, int>> btnSpanIndexs;
 }
 
-ToolSub::ToolSub(Win::Box* win) : ToolBase(win)
+ToolSub::ToolSub(Box* box) : ToolBase(box)
 {
 	strokeCtrl = new StrokeCtrl(this);
 	colorCtrl = new ColorCtrl(this);
@@ -98,7 +98,7 @@ std::vector<ToolBtn> ToolSub::makeBtns(const QJsonArray& arr, const QString& lan
 
 bool ToolSub::getSelectState(const QString& btnName)
 {
-	auto& values = btns[win->state];
+	auto& values = btns[box->state];
 	auto it = std::find_if(values.begin(), values.end(), [&btnName](const ToolBtn& item) {
 			return item.name == btnName;
 		});
@@ -133,7 +133,7 @@ void ToolSub::paintEvent(QPaintEvent* event)
 	path.lineTo(border, span);
 	painter->drawPath(path); //有个小三角形指向主工具条的按钮
 
-	auto& values = btns[win->state];
+	auto& values = btns[box->state];
 	int x = 4;
 	for (int i = 0; i < values.size(); i++)
 	{
@@ -163,12 +163,12 @@ void ToolSub::paintEvent(QPaintEvent* event)
 void ToolSub::mousePressEvent(QMouseEvent* event)
 {
 	if (hoverIndex < 0) return;
-	auto& values = btns[win->state];
+	auto& values = btns[box->state];
 	values[hoverIndex].selected = !values[hoverIndex].selected;
-	if (win->state == State::rect ||
-		win->state == State::ellipse ||
-		win->state == State::mosaic ||
-		win->state == State::eraser) {
+	if (box->state == State::rect ||
+		box->state == State::ellipse ||
+		box->state == State::mosaic ||
+		box->state == State::eraser) {
 		if (hoverIndex == 0) {
 			strokeCtrl->setEnabled(!values[hoverIndex].selected);
 		}
@@ -194,7 +194,7 @@ void ToolSub::mouseMoveEvent(QMouseEvent* event)
 		hoverIndex = tempIndex;
 		if (hoverIndex > -1)
 		{
-			auto& values = btns[win->state];
+			auto& values = btns[box->state];
 			QToolTip::showText(event->globalPosition().toPoint(), values[hoverIndex].tipText, this);
 		}
 		update();
@@ -203,7 +203,7 @@ void ToolSub::mouseMoveEvent(QMouseEvent* event)
 
 void ToolSub::showEvent(QShowEvent* event)
 {
-	auto& values = btns[win->state];
+	auto& values = btns[box->state];
 	auto w{ 4 };
 	bool strokeFlag{ false }, colorFlag{ false };
 	for (int i = 0; i < values.size(); i++)
@@ -240,8 +240,8 @@ void ToolSub::showEvent(QShowEvent* event)
 		colorCtrl->hide();
 	}
 
-	auto pos = win->toolMain->geometry().bottomLeft();
-	auto index = win->toolMain->selectIndex;
+	auto pos = box->toolMain->geometry().bottomLeft();
+	auto index = box->toolMain->selectIndex;
 	auto x = 4 + index * 32 + 32 / 2;
 	if (x > w) {
 		triangleX = w / 2;
@@ -252,10 +252,10 @@ void ToolSub::showEvent(QShowEvent* event)
 		move(pos.x(), pos.y());
 	}
 
-	if (win->state == State::rect || 
-		win->state == State::ellipse || 
-		win->state == State::mosaic ||
-		win->state == State::eraser) {
+	if (box->state == State::rect || 
+		box->state == State::ellipse || 
+		box->state == State::mosaic ||
+		box->state == State::eraser) {
 		strokeCtrl->setEnabled(!values[0].selected);
 	}
 }
@@ -263,5 +263,5 @@ void ToolSub::showEvent(QShowEvent* event)
 void ToolSub::closeEvent(QCloseEvent* event)
 {
 	deleteLater();
-	win->toolSub = nullptr;
+	box->toolSub = nullptr;
 }

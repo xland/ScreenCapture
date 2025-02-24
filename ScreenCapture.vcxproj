@@ -131,6 +131,12 @@
     <ClCompile Include="Lib\QHotKey\qhotkey_win.cpp" />
     <ClCompile Include="App\Tray.cpp" />
     <ClCompile Include="App\Util.cpp" />
+    <ClCompile Include="Tool\ColorCtrl.cpp" />
+    <ClCompile Include="Tool\StrokeCtrl.cpp" />
+    <ClCompile Include="Tool\ToolBase.cpp" />
+    <ClCompile Include="Tool\ToolBtn.cpp" />
+    <ClCompile Include="Tool\ToolMain.cpp" />
+    <ClCompile Include="Tool\ToolSub.cpp" />
     <ClCompile Include="Win\Box.cpp" />
     <ClCompile Include="Win\Canvas.cpp" />
     <ClCompile Include="Win\Magnifier.cpp" />
@@ -138,6 +144,12 @@
     <ClCompile Include="Win\Bg.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <QtMoc Include="Tool\StrokeCtrl.h" />
+    <QtMoc Include="Tool\ColorCtrl.h" />
+    <ClInclude Include="Tool\ToolBtn.h" />
+    <QtMoc Include="Tool\ToolSub.h" />
+    <QtMoc Include="Tool\ToolMain.h" />
+    <QtMoc Include="Tool\ToolBase.h" />
     <QtMoc Include="Win\Mask.h" />
     <QtMoc Include="Win\Magnifier.h" />
     <QtMoc Include="Win\Canvas.h" />

@@ -16,11 +16,11 @@ class ToolBase : public QWidget
 {
 	Q_OBJECT
 public:
-	ToolBase(Box* win,QWidget *parent = nullptr);
+	ToolBase(Box* box,QWidget *parent = nullptr);
 	virtual ~ToolBase();
 public:
 	int selectIndex{ -1 };
-	Box* win;
+	Box* box;
 protected:
 	void enterEvent(QEnterEvent* event) override;
 	void leaveEvent(QEvent* event) override;

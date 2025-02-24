@@ -5,7 +5,6 @@
 #include "../App/App.h"
 #include "StrokeCtrl.h"
 #include "../App/State.h"
-#include "../Win/WinBase.h"
 #include "ToolSub.h"
 
 StrokeCtrl::StrokeCtrl(QWidget *parent):QSlider(parent)

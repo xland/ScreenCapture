@@ -1,5 +1,7 @@
 #include <QApplication>
 #include "Box.h"
+#include "Tool/ToolMain.h"
+#include "Tool/ToolSub.h"
 
 
 Box::Box(QObject* parent) : QObject(parent)
@@ -60,4 +62,12 @@ void Box::hideTools(State state)
 	//		magnifier = new Magnifier(this);
 	//	}
 	//}
+}
+
+void Box::undo()
+{
+}
+
+void Box::redo()
+{
 }

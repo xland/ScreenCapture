@@ -6,10 +6,7 @@
 #include "../App/App.h"
 #include "../App/Util.h"
 #include "../App/NativeRect.h"
-#include "../Win/WinBox.h"
-#include "../Win/WinPin.h"
-#include "../Win/WinFull.h"
-#include "../Win/WinMask.h"
+#include "../Win/Box.h"
 #include "ToolMain.h"
 #include "ToolSub.h"
 
@@ -18,7 +15,7 @@ namespace{
     std::vector<unsigned> spliterIndexs;
 }
 
-ToolMain::ToolMain(Win::Box* win) : ToolBase(win)
+ToolMain::ToolMain(Box* box) : ToolBase(box)
 {
     setFixedSize(btns.size() * btnW + 8, 32);
     for (auto& btn : btns)
@@ -227,9 +224,9 @@ void ToolMain::mousePressEvent(QMouseEvent* event)
     if (hoverIndex == selectIndex) //取消选择
     {
         selectIndex = -1;
-        win->state = State::tool;
+        box->state = State::tool;
         update();
-        win->toolSub->hide();
+        box->toolSub->hide();
         if (topFlag) {
             auto pos = geometry().topLeft();
             pos.setY(pos.y() + height()+6);
@@ -242,35 +239,35 @@ void ToolMain::mousePressEvent(QMouseEvent* event)
         if (btn.name.isEmpty())
         {
             if (topFlag) {
-                if (!win->toolSub || !win->toolSub->isVisible()) {
+                if (!box->toolSub || !box->toolSub->isVisible()) {
                     auto pos = geometry().topLeft();
                     pos.setY(pos.y() - height() - 6);
                     move(pos);
                 }
             }
-            win->state = btn.state;
+            box->state = btn.state;
             selectIndex = hoverIndex;
-            win->showToolSub();
+            box->showToolSub();
             update();
         }
         else if (btn.name == "clipboard")
         {
-            win->saveToClipboard();
+            box->saveToClipboard();
         }
         else if (btn.name == "save")
         {
-            win->saveToFile();
+            box->saveToFile();
         }
         else if (btn.name == "undo")
         {
             if (btn.enable) {
-                win->undo();
+                box->undo();
             }            
         }
         else if (btn.name == "redo")
         {
             if (btn.enable) {
-                win->redo();
+                box->redo();
             }
         }
         else if (btn.name == "pin")
@@ -281,7 +278,7 @@ void ToolMain::mousePressEvent(QMouseEvent* event)
         }
         else if (btn.name == "close")
         {
-            win->close();
+            box->close();
         }
     }
 }
@@ -305,5 +302,5 @@ void ToolMain::mouseMoveEvent(QMouseEvent* event)
 void ToolMain::closeEvent(QCloseEvent* event)
 {
     deleteLater();
-    win->toolMain = nullptr;
+    box->toolMain = nullptr;
 }
