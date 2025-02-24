@@ -273,12 +273,12 @@ void ToolMain::mousePressEvent(QMouseEvent* event)
         else if (btn.name == "pin")
         {
             if (btn.enable) {
-				WinPin::init((WinFull*)win);
+				//WinPin::init((WinFull*)win);
             }
         }
         else if (btn.name == "close")
         {
-            box->close();
+            //box->close();
         }
     }
 }

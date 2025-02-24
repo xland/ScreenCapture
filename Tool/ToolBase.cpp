@@ -2,10 +2,10 @@
 #include <qpushbutton.h>
 #include <qtooltip.h>
 
+#include "ToolBase.h"
 #include "../App/App.h"
 #include "../App/Font.h"
-#include "ToolBase.h"
-#include "ToolSub.h"
+
 #include "../Win/Box.h"
 
 namespace

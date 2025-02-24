@@ -71,3 +71,27 @@ void Box::undo()
 void Box::redo()
 {
 }
+
+void Box::saveToClipboard()
+{
+}
+
+void Box::saveToFile()
+{
+}
+
+void Box::moveByKey(const int& key)
+{
+}
+
+void Box::removeShape()
+{
+}
+
+void Box::escPress()
+{
+}
+
+void Box::copyColor(const int& key)
+{
+}

@@ -21,6 +21,12 @@ class Box : public QObject
 		void hideTools(State state = State::start);
 		void undo();
 		void redo();
+		void saveToClipboard();
+		void saveToFile();
+		void moveByKey(const int& key);
+		void removeShape();
+		void escPress();
+		void copyColor(const int& key);
 	public:
 		Bg* bg;
 		Canvas* canvas;
