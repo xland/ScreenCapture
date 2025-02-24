@@ -23,27 +23,26 @@ void Box::initWins()
 	canvas->fullWindow();
 	magnifier = new Magnifier(this);
 	mask = new Mask(this);
-	//toolMain = new ToolMain(this);
 }
 void Box::showToolMain()
 {
-	//if (!toolMain) {
-	//	toolMain = new ToolMain(this);
-	//}
-	//toolMain->setBtnEnable(QString{ "pin" }, true);
-	//toolMain->confirmPos();
-	//toolMain->show();
+	if (!toolMain) {
+		toolMain = new ToolMain(this);
+	}
+	toolMain->setBtnEnable(QString{ "pin" }, true);
+	toolMain->confirmPos();
+	toolMain->show();
 }
 
 void Box::showToolSub()
 {
-	//if (!toolSub) {
-	//	toolSub = new ToolSub(this);
-	//}
-	//if (toolSub->isVisible()) {
-	//	toolSub->hide();
-	//}
-	//toolSub->show();
+	if (!toolSub) {
+		toolSub = new ToolSub(this);
+	}
+	if (toolSub->isVisible()) {
+		toolSub->hide();
+	}
+	toolSub->show();
 }
 void Box::hideTools(State state)
 {

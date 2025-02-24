@@ -36,10 +36,7 @@ Canvas::~Canvas()
 void Canvas::fullWindow()
 {
     auto& rect = NativeRect::getDesktopRect();
-    auto x = GetSystemMetrics(SM_XVIRTUALSCREEN);
-    auto y = GetSystemMetrics(SM_YVIRTUALSCREEN);
-    auto w = GetSystemMetrics(SM_CXVIRTUALSCREEN) + 1;  //必须大一点，不然第二次update时会出现黑屏闪烁
-    auto h = GetSystemMetrics(SM_CYVIRTUALSCREEN) + 1;
+    auto x{ rect.left() }, y{ rect.top() }, w{ rect.width() + 1 }, h{ rect.height() + 1 };  //必须大一点，不然第二次update时会出现黑屏闪烁
     //注意 必须先设置大小并显示窗口后，再使用原生API重置大小
     setMaximumSize(QSize(w, h));
     setMinimumSize(QSize(w, h));

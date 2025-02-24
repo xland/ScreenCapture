@@ -6,7 +6,7 @@
 #include "Mask.h"
 #include "Magnifier.h"
 #include "../App/NativeRect.h"
-//#include "../Tool/ToolMain.h"
+#include "../Tool/ToolMain.h"
 //#include "../Tool/ToolSub.h"
 
 
@@ -77,7 +77,7 @@ void Mask::mouseDrag(QMouseEvent* event)
 }
 void Mask::mouseRelease(QMouseEvent* event)
 {
-    if (box->state == State::mask || (box->state >= State::tool)) // && !box->toolMain->isVisible()
+    if (box->state == State::mask || (box->state >= State::tool && !box->toolMain->isVisible()))
     {
         box->state = State::tool;
         box->showToolMain();

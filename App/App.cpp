@@ -14,9 +14,9 @@
 #include "Font.h"
 #include "../Win/Box.h"
 #include "../Lib/QHotKey/qhotkey.h"
+#include "../Tool/ToolMain.h"
+#include "../Tool/ToolSub.h"
 //#include "../Win/WinPin.h"
-//#include "../Tool/ToolMain.h"
-//#include "../Tool/ToolSub.h"
 //#include "../Tool/ColorCtrl.h"
 
 namespace {
@@ -76,9 +76,9 @@ void App::initConfig()
     QJsonObject jsonObject = document.object();
     auto lang = jsonObject["defaultLang"].toString();
     Tray::initData(jsonObject["tray"].toObject(), lang);
+    ToolMain::initData(jsonObject["toolMain"].toArray(), lang);
+    ToolSub::initData(jsonObject["toolSub"].toObject(), lang);
     //WinPin::initData(jsonObject["winPin"].toArray(), lang);
-    //ToolMain::initData(jsonObject["toolMain"].toArray(), lang);
-    //ToolSub::initData(jsonObject["toolSub"].toObject(), lang);
     //ColorCtrl::initData(jsonObject["colorCtrl"].toObject(), lang);
     Font::initData(jsonObject["icon"].toObject());
     auto hotkey = new QHotkey(QKeySequence(jsonObject["hotKey"].toString()), true,qApp);
