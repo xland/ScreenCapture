@@ -2,6 +2,7 @@
 #include "Box.h"
 #include "Tool/ToolMain.h"
 #include "Tool/ToolSub.h"
+#include "Shape/ShapeBase.h"
 
 
 Box::Box(QObject* parent) : QObject(parent)

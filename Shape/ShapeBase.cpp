@@ -1,10 +1,9 @@
 #include "ShapeBase.h"
 #include "../App/App.h"
-#include "../Win/WinBox.h"
-#include "../Win/WinCanvas.h"
-#include "../Win/WinBoard.h"
+#include "../Win/Box.h"
+#include "../Win/Canvas.h"
 
-ShapeBase::ShapeBase(QObject* parent):QObject(parent)
+ShapeBase::ShapeBase(QObject* parent) :QObject(parent), box{(Box*)parent}
 {
 }
 
@@ -14,32 +13,29 @@ ShapeBase::~ShapeBase()
 
 void ShapeBase::showDragger()
 {
-	auto win = (WinBox*)parent();
-	if (state == ShapeState::ready && this == win->winCanvas->curShape) {
+	if (state == ShapeState::ready && this == box->canvas->curShape) {
 		//避免鼠标在ready的shape上移动的时候不断的重绘
 		return;
 	}
 	if (state != ShapeState::ready) {
 		state = ShapeState::ready;
-		win->winBoard->refresh();
+		box->winBoard->refresh();
 	}
-	win->winCanvas->curShape = this;
-	win->winCanvas->paintDragger();
+	box->canvas->curShape = this;
+	box->canvas->paintDragger();
 }
 
 void ShapeBase::paintOnBoard()
 {
-	auto win = (WinBox*)parent();
 	if (state != ShapeState::ready) {
 		state = ShapeState::ready;
 	}
-	win->winBoard->refresh();
+	box->winBoard->refresh();
 }
 
 void ShapeBase::painting()
 {
-	auto win = (WinBox*)parent();
-	win->winCanvas->paintShape();
+	box->canvas->paintShape();
 }
 
 void ShapeBase::prepareDraggers(const int& size)
@@ -55,17 +51,14 @@ void ShapeBase::prepareDraggers(const int& size)
 void ShapeBase::paintingStart()
 {
 	//ready状态的shape，鼠标按下
-	auto win = (WinBox*)parent();
-	win->winCanvas->initImg();
-	win->winCanvas->curShape = this;
-	win->winCanvas->paintShape();
-	win->winBoard->refresh();
+	box->canvas->initImg();
+	box->canvas->curShape = this;
+	box->canvas->paintShape();
 }
 
 void ShapeBase::paintingPrepare()
 {
 	//temp状态的shape,鼠标按下
-	auto win = (WinBox*)parent();
-	win->winCanvas->initImg();
-	win->winCanvas->curShape = this;
+	box->winCanvas->initImg();
+	box->winCanvas->curShape = this;
 }

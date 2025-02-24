@@ -5,6 +5,7 @@
 #include <QPainter>
 #include "ShapeState.h"
 
+class Box;
 class ShapeBase:public QObject
 {
     Q_OBJECT
@@ -25,6 +26,7 @@ public:
     int hoverDraggerIndex{ -1 };
     std::vector<QRect> draggers;
     bool isEraser{ false };
+    Box* box;
 protected:
     virtual void painting();
     virtual void paintingStart();

@@ -9,6 +9,7 @@
 
 class ToolMain;
 class ToolSub;
+class ShapeBase;
 class Box : public QObject
 {
 	Q_OBJECT
@@ -34,6 +35,7 @@ class Box : public QObject
 		Mask* mask;
 		ToolMain* toolMain;
 		ToolSub* toolSub;
+		std::vector<ShapeBase> shapes;
 		State state{ State::start };
 	private:
 		void initWins();
