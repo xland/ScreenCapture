@@ -18,10 +18,15 @@
 #include "../App/NativeRect.h"
 
 namespace Win {
-    // 注意：必须使用QOpenGLWindow，不能使用QOpenGLWideget
 	Canvas::Canvas(Box* box) : QOpenGLWindow(), box{ box }
     {
-        setFlags(Qt::FramelessWindowHint | Qt::Tool);		 
+        QSurfaceFormat format;
+        format.setSamples(8);
+        format.setDepthBufferSize(24);
+        format.setVersion(3, 3);
+        format.setProfile(QSurfaceFormat::CoreProfile);
+        setFormat(format);
+        setFlags(Qt::FramelessWindowHint | Qt::Tool);
     }
 
     Canvas::~Canvas()
@@ -47,19 +52,23 @@ namespace Win {
 
     void Canvas::initializeGL()
     {
-        //QSurfaceFormat format;
-        //format.setSamples(4);
-        //QSurfaceFormat::setDefaultFormat(format);
+
         initializeOpenGLFunctions();
-        //glEnable(GL_MULTISAMPLE);
-        glClearColor(0.f, 0.f, 0.f, 0.f);  // 设置清空颜色（背景色）
+
+        glEnable(GL_MULTISAMPLE);
+        glEnable(GL_LINE_SMOOTH);
+        glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
+        //glClearColor(0.f, 0.f, 0.f, 0.f);
+        //glViewport(0, 0, 3841, 2161);
     }
 
     void Canvas::paintGL()
     {
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT);
         QPainter painter(this);
         painter.setRenderHint(QPainter::Antialiasing, true);
+        painter.setRenderHint(QPainter::TextAntialiasing, true);
 		box->mask->paint(painter);
 
         //painter.setBrush(QColor(0, 0, 0, 120));
@@ -90,6 +99,9 @@ namespace Win {
 			box->mask->mouseDrag(event);
         }
         else {
+            if (box->state < State::tool) {
+                box->magnifier->mouseMove(event);
+            }            
             box->mask->mouseMove(event);
         }
     }

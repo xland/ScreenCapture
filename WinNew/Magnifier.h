@@ -11,7 +11,7 @@ namespace Win {
 	public:
 		Magnifier(Box* box);
 		~Magnifier();
-		void mouseMove();
+		void mouseMove(QMouseEvent* event);
 	protected:
 		void paintEvent(QPaintEvent* event) override;
 		void closeEvent(QCloseEvent* event) override;

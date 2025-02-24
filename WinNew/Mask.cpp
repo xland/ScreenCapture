@@ -77,7 +77,7 @@ namespace Win {
     }
     void Mask::mouseRelease(QMouseEvent* event)
     {
-        if (box->state == State::mask || (box->state >= State::tool && !box->toolMain->isVisible()))
+        if (box->state == State::mask || (box->state >= State::tool)) // && !box->toolMain->isVisible()
         {
             box->state = State::tool;
             box->showToolMain();

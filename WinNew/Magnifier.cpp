@@ -31,9 +31,9 @@ namespace Win {
     {
     }
 
-    void Magnifier::mouseMove()
+    void Magnifier::mouseMove(QMouseEvent* event)
     {
-        QPoint pos = QCursor::pos();
+        QPoint pos = event->pos();
         int span{ 10 };
         if (Util::posInScreen(pos.x() + width() + span, pos.y() + height() + span)) {
             move(pos.x() + span, pos.y() + span);
