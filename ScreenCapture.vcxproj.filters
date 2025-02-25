@@ -89,6 +89,12 @@
     <ClCompile Include="Shape\ShapeBase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Shape\ShapeRect.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Shape\ShapeRectBase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App\App.h">
@@ -211,6 +217,12 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="Shape\ShapeBase.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Shape\ShapeRect.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Shape\ShapeRectBase.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

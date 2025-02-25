@@ -41,7 +41,7 @@
     <QtBuildConfig>debug</QtBuildConfig>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="QtSettings">
-    <QtInstall>6.8.2_msvc2022_64</QtInstall>
+    <QtInstall>6.8.2-static_msvc2022_64</QtInstall>
     <QtModules>core;gui;widgets;concurrent;opengl;openglwidgets</QtModules>
     <QtBuildConfig>release</QtBuildConfig>
   </PropertyGroup>
@@ -71,6 +71,7 @@
     <ClCompile>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories>$(ProjectDir)Lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <AdditionalDependencies>dwmapi.lib;shcore.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -132,6 +133,8 @@
     <ClCompile Include="App\Tray.cpp" />
     <ClCompile Include="App\Util.cpp" />
     <ClCompile Include="Shape\ShapeBase.cpp" />
+    <ClCompile Include="Shape\ShapeRect.cpp" />
+    <ClCompile Include="Shape\ShapeRectBase.cpp" />
     <ClCompile Include="Tool\ColorCtrl.cpp" />
     <ClCompile Include="Tool\StrokeCtrl.cpp" />
     <ClCompile Include="Tool\ToolBase.cpp" />
@@ -148,6 +151,8 @@
     <QtMoc Include="Tool\StrokeCtrl.h" />
     <QtMoc Include="Tool\ColorCtrl.h" />
     <QtMoc Include="Shape\ShapeBase.h" />
+    <QtMoc Include="Shape\ShapeRect.h" />
+    <QtMoc Include="Shape\ShapeRectBase.h" />
     <ClInclude Include="Tool\ToolBtn.h" />
     <QtMoc Include="Tool\ToolSub.h" />
     <QtMoc Include="Tool\ToolMain.h" />
