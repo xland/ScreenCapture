@@ -3,8 +3,6 @@
 #include <versionhelpers.h>
 #include "Util.h"
 
-
-
 QMouseEvent Util::createMouseEvent(const QEvent::Type& type, const Qt::MouseButton& btn)
 {
     POINT pos; 
