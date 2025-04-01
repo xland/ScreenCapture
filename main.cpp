@@ -1,5 +1,4 @@
 #include <QtWidgets/QApplication>
-#include <QSurfaceFormat>
 
 #include "App/App.h"
 
