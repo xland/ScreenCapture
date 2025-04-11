@@ -26,16 +26,7 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Lib\QHotKey\qhotkey.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Lib\QHotKey\qhotkey_win.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="App\App.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="App\Tray.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Win\WinFull.cpp">
@@ -134,9 +125,6 @@
     <ClCompile Include="App\About.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="App\Logger.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="App\Font.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -166,75 +154,15 @@
     <ClInclude Include="App\Res.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Lib\spdlog\logger.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Lib\spdlog\spdlog.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Lib\spdlog\spdlog-inl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Lib\spdlog\logger-inl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Lib\spdlog\common.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Lib\spdlog\common-inl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Lib\spdlog\async.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Lib\spdlog\async_logger.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Lib\spdlog\async_logger-inl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Lib\spdlog\version.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Lib\spdlog\stopwatch.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Lib\spdlog\tweakme.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Lib\spdlog\pattern_formatter-inl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Lib\spdlog\mdc.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Lib\spdlog\pattern_formatter.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Lib\spdlog\fwd.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Lib\spdlog\formatter.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="App\Font.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <QtMoc Include="Lib\QHotKey\qhotkey.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="Lib\QHotKey\qhotkey_p.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
     <QtMoc Include="Win\WinPin.h">
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="Win\WinFull.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="App\Tray.h">
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="Tool\ToolSub.h">
@@ -313,9 +241,6 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="App\About.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="App\Logger.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

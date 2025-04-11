@@ -4,10 +4,7 @@
 
 int main(int argc, char* argv[])
 {
-    QApplication a(argc, argv);
-    if (!App::singleAppLock()) {
-        return 0;
-    }        
+    QApplication a(argc, argv);  
     App::init();
     auto resut = a.exec();
     App::dispose();

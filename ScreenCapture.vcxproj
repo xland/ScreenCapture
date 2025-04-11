@@ -123,7 +123,6 @@
     <ClCompile Include="App\About.cpp" />
     <ClCompile Include="App\App.cpp" />
     <ClCompile Include="App\NativeRect.cpp" />
-    <ClCompile Include="App\Logger.cpp" />
     <ClCompile Include="App\Font.cpp" />
     <ClCompile Include="Shape\ShapeArrow.cpp" />
     <ClCompile Include="Shape\ShapeBase.cpp" />
@@ -142,9 +141,6 @@
     <ClCompile Include="Shape\ShapeTextInput.cpp" />
     <ClCompile Include="Tool\ColorCtrl.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Lib\QHotKey\qhotkey.cpp" />
-    <ClCompile Include="Lib\QHotKey\qhotkey_win.cpp" />
-    <ClCompile Include="App\Tray.cpp" />
     <ClCompile Include="Tool\PixelInfo.cpp" />
     <ClCompile Include="Tool\StrokeCtrl.cpp" />
     <ClCompile Include="Tool\ToolBase.cpp" />
@@ -176,24 +172,6 @@
     <ClInclude Include="App\NativeRect.h" />
     <ClInclude Include="App\Res.h" />
     <ClInclude Include="App\Font.h" />
-    <ClInclude Include="Lib\spdlog\async.h" />
-    <ClInclude Include="Lib\spdlog\async_logger-inl.h" />
-    <ClInclude Include="Lib\spdlog\async_logger.h" />
-    <ClInclude Include="Lib\spdlog\common-inl.h" />
-    <ClInclude Include="Lib\spdlog\common.h" />
-    <ClInclude Include="Lib\spdlog\formatter.h" />
-    <ClInclude Include="Lib\spdlog\fwd.h" />
-    <ClInclude Include="Lib\spdlog\logger-inl.h" />
-    <ClInclude Include="Lib\spdlog\logger.h" />
-    <ClInclude Include="Lib\spdlog\mdc.h" />
-    <ClInclude Include="Lib\spdlog\pattern_formatter-inl.h" />
-    <ClInclude Include="Lib\spdlog\pattern_formatter.h" />
-    <ClInclude Include="Lib\spdlog\spdlog-inl.h" />
-    <ClInclude Include="Lib\spdlog\spdlog.h" />
-    <ClInclude Include="Lib\spdlog\stopwatch.h" />
-    <ClInclude Include="Lib\spdlog\tweakme.h" />
-    <ClInclude Include="Lib\spdlog\version.h" />
-    <QtMoc Include="App\Logger.h" />
     <ClInclude Include="Shape\ShapeEllipse.h" />
     <QtMoc Include="Shape\ShapeRect.h" />
     <QtMoc Include="Shape\ShapeNumber.h" />
@@ -214,11 +192,8 @@
     <QtMoc Include="Tool\ToolMain.h" />
     <QtMoc Include="Tool\ToolSub.h" />
     <QtMoc Include="Win\WinPin.h" />
-    <QtMoc Include="Lib\QHotKey\qhotkey_p.h" />
-    <QtMoc Include="Lib\QHotKey\qhotkey.h" />
     <ClInclude Include="App\State.h" />
     <QtMoc Include="Win\WinFull.h" />
-    <QtMoc Include="App\Tray.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Config\config.json" />
