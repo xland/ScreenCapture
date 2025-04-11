@@ -1,4 +1,5 @@
 {
+  "stayOn": true,
   "defaultLang": "en",
   "hotKey": "Ctrl+Alt+Z",
   "winPin": [

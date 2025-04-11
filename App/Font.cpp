@@ -9,8 +9,7 @@ void Font::initData(const QJsonObject& obj)
 {
     QFont font("Microsoft YaHei", 9);
     qApp->setFont(font);
-    QString fontPath = obj["fontPath"].toString();
-    auto result = QFontDatabase::addApplicationFont(fontPath);
+    auto result = QFontDatabase::addApplicationFont(":/Config/iconfont.ttf");
     if (result != 0) {
         qFatal() << "没有找到字体图标文件";
     }
