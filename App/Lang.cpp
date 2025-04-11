@@ -16,7 +16,7 @@ Lang::~Lang()
 
 QString Lang::get(const QString& name)
 {
-	return QString();
+	return lang->dic[name];
 }
 
 void Lang::init(const QString& langType)
