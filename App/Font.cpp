@@ -13,7 +13,7 @@ void Font::initData(const QJsonObject& obj)
     if (result != 0) {
         qFatal() << "没有找到字体图标文件";
     }
-    iconFont = std::make_unique<QFont>(obj["fontName"].toString());
+    iconFont = std::make_unique<QFont>("iconfont");
     iconFont->setStyleStrategy(QFont::PreferAntialias);
     iconFont->setHintingPreference(QFont::PreferNoHinting);
 }

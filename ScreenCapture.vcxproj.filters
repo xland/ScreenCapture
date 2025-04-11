@@ -247,7 +247,6 @@
   <ItemGroup>
     <None Include="ReadMe.md" />
     <None Include="todo.md" />
-    <None Include="Config\config.json" />
     <None Include="Doc\高亮窗口.md" />
   </ItemGroup>
   <ItemGroup>

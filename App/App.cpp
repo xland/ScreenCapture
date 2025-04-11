@@ -38,9 +38,7 @@ void App::start()
 void App::initConfig()
 {
     QString jsonStr = R"888({
-  "stayOn": true,
   "defaultLang": "en",
-  "hotKey": "Ctrl+Alt+Z",
   "winPin": [
     {
       "name": "toolBar",
@@ -53,30 +51,6 @@ void App::initConfig()
       "en": "Quit (Esc)"
     }
   ],
-  "icon": {
-    "fontPath": "./Config/iconfont.ttf",
-    "fontName": "iconfont"
-  },
-  "tray": {
-    "iconPath": "Config/logo.ico",
-    "menu": [
-      {
-        "name": "start",
-        "zhcn": "截图",
-        "en": "Capture"
-      },
-      {
-        "name": "about",
-        "zhcn": "关于",
-        "en": "About"
-      },
-      {
-        "name": "quit",
-        "zhcn": "退出",
-        "en": "Quit"
-      }
-    ]
-  },
   "toolMain": [
     {
       "name": "rect",
