@@ -11,16 +11,16 @@
 
 #include "ToolBtn.h"
 
-class Box;
+class WinBox;
 class ToolBase : public QWidget
 {
 	Q_OBJECT
 public:
-	ToolBase(Box* box,QWidget *parent = nullptr);
+	ToolBase(WinBox* win,QWidget *parent = nullptr);
 	virtual ~ToolBase();
 public:
 	int selectIndex{ -1 };
-	Box* box;
+	WinBox* win;
 protected:
 	void enterEvent(QEnterEvent* event) override;
 	void leaveEvent(QEvent* event) override;

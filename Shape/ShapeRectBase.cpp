@@ -3,8 +3,8 @@
 #include "ShapeRectBase.h"
 #include "../App/App.h"
 #include "../Tool/ToolSub.h"
-#include "../Win/Box.h"
-#include "../Win/Canvas.h"
+#include "../Win/WinBox.h"
+#include "../Win/WinCanvas.h"
 
 ShapeRectBase::ShapeRectBase(QObject* parent) : ShapeBase(parent)
 {
@@ -16,8 +16,7 @@ ShapeRectBase::~ShapeRectBase()
 
 void ShapeRectBase::resetDragger()
 {
-    draggers.resize(8);
-    std::fill(draggers.begin(), draggers.end(), QRect());
+    prepareDraggers(8);
     auto x{ shape.x() },y{ shape.y() },w{ shape.width() },h{ shape.height() };
     auto half{ draggerSize / 2 };
     draggers[0].setRect(x - half, y - half, draggerSize, draggerSize);

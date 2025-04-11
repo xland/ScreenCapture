@@ -20,6 +20,5 @@ public:
 	static QScreen* getScreen(const int& x, const int& y);
 	static void setClipboardText(const std::wstring& text);
 	static void copyColor(const int& key);
-	static bool alphaWindow(HWND hWnd);
 };
 

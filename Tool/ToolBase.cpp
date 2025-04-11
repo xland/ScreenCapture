@@ -2,11 +2,13 @@
 #include <qpushbutton.h>
 #include <qtooltip.h>
 
-#include "ToolBase.h"
 #include "../App/App.h"
 #include "../App/Font.h"
-
-#include "../Win/Box.h"
+#include "../Win/WinBox.h"
+#include "../Win/WinFull.h"
+#include "../Win/WinMask.h"
+#include "ToolBase.h"
+#include "ToolSub.h"
 
 namespace
 {
@@ -16,7 +18,7 @@ namespace
     std::vector<std::tuple<int, int, int>> btnSpanIndexs;
 }
 
-ToolBase::ToolBase(Box* box, QWidget* parent) : QWidget(parent), box{ box }
+ToolBase::ToolBase(WinBox* win, QWidget* parent) : QWidget(parent),win{win}
 {
     setMouseTracking(true);
     setVisible(false);
@@ -96,50 +98,50 @@ void ToolBase::keyPressEvent(QKeyEvent* event)
 {
     event->ignore();
     if (event->key() == Qt::Key_Escape) {
-        box->escPress();
+        win->escPress();
     }
     else if (event->key() == Qt::Key_Delete) {
-        box->removeShape();
+        win->removeShape();
     }
     else if (event->key() == Qt::Key_Left) {
-        box->moveByKey(0);
+        win->moveByKey(0);
     }
     else if (event->key() == Qt::Key_Up) {
-        box->moveByKey(1);
+        win->moveByKey(1);
     }
     else if (event->key() == Qt::Key_Right) {
-        box->moveByKey(2);
+        win->moveByKey(2);
     }
     else if (event->key() == Qt::Key_Down) {
-        box->moveByKey(3);
+        win->moveByKey(3);
     }
     else if (event->modifiers() & Qt::ControlModifier) {
         if (event->key() == Qt::Key_T) {
-            box->hideTools();
+            win->hideTools();
         }
         else if (event->key() == Qt::Key_Z) {
-            box->undo();
+            win->undo();
         }
         else if (event->key() == Qt::Key_Y) {
-            box->redo();
+            win->redo();
         }
         else if (event->key() == Qt::Key_S) {
-            box->saveToFile();
+            win->saveToFile();
         }
         else if (event->key() == Qt::Key_C) {
-            box->saveToClipboard();
+            win->saveToClipboard();
         }
         else if (event->key() == Qt::Key_H) {
-            box->copyColor(0);
+            win->copyColor(0);
         }
         else if (event->key() == Qt::Key_R) {
-            box->copyColor(1);
+            win->copyColor(1);
         }
         else if (event->key() == Qt::Key_K) {
-            box->copyColor(2);
+            win->copyColor(2);
         }
         else if (event->key() == Qt::Key_P) {
-            box->copyColor(3);
+            win->copyColor(3);
         }
     }
 }

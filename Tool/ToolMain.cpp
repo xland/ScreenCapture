@@ -6,7 +6,10 @@
 #include "../App/App.h"
 #include "../App/Util.h"
 #include "../App/NativeRect.h"
-#include "../Win/Box.h"
+#include "../Win/WinBox.h"
+#include "../Win/WinPin.h"
+#include "../Win/WinFull.h"
+#include "../Win/WinMask.h"
 #include "ToolMain.h"
 #include "ToolSub.h"
 
@@ -15,7 +18,7 @@ namespace{
     std::vector<unsigned> spliterIndexs;
 }
 
-ToolMain::ToolMain(Box* box) : ToolBase(box)
+ToolMain::ToolMain(WinBox* win) : ToolBase(win)
 {
     setFixedSize(btns.size() * btnW + 8, 32);
     for (auto& btn : btns)
@@ -144,18 +147,14 @@ void ToolMain::setBtnEnable(bool undo, bool redo)
 
 void ToolMain::confirmPos()
 {
-    auto& rect = NativeRect::getDesktopRect();
-    auto x{ rect.left() }, y{ rect.top() }, w{ rect.width() },h{ rect.height() };
+    auto full = (WinFull*)win;
     auto hwnd = (HWND)winId();
-    auto left{ x + box->mask->maskRect.right() - width()};
-    auto top{  y + box->mask->maskRect.bottom() + 6 };
-    move(left, top);
-    return;
-    //todo....
-
+    auto dpr = windowHandle()->devicePixelRatio();
+    auto left{full->x + full->winMask->maskRect.right() - width()*dpr};
+    auto top{ full->y + full->winMask->maskRect.bottom() + 6*dpr };
     //三个缝隙高度和两个工具条高度
-    auto heightSpan = 6 * 3 + height() * 2;
-    auto screen = NativeRect::getScreenByPos(x + box->mask->maskRect.right(), y + box->mask->maskRect.bottom() + heightSpan);
+    auto heightSpan = 6 * dpr * 3 + height() * dpr * 2;
+    auto screen = NativeRect::getScreenByPos(full->x + full->winMask->maskRect.right(), full->y + full->winMask->maskRect.bottom() + heightSpan);
     if (screen) { //工具条右下角在屏幕内
         topFlag = false;
         //工具条左上角不在屏幕内
@@ -166,25 +165,25 @@ void ToolMain::confirmPos()
     else { //工具条右下角不在屏幕内
         topFlag = true;
         //判断屏幕顶部是否有足够的空间，工具条是否可以在CutRect右上角
-        screen = NativeRect::getScreenByPos(x + box->mask->maskRect.right(), y + box->mask->maskRect.top() - heightSpan);
+        screen = NativeRect::getScreenByPos(full->x + full->winMask->maskRect.right(), full->y + full->winMask->maskRect.top() - heightSpan);
         if (screen) { //工具条右上角在屏幕内  
-            if (NativeRect::getScreenByPos(left, y + box->mask->maskRect.top() - heightSpan)) { //工具条左上角在屏幕内
-                top = y + box->mask->maskRect.top() - 6 - height();
+            if (NativeRect::getScreenByPos(left, full->y + full->winMask->maskRect.top() - heightSpan)) { //工具条左上角在屏幕内
+                top = full->y + full->winMask->maskRect.top() - 6*dpr - height()*dpr;
             }
             else { //工具条左上角不在屏幕中
                 left = screen->left();
-                top = y + box->mask->maskRect.top() - 6 - height();
+                top = full->y + full->winMask->maskRect.top() - 6 * dpr - height() * dpr;
             }
         }
         else { //工具条右上角不在屏幕内，此时屏幕顶部和屏幕底部都没有足够的空间，工具条只能显示在截图区域内            
-            if (NativeRect::getScreenByPos(left, y + box->mask->maskRect.bottom() - heightSpan)) { //工具条左上角在屏幕内
-                top = y + box->mask->maskRect.bottom() - 6 - height();
+            if (NativeRect::getScreenByPos(left, full->y + full->winMask->maskRect.bottom() - heightSpan)) { //工具条左上角在屏幕内
+                top = full->y + full->winMask->maskRect.bottom() - 6*dpr - height()*dpr;
             }
             else { //工具条左上角不在屏幕中，得到截图区域所在屏幕
-                screen = NativeRect::getScreenByPos(x + box->mask->maskRect.right(), y + box->mask->maskRect.bottom());
+                screen = NativeRect::getScreenByPos(full->x + full->winMask->maskRect.right(), full->y + full->winMask->maskRect.bottom());
                 if (screen) {
                     left = screen->left();
-                    top = y + box->mask->maskRect.bottom() - 6 - height();
+                    top = full->y + full->winMask->maskRect.bottom() - 6*dpr - height()*dpr;
                 }
             }
         }
@@ -228,9 +227,9 @@ void ToolMain::mousePressEvent(QMouseEvent* event)
     if (hoverIndex == selectIndex) //取消选择
     {
         selectIndex = -1;
-        box->state = State::tool;
+        win->state = State::tool;
         update();
-        box->toolSub->hide();
+        win->toolSub->hide();
         if (topFlag) {
             auto pos = geometry().topLeft();
             pos.setY(pos.y() + height()+6);
@@ -243,46 +242,46 @@ void ToolMain::mousePressEvent(QMouseEvent* event)
         if (btn.name.isEmpty())
         {
             if (topFlag) {
-                if (!box->toolSub || !box->toolSub->isVisible()) {
+                if (!win->toolSub || !win->toolSub->isVisible()) {
                     auto pos = geometry().topLeft();
                     pos.setY(pos.y() - height() - 6);
                     move(pos);
                 }
             }
-            box->state = btn.state;
+            win->state = btn.state;
             selectIndex = hoverIndex;
-            box->showToolSub();
+            win->showToolSub();
             update();
         }
         else if (btn.name == "clipboard")
         {
-            box->saveToClipboard();
+            win->saveToClipboard();
         }
         else if (btn.name == "save")
         {
-            box->saveToFile();
+            win->saveToFile();
         }
         else if (btn.name == "undo")
         {
             if (btn.enable) {
-                box->undo();
+                win->undo();
             }            
         }
         else if (btn.name == "redo")
         {
             if (btn.enable) {
-                box->redo();
+                win->redo();
             }
         }
         else if (btn.name == "pin")
         {
             if (btn.enable) {
-				//WinPin::init((WinFull*)win);
+				WinPin::init((WinFull*)win);
             }
         }
         else if (btn.name == "close")
         {
-            //box->close();
+            win->close();
         }
     }
 }
@@ -306,5 +305,5 @@ void ToolMain::mouseMoveEvent(QMouseEvent* event)
 void ToolMain::closeEvent(QCloseEvent* event)
 {
     deleteLater();
-    box->toolMain = nullptr;
+    win->toolMain = nullptr;
 }

@@ -38,7 +38,94 @@
     <ClCompile Include="App\Tray.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Win\WinFull.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Win\WinPin.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Tool\ToolSub.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Tool\ToolMain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Tool\ToolBtn.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Tool\StrokeCtrl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Tool\ColorCtrl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Win\WinBase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Shape\ShapeBase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Shape\ShapeEllipse.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Shape\ShapeRect.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Shape\ShapeArrow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Shape\ShapeNumber.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Shape\ShapeLine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Shape\ShapeText.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="App\Util.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Shape\ShapeTextInput.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Win\WinCanvas.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Win\WinMask.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Win\WinBoard.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Shape\ShapeRectBase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Shape\ShapeLineBase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Shape\ShapeEraserLine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Shape\ShapeEraserRect.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Shape\ShapeMosaicRect.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Shape\ShapeMosaicLine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Tool\PixelInfo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Win\WinBox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Tool\ToolBase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Shape\ShapeTextContainer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="App\NativeRect.cpp">
@@ -53,54 +140,21 @@
     <ClCompile Include="App\Font.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Win\Bg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Win\Box.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Win\Canvas.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Win\Magnifier.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Win\Mask.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Tool\ToolBase.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Tool\ToolBtn.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Tool\ToolMain.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Tool\ToolSub.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Tool\StrokeCtrl.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Tool\ColorCtrl.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Shape\ShapeBase.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Shape\ShapeRect.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Shape\ShapeRectBase.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App\App.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="App\State.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Tool\ToolBtn.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Shape\ShapeEllipse.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Shape\ShapeState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="App\Util.h">
@@ -166,9 +220,6 @@
     <ClInclude Include="App\Font.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Tool\ToolBtn.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="Lib\QHotKey\qhotkey.h">
@@ -177,37 +228,19 @@
     <QtMoc Include="Lib\QHotKey\qhotkey_p.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="Win\WinPin.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Win\WinFull.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
     <QtMoc Include="App\Tray.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="App\About.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="App\Logger.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="Win\Bg.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="Win\Box.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="Win\Canvas.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="Win\Magnifier.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="Win\Mask.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="Tool\ToolBase.h">
+    <QtMoc Include="Tool\ToolSub.h">
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="Tool\ToolMain.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="Tool\ToolSub.h">
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="Tool\StrokeCtrl.h">
@@ -216,13 +249,73 @@
     <QtMoc Include="Tool\ColorCtrl.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="Win\WinBase.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
     <QtMoc Include="Shape\ShapeBase.h">
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="Shape\ShapeRect.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="Shape\ShapeArrow.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Shape\ShapeNumber.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Shape\ShapeLine.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Shape\ShapeText.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Shape\ShapeTextInput.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Win\WinCanvas.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Win\WinMask.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Win\WinBoard.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
     <QtMoc Include="Shape\ShapeRectBase.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Shape\ShapeLineBase.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Shape\ShapeEraserRect.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Shape\ShapeEraserLine.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Shape\ShapeMosaicRect.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Shape\ShapeMosaicLine.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Tool\PixelInfo.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Win\WinBox.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Tool\ToolBase.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Shape\ShapeTextContainer.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="App\About.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="App\Logger.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>
@@ -230,6 +323,7 @@
     <None Include="ReadMe.md" />
     <None Include="todo.md" />
     <None Include="Config\config.json" />
+    <None Include="Doc\高亮窗口.md" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="Config\iconfont.ttf" />

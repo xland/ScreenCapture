@@ -5,13 +5,13 @@
 
 class StrokeCtrl;
 class ColorCtrl;
-class Box;
+class WinBox;
 class ToolSub : public ToolBase
 {
 	Q_OBJECT
 
 public:
-	ToolSub(Box* box);
+	ToolSub(WinBox* win);
 	~ToolSub();
 	static void initData(const QJsonObject& obj, const QString& lang);
 	bool getSelectState(const QString& btnName);
