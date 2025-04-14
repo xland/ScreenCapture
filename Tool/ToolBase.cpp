@@ -45,13 +45,6 @@ void ToolBase::btnClick(Btn* btn)
 {
 }
 
-
-void ToolBase::enterEvent(QEnterEvent* event)
-{
-    QGuiApplication::setOverrideCursor(Qt::PointingHandCursor);
-    QWidget::enterEvent(event);
-}
-
 void ToolBase::showEvent(QShowEvent* event)
 {
     QWidget::showEvent(event);

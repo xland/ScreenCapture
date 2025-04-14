@@ -19,11 +19,7 @@ public:
 public:
 protected:
 	void paintEvent(QPaintEvent* event) override;
-	void mouseMoveEvent(QMouseEvent* event) override;
-	void showEvent(QShowEvent* event) override;
 	void closeEvent(QCloseEvent* event) override;
-private:
-	static std::vector<ToolBtn> makeBtns(const QJsonArray& arr, const QString& lang);
 private:
 	StrokeCtrl* strokeCtrl;
 	ColorCtrl* colorCtrl;
