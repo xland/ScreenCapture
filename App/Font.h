@@ -2,11 +2,10 @@
 #include <QObject>
 #include <QFont>
 #include <QFontDatabase>
-#include <QJsonObject>
 class Font
 {
 public:
-	static void initData(const QJsonObject& obj);
+	static void init();
 	static QFont* icon();
 };
 

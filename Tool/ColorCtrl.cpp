@@ -2,28 +2,11 @@
 #include <QMouseEvent>
 #include <QJsonArray>
 #include <QToolTip>
+#include "../App/Lang.h"
 
 #include "ColorCtrl.h"
 #include "../App/App.h"
 #include "../App/Font.h"
-
-namespace {
-	QChar colorIcon;
-	QChar colorIconSelected;
-	int defaultSelectedIndex;
-	std::vector<QString> colorTips;
-	std::vector<QString> colorValues;
-}
-
-ColorCtrl::ColorCtrl(QWidget *parent) : QWidget(parent)
-{
-	setAttribute(Qt::WA_NoSystemBackground);
-	setAttribute(Qt::WA_Hover);
-	setMouseTracking(true);
-	setFocusPolicy(Qt::NoFocus);
-	int w{ (int)colorValues.size() * itemWidth };
-	setFixedSize(w, 28);
-}
 
 ColorCtrl::ColorCtrl(int selectIndex, QWidget* parent):selectedIndex{selectedIndex}
 {
@@ -31,33 +14,13 @@ ColorCtrl::ColorCtrl(int selectIndex, QWidget* parent):selectedIndex{selectedInd
 	setAttribute(Qt::WA_Hover);
 	setMouseTracking(true);
 	setFocusPolicy(Qt::NoFocus);
-	int w{ (int)colorValues.size() * itemWidth };
+	int w{ 8 * itemWidth };
 	setFixedSize(w, 28);
 }
 
 ColorCtrl::~ColorCtrl()
 {
 
-}
-
-void ColorCtrl::initData(const QJsonObject& obj, const QString& lang)
-{
-	defaultSelectedIndex = obj["defaultSelectedIndex"].toInt();
-	bool ok;
-	uint codePoint = obj["icon"].toString().toUInt(&ok, 16);
-	if (ok) {
-		colorIcon = QChar(codePoint);
-	}
-	codePoint = obj["iconSelected"].toString().toUInt(&ok, 16);
-	if (ok) {
-		colorIconSelected = QChar(codePoint);
-	}
-	auto arr = obj["items"].toArray();
-	for (const QJsonValue& item : arr)
-	{
-		colorTips.push_back(item[lang].toString());
-		colorValues.push_back(item["value"].toString());
-	}
 }
 
 QColor ColorCtrl::getColor()
@@ -74,6 +37,7 @@ void ColorCtrl::paintEvent(QPaintEvent * event)
 	painter.setRenderHint(QPainter::Antialiasing, true);
 	painter.setRenderHint(QPainter::TextAntialiasing, true);
 	painter.setFont(*font);
+	std::vector<QString> colorValues{"#CF1322","#D48806","#389E0D","#13C2C2","#0958D9","#722ED1","#EB2F96","#000000"};
 	for (int j = 0; j < colorValues.size(); j++)
 	{
 		QRect rect(j * itemWidth, 0, itemWidth, height());
@@ -85,10 +49,10 @@ void ColorCtrl::paintEvent(QPaintEvent * event)
 		}
 		painter.setPen(QColor(colorValues[j]));
 		if (j == selectedIndex) {
-			painter.drawText(rect, Qt::AlignCenter, colorIconSelected);
+			painter.drawText(rect, Qt::AlignCenter, QChar(0xe721));
 		}
 		else {
-			painter.drawText(rect, Qt::AlignCenter, colorIcon);
+			painter.drawText(rect, Qt::AlignCenter, QChar(0xe61d));
 		}
 	}
 }
@@ -110,7 +74,8 @@ void ColorCtrl::mouseMoveEvent(QMouseEvent* event)
 		update();
 		if (hoverIndex > -1)
 		{
-			QToolTip::showText(event->globalPosition().toPoint(), colorTips[hoverIndex], this);
+			std::vector<QString> colorNames{"red","yellow","green","cyan","blue","purple","pink","black"};
+			QToolTip::showText(QCursor::pos(), Lang::get(colorNames[hoverIndex]), this);
 		}
 	}
 }

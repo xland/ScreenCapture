@@ -148,8 +148,6 @@
     <ClCompile Include="Tool\PixelInfo.cpp" />
     <ClCompile Include="Tool\StrokeCtrl.cpp" />
     <ClCompile Include="Tool\ToolBase.cpp" />
-    <ClCompile Include="Tool\ToolBtn.cpp" />
-    <ClCompile Include="Tool\ToolBtnMain.cpp" />
     <ClCompile Include="Tool\ToolMain.cpp" />
     <ClCompile Include="Tool\ToolSub.cpp" />
     <ClCompile Include="App\Util.cpp" />
@@ -165,7 +163,6 @@
     <QtMoc Include="Tool\BtnCheck.h" />
     <QtMoc Include="Tool\Btn.h" />
     <QtMoc Include="Tool\BtnBase.h" />
-    <QtMoc Include="Tool\ToolBtnMain.h" />
     <QtMoc Include="App\About.h" />
     <ClInclude Include="App\App.h" />
     <QtMoc Include="App\Lang.h" />
@@ -198,7 +195,6 @@
     <QtMoc Include="Tool\PixelInfo.h" />
     <QtMoc Include="Tool\ToolBase.h" />
     <QtMoc Include="Shape\ShapeTextContainer.h" />
-    <ClInclude Include="Tool\ToolBtn.h" />
     <QtMoc Include="Tool\ToolMain.h" />
     <QtMoc Include="Tool\ToolSub.h" />
     <QtMoc Include="Win\WinPin.h" />

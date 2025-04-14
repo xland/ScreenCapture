@@ -51,22 +51,15 @@ void Lang::initZhCn()
 	dic.insert("close", "关闭");
 
 	dic.insert("rectFill", "填充矩形");
-	dic.insert("strokeCtrl", "线条粗细");
-	dic.insert("ellipseFill", "Close");
-	dic.insert("strokeCtrl", "Close");
-	dic.insert("arrowFill", "Close");
-	dic.insert("strokeCtrl", "Close");
-	dic.insert("numberFill", "Close");
-	dic.insert("lineTransparent", "Close");
-	dic.insert("strokeCtrl", "Close");
-	dic.insert("bold", "Close");
-	dic.insert("italic", "Close");
-	dic.insert("strokeCtrl", "Close");
+	dic.insert("strokeCtrl", "线条粗细：");
+	dic.insert("ellipseFill", "填充椭圆");
+	dic.insert("arrowFill", "填充箭头");
+	dic.insert("numberFill", "填充标号");
+	dic.insert("lineTransparent", "半透明线条");
+	dic.insert("bold", "粗体");
+	dic.insert("italic", "斜体");
 	dic.insert("mosaicFill", "矩形马赛克");
-	dic.insert("strokeCtrl", "线条粗细：");
 	dic.insert("eraserFill", "矩形橡皮擦");
-	dic.insert("strokeCtrl", "线条粗细：");
-
 
 	dic.insert("red", "红");
 	dic.insert("yellow", "黄");
@@ -98,22 +91,16 @@ void Lang::initEn()
 	dic.insert("save", "Save to Disk");
 	dic.insert("close", "Close");
 
-	dic.insert("rectFill", "Close");
-	dic.insert("strokeCtrl", "Close");
-	dic.insert("ellipseFill", "Close");
-	dic.insert("strokeCtrl", "Close");
-	dic.insert("arrowFill", "Close");
-	dic.insert("strokeCtrl", "Close");
-	dic.insert("numberFill", "Close");
-	dic.insert("lineTransparent", "Close");
-	dic.insert("strokeCtrl", "Close");
-	dic.insert("bold", "Close");
-	dic.insert("italic", "Close");
-	dic.insert("strokeCtrl", "Close");
+	dic.insert("rectFill", "Filled Rect");
+	dic.insert("strokeCtrl", "Stroke Width: ");
+	dic.insert("ellipseFill", "Filled Ellipse");
+	dic.insert("arrowFill", "Filled Arrow");
+	dic.insert("numberFill", "Filled Number");
+	dic.insert("lineTransparent", "Translucent Line");
+	dic.insert("bold", "Bold");
+	dic.insert("italic", "Italics");
 	dic.insert("mosaicFill", "Rectangle Mosaic");
-	dic.insert("strokeCtrl", "Stroke Width: ");
 	dic.insert("eraserFill", "Rectangle Eraser");
-	dic.insert("strokeCtrl", "Stroke Width: ");
 
 
 	dic.insert("red", "Red");

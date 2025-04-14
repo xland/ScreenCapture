@@ -7,7 +7,6 @@
 
 
 #include "ToolBase.h"
-#include "ToolBtn.h"
 
 class WinBox;
 class BtnBase;

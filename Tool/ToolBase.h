@@ -9,8 +9,6 @@
 #include <QJsonArray>
 #include <QJsonValue>
 
-#include "ToolBtn.h"
-
 class WinBox;
 class BtnBase;
 class BtnCheck;

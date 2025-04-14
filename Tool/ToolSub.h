@@ -1,7 +1,6 @@
 ﻿#pragma once
 #include <QWidget>
 #include "ToolBase.h"
-#include "ToolBtn.h"
 
 class StrokeCtrl;
 class ColorCtrl;

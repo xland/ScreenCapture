@@ -10,14 +10,6 @@
 #include "ToolBase.h"
 #include "ToolSub.h"
 
-namespace
-{
-    std::vector<ToolBtn> btnsMain;
-    std::vector<unsigned> spliterIndexs;
-    std::map<State, std::vector<ToolBtn>> btnsSub;
-    std::vector<std::tuple<int, int, int>> btnSpanIndexs;
-}
-
 ToolBase::ToolBase(WinBox* win, QWidget* parent) : QWidget(parent),win{win}
 {
     setMouseTracking(true);

@@ -8,15 +8,6 @@
 #include "../Win/WinBase.h"
 #include "ToolSub.h"
 
-StrokeCtrl::StrokeCtrl(QWidget *parent):QSlider(parent)
-{
-    setAttribute(Qt::WA_NoSystemBackground);
-    setAttribute(Qt::WA_Hover);
-    setMouseTracking(true);
-    setFixedSize(84, 28);
-    setFocusPolicy(Qt::NoFocus);
-}
-
 StrokeCtrl::StrokeCtrl(int min, int max, int val, QWidget* parent)
 {
     setAttribute(Qt::WA_NoSystemBackground);

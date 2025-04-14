@@ -8,7 +8,6 @@ class StrokeCtrl:public QSlider
 	Q_OBJECT
 
 public:
-	StrokeCtrl(QWidget *parent = nullptr);
 	StrokeCtrl(int min,int max,int val,QWidget* parent = nullptr);
 	~StrokeCtrl();
 public:

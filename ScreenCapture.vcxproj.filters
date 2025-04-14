@@ -41,9 +41,6 @@
     <ClCompile Include="Tool\ToolMain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Tool\ToolBtn.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Tool\StrokeCtrl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -131,9 +128,6 @@
     <ClCompile Include="App\Lang.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Tool\ToolBtnMain.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Tool\BtnBase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -167,9 +161,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="App\Font.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Tool\ToolBtn.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -259,9 +250,6 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="App\Lang.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="Tool\ToolBtnMain.h">
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="Tool\BtnBase.h">

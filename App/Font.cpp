@@ -5,7 +5,7 @@ namespace {
     std::unique_ptr<QFont> iconFont;
 }
 
-void Font::initData(const QJsonObject& obj)
+void Font::init()
 {
     QFont font("Microsoft YaHei", 9);
     qApp->setFont(font);

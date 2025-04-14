@@ -8,10 +8,8 @@ class ColorCtrl  : public QWidget
 	Q_OBJECT
 
 public:
-	ColorCtrl(QWidget *parent);
 	ColorCtrl(int selectIndex, QWidget* parent);
 	~ColorCtrl();
-	static void initData(const QJsonObject& obj, const QString& lang);
     QColor getColor();
 	int selectedIndex{ 0 };
 protected:
@@ -22,4 +20,6 @@ protected:
 private:
 	int itemWidth{ 26 };
 	int hoverIndex{ -1 };
+	std::vector<QString> colorValues;
+	std::vector<QString> colorTips;
 };

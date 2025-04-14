@@ -10,6 +10,5 @@ public:
 	static void start();
 public:
 private:
-	static void initConfig();
 };
 
