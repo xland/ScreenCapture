@@ -349,7 +349,7 @@ void App::initConfig()
     QJsonObject jsonObject = document.object();
     auto lang = jsonObject["defaultLang"].toString();
     //ToolMain::initData(jsonObject["toolMain"].toArray(), lang);
-    ToolSub::initData(jsonObject["toolSub"].toObject(), lang);
+    //ToolSub::initData(jsonObject["toolSub"].toObject(), lang);
     ColorCtrl::initData(jsonObject["colorCtrl"].toObject(), lang);
     Font::initData(jsonObject["icon"].toObject());
 }

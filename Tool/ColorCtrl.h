@@ -9,6 +9,7 @@ class ColorCtrl  : public QWidget
 
 public:
 	ColorCtrl(QWidget *parent);
+	ColorCtrl(int selectIndex, QWidget* parent);
 	~ColorCtrl();
 	static void initData(const QJsonObject& obj, const QString& lang);
     QColor getColor();

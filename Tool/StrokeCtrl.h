@@ -9,6 +9,7 @@ class StrokeCtrl:public QSlider
 
 public:
 	StrokeCtrl(QWidget *parent = nullptr);
+	StrokeCtrl(int min,int max,int val,QWidget* parent = nullptr);
 	~StrokeCtrl();
 public:
 	QString tipInfo;

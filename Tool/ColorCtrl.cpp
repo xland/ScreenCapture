@@ -17,13 +17,22 @@ namespace {
 
 ColorCtrl::ColorCtrl(QWidget *parent) : QWidget(parent)
 {
-	setVisible(false);
 	setAttribute(Qt::WA_NoSystemBackground);
 	setAttribute(Qt::WA_Hover);
 	setMouseTracking(true);
 	setFocusPolicy(Qt::NoFocus);
 	int w{ (int)colorValues.size() * itemWidth };
-	setFixedSize(w, 32);
+	setFixedSize(w, 28);
+}
+
+ColorCtrl::ColorCtrl(int selectIndex, QWidget* parent):selectedIndex{selectedIndex}
+{
+	setAttribute(Qt::WA_NoSystemBackground);
+	setAttribute(Qt::WA_Hover);
+	setMouseTracking(true);
+	setFocusPolicy(Qt::NoFocus);
+	int w{ (int)colorValues.size() * itemWidth };
+	setFixedSize(w, 28);
 }
 
 ColorCtrl::~ColorCtrl()
@@ -69,7 +78,7 @@ void ColorCtrl::paintEvent(QPaintEvent * event)
 	{
 		QRect rect(j * itemWidth, 0, itemWidth, height());
 		if (j == hoverIndex) {
-			rect.adjust(0, 5, 0, -5);
+			rect.adjust(0, 2, 0, -2);
 			painter.setPen(Qt::NoPen);
 			painter.setBrush(QColor(228, 238, 255));
 			painter.drawRoundedRect(rect, 6, 6);

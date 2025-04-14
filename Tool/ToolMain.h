@@ -22,11 +22,10 @@ public:
 	void setBtnEnable(bool undo,bool redo);
 	void confirmPos();
 	void btnCheckChange(BtnCheck* btn) override;
+	void btnClick(Btn* btn) override;
 public:
 protected:
 	void paintEvent(QPaintEvent* event) override;
-	void mousePressEvent(QMouseEvent* event) override;
-	void mouseMoveEvent(QMouseEvent* event) override;
 	void closeEvent(QCloseEvent* event) override;
 private:
 	bool topFlag{false};

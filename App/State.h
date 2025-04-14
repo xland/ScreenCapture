@@ -12,5 +12,6 @@ enum class State
     line,
     text,
     mosaic,
-    eraser
+    eraser,
+    noState
 };

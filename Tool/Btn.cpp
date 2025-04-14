@@ -1,10 +1,12 @@
 #include <QPainter>
 #include "Btn.h"
+#include "ToolBase.h"
 #include "../App/Font.h"
 
 
 Btn::Btn(const QString& name, const QChar& icon, QWidget *parent) : BtnBase(name,icon,parent)
 {
+    
 }
 
 Btn::~Btn()
@@ -27,4 +29,10 @@ void Btn::paintEvent(QPaintEvent* event)
     p.setPen(QColor(33, 33, 33));
     p.setBrush(Qt::NoBrush);
     p.drawText(r, Qt::AlignCenter, icon);
+}
+
+void Btn::mousePressEvent(QMouseEvent* event)
+{
+    ToolBase* toolBase = dynamic_cast<ToolBase*>(parent());
+    toolBase->btnClick(this);
 }

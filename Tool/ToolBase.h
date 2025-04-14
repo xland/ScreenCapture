@@ -14,6 +14,7 @@
 class WinBox;
 class BtnBase;
 class BtnCheck;
+class Btn;
 class ToolBase : public QWidget
 {
 	Q_OBJECT
@@ -21,14 +22,13 @@ public:
 	ToolBase(WinBox* win,QWidget *parent = nullptr);
 	virtual ~ToolBase();
 	virtual void btnCheckChange(BtnCheck* btn);
+	virtual void btnClick(Btn* btn);
 public:
-	int selectIndex{ -1 };
 	WinBox* win;
+	int selectIndex{ -1 };
 protected:
 	void enterEvent(QEnterEvent* event) override;
-	void leaveEvent(QEvent* event) override;
 	void showEvent(QShowEvent* event) override;
-	void hideEvent(QHideEvent* event) override;
 	void keyPressEvent(QKeyEvent* event) override;
 	std::shared_ptr<QPainter> getPainter();
 	void paintBtn(const QChar& icon,const QColor& frontColor,const QColor& bgColor,QRect& rect, QPainter* p);

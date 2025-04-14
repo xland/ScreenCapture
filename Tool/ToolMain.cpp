@@ -98,6 +98,9 @@ void ToolMain::confirmPos()
 
 void ToolMain::btnCheckChange(BtnCheck* btn)
 {
+    if (win->toolSub) {
+        win->toolSub->close();
+    }
     if (!btn->isChecked) {
         return;
     }
@@ -109,6 +112,31 @@ void ToolMain::btnCheckChange(BtnCheck* btn)
 			b->isChecked = false;
 			b->update();
         }
+	}
+    win->state = btn->state;
+	win->toolSub = new ToolSub(win);
+    update();
+}
+
+void ToolMain::btnClick(Btn* btn)
+{
+	if (btn->name == "clipboard") {
+		win->saveToClipboard();
+	}
+	else if (btn->name == "save") {
+		win->saveToFile();
+	}
+	else if (btn->name == "undo") {
+		win->undo();
+	}
+	else if (btn->name == "redo") {
+		win->redo();
+	}
+	else if (btn->name == "pin") {
+		WinPin::init((WinFull*)win);
+	}
+	else if (btn->name == "close") {
+		win->close();
 	}
 }
 
@@ -122,88 +150,6 @@ void ToolMain::paintEvent(QPaintEvent* event)
     painter->drawLine(x, 9, x,y1);
     x = 4 + 10 * btnW + 0.5;
     painter->drawLine(x, 9, x, y1);
-}
-
-void ToolMain::mousePressEvent(QMouseEvent* event)
-{
-    if (hoverIndex == -1) return;
-    if (hoverIndex == selectIndex) //取消选择
-    {
-        selectIndex = -1;
-        win->state = State::tool;
-        update();
-        win->toolSub->hide();
-        if (topFlag) {
-            auto pos = geometry().topLeft();
-            pos.setY(pos.y() + height()+6);
-            move(pos);
-        }
-    }
-    else
-    {
-        /*auto& btn = btns[hoverIndex];
-        if (btn.name.isEmpty())
-        {
-            if (topFlag) {
-                if (!win->toolSub || !win->toolSub->isVisible()) {
-                    auto pos = geometry().topLeft();
-                    pos.setY(pos.y() - height() - 6);
-                    move(pos);
-                }
-            }
-            win->state = btn.state;
-            selectIndex = hoverIndex;
-            win->showToolSub();
-            update();
-        }
-        else if (btn.name == "clipboard")
-        {
-            win->saveToClipboard();
-        }
-        else if (btn.name == "save")
-        {
-            win->saveToFile();
-        }
-        else if (btn.name == "undo")
-        {
-            if (btn.enable) {
-                win->undo();
-            }            
-        }
-        else if (btn.name == "redo")
-        {
-            if (btn.enable) {
-                win->redo();
-            }
-        }
-        else if (btn.name == "pin")
-        {
-            if (btn.enable) {
-				WinPin::init((WinFull*)win);
-            }
-        }
-        else if (btn.name == "close")
-        {
-            win->close();
-        }*/
-    }
-}
-
-void ToolMain::mouseMoveEvent(QMouseEvent* event)
-{
-    auto x = event->pos().x() - 4;
-    auto index{ x / (int)btnW };
-    if (index >= btns.size())index = -1;
-    if (index != hoverIndex)
-    {
-        hoverIndex = index;
-        repaint();
-        if (hoverIndex > -1)
-        {
-            auto tip = Lang::get(btns[hoverIndex].name);
-            QToolTip::showText(event->globalPosition().toPoint(), tip, this);
-        }
-    }
 }
 
 void ToolMain::closeEvent(QCloseEvent* event)

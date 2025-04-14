@@ -13,14 +13,12 @@ class ToolSub : public ToolBase
 public:
 	ToolSub(WinBox* win);
 	~ToolSub();
-	static void initData(const QJsonObject& obj, const QString& lang);
 	bool getSelectState(const QString& btnName);
     QColor getColor();
     int getStrokeWidth();
 public:
 protected:
 	void paintEvent(QPaintEvent* event) override;
-	void mousePressEvent(QMouseEvent* event) override;
 	void mouseMoveEvent(QMouseEvent* event) override;
 	void showEvent(QShowEvent* event) override;
 	void closeEvent(QCloseEvent* event) override;

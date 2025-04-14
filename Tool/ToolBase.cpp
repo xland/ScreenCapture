@@ -41,22 +41,15 @@ void ToolBase::btnCheckChange(BtnCheck* btn)
 {
 }
 
+void ToolBase::btnClick(Btn* btn)
+{
+}
+
 
 void ToolBase::enterEvent(QEnterEvent* event)
 {
     QGuiApplication::setOverrideCursor(Qt::PointingHandCursor);
     QWidget::enterEvent(event);
-}
-
-void ToolBase::leaveEvent(QEvent* event)
-{
-    if (hoverIndex != -1)
-    {
-        hoverIndex = -1;
-        update();
-    }
-    QGuiApplication::restoreOverrideCursor();
-    QWidget::leaveEvent(event);
 }
 
 void ToolBase::showEvent(QShowEvent* event)
@@ -65,12 +58,6 @@ void ToolBase::showEvent(QShowEvent* event)
     //用qt的setFocus始终无法使ToolSub聚焦
     auto wid = (HWND)winId();
     SetFocus(wid);
-}
-
-void ToolBase::hideEvent(QHideEvent* event)
-{
-    selectIndex = -1;
-    hoverIndex = -1;
 }
 
 std::shared_ptr<QPainter> ToolBase::getPainter()
