@@ -122,6 +122,7 @@
   <ItemGroup>
     <ClCompile Include="App\About.cpp" />
     <ClCompile Include="App\App.cpp" />
+    <ClCompile Include="App\Lang.cpp" />
     <ClCompile Include="App\NativeRect.cpp" />
     <ClCompile Include="App\Font.cpp" />
     <ClCompile Include="Shape\ShapeArrow.cpp" />
@@ -139,12 +140,16 @@
     <ClCompile Include="Shape\ShapeText.cpp" />
     <ClCompile Include="Shape\ShapeTextContainer.cpp" />
     <ClCompile Include="Shape\ShapeTextInput.cpp" />
+    <ClCompile Include="Tool\Btn.cpp" />
+    <ClCompile Include="Tool\BtnBase.cpp" />
+    <ClCompile Include="Tool\BtnCheck.cpp" />
     <ClCompile Include="Tool\ColorCtrl.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Tool\PixelInfo.cpp" />
     <ClCompile Include="Tool\StrokeCtrl.cpp" />
     <ClCompile Include="Tool\ToolBase.cpp" />
     <ClCompile Include="Tool\ToolBtn.cpp" />
+    <ClCompile Include="Tool\ToolBtnMain.cpp" />
     <ClCompile Include="Tool\ToolMain.cpp" />
     <ClCompile Include="Tool\ToolSub.cpp" />
     <ClCompile Include="App\Util.cpp" />
@@ -157,8 +162,13 @@
     <ClCompile Include="Win\WinPin.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <QtMoc Include="Tool\BtnCheck.h" />
+    <QtMoc Include="Tool\Btn.h" />
+    <QtMoc Include="Tool\BtnBase.h" />
+    <QtMoc Include="Tool\ToolBtnMain.h" />
     <QtMoc Include="App\About.h" />
     <ClInclude Include="App\App.h" />
+    <QtMoc Include="App\Lang.h" />
     <ClInclude Include="App\Util.h" />
     <QtMoc Include="Win\WinBox.h" />
     <QtMoc Include="Win\WinBoard.h" />

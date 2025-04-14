@@ -14,13 +14,11 @@
 #include "../Shape/ShapeText.h"
 #include "../Shape/ShapeTextContainer.h"
 #include "../App/Util.h"
+#include "../App/Lang.h"
 #include "../Tool/ToolMain.h"
 #include "../Tool/ToolSub.h"
 #include "../Tool/PixelInfo.h"
 
-namespace{
-    std::map<QString, std::wstring> menuItems;
-}
 
 WinPin::WinPin(QObject* parent) : WinBox(parent)
 {
@@ -30,17 +28,6 @@ WinPin::WinPin(QObject* parent) : WinBox(parent)
 WinPin::~WinPin()
 {
    
-}
-
-void WinPin::initData(const QJsonArray& arr, const QString& lang)
-{
-    for (const QJsonValue& val : arr)
-    {
-        menuItems.insert({
-            val["name"].toString(),
-            val[lang].toString("").toStdWString() 
-            });
-    }
 }
 
 void WinPin::init(WinFull* full)
@@ -178,8 +165,11 @@ void WinPin::mousePressRight(QMouseEvent* event)
 {
     auto flag = state == State::start;
     HMENU hMenu = CreatePopupMenu();
-    AppendMenu(hMenu, flag ? MF_UNCHECKED : MF_CHECKED, 1001, menuItems["toolBar"].data());
-    AppendMenu(hMenu, MF_STRING, 1002, menuItems["quit"].data());
+
+    auto toolBar = Lang::get("toolBar").toStdWString();
+    auto quit = Lang::get("quit").toStdWString();
+    AppendMenu(hMenu, flag ? MF_UNCHECKED : MF_CHECKED, 1001, toolBar.data());
+    AppendMenu(hMenu, MF_STRING, 1002, quit.data());
     auto pos = event->pos();
     int cmd = TrackPopupMenu(hMenu, TPM_RETURNCMD | TPM_NONOTIFY, x+pos.x(), y+pos.y(), 0, hwnd, NULL);
     if (cmd == 1001) {

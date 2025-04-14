@@ -6,143 +6,48 @@
 #include "../App/App.h"
 #include "../App/Util.h"
 #include "../App/NativeRect.h"
+#include "../App/Lang.h"
 #include "../Win/WinBox.h"
 #include "../Win/WinPin.h"
 #include "../Win/WinFull.h"
 #include "../Win/WinMask.h"
 #include "ToolMain.h"
 #include "ToolSub.h"
-
-namespace{
-    std::vector<ToolBtn> btns;
-    std::vector<unsigned> spliterIndexs;
-}
+#include "Btn.h"
+#include "BtnCheck.h"
 
 ToolMain::ToolMain(WinBox* win) : ToolBase(win)
 {
-    setFixedSize(btns.size() * btnW + 8, 32);
-    for (auto& btn : btns)
-    {
-        if (btn.name == "undo")
-        {
-            btn.enable = false;
-        }
-        if (btn.name == "redo")
-        {
-            btn.enable = false;
-        }
-    }    
+    setFixedSize(14 * btnW + 8, 32);
+    QHBoxLayout* layout = new QHBoxLayout(this);
+    layout->setSpacing(0);
+    layout->setContentsMargins(4, 2, 4, 2);
+    layout->addWidget(new BtnCheck("rect", QChar(0xe8e8), State::rect, this));
+    layout->addWidget(new BtnCheck("ellipse", QChar(0xe6bc), State::ellipse, this));
+	layout->addWidget(new BtnCheck("arrow", QChar(0xe603), State::arrow, this));
+	layout->addWidget(new BtnCheck("number", QChar(0xe776), State::number, this));
+	layout->addWidget(new BtnCheck("line", QChar(0xe601), State::line, this));
+	layout->addWidget(new BtnCheck("text", QChar(0xe6ec), State::text, this));
+	layout->addWidget(new BtnCheck("mosaic", QChar(0xe82e), State::mosaic, this));
+	layout->addWidget(new BtnCheck("eraser", QChar(0xe6be), State::eraser, this));
+    layout->addWidget(new Btn("undo", QChar(0xed85), this));
+    layout->addWidget(new Btn("redo", QChar(0xed8a), this));
+    layout->addWidget(new Btn("pin", QChar(0xe6a3),this));
+    layout->addWidget(new Btn("clipboard", QChar(0xe87f), this));
+    layout->addWidget(new Btn("save", QChar(0xe6c0), this));
+    layout->addWidget(new Btn("close", QChar(0xe6e7), this));
+    setLayout(layout);
 }
 ToolMain::~ToolMain()
 {
 }
 
-void ToolMain::initData(const QJsonArray& arr, const QString& lang)
-{
-    int index{ 0 };
-    for (const QJsonValue& val : arr)
-    {
-        ToolBtn btn;
-        auto name = val["name"].toString();
-        if (name == "splitter")
-        {
-            spliterIndexs.push_back(index);
-            continue;
-        }
-        else if (name == "rect")
-        {
-            btn.state = State::rect;
-        }
-        else if (name == "ellipse")
-        {
-            btn.state = State::ellipse;
-        }
-        else if (name == "arrow")
-        {
-            btn.state = State::arrow;
-        }
-        else if (name == "number")
-        {
-            btn.state = State::number;
-        }
-        else if (name == "line")
-        {
-            btn.state = State::line;
-        }
-        else if (name == "text")
-        {
-            btn.state = State::text;
-        }
-        else if (name == "mosaic")
-        {
-            btn.state = State::mosaic;
-        }
-        else if (name == "eraser")
-        {
-            btn.state = State::eraser;
-        }
-        else
-        {
-            btn.name = name;
-        }
-        btn.tipText = val[lang].toString("");
-        btn.selected = val["selectDefault"].toBool(false);
-        {
-            bool ok;
-            uint codePoint = val["icon"].toString().toUInt(&ok, 16);
-            if (ok)
-            {
-                btn.icon = QChar(codePoint);
-            }
-            else
-            {
-                qWarning() << "转换失败";
-            }
-        }
-        btns.push_back(btn);
-        index += 1;
-    }
-}
-
 void ToolMain::setBtnEnable(const QString& name, bool flag)
 {
-	for (auto& btn : btns)
-	{
-		if (btn.name == name)
-		{
-            if (btn.enable != flag) {
-				btn.enable = flag;
-				update();
-            }
-			break;
-		}
-	}
 }
 
 void ToolMain::setBtnEnable(bool undo, bool redo)
 {
-    bool flag{ false };
-    for (auto& btn : btns)
-    {
-        if (btn.name == "undo")
-        {
-            if (btn.enable != undo) {
-                btn.enable = undo;
-				flag = true;
-            }
-        }
-        if (btn.name == "redo")
-        {
-            if (btn.enable != redo) {
-                btn.enable = redo;
-                flag = true;
-            }
-        }
-    }
-    if (flag)
-    {
-        update();
-    }
 }
 
 void ToolMain::confirmPos()
@@ -191,34 +96,32 @@ void ToolMain::confirmPos()
     SetWindowPos(hwnd, nullptr, left, top, 0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_SHOWWINDOW);
 }
 
+void ToolMain::btnCheckChange(BtnCheck* btn)
+{
+    if (!btn->isChecked) {
+        return;
+    }
+    auto btns = findChildren<BtnCheck*>();
+	for (auto& b : btns)
+	{
+		if (b == btn) continue;
+        if (b->isChecked) {
+			b->isChecked = false;
+			b->update();
+        }
+	}
+}
+
 void ToolMain::paintEvent(QPaintEvent* event)
 {
     auto painter = getPainter(); 
     painter->drawRect(rect().toRectF().adjusted(border,border,-border,-border));
-    for (int i = 0; i < btns.size(); i++)
-    {
-        QRect rect(4 + i * btnW, 0, btnW, height());
-		if (btns[i].enable)
-		{
-            if (i == selectIndex) {
-                paintBtn(btns[i].icon, QColor(9, 88, 217), QColor(228, 238, 255), rect, painter.get());
-            }
-            else if (hoverIndex == i) {
-                paintBtn(btns[i].icon, QColor(33, 33, 33), QColor(228, 238, 255), rect, painter.get());
-            }
-            else {
-                paintBtn(btns[i].icon, QColor(33, 33, 33), Qt::white, rect, painter.get());
-            }
-        }
-        else {
-            paintBtn(btns[i].icon, QColor(180, 180, 180), Qt::white, rect, painter.get());
-        }
-    }
     painter->setPen(QColor(190, 190, 190));
-    for (int i = 0; i < spliterIndexs.size(); i++)
-    {
-        painter->drawLine(4 + spliterIndexs[i] * btnW + 0.5, 9, 4 + spliterIndexs[i] * btnW + 0.5, height() - 9);
-    }
+    auto x{ 4 + 8 * btnW + 0.5 };
+    auto y1{ height() - 9 };
+    painter->drawLine(x, 9, x,y1);
+    x = 4 + 10 * btnW + 0.5;
+    painter->drawLine(x, 9, x, y1);
 }
 
 void ToolMain::mousePressEvent(QMouseEvent* event)
@@ -238,7 +141,7 @@ void ToolMain::mousePressEvent(QMouseEvent* event)
     }
     else
     {
-        auto& btn = btns[hoverIndex];
+        /*auto& btn = btns[hoverIndex];
         if (btn.name.isEmpty())
         {
             if (topFlag) {
@@ -282,7 +185,7 @@ void ToolMain::mousePressEvent(QMouseEvent* event)
         else if (btn.name == "close")
         {
             win->close();
-        }
+        }*/
     }
 }
 
@@ -297,7 +200,8 @@ void ToolMain::mouseMoveEvent(QMouseEvent* event)
         repaint();
         if (hoverIndex > -1)
         {
-            QToolTip::showText(event->globalPosition().toPoint(), btns[hoverIndex].tipText, this);
+            auto tip = Lang::get(btns[hoverIndex].name);
+            QToolTip::showText(event->globalPosition().toPoint(), tip, this);
         }
     }
 }

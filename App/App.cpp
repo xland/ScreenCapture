@@ -10,6 +10,7 @@
 #include "App.h"
 #include "NativeRect.h"
 #include "Font.h"
+#include "Lang.h"
 #include "../Win/WinFull.h"
 #include "../Win/WinPin.h"
 #include "../Tool/ToolMain.h"
@@ -23,6 +24,7 @@ namespace {
 }
 void App::init()
 {
+    Lang::init("ZhCn"); //todo 
     initConfig();
     start();
 }
@@ -39,18 +41,6 @@ void App::initConfig()
 {
     QString jsonStr = R"888({
   "defaultLang": "en",
-  "winPin": [
-    {
-      "name": "toolBar",
-      "zhcn": "工具栏（Ctrl+T）",
-      "en": "Toolbar (Ctrl+T)"
-    },
-    {
-      "name": "quit",
-      "zhcn": "退出（Esc）",
-      "en": "Quit (Esc)"
-    }
-  ],
   "toolMain": [
     {
       "name": "rect",
@@ -358,8 +348,7 @@ void App::initConfig()
     }
     QJsonObject jsonObject = document.object();
     auto lang = jsonObject["defaultLang"].toString();
-    WinPin::initData(jsonObject["winPin"].toArray(), lang);
-    ToolMain::initData(jsonObject["toolMain"].toArray(), lang);
+    //ToolMain::initData(jsonObject["toolMain"].toArray(), lang);
     ToolSub::initData(jsonObject["toolSub"].toObject(), lang);
     ColorCtrl::initData(jsonObject["colorCtrl"].toObject(), lang);
     Font::initData(jsonObject["icon"].toObject());

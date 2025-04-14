@@ -12,12 +12,15 @@
 #include "ToolBtn.h"
 
 class WinBox;
+class BtnBase;
+class BtnCheck;
 class ToolBase : public QWidget
 {
 	Q_OBJECT
 public:
 	ToolBase(WinBox* win,QWidget *parent = nullptr);
 	virtual ~ToolBase();
+	virtual void btnCheckChange(BtnCheck* btn);
 public:
 	int selectIndex{ -1 };
 	WinBox* win;

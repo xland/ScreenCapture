@@ -37,6 +37,10 @@ ToolBase::~ToolBase()
 {
 }
 
+void ToolBase::btnCheckChange(BtnCheck* btn)
+{
+}
+
 
 void ToolBase::enterEvent(QEnterEvent* event)
 {

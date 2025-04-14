@@ -128,15 +128,27 @@
     <ClCompile Include="App\Font.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="App\Lang.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Tool\ToolBtnMain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Tool\BtnBase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Tool\Btn.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Tool\BtnCheck.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App\App.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="App\State.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Tool\ToolBtn.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Shape\ShapeEllipse.h">
@@ -155,6 +167,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="App\Font.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Tool\ToolBtn.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -241,6 +256,21 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="App\About.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="App\Lang.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Tool\ToolBtnMain.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Tool\BtnBase.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Tool\Btn.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Tool\BtnCheck.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>
