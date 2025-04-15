@@ -8,14 +8,15 @@
 #include "ToolMain.h"
 #include "StrokeCtrl.h"
 #include "ColorCtrl.h"
-#include "../Win/WinBox.h"
+#include "../Win/WinBase.h"
 #include "BtnCheck.h"
 
-ToolSub::ToolSub(WinBox* win) : ToolBase(win)
+ToolSub::ToolSub(QWidget* parent) : ToolBase(parent)
 {
 	QHBoxLayout* layout = new QHBoxLayout(this);
 	layout->setSpacing(0);
 	layout->setContentsMargins(4, 4, 4, 2);
+	auto win = (WinBase*)parent;
 	if (win->state == State::rect) {
 		layout->addWidget(new BtnCheck("rectFill", QChar(0xe602), State::noState, this));
 		layout->addWidget(new StrokeCtrl(1, 20, 3, this));
@@ -127,5 +128,6 @@ void ToolSub::paintEvent(QPaintEvent* event)
 void ToolSub::closeEvent(QCloseEvent* event)
 {
 	deleteLater();
+	auto win = (WinBase*)parent();
 	win->toolSub = nullptr;
 }

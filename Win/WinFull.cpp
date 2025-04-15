@@ -187,6 +187,9 @@ void WinFull::mouseReleaseEvent(QMouseEvent* event)
     rectMask = rectMask.normalized();
     update();
     auto br = rectMask.bottomRight();
+    if (!toolMain) {
+        toolMain = new ToolMain(this);
+    }
     //cutTool->move(br.x() - cutTool->width(), br.y() + 4);
     //cutTool->show();
 }
@@ -200,6 +203,8 @@ void WinFull::mouseReleaseEvent(QMouseEvent* event)
     //toolMain->confirmPos();
     //toolMain->show();
 //}
+
+
 //void WinFull::showToolSub()
 //{
     //if (!toolSub) {

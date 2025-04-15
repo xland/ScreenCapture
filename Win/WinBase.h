@@ -16,6 +16,10 @@ public:
 	~WinBase();
 	void initImg();
 	void releaseImg();
+	void saveToClipboard() {};
+	void saveToFile() {};
+	void undo() {};
+	void redo() {};
 	QImage grab() { return QImage(); };
 	QImage grab(const QRect& rect);
 	void raise();

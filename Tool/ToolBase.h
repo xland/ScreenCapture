@@ -17,12 +17,11 @@ class ToolBase : public QWidget
 {
 	Q_OBJECT
 public:
-	ToolBase(WinBox* win,QWidget *parent = nullptr);
+	ToolBase(QWidget *parent = nullptr);
 	virtual ~ToolBase();
 	virtual void btnCheckChange(BtnCheck* btn);
 	virtual void btnClick(Btn* btn);
 public:
-	WinBox* win;
 	int selectIndex{ -1 };
 protected:
 	void showEvent(QShowEvent* event) override;

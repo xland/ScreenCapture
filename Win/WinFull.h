@@ -40,6 +40,7 @@ private:
 	void changeMouseState(const int& x, const int& y);
 	void moveMaskRect(const QPoint& pos);
 	void initWinRect();
+private:
 	QList<QRect> rectWins;
 	uint mouseState{ 0 };
 };

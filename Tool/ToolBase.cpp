@@ -10,7 +10,7 @@
 #include "ToolBase.h"
 #include "ToolSub.h"
 
-ToolBase::ToolBase(WinBox* win, QWidget* parent) : QWidget(parent),win{win}
+ToolBase::ToolBase(QWidget* parent) : QWidget(parent)
 {
     setMouseTracking(true);
     setVisible(false);

@@ -15,7 +15,7 @@ class ToolMain : public ToolBase
 {
 	Q_OBJECT
 public:
-	ToolMain(WinBox* win);
+	ToolMain(QWidget* parent = nullptr);
 	~ToolMain();
 	void setBtnEnable(const QString& name,bool flag=true);
 	void setBtnEnable(bool undo,bool redo);

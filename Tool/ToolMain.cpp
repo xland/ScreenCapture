@@ -16,7 +16,7 @@
 #include "Btn.h"
 #include "BtnCheck.h"
 
-ToolMain::ToolMain(WinBox* win) : ToolBase(win)
+ToolMain::ToolMain(QWidget* parent) : ToolBase(parent)
 {
     setFixedSize(14 * btnW + 8, 32);
     QHBoxLayout* layout = new QHBoxLayout(this);
@@ -52,7 +52,7 @@ void ToolMain::setBtnEnable(bool undo, bool redo)
 
 void ToolMain::confirmPos()
 {
-    auto full = (WinFull*)win;
+    auto full = (WinFull*)parent();
     auto hwnd = (HWND)winId();
     auto dpr = windowHandle()->devicePixelRatio();
     auto left{full->x + full->winMask->maskRect.right() - width()*dpr};
@@ -98,6 +98,7 @@ void ToolMain::confirmPos()
 
 void ToolMain::btnCheckChange(BtnCheck* btn)
 {
+    auto win = (WinBase*)parent();
     if (win->toolSub) {
         win->toolSub->close();
     }
@@ -120,6 +121,7 @@ void ToolMain::btnCheckChange(BtnCheck* btn)
 
 void ToolMain::btnClick(Btn* btn)
 {
+    auto win = (WinBase*)parent();
 	if (btn->name == "clipboard") {
 		win->saveToClipboard();
 	}
@@ -155,5 +157,6 @@ void ToolMain::paintEvent(QPaintEvent* event)
 void ToolMain::closeEvent(QCloseEvent* event)
 {
     deleteLater();
+    auto win = (WinBase*)parent();
     win->toolMain = nullptr;
 }

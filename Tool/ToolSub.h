@@ -10,7 +10,7 @@ class ToolSub : public ToolBase
 	Q_OBJECT
 
 public:
-	ToolSub(WinBox* win);
+	ToolSub(QWidget* parent = nullptr);
 	~ToolSub();
 	bool getSelectState(const QString& btnName);
     QColor getColor();
