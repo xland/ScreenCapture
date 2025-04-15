@@ -1,19 +1,19 @@
 #pragma once
 #include <Windows.h>
-#include <QWidget>
+#include <QMainWindow>
 #include <QMouseEvent>
 #include <QImage>
 
 #include "../App/State.h"
 
-
-class WinBase  : public QObject
+class ToolMain;
+class ToolSub;
+class WinBase  : public QMainWindow
 {
 	Q_OBJECT
 public:
-	WinBase(QObject* parent = nullptr);
-	virtual ~WinBase();
-	void show();
+	WinBase(QWidget* parent = nullptr);
+	~WinBase();
 	void initImg();
 	void releaseImg();
 	QImage grab() { return QImage(); };
@@ -23,19 +23,22 @@ public:
 	virtual void close();
 public:
 	int x, y, w, h;
-	QImage img;
+	QImage imgBg;
+	QImage imgBoard;
+	QPixmap imgCanvas;
+	QPoint posPress;
 	HWND hwnd;
+	State state;
+	ToolMain* toolMain;
+	ToolSub* toolSub;
 protected:
-	void initWindow(bool isTransparent=true);
-	void paint();
+	void initWindow();
+	void paintEvent(QPaintEvent* event) override;
 	virtual void mousePress(QMouseEvent* event){};
 	virtual void mousePressRight(QMouseEvent* event) {};
 	virtual void mouseDBClick(QMouseEvent* event) {};
 	virtual void mouseMove(QMouseEvent* event){};
 	virtual void mouseDrag(QMouseEvent* event){};
 	virtual void mouseRelease(QMouseEvent* event){};
-	virtual bool processOtherMsg(UINT msg, WPARAM wParam, LPARAM lParam) { return false; };
 private:
-	static LRESULT CALLBACK routeWinMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-	LRESULT CALLBACK processWinMsg(UINT msg, WPARAM wParam, LPARAM lParam);
 };

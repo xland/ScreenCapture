@@ -18,9 +18,9 @@
 #include "../Shape/ShapeMosaicLine.h"
 #include "../Tool/ToolSub.h"
 #include "../Tool/ToolMain.h"
-#include "../Tool/PixelInfo.h"
+#include "PixelInfo.h"
 
-WinBox::WinBox(QObject* parent) : WinBase(parent)
+WinBox::WinBox(QWidget* parent) : WinBase(parent)
 {
 }
 
@@ -132,74 +132,6 @@ void WinBox::mouseReleaseOnShape(QMouseEvent* event)
     //        winCanvas->refresh(nullptr);
     //    }
     //}
-}
-bool WinBox::processOtherMsg(UINT msg, WPARAM wParam, LPARAM lParam)
-{
-    switch (msg)
-    {
-    case WM_KEYDOWN:
-    {
-        if (wParam == VK_BACK || wParam == VK_DELETE) {
-            removeShape();
-            return true;
-        }
-        else if (wParam == VK_ESCAPE) {
-            escPress();
-            return true;
-        }
-        else if (wParam == VK_LEFT) {
-            moveByKey(0);
-            return true;
-        }
-        else if (wParam == VK_UP) {
-            moveByKey(1);
-            return true;
-        }
-        else if (wParam == VK_RIGHT) {
-            moveByKey(2);
-            return true;
-        }
-        else if (wParam == VK_DOWN) {
-            moveByKey(3);
-            return true;
-        }
-        else if ((GetKeyState(VK_CONTROL) & 0x8000) != 0) {
-            if (wParam == 'T') {
-                ctrlTPress();
-                return true;
-            }
-            else if (wParam == 'Z') {
-                undo();
-                return true;
-            }
-            else if (wParam == 'Y') {
-                redo();
-                return true;
-            }
-            else if (wParam == 'H') {
-                copyColor(0);
-                return true;
-            }
-            else if (wParam == 'R') {
-                copyColor(1);
-                return true;
-            }
-            else if (wParam == 'K') {
-                copyColor(2);
-                return true;
-            }
-            else if (wParam == 'P') {
-                copyColor(3);
-                return true;
-            }
-        }
-        break;
-    }
-    default: {
-        return false;
-    }
-    }
-    return false;
 }
 void WinBox::removeShape()
 {

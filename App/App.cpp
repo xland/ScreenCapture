@@ -19,21 +19,15 @@
 
 namespace {
     std::unique_ptr<App> app; 
-    QList<QRect> screens;
-    QList<QRect> windows;
 }
 void App::init()
 {
     Lang::init("ZhCn");
     Font::init();
-    start();
+    NativeRect::init();
+    WinFull::init();
 }
 void App::dispose()
 {
     app.reset();       
-}
-void App::start()
-{
-    NativeRect::init();
-    WinFull::init();
 }

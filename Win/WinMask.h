@@ -11,7 +11,7 @@ class WinMask  : public WinBase
 {
 	Q_OBJECT
 public:
-	WinMask(QObject* parent = nullptr);
+	WinMask(QWidget* parent = nullptr);
 	~WinMask();
 	void mousePress(QMouseEvent* event);
 	void mouseDrag(QMouseEvent* event);

@@ -1,5 +1,8 @@
 ﻿#include <QMessageBox>
+#include <ShellScalingApi.h>
+
 #include "Util.h"
+#include "NativeRect.h"
 #include "../Win/WinBox.h"
 
 
@@ -78,6 +81,24 @@ QMouseEvent Util::createMouseEvent(const LPARAM& lParam, const QEvent::Type& typ
 
 QImage Util::printScreen(const int& x, const int& y, const int& w, const int& h)
 {
+    HDC hScreen = GetDC(NULL);
+    HDC hDC = CreateCompatibleDC(hScreen);
+    HBITMAP hBitmap = CreateCompatibleBitmap(hScreen, w, h);
+    DeleteObject(SelectObject(hDC, hBitmap));
+    BOOL bRet = BitBlt(hDC, 0, 0, w, h, hScreen, x, y, SRCCOPY);
+    auto img = QImage(w, h, QImage::Format_ARGB32);
+    BITMAPINFO bmi = { sizeof(BITMAPINFOHEADER), (long)w, 0 - (long)h, 1, 32, BI_RGB, (DWORD)w * 4 * h, 0, 0, 0, 0 };
+    GetDIBits(hDC, hBitmap, 0, h, img.bits(), &bmi, DIB_RGB_COLORS);
+    DeleteDC(hDC);
+    DeleteObject(hBitmap);
+    ReleaseDC(NULL, hScreen);
+    return img;
+}
+QImage Util::printScreen()
+{
+    auto rect = NativeRect::getDesktopRect();
+    auto x = rect.x(), y = rect.y();
+    auto w = rect.width(), h = rect.height();
     HDC hScreen = GetDC(NULL);
     HDC hDC = CreateCompatibleDC(hScreen);
     HBITMAP hBitmap = CreateCompatibleBitmap(hScreen, w, h);
@@ -172,6 +193,24 @@ void Util::copyColor(const int& key)
         tarStr = QString("%1,%2,%3,%4").arg(cmyk.cyan()).arg(cmyk.magenta()).arg(cmyk.yellow()).arg(cmyk.black()).toStdWString();
     }
     Util::setClipboardText(tarStr);
+}
+
+QPoint Util::getQtPoint(int x, int y) {
+    POINT point{ .x{x},.y{y} };
+    HMONITOR hMonitor = MonitorFromPoint(point, MONITOR_DEFAULTTONEAREST);
+    double dpr;
+    if (hMonitor) {
+        UINT dpiX, dpiY;
+        HRESULT hr = GetDpiForMonitor(hMonitor, MDT_EFFECTIVE_DPI, &dpiX, &dpiY);
+        if (FAILED(hr)) {
+            dpr = 1.0;
+        }
+        dpr = static_cast<double>(dpiX) / 96.0;
+    }
+    else {
+        dpr = 1.0;
+    }
+    return QPoint(x / dpr, y / dpr);
 }
 
 //QImage Util::printScreen(const int& x, const int& y, const int& w, const int& h)

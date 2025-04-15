@@ -121,7 +121,7 @@ void ShapeMosaicLine::createMosaicImg()
 {
     auto win = (WinBox*)parent();
     //auto start = QTime::currentTime();
-    winImg = QImage(win->img);
+    winImg = QImage(win->imgBg);
     //auto ss = start.msecsTo(QTime::currentTime());
     {
         QPainter painter(&winImg);

@@ -10,7 +10,7 @@ class WinCanvas : public WinBase
 {
 	Q_OBJECT
 public:
-	WinCanvas(QObject* parent = nullptr);
+	WinCanvas(QWidget* parent = nullptr);
 	~WinCanvas();
 	void paintDragger();
 	void paintShape();

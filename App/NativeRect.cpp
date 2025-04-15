@@ -1,6 +1,7 @@
 #include <Windows.h>
 #include <dwmapi.h>
 
+#include "Util.h"
 #include "NativeRect.h"
 
 namespace {
@@ -33,23 +34,23 @@ const QRect& NativeRect::getDesktopRect()
 
 void NativeRect::initWinRect()
 {
-    winRects.clear();
-    EnumWindows([](HWND hwnd, LPARAM lparam)
-        {
-            if (!hwnd) return TRUE;
-            if (!IsWindowVisible(hwnd)) return TRUE;
-            if (IsIconic(hwnd)) return TRUE;
-            if (GetWindowTextLength(hwnd) < 1) return TRUE;
-            RECT rect;
-            DwmGetWindowAttribute(hwnd, DWMWA_EXTENDED_FRAME_BOUNDS, &rect, sizeof(RECT));
-            if (rect.right - rect.left <= 6 || rect.bottom - rect.top <= 6) {
-                return TRUE;
-            }
-            QPoint lt(rect.left - desktopRect.x(), rect.top - desktopRect.y());
-            QPoint rb(rect.right - desktopRect.x(), rect.bottom - desktopRect.y());
-            winRects.push_back(QRect(lt, rb));
-            return TRUE;
-        },NULL);
+    //winRects.clear();
+    //EnumWindows([](HWND hwnd, LPARAM lparam)
+    //    {
+    //        if (!hwnd) return TRUE;
+    //        if (!IsWindowVisible(hwnd)) return TRUE;
+    //        if (IsIconic(hwnd)) return TRUE;
+    //        if (GetWindowTextLength(hwnd) < 1) return TRUE;
+    //        RECT rect;
+    //        DwmGetWindowAttribute(hwnd, DWMWA_EXTENDED_FRAME_BOUNDS, &rect, sizeof(RECT));
+    //        if (rect.right - rect.left <= 6 || rect.bottom - rect.top <= 6) {
+    //            return TRUE;
+    //        }
+    //        QPoint lt(rect.left - desktopRect.x(), rect.top - desktopRect.y());
+    //        QPoint rb(rect.right - desktopRect.x(), rect.bottom - desktopRect.y());
+    //        winRects.push_back(QRect(lt, rb));
+    //        return TRUE;
+    //    },NULL);
 }
 
 void NativeRect::initScreenRect()

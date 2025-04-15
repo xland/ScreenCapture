@@ -8,9 +8,9 @@
 #include "../App/NativeRect.h"
 #include "../Tool/ToolMain.h"
 #include "../Tool/ToolSub.h"
-#include "../Tool/PixelInfo.h"
+#include "PixelInfo.h"
 
-WinMask::WinMask(QObject* parent) : WinBase(parent)
+WinMask::WinMask(QWidget* parent) : WinBase(parent)
 {
     auto win = (WinFull*)parent;
     x = win->x; y = win->y;
@@ -31,7 +31,7 @@ void WinMask::mousePress(QMouseEvent* event)
     {
         posPress = event->pos();
         win->state = State::mask;
-        if(win->pixelInfo) win->pixelInfo->close();
+        //if(win->pixelInfo) win->pixelInfo->close();
         event->accept();
         return;
     }
@@ -48,7 +48,7 @@ void WinMask::mousePress(QMouseEvent* event)
     }
     if (win->state > State::tool && mousePosState > 0) {
         posPress = event->pos();
-        win->hideTools(win->state);
+        //win->hideTools(win->state);
         event->accept();
         return;
     }
@@ -93,7 +93,7 @@ void WinMask::mouseRelease(QMouseEvent* event)
     if (win->state == State::mask || (win->state >= State::tool && !win->toolMain->isVisible()) )
     {
         win->state = State::tool;
-        win->showToolMain();
+        //win->showToolMain();
         update();
     }
 }
@@ -132,19 +132,18 @@ void WinMask::mouseMove(QMouseEvent* event)
 }
 void WinMask::update()
 {
-    if (img.isNull()) {
-        img = QImage(w, h, QImage::Format_ARGB32_Premultiplied);
+    if (imgBg.isNull()) {
+        imgBg = QImage(w, h, QImage::Format_ARGB32_Premultiplied);
     }
     //绘制半透明和透明区域
-    img.fill(QColor(0, 0, 0, 120));
-    QPainter p(&img);
+    imgBg.fill(QColor(0, 0, 0, 120));
+    QPainter p(&imgBg);
     p.setRenderHint(QPainter::Antialiasing, true);
     p.setCompositionMode(QPainter::CompositionMode_Clear);
     p.setBrush(Qt::transparent);
     p.drawRect(maskRect);
 	paintMaskRectBorder(p);
     paintMaskRectInfo(p);
-    paint();
     p.end();
     auto win = (WinFull*)parent();
     if (win->state == State::tool) {

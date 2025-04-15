@@ -3,8 +3,7 @@
 #include <QWidget>
 #include "WinBase.h"
 
-class ToolMain;
-class ToolSub;
+
 class PixelInfo;
 class WinBoard;
 class WinCanvas;
@@ -14,7 +13,7 @@ class WinBox : public WinBase
 	Q_OBJECT
 
 public:
-	WinBox(QObject* parent = nullptr);
+	WinBox(QWidget* parent = nullptr);
 	virtual ~WinBox();
 	virtual void showToolMain()=0;
 	virtual void showToolSub()=0;
@@ -30,8 +29,7 @@ public:
 public:
 	State state{ State::start };
 	QList<ShapeBase*> shapes;
-	ToolMain* toolMain;
-	ToolSub* toolSub;
+
 	PixelInfo* pixelInfo;
 	WinCanvas* winCanvas;
 	WinBoard* winBoard;
@@ -42,7 +40,6 @@ protected:
 	void mouseMoveOnShape(QMouseEvent* event);
 	void mouseDragOnShape(QMouseEvent* event);
 	void mouseReleaseOnShape(QMouseEvent* event);
-	bool processOtherMsg(UINT msg, WPARAM wParam, LPARAM lParam) override;
 	virtual void ctrlTPress() {};
 private:
 };

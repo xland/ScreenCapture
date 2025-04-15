@@ -7,7 +7,7 @@ class WinBoard : public WinBase
 {
 	Q_OBJECT
 public:
-	WinBoard(QObject *parent = nullptr);
+	WinBoard(QWidget *parent = nullptr);
 	~WinBoard();
 	void refresh(bool releaseFlag=true);
 private:

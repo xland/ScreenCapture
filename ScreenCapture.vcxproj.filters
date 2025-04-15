@@ -104,7 +104,7 @@
     <ClCompile Include="Shape\ShapeMosaicLine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Tool\PixelInfo.cpp">
+    <ClCompile Include="Win\PixelInfo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Win\WinBox.cpp">
@@ -117,9 +117,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="App\NativeRect.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="App\About.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="App\Font.cpp">
@@ -234,7 +231,7 @@
     <QtMoc Include="Shape\ShapeMosaicLine.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="Tool\PixelInfo.h">
+    <QtMoc Include="Win\PixelInfo.h">
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="Win\WinBox.h">
@@ -244,9 +241,6 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="Shape\ShapeTextContainer.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="App\About.h">
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="App\Lang.h">

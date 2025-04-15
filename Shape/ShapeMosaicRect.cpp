@@ -9,7 +9,7 @@ ShapeMosaicRect::ShapeMosaicRect(QObject* parent) : ShapeRectBase(parent)
 {
     isFill = true;
     auto win = (WinBox*)parent;
-    QImage winImg(win->img);
+    QImage winImg(win->imgBg);
     QPainter painter(&winImg);
     for (int i = 0; i < win->shapes.size(); i++)
     {

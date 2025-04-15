@@ -6,7 +6,7 @@
 #include "WinBox.h"
 #include "../Shape/ShapeBase.h"
 
-WinCanvas::WinCanvas(QObject *parent) : WinBase(parent)
+WinCanvas::WinCanvas(QWidget *parent) : WinBase(parent)
 {
     auto win = (WinBox*)parent;
     x = win->x;
@@ -25,15 +25,13 @@ void WinCanvas::paintShape()
 {
     auto p = getPainter();
     curShape->paint(p.get());
-    paint();
 }
 
 void WinCanvas::clear()
 {
     curShape = nullptr;
     initImg();
-    img.fill(Qt::transparent);
-    paint();
+    imgBg.fill(Qt::transparent);
     releaseImg();
 }
 
@@ -42,15 +40,14 @@ void WinCanvas::paintDragger()
     initImg();
     auto p = getPainter();
     curShape->paintDragger(p.get());
-    paint();
     p->end();
     releaseImg();
 }
 
 std::shared_ptr<QPainter> WinCanvas::getPainter()
 {
-    img.fill(Qt::transparent);
-    auto p = std::make_shared<QPainter>(&img);
+    imgBg.fill(Qt::transparent);
+    auto p = std::make_shared<QPainter>(&imgBg);
     auto win = (WinBox*)parent();
     if (win->padding > 0) {
         p->setClipRect(win->padding, win->padding, w - 2 * win->padding, h - 2 * win->padding);

@@ -17,10 +17,10 @@
 #include "../App/Lang.h"
 #include "../Tool/ToolMain.h"
 #include "../Tool/ToolSub.h"
-#include "../Tool/PixelInfo.h"
+#include "PixelInfo.h"
 
 
-WinPin::WinPin(QObject* parent) : WinBox(parent)
+WinPin::WinPin(QWidget* parent) : WinBox(parent)
 {
     padding = 8;
 }
@@ -36,9 +36,9 @@ void WinPin::init(WinFull* full)
     winPin->prepareImg(full);
     winPin->x = full->x + full->winMask->maskRect.left() - winPin->padding;
     winPin->y = full->y + full->winMask->maskRect.top() - winPin->padding;
-    winPin->w = winPin->img.width();
-    winPin->h = winPin->img.height();
-    winPin->initWindow(false);
+    winPin->w = winPin->imgBg.width();
+    winPin->h = winPin->imgBg.height();
+    winPin->initWindow();
     winPin->show();
     winPin->winBoard = new WinBoard(winPin);
     winPin->winCanvas = new WinCanvas(winPin);
@@ -76,7 +76,7 @@ void WinPin::showToolSub()
 
 void WinPin::saveToClipboard()
 {
-    QImage tar = img.copy(QRect(padding, padding, w - padding * 2, h - padding * 2));
+    QImage tar = imgBg.copy(QRect(padding, padding, w - padding * 2, h - padding * 2));
     QPainter p(&tar);
     p.setRenderHint(QPainter::Antialiasing, true);
     p.setRenderHint(QPainter::TextAntialiasing, true);
@@ -98,7 +98,7 @@ void WinPin::saveToFile()
     {
         return;
     }
-	QImage tar = img.copy(QRect(padding, padding, w - padding * 2, h - padding * 2));
+	QImage tar = imgBg.copy(QRect(padding, padding, w - padding * 2, h - padding * 2));
     QPainter p(&tar);
     p.setRenderHint(QPainter::Antialiasing, true);
     p.setRenderHint(QPainter::TextAntialiasing, true);
@@ -263,24 +263,6 @@ void WinPin::mouseRelease(QMouseEvent* event)
     }
 }
 
-bool WinPin::processOtherMsg(UINT msg, WPARAM wParam, LPARAM lParam)
-{
-    if (WinBox::processOtherMsg(msg, wParam, lParam)) {
-        return true;
-    }
-    else if (msg == WM_MOUSELEAVE) {
-        if (pixelInfo)pixelInfo->hide();
-        untrackMouse();
-        return true;
-    }
-    else if (msg == WM_MOUSEWHEEL) {
-        int delta = GET_WHEEL_DELTA_WPARAM(wParam);
-        onMouseWheel(delta);
-        return true;
-    }
-    return false;
-}
-
 void WinPin::escPress()
 {
 	close();
@@ -356,9 +338,9 @@ void WinPin::copyColor(const int& key)
 void WinPin::prepareImg(WinFull* full)
 {
     auto tarImg = full->getCutImg();
-    img = QImage(tarImg.size() + QSize(padding * 2, padding * 2), QImage::Format_ARGB32_Premultiplied);
-    img.fill(Qt::transparent);
-    QPainter p(&img);
+    imgBg = QImage(tarImg.size() + QSize(padding * 2, padding * 2), QImage::Format_ARGB32_Premultiplied);
+    imgBg.fill(Qt::transparent);
+    QPainter p(&imgBg);
     p.setRenderHint(QPainter::Antialiasing);
     p.setPen(Qt::NoPen);
     QColor c(88, 88, 88, 88);
@@ -384,7 +366,7 @@ void WinPin::prepareImg(WinFull* full)
         p.drawRect(padding + tarImg.width(), 0, padding, padding);
     }
     {
-        QLinearGradient gradient(padding + tarImg.width(), 0, img.width(), 0);
+        QLinearGradient gradient(padding + tarImg.width(), 0, imgBg.width(), 0);
         gradient.setColorAt(0.0, c);
         gradient.setColorAt(1.0, Qt::transparent);
         p.setBrush(gradient);
@@ -398,7 +380,7 @@ void WinPin::prepareImg(WinFull* full)
         p.drawRect(padding + tarImg.width(), padding + tarImg.height(), padding, padding);
     }
     {
-        QLinearGradient gradient(padding, padding+ tarImg.height(), padding, img.height());
+        QLinearGradient gradient(padding, padding+ tarImg.height(), padding, imgBg.height());
         gradient.setColorAt(0.0, c);
         gradient.setColorAt(1.0, Qt::transparent);
         p.setBrush(gradient);

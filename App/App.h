@@ -7,7 +7,6 @@ class App
 public:
 	static void init();
 	static void dispose();
-	static void start();
 public:
 private:
 };

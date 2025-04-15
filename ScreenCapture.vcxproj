@@ -120,7 +120,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="App\About.cpp" />
     <ClCompile Include="App\App.cpp" />
     <ClCompile Include="App\Lang.cpp" />
     <ClCompile Include="App\NativeRect.cpp" />
@@ -145,7 +144,7 @@
     <ClCompile Include="Tool\BtnCheck.cpp" />
     <ClCompile Include="Tool\ColorCtrl.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Tool\PixelInfo.cpp" />
+    <ClCompile Include="Win\PixelInfo.cpp" />
     <ClCompile Include="Tool\StrokeCtrl.cpp" />
     <ClCompile Include="Tool\ToolBase.cpp" />
     <ClCompile Include="Tool\ToolMain.cpp" />
@@ -163,7 +162,6 @@
     <QtMoc Include="Tool\BtnCheck.h" />
     <QtMoc Include="Tool\Btn.h" />
     <QtMoc Include="Tool\BtnBase.h" />
-    <QtMoc Include="App\About.h" />
     <ClInclude Include="App\App.h" />
     <QtMoc Include="App\Lang.h" />
     <ClInclude Include="App\Util.h" />
@@ -192,7 +190,7 @@
     <ClInclude Include="Shape\ShapeState.h" />
     <QtMoc Include="Shape\ShapeText.h" />
     <QtMoc Include="Shape\ShapeTextInput.h" />
-    <QtMoc Include="Tool\PixelInfo.h" />
+    <QtMoc Include="Win\PixelInfo.h" />
     <QtMoc Include="Tool\ToolBase.h" />
     <QtMoc Include="Shape\ShapeTextContainer.h" />
     <QtMoc Include="Tool\ToolMain.h" />

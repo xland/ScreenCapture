@@ -11,7 +11,7 @@ class WinPin  : public WinBox
 	Q_OBJECT
 
 public:
-	WinPin(QObject *parent = nullptr);
+	WinPin(QWidget *parent = nullptr);
 	~WinPin();
 	static void init(WinFull* full);
 	void showToolMain() override;
@@ -29,7 +29,6 @@ protected:
 	void mouseMove(QMouseEvent* event) override;
 	void mouseDrag(QMouseEvent* event) override;
 	void mouseRelease(QMouseEvent* event) override;
-	bool processOtherMsg(UINT msg, WPARAM wParam, LPARAM lParam) override;
 	void escPress() override;
 private:
 	void prepareImg(WinFull* full);

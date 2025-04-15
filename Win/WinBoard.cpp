@@ -8,7 +8,7 @@
 #include "../Shape/ShapeBase.h"
 #include "../Tool/ToolMain.h"
 
-WinBoard::WinBoard(QObject *parent) : WinBase(parent)
+WinBoard::WinBoard(QWidget *parent) : WinBase(parent)
 {
     auto win = (WinBox*)parent;
     x = win->x; y = win->y;
@@ -25,8 +25,8 @@ void WinBoard::refresh(bool releaseFlag)
 {
     auto win = (WinBox*)parent();
     initImg();
-    img.fill(Qt::transparent);
-    QPainter p(&img);
+    imgBg.fill(Qt::transparent);
+    QPainter p(&imgBg);
     if (win->padding > 0) {
         p.setClipRect(win->padding, win->padding, w - 2 * win->padding, h - 2 * win->padding);
     }
@@ -47,7 +47,6 @@ void WinBoard::refresh(bool releaseFlag)
             }
         }
     }
-    paint();
     p.end();
     if (releaseFlag) {        
         releaseImg();
