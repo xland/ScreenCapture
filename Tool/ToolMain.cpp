@@ -101,6 +101,7 @@ void ToolMain::btnCheckChange(BtnCheck* btn)
         win->toolSub->close();
     }
     if (!btn->isChecked) {
+        win->state = State::tool;
         return;
     }
     auto btns = findChildren<BtnCheck*>();
@@ -113,6 +114,7 @@ void ToolMain::btnCheckChange(BtnCheck* btn)
         }
 	}
     win->state = btn->state;
+    win->setCursor(Qt::CrossCursor);
 	win->toolSub = new ToolSub(win);
     update();
 }

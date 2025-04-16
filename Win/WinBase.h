@@ -29,7 +29,7 @@ public:
 	int x, y, w, h;
 	QImage imgBg;
 	QImage imgBoard;
-	QPixmap imgCanvas;
+	QImage imgCanvas;
 	QPoint posPress;
 	HWND hwnd;
 	State state;

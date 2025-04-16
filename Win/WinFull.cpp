@@ -32,8 +32,7 @@ WinFull::WinFull(QWidget* parent) : WinBase(parent)
     imgBg = Util::printScreen();
     imgBg.setDevicePixelRatio(dpr);
     imgBoard = imgBg.copy();
-    imgCanvas = QPixmap(w,h);
-    imgCanvas.setDevicePixelRatio(dpr);
+    imgCanvas = imgBg.copy();
     pixelInfo = new PixelInfo(this);
     pixelInfo->mouseMove(QCursor::pos());
 }
@@ -51,6 +50,8 @@ void WinFull::paintEvent(QPaintEvent* event)
     p.setRenderHint(QPainter::Antialiasing, true);
     p.setRenderHint(QPainter::TextAntialiasing, true);
     p.drawImage(0, 0, imgBg);
+    p.drawImage(0, 0, imgBoard);
+    p.drawImage(0, 0, imgCanvas);
 
     p.setBrush(QColor(0, 0, 0, 120));
     QColor borderColor(22, 118, 255);
@@ -180,7 +181,7 @@ void WinFull::mouseMoveEvent(QMouseEvent* event)
                 }
             }
         }
-        else if (state == State::mask) {
+        else if (state <= State::tool) {
             changeMouseState(pos.x(), pos.y());
         }
     }
@@ -188,7 +189,7 @@ void WinFull::mouseMoveEvent(QMouseEvent* event)
 
 void WinFull::mouseReleaseEvent(QMouseEvent* event)
 {
-    state = State::mask;
+    state = State::tool;
     rectMask = rectMask.normalized();
     update();
     auto br = rectMask.bottomRight();
