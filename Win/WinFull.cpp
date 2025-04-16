@@ -142,9 +142,12 @@ void WinFull::mouseMoveEvent(QMouseEvent* event)
 {
     if (event->buttons() & Qt::LeftButton) {
         auto pos = event->pos();
-        //if (cutTool && cutTool->isVisible()) {
-        //    cutTool->hide();
-        //}
+        if (toolMain && toolMain->isVisible()) {
+            toolMain->hide();
+        }
+        if (toolSub && toolSub->isVisible()) {
+            toolSub->hide();
+        }
         if (state == State::start) {
             if (pos == posPress) return;
             rectMask.setCoords(posPress.x(), posPress.y(), pos.x(), pos.y());
@@ -190,8 +193,8 @@ void WinFull::mouseReleaseEvent(QMouseEvent* event)
     if (!toolMain) {
         toolMain = new ToolMain(this);
     }
-    //cutTool->move(br.x() - cutTool->width(), br.y() + 4);
-    //cutTool->show();
+    toolMain->confirmPos();
+    toolMain->show();
 }
 
 //void WinFull::showToolMain()

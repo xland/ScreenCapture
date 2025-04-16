@@ -25,7 +25,6 @@ public:
 	QImage getCutImg();
 public:
 	qreal dpr{ 1.0 };
-	WinMask* winMask;
 	PixelInfo* pixelInfo;
 	QRect rectMask;
 protected:

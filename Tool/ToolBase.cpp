@@ -4,9 +4,8 @@
 
 #include "../App/App.h"
 #include "../App/Font.h"
-#include "../Win/WinBox.h"
 #include "../Win/WinFull.h"
-#include "../Win/WinMask.h"
+#include "../Win/WinBase.h"
 #include "ToolBase.h"
 #include "ToolSub.h"
 
@@ -72,7 +71,8 @@ void ToolBase::paintBtn(const QChar& icon, const QColor& frontColor, const QColo
 }
 void ToolBase::keyPressEvent(QKeyEvent* event)
 {
-    event->ignore();
+    /*event->ignore();
+    auto win = (WinBase*)parent();
     if (event->key() == Qt::Key_Escape) {
         win->escPress();
     }
@@ -119,5 +119,5 @@ void ToolBase::keyPressEvent(QKeyEvent* event)
         else if (event->key() == Qt::Key_P) {
             win->copyColor(3);
         }
-    }
+    }*/
 }

@@ -34,8 +34,8 @@ void WinPin::init(WinFull* full)
 {
     auto winPin = new WinPin();
     winPin->prepareImg(full);
-    winPin->x = full->x + full->winMask->maskRect.left() - winPin->padding;
-    winPin->y = full->y + full->winMask->maskRect.top() - winPin->padding;
+    winPin->x = full->x + full->rectMask.left() - winPin->padding;
+    winPin->y = full->y + full->rectMask.top() - winPin->padding;
     winPin->w = winPin->imgBg.width();
     winPin->h = winPin->imgBg.height();
     winPin->initWindow();
