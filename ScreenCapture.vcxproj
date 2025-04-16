@@ -123,7 +123,6 @@
     <ClCompile Include="App\App.cpp" />
     <ClCompile Include="App\Lang.cpp" />
     <ClCompile Include="App\NativeRect.cpp" />
-    <ClCompile Include="App\Font.cpp" />
     <ClCompile Include="Shape\ShapeArrow.cpp" />
     <ClCompile Include="Shape\ShapeBase.cpp" />
     <ClCompile Include="Shape\ShapeEllipse.cpp" />
@@ -176,7 +175,6 @@
     <QtMoc Include="Shape\ShapeArrow.h" />
     <ClInclude Include="App\NativeRect.h" />
     <ClInclude Include="App\Res.h" />
-    <ClInclude Include="App\Font.h" />
     <ClInclude Include="Shape\ShapeEllipse.h" />
     <QtMoc Include="Shape\ShapeRect.h" />
     <QtMoc Include="Shape\ShapeNumber.h" />
@@ -205,10 +203,10 @@
     <None Include="Doc\高亮窗口.md" />
   </ItemGroup>
   <ItemGroup>
-    <Font Include="Config\iconfont.ttf" />
+    <Font Include="Res\iconfont.ttf" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="Config\logo.ico" />
+    <Image Include="Res\logo.ico" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="App\Res.rc" />

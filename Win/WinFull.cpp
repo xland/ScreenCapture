@@ -82,7 +82,9 @@ void WinFull::paintEvent(QPaintEvent* event)
         .arg(rectMask.x()).arg(rectMask.y())
         .arg(rectMask.right()).arg(rectMask.bottom())
         .arg(rectMask.width()).arg(rectMask.height());
-    QFontMetrics fm(font());
+    auto font = Util::getTextFont(10);
+    QFontMetrics fm(*font);
+    p.setFont(*font);
     int w = fm.horizontalAdvance(text);
     if (y < 0) y = rectMask.y() + 4;
     QRect rect(rectMask.x(), rectMask.y() - 25, w + 14, 22);

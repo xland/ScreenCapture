@@ -1,12 +1,11 @@
 #include <QPainter>
 #include "Btn.h"
 #include "ToolBase.h"
-#include "../App/Font.h"
+#include "../App/Util.h"
 
 
 Btn::Btn(const QString& name, const QChar& icon, QWidget *parent) : BtnBase(name,icon,parent)
 {
-    
 }
 
 Btn::~Btn()
@@ -21,8 +20,7 @@ void Btn::paintEvent(QPaintEvent* event)
     p.setRenderHint(QPainter::TextAntialiasing, true);
     auto r = rect().adjusted(2, 2, -2, -2);
     p.setPen(Qt::NoPen);
-    auto font = Font::icon();
-    font->setPixelSize(15);
+    auto font = Util::getIconFont(15);
     p.setFont(*font);
     p.setBrush(isHover? QColor(228, 238, 255): Qt::white);
     p.drawRoundedRect(r, 6, 6);

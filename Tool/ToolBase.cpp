@@ -2,8 +2,8 @@
 #include <qpushbutton.h>
 #include <qtooltip.h>
 
+#include "../App/Util.h"
 #include "../App/App.h"
-#include "../App/Font.h"
 #include "../Win/WinFull.h"
 #include "../Win/WinBase.h"
 #include "ToolBase.h"
@@ -46,7 +46,7 @@ void ToolBase::showEvent(QShowEvent* event)
 
 std::shared_ptr<QPainter> ToolBase::getPainter()
 {
-    auto font = Font::icon();
+    auto font = Util::getIconFont(15);
     font->setPixelSize(15);
     auto painter = std::make_shared<QPainter>(this);
     painter->setRenderHint(QPainter::Antialiasing, true);

@@ -119,9 +119,6 @@
     <ClCompile Include="App\NativeRect.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="App\Font.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="App\Lang.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -155,9 +152,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="App\Res.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="App\Font.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -262,10 +256,10 @@
     <None Include="Doc\高亮窗口.md" />
   </ItemGroup>
   <ItemGroup>
-    <Font Include="Config\iconfont.ttf" />
+    <Font Include="Res\iconfont.ttf" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="Config\logo.ico">
+    <Image Include="Res\logo.ico">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

@@ -53,47 +53,45 @@ void ToolMain::setBtnEnable(bool undo, bool redo)
 void ToolMain::confirmPos()
 {
     auto full = (WinFull*)parent();
-    auto hwnd = (HWND)winId();
     auto dpr = windowHandle()->devicePixelRatio();
-    auto left{full->x + full->rectMask.right() - width()*dpr};
-    auto top{ full->y + full->rectMask.bottom() + 6*dpr };
-    //三个缝隙高度和两个工具条高度
-    auto heightSpan = 6 * dpr * 3 + height() * dpr * 2;
-    auto screen = NativeRect::getScreenByPos(full->x + full->rectMask.right(), full->y + full->rectMask.bottom() + heightSpan);
-    if (screen) { //工具条右下角在屏幕内
-        topFlag = false;
-        //工具条左上角不在屏幕内
-        if (!NativeRect::getScreenByPos(left, top)) {
-            left = screen->left();
+    auto br = full->mapToGlobal(full->rectMask.bottomRight());
+    auto tr = full->mapToGlobal(full->rectMask.topRight());
+    auto tl = full->mapToGlobal(full->rectMask.topLeft());
+    auto left { br.x() - width() };
+    auto top { br.y() + 6 };
+    auto heightSpan{ 6 * 3 + height() * 2 }; //三个缝隙，两个高度
+    QList<QScreen*> screens = QGuiApplication::screens();
+    auto getScreen = [&screens](int x, int y) {
+        for (auto& s : screens)
+        {
+            if (s->geometry().contains(x, y)) {
+                return s;
+            }
+        }
+        };
+    auto screen = getScreen(br.x(), br.y() + heightSpan); //1. 工具条在截图区域右下角
+    if (screen) { //工具条右下角在屏幕中
+        if (!getScreen(left, top)) { //工具条左上角不在屏幕中
+            left = screen->geometry().left();
         }
     }
-    else { //工具条右下角不在屏幕内
-        topFlag = true;
-        //判断屏幕顶部是否有足够的空间，工具条是否可以在CutRect右上角
-        screen = NativeRect::getScreenByPos(full->x + full->rectMask.right(), full->y + full->rectMask.top() - heightSpan);
-        if (screen) { //工具条右上角在屏幕内  
-            if (NativeRect::getScreenByPos(left, full->y + full->rectMask.top() - heightSpan)) { //工具条左上角在屏幕内
-                top = full->y + full->rectMask.top() - 6*dpr - height()*dpr;
-            }
-            else { //工具条左上角不在屏幕中
-                left = screen->left();
-                top = full->y + full->rectMask.top() - 6 * dpr - height() * dpr;
+    else { //工具条右下角不在屏幕中
+        screen = getScreen(tr.x(), tr.y() - heightSpan); //2. 工具条在截图区域右上角
+        if (screen) {
+            top = tr.y() - height() - 6;
+            if (!getScreen(left, tr.y() - heightSpan)) {//工具条左上角不在屏幕中
+                left = screen->geometry().left();
             }
         }
-        else { //工具条右上角不在屏幕内，此时屏幕顶部和屏幕底部都没有足够的空间，工具条只能显示在截图区域内            
-            if (NativeRect::getScreenByPos(left, full->y + full->rectMask.bottom() - heightSpan)) { //工具条左上角在屏幕内
-                top = full->y + full->rectMask.bottom() - 6*dpr - height()*dpr;
-            }
-            else { //工具条左上角不在屏幕中，得到截图区域所在屏幕
-                screen = NativeRect::getScreenByPos(full->x + full->rectMask.right(), full->y + full->rectMask.bottom());
-                if (screen) {
-                    left = screen->left();
-                    top = full->y + full->rectMask.bottom() - 6*dpr - height()*dpr;
-                }
+        else { //3. 屏幕顶部和屏幕底部都没有足够的空间，工具条只能显示在截图区域内  
+            top = br.y() - height() - 6;
+            screen = getScreen(br.x(), top);
+            if (!getScreen(left, top)) {//工具条左上角不在屏幕中
+                left = screen->geometry().left();
             }
         }
     }
-    SetWindowPos(hwnd, nullptr, left, top, 0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_SHOWWINDOW);
+    move(left, top);
 }
 
 void ToolMain::btnCheckChange(BtnCheck* btn)

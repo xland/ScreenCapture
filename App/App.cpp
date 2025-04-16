@@ -9,7 +9,6 @@
 #include <QMessageBox>
 #include "App.h"
 #include "NativeRect.h"
-#include "Font.h"
 #include "Lang.h"
 #include "../Win/WinFull.h"
 #include "../Win/WinPin.h"
@@ -22,8 +21,9 @@ namespace {
 }
 void App::init()
 {
+    QFont font("Microsoft YaHei", 9);
+    qApp->setFont(font);
     Lang::init("ZhCn");
-    Font::init();
     NativeRect::init();
     WinFull::init();
 }

@@ -8,7 +8,6 @@ public:
 	static const QList<QRect>& getWinRects();
 	static const QList<QRect>& getScreenRects();
 	static const QRect& getDesktopRect();
-	static const QRect* getScreenByPos(const int& x, const int& y);
 private:
 	static void initWinRect();
 	static void initScreenRect();

@@ -1,5 +1,6 @@
 #include <QPainter>
-#include "../App/Font.h"
+
+#include "../App/Util.h"
 #include "ToolBase.h"
 #include "BtnCheck.h"
 
@@ -21,8 +22,7 @@ void BtnCheck::paintEvent(QPaintEvent* event)
     p.setRenderHint(QPainter::TextAntialiasing, true);
     auto r = rect().adjusted(2, 2, -2, -2);
     p.setPen(Qt::NoPen);
-    auto font = Font::icon();
-    font->setPixelSize(15);
+    auto font = Util::getIconFont(15);
     p.setFont(*font);
     if (isChecked)
     {

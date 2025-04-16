@@ -76,14 +76,3 @@ void NativeRect::initDesktopRect()
     auto h = GetSystemMetrics(SM_CYVIRTUALSCREEN);
     desktopRect = QRect(x, y, w, h);
 }
-
-const QRect* NativeRect::getScreenByPos(const int& x, const int& y)
-{
-    for (int i = 0; i < screenRects.size(); i++)
-    {
-        if (screenRects[i].contains(x, y)) {
-            return &screenRects[i];
-        }
-    }
-    return nullptr;
-}

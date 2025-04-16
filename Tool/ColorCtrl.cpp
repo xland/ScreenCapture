@@ -6,7 +6,7 @@
 
 #include "ColorCtrl.h"
 #include "../App/App.h"
-#include "../App/Font.h"
+#include "../App/Util.h"
 
 ColorCtrl::ColorCtrl(int selectIndex, QWidget* parent):selectedIndex{selectedIndex}
 {
@@ -30,9 +30,7 @@ QColor ColorCtrl::getColor()
 
 void ColorCtrl::paintEvent(QPaintEvent * event)
 {
-	auto font = Font::icon();
-	font->setPixelSize(15);
-
+	auto font = Util::getIconFont(15);
 	QPainter painter(this);
 	painter.setRenderHint(QPainter::Antialiasing, true);
 	painter.setRenderHint(QPainter::TextAntialiasing, true);
