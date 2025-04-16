@@ -5,7 +5,6 @@
 
 #include "ShapeTextInput.h"
 #include "../Win/WinBox.h"
-#include "../Win/WinBoard.h"
 #include "ShapeTextContainer.h"
 #include "ShapeText.h"
 

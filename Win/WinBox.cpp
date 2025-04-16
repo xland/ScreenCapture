@@ -1,6 +1,5 @@
 #include "WinBox.h"
 #include "WinCanvas.h"
-#include "WinBoard.h"
 
 #include "WinFull.h"
 #include "WinMask.h"
@@ -138,7 +137,7 @@ void WinBox::removeShape()
     if (winCanvas->curShape) {
         shapes.removeOne(winCanvas->curShape);
 		winCanvas->curShape->deleteLater();
-        winBoard->refresh();
+        //winBoard->refresh();
         winCanvas->clear();
     }    
 }
@@ -148,7 +147,7 @@ void WinBox::undo()
     {
         if (shapes[i]->state != ShapeState::hidden) {
 			shapes[i]->state = ShapeState::hidden;
-			winBoard->refresh();
+			//winBoard->refresh();
             winCanvas->clear();
 			break;
         }
@@ -160,7 +159,7 @@ void WinBox::redo()
     {
         if (shapes[i]->state == ShapeState::hidden) {
             shapes[i]->state = ShapeState::ready;
-            winBoard->refresh();
+            //winBoard->refresh();
             winCanvas->clear();
             break;
         }

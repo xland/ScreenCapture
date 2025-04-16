@@ -15,7 +15,6 @@
 #include "WinFull.h"
 #include "WinPin.h"
 #include "WinMask.h"
-#include "WinBoard.h"
 #include "WinCanvas.h"
 #include "PixelInfo.h"
 
@@ -131,12 +130,15 @@ void WinFull::mousePressEvent(QMouseEvent* event)
 {
     if (event->buttons() & Qt::LeftButton) {
         posPress = event->pos();
+        if (pixelInfo) {
+            pixelInfo->hide();
+        }
         if (state == State::mask) {
             changeRectMask(posPress);
             update();
         }
-        if (pixelInfo) {
-            pixelInfo->hide();
+        else if (state >= State::tool) {
+
         }
     }
 }
@@ -156,7 +158,7 @@ void WinFull::mouseMoveEvent(QMouseEvent* event)
             rectMask.setCoords(posPress.x(), posPress.y(), pos.x(), pos.y());
             update();
         }
-        else if (state == State::mask) {
+        else if (state == State::tool) {
             if (mouseState == 0)
             {
                 moveMaskRect(pos);

@@ -3,28 +3,22 @@
 #include <shellscalingapi.h>
 #include <QTimer>
 
-#include "WinMask.h"
+#include "CutMask.h"
 #include "WinFull.h"
 #include "../App/NativeRect.h"
 #include "../Tool/ToolMain.h"
 #include "../Tool/ToolSub.h"
 #include "PixelInfo.h"
 
-WinMask::WinMask(QWidget* parent) : WinBase(parent)
-{
-    auto win = (WinFull*)parent;
-    x = win->x; y = win->y;
-    w = win->w; h = win->h;
-    maskStroke = maskStroke * win->dpr;
-    initWindow();
-    show();
-}
-
-WinMask::~WinMask()
+CutMask::CutMask(QObject* parent) : QObject(parent)
 {
 }
 
-void WinMask::mousePress(QMouseEvent* event)
+CutMask::~CutMask()
+{
+}
+
+void CutMask::mousePress(QMouseEvent* event)
 {
     auto win = (WinFull*)parent();
     if (win->state == State::start)
@@ -54,7 +48,7 @@ void WinMask::mousePress(QMouseEvent* event)
     }
 }
 
-void WinMask::mouseDrag(QMouseEvent* event)
+void CutMask::mouseDrag(QMouseEvent* event)
 {
     auto father = (WinFull*)parent();
     if (father->state == State::mask)
@@ -87,7 +81,7 @@ void WinMask::mouseDrag(QMouseEvent* event)
     }
 }
 
-void WinMask::mouseRelease(QMouseEvent* event)
+void CutMask::mouseRelease(QMouseEvent* event)
 {
     auto win = (WinFull*)parent();
     if (win->state == State::mask || (win->state >= State::tool && !win->toolMain->isVisible()) )
@@ -98,7 +92,7 @@ void WinMask::mouseRelease(QMouseEvent* event)
     }
 }
 
-void WinMask::mouseMove(QMouseEvent* event)
+void CutMask::mouseMove(QMouseEvent* event)
 {
     auto father = (WinFull*)parent();
     if (father->state == State::start)
@@ -130,7 +124,7 @@ void WinMask::mouseMove(QMouseEvent* event)
         }
     }
 }
-void WinMask::update()
+void CutMask::update()
 {
     if (imgBg.isNull()) {
         imgBg = QImage(w, h, QImage::Format_ARGB32_Premultiplied);
@@ -150,7 +144,7 @@ void WinMask::update()
         releaseImg();
     }
 }
-void WinMask::changeMaskRect(const QPoint& pos)
+void CutMask::changeMaskRect(const QPoint& pos)
 {
     if (mousePosState == 1)
     {
@@ -187,7 +181,7 @@ void WinMask::changeMaskRect(const QPoint& pos)
     maskRect = maskRect.normalized();
     update();
 }
-void WinMask::changeMousePosState(const int& x, const int& y)
+void CutMask::changeMousePosState(const int& x, const int& y)
 {
     auto leftX = maskRect.left(); auto topY = maskRect.top();
     auto rightX = maskRect.right(); auto bottomY = maskRect.bottom();
@@ -237,7 +231,7 @@ void WinMask::changeMousePosState(const int& x, const int& y)
         mousePosState = 8;
     }
 }
-void WinMask::changeMousePosState2(const int& x, const int& y)
+void CutMask::changeMousePosState2(const int& x, const int& y)
 {
     auto x1{ maskRect.x() - maskStroke }, x2{ x1 + maskStroke * 3 };
     auto x3{ maskRect.right() - maskStroke }, x4{ x3 + maskStroke * 3 };
@@ -286,7 +280,7 @@ void WinMask::changeMousePosState2(const int& x, const int& y)
         mousePosState = -1;
     }
 }
-void WinMask::paintMaskRectInfo(QPainter& p)
+void CutMask::paintMaskRectInfo(QPainter& p)
 {
     //绘制截图区域位置和大小
     auto text = QString("X:%1 Y:%2 R:%3 B:%4 W:%5 H:%6")
@@ -315,7 +309,7 @@ void WinMask::paintMaskRectInfo(QPainter& p)
     p.drawText(rect, Qt::AlignCenter, text);
 }
 
-void WinMask::paintMaskRectBorder(QPainter& p)
+void CutMask::paintMaskRectBorder(QPainter& p)
 {
     //绘制透明区域的边框
     p.setCompositionMode(QPainter::CompositionMode_SourceOver);
@@ -342,7 +336,7 @@ void WinMask::paintMaskRectBorder(QPainter& p)
     }
 }
 
-void WinMask::moveMaskRect(const QPoint& pos)
+void CutMask::moveMaskRect(const QPoint& pos)
 {
 	auto span = pos - posPress;
 	auto target = maskRect.topLeft()+span;

@@ -5,14 +5,12 @@
 #include <QPainter>
 #include <QPaintEvent>
 
-#include "WinBase.h"
-
-class WinMask  : public WinBase
+class CutMask  : public QObject
 {
 	Q_OBJECT
 public:
-	WinMask(QWidget* parent = nullptr);
-	~WinMask();
+	CutMask(QObject* parent = nullptr);
+	~CutMask();
 	void mousePress(QMouseEvent* event);
 	void mouseDrag(QMouseEvent* event);
 	void mouseRelease(QMouseEvent* event);

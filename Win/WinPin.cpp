@@ -8,7 +8,6 @@
 #include "WinPin.h"
 #include "WinFull.h"
 #include "WinMask.h"
-#include "WinBoard.h"
 #include "WinCanvas.h"
 #include "../Shape/ShapeBase.h"
 #include "../Shape/ShapeText.h"
@@ -40,7 +39,7 @@ void WinPin::init(WinFull* full)
     winPin->h = winPin->imgBg.height();
     winPin->initWindow();
     winPin->show();
-    winPin->winBoard = new WinBoard(winPin);
+    //winPin->winBoard = new WinBoard(winPin);
     winPin->winCanvas = new WinCanvas(winPin);
     winPin->pixelInfo = new PixelInfo(winPin);
     full->close();
@@ -115,9 +114,9 @@ void WinPin::close()
     if (winCanvas) {
         winCanvas->close();
     }
-    if (winBoard) {
-        winBoard->close();
-    }
+    //if (winBoard) {
+    //    winBoard->close();
+    //}
     if (toolMain) {
         toolMain->close();
     }
@@ -231,9 +230,9 @@ void WinPin::mouseDrag(QMouseEvent* event)
     if (GetCapture() == hwnd) {
         auto pos = event->globalPosition() - posPress;
         SetWindowPos(hwnd, NULL, pos.x(), pos.y(), 0, 0, SWP_NOSIZE | SWP_NOZORDER);
-        if (winBoard) {
-            SetWindowPos(winBoard->hwnd, NULL, pos.x(), pos.y(), 0, 0, SWP_NOSIZE | SWP_NOZORDER);
-        }
+        //if (winBoard) {
+        //    SetWindowPos(winBoard->hwnd, NULL, pos.x(), pos.y(), 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+        //}
         if (winCanvas) {
             SetWindowPos(winCanvas->hwnd, NULL, pos.x(), pos.y(), 0, 0, SWP_NOSIZE | SWP_NOZORDER);
         }

@@ -6,7 +6,6 @@
 #include "../App/App.h"
 #include "../Tool/ToolSub.h"
 #include "../Win/WinBox.h"
-#include "../Win/WinBoard.h"
 #include "../Win/WinCanvas.h"
 
 
@@ -36,20 +35,20 @@ void ShapeEraserLine::paint(QPainter* painter)
 
 void ShapeEraserLine::paintingStart()
 {
-    auto win = (WinBox*)parent();
-    win->winBoard->initImg(); //鼠标按下，初始化图像
-    win->winCanvas->clear();  //清空虚线框
+    //auto win = (WinBox*)parent();
+    //win->winBoard->initImg(); //鼠标按下，初始化图像
+    //win->winCanvas->clear();  //清空虚线框
 }
 
 void ShapeEraserLine::paintOnBoard()
 {
-    auto win = (WinBox*)parent();
-    win->winBoard->refresh(); //此处释放了图像
+    //auto win = (WinBox*)parent();
+    //win->winBoard->refresh(); //此处释放了图像
 }
 
 void ShapeEraserLine::painting()
 {
-    auto win = (WinBox*)parent();
-    win->winBoard->refresh(false); //绘制过程，不断刷新，刷新时不释放图像
+    //auto win = (WinBox*)parent();
+    //win->winBoard->refresh(false); //绘制过程，不断刷新，刷新时不释放图像
 }
 

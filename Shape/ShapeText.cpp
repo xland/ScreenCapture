@@ -10,7 +10,6 @@
 #include "ShapeTextInput.h"
 #include "../Win/WinBase.h"
 #include "../Win/WinBox.h"
-#include "../Win/WinBoard.h"
 #include "../Win/WinPin.h"
 #include "../App/App.h"
 #include "../Tool/ToolSub.h"
@@ -59,7 +58,7 @@ void ShapeText::mouseMove(QMouseEvent* event)
     else {
         if (container->ctrlRect.contains(pos)) {
             state = ShapeState::temp;
-            win->winBoard->refresh();
+            //win->winBoard->refresh();
             win->winCanvas->clear();
             win->winCanvas->curShape = this;
             container->show();

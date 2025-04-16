@@ -3,7 +3,6 @@
 #include <QTimer>
 #include <QWindow>
 #include "../Win/WinBox.h"
-#include "../Win/WinBoard.h"
 
 #include "ShapeTextInput.h"
 #include "ShapeText.h"
