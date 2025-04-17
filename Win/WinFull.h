@@ -2,12 +2,10 @@
 #include "WinBase.h"
 
 
-class WinCanvas;
-class WinMask;
+class CutMask;
 class ToolMain;
 class ToolSub;
 class PixelInfo;
-class ShapeBase;
 
 class WinFull : public WinBase
 {
@@ -26,7 +24,7 @@ public:
 public:
 	qreal dpr{ 1.0 };
 	PixelInfo* pixelInfo;
-	QRect rectMask;
+	CutMask* cutMask;
 protected:
 	void paintEvent(QPaintEvent* event) override;
 	void mousePressEvent(QMouseEvent* event) override;
@@ -35,12 +33,8 @@ protected:
 	//void copyColor(const int& key) override;
 	//void escPress() override;
 private:
-	void changeRectMask(const QPoint& pos);
 	void changeMouseState(const int& x, const int& y);
 	void moveMaskRect(const QPoint& pos);
-	void initWinRect();
 private:
-	QList<QRect> rectWins;
-	uint mouseState{ 0 };
 };
 

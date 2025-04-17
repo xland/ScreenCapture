@@ -7,7 +7,6 @@
 
 #include "WinPin.h"
 #include "WinFull.h"
-#include "WinMask.h"
 #include "WinCanvas.h"
 #include "../Shape/ShapeBase.h"
 #include "../Shape/ShapeText.h"

@@ -10,7 +10,6 @@
 #include "../Win/WinBox.h"
 #include "../Win/WinPin.h"
 #include "../Win/WinFull.h"
-#include "../Win/WinMask.h"
 #include "ToolMain.h"
 #include "ToolSub.h"
 #include "Btn.h"

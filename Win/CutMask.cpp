@@ -1,10 +1,13 @@
 ﻿#include <QWindow>
 #include <dwmapi.h>
 #include <shellscalingapi.h>
+#include <QApplication>
 #include <QTimer>
+#include <QPainterPath>
 
 #include "CutMask.h"
 #include "WinFull.h"
+#include "../App/Util.h"
 #include "../App/NativeRect.h"
 #include "../Tool/ToolMain.h"
 #include "../Tool/ToolSub.h"
@@ -12,74 +15,98 @@
 
 CutMask::CutMask(QObject* parent) : QObject(parent)
 {
+    initWinRect();
 }
 
 CutMask::~CutMask()
 {
 }
 
+void CutMask::initWinRect()
+{
+    rectWins.clear();
+    EnumWindows([](HWND hwnd, LPARAM lparam)
+        {
+            if (!hwnd) return TRUE;
+            if (!IsWindowVisible(hwnd)) return TRUE;
+            if (IsIconic(hwnd)) return TRUE;
+            if (GetWindowTextLength(hwnd) < 1) return TRUE;
+            RECT rect;
+            DwmGetWindowAttribute(hwnd, DWMWA_EXTENDED_FRAME_BOUNDS, &rect, sizeof(RECT));
+            if (rect.right - rect.left <= 6 || rect.bottom - rect.top <= 6) {
+                return TRUE;
+            }
+            auto self = (CutMask*)lparam;
+            auto win = (WinFull*)self->parent();
+            if (rect.left < win->x) rect.left = win->x;
+            if (rect.top < win->y) rect.top = win->y;
+            if (rect.right > win->x + win->w) rect.right = win->x + win->w;
+            if (rect.bottom > win->y + win->h) rect.bottom = win->y + win->h;
+            auto lt = Util::getQtPoint(rect.left, rect.top);
+            auto rb = Util::getQtPoint(rect.right, rect.bottom);
+            lt = win->mapFromGlobal(lt);
+            rb = win->mapFromGlobal(rb);
+            self->rectWins.push_back(QRect(lt, rb));
+            return TRUE;
+        }, (LPARAM)this);
+}
+
 void CutMask::mousePress(QMouseEvent* event)
 {
-    auto win = (WinFull*)parent();
-    if (win->state == State::start)
-    {
-        posPress = event->pos();
-        win->state = State::mask;
-        //if(win->pixelInfo) win->pixelInfo->close();
-        event->accept();
-        return;
-    }
-    if (win->state == State::tool)
-    {
-        posPress = event->pos();
-        win->toolMain->hide();
-        if (mousePosState != 0)
-        {
-            changeMaskRect(posPress);
-        }
-        event->accept();
-        return;
-    }
-    if (win->state > State::tool && mousePosState > 0) {
-        posPress = event->pos();
-        //win->hideTools(win->state);
-        event->accept();
-        return;
-    }
+    posPress = event->pos();
+    changeRectMask(posPress);
 }
 
 void CutMask::mouseDrag(QMouseEvent* event)
 {
-    auto father = (WinFull*)parent();
-    if (father->state == State::mask)
-    {
-        auto pos = event->pos();
-		if (pos == posPress) return;
-        maskRect.setCoords(posPress.x(), posPress.y(), pos.x(),pos.y());
-        maskRect = maskRect.normalized();
-        update();
-        return;
+    auto pos = event->pos();
+    auto win = (WinFull*)parent();
+    if (win->state == State::start) {
+        if (pos == posPress) return;
+        rectMask.setCoords(posPress.x(), posPress.y(), pos.x(), pos.y());
+        win->update();
     }
-    if (father->state == State::tool)
-    {
-        if (mousePosState == 0)
+    else if (win->state == State::tool) {
+        if (mouseState == 0)
         {
-            moveMaskRect(event->pos());
-            update();
+            moveMaskRect(pos);
         }
-        else
-        {
-            auto pos = event->pos();
-            changeMaskRect(pos);
+        else {
+            changeRectMask(pos);
         }
-        return;
-    }
-    if (father->state > State::tool && mousePosState > 0) {
-        auto pos = event->pos();
-        changeMaskRect(pos);
-        return;
+        win->update();
     }
 }
+
+void CutMask::moveMaskRect(const QPoint& pos)
+{
+    auto span = pos - posPress;
+    posPress = pos;
+    auto target = rectMask.topLeft() + span;
+    auto win = (WinFull*)parent();
+    if (target.x() < 0) {
+        target.setX(0);
+        rectMask.moveTo(target);
+        return;
+    }
+    if (target.y() < 0) {
+        target.setY(0);
+        rectMask.moveTo(target);
+        return;
+    }
+    if (target.x() + rectMask.width() > win->width()) {
+        target.setX(win->width() - rectMask.width());
+        rectMask.moveTo(target);
+        return;
+    }
+    if (target.y() + rectMask.height() > win->height()) {
+        target.setY(win->height() - rectMask.height());
+        rectMask.moveTo(target);
+        return;
+    }
+    rectMask.moveTo(target);
+}
+
 
 void CutMask::mouseRelease(QMouseEvent* event)
 {
@@ -94,141 +121,156 @@ void CutMask::mouseRelease(QMouseEvent* event)
 
 void CutMask::mouseMove(QMouseEvent* event)
 {
-    auto father = (WinFull*)parent();
-    if (father->state == State::start)
-    {
-        QGuiApplication::setOverrideCursor(Qt::CrossCursor);
-        auto& rects = NativeRect::getWinRects();
-        for (int i = 0; i < rects.size(); i++)
+    auto pos = event->pos();
+    auto win = (WinFull*)parent();
+    if (win->state == State::start) {
+        win->pixelInfo->mouseMove(pos);
+        for (const auto& rect : rectWins)
         {
-            if (rects[i].contains(event->pos())) {
-                if (maskRect == rects[i]) return;
-                maskRect = rects[i];
-                update();
+            if (rect.contains(pos)) {
+                if (rectMask == rect) return;
+                rectMask = rect;
+                win->update();
                 return;
             }
         }
     }
-    else if (father->state == State::tool)
-    {
-        auto pos = event->pos();
-        changeMousePosState(pos.x(), pos.y());
-        event->accept();
-    }
-    else if (father->state > State::tool) {
-        auto pos = event->pos();
-        changeMousePosState2(pos.x(), pos.y());
-        if (mousePosState != -1) {
-            event->accept();
-            return;
-        }
+    else if (win->state <= State::tool) {
+        changeMouseState(pos.x(), pos.y());
     }
 }
-void CutMask::update()
+void CutMask::paint(QPainter& p)
 {
-    if (imgBg.isNull()) {
-        imgBg = QImage(w, h, QImage::Format_ARGB32_Premultiplied);
-    }
-    //绘制半透明和透明区域
-    imgBg.fill(QColor(0, 0, 0, 120));
-    QPainter p(&imgBg);
-    p.setRenderHint(QPainter::Antialiasing, true);
-    p.setCompositionMode(QPainter::CompositionMode_Clear);
-    p.setBrush(Qt::transparent);
-    p.drawRect(maskRect);
-	paintMaskRectBorder(p);
-    paintMaskRectInfo(p);
-    p.end();
     auto win = (WinFull*)parent();
-    if (win->state == State::tool) {
-        releaseImg();
-    }
+    p.setBrush(QColor(0, 0, 0, 120));
+    QColor borderColor(22, 118, 255);
+    p.setPen(QPen(QBrush(borderColor), 1.5));
+    QPainterPath path;
+    path.addRect(-1, -1, win->w + 1, win->h + 1);
+    path.addRect(rectMask);
+    p.drawPath(path);
+    if (win->state != State::mask) return;
+    if (QApplication::mouseButtons() & Qt::LeftButton) return;
+
+    //绘制边框上的拖动圆点
+    p.setBrush(borderColor);
+    p.setPen(QPen(QBrush(QColor(255, 255, 255)), 1));
+    auto r{ 3 };
+    auto hw{ rectMask.width() / 2 };
+    auto hh{ rectMask.height() / 2 };
+    p.drawEllipse(rectMask.topLeft().toPointF(), r, r);
+    p.drawEllipse(QPointF(rectMask.left() + hw, rectMask.top()), r, r);
+    p.drawEllipse(rectMask.topRight().toPointF(), r, r);
+    p.drawEllipse(QPointF(rectMask.right(), rectMask.top() + hh), r, r);
+    p.drawEllipse(rectMask.bottomRight().toPointF(), r, r);
+    p.drawEllipse(QPointF(rectMask.left() + hw, rectMask.bottom()), r, r);
+    p.drawEllipse(rectMask.bottomLeft().toPointF(), r, r);
+    p.drawEllipse(QPointF(rectMask.left(), rectMask.top() + hh), r, r);
+
+    //绘制截图区域位置和大小
+    auto text = QString("X:%1 Y:%2 R:%3 B:%4 W:%5 H:%6")
+        .arg(rectMask.x()).arg(rectMask.y())
+        .arg(rectMask.right()).arg(rectMask.bottom())
+        .arg(rectMask.width()).arg(rectMask.height());
+    auto font = Util::getTextFont(10);
+    QFontMetrics fm(*font);
+    p.setFont(*font);
+    int w = fm.horizontalAdvance(text);
+    if (win->y < 0) win->y = rectMask.y() + 4;
+    QRect rect(rectMask.x(), rectMask.y() - 25, w + 14, 22);
+    p.setBrush(QColor(0, 0, 0, 120));
+    p.setPen(Qt::NoPen);
+    p.drawRoundedRect(rect, 3, 3);
+    p.setPen(QPen(QBrush(Qt::white), 1));
+    p.setBrush(Qt::NoBrush);
+    p.drawText(rect, Qt::AlignCenter, text);
 }
-void CutMask::changeMaskRect(const QPoint& pos)
+void CutMask::changeRectMask(const QPoint& pos)
 {
-    if (mousePosState == 1)
+    if (mouseState == 1)
     {
-        maskRect.setTopLeft(pos);
+        rectMask.setTopLeft(pos);
     }
-    else if (mousePosState == 2)
+    else if (mouseState == 2)
     {
-        maskRect.setTop(pos.y());
+        rectMask.setTop(pos.y());
     }
-    else if (mousePosState == 3)
+    else if (mouseState == 3)
     {
-        maskRect.setTopRight(pos);
+        rectMask.setTopRight(pos);
     }
-    else if (mousePosState == 4)
+    else if (mouseState == 4)
     {
-        maskRect.setRight(pos.x());
+        rectMask.setRight(pos.x());
     }
-    else if (mousePosState == 5)
+    else if (mouseState == 5)
     {
-        maskRect.setBottomRight(pos);
+        rectMask.setBottomRight(pos);
     }
-    else if (mousePosState == 6)
+    else if (mouseState == 6)
     {
-        maskRect.setBottom(pos.y());
+        rectMask.setBottom(pos.y());
     }
-    else if (mousePosState == 7)
+    else if (mouseState == 7)
     {
-        maskRect.setBottomLeft(pos);
+        rectMask.setBottomLeft(pos);
     }
-    else if (mousePosState == 8)
+    else if (mouseState == 8)
     {
-        maskRect.setLeft(pos.x());
+        rectMask.setLeft(pos.x());
     }
-    maskRect = maskRect.normalized();
-    update();
+    auto win = (WinFull*)parent();
+    win->update();
 }
 void CutMask::changeMousePosState(const int& x, const int& y)
 {
-    auto leftX = maskRect.left(); auto topY = maskRect.top();
-    auto rightX = maskRect.right(); auto bottomY = maskRect.bottom();
-    if (x>leftX+1 && y>topY+1 && x<rightX-1 && y<bottomY-1) //不然截图区域上顶天，下顶地的时候没法改变高度
+    auto leftX = rectMask.left(); auto topY = rectMask.top();
+    auto rightX = rectMask.right(); auto bottomY = rectMask.bottom();
+    auto win = (WinFull*)parent();
+    if (x > leftX + 1 && y > topY + 1 && x < rightX - 1 && y < bottomY - 1) //不然截图区域上顶天，下顶地的时候没法改变高度
     {
-        QGuiApplication::setOverrideCursor(Qt::SizeAllCursor);
-        mousePosState = 0;
+        win->setCursor(Qt::SizeAllCursor);
+        mouseState = 0;
     }
     else if (x <= leftX && y <= topY)
     {
-        QGuiApplication::setOverrideCursor(Qt::SizeFDiagCursor);
-        mousePosState = 1;
+        win->setCursor(Qt::SizeFDiagCursor);
+        mouseState = 1;
     }
     else if (x >= leftX && x <= rightX && y <= topY)
     {
-        QGuiApplication::setOverrideCursor(Qt::SizeVerCursor);
-        mousePosState = 2;
+        win->setCursor(Qt::SizeVerCursor);
+        mouseState = 2;
     }
     else if (x >= rightX && y <= topY)
     {
-        QGuiApplication::setOverrideCursor(Qt::SizeBDiagCursor);
-        mousePosState = 3;
+        win->setCursor(Qt::SizeBDiagCursor);
+        mouseState = 3;
     }
     else if (x >= rightX && y >= topY && y <= bottomY)
     {
-        QGuiApplication::setOverrideCursor(Qt::SizeHorCursor);
-        mousePosState = 4;
+        win->setCursor(Qt::SizeHorCursor);
+        mouseState = 4;
     }
     else if (x >= rightX && y >= bottomY)
     {
-        QGuiApplication::setOverrideCursor(Qt::SizeFDiagCursor);
-        mousePosState = 5;
+        win->setCursor(Qt::SizeFDiagCursor);
+        mouseState = 5;
     }
     else if (x >= leftX && x <= rightX && y >= bottomY)
     {
-        QGuiApplication::setOverrideCursor(Qt::SizeVerCursor);
-        mousePosState = 6;
+        win->setCursor(Qt::SizeVerCursor);
+        mouseState = 6;
     }
     else if (x <= leftX && y >= bottomY)
     {
-        QGuiApplication::setOverrideCursor(Qt::SizeBDiagCursor);
-        mousePosState = 7;
+        win->setCursor(Qt::SizeBDiagCursor);
+        mouseState = 7;
     }
     else if (x <= leftX && y <= bottomY && y >= topY)
     {
-        QGuiApplication::setOverrideCursor(Qt::SizeHorCursor);
-        mousePosState = 8;
+        win->setCursor(Qt::SizeHorCursor);
+        mouseState = 8;
     }
 }
 void CutMask::changeMousePosState2(const int& x, const int& y)
@@ -344,7 +386,6 @@ void CutMask::moveMaskRect(const QPoint& pos)
 	if (target.x() < 0 || target.y()<0) return;
 	if (target.x() + maskRect.width() > w || target.y() + maskRect.height() > h) return;
     maskRect.moveTo(maskRect.topLeft() + span);
-	update();
 }
 
 

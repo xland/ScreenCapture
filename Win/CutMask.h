@@ -15,19 +15,20 @@ public:
 	void mouseDrag(QMouseEvent* event);
 	void mouseRelease(QMouseEvent* event);
 	void mouseMove(QMouseEvent* event);
-	void update();
+	void paint(QPainter& p);
 public:
-	QRect maskRect;
+	QRect rectMask;
 protected:
 private:
-	void changeMaskRect(const QPoint& pos);
+	void changeRectMask(const QPoint& pos);
 	void changeMousePosState(const int& x, const int& y);
 	void changeMousePosState2(const int& x, const int& y);
 	void paintMaskRectInfo(QPainter& p);
 	void paintMaskRectBorder(QPainter& p);
 	void moveMaskRect(const QPoint& pos);
+	void initWinRect();
 private:
+	QList<QRect> rectWins;
+	uint mouseState{ 0 };
 	QPoint posPress;
-	qreal maskStroke{ 2.0 };
-	int mousePosState{ -1 };
 };

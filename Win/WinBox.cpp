@@ -2,7 +2,6 @@
 #include "WinCanvas.h"
 
 #include "WinFull.h"
-#include "WinMask.h"
 #include "../App/Util.h"
 #include "../Shape/ShapeBase.h"
 #include "../Shape/ShapeRect.h"
