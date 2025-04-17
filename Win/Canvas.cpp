@@ -37,6 +37,8 @@ void Canvas::mouseDrag(QMouseEvent* event)
     {
         shapes[i]->mouseDrag(event);
     }
+    auto win = (WinBase*)parent();
+    win->update();
 }
 
 void Canvas::mouseRelease(QMouseEvent* event)
@@ -57,6 +59,12 @@ void Canvas::mouseMove(QMouseEvent* event)
 
 void Canvas::paint(QPainter& p)
 {
+    if (shapes.size() > 0) {
+        auto shape = shapes[shapes.size() - 1];
+        if (shape->state >= ShapeState::sizing0) {
+            shape->paint(&p);
+        }
+    }
 }
 
 ShapeBase* Canvas::addShape()
@@ -64,39 +72,39 @@ ShapeBase* Canvas::addShape()
     ShapeBase* shape;
     auto win = (WinBase*)parent();
     if (win->state == State::rect) {
-        shape = new ShapeRect(this);
+        shape = new ShapeRect(win);
     }
     else if (win->state == State::ellipse) {
-        shape = new ShapeEllipse(this);
+        shape = new ShapeEllipse(win);
     }
     else if (win->state == State::arrow) {
-        shape = new ShapeArrow(this);
+        shape = new ShapeArrow(win);
     }
     else if (win->state == State::number) {
-        shape = new ShapeNumber(this);
+        shape = new ShapeNumber(win);
     }
     else if (win->state == State::line) {
-        shape = new ShapeLine(this);
+        shape = new ShapeLine(win);
     }
     else if (win->state == State::text) {
-        shape = new ShapeText(this);
+        shape = new ShapeText(win);
     }
     else if (win->state == State::mosaic) {
         auto isRect = win->toolSub->getSelectState("mosaicFill");
         if (isRect) {
-            shape = new ShapeMosaicRect(this);
+            shape = new ShapeMosaicRect(win);
         }
         else {
-            shape = new ShapeMosaicLine(this);
+            shape = new ShapeMosaicLine(win);
         }
     }
     else if (win->state == State::eraser) {
         auto isRect = win->toolSub->getSelectState("eraserFill");
         if (isRect) {
-            shape = new ShapeEraserRect(this);
+            shape = new ShapeEraserRect(win);
         }
         else {
-            shape = new ShapeEraserLine(this);
+            shape = new ShapeEraserLine(win);
         }
     }
     else

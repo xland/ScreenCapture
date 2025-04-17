@@ -79,11 +79,16 @@ void WinFull::mouseMoveEvent(QMouseEvent* event)
         if (state <= State::tool) {
             cutMask->mouseDrag(event);
         }
-        
+        else {
+            canvas->mouseDrag(event);
+        }        
     }
     else {
         if (state <= State::tool) {
             cutMask->mouseMove(event);
+        }
+        else {
+            canvas->mouseMove(event);
         }
     }
 }
@@ -97,6 +102,9 @@ void WinFull::mouseReleaseEvent(QMouseEvent* event)
         }
         toolMain->confirmPos();
         toolMain->show();
+    }
+    else {
+        canvas->mouseRelease(event);
     }
 }
 

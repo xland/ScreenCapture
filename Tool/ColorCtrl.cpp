@@ -6,7 +6,7 @@
 #include "ColorCtrl.h"
 
 
-ColorCtrl::ColorCtrl(int selectIndex, QWidget* parent):selectedIndex{selectedIndex}
+ColorCtrl::ColorCtrl(int selectIndex, QWidget* parent):selectedIndex{ selectIndex }
 {
 	setAttribute(Qt::WA_NoSystemBackground);
 	setAttribute(Qt::WA_Hover);
@@ -23,7 +23,8 @@ ColorCtrl::~ColorCtrl()
 
 QColor ColorCtrl::getColor()
 {
-    return QColor(colorValues[selectedIndex]);
+	std::vector<QString> colorValues = getColors();
+	return QColor(colorValues[selectedIndex]);
 }
 
 void ColorCtrl::paintEvent(QPaintEvent * event)
@@ -33,7 +34,7 @@ void ColorCtrl::paintEvent(QPaintEvent * event)
 	painter.setRenderHint(QPainter::Antialiasing, true);
 	painter.setRenderHint(QPainter::TextAntialiasing, true);
 	painter.setFont(*font);
-	std::vector<QString> colorValues{"#CF1322","#D48806","#389E0D","#13C2C2","#0958D9","#722ED1","#EB2F96","#000000"};
+	std::vector<QString> colorValues = getColors();
 	for (int j = 0; j < colorValues.size(); j++)
 	{
 		QRect rect(j * itemWidth, 0, itemWidth, height());
@@ -82,4 +83,18 @@ void ColorCtrl::leaveEvent(QEvent* event)
 		hoverIndex = -1;
 		update();
 	}
+}
+
+std::vector<QString> ColorCtrl::getColors()
+{
+	return std::vector<QString>{ 
+		"#CF1322",
+		"#D48806",
+		"#389E0D",
+		"#13C2C2",
+		"#0958D9",
+		"#722ED1",
+		"#EB2F96",
+		"#000000" 
+	};
 }

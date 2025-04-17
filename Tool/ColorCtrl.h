@@ -19,8 +19,8 @@ protected:
 	void mouseMoveEvent(QMouseEvent* event) override;
 	void leaveEvent(QEvent* event) override;
 private:
+	std::vector<QString> getColors();
+private:
 	int itemWidth{ 26 };
 	int hoverIndex{ -1 };
-	std::vector<QString> colorValues;
-	std::vector<QString> colorTips;
 };
