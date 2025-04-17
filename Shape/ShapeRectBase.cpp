@@ -1,4 +1,4 @@
-﻿#include <qpainter.h>
+﻿#include <QPainter>
 
 #include "ShapeRectBase.h"
 #include "../App/App.h"
@@ -43,46 +43,49 @@ void ShapeRectBase::paintDragger(QPainter* painter)
 void ShapeRectBase::mouseMove(QMouseEvent* event)
 {
     if (state != ShapeState::ready) return;
+    auto win = (WinBase*)parent();
     auto pos = event->pos();
     hoverDraggerIndex = -1;
     if (draggers[0].contains(pos)) {
         hoverDraggerIndex = 0;
-        QGuiApplication::setOverrideCursor(Qt::SizeFDiagCursor);
+        win->setCursor(Qt::SizeFDiagCursor);
     }
     else if (draggers[1].contains(pos)) {
         hoverDraggerIndex = 1;
-        QGuiApplication::setOverrideCursor(Qt::SizeVerCursor);
+        win->setCursor(Qt::SizeVerCursor);
     }
     else if (draggers[2].contains(pos)) {
         hoverDraggerIndex = 2;
-        QGuiApplication::setOverrideCursor(Qt::SizeBDiagCursor);
+        win->setCursor(Qt::SizeBDiagCursor);
     }
     else if (draggers[3].contains(pos)) {
         hoverDraggerIndex = 3;
-        QGuiApplication::setOverrideCursor(Qt::SizeHorCursor);
+        win->setCursor(Qt::SizeHorCursor);
     }
     else if (draggers[4].contains(pos)) {
         hoverDraggerIndex = 4;
-        QGuiApplication::setOverrideCursor(Qt::SizeFDiagCursor);
+        win->setCursor(Qt::SizeFDiagCursor);
     }
     else if (draggers[5].contains(pos)) {
         hoverDraggerIndex = 5;
-        QGuiApplication::setOverrideCursor(Qt::SizeVerCursor);
+        win->setCursor(Qt::SizeVerCursor);
     }
     else if (draggers[6].contains(pos)) {
         hoverDraggerIndex = 6;
-        QGuiApplication::setOverrideCursor(Qt::SizeBDiagCursor);
+        win->setCursor(Qt::SizeBDiagCursor);
     }
     else if (draggers[7].contains(pos)) {
         hoverDraggerIndex = 7;
-        QGuiApplication::setOverrideCursor(Qt::SizeHorCursor);
+        win->setCursor(Qt::SizeHorCursor);
     }
     if (hoverDraggerIndex == -1) {
         mouseOnShape(event);
     }
     if (hoverDraggerIndex > -1) {
         showDragger();
-        event->accept();
+    }
+    else {
+        win->setCursor(Qt::CrossCursor);
     }
 }
 void ShapeRectBase::mousePress(QMouseEvent* event)
@@ -174,19 +177,12 @@ void ShapeRectBase::mouseDrag(QMouseEvent* event)
 void ShapeRectBase::mouseOnShape(QMouseEvent* event)
 {
     auto pos = event->position();
-    if (isFill) {
-        if (shape.contains(pos)) {
-            hoverDraggerIndex = 8;
-            QGuiApplication::setOverrideCursor(Qt::SizeAllCursor);
-        }
-    }
-    else {
-        auto half{ strokeWidth / 2 };
-        QRectF outerRect = shape.adjusted(-half, -half, half, half);
-        QRectF innerRect = shape.adjusted(half, half, -half, -half);
-        if (outerRect.contains(pos) && !innerRect.contains(pos)) {
-            hoverDraggerIndex = 8;
-            QGuiApplication::setOverrideCursor(Qt::SizeAllCursor);
-        }
+    auto half{ strokeWidth / 2 };
+    QRectF outerRect = shape.adjusted(-half, -half, half, half);
+    QRectF innerRect = shape.adjusted(half, half, -half, -half);
+    if (outerRect.contains(pos) && !innerRect.contains(pos)) {
+        hoverDraggerIndex = 8;
+        auto win = (WinBase*)parent();
+        win->setCursor(Qt::SizeAllCursor);
     }
 }
