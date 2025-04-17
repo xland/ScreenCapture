@@ -144,7 +144,6 @@ void CutMask::paint(QPainter& p)
     path.addRect(-1, -1, win->w + 1, win->h + 1);
     path.addRect(rectMask);
     p.drawPath(path);
-    if (win->state < State::mask) return;
     //绘制截图区域位置和大小
     auto text = QString("X:%1 Y:%2 R:%3 B:%4 W:%5 H:%6")
         .arg(rectMask.x()).arg(rectMask.y())

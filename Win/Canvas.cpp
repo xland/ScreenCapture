@@ -43,9 +43,16 @@ void Canvas::mouseDrag(QMouseEvent* event)
 
 void Canvas::mouseRelease(QMouseEvent* event)
 {
-    for (int i = shapes.size() - 1; i >= 0; i--)
+    for (auto& s:shapes)
     {
-        shapes[i]->mouseRelease(event);
+        if (s->state >= ShapeState::sizing0) {
+            auto win = (WinBase*)parent();
+            QPainter p(&win->imgBoard);
+            s->mouseRelease(event);
+            s->paint(&p);
+            win->update();
+            break;
+        }
     }
 }
 
