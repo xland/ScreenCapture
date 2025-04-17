@@ -2,7 +2,7 @@
 #include <Windows.h>
 #include <QTimer>
 #include <QWindow>
-#include "../Win/WinBox.h"
+#include "../Win/WinBase.h"
 
 #include "ShapeTextInput.h"
 #include "ShapeText.h"

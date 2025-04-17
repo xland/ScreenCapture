@@ -2,21 +2,21 @@
 #include <QWindow>
 
 #include "ShapeMosaicRect.h"
-#include "../Win/WinBox.h"
+#include "../Win/WinBase.h"
 #include "../App/Util.h"
 
 ShapeMosaicRect::ShapeMosaicRect(QObject* parent) : ShapeRectBase(parent)
 {
     isFill = true;
-    auto win = (WinBox*)parent;
-    QImage winImg(win->imgBg);
-    QPainter painter(&winImg);
-    for (int i = 0; i < win->shapes.size(); i++)
-    {
-        win->shapes[i]->paint(&painter);
-    }
-    mosaicPixs = winImg.scaled(winImg.width() / mosaicRectSize,
-        winImg.height() / mosaicRectSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+    auto win = (WinBase*)parent;
+    //QImage winImg(win->imgBg);
+    //QPainter painter(&winImg);
+    //for (int i = 0; i < win->shapes.size(); i++)
+    //{
+    //    win->shapes[i]->paint(&painter);
+    //}
+    //mosaicPixs = winImg.scaled(winImg.width() / mosaicRectSize,
+    //    winImg.height() / mosaicRectSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
 
 }
 

@@ -3,7 +3,7 @@
 #include <QTime>
 
 #include "ShapeMosaicLine.h"
-#include "../Win/WinBox.h"
+#include "../Win/WinBase.h"
 #include "../App/Util.h"
 
 ShapeMosaicLine::ShapeMosaicLine(QObject* parent) : ShapeLineBase(parent)
@@ -119,10 +119,8 @@ void ShapeMosaicLine::erasePath(QImage* img)
 
 void ShapeMosaicLine::createMosaicImg()
 {
-    auto win = (WinBox*)parent();
-    //auto start = QTime::currentTime();
+    /*auto win = (WinBase*)parent();
     winImg = QImage(win->imgBg);
-    //auto ss = start.msecsTo(QTime::currentTime());
     {
         QPainter painter(&winImg);
         for (int i = 0; i < win->shapes.size(); i++)
@@ -130,8 +128,6 @@ void ShapeMosaicLine::createMosaicImg()
             win->shapes[i]->paint(&painter);
         }
     }
-    //ss = start.msecsTo(QTime::currentTime());
-    //qDebug() << "\n create" << ss;
     QImage mosaicPixs = winImg.scaled(winImg.width() / mosaicRectSize,
         winImg.height() / mosaicRectSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
     mosaicImg = QImage(winImg);
@@ -147,6 +143,6 @@ void ShapeMosaicLine::createMosaicImg()
             QRectF mRect(xPos, y * mosaicRectSize, mosaicRectSize, mosaicRectSize);
             painter.drawRect(mRect);
         }
-    }
+    }*/
 }
 

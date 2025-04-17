@@ -5,7 +5,6 @@
 
 #include "Util.h"
 #include "NativeRect.h"
-#include "../Win/WinBox.h"
 
 QFont* Util::getIconFont(const int& fontSize)
 {
@@ -62,49 +61,6 @@ QMouseEvent Util::createMouseEvent(const LPARAM& lParam, const QEvent::Type& typ
     QPointF g(pos.x, pos.y);
     return QMouseEvent(type, p, g, btn, btn, mf);
 }
-
-//QImage Util::printWindow(WinBox* win)
-//{
-//    HDC hScreen = GetDC(win->hwnd);
-//    HDC hDC = CreateCompatibleDC(hScreen);
-//    HBITMAP hBitmap = CreateCompatibleBitmap(hScreen, win->w, win->h);
-//    DeleteObject(SelectObject(hDC, hBitmap));
-//    auto flag = PrintWindow(win->hwnd, hDC, PW_RENDERFULLCONTENT);
-//    spdlog::info("PrintWindow {}",flag);
-//    auto img = QImage(win->w, win->h, QImage::Format_ARGB32);
-//    BITMAPINFO info = { sizeof(BITMAPINFOHEADER), (long)win->w, 0 - (long)win->h, 1, 32, BI_RGB, (DWORD)win->w * 4 * win->h, 0, 0, 0, 0 };
-//    GetDIBits(hDC, hBitmap, 0, win->h, img.bits(), &info, DIB_RGB_COLORS);
-//    DeleteDC(hDC);
-//    DeleteObject(hBitmap);
-//    ReleaseDC(NULL, hScreen);
-//    return img;
-//}
-
-//QImage Util::printWindow2(WinBox* win)
-//{
-//    //auto dwmCapture = new DWMCapture();
-//    //auto hr = dwmCapture->Init();
-//    //if (FAILED(hr)) {
-//    //    delete dwmCapture;
-//    //}
-//    //BOX* box = nullptr;
-//    //CAPTURE_DATA* data = new CAPTURE_DATA();
-//    //dwmCapture->CaptureWindow(win->hwnd, box, data);
-//    HDC hdcSrc = GetWindowDC(win->hwnd);
-//    HDC hdcDest = CreateCompatibleDC(hdcSrc);
-//    HBITMAP hBitmap = CreateCompatibleBitmap(hdcSrc, win->w, win->h);
-//    auto hOld = SelectObject(hdcDest, hBitmap);
-//    BitBlt(hdcDest, 0, 0, win->w, win->h, hdcSrc, 0, 0, SRCCOPY);
-//    auto img = QImage(win->w, win->h, QImage::Format_ARGB32);
-//    BITMAPINFO info = { sizeof(BITMAPINFOHEADER), (long)win->w, 0 - (long)win->h, 1, 32, BI_RGB, (DWORD)win->w * 4 * win->h, 0, 0, 0, 0 };
-//    GetDIBits(hdcDest, hBitmap, 0, win->h, img.bits(), &info, DIB_RGB_COLORS);
-//    SelectObject(hdcDest, hOld);
-//    DeleteDC(hdcDest);
-//    DeleteObject(hBitmap);
-//    ReleaseDC(win->hwnd, hdcSrc);
-//    return img;
-//}
-
 QImage Util::printScreen(const int& x, const int& y, const int& w, const int& h)
 {
     HDC hScreen = GetDC(NULL);

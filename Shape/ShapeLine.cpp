@@ -5,13 +5,13 @@
 #include "ShapeLine.h"
 #include "../App/App.h"
 #include "../Tool/ToolSub.h"
-#include "../Win/WinBox.h"
+#include "../Win/WinBase.h"
 #include "../Win/WinCanvas.h"
 
 
 ShapeLine::ShapeLine(QObject* parent) : ShapeLineBase(parent)
 {
-    auto win = (WinBox*)parent;
+    auto win = (WinBase*)parent;
     auto isTransparent = win->toolSub->getSelectState("lineTransparent");
     color = win->toolSub->getColor();
     if (isTransparent) {

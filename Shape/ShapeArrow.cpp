@@ -4,12 +4,12 @@
 #include "ShapeArrow.h"
 #include "../App/App.h"
 #include "../Tool/ToolSub.h"
-#include "../Win/WinBox.h"
+#include "../Win/WinBase.h"
 #include "../Win/WinCanvas.h"
 
 ShapeArrow::ShapeArrow(QObject* parent) : ShapeBase(parent)
 {
-    auto win = (WinBox*)parent;
+    auto win = (WinBase*)parent;
     isFill = win->toolSub->getSelectState("arrowFill");
     color = win->toolSub->getColor();
     arrowSize = win->toolSub->getStrokeWidth();

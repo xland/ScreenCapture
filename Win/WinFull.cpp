@@ -16,6 +16,7 @@
 #include "WinPin.h"
 #include "CutMask.h"
 #include "PixelInfo.h"
+#include "Canvas.h"
 
 namespace {
     WinFull* winFull;
@@ -28,6 +29,7 @@ WinFull::WinFull(QWidget* parent) : WinBase(parent)
     w = GetSystemMetrics(SM_CXVIRTUALSCREEN);
     h = GetSystemMetrics(SM_CYVIRTUALSCREEN);
     cutMask = new CutMask(this);
+    canvas = new Canvas(this);
     initWindow();
     auto dpr = devicePixelRatio();
     imgBg = Util::printScreen();
@@ -50,43 +52,52 @@ void WinFull::paintEvent(QPaintEvent* event)
     QPainter p(this);
     p.drawImage(0, 0, imgBg);
     p.drawImage(0, 0, imgBoard);
-    p.drawImage(0, 0, imgCanvas);
+    canvas->paint(p);
     cutMask->paint(p);
 }
 
 void WinFull::mousePressEvent(QMouseEvent* event)
 {
     if (event->buttons() & Qt::LeftButton) {
-        if (toolMain) toolMain->hide();
-        if (state < State::mask && pixelInfo) pixelInfo->close();
-        cutMask->mousePress(event);
+        if (state < State::mask) {
+            if(pixelInfo) pixelInfo->close();
+            cutMask->mousePress(event);
+        }
+        else if (state <= State::tool) {
+            if(toolMain->isVisible())toolMain->hide();
+            cutMask->mousePress(event);
+        }
+        else {
+            canvas->mousePress(event);
+        }
     }
 }
 
 void WinFull::mouseMoveEvent(QMouseEvent* event)
 {
-    if (event->buttons() & Qt::LeftButton) {        
-        if (toolMain && toolMain->isVisible()) {
-            toolMain->hide();
+    if (event->buttons() & Qt::LeftButton) {
+        if (state <= State::tool) {
+            cutMask->mouseDrag(event);
         }
-        if (toolSub && toolSub->isVisible()) {
-            toolSub->hide();
-        }
-        cutMask->mouseDrag(event);
+        
     }
     else {
-        cutMask->mouseMove(event);
+        if (state <= State::tool) {
+            cutMask->mouseMove(event);
+        }
     }
 }
 
 void WinFull::mouseReleaseEvent(QMouseEvent* event)
 {
-    state = State::tool;    
-    if (!toolMain) {
-        toolMain = new ToolMain(this);
+    if (state <= State::tool) {
+        state = State::tool;
+        if (!toolMain) {
+            toolMain = new ToolMain(this);
+        }
+        toolMain->confirmPos();
+        toolMain->show();
     }
-    toolMain->confirmPos();
-    toolMain->show();
 }
 
 void WinFull::close()

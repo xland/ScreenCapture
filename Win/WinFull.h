@@ -3,8 +3,6 @@
 
 
 class CutMask;
-class ToolMain;
-class ToolSub;
 class PixelInfo;
 
 class WinFull : public WinBase

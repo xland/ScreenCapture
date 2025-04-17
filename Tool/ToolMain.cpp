@@ -7,7 +7,6 @@
 #include "../App/Util.h"
 #include "../App/NativeRect.h"
 #include "../App/Lang.h"
-#include "../Win/WinBox.h"
 #include "../Win/WinPin.h"
 #include "../Win/WinFull.h"
 #include "../Win/CutMask.h"

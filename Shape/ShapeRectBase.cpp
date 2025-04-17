@@ -3,7 +3,7 @@
 #include "ShapeRectBase.h"
 #include "../App/App.h"
 #include "../Tool/ToolSub.h"
-#include "../Win/WinBox.h"
+#include "../Win/WinBase.h"
 #include "../Win/WinCanvas.h"
 
 ShapeRectBase::ShapeRectBase(QObject* parent) : ShapeBase(parent)

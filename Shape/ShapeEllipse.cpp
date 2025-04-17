@@ -3,12 +3,12 @@
 
 #include "ShapeEllipse.h"
 #include "../App/App.h"
-#include "../Win/WinBox.h"
+#include "../Win/WinBase.h"
 #include "../Tool/ToolSub.h"
 
 ShapeEllipse::ShapeEllipse(QObject* parent) : ShapeRectBase(parent)
 {
-    auto win = (WinBox*)parent;
+    auto win = (WinBase*)parent;
     isFill = win->toolSub->getSelectState("ellipseFill");
     color = win->toolSub->getColor();
     strokeWidth = win->toolSub->getStrokeWidth();

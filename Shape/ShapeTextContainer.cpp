@@ -4,7 +4,7 @@
 #include <QWindow>
 
 #include "ShapeTextInput.h"
-#include "../Win/WinBox.h"
+#include "../Win/WinBase.h"
 #include "ShapeTextContainer.h"
 #include "ShapeText.h"
 
@@ -46,7 +46,7 @@ void ShapeTextContainer::setNativeRect()
 	GetWindowRect((HWND)winId(), &r);
 	POINT lt{ .x{r.left},.y{r.top} };
 	POINT rb{ .x{r.right},.y{r.bottom} };
-	auto win = (WinBox*)shapeText->parent();
+	auto win = (WinBase*)shapeText->parent();
 	ScreenToClient(win->hwnd,&lt);
 	ScreenToClient(win->hwnd,&rb);
 	ctrlRect = QRect(QPoint(lt.x, lt.y+8), QPoint(rb.x, rb.y));

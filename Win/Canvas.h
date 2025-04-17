@@ -4,6 +4,7 @@
 #include <QPainter>
 #include <QPaintEvent>
 
+class ShapeBase;
 class Canvas  : public QObject
 {
 	Q_OBJECT
@@ -15,4 +16,8 @@ public:
 	void mouseRelease(QMouseEvent* event);
 	void mouseMove(QMouseEvent* event);
 	void paint(QPainter& p);
+private:
+	ShapeBase* addShape();
+private:
+	QList<ShapeBase*> shapes;
 };

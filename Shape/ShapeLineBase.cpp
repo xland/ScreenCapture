@@ -5,13 +5,13 @@
 #include "ShapeLineBase.h"
 #include "../App/App.h"
 #include "../Tool/ToolSub.h"
-#include "../Win/WinBox.h"
+#include "../Win/WinBase.h"
 #include "../Win/WinCanvas.h"
 
 
 ShapeLineBase::ShapeLineBase(QObject* parent) : ShapeBase(parent)
 {
-    auto win = (WinBox*)(parent);
+    auto win = (WinBase*)(parent);
     strokeWidth = win->toolSub->getStrokeWidth();
     stroker.setWidth(strokeWidth);
     stroker.setCapStyle(Qt::RoundCap);

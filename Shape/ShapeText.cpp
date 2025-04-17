@@ -9,7 +9,7 @@
 #include "ShapeText.h"
 #include "ShapeTextInput.h"
 #include "../Win/WinBase.h"
-#include "../Win/WinBox.h"
+#include "../Win/WinBase.h"
 #include "../Win/WinPin.h"
 #include "../App/App.h"
 #include "../Tool/ToolSub.h"
@@ -18,7 +18,7 @@
 
 ShapeText::ShapeText(QObject* parent) : ShapeBase(parent)
 {
-    auto win = (WinBox*)parent;
+    auto win = (WinBase*)parent;
     color = win->toolSub->getColor();
     fontSize = win->toolSub->getStrokeWidth();
     bold = win->toolSub->getSelectState("bold");
@@ -37,7 +37,7 @@ void ShapeText::paint(QPainter* painter)
     auto hwnd = (HWND)container->winId();
     GetWindowRect(hwnd, &rectNative);
     auto img = container->grab().toImage();
-    auto win = (WinBox*)parent();
+    auto win = (WinBase*)parent();
     QPointF tl(rectNative.left - win->x, rectNative.top - win->y);
     QPointF rb(rectNative.right - win->x, rectNative.bottom - win->y);
     QRectF rect(tl,rb);
@@ -47,7 +47,7 @@ void ShapeText::paint(QPainter* painter)
 void ShapeText::mouseMove(QMouseEvent* event)
 {
     auto pos = event->position().toPoint();
-    auto win = (WinBox*)parent();
+    auto win = (WinBase*)parent();
     hoverDraggerIndex = -1;
     if (container->isVisible()) {
         if (!container->shapeTextInput->hasFocus()) {
@@ -57,13 +57,12 @@ void ShapeText::mouseMove(QMouseEvent* event)
     }
     else {
         if (container->ctrlRect.contains(pos)) {
-            state = ShapeState::temp;
-            //win->winBoard->refresh();
-            win->winCanvas->clear();
-            win->winCanvas->curShape = this;
-            container->show();
-            container->raise();
-            event->accept();
+            //state = ShapeState::temp;
+            //win->winCanvas->clear();
+            //win->winCanvas->curShape = this;
+            //container->show();
+            //container->raise();
+            //event->accept();
         }
     }
 }

@@ -5,7 +5,7 @@
 #include "ShapeNumber.h"
 #include "../App/App.h"
 #include "../Tool/ToolSub.h"
-#include "../Win/WinBox.h"
+#include "../Win/WinBase.h"
 #include "../Win/WinCanvas.h"
 
 namespace {
@@ -15,7 +15,7 @@ namespace {
 
 ShapeNumber::ShapeNumber(QObject* parent) : ShapeBase(parent)
 {
-    auto win = (WinBox*)parent;
+    auto win = (WinBase*)parent;
     prepareDraggers(1);
     isFill = win->toolSub->getSelectState("numberFill");
     color = win->toolSub->getColor();

@@ -53,10 +53,7 @@ void CutMask::mousePress(QMouseEvent* event)
 {
     auto win = (WinFull*)parent();
     posPress = event->pos();
-    if (win->state >= State::mask)
-    {
-        changeRectMask(posPress);
-    }
+    changeRectMask(posPress);
 }
 
 void CutMask::mouseDrag(QMouseEvent* event)

@@ -8,6 +8,7 @@
 
 class ToolMain;
 class ToolSub;
+class Canvas;
 class WinBase  : public QMainWindow
 {
 	Q_OBJECT
@@ -34,6 +35,7 @@ public:
 	State state;
 	ToolMain* toolMain;
 	ToolSub* toolSub;
+	Canvas* canvas;
 protected:
 	void initWindow();
 	void paintEvent(QPaintEvent* event) override;

@@ -4,11 +4,11 @@
 #include <QHBoxLayout>
 
 #include "../App/App.h"
+#include "../Win/WinBase.h"
 #include "ToolSub.h"
 #include "ToolMain.h"
 #include "StrokeCtrl.h"
 #include "ColorCtrl.h"
-#include "../Win/WinBase.h"
 #include "BtnCheck.h"
 
 ToolSub::ToolSub(QWidget* parent) : ToolBase(parent)
@@ -99,11 +99,13 @@ bool ToolSub::getSelectState(const QString& btnName)
 
 QColor ToolSub::getColor()
 {
+	auto colorCtrl = findChild<ColorCtrl*>();
     return colorCtrl->getColor();
 }
 
 int ToolSub::getStrokeWidth()
 {
+	auto strokeCtrl = findChild<StrokeCtrl*>();
     return strokeCtrl->value();
 }
 
