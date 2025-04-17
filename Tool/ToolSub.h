@@ -4,7 +4,6 @@
 
 class StrokeCtrl;
 class ColorCtrl;
-class WinBox;
 class ToolSub : public ToolBase
 {
 	Q_OBJECT

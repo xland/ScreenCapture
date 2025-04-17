@@ -10,6 +10,7 @@
 #include "../Win/WinBox.h"
 #include "../Win/WinPin.h"
 #include "../Win/WinFull.h"
+#include "../Win/CutMask.h"
 #include "ToolMain.h"
 #include "ToolSub.h"
 #include "Btn.h"
@@ -53,9 +54,10 @@ void ToolMain::confirmPos()
 {
     auto full = (WinFull*)parent();
     auto dpr = windowHandle()->devicePixelRatio();
-    auto br = full->mapToGlobal(full->rectMask.bottomRight());
-    auto tr = full->mapToGlobal(full->rectMask.topRight());
-    auto tl = full->mapToGlobal(full->rectMask.topLeft());
+    auto rectMask = full->cutMask->rectMask;
+    auto br = full->mapToGlobal(rectMask.bottomRight());
+    auto tr = full->mapToGlobal(rectMask.topRight());
+    auto tl = full->mapToGlobal(rectMask.topLeft());
     auto left { br.x() - width() };
     auto top { br.y() + 6 };
     auto heightSpan{ 6 * 3 + height() * 2 }; //三个缝隙，两个高度

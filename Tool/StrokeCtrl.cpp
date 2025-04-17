@@ -1,11 +1,11 @@
-#include <qpainter.h>
+#include <QPainter>
 #include <QWheelEvent>
-#include <qtooltip.h>
+#include <QToolTip>
 
 #include "../App/App.h"
-#include "StrokeCtrl.h"
 #include "../App/State.h"
 #include "../Win/WinBase.h"
+#include "StrokeCtrl.h"
 #include "ToolSub.h"
 
 StrokeCtrl::StrokeCtrl(int min, int max, int val, QWidget* parent)

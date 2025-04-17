@@ -1,16 +1,8 @@
 ﻿#pragma once
 
 #include <QWidget>
-#include <qpainter.h>
-#include <QMouseEvent>
-#include <QPoint>
-#include <QJsonDocument>
-#include <QJsonObject>
-#include <QJsonArray>
-#include <QJsonValue>
+#include <QPainter>
 
-class WinBox;
-class BtnBase;
 class BtnCheck;
 class Btn;
 class ToolBase : public QWidget

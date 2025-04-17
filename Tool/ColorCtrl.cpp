@@ -1,12 +1,10 @@
-#include <QPainter>
-#include <QMouseEvent>
-#include <QJsonArray>
 #include <QToolTip>
-#include "../App/Lang.h"
 
-#include "ColorCtrl.h"
+#include "../App/Lang.h"
 #include "../App/App.h"
 #include "../App/Util.h"
+#include "ColorCtrl.h"
+
 
 ColorCtrl::ColorCtrl(int selectIndex, QWidget* parent):selectedIndex{selectedIndex}
 {

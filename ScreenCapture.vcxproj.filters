@@ -80,7 +80,7 @@
     <ClCompile Include="Win\WinCanvas.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Win\WinMask.cpp">
+    <ClCompile Include="Win\CutMask.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Shape\ShapeRectBase.cpp">
@@ -126,6 +126,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Tool\BtnCheck.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Win\Canvas.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -198,7 +201,7 @@
     <QtMoc Include="Win\WinCanvas.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="Win\WinMask.h">
+    <QtMoc Include="Win\CutMask.h">
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="Shape\ShapeRectBase.h">
@@ -241,6 +244,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="Tool\BtnCheck.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Win\Canvas.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

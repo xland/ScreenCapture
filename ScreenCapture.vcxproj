@@ -143,6 +143,7 @@
     <ClCompile Include="Tool\BtnCheck.cpp" />
     <ClCompile Include="Tool\ColorCtrl.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Win\Canvas.cpp" />
     <ClCompile Include="Win\PixelInfo.cpp" />
     <ClCompile Include="Tool\StrokeCtrl.cpp" />
     <ClCompile Include="Tool\ToolBase.cpp" />
@@ -153,10 +154,11 @@
     <ClCompile Include="Win\WinBox.cpp" />
     <ClCompile Include="Win\WinCanvas.cpp" />
     <ClCompile Include="Win\WinFull.cpp" />
-    <ClCompile Include="Win\WinMask.cpp" />
+    <ClCompile Include="Win\CutMask.cpp" />
     <ClCompile Include="Win\WinPin.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <QtMoc Include="Win\Canvas.h" />
     <QtMoc Include="Tool\BtnCheck.h" />
     <QtMoc Include="Tool\Btn.h" />
     <QtMoc Include="Tool\BtnBase.h" />
@@ -164,7 +166,7 @@
     <QtMoc Include="App\Lang.h" />
     <ClInclude Include="App\Util.h" />
     <QtMoc Include="Win\WinBox.h" />
-    <QtMoc Include="Win\WinMask.h" />
+    <QtMoc Include="Win\CutMask.h" />
     <QtMoc Include="Win\WinCanvas.h" />
     <QtMoc Include="Win\WinBase.h" />
     <QtMoc Include="Tool\StrokeCtrl.h" />

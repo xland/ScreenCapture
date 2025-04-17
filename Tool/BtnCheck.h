@@ -1,6 +1,6 @@
 #pragma once
-#include "../App/State.h"
 #include "BtnBase.h"
+#include "../App/State.h"
 
 class BtnCheck : public BtnBase
 {

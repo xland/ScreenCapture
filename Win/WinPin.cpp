@@ -30,19 +30,19 @@ WinPin::~WinPin()
 
 void WinPin::init(WinFull* full)
 {
-    auto winPin = new WinPin();
-    winPin->prepareImg(full);
-    winPin->x = full->x + full->rectMask.left() - winPin->padding;
-    winPin->y = full->y + full->rectMask.top() - winPin->padding;
-    winPin->w = winPin->imgBg.width();
-    winPin->h = winPin->imgBg.height();
-    winPin->initWindow();
-    winPin->show();
-    //winPin->winBoard = new WinBoard(winPin);
-    winPin->winCanvas = new WinCanvas(winPin);
-    winPin->pixelInfo = new PixelInfo(winPin);
-    full->close();
-    SetFocus(winPin->hwnd);
+    //auto winPin = new WinPin();
+    //winPin->prepareImg(full);
+    //winPin->x = full->x + full->rectMask.left() - winPin->padding;
+    //winPin->y = full->y + full->rectMask.top() - winPin->padding;
+    //winPin->w = winPin->imgBg.width();
+    //winPin->h = winPin->imgBg.height();
+    //winPin->initWindow();
+    //winPin->show();
+    ////winPin->winBoard = new WinBoard(winPin);
+    //winPin->winCanvas = new WinCanvas(winPin);
+    //winPin->pixelInfo = new PixelInfo(winPin);
+    //full->close();
+    //SetFocus(winPin->hwnd);
 }
 
 void WinPin::showToolMain()
@@ -335,70 +335,10 @@ void WinPin::copyColor(const int& key)
 
 void WinPin::prepareImg(WinFull* full)
 {
-    auto tarImg = full->getCutImg();
-    imgBg = QImage(tarImg.size() + QSize(padding * 2, padding * 2), QImage::Format_ARGB32_Premultiplied);
-    imgBg.fill(Qt::transparent);
-    QPainter p(&imgBg);
-    p.setRenderHint(QPainter::Antialiasing);
-    p.setPen(Qt::NoPen);
-    QColor c(88, 88, 88, 88);
-    {
-        QRadialGradient gradient(QPointF(padding, padding), padding);
-        gradient.setColorAt(0.0, c);
-        gradient.setColorAt(1.0, Qt::transparent);
-        p.setBrush(gradient);
-        p.drawRect(0, 0, padding, padding);
-    }
-    {
-        QLinearGradient gradient(0, 0, 0, padding);
-        gradient.setColorAt(0.0, Qt::transparent);
-        gradient.setColorAt(1.0, c);
-        p.setBrush(gradient);
-        p.drawRect(padding, 0, tarImg.width(), padding);
-    }
-    {
-        QRadialGradient gradient(QPointF(padding + tarImg.width(), padding), padding);
-        gradient.setColorAt(0.0, c);
-        gradient.setColorAt(1.0, Qt::transparent);
-        p.setBrush(gradient);
-        p.drawRect(padding + tarImg.width(), 0, padding, padding);
-    }
-    {
-        QLinearGradient gradient(padding + tarImg.width(), 0, imgBg.width(), 0);
-        gradient.setColorAt(0.0, c);
-        gradient.setColorAt(1.0, Qt::transparent);
-        p.setBrush(gradient);
-        p.drawRect(padding+ tarImg.width(), padding, padding, tarImg.height());
-    }
-    {
-        QRadialGradient gradient(QPointF(padding + tarImg.width(), padding + tarImg.height()), padding);
-        gradient.setColorAt(0.0, c);
-        gradient.setColorAt(1.0, Qt::transparent);
-        p.setBrush(gradient);
-        p.drawRect(padding + tarImg.width(), padding + tarImg.height(), padding, padding);
-    }
-    {
-        QLinearGradient gradient(padding, padding+ tarImg.height(), padding, imgBg.height());
-        gradient.setColorAt(0.0, c);
-        gradient.setColorAt(1.0, Qt::transparent);
-        p.setBrush(gradient);
-        p.drawRect(padding, padding + tarImg.height(), tarImg.width(), padding);
-    }
-    {
-        QRadialGradient gradient(QPointF(padding, padding + tarImg.height()), padding);
-        gradient.setColorAt(0.0, c);
-        gradient.setColorAt(1.0, Qt::transparent);
-        p.setBrush(gradient);
-        p.drawRect(0, padding + tarImg.height(), padding, padding);
-    }
-    {
-        QLinearGradient gradient(0, 0, padding, 0);
-        gradient.setColorAt(0.0, Qt::transparent);
-        gradient.setColorAt(1.0, c);
-        p.setBrush(gradient);
-        p.drawRect(0, padding, padding, tarImg.height());
-    }
-	p.drawImage(padding, padding, tarImg);
+ //   auto tarImg = full->getCutImg();
+ //   imgBg = QImage(tarImg.size() + QSize(padding * 2, padding * 2), QImage::Format_ARGB32_Premultiplied);
+ //   imgBg.fill(Qt::transparent);    
+	//p.drawImage(padding, padding, tarImg);
 }
 
 void WinPin::trackMouse()

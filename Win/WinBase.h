@@ -30,7 +30,6 @@ public:
 	QImage imgBg;
 	QImage imgBoard;
 	QImage imgCanvas;
-	QPoint posPress;
 	HWND hwnd;
 	State state;
 	ToolMain* toolMain;

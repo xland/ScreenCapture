@@ -1,14 +1,14 @@
 ﻿#pragma once
 
 #include <QWidget>
-#include <qpainter.h>
+#include <QPainter>
 #include <QMouseEvent>
 #include <QPoint>
 
 
 #include "ToolBase.h"
 
-class WinBox;
+
 class BtnBase;
 class BtnCheck;
 class ToolMain : public ToolBase

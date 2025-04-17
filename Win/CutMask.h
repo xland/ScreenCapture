@@ -21,14 +21,12 @@ public:
 protected:
 private:
 	void changeRectMask(const QPoint& pos);
-	void changeMousePosState(const int& x, const int& y);
-	void changeMousePosState2(const int& x, const int& y);
-	void paintMaskRectInfo(QPainter& p);
-	void paintMaskRectBorder(QPainter& p);
+	void changeMouseState(const int& x, const int& y);
 	void moveMaskRect(const QPoint& pos);
 	void initWinRect();
 private:
 	QList<QRect> rectWins;
 	uint mouseState{ 0 };
 	QPoint posPress;
+	float maskStroke{ 1.5 };
 };
