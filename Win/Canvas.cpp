@@ -40,9 +40,9 @@ void Canvas::mousePress(QMouseEvent* event)
 
 void Canvas::mouseDrag(QMouseEvent* event)
 {
-    if (shapeCur) shapeCur->mouseDrag(event);
-    auto win = (WinBase*)parent();
-    win->update();
+    if (shapeCur) {
+        shapeCur->mouseDrag(event);
+    }
 }
 
 void Canvas::mouseRelease(QMouseEvent* event)
@@ -61,7 +61,10 @@ void Canvas::mouseMove(QMouseEvent* event)
 {
     for (int i = shapes.size() - 1; i >= 0; i--)
     {
-        shapes[i]->mouseMove(event);
+        auto flag = shapes[i]->mouseMove(event);
+        if (flag) {
+            return;
+        }
     }
 }
 
@@ -69,7 +72,9 @@ void Canvas::paint(QPainter& p)
 {
     if (shapeCur) {
         shapeCur->paint(&p);
-        shapeCur->paintDragger(&p);
+    }
+    if (shapeHover) {
+        shapeHover->paintDragger(&p);
     }
 }
 
@@ -122,25 +127,27 @@ void Canvas::addShape()
     shapes.push_back(shapeCur);
 }
 
-void Canvas::setCurShape(ShapeBase* shape)
+void Canvas::setHoverShape(ShapeBase* shape)
 {
     if (!timerDragger) {
         timerDragger = new QTimer(this);
         timerDragger->setInterval(800);
         timerDragger->setSingleShot(true);
         connect(timerDragger, &QTimer::timeout, [this]() {
-            if (shapeCur->hoverDraggerIndex != -1) {
+            if (shapeHover->hoverDraggerIndex != -1) {
                 timerDragger->start();
             }
             else {
-                shapeCur = nullptr;
+                qDebug() << "del shapeCur";
+                shapeHover = nullptr;
                 auto win = (WinBase*)parent();
                 win->update();
             }
             });
     }
-    if (shape != shapeCur) {
-        shapeCur = shape;
+    if (shape != shapeHover) {
+        qDebug() << "new shapeCur";
+        shapeHover = shape;
         auto win = (WinBase*)parent();
         win->update();
     }

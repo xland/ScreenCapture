@@ -83,7 +83,7 @@ bool ShapeRectBase::mouseMove(QMouseEvent* event)
         mouseOnShape(event);
     }
     if (hoverDraggerIndex > -1) {
-        win->canvas->setCurShape(this);
+        win->canvas->setHoverShape(this);
         return true;
     }
     else {
@@ -100,9 +100,12 @@ bool ShapeRectBase::mousePress(QMouseEvent* event)
         rightBottom = pressPos;
         return true;
     }
-    else if (hoverDraggerIndex >= 0) {
-        auto win = (WinBase*)parent();
-        win->canvas->removeShapeFromBoard(this);
+    if (hoverDraggerIndex >= 0) {
+        if (state == ShapeState::ready) {
+            auto win = (WinBase*)parent();
+            win->canvas->shapeCur = this;
+            win->canvas->removeShapeFromBoard(this);
+        }
         state = (ShapeState)((int)ShapeState::sizing0 + hoverDraggerIndex);
         pressPos = event->position();
         topLeft = shape.topLeft();
@@ -113,15 +116,14 @@ bool ShapeRectBase::mousePress(QMouseEvent* event)
 }
 void ShapeRectBase::mouseRelease(QMouseEvent* event)
 {
-    if (shape.isEmpty()) { //鼠标按下，没有拖拽，随即释放
-        deleteLater();
+    if (pressPos == event->position()) { //鼠标按下，没有拖拽，随即释放
         return;
     }
     if (state >= ShapeState::sizing0) {
         resetDragger();
         state = ShapeState::ready;
         auto win = (WinBase*)parent();
-        win->canvas->setCurShape(this);
+        win->canvas->setHoverShape(this);
     }
 }
 void ShapeRectBase::mouseDrag(QMouseEvent* event)

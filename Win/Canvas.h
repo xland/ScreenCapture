@@ -17,10 +17,11 @@ public:
 	void mouseRelease(QMouseEvent* event);
 	void mouseMove(QMouseEvent* event);
 	void paint(QPainter& p);
-	void setCurShape(ShapeBase* shape);
+	void setHoverShape(ShapeBase* shape);
 	void removeShapeFromBoard(ShapeBase* shape);
 public:
 	ShapeBase* shapeCur;
+	ShapeBase* shapeHover;
 private:
 	void addShape();
 private:
