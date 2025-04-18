@@ -66,18 +66,18 @@ void ShapeText::mouseMove(QMouseEvent* event)
         }
     }
 }
-void ShapeText::mousePress(QMouseEvent* event)
+bool ShapeText::mousePress(QMouseEvent* event)
 {
     if (!container) {
         container = new ShapeTextContainer(this);
         state = ShapeState::sizing0;
-        event->accept();
-        return;
+        return true;
     }
     if(hoverDraggerIndex == 8){
 		state = ShapeState::moving;
-		event->accept();
+        return true;
 	}
+    return false;
 }
 void ShapeText::mouseRelease(QMouseEvent* event)
 {

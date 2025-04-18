@@ -15,7 +15,7 @@ public:
     virtual void paintDragger(QPainter* painter) override;
     virtual void mouseMove(QMouseEvent* event) override;
     virtual void mouseDrag(QMouseEvent* event) override;
-    virtual void mousePress(QMouseEvent* event) override;
+    virtual bool mousePress(QMouseEvent* event) override;
     virtual void mouseRelease(QMouseEvent* event) override;
     virtual void mouseOnShape(QMouseEvent* event);
 public:

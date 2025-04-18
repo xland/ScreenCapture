@@ -53,7 +53,7 @@ void ShapeLineBase::mouseMove(QMouseEvent* event)
         event->accept();
     }
 }
-void ShapeLineBase::mousePress(QMouseEvent* event)
+bool ShapeLineBase::mousePress(QMouseEvent* event)
 {
     if (state == ShapeState::temp) {
         pressPos = event->position();
@@ -61,7 +61,7 @@ void ShapeLineBase::mousePress(QMouseEvent* event)
         state = (ShapeState)((int)ShapeState::sizing0 + 1);
         path.moveTo(pressPos);
         paintingPrepare();
-        event->accept();
+        return true;
     }
     else if (hoverDraggerIndex >= 0) {
         pressPos = event->position();
@@ -70,8 +70,9 @@ void ShapeLineBase::mousePress(QMouseEvent* event)
             pathStart.moveTo(pressPos);
         }
         paintingStart();
-        event->accept();
+        return true;
     }
+    return false;
 }
 void ShapeLineBase::mouseRelease(QMouseEvent* event)
 {

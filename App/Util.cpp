@@ -68,7 +68,7 @@ QImage Util::printScreen(const int& x, const int& y, const int& w, const int& h)
     HBITMAP hBitmap = CreateCompatibleBitmap(hScreen, w, h);
     DeleteObject(SelectObject(hDC, hBitmap));
     BOOL bRet = BitBlt(hDC, 0, 0, w, h, hScreen, x, y, SRCCOPY);
-    auto img = QImage(w, h, QImage::Format_ARGB32);
+    auto img = QImage(w, h, QImage::Format_ARGB32_Premultiplied);
     BITMAPINFO bmi = { sizeof(BITMAPINFOHEADER), (long)w, 0 - (long)h, 1, 32, BI_RGB, (DWORD)w * 4 * h, 0, 0, 0, 0 };
     GetDIBits(hDC, hBitmap, 0, h, img.bits(), &bmi, DIB_RGB_COLORS);
     DeleteDC(hDC);
@@ -86,7 +86,7 @@ QImage Util::printScreen()
     HBITMAP hBitmap = CreateCompatibleBitmap(hScreen, w, h);
     DeleteObject(SelectObject(hDC, hBitmap));
     BOOL bRet = BitBlt(hDC, 0, 0, w, h, hScreen, x, y, SRCCOPY);
-    auto img = QImage(w, h, QImage::Format_ARGB32);
+    auto img = QImage(w, h, QImage::Format_ARGB32_Premultiplied);
     BITMAPINFO bmi = { sizeof(BITMAPINFOHEADER), (long)w, 0 - (long)h, 1, 32, BI_RGB, (DWORD)w * 4 * h, 0, 0, 0, 0 };
     GetDIBits(hDC, hBitmap, 0, h, img.bits(), &bmi, DIB_RGB_COLORS);
     DeleteDC(hDC);

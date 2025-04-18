@@ -16,7 +16,7 @@ public:
     void paintDragger(QPainter* painter) override;
     void mouseMove(QMouseEvent* event) override;
     void mouseDrag(QMouseEvent* event) override;
-    void mousePress(QMouseEvent* event) override;
+    bool mousePress(QMouseEvent* event) override;
     void mouseRelease(QMouseEvent* event) override;
 public:
     QPainterPath shape;

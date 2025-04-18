@@ -90,20 +90,21 @@ void ShapeNumber::mouseMove(QMouseEvent* event)
         event->accept();
     }
 }
-void ShapeNumber::mousePress(QMouseEvent* event)
+bool ShapeNumber::mousePress(QMouseEvent* event)
 {
     if (state == ShapeState::temp) {
         startPos = event->position();
         state = ShapeState::sizing0;
         paintingPrepare();
-        event->accept();
+        return true;
     }
     else if (hoverDraggerIndex >= 0) {
         pressPos = event->position();
         state = (ShapeState)((int)ShapeState::sizing0 + hoverDraggerIndex);
         paintingStart();
-        event->accept();
+        return true;
     }
+    return false;
 }
 void ShapeNumber::mouseRelease(QMouseEvent* event)
 {

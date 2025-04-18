@@ -15,7 +15,7 @@ public:
     ~ShapeMosaicLine();
     void paint(QPainter* painter) override;
     void mouseRelease(QMouseEvent* event) override;
-    void mousePress(QMouseEvent* event) override;
+    bool mousePress(QMouseEvent* event) override;
 private:
     void erasePath(QImage* img);
     void createMosaicImg();

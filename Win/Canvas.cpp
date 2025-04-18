@@ -48,6 +48,7 @@ void Canvas::mouseRelease(QMouseEvent* event)
         if (s->state >= ShapeState::sizing0) {
             auto win = (WinBase*)parent();
             QPainter p(&win->imgBoard);
+            p.setRenderHint(QPainter::Antialiasing, true);
             s->mouseRelease(event);
             s->paint(&p);
             win->update();

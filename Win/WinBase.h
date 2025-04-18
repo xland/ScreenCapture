@@ -3,12 +3,14 @@
 #include <QMainWindow>
 #include <QMouseEvent>
 #include <QImage>
+#include <QTimer>
 
 #include "../App/State.h"
 
 class ToolMain;
 class ToolSub;
 class Canvas;
+class ShapeBase;
 class WinBase  : public QMainWindow
 {
 	Q_OBJECT
@@ -25,6 +27,7 @@ public:
 	QImage grab(const QRect& rect);
 	void raise();
 	void move(const int& x, const int& y);
+	void setCurShape(ShapeBase* shape);
 	virtual void close();
 public:
 	int x, y, w, h;
@@ -37,6 +40,8 @@ public:
 	ToolSub* toolSub;
 	Canvas* canvas;
 protected:
+	ShapeBase* shapeCur;
+protected:
 	void initWindow();
 	void paintEvent(QPaintEvent* event) override;
 	virtual void mousePress(QMouseEvent* event){};
@@ -46,4 +51,5 @@ protected:
 	virtual void mouseDrag(QMouseEvent* event){};
 	virtual void mouseRelease(QMouseEvent* event){};
 private:
+	QTimer* timerDragger;
 };

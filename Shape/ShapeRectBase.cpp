@@ -34,6 +34,7 @@ void ShapeRectBase::paintDragger(QPainter* painter)
     QPen pen;
     pen.setColor(Qt::black);
     pen.setWidth(1);
+    painter->setPen(pen);
     painter->setBrush(Qt::NoBrush);
     for (int i = 0; i < draggers.size(); i++)
     {
@@ -88,7 +89,7 @@ void ShapeRectBase::mouseMove(QMouseEvent* event)
         win->setCursor(Qt::CrossCursor);
     }
 }
-void ShapeRectBase::mousePress(QMouseEvent* event)
+bool ShapeRectBase::mousePress(QMouseEvent* event)
 {
     if (state == ShapeState::temp) {
         state = (ShapeState)((int)ShapeState::sizing0 + 4);
@@ -96,7 +97,7 @@ void ShapeRectBase::mousePress(QMouseEvent* event)
         topLeft = pressPos;
         rightBottom = pressPos;
         paintingPrepare();
-        event->accept();
+        return true;
     }
     else if (hoverDraggerIndex >= 0) {
         state = (ShapeState)((int)ShapeState::sizing0 + hoverDraggerIndex);
@@ -104,8 +105,9 @@ void ShapeRectBase::mousePress(QMouseEvent* event)
         topLeft = shape.topLeft();
         rightBottom = shape.bottomRight();
         paintingStart();
-        event->accept();
+        return true;
     }
+    return false;
 }
 void ShapeRectBase::mouseRelease(QMouseEvent* event)
 {
@@ -115,8 +117,9 @@ void ShapeRectBase::mouseRelease(QMouseEvent* event)
     }
     if (state >= ShapeState::sizing0) {
         resetDragger();
-        showDragger();
         state = ShapeState::ready;
+        auto win = (WinBase*)parent();
+        win->setCurShape(this);
     }
 }
 
@@ -171,8 +174,8 @@ void ShapeRectBase::mouseDrag(QMouseEvent* event)
             shape.setWidth(shape.height());
         }
     }
-    painting();
-    event->accept();
+    auto win = (WinBase*)parent();
+    win->update();
 }
 void ShapeRectBase::mouseOnShape(QMouseEvent* event)
 {
@@ -183,6 +186,7 @@ void ShapeRectBase::mouseOnShape(QMouseEvent* event)
     if (outerRect.contains(pos) && !innerRect.contains(pos)) {
         hoverDraggerIndex = 8;
         auto win = (WinBase*)parent();
+        win->setCurShape(this);
         win->setCursor(Qt::SizeAllCursor);
     }
 }

@@ -13,16 +13,8 @@ ShapeBase::~ShapeBase()
 
 void ShapeBase::showDragger()
 {
-	auto win = (WinBase*)parent();
-	//if (state == ShapeState::ready && this == win->winCanvas->curShape) {
-	//	//避免鼠标在ready的shape上移动的时候不断的重绘
-	//	return;
-	//}
-	//if (state != ShapeState::ready) {
-	//	state = ShapeState::ready;
-	//}
-	//win->winCanvas->curShape = this;
-	//win->winCanvas->paintDragger();
+	//auto win = (WinBase*)parent();
+	
 }
 
 void ShapeBase::paintOnBoard()

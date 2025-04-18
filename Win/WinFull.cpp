@@ -50,9 +50,14 @@ void WinFull::init()
 void WinFull::paintEvent(QPaintEvent* event)
 {
     QPainter p(this);
+    p.setRenderHint(QPainter::Antialiasing, true);
+    p.setRenderHint(QPainter::TextAntialiasing, true);
     p.drawImage(0, 0, imgBg);
     p.drawImage(0, 0, imgBoard);
     canvas->paint(p);
+    if (shapeCur) {
+        shapeCur->paintDragger(&p);
+    }
     cutMask->paint(p);
 }
 

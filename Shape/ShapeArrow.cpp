@@ -87,20 +87,21 @@ void ShapeArrow::mouseMove(QMouseEvent* event)
         event->accept();
     }
 }
-void ShapeArrow::mousePress(QMouseEvent* event)
+bool ShapeArrow::mousePress(QMouseEvent* event)
 {
     if (state == ShapeState::temp) {
         startPos = event->position();
         state = (ShapeState)((int)ShapeState::sizing0 + 1);
         paintingPrepare();
-        event->accept();
+        return true;
     }
     else if(hoverDraggerIndex >= 0) {
         pressPos = event->position();
         state = (ShapeState)((int)ShapeState::sizing0 + hoverDraggerIndex);
         paintingStart();
-        event->accept();
+        return true;
     }
+    return false;
 }
 void ShapeArrow::mouseRelease(QMouseEvent* event)
 {

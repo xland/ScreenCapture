@@ -82,7 +82,7 @@ void ShapeMosaicLine::mouseRelease(QMouseEvent* event)
     event->accept();
 }
 
-void ShapeMosaicLine::mousePress(QMouseEvent* event)
+bool ShapeMosaicLine::mousePress(QMouseEvent* event)
 {
     if (state == ShapeState::temp) {
         pressPos = event->position();
@@ -90,7 +90,7 @@ void ShapeMosaicLine::mousePress(QMouseEvent* event)
         state = (ShapeState)((int)ShapeState::sizing0 + 1);
         path.moveTo(pressPos);
         paintingPrepare();
-        event->accept();
+        return true;
     }
     else if (hoverDraggerIndex >= 0) {
         imgPatch = QImage();
@@ -101,8 +101,9 @@ void ShapeMosaicLine::mousePress(QMouseEvent* event)
             pathStart.moveTo(pressPos);
         }
         paintingStart();
-        event->accept();
+        return true;
     }
+    return false;
 }
 
 void ShapeMosaicLine::erasePath(QImage* img)
