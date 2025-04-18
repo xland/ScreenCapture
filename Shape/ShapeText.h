@@ -22,7 +22,7 @@ public:
     ShapeTextContainer* container;
 protected:
     void paint(QPainter* painter) override;
-    void mouseMove(QMouseEvent* event) override;
+    bool mouseMove(QMouseEvent* event) override;
     bool mousePress(QMouseEvent* event) override;
     void mouseRelease(QMouseEvent* event) override;
 private:

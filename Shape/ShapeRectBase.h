@@ -13,7 +13,7 @@ public:
     virtual ~ShapeRectBase();
     virtual void paint(QPainter* painter) = 0;
     virtual void paintDragger(QPainter* painter) override;
-    virtual void mouseMove(QMouseEvent* event) override;
+    virtual bool mouseMove(QMouseEvent* event) override;
     virtual void mouseDrag(QMouseEvent* event) override;
     virtual bool mousePress(QMouseEvent* event) override;
     virtual void mouseRelease(QMouseEvent* event) override;

@@ -27,33 +27,33 @@ Canvas::~Canvas()
 
 void Canvas::mousePress(QMouseEvent* event)
 {
-    auto shape = addShape();
-    shape->mousePress(event); //不然新添加的Shape收不到鼠标按下事件
+    for (int i = shapes.size() - 1; i >= 0; i--)
+    {
+        auto flag = shapes[i]->mousePress(event);
+        if (flag) {
+            return;
+        }
+    }
+    addShape();
+    shapeCur->mousePress(event);
 }
 
 void Canvas::mouseDrag(QMouseEvent* event)
 {
-    for (int i = shapes.size() - 1; i >= 0; i--)
-    {
-        shapes[i]->mouseDrag(event);
-    }
+    if (shapeCur) shapeCur->mouseDrag(event);
     auto win = (WinBase*)parent();
     win->update();
 }
 
 void Canvas::mouseRelease(QMouseEvent* event)
 {
-    for (auto& s:shapes)
-    {
-        if (s->state >= ShapeState::sizing0) {
-            auto win = (WinBase*)parent();
-            QPainter p(&win->imgBoard);
-            p.setRenderHint(QPainter::Antialiasing, true);
-            s->mouseRelease(event);
-            s->paint(&p);
-            win->update();
-            break;
-        }
+    if (shapeCur) {
+        auto win = (WinBase*)parent();
+        QPainter p(&win->imgBoard);
+        p.setRenderHint(QPainter::Antialiasing, true);
+        shapeCur->mouseRelease(event);
+        shapeCur->paint(&p);
+        win->update();
     }
 }
 
@@ -67,61 +67,95 @@ void Canvas::mouseMove(QMouseEvent* event)
 
 void Canvas::paint(QPainter& p)
 {
-    if (shapes.size() > 0) {
-        auto shape = shapes[shapes.size() - 1];
-        if (shape->state >= ShapeState::sizing0) {
-            shape->paint(&p);
-        }
+    if (shapeCur) {
+        shapeCur->paint(&p);
+        shapeCur->paintDragger(&p);
     }
 }
 
-ShapeBase* Canvas::addShape()
+void Canvas::addShape()
 {
-    ShapeBase* shape;
     auto win = (WinBase*)parent();
     if (win->state == State::rect) {
-        shape = new ShapeRect(win);
+        shapeCur = new ShapeRect(win);
     }
     else if (win->state == State::ellipse) {
-        shape = new ShapeEllipse(win);
+        shapeCur = new ShapeEllipse(win);
     }
     else if (win->state == State::arrow) {
-        shape = new ShapeArrow(win);
+        shapeCur = new ShapeArrow(win);
     }
     else if (win->state == State::number) {
-        shape = new ShapeNumber(win);
+        shapeCur = new ShapeNumber(win);
     }
     else if (win->state == State::line) {
-        shape = new ShapeLine(win);
+        shapeCur = new ShapeLine(win);
     }
     else if (win->state == State::text) {
-        shape = new ShapeText(win);
+        shapeCur = new ShapeText(win);
     }
     else if (win->state == State::mosaic) {
         auto isRect = win->toolSub->getSelectState("mosaicFill");
         if (isRect) {
-            shape = new ShapeMosaicRect(win);
+            shapeCur = new ShapeMosaicRect(win);
         }
         else {
-            shape = new ShapeMosaicLine(win);
+            shapeCur = new ShapeMosaicLine(win);
         }
     }
     else if (win->state == State::eraser) {
         auto isRect = win->toolSub->getSelectState("eraserFill");
         if (isRect) {
-            shape = new ShapeEraserRect(win);
+            shapeCur = new ShapeEraserRect(win);
         }
         else {
-            shape = new ShapeEraserLine(win);
+            shapeCur = new ShapeEraserLine(win);
         }
     }
     else
     {
-        return nullptr;
+        return;
     }
-    connect(shape, &QObject::destroyed, [this](QObject* obj) {
-        shapes.removeOne(obj); //先执行析构函数，再执行此方法
-        });
-    shapes.push_back(shape);
-    return shape;
+    //connect(shape, &QObject::destroyed, [this](QObject* obj) {
+    //    shapes.removeOne(obj); //先执行析构函数，再执行此方法
+    //    });
+    shapes.push_back(shapeCur);
+}
+
+void Canvas::setCurShape(ShapeBase* shape)
+{
+    if (!timerDragger) {
+        timerDragger = new QTimer(this);
+        timerDragger->setInterval(800);
+        timerDragger->setSingleShot(true);
+        connect(timerDragger, &QTimer::timeout, [this]() {
+            if (shapeCur->hoverDraggerIndex != -1) {
+                timerDragger->start();
+            }
+            else {
+                shapeCur = nullptr;
+                auto win = (WinBase*)parent();
+                win->update();
+            }
+            });
+    }
+    if (shape != shapeCur) {
+        shapeCur = shape;
+        auto win = (WinBase*)parent();
+        win->update();
+    }
+    timerDragger->start();
+}
+
+void Canvas::removeShapeFromBoard(ShapeBase* shape)
+{
+    auto win = (WinBase*)parent();
+    win->imgBoard.fill(Qt::transparent);
+    QPainter p(&win->imgBoard);
+    p.setRenderHint(QPainter::Antialiasing, true);
+    for (auto& s : shapes)
+    {
+        if (shape == s) continue;
+        s->paint(&p);
+    }
 }

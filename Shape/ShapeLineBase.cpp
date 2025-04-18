@@ -33,9 +33,9 @@ void ShapeLineBase::paintDragger(QPainter* painter)
     painter->drawRect(draggers[0]);
     painter->drawRect(draggers[1]);
 }
-void ShapeLineBase::mouseMove(QMouseEvent* event)
+bool ShapeLineBase::mouseMove(QMouseEvent* event)
 {
-    if (state != ShapeState::ready) return;  //!isStraight || 
+    if (state != ShapeState::ready) return true;  //!isStraight || 
     auto pos = event->pos();
     hoverDraggerIndex = -1;
     if (draggers[0].contains(pos)) {
@@ -52,6 +52,7 @@ void ShapeLineBase::mouseMove(QMouseEvent* event)
         showDragger();
         event->accept();
     }
+    return false;
 }
 bool ShapeLineBase::mousePress(QMouseEvent* event)
 {

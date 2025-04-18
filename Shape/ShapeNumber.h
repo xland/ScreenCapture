@@ -14,7 +14,7 @@ public:
     ~ShapeNumber();
     virtual void paint(QPainter* painter) override;
     void paintDragger(QPainter* painter) override;
-    void mouseMove(QMouseEvent* event) override;
+    bool mouseMove(QMouseEvent* event) override;
     void mouseDrag(QMouseEvent* event) override;
     bool mousePress(QMouseEvent* event) override;
     void mouseRelease(QMouseEvent* event) override;

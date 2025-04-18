@@ -74,9 +74,9 @@ void ShapeNumber::paintDragger(QPainter* painter)
     painter->setBrush(Qt::NoBrush);
     painter->drawRect(draggers[0]);
 }
-void ShapeNumber::mouseMove(QMouseEvent* event)
+bool ShapeNumber::mouseMove(QMouseEvent* event)
 {
-    if (state != ShapeState::ready) return;
+    if (state != ShapeState::ready) return true;
     auto pos = event->pos();
     hoverDraggerIndex = -1;
     if (draggers[0].contains(pos)) {
@@ -89,6 +89,7 @@ void ShapeNumber::mouseMove(QMouseEvent* event)
         QGuiApplication::setOverrideCursor(Qt::SizeAllCursor);
         event->accept();
     }
+    return false;
 }
 bool ShapeNumber::mousePress(QMouseEvent* event)
 {

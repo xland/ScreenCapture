@@ -67,9 +67,9 @@ void ShapeArrow::paintDragger(QPainter* painter)
     painter->drawRect(draggers[0]);
     painter->drawRect(draggers[1]);
 }
-void ShapeArrow::mouseMove(QMouseEvent* event)
+bool ShapeArrow::mouseMove(QMouseEvent* event)
 {
-    if (state != ShapeState::ready) return;
+    if (state != ShapeState::ready) return true;
     auto pos = event->pos();
     hoverDraggerIndex = -1;
     if (draggers[0].contains(pos)) {
@@ -86,6 +86,7 @@ void ShapeArrow::mouseMove(QMouseEvent* event)
         showDragger();
         event->accept();
     }
+    return false;
 }
 bool ShapeArrow::mousePress(QMouseEvent* event)
 {

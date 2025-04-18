@@ -41,30 +41,6 @@ void WinBase::move(const int& x, const int& y)
     this->y = y;
     SetWindowPos(hwnd, nullptr, x, y, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
 }
-
-void WinBase::setCurShape(ShapeBase* shape)
-{
-    if (!timerDragger) {
-        timerDragger = new QTimer(this);
-        timerDragger->setInterval(800);
-        timerDragger->setSingleShot(true);
-        connect(timerDragger, &QTimer::timeout, [this]() {
-            if (shapeCur->hoverDraggerIndex != -1) {
-                timerDragger->start();
-            }
-            else {
-                shapeCur = nullptr;
-                update();
-            }
-            });
-    }
-    if (shape != shapeCur) {
-        shapeCur = shape;
-        update();
-    }
-    timerDragger->start();    
-}
-
 void WinBase::close()
 {
     PostMessage(hwnd, WM_CLOSE, 0, 0);

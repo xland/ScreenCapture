@@ -13,7 +13,7 @@ public:
     virtual ~ShapeBase();
     virtual void paint(QPainter* painter) = 0;
     virtual void paintDragger(QPainter* painter) {};
-    virtual void mouseMove(QMouseEvent* event) = 0;
+    virtual bool mouseMove(QMouseEvent* event) { return false; };
     virtual void mouseDrag(QMouseEvent* event) {};
     virtual bool mousePress(QMouseEvent* event) { return false; };
     virtual void mouseRelease(QMouseEvent* event) {};

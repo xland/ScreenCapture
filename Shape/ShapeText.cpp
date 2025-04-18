@@ -44,7 +44,7 @@ void ShapeText::paint(QPainter* painter)
     painter->drawImage(rect, img);
     container->painting = false;
 }
-void ShapeText::mouseMove(QMouseEvent* event)
+bool ShapeText::mouseMove(QMouseEvent* event)
 {
     auto pos = event->position().toPoint();
     auto win = (WinBase*)parent();
@@ -65,6 +65,7 @@ void ShapeText::mouseMove(QMouseEvent* event)
             //event->accept();
         }
     }
+    return false;
 }
 bool ShapeText::mousePress(QMouseEvent* event)
 {

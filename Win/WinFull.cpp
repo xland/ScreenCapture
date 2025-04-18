@@ -55,9 +55,6 @@ void WinFull::paintEvent(QPaintEvent* event)
     p.drawImage(0, 0, imgBg);
     p.drawImage(0, 0, imgBoard);
     canvas->paint(p);
-    if (shapeCur) {
-        shapeCur->paintDragger(&p);
-    }
     cutMask->paint(p);
 }
 

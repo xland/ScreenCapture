@@ -3,6 +3,7 @@
 #include <QObject>
 #include <QPainter>
 #include <QPaintEvent>
+#include <QTimer>
 
 class ShapeBase;
 class Canvas  : public QObject
@@ -16,8 +17,13 @@ public:
 	void mouseRelease(QMouseEvent* event);
 	void mouseMove(QMouseEvent* event);
 	void paint(QPainter& p);
+	void setCurShape(ShapeBase* shape);
+	void removeShapeFromBoard(ShapeBase* shape);
+public:
+	ShapeBase* shapeCur;
 private:
-	ShapeBase* addShape();
+	void addShape();
 private:
 	QList<ShapeBase*> shapes;
+	QTimer* timerDragger;
 };

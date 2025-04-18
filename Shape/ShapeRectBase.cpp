@@ -4,7 +4,7 @@
 #include "../App/App.h"
 #include "../Tool/ToolSub.h"
 #include "../Win/WinBase.h"
-#include "../Win/WinCanvas.h"
+#include "../Win/Canvas.h"
 
 ShapeRectBase::ShapeRectBase(QObject* parent) : ShapeBase(parent)
 {
@@ -30,7 +30,7 @@ void ShapeRectBase::resetDragger()
 }
 void ShapeRectBase::paintDragger(QPainter* painter)
 {
-    if (draggers.empty()) return;
+    if (state != ShapeState::ready) return;
     QPen pen;
     pen.setColor(Qt::black);
     pen.setWidth(1);
@@ -41,9 +41,9 @@ void ShapeRectBase::paintDragger(QPainter* painter)
         painter->drawRect(draggers[i]);
     }
 }
-void ShapeRectBase::mouseMove(QMouseEvent* event)
+bool ShapeRectBase::mouseMove(QMouseEvent* event)
 {
-    if (state != ShapeState::ready) return;
+    if (state != ShapeState::ready) return true;
     auto win = (WinBase*)parent();
     auto pos = event->pos();
     hoverDraggerIndex = -1;
@@ -83,10 +83,12 @@ void ShapeRectBase::mouseMove(QMouseEvent* event)
         mouseOnShape(event);
     }
     if (hoverDraggerIndex > -1) {
-        showDragger();
+        win->canvas->setCurShape(this);
+        return true;
     }
     else {
         win->setCursor(Qt::CrossCursor);
+        return false;
     }
 }
 bool ShapeRectBase::mousePress(QMouseEvent* event)
@@ -96,15 +98,15 @@ bool ShapeRectBase::mousePress(QMouseEvent* event)
         pressPos = event->position();
         topLeft = pressPos;
         rightBottom = pressPos;
-        paintingPrepare();
         return true;
     }
     else if (hoverDraggerIndex >= 0) {
+        auto win = (WinBase*)parent();
+        win->canvas->removeShapeFromBoard(this);
         state = (ShapeState)((int)ShapeState::sizing0 + hoverDraggerIndex);
         pressPos = event->position();
         topLeft = shape.topLeft();
         rightBottom = shape.bottomRight();
-        paintingStart();
         return true;
     }
     return false;
@@ -119,10 +121,9 @@ void ShapeRectBase::mouseRelease(QMouseEvent* event)
         resetDragger();
         state = ShapeState::ready;
         auto win = (WinBase*)parent();
-        win->setCurShape(this);
+        win->canvas->setCurShape(this);
     }
 }
-
 void ShapeRectBase::mouseDrag(QMouseEvent* event)
 {
     if (state == ShapeState::ready) {
@@ -186,7 +187,6 @@ void ShapeRectBase::mouseOnShape(QMouseEvent* event)
     if (outerRect.contains(pos) && !innerRect.contains(pos)) {
         hoverDraggerIndex = 8;
         auto win = (WinBase*)parent();
-        win->setCurShape(this);
         win->setCursor(Qt::SizeAllCursor);
     }
 }
