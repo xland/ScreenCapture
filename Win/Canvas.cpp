@@ -138,7 +138,6 @@ void Canvas::setHoverShape(ShapeBase* shape)
                 timerDragger->start();
             }
             else {
-                qDebug() << "del shapeCur";
                 shapeHover = nullptr;
                 auto win = (WinBase*)parent();
                 win->update();
@@ -146,7 +145,6 @@ void Canvas::setHoverShape(ShapeBase* shape)
             });
     }
     if (shape != shapeHover) {
-        qDebug() << "new shapeCur";
         shapeHover = shape;
         auto win = (WinBase*)parent();
         win->update();
