@@ -31,17 +31,11 @@ ShapeText::~ShapeText()
 
 void ShapeText::paint(QPainter* painter)
 {
-    container->painting = true;
-    RECT rectNative;
-    auto hwnd = (HWND)container->winId();
-    GetWindowRect(hwnd, &rectNative);
-    auto img = container->grab().toImage();
+    if (state != ShapeState::ready) return;
+    auto img = container->shapeTextInput->grab().toImage();
     auto win = (WinBase*)parent();
-    QPointF tl(rectNative.left - win->x, rectNative.top - win->y);
-    QPointF rb(rectNative.right - win->x, rectNative.bottom - win->y);
-    QRectF rect(tl,rb);
-    painter->drawImage(rect, img);
-    container->painting = false;
+    img.setDevicePixelRatio(win->devicePixelRatio());
+    painter->drawImage(container->pos(), img);
 }
 bool ShapeText::mouseMove(QMouseEvent* event)
 {
@@ -54,7 +48,7 @@ bool ShapeText::mouseMove(QMouseEvent* event)
         }
     }
     else {
-        if (container->ctrlRect.contains(pos)) {
+        if (container->geometry().contains(pos)) {
             //state = ShapeState::temp;
             //win->winCanvas->clear();
             //win->winCanvas->curShape = this;
@@ -80,5 +74,5 @@ bool ShapeText::mousePress(QMouseEvent* event)
 }
 bool ShapeText::mouseRelease(QMouseEvent* event)
 {
-    state = ShapeState::ready; return false;
+    return true;
 }

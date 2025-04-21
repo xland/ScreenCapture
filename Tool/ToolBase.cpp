@@ -22,7 +22,8 @@ ToolBase::ToolBase(QWidget* parent) : QWidget(parent)
     setAttribute(Qt::WA_Hover);
     setCursor(Qt::PointingHandCursor);
     //setFocusPolicy(Qt::FocusPolicy::StrongFocus);
-    setWindowFlag(Qt::WindowDoesNotAcceptFocus);   //右键Pin菜单，要点两次才会出现
+    //setWindowFlag(Qt::WindowDoesNotAcceptFocus);   //右键Pin菜单，要点两次才会出现
+    setFocusPolicy(Qt::StrongFocus);
 }
 ToolBase::~ToolBase()
 {

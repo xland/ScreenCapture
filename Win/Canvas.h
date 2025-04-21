@@ -19,6 +19,7 @@ public:
 	void paint(QPainter& p);
 	void setHoverShape(ShapeBase* shape);
 	void removeShapeFromBoard(ShapeBase* shape);
+	void paintShapeOnBoard(ShapeBase* shape);
 public:
 	ShapeBase* shapeCur;
 	ShapeBase* shapeHover;

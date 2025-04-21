@@ -8,6 +8,7 @@ name{name},icon{icon}
 	setMouseTracking(true);
 	setAttribute(Qt::WA_Hover);
 	setCursor(Qt::PointingHandCursor);
+	setFocusPolicy(Qt::StrongFocus);
 	setFixedSize(32, 28);
 }
 

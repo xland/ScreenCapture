@@ -40,30 +40,16 @@ ShapeTextContainer::~ShapeTextContainer()
 {
 }
 
-void ShapeTextContainer::setNativeRect()
-{
-	RECT r;
-	GetWindowRect((HWND)winId(), &r);
-	POINT lt{ .x{r.left},.y{r.top} };
-	POINT rb{ .x{r.right},.y{r.bottom} };
-	auto win = (WinBase*)shapeText->parent();
-	ScreenToClient(win->hwnd,&lt);
-	ScreenToClient(win->hwnd,&rb);
-	ctrlRect = QRect(QPoint(lt.x, lt.y+8), QPoint(rb.x, rb.y));
-}
-
 void ShapeTextContainer::adjustSize()
 {
 	auto doc = shapeTextInput->document();
 	doc->adjustSize();
 	setFixedSize(doc->size().toSize()+QSize(6,6));
-	setNativeRect();
 }
 
 void ShapeTextContainer::paintEvent(QPaintEvent* event)
 {
 	QWidget::paintEvent(event);
-	if (painting) return;
 	QPainter painter(this);
 	painter.setRenderHint(QPainter::Antialiasing, true);
 	painter.setBrush(QColor(0, 0, 0,1));
@@ -82,7 +68,8 @@ void ShapeTextContainer::paintEvent(QPaintEvent* event)
 
 void ShapeTextContainer::mouseMoveEvent(QMouseEvent* event)
 {
-	QGuiApplication::setOverrideCursor(Qt::SizeAllCursor);
+	auto win = (WinBase*)window();
+	win->setCursor(Qt::SizeAllCursor);
 	if (isPress) {
 		auto pos = QCursor::pos();
 		auto span = pos - pressPos;
@@ -100,6 +87,5 @@ void ShapeTextContainer::mousePressEvent(QMouseEvent* event)
 
 void ShapeTextContainer::mouseReleaseEvent(QMouseEvent* event)
 {
-	setNativeRect();
 	isPress = false;
 }

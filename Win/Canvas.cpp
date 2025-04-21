@@ -45,24 +45,6 @@ void Canvas::mouseDrag(QMouseEvent* event)
     }
 }
 
-void Canvas::mouseRelease(QMouseEvent* event)
-{
-    if (shapeCur) {
-        auto flag = shapeCur->mouseRelease(event);
-        if (flag) {
-            auto win = (WinBase*)parent();
-            QPainter p(&win->imgBoard);
-            p.setRenderHint(QPainter::Antialiasing, true);
-            shapeCur->paint(&p);
-            win->update();
-            shapes.push_back(shapeCur);
-            shapeCur = nullptr;
-        } else {
-            shapeCur->deleteLater();
-        }
-    }
-}
-
 void Canvas::mouseMove(QMouseEvent* event)
 {
     for (int i = shapes.size() - 1; i >= 0; i--)
@@ -70,6 +52,24 @@ void Canvas::mouseMove(QMouseEvent* event)
         auto flag = shapes[i]->mouseMove(event);
         if (flag) {
             return;
+        }
+    }
+}
+
+void Canvas::mouseRelease(QMouseEvent* event)
+{
+    if (shapeCur) {
+        auto flag = shapeCur->mouseRelease(event);
+        if (flag) {
+            auto win = (WinBase*)parent();
+            if (win->state == State::text) {
+                return;
+            }
+            paintShapeOnBoard(shapeCur);
+            shapeCur = nullptr;
+        }
+        else {
+            shapeCur->deleteLater();
         }
     }
 }
@@ -167,4 +167,14 @@ void Canvas::removeShapeFromBoard(ShapeBase* shape)
         s->paint(&p);
     }
     shapeCur = shape; //这行主要是为了显示Dragger
+}
+
+void Canvas::paintShapeOnBoard(ShapeBase* shape)
+{
+    auto win = (WinBase*)parent();
+    QPainter p(&win->imgBoard);
+    p.setRenderHint(QPainter::Antialiasing, true);
+    shape->paint(&p);
+    win->update();
+    shapes.push_back(shape);
 }

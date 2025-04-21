@@ -2,7 +2,8 @@
 #include <Windows.h>
 #include <QTimer>
 #include <QWindow>
-#include "../Win/WinBase.h"
+#include "Win/WinBase.h"
+#include "Win/Canvas.h"
 
 #include "ShapeTextInput.h"
 #include "ShapeText.h"
@@ -41,11 +42,15 @@ void ShapeTextInput::focusOutEvent(QFocusEvent* event)
 		auto cursor = textCursor();
 		cursor.clearSelection();
 		setTextCursor(cursor);
-		p->hide();
-
 		if (document()->toPlainText().trimmed().isEmpty()) 
 		{ 
 			shapeText->deleteLater(); 
+		}
+		else {
+			p->hide();
+			shapeText->state = ShapeState::ready;
+			auto win = (WinBase*)shapeText->parent();
+			win->canvas->paintShapeOnBoard(shapeText);
 		}
 	});
 }
@@ -53,7 +58,7 @@ void ShapeTextInput::focusOutEvent(QFocusEvent* event)
 void ShapeTextInput::mouseMoveEvent(QMouseEvent* event)
 {
 	QTextEdit::mouseMoveEvent(event);
-	QGuiApplication::setOverrideCursor(Qt::IBeamCursor);
+	setCursor(Qt::IBeamCursor);
 }
 
 void ShapeTextInput::paintEvent(QPaintEvent* event)

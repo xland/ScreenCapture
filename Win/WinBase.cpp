@@ -15,6 +15,7 @@ WinBase::~WinBase()
 }
 void WinBase::initWindow()
 {
+    setFocusPolicy(Qt::StrongFocus);
     setGeometry(x, y, w, h);
     setWindowFlag(Qt::FramelessWindowHint);
     show();

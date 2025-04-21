@@ -252,10 +252,10 @@ void WinPin::mouseRelease(QMouseEvent* event)
         {
             auto shapeText = qobject_cast<ShapeText*>(shapes[i]);
             if (shapeText) {
-                auto hwnd = (HWND)shapeText->container->winId();
-                auto xx = x + shapeText->container->ctrlRect.x();
-                auto yy = y + shapeText->container->ctrlRect.y()-8;
-                SetWindowPos(hwnd, nullptr, xx, yy, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
+                //auto hwnd = (HWND)shapeText->container->winId();
+                //auto xx = x + shapeText->container->ctrlRect.x();
+                //auto yy = y + shapeText->container->ctrlRect.y()-8;
+                //SetWindowPos(hwnd, nullptr, xx, yy, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
             }
         }
     }

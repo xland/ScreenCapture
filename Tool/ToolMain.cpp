@@ -114,7 +114,12 @@ void ToolMain::btnCheckChange(BtnCheck* btn)
         }
 	}
     win->state = btn->state;
-    win->setCursor(Qt::CrossCursor);
+    if (btn->state == State::text) {
+        win->setCursor(Qt::IBeamCursor);
+    }
+    else {
+        win->setCursor(Qt::CrossCursor);
+    }    
 	win->toolSub = new ToolSub(win);
     update();
 }
