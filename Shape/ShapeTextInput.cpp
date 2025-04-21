@@ -41,7 +41,6 @@ void ShapeTextInput::focusOutEvent(QFocusEvent* event)
 		auto cursor = textCursor();
 		cursor.clearSelection();
 		setTextCursor(cursor);
-		shapeText->paintOnBoard();
 		p->hide();
 
 		if (document()->toPlainText().trimmed().isEmpty()) 

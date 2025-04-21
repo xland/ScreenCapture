@@ -9,11 +9,10 @@
 #include "ShapeText.h"
 #include "ShapeTextInput.h"
 #include "../Win/WinBase.h"
-#include "../Win/WinBase.h"
 #include "../Win/WinPin.h"
 #include "../App/App.h"
 #include "../Tool/ToolSub.h"
-#include "../Win/WinCanvas.h"
+#include "../Win/Canvas.h"
 
 
 ShapeText::ShapeText(QObject* parent) : ShapeBase(parent)
@@ -51,7 +50,6 @@ bool ShapeText::mouseMove(QMouseEvent* event)
     hoverDraggerIndex = -1;
     if (container->isVisible()) {
         if (!container->shapeTextInput->hasFocus()) {
-            paintOnBoard();
             container->hide();
         }
     }

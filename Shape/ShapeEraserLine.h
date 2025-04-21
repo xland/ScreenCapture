@@ -13,7 +13,4 @@ public:
     void paint(QPainter* painter) override;
 public:
 protected:
-    void paintingStart() override;
-    void paintOnBoard() override;
-    void painting() override;
 };

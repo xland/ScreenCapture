@@ -14,7 +14,4 @@ public:
     void paint(QPainter* painter) override;
     void paintDragger(QPainter* painter) override;
 protected:
-    void paintingStart() override;
-    void paintOnBoard() override;
-    void painting() override;
 };

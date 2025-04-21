@@ -33,22 +33,3 @@ void ShapeEraserLine::paint(QPainter* painter)
     painter->restore();
 }
 
-void ShapeEraserLine::paintingStart()
-{
-    //auto win = (WinBox*)parent();
-    //win->winBoard->initImg(); //鼠标按下，初始化图像
-    //win->winCanvas->clear();  //清空虚线框
-}
-
-void ShapeEraserLine::paintOnBoard()
-{
-    //auto win = (WinBox*)parent();
-    //win->winBoard->refresh(); //此处释放了图像
-}
-
-void ShapeEraserLine::painting()
-{
-    //auto win = (WinBox*)parent();
-    //win->winBoard->refresh(false); //绘制过程，不断刷新，刷新时不释放图像
-}
-

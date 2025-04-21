@@ -96,13 +96,11 @@ bool ShapeNumber::mousePress(QMouseEvent* event)
     if (state == ShapeState::temp) {
         startPos = event->position();
         state = ShapeState::sizing0;
-        paintingPrepare();
         return true;
     }
     else if (hoverDraggerIndex >= 0) {
         pressPos = event->position();
         state = (ShapeState)((int)ShapeState::sizing0 + hoverDraggerIndex);
-        paintingStart();
         return true;
     }
     return false;
@@ -117,8 +115,6 @@ bool ShapeNumber::mouseRelease(QMouseEvent* event)
     if (state >= ShapeState::sizing0) {
         auto half{ draggerSize / 2 };
         draggers[0].setRect(endPos.x() - half, endPos.y() - half, draggerSize, draggerSize);
-        showDragger();
-        event->accept();
     }return false;
 }
 
@@ -139,6 +135,4 @@ void ShapeNumber::mouseDrag(QMouseEvent* event)
         endPos+=span;
         pressPos = pos;
     }
-    painting();
-    event->accept();
 }

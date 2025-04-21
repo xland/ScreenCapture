@@ -49,8 +49,6 @@ bool ShapeLineBase::mouseMove(QMouseEvent* event)
     }
     if (hoverDraggerIndex > -1) {
         QGuiApplication::setOverrideCursor(Qt::SizeAllCursor);
-        showDragger();
-        event->accept();
     }
     return false;
 }
@@ -61,7 +59,6 @@ bool ShapeLineBase::mousePress(QMouseEvent* event)
         isStraight = event->modifiers() & Qt::ShiftModifier;
         state = (ShapeState)((int)ShapeState::sizing0 + 1);
         path.moveTo(pressPos);
-        paintingPrepare();
         return true;
     }
     else if (hoverDraggerIndex >= 0) {
@@ -70,7 +67,6 @@ bool ShapeLineBase::mousePress(QMouseEvent* event)
         if (hoverDraggerIndex == 0) {
             pathStart.moveTo(pressPos);
         }
-        paintingStart();
         return true;
     }
     return false;
@@ -105,10 +101,7 @@ bool ShapeLineBase::mouseRelease(QMouseEvent* event)
     auto half{ draggerSize / 2 };
     draggers[0].setRect(startPos.x - half, startPos.y - half, draggerSize, draggerSize);
     draggers[1].setRect(endPos.x - half, endPos.y - half, draggerSize, draggerSize);
-    showDragger();
-    paintOnBoard();
     pathStroker = stroker.createStroke(path);
-    event->accept();
     return false;
 }
 void ShapeLineBase::mouseDrag(QMouseEvent* event)
@@ -149,6 +142,5 @@ void ShapeLineBase::mouseDrag(QMouseEvent* event)
             pressPos = pos;
         }
     }
-    painting();
     event->accept();
 }

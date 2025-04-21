@@ -17,8 +17,6 @@ public:
     virtual void mouseDrag(QMouseEvent* event) {};
     virtual bool mousePress(QMouseEvent* event) { return false; };
     virtual bool mouseRelease(QMouseEvent* event) { return false; };
-    virtual void paintOnBoard();
-    void showDragger();
 public:
     int draggerSize{ 8 };
     ShapeState state{ ShapeState::temp };
@@ -26,9 +24,6 @@ public:
     std::vector<QRect> draggers;
     bool isEraser{ false };
 protected:
-    virtual void painting();
-    virtual void paintingStart();
-    virtual void paintingPrepare();
     void prepareDraggers(const int& size);
 
 };

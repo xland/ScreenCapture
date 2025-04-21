@@ -76,10 +76,7 @@ bool ShapeMosaicLine::mouseRelease(QMouseEvent* event)
     auto half{ draggerSize / 2 };
     draggers[0].setRect(startPos.x - half, startPos.y - half, draggerSize, draggerSize);
     draggers[1].setRect(endPos.x - half, endPos.y - half, draggerSize, draggerSize);
-    showDragger();
-    paintOnBoard();
     pathStroker = stroker.createStroke(path);
-    event->accept();
     return false;
 }
 
@@ -90,7 +87,6 @@ bool ShapeMosaicLine::mousePress(QMouseEvent* event)
         isStraight = event->modifiers() & Qt::ShiftModifier;
         state = (ShapeState)((int)ShapeState::sizing0 + 1);
         path.moveTo(pressPos);
-        paintingPrepare();
         return true;
     }
     else if (hoverDraggerIndex >= 0) {
@@ -101,7 +97,6 @@ bool ShapeMosaicLine::mousePress(QMouseEvent* event)
         if (hoverDraggerIndex == 0) {
             pathStart.moveTo(pressPos);
         }
-        paintingStart();
         return true;
     }
     return false;
