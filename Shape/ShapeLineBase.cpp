@@ -6,7 +6,7 @@
 #include "../App/App.h"
 #include "../Tool/ToolSub.h"
 #include "../Win/WinBase.h"
-#include "../Win/WinCanvas.h"
+#include "../Win/Canvas.h"
 
 
 ShapeLineBase::ShapeLineBase(QObject* parent) : ShapeBase(parent)
@@ -25,6 +25,7 @@ ShapeLineBase::~ShapeLineBase()
 
 void ShapeLineBase::paintDragger(QPainter* painter)
 {
+    if (state != ShapeState::ready) return;
     QPen pen;
     pen.setColor(Qt::black);
     pen.setWidth(1);
@@ -47,10 +48,16 @@ bool ShapeLineBase::mouseMove(QMouseEvent* event)
     else if(pathStroker.contains(pos)){
         hoverDraggerIndex = 8;
     }
+    auto win = (WinBase*)parent();
     if (hoverDraggerIndex > -1) {
-        QGuiApplication::setOverrideCursor(Qt::SizeAllCursor);
+        win->canvas->setHoverShape(this);
+        win->setCursor(Qt::SizeAllCursor);
+        return true;
     }
-    return false;
+    else {
+        win->setCursor(Qt::CrossCursor);
+        return false;
+    }
 }
 bool ShapeLineBase::mousePress(QMouseEvent* event)
 {
@@ -62,6 +69,10 @@ bool ShapeLineBase::mousePress(QMouseEvent* event)
         return true;
     }
     else if (hoverDraggerIndex >= 0) {
+        if (state == ShapeState::ready) {
+            auto win = (WinBase*)parent();
+            win->canvas->removeShapeFromBoard(this);
+        }
         pressPos = event->position();
         state = (ShapeState)((int)ShapeState::sizing0 + hoverDraggerIndex);
         if (hoverDraggerIndex == 0) {
@@ -75,8 +86,6 @@ bool ShapeLineBase::mouseRelease(QMouseEvent* event)
 {
     if (state < ShapeState::sizing0) return false;
     if (path.isEmpty()) {
-        deleteLater();
-        event->accept();
         return false;
     }
     if (state == ShapeState::sizing0) {
@@ -102,7 +111,10 @@ bool ShapeLineBase::mouseRelease(QMouseEvent* event)
     draggers[0].setRect(startPos.x - half, startPos.y - half, draggerSize, draggerSize);
     draggers[1].setRect(endPos.x - half, endPos.y - half, draggerSize, draggerSize);
     pathStroker = stroker.createStroke(path);
-    return false;
+    state = ShapeState::ready;
+    auto win = (WinBase*)parent();
+    win->canvas->setHoverShape(this);
+    return true;
 }
 void ShapeLineBase::mouseDrag(QMouseEvent* event)
 {
@@ -142,5 +154,6 @@ void ShapeLineBase::mouseDrag(QMouseEvent* event)
             pressPos = pos;
         }
     }
-    event->accept();
+    auto win = (WinBase*)parent();
+    win->update();
 }

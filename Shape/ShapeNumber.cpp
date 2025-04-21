@@ -6,7 +6,7 @@
 #include "../App/App.h"
 #include "../Tool/ToolSub.h"
 #include "../Win/WinBase.h"
-#include "../Win/WinCanvas.h"
+#include "../Win/Canvas.h"
 
 namespace {
     static int numVal{ 0 };
@@ -70,6 +70,7 @@ void ShapeNumber::paint(QPainter* painter)
 }
 void ShapeNumber::paintDragger(QPainter* painter)
 {
+    if (state != ShapeState::ready) return;
     painter->setPen(QPen(QBrush(QColor(0, 0, 0)), 1));
     painter->setBrush(Qt::NoBrush);
     painter->drawRect(draggers[0]);
@@ -82,14 +83,22 @@ bool ShapeNumber::mouseMove(QMouseEvent* event)
     if (draggers[0].contains(pos)) {
         hoverDraggerIndex = 0;
     }
-    else if(shape.contains(pos)) {
-        hoverDraggerIndex = 8;
+    else if(shape.contains(pos)) {        
+        qreal spanX{ pos.x() - startPos.x() }, spanY{ pos.y() - startPos.y() };
+        auto flag = qSqrt(spanX * spanX + spanY * spanY) >= r-2;
+        if (flag) {
+            hoverDraggerIndex = 8;
+        }        
     }
+    auto win = (WinBase*)parent();
     if (hoverDraggerIndex > -1) {
-        QGuiApplication::setOverrideCursor(Qt::SizeAllCursor);
-        event->accept();
+        win->canvas->setHoverShape(this);
+        win->setCursor(Qt::SizeAllCursor);
     }
-    return false;
+    else {
+        win->setCursor(Qt::CrossCursor);
+        return false;
+    }
 }
 bool ShapeNumber::mousePress(QMouseEvent* event)
 {
@@ -99,6 +108,10 @@ bool ShapeNumber::mousePress(QMouseEvent* event)
         return true;
     }
     else if (hoverDraggerIndex >= 0) {
+        if (state == ShapeState::ready) {
+            auto win = (WinBase*)parent();
+            win->canvas->removeShapeFromBoard(this);
+        }
         pressPos = event->position();
         state = (ShapeState)((int)ShapeState::sizing0 + hoverDraggerIndex);
         return true;
@@ -108,14 +121,17 @@ bool ShapeNumber::mousePress(QMouseEvent* event)
 bool ShapeNumber::mouseRelease(QMouseEvent* event)
 {
     if (shape.isEmpty()) { //鼠标按下，没有拖拽，随即释放
-        deleteLater();
-        event->accept();
         return false;
     }
     if (state >= ShapeState::sizing0) {
         auto half{ draggerSize / 2 };
         draggers[0].setRect(endPos.x() - half, endPos.y() - half, draggerSize, draggerSize);
-    }return false;
+        state = ShapeState::ready;
+        auto win = (WinBase*)parent();
+        win->canvas->setHoverShape(this);
+        return true;
+    }
+    return false;
 }
 
 void ShapeNumber::mouseDrag(QMouseEvent* event)
@@ -135,4 +151,6 @@ void ShapeNumber::mouseDrag(QMouseEvent* event)
         endPos+=span;
         pressPos = pos;
     }
+    auto win = (WinBase*)parent();
+    win->update();
 }

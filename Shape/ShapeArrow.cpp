@@ -127,9 +127,7 @@ bool ShapeArrow::mouseRelease(QMouseEvent* event)
 }
 void ShapeArrow::mouseDrag(QMouseEvent* event)
 {
-    if (state == ShapeState::ready) {
-        return;
-    }
+    if (state == ShapeState::ready) return;
     if (state == ShapeState::sizing0) {
         startPos = event->pos();
         resetShape();

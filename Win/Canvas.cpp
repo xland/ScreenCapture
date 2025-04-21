@@ -56,6 +56,7 @@ void Canvas::mouseRelease(QMouseEvent* event)
             shapeCur->paint(&p);
             win->update();
             shapes.push_back(shapeCur);
+            shapeCur = nullptr;
         } else {
             shapeCur->deleteLater();
         }
