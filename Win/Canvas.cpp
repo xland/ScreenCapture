@@ -165,4 +165,5 @@ void Canvas::removeShapeFromBoard(ShapeBase* shape)
         if (shape == s) continue;
         s->paint(&p);
     }
+    shapeCur = shape; //这行主要是为了显示Dragger
 }

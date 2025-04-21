@@ -5,7 +5,7 @@
 #include "../App/App.h"
 #include "../Tool/ToolSub.h"
 #include "../Win/WinBase.h"
-#include "../Win/WinCanvas.h"
+#include "../Win/Canvas.h"
 
 ShapeArrow::ShapeArrow(QObject* parent) : ShapeBase(parent)
 {
@@ -62,6 +62,7 @@ void ShapeArrow::paint(QPainter* painter)
 }
 void ShapeArrow::paintDragger(QPainter* painter)
 {
+    if (state != ShapeState::ready) return;
     painter->setPen(QPen(QBrush(QColor(0, 0, 0)), 1));
     painter->setBrush(Qt::NoBrush);
     painter->drawRect(draggers[0]);
@@ -81,25 +82,31 @@ bool ShapeArrow::mouseMove(QMouseEvent* event)
     else if (shape.containsPoint(event->pos(), Qt::WindingFill)) {
         hoverDraggerIndex = 8;
     }
+    auto win = (WinBase*)parent();
     if (hoverDraggerIndex > -1) {
-        QGuiApplication::setOverrideCursor(Qt::SizeAllCursor);
-        showDragger();
-        event->accept();
+        win->canvas->setHoverShape(this);
+        win->setCursor(Qt::SizeAllCursor);
+        return true;
     }
-    return false;
+    else {
+        win->setCursor(Qt::CrossCursor);
+        return false;
+    }
 }
 bool ShapeArrow::mousePress(QMouseEvent* event)
 {
     if (state == ShapeState::temp) {
         startPos = event->position();
         state = (ShapeState)((int)ShapeState::sizing0 + 1);
-        paintingPrepare();
         return true;
     }
     else if(hoverDraggerIndex >= 0) {
+        if (state == ShapeState::ready) {
+            auto win = (WinBase*)parent();
+            win->canvas->removeShapeFromBoard(this);
+        }
         pressPos = event->position();
         state = (ShapeState)((int)ShapeState::sizing0 + hoverDraggerIndex);
-        paintingStart();
         return true;
     }
     return false;
@@ -107,14 +114,14 @@ bool ShapeArrow::mousePress(QMouseEvent* event)
 bool ShapeArrow::mouseRelease(QMouseEvent* event)
 {
     if (shape.isEmpty()) { //鼠标按下，没有拖拽，随即释放
-        deleteLater();
-        event->accept();
         return false;
     }
     if (state >= ShapeState::sizing0) {
         resetDragger();
-        showDragger();
-        event->accept();
+        state = ShapeState::ready;
+        auto win = (WinBase*)parent();
+        win->canvas->setHoverShape(this);
+        return true;
     }
     return false;
 }
@@ -139,8 +146,6 @@ void ShapeArrow::mouseDrag(QMouseEvent* event)
         endPos = shape[3];
         pressPos = pos;
     }
-    painting();
-    event->accept();
     //if (event->modifiers() & Qt::ShiftModifier) {
     //    if (shape.width() > shape.height()) {
     //        shape.setHeight(shape.width());
@@ -149,4 +154,6 @@ void ShapeArrow::mouseDrag(QMouseEvent* event)
     //        shape.setWidth(shape.height());
     //    }
     //}
+    auto win = (WinBase*)parent();
+    win->update();
 }

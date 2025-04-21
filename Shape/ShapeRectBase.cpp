@@ -103,7 +103,6 @@ bool ShapeRectBase::mousePress(QMouseEvent* event)
     if (hoverDraggerIndex >= 0) {
         if (state == ShapeState::ready) {
             auto win = (WinBase*)parent();
-            win->canvas->shapeCur = this;
             win->canvas->removeShapeFromBoard(this);
         }
         state = (ShapeState)((int)ShapeState::sizing0 + hoverDraggerIndex);
