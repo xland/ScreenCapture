@@ -9,6 +9,7 @@
 #include "ToolMain.h"
 #include "StrokeCtrl.h"
 #include "ColorCtrl.h"
+#include "BtnBase.h"
 #include "BtnCheck.h"
 
 ToolSub::ToolSub(QWidget* parent) : ToolBase(parent)
@@ -94,6 +95,13 @@ ToolSub::~ToolSub()
 
 bool ToolSub::getSelectState(const QString& btnName)
 {
+	auto btns = findChildren<BtnCheck*>();
+	for (auto& btn:btns)
+	{
+		if (btn->name == btnName) {
+			return btn->isChecked;
+		}
+	}
 	return false;
 }
 
