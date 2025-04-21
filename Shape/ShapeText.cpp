@@ -80,7 +80,7 @@ bool ShapeText::mousePress(QMouseEvent* event)
 	}
     return false;
 }
-void ShapeText::mouseRelease(QMouseEvent* event)
+bool ShapeText::mouseRelease(QMouseEvent* event)
 {
-    state = ShapeState::ready;
+    state = ShapeState::ready; return false;
 }

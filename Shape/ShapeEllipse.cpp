@@ -36,31 +36,21 @@ void ShapeEllipse::mouseOnShape(QMouseEvent* event)
 {
     auto pos = event->position();
     auto center = shape.center();
-    if (isFill) {
-        double normalizedX = (pos.x() - center.x()) / static_cast<double>(shape.width() / 2);
-        double normalizedY = (pos.y() - center.y()) / static_cast<double>(shape.height() / 2);
-        auto flag = (normalizedX * normalizedX + normalizedY * normalizedY <= 1.0);
-        if (flag) {
+    float half{ strokeWidth / 2.f };
+    QRectF outerRect = shape.adjusted(-half, -half, half, half);
+    qreal spanX{ pos.x() - center.x() }, spanY{ pos.y() - center.y() };
+    float normalizedX = spanX / static_cast<double>(outerRect.width() / 2);
+    float normalizedY = spanY / static_cast<double>(outerRect.height() / 2);
+    auto flag = (normalizedX * normalizedX + normalizedY * normalizedY <= 1.0);
+    if (flag) {
+        QRectF innerRect = shape.adjusted(half, half, -half, -half);
+        normalizedX = spanX / static_cast<double>(innerRect.width() / 2);
+        normalizedY = spanY / static_cast<double>(innerRect.height() / 2);
+        flag = (normalizedX * normalizedX + normalizedY * normalizedY <= 1.0);
+        if (!flag) {
             hoverDraggerIndex = 8;
-            QGuiApplication::setOverrideCursor(Qt::SizeAllCursor);
-        }
-    }
-    else {
-        float half{ strokeWidth / 2.f };
-        QRectF outerRect = shape.adjusted(-half, -half, half, half);
-        qreal spanX{ pos.x() - center.x() }, spanY{ pos.y() - center.y() };
-        float normalizedX = spanX / static_cast<double>(outerRect.width() / 2);
-        float normalizedY = spanY / static_cast<double>(outerRect.height() / 2);
-        auto flag = (normalizedX * normalizedX + normalizedY * normalizedY <= 1.0);
-        if (flag) {
-            QRectF innerRect = shape.adjusted(half, half, -half, -half);
-            normalizedX = spanX / static_cast<double>(innerRect.width() / 2);
-            normalizedY = spanY / static_cast<double>(innerRect.height() / 2);
-            flag = (normalizedX * normalizedX + normalizedY * normalizedY <= 1.0);
-            if (!flag) {
-                hoverDraggerIndex = 8;
-                QGuiApplication::setOverrideCursor(Qt::SizeAllCursor);
-            }
+            auto win = (WinBase*)parent();
+            win->setCursor(Qt::SizeAllCursor);
         }
     }
 }

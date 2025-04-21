@@ -16,7 +16,7 @@ public:
     virtual bool mouseMove(QMouseEvent* event) override;
     virtual void mouseDrag(QMouseEvent* event) override;
     virtual bool mousePress(QMouseEvent* event) override;
-    virtual void mouseRelease(QMouseEvent* event) override;
+    virtual bool mouseRelease(QMouseEvent* event) override;
 public:
     qreal strokeWidth;
 protected:

@@ -24,7 +24,7 @@ protected:
     void paint(QPainter* painter) override;
     bool mouseMove(QMouseEvent* event) override;
     bool mousePress(QMouseEvent* event) override;
-    void mouseRelease(QMouseEvent* event) override;
+    bool mouseRelease(QMouseEvent* event) override;
 private:
 private:
 };

@@ -12,7 +12,7 @@ public:
     ShapeMosaicRect(QObject* parent = nullptr);
     ~ShapeMosaicRect();
     virtual void paint(QPainter* painter) override;
-    void mouseRelease(QMouseEvent* event) override;
+    bool mouseRelease(QMouseEvent* event) override;
 private:
 private:
     QImage imgPatch;

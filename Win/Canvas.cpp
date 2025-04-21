@@ -48,12 +48,17 @@ void Canvas::mouseDrag(QMouseEvent* event)
 void Canvas::mouseRelease(QMouseEvent* event)
 {
     if (shapeCur) {
-        auto win = (WinBase*)parent();
-        QPainter p(&win->imgBoard);
-        p.setRenderHint(QPainter::Antialiasing, true);
-        shapeCur->mouseRelease(event);
-        shapeCur->paint(&p);
-        win->update();
+        auto flag = shapeCur->mouseRelease(event);
+        if (flag) {
+            auto win = (WinBase*)parent();
+            QPainter p(&win->imgBoard);
+            p.setRenderHint(QPainter::Antialiasing, true);
+            shapeCur->paint(&p);
+            win->update();
+            shapes.push_back(shapeCur);
+        } else {
+            shapeCur->deleteLater();
+        }
     }
 }
 
@@ -121,10 +126,7 @@ void Canvas::addShape()
     {
         return;
     }
-    //connect(shape, &QObject::destroyed, [this](QObject* obj) {
-    //    shapes.removeOne(obj); //先执行析构函数，再执行此方法
-    //    });
-    shapes.push_back(shapeCur);
+    
 }
 
 void Canvas::setHoverShape(ShapeBase* shape)
@@ -146,9 +148,9 @@ void Canvas::setHoverShape(ShapeBase* shape)
     }
     if (shape != shapeHover) {
         shapeHover = shape;
-        auto win = (WinBase*)parent();
-        win->update();
     }
+    auto win = (WinBase*)parent();
+    win->update();
     timerDragger->start();
 }
 

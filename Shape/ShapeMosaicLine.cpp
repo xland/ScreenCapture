@@ -32,13 +32,13 @@ void ShapeMosaicLine::paint(QPainter* painter)
     }
 }
 
-void ShapeMosaicLine::mouseRelease(QMouseEvent* event)
+bool ShapeMosaicLine::mouseRelease(QMouseEvent* event)
 {
-    if (state < ShapeState::sizing0) return;
+    if (state < ShapeState::sizing0) return false;
     if (path.isEmpty()) {
         deleteLater();
         event->accept();
-        return;
+        return false;
     }
     pathRect = path.boundingRect().adjusted(-strokeWidth, -strokeWidth, strokeWidth, strokeWidth);
     imgPatch = mosaicImg.copy(pathRect.toRect());
@@ -80,6 +80,7 @@ void ShapeMosaicLine::mouseRelease(QMouseEvent* event)
     paintOnBoard();
     pathStroker = stroker.createStroke(path);
     event->accept();
+    return false;
 }
 
 bool ShapeMosaicLine::mousePress(QMouseEvent* event)

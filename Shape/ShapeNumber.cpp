@@ -107,19 +107,19 @@ bool ShapeNumber::mousePress(QMouseEvent* event)
     }
     return false;
 }
-void ShapeNumber::mouseRelease(QMouseEvent* event)
+bool ShapeNumber::mouseRelease(QMouseEvent* event)
 {
     if (shape.isEmpty()) { //鼠标按下，没有拖拽，随即释放
         deleteLater();
         event->accept();
-        return;
+        return false;
     }
     if (state >= ShapeState::sizing0) {
         auto half{ draggerSize / 2 };
         draggers[0].setRect(endPos.x() - half, endPos.y() - half, draggerSize, draggerSize);
         showDragger();
         event->accept();
-    }
+    }return false;
 }
 
 void ShapeNumber::mouseDrag(QMouseEvent* event)

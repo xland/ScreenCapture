@@ -75,13 +75,13 @@ bool ShapeLineBase::mousePress(QMouseEvent* event)
     }
     return false;
 }
-void ShapeLineBase::mouseRelease(QMouseEvent* event)
+bool ShapeLineBase::mouseRelease(QMouseEvent* event)
 {
-    if (state < ShapeState::sizing0) return;
+    if (state < ShapeState::sizing0) return false;
     if (path.isEmpty()) {
         deleteLater();
         event->accept();
-        return;
+        return false;
     }
     if (state == ShapeState::sizing0) {
         QPainterPath tempPath;
@@ -109,6 +109,7 @@ void ShapeLineBase::mouseRelease(QMouseEvent* event)
     paintOnBoard();
     pathStroker = stroker.createStroke(path);
     event->accept();
+    return false;
 }
 void ShapeLineBase::mouseDrag(QMouseEvent* event)
 {

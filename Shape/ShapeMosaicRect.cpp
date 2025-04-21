@@ -44,9 +44,8 @@ void ShapeMosaicRect::paint(QPainter* painter)
     }
 }
 
-void ShapeMosaicRect::mouseRelease(QMouseEvent* event)
+bool ShapeMosaicRect::mouseRelease(QMouseEvent* event)
 {
-    
     imgPatch = QImage(shape.size().toSize(), QImage::Format_ARGB32_Premultiplied);
     QPainter painter(&imgPatch);
     painter.setPen(Qt::NoPen);
@@ -60,5 +59,6 @@ void ShapeMosaicRect::mouseRelease(QMouseEvent* event)
             painter.drawRect(mRect);
         }
     }
-    ShapeRectBase::mouseRelease(event);
+    ShapeRectBase::mouseRelease(event); 
+    return false;
 }

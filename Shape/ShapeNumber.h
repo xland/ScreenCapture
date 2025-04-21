@@ -17,7 +17,7 @@ public:
     bool mouseMove(QMouseEvent* event) override;
     void mouseDrag(QMouseEvent* event) override;
     bool mousePress(QMouseEvent* event) override;
-    void mouseRelease(QMouseEvent* event) override;
+    bool mouseRelease(QMouseEvent* event) override;
 public:
     QPainterPath shape;
     bool isFill{ false };

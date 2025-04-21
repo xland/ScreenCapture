@@ -114,17 +114,19 @@ bool ShapeRectBase::mousePress(QMouseEvent* event)
     }
     return false;
 }
-void ShapeRectBase::mouseRelease(QMouseEvent* event)
+bool ShapeRectBase::mouseRelease(QMouseEvent* event)
 {
-    if (pressPos == event->position()) { //鼠标按下，没有拖拽，随即释放
-        return;
+    if (pressPos == event->position() && state != ShapeState::moving) { //鼠标按下，没有拖拽，随即释放
+        return false;
     }
     if (state >= ShapeState::sizing0) {
         resetDragger();
         state = ShapeState::ready;
         auto win = (WinBase*)parent();
         win->canvas->setHoverShape(this);
+        return true;
     }
+    return false;
 }
 void ShapeRectBase::mouseDrag(QMouseEvent* event)
 {

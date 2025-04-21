@@ -104,18 +104,19 @@ bool ShapeArrow::mousePress(QMouseEvent* event)
     }
     return false;
 }
-void ShapeArrow::mouseRelease(QMouseEvent* event)
+bool ShapeArrow::mouseRelease(QMouseEvent* event)
 {
     if (shape.isEmpty()) { //鼠标按下，没有拖拽，随即释放
         deleteLater();
         event->accept();
-        return;
+        return false;
     }
     if (state >= ShapeState::sizing0) {
         resetDragger();
         showDragger();
         event->accept();
     }
+    return false;
 }
 void ShapeArrow::mouseDrag(QMouseEvent* event)
 {
