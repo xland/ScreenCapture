@@ -13,6 +13,7 @@
 #include "../App/App.h"
 #include "../Tool/ToolSub.h"
 #include "../Win/Canvas.h"
+#include "App/Util.h"
 
 
 ShapeText::ShapeText(QObject* parent) : ShapeBase(parent)
@@ -26,32 +27,62 @@ ShapeText::ShapeText(QObject* parent) : ShapeBase(parent)
 
 ShapeText::~ShapeText()
 {
-    delete container;
 }
 
 void ShapeText::paint(QPainter* painter)
 {
     if (state != ShapeState::ready) return;
-    auto img = container->shapeTextInput->grab().toImage();
-    auto win = (WinBase*)parent();
-    img.setDevicePixelRatio(win->devicePixelRatio());
-    painter->drawImage(container->pos()+container->shapeTextInput->pos(), img);
+    auto f = Util::getTextFont(fontSize);
+    f->setWeight(bold ? QFont::Bold : QFont::Normal);
+    f->setItalic(italic);
+	painter->setFont(*f);
+    painter->setPen(color);
+	painter->drawText(containerRect.adjusted(7,-1,0,0), Qt::AlignLeft | Qt::AlignVCenter, text);
+	qDebug() << "paint: "<< text << QDateTime::currentDateTime().toString("hh:mm:ss.zzz");
 }
 bool ShapeText::mouseMove(QMouseEvent* event)
 {
-    return false;
+    auto ppp = event->pos();
+    auto win = (WinBase*)parent();
+    if (containerRect.contains(ppp)) {
+        win->setCursor(Qt::IBeamCursor);
+        hoverDraggerIndex = 8;
+        return true;
+    }
+    else {
+		hoverDraggerIndex = -1;
+        if (win->cursor() == Qt::IBeamCursor && win->state != State::text) {
+            win->setCursor(Qt::CrossCursor);
+        }
+        return false;
+    }
 }
 bool ShapeText::mousePress(QMouseEvent* event)
 {
-    if (!container) {
-        container = new ShapeTextContainer(this);
-        state = ShapeState::sizing0;
+    auto win = (WinBase*)parent();
+    auto ppp = event->pos();
+    if (containerRect.contains(ppp)) {
+        state = ShapeState::hidden;
+        win->canvas->shapeCur = nullptr;
+        qDebug() << "mousePress: " << text << QDateTime::currentDateTime().toString("hh:mm:ss.zzz");
+        if (text == "222") {
+            auto a = 1;
+        }
+        win->canvas->removeShapeFromBoard(this);
+        container = new ShapeTextContainer(this,win);
+        container->move(containerRect.topLeft());
+        container->show();
+        container->shapeTextInput->setText(text);
+        win->canvas->shapeCur = nullptr;
         return true;
     }
-    if(hoverDraggerIndex == 8){
-		state = ShapeState::moving;
+    if(state == ShapeState::temp) {
+        container = new ShapeTextContainer(this,win);
+        container->move(QCursor::pos() + QPoint(-10, -10));
+        container->show();
+        container->shapeTextInput->setText("");  //触发一次adjustSize
         return true;
-	}
+    }
     return false;
 }
 bool ShapeText::mouseRelease(QMouseEvent* event)

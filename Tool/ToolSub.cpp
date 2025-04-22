@@ -60,7 +60,7 @@ ToolSub::ToolSub(QWidget* parent) : ToolBase(parent)
 	else if (win->state == State::text) {
 		layout->addWidget(new BtnCheck("bold", QChar(0xe634), State::noState, this));
 		layout->addWidget(new BtnCheck("italic", QChar(0xe682), State::noState, this));
-		layout->addWidget(new StrokeCtrl(8, 160, 16, this));
+		layout->addWidget(new StrokeCtrl(12, 160, 22, this));
 		layout->addWidget(new ColorCtrl(5, this));
 		setFixedSize(8 + btnW*2 + 84 + 26 * 8, 40);
 		move(win->toolMain->x(), win->toolMain->y() + win->toolMain->height() + 2);

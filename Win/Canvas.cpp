@@ -1,3 +1,4 @@
+#include <QDateTime>
 
 #include "../Win/WinBase.h"
 #include "../Tool/ToolSub.h"
@@ -66,20 +67,22 @@ void Canvas::mouseRelease(QMouseEvent* event)
                 return;
             }
             paintShapeOnBoard(shapeCur);
-            shapeCur = nullptr;
         }
         else {
             shapeCur->deleteLater();
         }
+        shapeCur = nullptr;
     }
 }
 
 void Canvas::paint(QPainter& p)
 {
     if (shapeCur) {
+        qDebug() << "shapeCur paint: " << ((ShapeText*)shapeCur)->text << QDateTime::currentDateTime().toString("hh:mm:ss.zzz");
         shapeCur->paint(&p);
     }
     if (shapeHover) {
+        qDebug() << "shapeHover paint: " << ((ShapeText*)shapeCur)->text << QDateTime::currentDateTime().toString("hh:mm:ss.zzz");
         shapeHover->paintDragger(&p);
     }
 }
@@ -167,6 +170,7 @@ void Canvas::removeShapeFromBoard(ShapeBase* shape)
         s->paint(&p);
     }
     shapeCur = shape; //这行主要是为了显示Dragger
+    qDebug() << "removeShapeFromBoard: " << QDateTime::currentDateTime().toString("hh:mm:ss.zzz");
 }
 
 void Canvas::paintShapeOnBoard(ShapeBase* shape)
@@ -176,5 +180,7 @@ void Canvas::paintShapeOnBoard(ShapeBase* shape)
     p.setRenderHint(QPainter::Antialiasing, true);
     shape->paint(&p);
     win->update();
-    shapes.push_back(shape);
+	if (!shapes.contains(shape)) {
+		shapes.push_back(shape); //防止文本对象重复添加
+	}
 }

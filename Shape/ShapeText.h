@@ -19,7 +19,9 @@ public:
     qreal fontSize;
     bool bold;
     bool italic;
+    QRect containerRect;
     ShapeTextContainer* container;
+	QString text;
 protected:
     void paint(QPainter* painter) override;
     bool mouseMove(QMouseEvent* event) override;

@@ -15,12 +15,12 @@ public:
 	~ShapeTextContainer();
 public:
 	ShapeTextInput* shapeTextInput;
-	bool isPress{ false };
 protected:
 	void paintEvent(QPaintEvent* event) override;
 	void mouseMoveEvent(QMouseEvent* event) override;
 	void mousePressEvent(QMouseEvent* event) override;
 	void mouseReleaseEvent(QMouseEvent* event) override;
+	void showEvent(QShowEvent* event) override;
 private:
 	void adjustSize();
 private:

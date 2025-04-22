@@ -11,14 +11,13 @@
 ShapeTextContainer::ShapeTextContainer(ShapeText* shapeText, QWidget* parent) : QWidget(parent),shapeText{shapeText}
 {
 	setAttribute(Qt::WA_TranslucentBackground, true);
-	setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::Tool);
+	//setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::Tool);
 	setAttribute(Qt::WA_InputMethodEnabled, true);
 	setAttribute(Qt::WA_QuitOnClose, false);
-	setAttribute(Qt::WA_OpaquePaintEvent, false);
-	setAttribute(Qt::WA_NoSystemBackground);
+	//setAttribute(Qt::WA_OpaquePaintEvent, false);
+	//setAttribute(Qt::WA_NoSystemBackground);
 	setFocusPolicy(Qt::StrongFocus);
 	setMouseTracking(true);
-	setAttribute(Qt::WA_Hover);
 
 	shapeTextInput = new ShapeTextInput(shapeText,this);
 	QVBoxLayout* layout = new QVBoxLayout(this);
@@ -28,12 +27,7 @@ ShapeTextContainer::ShapeTextContainer(ShapeText* shapeText, QWidget* parent) : 
 	setLayout(layout);
 
 	connect(shapeTextInput->document(), &QTextDocument::contentsChanged, this, &ShapeTextContainer::adjustSize);
-	shapeTextInput->setText("");  //触发一次adjustSize
-	shapeTextInput->setFocus();
-	move(QCursor::pos() + QPoint(-10, -10));
-	show();
-	raise();
-	activateWindow();
+
 }
 
 ShapeTextContainer::~ShapeTextContainer()
@@ -70,7 +64,7 @@ void ShapeTextContainer::mouseMoveEvent(QMouseEvent* event)
 {
 	auto win = (WinBase*)window();
 	win->setCursor(Qt::SizeAllCursor);
-	if (isPress) {
+	if (event->buttons() & Qt::LeftButton) {
 		auto pos = QCursor::pos();
 		auto span = pos - pressPos;
 		auto p = mapToGlobal(QPoint(0, 0)) + span;
@@ -82,10 +76,16 @@ void ShapeTextContainer::mouseMoveEvent(QMouseEvent* event)
 void ShapeTextContainer::mousePressEvent(QMouseEvent* event)
 {
 	pressPos = QCursor::pos();
-	isPress = true;
 }
 
 void ShapeTextContainer::mouseReleaseEvent(QMouseEvent* event)
 {
-	isPress = false;
+	shapeTextInput->setFocus();
+}
+
+void ShapeTextContainer::showEvent(QShowEvent* event)
+{
+	raise();
+	activateWindow();
+	shapeTextInput->setFocus();
 }
