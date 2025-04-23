@@ -15,7 +15,18 @@ ShapeMosaicRect::ShapeMosaicRect(QObject* parent) : ShapeRectBase(parent)
 ShapeMosaicRect::~ShapeMosaicRect()
 {
 }
-
+void ShapeMosaicRect::paintDragger(QPainter* painter)
+{
+    ShapeRectBase::paintDragger(painter);
+    QPen pen;
+    pen.setColor(Qt::black);
+    pen.setWidth(1);
+    pen.setStyle(Qt::CustomDashLine);
+    pen.setDashPattern({ 3,3 });
+    painter->setPen(pen);
+    painter->setBrush(Qt::NoBrush);
+    painter->drawRect(shape);
+}
 void ShapeMosaicRect::paint(QPainter* painter)
 {
     bool flag = shape.isEmpty();

@@ -11,7 +11,8 @@ class ShapeMosaicRect:public ShapeRectBase
 public:
     ShapeMosaicRect(QObject* parent = nullptr);
     ~ShapeMosaicRect();
-    virtual void paint(QPainter* painter) override;
+    void paint(QPainter* painter) override;
+	void paintDragger(QPainter* painter) override;
 private:
     void createMosaicImg();
 private:

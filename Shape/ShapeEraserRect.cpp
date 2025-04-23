@@ -21,13 +21,20 @@ ShapeEraserRect::~ShapeEraserRect()
 
 void ShapeEraserRect::paint(QPainter* painter)
 {
-    painter->setBrush(Qt::transparent);
+    if (shape.isEmpty()) return;
     painter->setPen(Qt::NoPen);
-    painter->save();
-    painter->setCompositionMode(QPainter::CompositionMode_Clear);
+    if (state == ShapeState::ready) {
+        painter->save();
+        painter->setCompositionMode(QPainter::CompositionMode_Clear); //橡皮擦模式
+        painter->setBrush(Qt::transparent);
+    }
+    else {
+        painter->setBrush(QColor(220, 80, 0, 120));
+    }
     painter->drawRect(shape);
-    painter->restore();
-
+    if (state == ShapeState::ready) {
+        painter->restore();
+    }
 }
 
 void ShapeEraserRect::paintDragger(QPainter* painter)
