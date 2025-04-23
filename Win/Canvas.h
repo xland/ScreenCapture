@@ -20,6 +20,7 @@ public:
 	void setHoverShape(ShapeBase* shape);
 	void removeShapeFromBoard(ShapeBase* shape);
 	void paintShapeOnBoard(ShapeBase* shape);
+	void removeShapeCur();
 public:
 	ShapeBase* shapeCur;
 	ShapeBase* shapeHover;

@@ -45,14 +45,13 @@ void ShapeTextInput::focusOutEvent(QFocusEvent* event)
 	auto text = document()->toPlainText();
 	if (text.isEmpty())
 	{
-		shapeText->deleteLater();
-		win->canvas->shapeCur = nullptr;
+		parent()->deleteLater();
+		win->canvas->removeShapeCur();
 	}
 	else {
 		shapeText->state = ShapeState::ready;
 		shapeText->containerRect = parentWidget()->geometry();
 		shapeText->text = text;
-		qDebug() << "paintShapeOnBoard: " << text << QDateTime::currentDateTime().toString("hh:mm:ss.zzz");
 		win->canvas->paintShapeOnBoard(shapeText);
 		shapeText->container->deleteLater();
 		shapeText->container = nullptr;

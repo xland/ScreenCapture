@@ -69,7 +69,7 @@ void Canvas::mouseRelease(QMouseEvent* event)
             paintShapeOnBoard(shapeCur);
         }
         else {
-            shapeCur->deleteLater();
+            removeShapeCur();
         }
         shapeCur = nullptr;
     }
@@ -78,11 +78,9 @@ void Canvas::mouseRelease(QMouseEvent* event)
 void Canvas::paint(QPainter& p)
 {
     if (shapeCur) {
-        qDebug() << "shapeCur paint: " << ((ShapeText*)shapeCur)->text << QDateTime::currentDateTime().toString("hh:mm:ss.zzz");
         shapeCur->paint(&p);
     }
     if (shapeHover) {
-        qDebug() << "shapeHover paint: " << ((ShapeText*)shapeCur)->text << QDateTime::currentDateTime().toString("hh:mm:ss.zzz");
         shapeHover->paintDragger(&p);
     }
 }
@@ -170,7 +168,6 @@ void Canvas::removeShapeFromBoard(ShapeBase* shape)
         s->paint(&p);
     }
     shapeCur = shape; //这行主要是为了显示Dragger
-    qDebug() << "removeShapeFromBoard: " << QDateTime::currentDateTime().toString("hh:mm:ss.zzz");
 }
 
 void Canvas::paintShapeOnBoard(ShapeBase* shape)
@@ -183,4 +180,11 @@ void Canvas::paintShapeOnBoard(ShapeBase* shape)
 	if (!shapes.contains(shape)) {
 		shapes.push_back(shape); //防止文本对象重复添加
 	}
+}
+
+void Canvas::removeShapeCur()
+{
+    shapes.removeOne(shapeCur);
+    shapeCur->deleteLater();
+    shapeCur = nullptr;
 }

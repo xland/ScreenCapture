@@ -38,7 +38,6 @@ void ShapeText::paint(QPainter* painter)
 	painter->setFont(*f);
     painter->setPen(color);
 	painter->drawText(containerRect.adjusted(7,-1,0,0), Qt::AlignLeft | Qt::AlignVCenter, text);
-	qDebug() << "paint: "<< text << QDateTime::currentDateTime().toString("hh:mm:ss.zzz");
 }
 bool ShapeText::mouseMove(QMouseEvent* event)
 {
@@ -64,10 +63,6 @@ bool ShapeText::mousePress(QMouseEvent* event)
     if (containerRect.contains(ppp)) {
         state = ShapeState::hidden;
         win->canvas->shapeCur = nullptr;
-        qDebug() << "mousePress: " << text << QDateTime::currentDateTime().toString("hh:mm:ss.zzz");
-        if (text == "222") {
-            auto a = 1;
-        }
         win->canvas->removeShapeFromBoard(this);
         container = new ShapeTextContainer(this,win);
         container->move(containerRect.topLeft());

@@ -11,13 +11,10 @@
 ShapeTextContainer::ShapeTextContainer(ShapeText* shapeText, QWidget* parent) : QWidget(parent),shapeText{shapeText}
 {
 	setAttribute(Qt::WA_TranslucentBackground, true);
-	//setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::Tool);
 	setAttribute(Qt::WA_InputMethodEnabled, true);
 	setAttribute(Qt::WA_QuitOnClose, false);
-	//setAttribute(Qt::WA_OpaquePaintEvent, false);
-	//setAttribute(Qt::WA_NoSystemBackground);
 	setFocusPolicy(Qt::StrongFocus);
-	setMouseTracking(true);
+	setCursor(Qt::SizeAllCursor);
 
 	shapeTextInput = new ShapeTextInput(shapeText,this);
 	QVBoxLayout* layout = new QVBoxLayout(this);
@@ -63,7 +60,6 @@ void ShapeTextContainer::paintEvent(QPaintEvent* event)
 void ShapeTextContainer::mouseMoveEvent(QMouseEvent* event)
 {
 	auto win = (WinBase*)window();
-	win->setCursor(Qt::SizeAllCursor);
 	if (event->buttons() & Qt::LeftButton) {
 		auto pos = QCursor::pos();
 		auto span = pos - pressPos;
