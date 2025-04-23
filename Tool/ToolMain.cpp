@@ -31,8 +31,8 @@ ToolMain::ToolMain(QWidget* parent) : ToolBase(parent)
 	layout->addWidget(new BtnCheck("text", QChar(0xe6ec), State::text, this));
 	layout->addWidget(new BtnCheck("mosaic", QChar(0xe82e), State::mosaic, this));
 	layout->addWidget(new BtnCheck("eraser", QChar(0xe6be), State::eraser, this));
-    layout->addWidget(new Btn("undo", QChar(0xed85), this));
-    layout->addWidget(new Btn("redo", QChar(0xed8a), this));
+    layout->addWidget(new Btn("undo", QChar(0xed85), false,this));
+    layout->addWidget(new Btn("redo", QChar(0xed8a), false,this));
     layout->addWidget(new Btn("pin", QChar(0xe6a3),this));
     layout->addWidget(new Btn("clipboard", QChar(0xe87f), this));
     layout->addWidget(new Btn("save", QChar(0xe6c0), this));
@@ -45,10 +45,14 @@ ToolMain::~ToolMain()
 
 void ToolMain::setBtnEnable(const QString& name, bool flag)
 {
-}
-
-void ToolMain::setBtnEnable(bool undo, bool redo)
-{
+    auto btns = findChildren<Btn*>();
+	for (auto& b : btns)
+	{
+		if (b->name == name) {
+			b->setEnable(flag);
+			break;
+		}
+	}
 }
 
 void ToolMain::confirmPos()

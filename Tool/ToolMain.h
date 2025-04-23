@@ -17,8 +17,7 @@ class ToolMain : public ToolBase
 public:
 	ToolMain(QWidget* parent = nullptr);
 	~ToolMain();
-	void setBtnEnable(const QString& name,bool flag=true);
-	void setBtnEnable(bool undo,bool redo);
+	void setBtnEnable(const QString& name, bool flag);
 	void confirmPos();
 	void btnCheckChange(BtnCheck* btn) override;
 	void btnClick(Btn* btn) override;

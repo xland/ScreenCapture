@@ -1,20 +1,21 @@
 #include <QDateTime>
 
-#include "../Win/WinBase.h"
-#include "../Tool/ToolSub.h"
-#include "../Shape/ShapeBase.h"
-#include "../Shape/ShapeRect.h"
-#include "../Shape/ShapeEllipse.h"
-#include "../Shape/ShapeArrow.h"
-#include "../Shape/ShapeNumber.h"
-#include "../Shape/ShapeLine.h"
-#include "../Shape/ShapeText.h"
-#include "../Shape/ShapeEraserRect.h"
-#include "../Shape/ShapeEraserLine.h"
-#include "../Shape/ShapeMosaicRect.h"
-#include "../Shape/ShapeMosaicLine.h"
+#include "Win/WinBase.h"
+#include "Tool/ToolMain.h"
+#include "Tool/ToolSub.h"
+#include "Shape/ShapeBase.h"
+#include "Shape/ShapeRect.h"
+#include "Shape/ShapeEllipse.h"
+#include "Shape/ShapeArrow.h"
+#include "Shape/ShapeNumber.h"
+#include "Shape/ShapeLine.h"
+#include "Shape/ShapeText.h"
+#include "Shape/ShapeEraserRect.h"
+#include "Shape/ShapeEraserLine.h"
+#include "Shape/ShapeMosaicRect.h"
+#include "Shape/ShapeMosaicLine.h"
 #include "Canvas.h"
-#include "../App/Util.h"
+#include "App/Util.h"
 
 
 Canvas::Canvas(QObject *parent) : QObject(parent)
@@ -42,6 +43,11 @@ void Canvas::undo()
 			break;
         }
     }
+    auto win = (WinBase*)parent();
+    if (shapes.first()->state == ShapeState::undo) {
+        win->toolMain->setBtnEnable("undo", false);
+    }
+    win->toolMain->setBtnEnable("redo", true);
 	imgBoard.fill(Qt::transparent);
 	QPainter p(&imgBoard);
 	p.setRenderHint(QPainter::Antialiasing, true);
@@ -51,19 +57,22 @@ void Canvas::undo()
 		if (s->state == ShapeState::undo) continue;
 		s->paint(&p);
 	}
-	auto win = (WinBase*)parent();
 	win->update();
 }
 
 void Canvas::redo()
 {
-    if (shapes.isEmpty()) return;
+    if (shapes.isEmpty()) return;    
     for (int i = 0; i < shapes.size(); i++)
     {
         if (shapes[i]->state == ShapeState::undo) {
             shapes[i]->state = ShapeState::ready;
             break;
         }
+    }
+    auto win = (WinBase*)parent();
+    if (shapes.last()->state == ShapeState::ready) {
+        win->toolMain->setBtnEnable("redo", false);
     }
     imgBoard.fill(Qt::transparent);
     QPainter p(&imgBoard);
@@ -74,7 +83,6 @@ void Canvas::redo()
         if (s->state == ShapeState::undo) continue;
         s->paint(&p);
     }
-    auto win = (WinBase*)parent();
     win->update();
 }
 
@@ -234,6 +242,7 @@ void Canvas::paintShapeOnBoard(ShapeBase* shape)
     win->update();
 	if (!shapes.contains(shape)) {
 		shapes.push_back(shape); //防止文本对象重复添加
+		win->toolMain->setBtnEnable("undo", true);
 	}
 }
 

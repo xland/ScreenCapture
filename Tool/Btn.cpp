@@ -4,13 +4,36 @@
 #include "../App/Util.h"
 
 
-Btn::Btn(const QString& name, const QChar& icon, QWidget *parent) : BtnBase(name,icon,parent)
+Btn::Btn(const QString& name, const QChar& icon, bool isEnable, QWidget *parent) : BtnBase(name,icon,parent),isEnable{isEnable}
 {
+	if (isEnable)
+	{
+		setCursor(Qt::PointingHandCursor);
+	}
+	else
+	{
+		setCursor(Qt::ArrowCursor);
+	}
 }
 
 Btn::~Btn()
 {
 
+}
+
+void Btn::setEnable(bool flag)
+{
+	if (flag == isEnable) return;
+	isEnable = flag;
+	if (flag)
+	{
+		setCursor(Qt::PointingHandCursor);
+	}
+	else
+	{
+		setCursor(Qt::ArrowCursor);
+	}
+    update();
 }
 
 void Btn::paintEvent(QPaintEvent* event)
@@ -22,9 +45,18 @@ void Btn::paintEvent(QPaintEvent* event)
     p.setPen(Qt::NoPen);
     auto font = Util::getIconFont(15);
     p.setFont(*font);
-    p.setBrush(isHover? QColor(228, 238, 255): Qt::white);
-    p.drawRoundedRect(r, 6, 6);
-    p.setPen(QColor(33, 33, 33));
+	if (isEnable)
+	{
+		p.setBrush(isHover ? QColor(228, 238, 255) : Qt::white);
+		p.drawRoundedRect(r, 6, 6);
+		p.setPen(QColor(33, 33, 33));
+	}
+	else
+	{
+		p.setBrush(Qt::white);
+		p.drawRoundedRect(r, 6, 6);
+		p.setPen(QColor(180, 180, 180));
+	}
     p.setBrush(Qt::NoBrush);
     p.drawText(r, Qt::AlignCenter, icon);
 }
