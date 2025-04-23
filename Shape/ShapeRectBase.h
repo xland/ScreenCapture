@@ -18,6 +18,7 @@ public:
     virtual bool mousePress(QMouseEvent* event) override;
     virtual bool mouseRelease(QMouseEvent* event) override;
     virtual void mouseOnShape(QMouseEvent* event);
+    void resetDragger();
 public:
     QRectF shape;
     bool isFill{ false };
@@ -25,6 +26,5 @@ public:
 protected:
     QPointF topLeft, rightBottom, pressPos;
 private:
-    void resetDragger();
 private:
 };

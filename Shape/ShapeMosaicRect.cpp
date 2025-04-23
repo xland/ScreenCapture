@@ -18,22 +18,15 @@ ShapeMosaicRect::~ShapeMosaicRect()
 
 void ShapeMosaicRect::paint(QPainter* painter)
 {
+    bool flag = shape.isEmpty();
+    if (flag) return;
     if (state != ShapeState::ready) {
-        imgPatch = mosaicImg.copy(shape.left()*1.5,shape.top()*1.5,shape.width()*1.5,shape.height()*1.5);
+        
+        auto win = (WinBase*)parent();
+		auto dpr = win->devicePixelRatio();
+        imgPatch = mosaicImg.copy(shape.left() * dpr,shape.top() * dpr,shape.width() * dpr,shape.height() * dpr);
     }
     painter->drawImage(shape.topLeft(), imgPatch);
-}
-
-bool ShapeMosaicRect::mouseRelease(QMouseEvent* event)
-{
-    if (pressPos == event->position() && state != ShapeState::moving) { //鼠标按下，没有拖拽，随即释放
-        return false;
-    }
-    if (state >= ShapeState::sizing0) {
-        ShapeRectBase::mouseRelease(event);
-		return true;
-    }
-    return false;
 }
 
 void ShapeMosaicRect::createMosaicImg()
