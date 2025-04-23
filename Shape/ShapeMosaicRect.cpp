@@ -3,21 +3,13 @@
 
 #include "ShapeMosaicRect.h"
 #include "../Win/WinBase.h"
+#include "../Win/Canvas.h"
 #include "../App/Util.h"
 
 ShapeMosaicRect::ShapeMosaicRect(QObject* parent) : ShapeRectBase(parent)
 {
     isFill = true;
-    auto win = (WinBase*)parent;
-    //QImage winImg(win->imgBg);
-    //QPainter painter(&winImg);
-    //for (int i = 0; i < win->shapes.size(); i++)
-    //{
-    //    win->shapes[i]->paint(&painter);
-    //}
-    //mosaicPixs = winImg.scaled(winImg.width() / mosaicRectSize,
-    //    winImg.height() / mosaicRectSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-
+    createMosaicImg();
 }
 
 ShapeMosaicRect::~ShapeMosaicRect()
@@ -26,39 +18,52 @@ ShapeMosaicRect::~ShapeMosaicRect()
 
 void ShapeMosaicRect::paint(QPainter* painter)
 {
-    if (state == ShapeState::ready) {
-        painter->drawImage(shape.topLeft(), imgPatch);
+    if (state != ShapeState::ready) {
+        imgPatch = mosaicImg.copy(shape.left()*1.5,shape.top()*1.5,shape.width()*1.5,shape.height()*1.5);
     }
-    else {
-        painter->setPen(Qt::NoPen);
-        for (quint32 x = shape.left(); x < shape.right(); x += mosaicRectSize)
-        {
-            for (quint32 y = shape.top(); y < shape.bottom(); y += mosaicRectSize)
-            {
-                auto c = mosaicPixs.pixelColor(x / mosaicRectSize, y / mosaicRectSize);
-                painter->setBrush(c);
-                QRect mRect(x, y, mosaicRectSize, mosaicRectSize);
-                painter->drawRect(mRect);
-            }
-        }
-    }
+    painter->drawImage(shape.topLeft(), imgPatch);
 }
 
 bool ShapeMosaicRect::mouseRelease(QMouseEvent* event)
 {
-    imgPatch = QImage(shape.size().toSize(), QImage::Format_ARGB32_Premultiplied);
-    QPainter painter(&imgPatch);
-    painter.setPen(Qt::NoPen);
-    for (quint32 x = shape.left(); x < shape.right(); x += mosaicRectSize)
+    if (pressPos == event->position() && state != ShapeState::moving) { //鼠标按下，没有拖拽，随即释放
+        return false;
+    }
+    if (state >= ShapeState::sizing0) {
+        ShapeRectBase::mouseRelease(event);
+		return true;
+    }
+    return false;
+}
+
+void ShapeMosaicRect::createMosaicImg()
+{
+    auto win = (WinBase*)parent();
+    auto winImg = win->imgBg.copy();
     {
-        for (quint32 y = shape.top(); y < shape.bottom(); y += mosaicRectSize)
+        QPainter painter(&winImg);
+        for (auto& s : win->canvas->shapes)
         {
-            auto c = mosaicPixs.pixelColor(x / mosaicRectSize, y / mosaicRectSize);
+            s->paint(&painter);
+        }
+    }
+    winImg.setDevicePixelRatio(1.0);
+    QImage mosaicPixs = winImg.scaled(winImg.width() / mosaicRectSize, winImg.height() / mosaicRectSize,
+        Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+    mosaicImg = winImg.copy();
+    QPainter painter(&mosaicImg);
+    painter.setPen(Qt::NoPen);
+    for (int x = 0; x < mosaicPixs.width(); x++)
+    {
+        auto xPos = x * mosaicRectSize;
+        for (int y = 0; y < mosaicPixs.height(); y++)
+        {
+            auto c = mosaicPixs.pixelColor(x, y);
             painter.setBrush(c);
-            QRect mRect(x- shape.left(), y- shape.top(), mosaicRectSize, mosaicRectSize);
+            QRectF mRect(xPos, y * mosaicRectSize, mosaicRectSize, mosaicRectSize);
             painter.drawRect(mRect);
         }
     }
-    ShapeRectBase::mouseRelease(event); 
-    return false;
+    auto dpr = win->imgBg.devicePixelRatio();
+    mosaicImg.setDevicePixelRatio(dpr);
 }

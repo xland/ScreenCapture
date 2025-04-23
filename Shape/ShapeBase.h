@@ -17,6 +17,7 @@ public:
     virtual void mouseDrag(QMouseEvent* event) {};
     virtual bool mousePress(QMouseEvent* event) { return false; };
     virtual bool mouseRelease(QMouseEvent* event) { return false; };
+    void createMosaicImg();
 public:
     int draggerSize{ 8 };
     ShapeState state{ ShapeState::temp };

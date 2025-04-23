@@ -14,8 +14,9 @@ public:
     virtual void paint(QPainter* painter) override;
     bool mouseRelease(QMouseEvent* event) override;
 private:
+    void createMosaicImg();
 private:
+    QImage mosaicImg;
     QImage imgPatch;
-    QImage mosaicPixs;
     int mosaicRectSize{ 18 };
 };
