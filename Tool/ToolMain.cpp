@@ -10,6 +10,8 @@
 #include "../Win/WinPin.h"
 #include "../Win/WinFull.h"
 #include "../Win/CutMask.h"
+#include "../Win/Canvas.h"
+
 #include "ToolMain.h"
 #include "ToolSub.h"
 #include "Btn.h"
@@ -134,13 +136,13 @@ void ToolMain::btnClick(Btn* btn)
 		win->saveToFile();
 	}
 	else if (btn->name == "undo") {
-		win->undo();
+		win->canvas->undo();
 	}
 	else if (btn->name == "redo") {
-		win->redo();
+		win->canvas->redo();
 	}
 	else if (btn->name == "pin") {
-		WinPin::init((WinFull*)win);
+		WinPin::init();
 	}
 	else if (btn->name == "close") {
 		win->close();

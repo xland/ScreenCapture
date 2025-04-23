@@ -4,7 +4,7 @@ enum class ShapeState
 {
     temp = 0,
     ready,
-    hidden,
+    undo,
     sizing0,
     sizing1,
     sizing2,

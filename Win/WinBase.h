@@ -17,8 +17,6 @@ public:
 	~WinBase();
 	void saveToClipboard() {};
 	void saveToFile() {};
-	void undo() {};
-	void redo() {};
 	void raise();
 	void move(const int& x, const int& y);
 	virtual void close();

@@ -77,7 +77,7 @@ void ShapeNumber::paintDragger(QPainter* painter)
 }
 bool ShapeNumber::mouseMove(QMouseEvent* event)
 {
-    if (state != ShapeState::ready) return true;
+    if (state != ShapeState::ready) return false;
     auto pos = event->pos();
     hoverDraggerIndex = -1;
     if (draggers[0].contains(pos)) {

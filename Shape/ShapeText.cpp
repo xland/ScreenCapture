@@ -41,6 +41,7 @@ void ShapeText::paint(QPainter* painter)
 }
 bool ShapeText::mouseMove(QMouseEvent* event)
 {
+    if (state != ShapeState::ready) return false;
     auto ppp = event->pos();
     auto win = (WinBase*)parent();
     if (containerRect.contains(ppp)) {
@@ -61,7 +62,7 @@ bool ShapeText::mousePress(QMouseEvent* event)
     auto win = (WinBase*)parent();
     auto ppp = event->pos();
     if (containerRect.contains(ppp)) {
-        state = ShapeState::hidden;
+        state = ShapeState::moving;
         win->canvas->shapeCur = nullptr;
         win->canvas->removeShapeFromBoard(this);
         container = new ShapeTextContainer(this,win);

@@ -12,6 +12,8 @@ class Canvas  : public QObject
 public:
 	Canvas(QObject *parent);
 	~Canvas();
+	void undo();
+	void redo();
 	void mousePress(QMouseEvent* event);
 	void mouseDrag(QMouseEvent* event);
 	void mouseRelease(QMouseEvent* event);

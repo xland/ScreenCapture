@@ -36,7 +36,7 @@ void ShapeLineBase::paintDragger(QPainter* painter)
 }
 bool ShapeLineBase::mouseMove(QMouseEvent* event)
 {
-    if (state != ShapeState::ready) return true;  //!isStraight || 
+    if (state != ShapeState::ready) return false; //!isStraight || 
     auto pos = event->pos();
     hoverDraggerIndex = -1;
     if (draggers[0].contains(pos)) {

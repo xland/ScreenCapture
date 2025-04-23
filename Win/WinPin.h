@@ -5,7 +5,6 @@
 #include <QAction>
 #include "WinBase.h"
 
-class WinFull;
 class WinPin  : public WinBase
 {
 	Q_OBJECT
@@ -13,7 +12,7 @@ class WinPin  : public WinBase
 public:
 	WinPin(QWidget *parent = nullptr);
 	~WinPin();
-	static void init(WinFull* full);
+	static void init();
 	void showToolMain();
 	void showToolSub();
 	void moveByKey(const int& key);
@@ -22,7 +21,7 @@ protected:
 	void mouseDBClick(QMouseEvent* event) override;
 	void escPress();
 private:
-	void prepareImg(WinFull* full);
+	void prepareImg();
 	void trackMouse();
 	void untrackMouse();
 	void onMouseWheel(const int& delta);

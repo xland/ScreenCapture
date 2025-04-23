@@ -27,7 +27,7 @@ WinPin::~WinPin()
    
 }
 
-void WinPin::init(WinFull* full)
+void WinPin::init()
 {
     //auto winPin = new WinPin();
     //winPin->prepareImg(full);
@@ -153,7 +153,7 @@ void WinPin::copyColor(const int& key)
     close();
 }
 
-void WinPin::prepareImg(WinFull* full)
+void WinPin::prepareImg()
 {
  //   auto tarImg = full->getCutImg();
  //   imgBg = QImage(tarImg.size() + QSize(padding * 2, padding * 2), QImage::Format_ARGB32_Premultiplied);

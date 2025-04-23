@@ -43,7 +43,7 @@ void ShapeRectBase::paintDragger(QPainter* painter)
 }
 bool ShapeRectBase::mouseMove(QMouseEvent* event)
 {
-    if (state != ShapeState::ready) return true;
+    if (state != ShapeState::ready) return false;
     auto win = (WinBase*)parent();
     auto pos = event->pos();
     hoverDraggerIndex = -1;

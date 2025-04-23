@@ -32,6 +32,52 @@ Canvas::~Canvas()
 
 }
 
+void Canvas::undo()
+{
+	if (shapes.isEmpty()) return;	
+    for (int i = shapes.size() - 1; i >= 0; i--)
+    {
+        if (shapes[i]->state != ShapeState::undo) {
+			shapes[i]->state = ShapeState::undo;
+			break;
+        }
+    }
+	imgBoard.fill(Qt::transparent);
+	QPainter p(&imgBoard);
+	p.setRenderHint(QPainter::Antialiasing, true);
+    p.setRenderHint(QPainter::TextAntialiasing, true);
+	for (auto& s : shapes)
+	{
+		if (s->state == ShapeState::undo) continue;
+		s->paint(&p);
+	}
+	auto win = (WinBase*)parent();
+	win->update();
+}
+
+void Canvas::redo()
+{
+    if (shapes.isEmpty()) return;
+    for (int i = 0; i < shapes.size(); i++)
+    {
+        if (shapes[i]->state == ShapeState::undo) {
+            shapes[i]->state = ShapeState::ready;
+            break;
+        }
+    }
+    imgBoard.fill(Qt::transparent);
+    QPainter p(&imgBoard);
+    p.setRenderHint(QPainter::Antialiasing, true);
+    p.setRenderHint(QPainter::TextAntialiasing, true);
+    for (auto& s : shapes)
+    {
+        if (s->state == ShapeState::undo) continue;
+        s->paint(&p);
+    }
+    auto win = (WinBase*)parent();
+    win->update();
+}
+
 void Canvas::mousePress(QMouseEvent* event)
 {
     for (int i = shapes.size() - 1; i >= 0; i--)
@@ -170,6 +216,7 @@ void Canvas::removeShapeFromBoard(ShapeBase* shape)
     imgBoard.fill(Qt::transparent);
     QPainter p(&imgBoard);
     p.setRenderHint(QPainter::Antialiasing, true);
+    p.setRenderHint(QPainter::TextAntialiasing, true);
     for (auto& s : shapes)
     {
         if (shape == s) continue;
