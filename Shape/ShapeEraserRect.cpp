@@ -6,13 +6,11 @@
 #include "../App/App.h"
 #include "../Tool/ToolSub.h"
 #include "../Win/WinBase.h"
-#include "../Win/WinCanvas.h"
+#include "../Win/Canvas.h"
 
 
 ShapeEraserRect::ShapeEraserRect(QObject* parent) : ShapeRectBase(parent)
 {
-    isFill = true;
-    isEraser = true;
 }
 
 ShapeEraserRect::~ShapeEraserRect()

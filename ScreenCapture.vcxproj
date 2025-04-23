@@ -151,8 +151,6 @@
     <ClCompile Include="Tool\ToolSub.cpp" />
     <ClCompile Include="App\Util.cpp" />
     <ClCompile Include="Win\WinBase.cpp" />
-    <ClCompile Include="Win\WinBox.cpp" />
-    <ClCompile Include="Win\WinCanvas.cpp" />
     <ClCompile Include="Win\WinFull.cpp" />
     <ClCompile Include="Win\CutMask.cpp" />
     <ClCompile Include="Win\WinPin.cpp" />
@@ -165,9 +163,7 @@
     <ClInclude Include="App\App.h" />
     <QtMoc Include="App\Lang.h" />
     <ClInclude Include="App\Util.h" />
-    <QtMoc Include="Win\WinBox.h" />
     <QtMoc Include="Win\CutMask.h" />
-    <QtMoc Include="Win\WinCanvas.h" />
     <QtMoc Include="Win\WinBase.h" />
     <QtMoc Include="Tool\StrokeCtrl.h" />
     <QtMoc Include="Tool\ColorCtrl.h" />

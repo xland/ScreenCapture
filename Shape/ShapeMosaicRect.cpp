@@ -43,7 +43,7 @@ void ShapeMosaicRect::paint(QPainter* painter)
 void ShapeMosaicRect::createMosaicImg()
 {
     auto win = (WinBase*)parent();
-    auto winImg = win->imgBg.copy();
+    auto winImg = win->canvas->imgBg.copy();
     {
         QPainter painter(&winImg);
         for (auto& s : win->canvas->shapes)
@@ -68,6 +68,6 @@ void ShapeMosaicRect::createMosaicImg()
             painter.drawRect(mRect);
         }
     }
-    auto dpr = win->imgBg.devicePixelRatio();
+    auto dpr = win->canvas->imgBg.devicePixelRatio();
     mosaicImg.setDevicePixelRatio(dpr);
 }

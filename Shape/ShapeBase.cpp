@@ -1,7 +1,6 @@
 #include "ShapeBase.h"
 #include "../App/App.h"
 #include "../Win/WinBase.h"
-#include "../Win/WinCanvas.h"
 
 ShapeBase::ShapeBase(QObject* parent):QObject(parent)
 {

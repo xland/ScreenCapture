@@ -7,7 +7,7 @@
 
 #include "WinPin.h"
 #include "WinFull.h"
-#include "WinCanvas.h"
+#include "Canvas.h"
 #include "../Shape/ShapeBase.h"
 #include "../Shape/ShapeText.h"
 #include "../Shape/ShapeTextContainer.h"
@@ -18,9 +18,8 @@
 #include "PixelInfo.h"
 
 
-WinPin::WinPin(QWidget* parent) : WinBox(parent)
+WinPin::WinPin(QWidget* parent) : WinBase(parent)
 {
-    padding = 8;
 }
 
 WinPin::~WinPin()
@@ -50,13 +49,12 @@ void WinPin::showToolMain()
     if (!toolMain) {
         toolMain = new ToolMain(this);
     }
-    QPoint pos{ x + padding, y + h };
+    QPoint pos{ x, y + h };
     auto hwnd = (HWND)toolMain->winId();
     SetWindowPos(hwnd, nullptr, pos.x(), pos.y(), 0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_SHOWWINDOW);
     toolMain->setBtnEnable(QString{ "pin" }, false);
     toolMain->show();
     state = State::tool;
-    if (pixelInfo) pixelInfo->close();
 }
 
 void WinPin::showToolSub()
@@ -72,194 +70,16 @@ void WinPin::showToolSub()
     toolSub->raise();
 }
 
-void WinPin::saveToClipboard()
-{
-    QImage tar = imgBg.copy(QRect(padding, padding, w - padding * 2, h - padding * 2));
-    QPainter p(&tar);
-    p.setRenderHint(QPainter::Antialiasing, true);
-    p.setRenderHint(QPainter::TextAntialiasing, true);
-    for (auto shape : shapes)
-    {
-        shape->paint(&p);
-    }
-    Util::imgToClipboard(tar);
-    close();
 
-}
 
-void WinPin::saveToFile()
-{
-    QString desktopPath = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
-    auto filePath = QDir::cleanPath(desktopPath + QDir::separator() + "Img" + QDateTime::currentDateTime().toString("yyyyMMddhhmmsszzz") + ".png");
-    filePath = QFileDialog::getSaveFileName(toolMain, tr("保存文件"), filePath, "ScreenCapture (*.png)");
-    if (filePath.isEmpty())
-    {
-        return;
-    }
-	QImage tar = imgBg.copy(QRect(padding, padding, w - padding * 2, h - padding * 2));
-    QPainter p(&tar);
-    p.setRenderHint(QPainter::Antialiasing, true);
-    p.setRenderHint(QPainter::TextAntialiasing, true);
-    for (auto shape : shapes)
-    {
-        shape->paint(&p);
-    }
-    tar.save(filePath);
-    close();
-}
 
-void WinPin::close()
-{
-    if (winCanvas) {
-        winCanvas->close();
-    }
-    //if (winBoard) {
-    //    winBoard->close();
-    //}
-    if (toolMain) {
-        toolMain->close();
-    }
-    if (toolSub) {
-        toolSub->close();
-    }
-    if (pixelInfo) {
-        pixelInfo->close();
-    }
-    WinBase::close();
-}
-
-void WinPin::ctrlTPress()
-{
-	if (state == State::start)
-	{
-		showToolMain();
-	}
-	else
-	{
-        hideTools();
-	}
-}
-
-void WinPin::mousePress(QMouseEvent* event)
-{
-    event->ignore();
-    if (pixelInfo)pixelInfo->hide();
-    if (toolSub && toolSub->isVisible()) {
-        mousePressOnShape(event);
-    }
-    else {
-        if (toolMain) {
-            needShowToolMain = toolMain->isVisible();
-            if (needShowToolMain) {
-                toolMain->hide();
-            }
-        }
-        SetCapture(hwnd);
-        posPress = event->position();
-    }
-}
-
-void WinPin::mousePressRight(QMouseEvent* event)
-{
-    auto flag = state == State::start;
-    HMENU hMenu = CreatePopupMenu();
-
-    auto toolBar = Lang::get("toolBar").toStdWString();
-    auto quit = Lang::get("quit").toStdWString();
-    AppendMenu(hMenu, flag ? MF_UNCHECKED : MF_CHECKED, 1001, toolBar.data());
-    AppendMenu(hMenu, MF_STRING, 1002, quit.data());
-    auto pos = event->pos();
-    int cmd = TrackPopupMenu(hMenu, TPM_RETURNCMD | TPM_NONOTIFY, x+pos.x(), y+pos.y(), 0, hwnd, NULL);
-    if (cmd == 1001) {
-       if (state == State::start)
-       {
-           showToolMain();
-           state = State::tool;
-	   }
-       else
-       {
-           hideTools();
-           state = State::start;
-       }
-    }
-    else if (cmd == 1002) {
-        close();
-    }
-    DestroyMenu(hMenu);
-}
 
 void WinPin::mouseDBClick(QMouseEvent* event)
 {
     saveToClipboard();
 }
 
-void WinPin::mouseMove(QMouseEvent* event)
-{
-    trackMouse();
-    event->ignore();
-    if (pixelInfo) {
-        auto pos = event->pos();
-        if (pos.x() > padding && pos.y() > padding && pos.x() < w - padding && pos.y() < h - padding) {            
-            pixelInfo->mouseMove(pos);
-        }
-        else {
-            pixelInfo->hide();
-        }
-    }
-    if (state <= State::tool) {
-        QGuiApplication::setOverrideCursor(Qt::SizeAllCursor);
-        return;
-    }
-    mouseMoveOnShape(event);
-    if (!event->isAccepted()) {
-        if (state == State::text) {
-            QGuiApplication::setOverrideCursor(Qt::IBeamCursor);
-        }
-        else
-        {
-            QGuiApplication::setOverrideCursor(Qt::CrossCursor);
-        }
-    }
-}
 
-void WinPin::mouseDrag(QMouseEvent* event)
-{
-    event->ignore();
-    mouseDragOnShape(event);
-    if (GetCapture() == hwnd) {
-        auto pos = event->globalPosition() - posPress;
-        SetWindowPos(hwnd, NULL, pos.x(), pos.y(), 0, 0, SWP_NOSIZE | SWP_NOZORDER);
-        //if (winBoard) {
-        //    SetWindowPos(winBoard->hwnd, NULL, pos.x(), pos.y(), 0, 0, SWP_NOSIZE | SWP_NOZORDER);
-        //}
-        if (winCanvas) {
-            SetWindowPos(winCanvas->hwnd, NULL, pos.x(), pos.y(), 0, 0, SWP_NOSIZE | SWP_NOZORDER);
-        }
-    }
-}
-
-void WinPin::mouseRelease(QMouseEvent* event)
-{
-    event->ignore();
-    mouseReleaseOnShape(event);
-    if (GetCapture() == hwnd) {
-        ReleaseCapture();
-        if (needShowToolMain) {
-            showToolMain();
-        }
-        auto span = event->globalPosition() - posPress;
-        for (int i = 0; i < shapes.size(); i++)
-        {
-            auto shapeText = qobject_cast<ShapeText*>(shapes[i]);
-            if (shapeText) {
-                //auto hwnd = (HWND)shapeText->container->winId();
-                //auto xx = x + shapeText->container->ctrlRect.x();
-                //auto yy = y + shapeText->container->ctrlRect.y()-8;
-                //SetWindowPos(hwnd, nullptr, xx, yy, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
-            }
-        }
-    }
-}
 
 void WinPin::escPress()
 {

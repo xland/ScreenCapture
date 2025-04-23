@@ -6,7 +6,7 @@
 #include "../App/App.h"
 #include "../Tool/ToolSub.h"
 #include "../Win/WinBase.h"
-#include "../Win/WinCanvas.h"
+#include "../Win/Canvas.h"
 
 
 ShapeLine::ShapeLine(QObject* parent) : ShapeLineBase(parent)

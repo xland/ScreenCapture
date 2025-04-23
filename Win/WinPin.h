@@ -3,10 +3,10 @@
 #include <QWidget>
 #include <QMenu>
 #include <QAction>
-#include "WinBox.h"
+#include "WinBase.h"
 
 class WinFull;
-class WinPin  : public WinBox
+class WinPin  : public WinBase
 {
 	Q_OBJECT
 
@@ -14,22 +14,13 @@ public:
 	WinPin(QWidget *parent = nullptr);
 	~WinPin();
 	static void init(WinFull* full);
-	void showToolMain() override;
-	void showToolSub() override;
-	void saveToClipboard() override;
-	void saveToFile() override;
-	void close() override;
-	void ctrlTPress() override;
-	void moveByKey(const int& key) override;
-	void copyColor(const int& key) override;
+	void showToolMain();
+	void showToolSub();
+	void moveByKey(const int& key);
+	void copyColor(const int& key);
 protected:
-	void mousePress(QMouseEvent* event) override;
-	void mousePressRight(QMouseEvent* event) override;
 	void mouseDBClick(QMouseEvent* event) override;
-	void mouseMove(QMouseEvent* event) override;
-	void mouseDrag(QMouseEvent* event) override;
-	void mouseRelease(QMouseEvent* event) override;
-	void escPress() override;
+	void escPress();
 private:
 	void prepareImg(WinFull* full);
 	void trackMouse();

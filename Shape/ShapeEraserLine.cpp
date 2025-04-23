@@ -11,7 +11,6 @@
 
 ShapeEraserLine::ShapeEraserLine(QObject* parent) : ShapeLineBase(parent)
 {
-    isEraser = true;
 }
 
 ShapeEraserLine::~ShapeEraserLine()

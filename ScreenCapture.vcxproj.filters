@@ -77,9 +77,6 @@
     <ClCompile Include="Shape\ShapeTextInput.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Win\WinCanvas.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Win\CutMask.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -102,9 +99,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Win\PixelInfo.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Win\WinBox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Tool\ToolBase.cpp">
@@ -198,9 +192,6 @@
     <QtMoc Include="Shape\ShapeTextInput.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="Win\WinCanvas.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
     <QtMoc Include="Win\CutMask.h">
       <Filter>Header Files</Filter>
     </QtMoc>
@@ -223,9 +214,6 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="Win\PixelInfo.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="Win\WinBox.h">
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="Tool\ToolBase.h">

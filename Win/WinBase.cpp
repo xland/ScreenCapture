@@ -28,10 +28,6 @@ void WinBase::initWindow()
 void WinBase::paintEvent(QPaintEvent* event)
 {
 }
-QImage WinBase::grab(const QRect& rect)
-{
-    return imgBg.copy(rect);
-}
 void WinBase::raise()
 {
     SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
@@ -46,17 +42,4 @@ void WinBase::close()
 {
     PostMessage(hwnd, WM_CLOSE, 0, 0);
     deleteLater();
-}
-
-void WinBase::releaseImg()
-{
-    if (!imgBg.isNull()) {
-        imgBg = QImage();
-    }
-}
-void WinBase::initImg()
-{
-    if (imgBg.isNull()) {
-        imgBg = QImage(w, h, QImage::Format_ARGB32_Premultiplied);
-    }
 }

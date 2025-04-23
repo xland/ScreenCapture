@@ -25,6 +25,9 @@ public:
 	ShapeBase* shapeCur;
 	ShapeBase* shapeHover;
 	QList<ShapeBase*> shapes;
+	QImage imgBg;
+	QImage imgBoard;
+	QImage imgCanvas;
 private:
 	void addShape();
 private:

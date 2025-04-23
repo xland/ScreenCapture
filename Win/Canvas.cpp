@@ -14,11 +14,17 @@
 #include "../Shape/ShapeMosaicRect.h"
 #include "../Shape/ShapeMosaicLine.h"
 #include "Canvas.h"
+#include "../App/Util.h"
 
 
 Canvas::Canvas(QObject *parent) : QObject(parent)
 {
-
+	auto win = (WinBase*)parent;
+    auto dpr = win->devicePixelRatio();
+    imgBg = Util::printScreen();
+    imgBg.setDevicePixelRatio(dpr);
+    imgBoard = imgBg.copy();
+    imgCanvas = imgBg.copy();
 }
 
 Canvas::~Canvas()
@@ -77,6 +83,8 @@ void Canvas::mouseRelease(QMouseEvent* event)
 
 void Canvas::paint(QPainter& p)
 {
+    p.drawImage(0, 0, imgBg);
+    p.drawImage(0, 0, imgBoard);
     if (shapeCur) {
         shapeCur->paint(&p);
     }
@@ -159,8 +167,8 @@ void Canvas::setHoverShape(ShapeBase* shape)
 void Canvas::removeShapeFromBoard(ShapeBase* shape)
 {
     auto win = (WinBase*)parent();
-    win->imgBoard.fill(Qt::transparent);
-    QPainter p(&win->imgBoard);
+    imgBoard.fill(Qt::transparent);
+    QPainter p(&imgBoard);
     p.setRenderHint(QPainter::Antialiasing, true);
     for (auto& s : shapes)
     {
@@ -173,7 +181,7 @@ void Canvas::removeShapeFromBoard(ShapeBase* shape)
 void Canvas::paintShapeOnBoard(ShapeBase* shape)
 {
     auto win = (WinBase*)parent();
-    QPainter p(&win->imgBoard);
+    QPainter p(&imgBoard);
     p.setRenderHint(QPainter::Antialiasing, true);
     shape->paint(&p);
     win->update();

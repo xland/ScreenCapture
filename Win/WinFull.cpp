@@ -31,11 +31,6 @@ WinFull::WinFull(QWidget* parent) : WinBase(parent)
     cutMask = new CutMask(this);
     canvas = new Canvas(this);
     initWindow();
-    auto dpr = devicePixelRatio();
-    imgBg = Util::printScreen();
-    imgBg.setDevicePixelRatio(dpr);
-    imgBoard = imgBg.copy();
-    imgCanvas = imgBg.copy();
     pixelInfo = new PixelInfo(this);
     pixelInfo->mouseMove(QCursor::pos());
 }
@@ -52,8 +47,6 @@ void WinFull::paintEvent(QPaintEvent* event)
     QPainter p(this);
     p.setRenderHint(QPainter::Antialiasing, true);
     p.setRenderHint(QPainter::TextAntialiasing, true);
-    p.drawImage(0, 0, imgBg);
-    p.drawImage(0, 0, imgBoard);
     canvas->paint(p);
     cutMask->paint(p);
 }

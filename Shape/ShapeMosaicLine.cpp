@@ -119,7 +119,7 @@ void ShapeMosaicLine::erasePath(QImage* img)
 void ShapeMosaicLine::createMosaicImg()
 {
     auto win = (WinBase*)parent();
-    winImg = win->imgBg.copy();
+    winImg = win->canvas->imgBg.copy();
     {
         QPainter painter(&winImg);
         for (auto& s:win->canvas->shapes)
@@ -144,7 +144,7 @@ void ShapeMosaicLine::createMosaicImg()
             painter.drawRect(mRect);
         }
     }
-    auto dpr = win->imgBg.devicePixelRatio();
+    auto dpr = win->canvas->imgBg.devicePixelRatio();
     mosaicImg.setDevicePixelRatio(dpr);
     winImg.setDevicePixelRatio(dpr);
 }

@@ -9,29 +9,21 @@
 class ToolMain;
 class ToolSub;
 class Canvas;
-class ShapeBase;
 class WinBase  : public QMainWindow
 {
 	Q_OBJECT
 public:
 	WinBase(QWidget* parent = nullptr);
 	~WinBase();
-	void initImg();
-	void releaseImg();
 	void saveToClipboard() {};
 	void saveToFile() {};
 	void undo() {};
 	void redo() {};
-	QImage grab() { return QImage(); };
-	QImage grab(const QRect& rect);
 	void raise();
 	void move(const int& x, const int& y);
 	virtual void close();
 public:
 	int x, y, w, h;
-	QImage imgBg;
-	QImage imgBoard;
-	QImage imgCanvas;
 	HWND hwnd;
 	State state;
 	ToolMain* toolMain;
