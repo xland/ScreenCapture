@@ -24,9 +24,9 @@ public:
 public:
 	ShapeBase* shapeCur;
 	ShapeBase* shapeHover;
+	QList<ShapeBase*> shapes;
 private:
 	void addShape();
 private:
-	QList<ShapeBase*> shapes;
 	QTimer* timerDragger;
 };

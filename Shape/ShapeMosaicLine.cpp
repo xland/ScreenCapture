@@ -4,7 +4,9 @@
 
 #include "ShapeMosaicLine.h"
 #include "../Win/WinBase.h"
+#include "../Win/Canvas.h"
 #include "../App/Util.h"
+#include "Shape/ShapeBase.h"
 
 ShapeMosaicLine::ShapeMosaicLine(QObject* parent) : ShapeLineBase(parent)
 {
@@ -32,6 +34,27 @@ void ShapeMosaicLine::paint(QPainter* painter)
     }
 }
 
+bool ShapeMosaicLine::mousePress(QMouseEvent* event)
+{
+    if (state == ShapeState::temp) {
+        pressPos = event->position();
+        isStraight = event->modifiers() & Qt::ShiftModifier;
+        state = (ShapeState)((int)ShapeState::sizing0 + 1);
+        path.moveTo(pressPos);
+        return true;
+    }
+    else if (hoverDraggerIndex >= 0) {
+        imgPatch = QImage();
+        createMosaicImg();
+        pressPos = event->position();
+        state = (ShapeState)((int)ShapeState::sizing0 + hoverDraggerIndex);
+        if (hoverDraggerIndex == 0) {
+            pathStart.moveTo(pressPos);
+        }
+        return true;
+    }
+    return false;
+}
 bool ShapeMosaicLine::mouseRelease(QMouseEvent* event)
 {
     if (state < ShapeState::sizing0) return false;
@@ -80,27 +103,6 @@ bool ShapeMosaicLine::mouseRelease(QMouseEvent* event)
     return false;
 }
 
-bool ShapeMosaicLine::mousePress(QMouseEvent* event)
-{
-    if (state == ShapeState::temp) {
-        pressPos = event->position();
-        isStraight = event->modifiers() & Qt::ShiftModifier;
-        state = (ShapeState)((int)ShapeState::sizing0 + 1);
-        path.moveTo(pressPos);
-        return true;
-    }
-    else if (hoverDraggerIndex >= 0) {
-        imgPatch = QImage();
-        createMosaicImg();
-        pressPos = event->position();
-        state = (ShapeState)((int)ShapeState::sizing0 + hoverDraggerIndex);
-        if (hoverDraggerIndex == 0) {
-            pathStart.moveTo(pressPos);
-        }
-        return true;
-    }
-    return false;
-}
 
 void ShapeMosaicLine::erasePath(QImage* img)
 {
@@ -116,18 +118,19 @@ void ShapeMosaicLine::erasePath(QImage* img)
 
 void ShapeMosaicLine::createMosaicImg()
 {
-    /*auto win = (WinBase*)parent();
-    winImg = QImage(win->imgBg);
+    auto win = (WinBase*)parent();
+    winImg = win->imgBg.copy();
     {
         QPainter painter(&winImg);
-        for (int i = 0; i < win->shapes.size(); i++)
+        for (auto& s:win->canvas->shapes)
         {
-            win->shapes[i]->paint(&painter);
+			s->paint(&painter);
         }
     }
-    QImage mosaicPixs = winImg.scaled(winImg.width() / mosaicRectSize,
-        winImg.height() / mosaicRectSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-    mosaicImg = QImage(winImg);
+	winImg.setDevicePixelRatio(1.0);
+    QImage mosaicPixs = winImg.scaled(winImg.width() / mosaicRectSize,winImg.height() / mosaicRectSize, 
+        Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+    mosaicImg = winImg.copy();
     QPainter painter(&mosaicImg);
     painter.setPen(Qt::NoPen);
     for (int x = 0; x < mosaicPixs.width(); x++)
@@ -140,6 +143,9 @@ void ShapeMosaicLine::createMosaicImg()
             QRectF mRect(xPos, y * mosaicRectSize, mosaicRectSize, mosaicRectSize);
             painter.drawRect(mRect);
         }
-    }*/
+    }
+    auto dpr = win->imgBg.devicePixelRatio();
+    mosaicImg.setDevicePixelRatio(dpr);
+    winImg.setDevicePixelRatio(dpr);
 }
 
