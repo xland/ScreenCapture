@@ -27,6 +27,7 @@ public:
 protected:
 	virtual QImage getTargetImg() = 0;
 	void keyPressEvent(QKeyEvent* event) override;
+	void moveCursor(const QPoint& pos);
 private:
 
 };

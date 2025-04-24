@@ -1,6 +1,9 @@
-- 进程返回值
-- 键盘移动PixInfo
-- Del键删除Shape
-- 复制颜色值
-- 复制位置
 - 验证多屏幕
+- 多语言支持（`ScreenCapture.exe --lang:en_us`）
+- 直接把剪切板内的图片钉在桌面上（`ScreenCapture.exe --pin:clipboard`）。
+- 设置默认保存目录（`ScreenCapture.exe --dir:"D:\doc\测试目录"`）。
+
+
+
+- 滚轮调整文字大小
+- Del键删除Shape

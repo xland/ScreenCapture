@@ -10,12 +10,12 @@ English:
 
 - Multi-screen capture, Cross screen shot.
 - Window area highlight.
-- Camera aperture,Copy pixel color:RGB(`Ctrl+R`),HEX(`Ctrl+H`).
+- Camera aperture,Copy pixel color:RGB(`Ctrl+R`),HEX(`Ctrl+H`),CMYK(`Ctrl+K`).
 - Draw circle(`Shift` down),ellipse,square(`Shift` down),rectangle,arrow,ordered number by diffrent colors (fill or not fill).
-- Draw curve,straight line(`Shift` down),opacity line,mosaic,eraser,text(`Mouse Wheel` to change font size).
-- Modify the drawn elements at any time(`Mouse Over` the element and wait `1.6` second).
+- Draw curve,straight line(`Shift` down),opacity line,mosaic,eraser,text.
+- Modify the drawn elements at any time(when `Mouse Over` the element).
 - Undo(`Ctrl+Z`) Redo(`Ctrl+Y`) support.
-- Pin the cut area on desktop(`Ctrl+P`), resize pin window by `Mouse Wheel`.
+- Pin the cut area on desktop, resize pin window by `Mouse Wheel`.
 - Save to file(`Ctrl+S`) or clipboard(`Ctrl+C`).
 - Multi-language support(`ScreenCapture.exe --lang:en_us`).
 - Pin the clipboard image to the desktop(`ScreenCapture.exe --pin:clipboard`).
@@ -23,17 +23,16 @@ English:
 - Very fast,Small memory footprint,Low CPU useage.
 - Only one small executable file (3.8M，with out any dll).
 - Can be easily integrated into any program.
-- Powered by Skia.
 
 Chinese:
 
 - 跨屏幕截图、高分屏支持、窗口区域高亮。
 - 取景框，支持快捷键复制 RGB 颜色 （`Ctrl+R`）和 HEX 颜色（`Ctrl+H`）。
 - 绘制填充、非填充的椭圆、正圆（`Shift`按下）、矩形、正方形（`Shift`按下）、箭头、排序标号（`拖拽`调整箭头方向和大小，`滚轮`调整大小）。
-- 画曲线、直线（`Shift`按下）、半透明直线、马赛克、橡皮擦、文本（`滚轮`调整文字大小）。
-- 可以随时修改已绘制的元素（鼠标移到元素上等待 `1.6` 秒）。
+- 画曲线、直线（`Shift`按下）、半透明直线、马赛克、橡皮擦、文本。
+- 可以随时修改已绘制的元素（鼠标移到元素上）。
 - 上一步（`Ctrl+Z`）、下一步（`Ctrl+Y`）。
-- 在新窗口中钉住截图区域（`Ctrl+P`）,鼠标`滚轮`改变钉图窗口大小。
+- 在新窗口中钉住截图区域,鼠标`滚轮`改变钉图窗口大小。
 - 保存成文件（`Ctrl+S`）、保存到剪切板（`Ctrl+C`）。
 - 多语言支持（`ScreenCapture.exe --lang:en_us`）。
 - 直接把剪切板内的图片钉在桌面上（`ScreenCapture.exe --pin:clipboard`）。
@@ -41,7 +40,6 @@ Chinese:
 - 非常快、低内存消耗、低 CPU 使用率。
 - 非常小、仅一个可执行文件（3.8M），无需安装，不依赖任何动态链接库。
 - 可以非常容易的集成到其他应用中。
-- 基于Skia。
 
 
 ## Download（下载）
