@@ -80,15 +80,16 @@ void WinPin::mouseReleaseEvent(QMouseEvent* event)
 
 void WinPin::initWindow()
 {
-    show();
     setAttribute(Qt::WA_DontCreateNativeAncestors);
+    setMouseTracking(true);
+    setCursor(Qt::SizeAllCursor);
+    show();
     HWND hwnd = reinterpret_cast<HWND>(winId());
     MARGINS margins = { 1, 1, 1, 1 };
     DwmExtendFrameIntoClientArea(hwnd, &margins);
     int value = 2;
     DwmSetWindowAttribute(hwnd, DWMWA_NCRENDERING_POLICY, &value, sizeof(value));
     DwmSetWindowAttribute(hwnd, DWMWA_ALLOW_NCPAINT, &value, sizeof(value));
-    setCursor(Qt::SizeAllCursor);
 }
 
 void WinPin::showContextMenu(const QPoint& pos)
