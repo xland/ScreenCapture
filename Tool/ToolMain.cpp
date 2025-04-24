@@ -170,7 +170,10 @@ void ToolMain::paintEvent(QPaintEvent* event)
 
 void ToolMain::closeEvent(QCloseEvent* event)
 {
-    deleteLater();
     auto win = (WinBase*)parent();
+	if (win->toolSub) {
+		win->toolSub->close();
+	}
+    deleteLater();
     win->toolMain = nullptr;
 }

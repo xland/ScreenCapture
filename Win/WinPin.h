@@ -19,6 +19,8 @@ protected:
 	void mouseReleaseEvent(QMouseEvent* event) override;
 private:
 	void initWindow();
+	void showContextMenu(const QPoint& pos);
+	void moveEvent(QMoveEvent* event) override;
 private:
 	QPointF posPress;
 };

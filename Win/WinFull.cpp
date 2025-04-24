@@ -105,7 +105,6 @@ void WinFull::pin()
 	auto br = cutMask->rectMask.bottomRight() * dpr+QPoint(1,1);
     QRect r;
     r.setCoords(tl.x(), tl.y(), br.x(), br.y());
-
     auto img = canvas->imgBg.copy(r);
     auto img2 = canvas->imgBoard.copy(r);
     QPainter p(&img);

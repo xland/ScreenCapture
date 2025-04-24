@@ -1,5 +1,5 @@
 #include <QToolTip>
-#include "../App/Lang.h"
+#include "App/Lang.h"
 #include "BtnBase.h"
 
 BtnBase::BtnBase(const QString& name, const QChar& icon, QWidget *parent) : QWidget(parent),

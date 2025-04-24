@@ -23,6 +23,8 @@ WinPin::WinPin(const QRect& r, const QImage& img, QWidget* parent) : WinBase(par
     setGeometry(r);
     initWindow();
     canvas = new Canvas(img, this);
+    setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(this, &QWidget::customContextMenuRequested, this, &WinPin::showContextMenu);
 }
 
 WinPin::~WinPin()
@@ -40,21 +42,40 @@ void WinPin::paintEvent(QPaintEvent* event)
 
 void WinPin::mousePressEvent(QMouseEvent* event)
 {
-    if (event->buttons() & Qt::LeftButton) {
-        posPress = event->globalPosition() - window()->pos();
+    if (event->buttons() & Qt::LeftButton) {        
+        if (state >= State::rect) {
+            canvas->mousePress(event);
+        }
+        else {
+            posPress = event->globalPosition() - window()->pos();
+        }
     }
 }
 
 void WinPin::mouseMoveEvent(QMouseEvent* event)
 {
 	if (event->buttons() & Qt::LeftButton) {
-        auto p = event->globalPosition() - posPress;
-        move(p.toPoint());
-	}
+        if (state >= State::rect) {
+            canvas->mouseDrag(event);
+		}
+		else {
+            auto p = event->globalPosition() - posPress;
+            move(p.toPoint());
+		}
+    }
+    else
+    {
+        if (state >= State::rect) {
+            canvas->mouseMove(event);
+        }
+    }
 }
 
 void WinPin::mouseReleaseEvent(QMouseEvent* event)
 {
+    if (state >= State::rect) {
+        canvas->mouseRelease(event);
+    }
 }
 
 void WinPin::initWindow()
@@ -67,5 +88,41 @@ void WinPin::initWindow()
     int value = 2;
     DwmSetWindowAttribute(hwnd, DWMWA_NCRENDERING_POLICY, &value, sizeof(value));
     DwmSetWindowAttribute(hwnd, DWMWA_ALLOW_NCPAINT, &value, sizeof(value));
+    setCursor(Qt::SizeAllCursor);
+}
+
+void WinPin::showContextMenu(const QPoint& pos)
+{
+    QMenu contextMenu(this);
+    QAction* menuAction = contextMenu.addAction(Lang::get("toolBar"));
+    menuAction->setCheckable(true);
+	if (toolMain) {
+        menuAction->setChecked(true);
+	}
+    QAction* closeAction = contextMenu.addAction(Lang::get("quit"));
+    connect(menuAction, &QAction::triggered, [this]() {
+		if (toolMain) {
+			toolMain->close();
+			toolMain = nullptr;
+            this->setCursor(Qt::SizeAllCursor);
+        }
+        else {
+            toolMain = new ToolMain(this);
+            auto pos = this->pos();
+            toolMain->move(pos.x(), pos.y() + this->height() + 4);
+            toolMain->show();
+        }
+        });
+    connect(closeAction, &QAction::triggered, [this](){
+        close();
+        });
+    contextMenu.exec(mapToGlobal(pos));
+}
+
+void WinPin::moveEvent(QMoveEvent* event)
+{
+	if (!toolMain) return;
+    auto pos = this->pos();
+    toolMain->move(pos.x(), pos.y() + height() + 4);
 }
 
