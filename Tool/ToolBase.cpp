@@ -2,10 +2,10 @@
 #include <qpushbutton.h>
 #include <qtooltip.h>
 
-#include "../App/Util.h"
-#include "../App/App.h"
-#include "../Win/WinFull.h"
-#include "../Win/WinBase.h"
+#include "App/Util.h"
+#include "App/App.h"
+#include "Win/WinBase.h"
+#include "Win/Canvas.h"
 #include "ToolBase.h"
 #include "ToolSub.h"
 
@@ -45,39 +45,13 @@ void ToolBase::showEvent(QShowEvent* event)
     SetFocus(wid);
 }
 
-std::shared_ptr<QPainter> ToolBase::getPainter()
-{
-    auto font = Util::getIconFont(15);
-    font->setPixelSize(15);
-    auto painter = std::make_shared<QPainter>(this);
-    painter->setRenderHint(QPainter::Antialiasing, true);
-    painter->setRenderHint(QPainter::TextAntialiasing, true);
-    painter->setFont(*font);
-    QPen pen;
-    pen.setColor(QColor(22, 118, 255));
-    pen.setWidthF(border);
-    painter->setPen(pen);
-    painter->setBrush(Qt::white);
-    return painter;
-}
-
-void ToolBase::paintBtn(const QChar& icon, const QColor& frontColor, const QColor& bgColor, QRect& rect,QPainter* p)
-{
-    rect.adjust(2, 4, -2, -4);
-    p->setPen(Qt::NoPen);
-    p->setBrush(bgColor);
-    p->drawRoundedRect(rect, 6, 6);
-    p->setPen(frontColor);
-    p->drawText(rect, Qt::AlignCenter, icon);
-}
 void ToolBase::keyPressEvent(QKeyEvent* event)
 {
-    /*event->ignore();
     auto win = (WinBase*)parent();
     if (event->key() == Qt::Key_Escape) {
-        win->escPress();
+        qApp->exit(3);
     }
-    else if (event->key() == Qt::Key_Delete) {
+    /*else if (event->key() == Qt::Key_Delete) {
         win->removeShape();
     }
     else if (event->key() == Qt::Key_Left) {
@@ -92,33 +66,34 @@ void ToolBase::keyPressEvent(QKeyEvent* event)
     else if (event->key() == Qt::Key_Down) {
         win->moveByKey(3);
     }
+    */
     else if (event->modifiers() & Qt::ControlModifier) {
         if (event->key() == Qt::Key_T) {
-            win->hideTools();
+            
         }
-        else if (event->key() == Qt::Key_Z) {
-            win->undo();
-        }
-        else if (event->key() == Qt::Key_Y) {
-            win->redo();
-        }
-        else if (event->key() == Qt::Key_S) {
-            win->saveToFile();
-        }
-        else if (event->key() == Qt::Key_C) {
-            win->saveToClipboard();
-        }
+        //else if (event->key() == Qt::Key_Z) {
+        //    win->undo();
+        //}
+        //else if (event->key() == Qt::Key_Y) {
+        //    win->redo();
+        //}
+        //else if (event->key() == Qt::Key_S) {
+        //    win->saveToFile();
+        //}
+        //else if (event->key() == Qt::Key_C) {
+        //    win->saveToClipboard();
+        //}
         else if (event->key() == Qt::Key_H) {
-            win->copyColor(0);
+            win->canvas->copyColor(0);
         }
         else if (event->key() == Qt::Key_R) {
-            win->copyColor(1);
+            win->canvas->copyColor(1);
         }
         else if (event->key() == Qt::Key_K) {
-            win->copyColor(2);
+            win->canvas->copyColor(2);
         }
         else if (event->key() == Qt::Key_P) {
-            win->copyColor(3);
+            win->canvas->copyColor(3);
         }
-    }*/
+    }
 }

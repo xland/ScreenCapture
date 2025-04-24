@@ -18,8 +18,6 @@ public:
 protected:
 	void showEvent(QShowEvent* event) override;
 	void keyPressEvent(QKeyEvent* event) override;
-	std::shared_ptr<QPainter> getPainter();
-	void paintBtn(const QChar& icon,const QColor& frontColor,const QColor& bgColor,QRect& rect, QPainter* p);
 protected:
 	int hoverIndex{ -1 };
 	qreal btnW{ 32 };

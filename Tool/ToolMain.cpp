@@ -152,19 +152,30 @@ void ToolMain::btnClick(Btn* btn)
 	}
 	else if (btn->name == "close") {
 		win->close();
+        qApp->exit(1);
 	}
 }
 
 void ToolMain::paintEvent(QPaintEvent* event)
 {
-    auto painter = getPainter(); 
-    painter->drawRect(rect().toRectF().adjusted(border,border,-border,-border));
-    painter->setPen(QColor(190, 190, 190));
+    QPainter painter(this);
+    auto font = Util::getIconFont(15);
+    font->setPixelSize(15);
+    painter.setRenderHint(QPainter::Antialiasing, true);
+    painter.setRenderHint(QPainter::TextAntialiasing, true);
+    painter.setFont(*font);
+    QPen pen;
+    pen.setColor(QColor(22, 118, 255));
+    pen.setWidthF(border);
+    painter.setPen(pen);
+    painter.setBrush(Qt::white);
+    painter.drawRect(rect().toRectF().adjusted(border,border,-border,-border));
+    painter.setPen(QColor(190, 190, 190));
     auto x{ 4 + 8 * btnW + 0.5 };
     auto y1{ height() - 9 };
-    painter->drawLine(x, 9, x,y1);
+    painter.drawLine(x, 9, x,y1);
     x = 4 + 10 * btnW + 0.5;
-    painter->drawLine(x, 9, x, y1);
+    painter.drawLine(x, 9, x, y1);
 }
 
 void ToolMain::closeEvent(QCloseEvent* event)

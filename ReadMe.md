@@ -61,10 +61,12 @@ child.on("close", (code) => {
     /// 1 quit by press close btn;
     /// 2 quit by press right mouse btn;
     /// 3 quit by press esc keyboard
-    /// 4 quit when copy rgb color
-    /// 5 quit when copy hex color
-    /// 6 quit when save to file
-    /// 7 quit when save to clipboard
+    /// 4 quit when copy rgb color;
+    /// 5 quit when copy hex color;
+    /// 6 quit when copy cmyk color;
+    /// 7 quit when copy mouse position;
+    /// 8 quit when save to file;
+    /// 9 quit when save to clipboard;
     console.log("the quit code is:",code)
 });
 ```

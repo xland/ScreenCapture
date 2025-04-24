@@ -236,6 +236,7 @@
     <None Include="ReadMe.md" />
     <None Include="todo.md" />
     <None Include="Doc\高亮窗口.md" />
+    <None Include="Doc\todo.md" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="Res\iconfont.ttf" />

@@ -6,6 +6,7 @@
 #include <ShellScalingApi.h>
 
 #include "Util.h"
+#include "Lang.h"
 
 QFont* Util::getIconFont(const int& fontSize)
 {
@@ -152,7 +153,7 @@ void Util::saveToFile(const QImage& img)
 {
     QString desktopPath = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
     auto filePath = QDir::cleanPath(desktopPath + QDir::separator() + "Img" + QDateTime::currentDateTime().toString("yyyyMMddhhmmsszzz") + ".png");
-    filePath = QFileDialog::getSaveFileName(nullptr, "保存文件", filePath, "ScreenCapture (*.png)");
+    filePath = QFileDialog::getSaveFileName(nullptr, Lang::get("saveFile"), filePath, "ScreenCapture (*.png)");
     if (filePath.isEmpty())
     {
         return;

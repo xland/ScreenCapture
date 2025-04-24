@@ -23,6 +23,7 @@ public:
 	void removeShapeFromBoard(ShapeBase* shape);
 	void paintShapeOnBoard(ShapeBase* shape);
 	void removeShapeCur();
+	void copyColor(const int& key);
 public:
 	ShapeBase* shapeCur;
 	ShapeBase* shapeHover;

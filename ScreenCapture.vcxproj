@@ -192,6 +192,7 @@
     <QtMoc Include="Win\WinFull.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Doc\todo.md" />
     <None Include="ReadMe.md" />
     <None Include="todo.md" />
     <None Include="Doc\高亮窗口.md" />

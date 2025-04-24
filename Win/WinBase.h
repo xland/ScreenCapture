@@ -25,14 +25,8 @@ public:
 	ToolSub* toolSub;
 	Canvas* canvas;
 protected:
-protected:
-	virtual void mousePress(QMouseEvent* event){};
-	virtual void mousePressRight(QMouseEvent* event) {};
-	virtual void mouseDBClick(QMouseEvent* event) {};
-	virtual void mouseMove(QMouseEvent* event){};
-	virtual void mouseDrag(QMouseEvent* event){};
-	virtual void mouseRelease(QMouseEvent* event){};
 	virtual QImage getTargetImg() = 0;
+	void keyPressEvent(QKeyEvent* event) override;
 private:
 
 };

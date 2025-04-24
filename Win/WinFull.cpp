@@ -55,6 +55,11 @@ void WinFull::mousePressEvent(QMouseEvent* event)
             canvas->mousePress(event);
         }
     }
+    else {
+        if (state < State::mask) {
+            qApp->exit(2);
+        }
+    }
 }
 
 void WinFull::mouseMoveEvent(QMouseEvent* event)
