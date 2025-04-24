@@ -21,17 +21,7 @@ WinPin::WinPin(const QRect& r, const QImage& img, QWidget* parent) : WinBase(par
 {
     setWindowFlags(Qt::FramelessWindowHint | Qt::Window);
     setGeometry(r);
-    show();
-
-    setAttribute(Qt::WA_DontCreateNativeAncestors);
-    HWND hwnd = reinterpret_cast<HWND>(winId());
-    MARGINS margins = { 1, 1, 1, 1 };
-    DwmExtendFrameIntoClientArea(hwnd, &margins);
-    int value = 2;
-    DwmSetWindowAttribute(hwnd, DWMWA_NCRENDERING_POLICY, &value, sizeof(value));
-    DwmSetWindowAttribute(hwnd, DWMWA_ALLOW_NCPAINT, &value, sizeof(value));
-
-
+    initWindow();
     canvas = new Canvas(img, this);
 }
 
@@ -65,5 +55,17 @@ void WinPin::mouseMoveEvent(QMouseEvent* event)
 
 void WinPin::mouseReleaseEvent(QMouseEvent* event)
 {
+}
+
+void WinPin::initWindow()
+{
+    show();
+    setAttribute(Qt::WA_DontCreateNativeAncestors);
+    HWND hwnd = reinterpret_cast<HWND>(winId());
+    MARGINS margins = { 1, 1, 1, 1 };
+    DwmExtendFrameIntoClientArea(hwnd, &margins);
+    int value = 2;
+    DwmSetWindowAttribute(hwnd, DWMWA_NCRENDERING_POLICY, &value, sizeof(value));
+    DwmSetWindowAttribute(hwnd, DWMWA_ALLOW_NCPAINT, &value, sizeof(value));
 }
 

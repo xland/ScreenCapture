@@ -29,18 +29,7 @@ WinFull::WinFull(QWidget* parent) : WinBase(parent)
     auto imgBg = Util::printScreen();
     imgBg.setDevicePixelRatio(devicePixelRatio());
     canvas = new Canvas(imgBg,this);
-    
-    setFocusPolicy(Qt::StrongFocus);
-    setGeometry(x, y, w, h);
-    setWindowFlag(Qt::FramelessWindowHint);
-    show();
-    auto hwnd = (HWND)winId();
-    SetWindowPos(hwnd, nullptr, x, y, w, h, SWP_NOZORDER | SWP_SHOWWINDOW);
-    setMouseTracking(true);
-    setCursor(Qt::CrossCursor);
-    SetFocus(hwnd);
-
-
+    initWindow();
     pixelInfo = new PixelInfo(this);
     pixelInfo->mouseMove(QCursor::pos());
 }
@@ -113,7 +102,7 @@ void WinFull::pin()
 {
     auto dpr = devicePixelRatio();
 	auto tl = cutMask->rectMask.topLeft() * dpr;
-	auto br = cutMask->rectMask.bottomRight() * dpr;
+	auto br = cutMask->rectMask.bottomRight() * dpr+QPoint(1,1);
     QRect r;
     r.setCoords(tl.x(), tl.y(), br.x(), br.y());
 
@@ -128,4 +117,17 @@ void WinFull::pin()
 void WinFull::closeEvent(QCloseEvent* event)
 {
     deleteLater();
+}
+
+void WinFull::initWindow()
+{
+    setFocusPolicy(Qt::StrongFocus);
+    setGeometry(x, y, w, h);
+    setWindowFlag(Qt::FramelessWindowHint);
+    show();
+    auto hwnd = (HWND)winId();
+    SetWindowPos(hwnd, nullptr, x, y, w, h, SWP_NOZORDER | SWP_SHOWWINDOW);
+    setMouseTracking(true);
+    setCursor(Qt::CrossCursor);
+    SetFocus(hwnd);
 }

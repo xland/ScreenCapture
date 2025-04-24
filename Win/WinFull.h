@@ -22,6 +22,7 @@ protected:
 	void mouseReleaseEvent(QMouseEvent* event) override;
 	void closeEvent(QCloseEvent* event) override;
 private:
+	void initWindow();
 private:
 };
 
