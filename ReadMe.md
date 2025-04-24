@@ -1,4 +1,4 @@
-The next major version (2.2.0) is developed in the main branch.
+The next major version (2.2.x) is developed in the main branch.
 
 The last stable version is available in the [2.1.x](https://github.com/xland/ScreenCapture/tree/2.1.x) branch.
 
@@ -21,7 +21,7 @@ English:
 - Pin the clipboard image to the desktop(`ScreenCapture.exe --pin:clipboard`).
 - set default save path(`ScreenCapture.exe --dir:"D:\doc"`).
 - Very fast,Small memory footprint,Low CPU useage.
-- Only one small executable file (3.8M，with out any dll).
+- Only one small executable file (7M，with out any dll).
 - Can be easily integrated into any program.
 
 Chinese:
@@ -38,13 +38,13 @@ Chinese:
 - 直接把剪切板内的图片钉在桌面上（`ScreenCapture.exe --pin:clipboard`）。
 - 设置默认保存目录（`ScreenCapture.exe --dir:"D:\doc\测试目录"`）。
 - 非常快、低内存消耗、低 CPU 使用率。
-- 非常小、仅一个可执行文件（3.8M），无需安装，不依赖任何动态链接库。
+- 非常小、仅一个可执行文件（7M），无需安装，不依赖任何动态链接库。
 - 可以非常容易的集成到其他应用中。
 
 
 ## Download（下载）
 
-[Release](https://github.com/xland/ScreenCapture/releases/) (3.8M)
+[Release](https://github.com/xland/ScreenCapture/releases/) (7M)
 
 ## Integration（集成）
 
