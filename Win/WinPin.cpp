@@ -32,16 +32,6 @@ WinPin::~WinPin()
    
 }
 
-void WinPin::saveToClipboard()
-{
-
-}
-
-void WinPin::saveToFile()
-{
-
-}
-
 void WinPin::paintEvent(QPaintEvent* event)
 {
     QPainter p(this);
@@ -130,10 +120,22 @@ void WinPin::showContextMenu(const QPoint& pos)
     contextMenu.exec(mapToGlobal(pos));
 }
 
+QImage WinPin::getTargetImg()
+{
+    QPainter p(&canvas->imgBg);
+    p.drawImage(QPoint(0, 0), canvas->imgBoard);
+    return canvas->imgBg;
+}
+
 void WinPin::moveEvent(QMoveEvent* event)
 {
 	if (!toolMain) return;
     auto pos = this->pos();
     toolMain->move(pos.x(), pos.y() + height() + 4);
+}
+
+void WinPin::closeEvent(QCloseEvent* event)
+{
+    deleteLater();
 }
 

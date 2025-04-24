@@ -13,3 +13,17 @@ WinBase::WinBase(QWidget* parent) : QMainWindow(parent)
 WinBase::~WinBase()
 {
 }
+
+void WinBase::saveToClipboard()
+{
+    auto img = getTargetImg();
+    Util::imgToClipboard(img);
+    close();
+}
+
+void WinBase::saveToFile()
+{
+    auto img = getTargetImg();
+    Util::saveToFile(img);
+    close();
+}

@@ -133,10 +133,10 @@ void ToolMain::btnClick(Btn* btn)
 {
     auto win = (WinBase*)parent();
 	if (btn->name == "clipboard") {
-		
+        win->saveToClipboard();
 	}
 	else if (btn->name == "save") {
-		
+        win->saveToFile();
 	}
 	else if (btn->name == "undo") {
 		win->canvas->undo();

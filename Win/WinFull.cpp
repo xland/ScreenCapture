@@ -94,20 +94,8 @@ void WinFull::mouseReleaseEvent(QMouseEvent* event)
 
 void WinFull::pin()
 {
-    auto img = getCutImg();
+    auto img = getTargetImg();
 	new WinPin(cutMask->rectMask, img);
-    close();
-}
-
-void WinFull::saveToClipboard()
-{
-    auto img = getCutImg();
-}
-
-void WinFull::saveToFile()
-{
-    auto img = getCutImg();
-	Util::saveToFile(img);
     close();
 }
 
@@ -129,7 +117,7 @@ void WinFull::initWindow()
     SetFocus(hwnd);
 }
 
-QImage WinFull::getCutImg()
+QImage WinFull::getTargetImg()
 {
     auto dpr = devicePixelRatio();
     auto tl = cutMask->rectMask.topLeft() * dpr;
