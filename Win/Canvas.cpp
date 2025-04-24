@@ -1,6 +1,9 @@
 #include <QDateTime>
 
-#include "Win/WinBase.h"
+#include "Canvas.h"
+#include "WinBase.h"
+#include "CutMask.h"
+#include "App/Util.h"
 #include "Tool/ToolMain.h"
 #include "Tool/ToolSub.h"
 #include "Shape/ShapeBase.h"
@@ -14,16 +17,10 @@
 #include "Shape/ShapeEraserLine.h"
 #include "Shape/ShapeMosaicRect.h"
 #include "Shape/ShapeMosaicLine.h"
-#include "Canvas.h"
-#include "App/Util.h"
 
-
-Canvas::Canvas(QObject *parent) : QObject(parent)
+Canvas::Canvas(const QImage& img, QObject *parent) : QObject(parent),imgBg{img}
 {
-	auto win = (WinBase*)parent;
-    auto dpr = win->devicePixelRatio();
-    imgBg = Util::printScreen();
-    imgBg.setDevicePixelRatio(dpr);
+	auto win = (WinBase*)parent;    
     imgBoard = imgBg.copy();
     imgCanvas = imgBg.copy();
 }
@@ -74,6 +71,7 @@ void Canvas::redo()
     if (shapes.last()->state == ShapeState::ready) {
         win->toolMain->setBtnEnable("redo", false);
     }
+    win->toolMain->setBtnEnable("undo", true);
     imgBoard.fill(Qt::transparent);
     QPainter p(&imgBoard);
     p.setRenderHint(QPainter::Antialiasing, true);
@@ -186,11 +184,7 @@ void Canvas::addShape()
             shapeCur = new ShapeEraserLine(win);
         }
     }
-    else
-    {
-        return;
-    }
-    
+    return;    
 }
 
 void Canvas::setHoverShape(ShapeBase* shape)
@@ -251,4 +245,10 @@ void Canvas::removeShapeCur()
     shapes.removeOne(shapeCur);
     shapeCur->deleteLater();
     shapeCur = nullptr;
+}
+
+QImage Canvas::getCutImage(const QRect& rect)
+{
+
+    return QImage();
 }

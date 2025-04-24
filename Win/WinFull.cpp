@@ -6,21 +6,18 @@
 #include <QPainterPath>
 #include <dwmapi.h>
 
-#include "../App/App.h"
-#include "../App/NativeRect.h"
-#include "../Shape/ShapeBase.h"
-#include "../Tool/ToolMain.h"
-#include "../Tool/ToolSub.h"
-#include "../App/Util.h"
+#include "App/App.h"
+#include "App/NativeRect.h"
+#include "App/Util.h"
+#include "Shape/ShapeBase.h"
+#include "Tool/ToolMain.h"
+#include "Tool/ToolSub.h"
 #include "WinFull.h"
 #include "WinPin.h"
 #include "CutMask.h"
 #include "PixelInfo.h"
 #include "Canvas.h"
 
-namespace {
-    WinFull* winFull;
-}
 
 WinFull::WinFull(QWidget* parent) : WinBase(parent)
 {
@@ -29,17 +26,26 @@ WinFull::WinFull(QWidget* parent) : WinBase(parent)
     w = GetSystemMetrics(SM_CXVIRTUALSCREEN);
     h = GetSystemMetrics(SM_CYVIRTUALSCREEN);
     cutMask = new CutMask(this);
-    canvas = new Canvas(this);
-    initWindow();
+    auto imgBg = Util::printScreen();
+    imgBg.setDevicePixelRatio(devicePixelRatio());
+    canvas = new Canvas(imgBg,this);
+    
+    setFocusPolicy(Qt::StrongFocus);
+    setGeometry(x, y, w, h);
+    setWindowFlag(Qt::FramelessWindowHint);
+    show();
+    auto hwnd = (HWND)winId();
+    SetWindowPos(hwnd, nullptr, x, y, w, h, SWP_NOZORDER | SWP_SHOWWINDOW);
+    setMouseTracking(true);
+    setCursor(Qt::CrossCursor);
+    SetFocus(hwnd);
+
+
     pixelInfo = new PixelInfo(this);
     pixelInfo->mouseMove(QCursor::pos());
 }
 WinFull::~WinFull()
 {   
-}
-void WinFull::init()
-{
-    winFull = new WinFull();
 }
 
 void WinFull::paintEvent(QPaintEvent* event)
@@ -103,8 +109,23 @@ void WinFull::mouseReleaseEvent(QMouseEvent* event)
     }
 }
 
-void WinFull::close()
+void WinFull::pin()
+{
+    auto dpr = devicePixelRatio();
+	auto tl = cutMask->rectMask.topLeft() * dpr;
+	auto br = cutMask->rectMask.bottomRight() * dpr;
+    QRect r;
+    r.setCoords(tl.x(), tl.y(), br.x(), br.y());
+
+    auto img = canvas->imgBg.copy(r);
+    auto img2 = canvas->imgBoard.copy(r);
+    QPainter p(&img);
+    p.drawImage(QPoint(0, 0), img2);
+	new WinPin(cutMask->rectMask, img);
+    close();
+}
+
+void WinFull::closeEvent(QCloseEvent* event)
 {
     deleteLater();
-    winFull = nullptr;
 }

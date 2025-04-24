@@ -10,7 +10,7 @@ class Canvas  : public QObject
 {
 	Q_OBJECT
 public:
-	Canvas(QObject *parent);
+	Canvas(const QImage& img,QObject *parent);
 	~Canvas();
 	void undo();
 	void redo();
@@ -23,6 +23,7 @@ public:
 	void removeShapeFromBoard(ShapeBase* shape);
 	void paintShapeOnBoard(ShapeBase* shape);
 	void removeShapeCur();
+	QImage getCutImage(const QRect& rect);
 public:
 	ShapeBase* shapeCur;
 	ShapeBase* shapeHover;

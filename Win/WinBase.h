@@ -15,11 +15,6 @@ class WinBase  : public QMainWindow
 public:
 	WinBase(QWidget* parent = nullptr);
 	~WinBase();
-	void saveToClipboard() {};
-	void saveToFile() {};
-	void raise();
-	void move(const int& x, const int& y);
-	virtual void close();
 public:
 	int x, y, w, h;
 	HWND hwnd;
@@ -29,8 +24,6 @@ public:
 	Canvas* canvas;
 protected:
 protected:
-	void initWindow();
-	void paintEvent(QPaintEvent* event) override;
 	virtual void mousePress(QMouseEvent* event){};
 	virtual void mousePressRight(QMouseEvent* event) {};
 	virtual void mouseDBClick(QMouseEvent* event) {};

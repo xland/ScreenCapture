@@ -134,10 +134,10 @@ void ToolMain::btnClick(Btn* btn)
 {
     auto win = (WinBase*)parent();
 	if (btn->name == "clipboard") {
-		win->saveToClipboard();
+		
 	}
 	else if (btn->name == "save") {
-		win->saveToFile();
+		
 	}
 	else if (btn->name == "undo") {
 		win->canvas->undo();
@@ -146,7 +146,10 @@ void ToolMain::btnClick(Btn* btn)
 		win->canvas->redo();
 	}
 	else if (btn->name == "pin") {
-		WinPin::init();
+        auto winFull = dynamic_cast<WinFull*>(parent());
+        if (winFull) {
+            winFull->pin();
+        }
 	}
 	else if (btn->name == "close") {
 		win->close();
