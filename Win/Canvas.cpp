@@ -246,9 +246,3 @@ void Canvas::removeShapeCur()
     shapeCur->deleteLater();
     shapeCur = nullptr;
 }
-
-QImage Canvas::getCutImage(const QRect& rect)
-{
-
-    return QImage();
-}

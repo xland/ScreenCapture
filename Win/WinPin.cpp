@@ -32,6 +32,16 @@ WinPin::~WinPin()
    
 }
 
+void WinPin::saveToClipboard()
+{
+
+}
+
+void WinPin::saveToFile()
+{
+
+}
+
 void WinPin::paintEvent(QPaintEvent* event)
 {
     QPainter p(this);

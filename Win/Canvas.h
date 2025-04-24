@@ -23,7 +23,6 @@ public:
 	void removeShapeFromBoard(ShapeBase* shape);
 	void paintShapeOnBoard(ShapeBase* shape);
 	void removeShapeCur();
-	QImage getCutImage(const QRect& rect);
 public:
 	ShapeBase* shapeCur;
 	ShapeBase* shapeHover;

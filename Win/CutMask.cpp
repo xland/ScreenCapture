@@ -8,7 +8,6 @@
 #include "CutMask.h"
 #include "WinFull.h"
 #include "../App/Util.h"
-#include "../App/NativeRect.h"
 #include "../Tool/ToolMain.h"
 #include "../Tool/ToolSub.h"
 #include "PixelInfo.h"

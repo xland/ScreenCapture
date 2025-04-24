@@ -5,7 +5,6 @@
 
 #include "../App/App.h"
 #include "../App/Util.h"
-#include "../App/NativeRect.h"
 #include "../App/Lang.h"
 #include "../Win/WinPin.h"
 #include "../Win/WinFull.h"

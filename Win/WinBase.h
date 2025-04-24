@@ -15,6 +15,8 @@ class WinBase  : public QMainWindow
 public:
 	WinBase(QWidget* parent = nullptr);
 	~WinBase();
+	virtual void saveToClipboard()=0;
+	virtual void saveToFile()=0;
 public:
 	int x, y, w, h;
 	HWND hwnd;

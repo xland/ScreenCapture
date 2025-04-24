@@ -12,6 +12,8 @@ class WinPin  : public WinBase
 public:
 	WinPin(const QRect& r, const QImage& img,QWidget *parent = nullptr);
 	~WinPin();
+	void saveToClipboard() override;
+	void saveToFile() override;
 protected:
 	void paintEvent(QPaintEvent* event) override;
 	void mousePressEvent(QMouseEvent* event) override;

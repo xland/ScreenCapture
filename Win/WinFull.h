@@ -11,6 +11,8 @@ public:
 	WinFull(QWidget* parent = nullptr);
 	~WinFull();
 	void pin();
+	void saveToClipboard() override;
+	void saveToFile() override;
 public:
 	qreal dpr{ 1.0 };
 	PixelInfo* pixelInfo;
@@ -23,6 +25,7 @@ protected:
 	void closeEvent(QCloseEvent* event) override;
 private:
 	void initWindow();
+	QImage getCutImg();
 private:
 };
 

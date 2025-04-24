@@ -1,13 +1,7 @@
 #include <QApplication>
 #include <QPainter>
-#include <QClipboard>
-#include <QFileDialog>
-#include <QStandardPaths>
-#include <QPainterPath>
-#include <dwmapi.h>
 
 #include "App/App.h"
-#include "App/NativeRect.h"
 #include "App/Util.h"
 #include "Shape/ShapeBase.h"
 #include "Tool/ToolMain.h"
@@ -26,7 +20,7 @@ WinFull::WinFull(QWidget* parent) : WinBase(parent)
     w = GetSystemMetrics(SM_CXVIRTUALSCREEN);
     h = GetSystemMetrics(SM_CYVIRTUALSCREEN);
     cutMask = new CutMask(this);
-    auto imgBg = Util::printScreen();
+    auto imgBg = Util::printScreen(x,y,w,h);
     imgBg.setDevicePixelRatio(devicePixelRatio());
     canvas = new Canvas(imgBg,this);
     initWindow();
@@ -100,16 +94,20 @@ void WinFull::mouseReleaseEvent(QMouseEvent* event)
 
 void WinFull::pin()
 {
-    auto dpr = devicePixelRatio();
-	auto tl = cutMask->rectMask.topLeft() * dpr;
-	auto br = cutMask->rectMask.bottomRight() * dpr+QPoint(1,1);
-    QRect r;
-    r.setCoords(tl.x(), tl.y(), br.x(), br.y());
-    auto img = canvas->imgBg.copy(r);
-    auto img2 = canvas->imgBoard.copy(r);
-    QPainter p(&img);
-    p.drawImage(QPoint(0, 0), img2);
+    auto img = getCutImg();
 	new WinPin(cutMask->rectMask, img);
+    close();
+}
+
+void WinFull::saveToClipboard()
+{
+    auto img = getCutImg();
+}
+
+void WinFull::saveToFile()
+{
+    auto img = getCutImg();
+	Util::saveToFile(img);
     close();
 }
 
@@ -129,4 +127,18 @@ void WinFull::initWindow()
     setMouseTracking(true);
     setCursor(Qt::CrossCursor);
     SetFocus(hwnd);
+}
+
+QImage WinFull::getCutImg()
+{
+    auto dpr = devicePixelRatio();
+    auto tl = cutMask->rectMask.topLeft() * dpr;
+    auto br = cutMask->rectMask.bottomRight() * dpr + QPoint(1, 1);
+    QRect r;
+    r.setCoords(tl.x(), tl.y(), br.x(), br.y());
+    auto img = canvas->imgBg.copy(r);
+    auto img2 = canvas->imgBoard.copy(r);
+    QPainter p(&img);
+    p.drawImage(QPoint(0, 0), img2);
+	return img;
 }

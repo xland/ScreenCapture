@@ -64,7 +64,7 @@ void PixelInfo::paintEvent(QPaintEvent* event)
     //放大后的目标矩形区域的图像
     auto win = (WinFull*)parent();
     auto dpr = win->devicePixelRatio();
-    auto img = Util::printScreen(nativePos.x()*dpr - 20, nativePos.y()*dpr - 10, 36, 20);
+    auto img = Util::printScreen(nativePos.x()*dpr - 20, nativePos.y()*dpr - 10, 36, 20);  //todo 这里有问题
     painter.drawImage(QRect(0,0,180,100),img);//放大了5倍
     //十字架准星
     QPainterPath path;

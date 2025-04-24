@@ -1,6 +1,5 @@
 #include <QApplication>
 #include "App.h"
-#include "NativeRect.h"
 #include "Lang.h"
 #include "Win/WinFull.h"
 #include "Win/WinPin.h"
@@ -13,9 +12,7 @@ void App::init()
     QFont font("Microsoft YaHei", 9);
     qApp->setFont(font);
     Lang::init("ZhCn");
-    NativeRect::init();
     new WinFull();
-
 }
 void App::dispose()
 {
