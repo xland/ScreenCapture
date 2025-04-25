@@ -45,6 +45,10 @@ bool ShapeMosaicLine::mousePress(QMouseEvent* event)
         return true;
     }
     else if (hoverDraggerIndex >= 0) {
+        if (state == ShapeState::ready) {
+            auto win = (WinBase*)parent();
+            win->canvas->removeShapeFromBoard(this);
+        }
         imgPatch = QImage();
         createMosaicImg();
         pressPos = event->position();
