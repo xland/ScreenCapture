@@ -8,7 +8,6 @@
 
 namespace {
     std::unique_ptr<App> app;
-
     QString defaultSavePath;
 }
 bool App::parseCmd() {

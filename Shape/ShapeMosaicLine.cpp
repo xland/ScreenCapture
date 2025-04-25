@@ -19,7 +19,8 @@ ShapeMosaicLine::~ShapeMosaicLine()
 void ShapeMosaicLine::paint(QPainter* painter)
 {
     if (state == ShapeState::ready) {
-        painter->drawImage(pathRect.topLeft(), imgPatch);
+        auto win = (WinBase*)parent();
+        painter->drawImage(pathRect.topLeft()/win->devicePixelRatio(), imgPatch);
     }
     else if(state == ShapeState::moving || isStraight){
         auto tempImg = winImg.copy();
@@ -57,13 +58,17 @@ bool ShapeMosaicLine::mousePress(QMouseEvent* event)
 }
 bool ShapeMosaicLine::mouseRelease(QMouseEvent* event)
 {
-    if (state < ShapeState::sizing0) return false;
     if (path.isEmpty()) {
-        deleteLater();
-        event->accept();
         return false;
     }
+	auto win = (WinBase*)parent();
     pathRect = path.boundingRect().adjusted(-strokeWidth, -strokeWidth, strokeWidth, strokeWidth);
+
+    auto dpr = win->devicePixelRatio();
+    auto tl = pathRect.topLeft() * dpr;
+    auto br = pathRect.bottomRight() * dpr;
+    pathRect.setCoords(tl.x(), tl.y(), br.x(), br.y());
+
     imgPatch = mosaicImg.copy(pathRect.toRect());
     QPainter painter(&imgPatch);
     if (state == ShapeState::moving || isStraight) {
@@ -76,7 +81,6 @@ bool ShapeMosaicLine::mouseRelease(QMouseEvent* event)
     }
     mosaicImg = QImage();
     winImg = QImage();
-
     if (state == ShapeState::sizing0) {
         QPainterPath tempPath;
         auto ele = pathStart.elementAt(pathStart.elementCount() - 1);
@@ -100,7 +104,8 @@ bool ShapeMosaicLine::mouseRelease(QMouseEvent* event)
     draggers[0].setRect(startPos.x - half, startPos.y - half, draggerSize, draggerSize);
     draggers[1].setRect(endPos.x - half, endPos.y - half, draggerSize, draggerSize);
     pathStroker = stroker.createStroke(path);
-    return false;
+    state = ShapeState::ready;
+    return true;
 }
 
 

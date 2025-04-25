@@ -115,7 +115,7 @@ bool ShapeRectBase::mousePress(QMouseEvent* event)
 }
 bool ShapeRectBase::mouseRelease(QMouseEvent* event)
 {
-    if (pressPos == event->position() && state != ShapeState::moving) { //鼠标按下，没有拖拽，随即释放
+    if (shape.isEmpty()) { //鼠标按下，没有拖拽，随即释放
         return false;
     }
     if (state >= ShapeState::sizing0) {
