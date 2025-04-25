@@ -17,10 +17,14 @@
 #include "Tool/ToolSub.h"
 
 
-WinPin::WinPin(const QRect& r, const QImage& img, QWidget* parent) : WinBase(parent)
+WinPin::WinPin(const QPoint& pos, QImage& img, QWidget* parent) : WinBase(parent)
 {
+    auto dpr = devicePixelRatio();
     setWindowFlags(Qt::FramelessWindowHint | Qt::Window);
-    setGeometry(r);
+    if (dpr != img.devicePixelRatio()) {
+		img.setDevicePixelRatio(dpr);
+    }
+	setGeometry(pos.x(), pos.y(), img.width()/dpr, img.height()/dpr);
     initWindow();
     canvas = new Canvas(img, this);
     setContextMenuPolicy(Qt::CustomContextMenu);

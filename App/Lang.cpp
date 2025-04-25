@@ -22,10 +22,10 @@ QString Lang::get(const QString& name)
 void Lang::init(const QString& langType)
 {
 	lang = new Lang(qApp);
-	if (langType == "ZhCn") {
+	if (langType == "zhcn") {
 		lang->initZhCn();
 	}
-	else if (langType == "En") {
+	else if (langType == "en") {
 		lang->initEn();
 	}
 }

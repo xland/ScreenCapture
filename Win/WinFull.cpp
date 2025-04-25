@@ -100,7 +100,7 @@ void WinFull::mouseReleaseEvent(QMouseEvent* event)
 void WinFull::pin()
 {
     auto img = getTargetImg();
-	new WinPin(cutMask->rectMask, img);
+	new WinPin(cutMask->rectMask.topLeft(), img);
     close();
 }
 

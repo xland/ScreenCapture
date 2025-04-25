@@ -7,6 +7,7 @@
 
 #include "Util.h"
 #include "Lang.h"
+#include "App/App.h"
 
 QFont* Util::getIconFont(const int& fontSize)
 {
@@ -151,12 +152,20 @@ QPoint Util::getQtPoint(int x, int y) {
 
 void Util::saveToFile(const QImage& img)
 {
-    QString desktopPath = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
-    auto filePath = QDir::cleanPath(desktopPath + QDir::separator() + "Img" + QDateTime::currentDateTime().toString("yyyyMMddhhmmsszzz") + ".png");
-    filePath = QFileDialog::getSaveFileName(nullptr, Lang::get("saveFile"), filePath, "ScreenCapture (*.png)");
-    if (filePath.isEmpty())
-    {
-        return;
+    auto fileName = "Img" + QDateTime::currentDateTime().toString("yyyyMMddhhmmsszzz") + ".png";
+    auto savePath = App::getSavePath();
+    QString filePath;
+	if (savePath.isEmpty()) {
+        QString desktopPath = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
+        filePath = QDir::cleanPath(desktopPath + QDir::separator() + fileName);
+        filePath = QFileDialog::getSaveFileName(nullptr, Lang::get("saveFile"), filePath, "ScreenCapture (*.png)");
+        if (filePath.isEmpty())
+        {
+            return;
+        }
+    }
+    else {
+		filePath = QDir::cleanPath(savePath + QDir::separator() + fileName);
     }
     img.save(filePath);
 }

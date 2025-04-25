@@ -192,6 +192,7 @@
     <QtMoc Include="Win\WinFull.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Doc\qrcode.md" />
     <None Include="Doc\todo.md" />
     <None Include="ReadMe.md" />
     <None Include="todo.md" />

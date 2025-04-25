@@ -46,6 +46,11 @@ Chinese:
 
 [Release](https://github.com/xland/ScreenCapture/releases/) (7M)
 
+--lang:en --pin:clipboard,100,100
+--lang:en --pin:file,"D:\test.png",100,100
+--lang:en --pin:area,100,100,500,600,1000,10
+
+
 ## Integration（集成）
 
 (With Node.js Or Electron)

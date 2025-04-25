@@ -12,8 +12,10 @@ public:
 	~Lang();
 	static QString get(const QString& name);
 	static void init(const QString& langType="ZhCn");
-private:
+
 	void initZhCn();
 	void initEn();
+private:
+
 	QMap<QString, QString> dic;
 };

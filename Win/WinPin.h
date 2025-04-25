@@ -10,7 +10,7 @@ class WinPin  : public WinBase
 	Q_OBJECT
 
 public:
-	WinPin(const QRect& r, const QImage& img,QWidget *parent = nullptr);
+	WinPin(const QPoint& pos, QImage& img,QWidget *parent = nullptr);
 	~WinPin();
 protected:
 	void paintEvent(QPaintEvent* event) override;
