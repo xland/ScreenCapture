@@ -25,7 +25,6 @@ protected:
 	QImage getTargetImg() override;
 private:
 	void initWindow();
-	void showContextMenu(const QPoint& pos);
 private:
 	QPointF posPress;
 	WinPinBtns* btns;

@@ -64,8 +64,8 @@ void WinPinBtns::mousePressEvent(QMouseEvent* event)
 		}
 		else {
 			winPin->toolMain = new ToolMain(this);
-			auto pos = this->pos();
-			winPin->toolMain->move(pos.x(), pos.y() + this->height() + 4);
+			auto pos = winPin->pos();
+			winPin->toolMain->move(pos.x(), pos.y() + winPin->height() + 4);
 			winPin->toolMain->show();
 		}
 	}

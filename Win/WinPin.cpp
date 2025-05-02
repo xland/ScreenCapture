@@ -31,8 +31,6 @@ WinPin::WinPin(const QPoint& pos, QImage& img, QWidget* parent) : WinBase(parent
 
     btns = new WinPinBtns(this);
     canvas = new Canvas(img, this);
-    setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(this, &QWidget::customContextMenuRequested, this, &WinPin::showContextMenu);
 
 }
 
@@ -99,34 +97,6 @@ void WinPin::initWindow()
     int value = 2;
     DwmSetWindowAttribute(hwnd, DWMWA_NCRENDERING_POLICY, &value, sizeof(value));
     DwmSetWindowAttribute(hwnd, DWMWA_ALLOW_NCPAINT, &value, sizeof(value));
-}
-
-void WinPin::showContextMenu(const QPoint& pos)
-{
-    QMenu contextMenu(this);
-    QAction* menuAction = contextMenu.addAction(Lang::get("toolBar"));
-    menuAction->setCheckable(true);
-	if (toolMain) {
-        menuAction->setChecked(true);
-	}
-    QAction* closeAction = contextMenu.addAction(Lang::get("quit"));
-    connect(menuAction, &QAction::triggered, [this]() {
-		if (toolMain) {
-			toolMain->close();
-			toolMain = nullptr;
-            this->setCursor(Qt::SizeAllCursor);
-        }
-        else {
-            toolMain = new ToolMain(this);
-            auto pos = this->pos();
-            toolMain->move(pos.x(), pos.y() + this->height() + 4);
-            toolMain->show();
-        }
-        });
-    connect(closeAction, &QAction::triggered, [this](){
-        close();
-        });
-    contextMenu.exec(mapToGlobal(pos));
 }
 
 QImage WinPin::getTargetImg()
