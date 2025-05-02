@@ -135,8 +135,10 @@ void Canvas::mouseRelease(QMouseEvent* event)
 
 void Canvas::paint(QPainter& p)
 {
-    p.drawImage(0, 0, imgBg);
-    p.drawImage(0, 0, imgBoard);
+	auto win = (WinBase*)parent();
+    auto rect = win->rect();
+    p.drawImage(rect, imgBg);
+    p.drawImage(rect, imgBoard);
     if (shapeCur) {
         shapeCur->paint(&p);
     }
@@ -258,4 +260,13 @@ void Canvas::copyColor(const int& key)
     }
     Util::copyColor(key);
     qApp->exit(4+key);
+}
+
+void Canvas::resize(const QSize& size)
+{
+	auto win = (WinBase*)parent();
+	auto dpr = win->devicePixelRatio();
+    imgBg = imgBg.scaled(size*dpr);
+    imgBoard = imgBoard.scaled(size * dpr, Qt::KeepAspectRatio);
+    imgCanvas = imgCanvas.scaled(size * dpr, Qt::KeepAspectRatio);
 }

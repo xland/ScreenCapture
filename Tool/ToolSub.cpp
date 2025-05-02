@@ -23,7 +23,9 @@ ToolSub::ToolSub(QWidget* parent) : ToolBase(parent)
 		layout->addWidget(new StrokeCtrl(1, 20, 3, this));
 		layout->addWidget(new ColorCtrl(0, this));
 		setFixedSize(8+btnW + 84+26*8, 40);
-		move(win->toolMain->x(), win->toolMain->y() + win->toolMain->height()+2);
+		auto x = win->toolMain->x();
+		auto y = win->toolMain->y() + win->toolMain->height() + 2;
+		move(x, y);
 		triangleX = 4 + btnW/2;
 	}
 	else if (win->state == State::ellipse) {

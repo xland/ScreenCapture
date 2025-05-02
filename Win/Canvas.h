@@ -24,6 +24,7 @@ public:
 	void paintShapeOnBoard(ShapeBase* shape);
 	void removeShapeCur();
 	void copyColor(const int& key);
+	void resize(const QSize& size);
 public:
 	ShapeBase* shapeCur;
 	ShapeBase* shapeHover;

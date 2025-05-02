@@ -27,8 +27,8 @@ WinPin::WinPin(const QPoint& pos, QImage& img, QWidget* parent) : WinBase(parent
 		img.setDevicePixelRatio(dpr);
     }
 	setGeometry(pos.x(), pos.y(), img.width()/dpr, img.height()/dpr);
+    initSize = size();
     initWindow();
-
     btns = new WinPinBtns(this);
     canvas = new Canvas(img, this);
 
@@ -45,6 +45,21 @@ void WinPin::paintEvent(QPaintEvent* event)
     p.setRenderHint(QPainter::Antialiasing, true);
     p.setRenderHint(QPainter::TextAntialiasing, true);
     canvas->paint(p);
+    if (scaleNum != 1.0)
+    {
+        auto text = QString("Scale:%1").arg(QString::number(scaleNum, 'f', 2));
+        auto font = Util::getTextFont(10);
+        QFontMetrics fm(*font);
+        p.setFont(*font);
+        int w = fm.horizontalAdvance(text);
+        QRect rect(0, 0, w + 14, 30);
+        p.setBrush(QColor(0, 0, 0, 120));
+        p.setPen(Qt::NoPen);
+        p.drawRect(rect);
+        p.setPen(QPen(QBrush(Qt::white), 1));
+        p.setBrush(Qt::NoBrush);
+        p.drawText(rect, Qt::AlignCenter, text);
+    }
 }
 
 void WinPin::mousePressEvent(QMouseEvent* event)
@@ -83,6 +98,25 @@ void WinPin::mouseReleaseEvent(QMouseEvent* event)
     if (state >= State::rect) {
         canvas->mouseRelease(event);
     }
+}
+
+void WinPin::wheelEvent(QWheelEvent* event)
+{
+    if (toolMain) {
+        toolMain->close();
+        toolMain = nullptr;
+        state = State::start;
+        setCursor(Qt::SizeAllCursor);
+    }
+    int delta = event->angleDelta().y();    
+    if (delta > 0) {        
+        scaleNum += 0.06;
+    }
+    else if (delta < 0) {        
+        scaleNum -= 0.06;
+    }
+    QSize newSize = initSize * scaleNum;
+    resize(newSize);
 }
 
 void WinPin::initWindow()

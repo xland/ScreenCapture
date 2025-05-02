@@ -26,7 +26,7 @@ void WinPinBtns::paintEvent(QPaintEvent* event)
 {
 	QPainter p(this);
 	p.setPen(Qt::NoPen);
-	p.setBrush(QColor(88, 88, 88, 68));
+	p.setBrush(QColor(0, 0, 0, 120));
 	p.drawRect(rect());
 	QRect r1(0, 0, 33, 30);
 	QRect r2(33, 0, 33, 30);
@@ -34,13 +34,13 @@ void WinPinBtns::paintEvent(QPaintEvent* event)
 	p.setFont(*font);
 	if (hoverIndex == 0)
 	{
-		p.setBrush(QColor(88, 88, 88));
+		p.setBrush(QColor(0, 0, 0, 220));
 		p.drawRect(r1);
 		p.setPen(QColor(255, 255, 255));
 	}
 	else if(hoverIndex == 1)
 	{
-		p.setBrush(QColor(88, 88, 88));
+		p.setBrush(QColor(0, 0, 0, 220));
 		p.drawRect(r2);
 		p.setPen(QColor(255, 255, 255));
 	}
@@ -57,13 +57,17 @@ void WinPinBtns::mousePressEvent(QMouseEvent* event)
 	auto winPin = (WinPin*)parent();
 	if (hoverIndex == 0)
 	{
+		if (winPin->scaleNum != 1.0) {
+			return;
+		}
 		if (winPin->toolMain) {
 			winPin->toolMain->close();
 			winPin->toolMain = nullptr;
 			winPin->setCursor(Qt::SizeAllCursor);
+			winPin->state = State::start;
 		}
 		else {
-			winPin->toolMain = new ToolMain(this);
+			winPin->toolMain = new ToolMain(winPin);
 			auto pos = winPin->pos();
 			winPin->toolMain->move(pos.x(), pos.y() + winPin->height() + 4);
 			winPin->toolMain->show();
