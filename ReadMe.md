@@ -46,10 +46,13 @@ Chinese:
 
 [Release](https://github.com/xland/ScreenCapture/releases/) (7M)
 
---lang:en --pin:clipboard,100,100
---lang:en --pin:file,"D:\test.png",100,100
---lang:en --pin:area,100,100,500,600,1000,10
+## Command line（命令行）
 
+```
+--lang:en --pin:clipboard,100,100  //英文，钉住剪切板图片，100,100是钉住窗口的坐标
+--lang:en --pin:file,"D:\test.png",100,100  //英文，钉住文件图片，100,100是钉住窗口的坐标
+--lang:en --pin:area,100,100,500,600,1000,10 //英文，钉住桌面某个区域，100,100,500,600是区域矩形，1000,10是钉住窗口的坐标
+```
 
 ## Integration（集成）
 

@@ -5,6 +5,7 @@
 #include <QAction>
 #include "WinBase.h"
 
+class WinPinBtns;
 class WinPin  : public WinBase
 {
 	Q_OBJECT
@@ -18,11 +19,14 @@ protected:
 	void mouseMoveEvent(QMouseEvent* event) override;
 	void mouseReleaseEvent(QMouseEvent* event) override;
 	void moveEvent(QMoveEvent* event) override;
-	void closeEvent(QCloseEvent* event) override;
+	void resizeEvent(QResizeEvent* event) override;
+	void leaveEvent(QEvent* event) override;
+	void enterEvent(QEnterEvent* event) override;
 	QImage getTargetImg() override;
 private:
 	void initWindow();
 	void showContextMenu(const QPoint& pos);
 private:
 	QPointF posPress;
+	WinPinBtns* btns;
 };

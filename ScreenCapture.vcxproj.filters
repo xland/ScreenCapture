@@ -122,6 +122,9 @@
     <ClCompile Include="Win\Canvas.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Win\WinPinBtns.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App\App.h">
@@ -229,6 +232,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="Win\Canvas.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Win\WinPinBtns.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

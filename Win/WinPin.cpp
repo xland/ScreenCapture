@@ -6,6 +6,7 @@
 #include <QStandardPaths>
 #include <QApplication>
 #include <QClipboard>
+#include <QHBoxLayout>
 
 #include "WinPin.h"
 #include "WinFull.h"
@@ -15,6 +16,7 @@
 #include "App/Lang.h"
 #include "Tool/ToolMain.h"
 #include "Tool/ToolSub.h"
+#include "WinPinBtns.h"
 
 
 WinPin::WinPin(const QPoint& pos, QImage& img, QWidget* parent) : WinBase(parent)
@@ -26,9 +28,12 @@ WinPin::WinPin(const QPoint& pos, QImage& img, QWidget* parent) : WinBase(parent
     }
 	setGeometry(pos.x(), pos.y(), img.width()/dpr, img.height()/dpr);
     initWindow();
+
+    btns = new WinPinBtns(this);
     canvas = new Canvas(img, this);
     setContextMenuPolicy(Qt::CustomContextMenu);
     connect(this, &QWidget::customContextMenuRequested, this, &WinPin::showContextMenu);
+
 }
 
 WinPin::~WinPin()
@@ -138,8 +143,24 @@ void WinPin::moveEvent(QMoveEvent* event)
     toolMain->move(pos.x(), pos.y() + height() + 4);
 }
 
-void WinPin::closeEvent(QCloseEvent* event)
+void WinPin::resizeEvent(QResizeEvent* event)
 {
-    deleteLater();
+    if (btns) {
+        btns->move(width() - btns->width(), 0);
+    }
+}
+
+void WinPin::leaveEvent(QEvent* event)
+{
+    if (btns->isVisible()) {
+        btns->hide();
+    }
+}
+
+void WinPin::enterEvent(QEnterEvent* event)
+{
+    if (!btns->isVisible()) {
+        btns->show();
+    }
 }
 
