@@ -36,12 +36,12 @@
     <Import Project="$(QtMsBuild)\qt_defaults.props" />
   </ImportGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="QtSettings">
-    <QtInstall>6.8.3_msvc2022_64</QtInstall>
+    <QtInstall>6.9.0_msvc2022_64</QtInstall>
     <QtModules>core;gui;widgets;concurrent</QtModules>
     <QtBuildConfig>debug</QtBuildConfig>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="QtSettings">
-    <QtInstall>6.8.3-static_msvc2022_64</QtInstall>
+    <QtInstall>6.9.0-static_msvc2022_64</QtInstall>
     <QtModules>core;gui;widgets;concurrent</QtModules>
     <QtBuildConfig>release</QtBuildConfig>
   </PropertyGroup>
@@ -153,8 +153,10 @@
     <ClCompile Include="Win\WinFull.cpp" />
     <ClCompile Include="Win\CutMask.cpp" />
     <ClCompile Include="Win\WinPin.cpp" />
+    <ClCompile Include="Win\WinPinBtns.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <QtMoc Include="Win\WinPinBtns.h" />
     <QtMoc Include="Win\Canvas.h" />
     <QtMoc Include="Tool\BtnCheck.h" />
     <QtMoc Include="Tool\Btn.h" />
@@ -195,7 +197,6 @@
     <None Include="Doc\qrcode.md" />
     <None Include="Doc\todo.md" />
     <None Include="ReadMe.md" />
-    <None Include="todo.md" />
     <None Include="Doc\高亮窗口.md" />
   </ItemGroup>
   <ItemGroup>
