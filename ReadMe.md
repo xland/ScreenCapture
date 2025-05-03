@@ -13,12 +13,12 @@
 - 在新窗口中钉住截图区域，使用鼠标`滚轮`改变钉图窗口大小。
 - 保存为文件（`Ctrl+S`）、保存到剪贴板（`Ctrl+C`）。
 - 运行速度快、内存占用低、CPU 使用率低。
-- 体积小、仅一个可执行文件（7M），无需安装，不依赖任何动态链接库。
+- 体积小、仅一个可执行文件（8M），无需安装，不依赖任何动态链接库。
 - 可以非常容易地集成到其他应用中。
 
 ## 下载
 
-[Release](https://github.com/xland/ScreenCapture/releases/) （7M）
+[Release](https://github.com/xland/ScreenCapture/releases/) （8M）
 
 ## 命令行
 
@@ -136,21 +136,13 @@ It now support
 ## 赞助
 
 <img alt="ali pay" src="./Doc/alipay.jpg" style="width:160px;height:160px;" /><br />
-alipay(支付宝支付)
+支付宝支付
 
 <img alt="wechat pay" src="./Doc/wechat.png" style="width:160px;height:160px;" /><br />
-wechat(微信支付)
+微信支付
 
 ## 作者
 
 <img alt="wechat qrcode" src="./Doc/author.jpg" style="width:160px;height:160px;" />
 
-Author's Wechat QR code（作者微信）
-
-Whether there is any topic to talk about, whether it is related to this product or not, I am very happy to meet you.
-
 无论有没有要聊的话题，无论是不是与此产品有关的话题，都很开心能认识你。
-
-## Stargazers over time
-
-[![Stargazers over time](https://starchart.cc/xland/ScreenCapture.svg?variant=adaptive)](https://starchart.cc/xland/ScreenCapture)
