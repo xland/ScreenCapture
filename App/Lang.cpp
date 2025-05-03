@@ -32,8 +32,6 @@ void Lang::init(const QString& langType)
 
 void Lang::initZhCn()
 {
-	dic.insert("toolBar", "工具栏");
-	dic.insert("quit", "退出");
 	dic.insert("saveFile", "保存文件");
 
 	dic.insert("rect", "矩形");
@@ -74,8 +72,6 @@ void Lang::initZhCn()
 
 void Lang::initEn()
 {
-	dic.insert("toolBar", "Toolbar");
-	dic.insert("quit", "Quit");
 	dic.insert("saveFile", "Save File");
 
 	dic.insert("rect", "Rect");
