@@ -43,18 +43,24 @@ Chinese:
 ## Command line（命令行）
 
 ```
-//英文，钉住剪切板图片，100,100是钉住窗口的坐标
---lang:en --pin:clipboard,100,100  
+//钉住剪切板内的图像，100,100是钉住窗口的坐标
+ScreenCapture.exe --pin:clipboard,100,100  
 
-//英文，钉住文件图片，100,100是钉住窗口的坐标
---lang:en --pin:file,"D:\test.png",100,100  
+//钉住图像文件，100,100是钉住窗口的坐标
+ScreenCapture.exe --pin:file,"D:\test.png",100,100  
 
-//英文，钉住桌面某个区域，100,100,500,600是区域矩形，
-//1000,10是钉住窗口的坐标
---lang:en --pin:area,100,100,500,600,1000,10 
+//钉住桌面某个区域的图像，100,100,500,600是区域矩形，
+//800,10是钉住窗口的坐标
+ScreenCapture.exe --pin:area,100,100,500,600,800,10 
 
-//设置默认保存目录
---dir:"D:\doc\测试目录"
+//设置截图图像的默认保存路径，目前只支持png格式文件
+ScreenCapture.exe --path:"D:\doc\测试目录\test.png"
+
+//设置截图图像的默认保存目录，与--path命令互斥
+ScreenCapture.exe --dir:"D:\doc\测试目录"
+
+//设置应用程序的语言，目前只支持中文(zhcn)和英文(en)，默认是中文
+ScreenCapture.exe --lang:en 
 ```
 
 ## Integration（集成）

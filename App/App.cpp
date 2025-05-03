@@ -35,6 +35,9 @@ bool App::parseCmd() {
     if (params.contains("dir")) {
         defaultSavePath = params["dir"];
     }
+    else if (params.contains("path")) {
+        defaultSavePath = params["path"];
+    }
     if (params.contains("lang")) {
 		QString lang = params["lang"];
 		if (lang == "en") {

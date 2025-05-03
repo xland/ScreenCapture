@@ -64,3 +64,19 @@ void ShapeTextInput::showEvent(QShowEvent* event)
 	QTextEdit::showEvent(event);
 	setFocus();
 }
+void ShapeTextInput::wheelEvent(QWheelEvent* event)
+{
+	int delta = event->angleDelta().y();
+	if (delta > 0) {
+		shapeText->fontSize += 1;
+	}
+	else if (delta < 0) {
+		shapeText->fontSize -= 1;
+	}
+	auto f = Util::getTextFont(shapeText->fontSize);
+	f->setWeight(shapeText->bold ? QFont::Bold : QFont::Normal);
+	f->setItalic(shapeText->italic);
+	setFont(*f);
+	auto p = (ShapeTextContainer*)parent();
+	p->adjustSize();
+}

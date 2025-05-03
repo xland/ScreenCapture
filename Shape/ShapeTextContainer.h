@@ -13,6 +13,7 @@ class ShapeTextContainer  : public QWidget
 public:
 	ShapeTextContainer(ShapeText* shapeText, QWidget* parent = nullptr);
 	~ShapeTextContainer();
+	void adjustSize();
 public:
 	ShapeTextInput* shapeTextInput;
 protected:
@@ -22,7 +23,6 @@ protected:
 	void mouseReleaseEvent(QMouseEvent* event) override;
 	void showEvent(QShowEvent* event) override;
 private:
-	void adjustSize();
 private:
 	ShapeText* shapeText;
 	QPointF pressPos;

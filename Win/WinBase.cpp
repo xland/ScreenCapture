@@ -26,9 +26,11 @@ void WinBase::saveToClipboard()
 void WinBase::saveToFile()
 {
     auto img = getTargetImg();
-    Util::saveToFile(img);
-    close();
-    qApp->exit(8);
+    auto flag = Util::saveToFile(img);
+    if (flag) {
+        close();
+        qApp->exit(8);
+    }
 }
 
 void WinBase::keyPressEvent(QKeyEvent* event)

@@ -15,6 +15,7 @@ public:
 protected:
 	void focusOutEvent(QFocusEvent* event) override;
 	void showEvent(QShowEvent* event) override;
+	void wheelEvent(QWheelEvent* event) override;
 private:
 private:
 	bool showTextInputCursor{ true };

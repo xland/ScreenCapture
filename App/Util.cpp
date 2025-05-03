@@ -150,10 +150,14 @@ QPoint Util::getQtPoint(int x, int y) {
     return QPoint(x / dpr, y / dpr);
 }
 
-void Util::saveToFile(const QImage& img)
+bool Util::saveToFile(const QImage& img)
 {
-    auto fileName = "Img" + QDateTime::currentDateTime().toString("yyyyMMddhhmmsszzz") + ".png";
     auto savePath = App::getSavePath();
+    if (savePath.toUpper().endsWith(".PNG")) {
+        img.save(savePath);
+        return true;
+    }
+    auto fileName = "Img" + QDateTime::currentDateTime().toString("yyyyMMddhhmmsszzz") + ".png";    
     QString filePath;
 	if (savePath.isEmpty()) {
         QString desktopPath = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
@@ -161,11 +165,12 @@ void Util::saveToFile(const QImage& img)
         filePath = QFileDialog::getSaveFileName(nullptr, Lang::get("saveFile"), filePath, "ScreenCapture (*.png)");
         if (filePath.isEmpty())
         {
-            return;
+            return false;
         }
     }
     else {
 		filePath = QDir::cleanPath(savePath + QDir::separator() + fileName);
     }
     img.save(filePath);
+    return true;
 }

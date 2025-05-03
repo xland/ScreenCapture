@@ -16,7 +16,7 @@ public:
 	static void setClipboardText(const std::wstring& text);
 	static void copyColor(const int& key);
 	static QPoint getQtPoint(int x, int y);
-	static void saveToFile(const QImage& img);
+	static bool saveToFile(const QImage& img);
 	static void imgToClipboard(const QImage& img);
 };
 
