@@ -123,7 +123,7 @@ Simple tutorial for ahk.
 ^!A::Run "path/to/ScreenCapture.exe"
 
 ;This hotkey is Win+Ctrl+Alt+P
-#^!P::Run "path/to/ScreenCapture.exe" "--dir:`"D:\doc\测试目录`""
+#^!P::Run "path/to/ScreenCapture.exe" "--dir:`"D:\doc`""
 ```
 
 - Double Click the `.ahk` file,then you can start the `ScreenCapture.exe` by press `Ctrl+Alt+A`.
