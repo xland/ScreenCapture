@@ -1,6 +1,8 @@
 #include <QApplication>
 #include <QClipboard>
 #include <QTimer>
+#include <QMimeData>
+#include <QFileInfo>
 #include "App.h"
 #include "Lang.h"
 #include "Util.h"
@@ -10,6 +12,8 @@
 namespace {
     std::unique_ptr<App> app;
     QString defaultSavePath;
+    int compressSize{ 100 };
+    int compressQuality{ -1 };
 }
 bool App::parseCmd() {
     QStringList args = QCoreApplication::arguments();
@@ -32,6 +36,9 @@ bool App::parseCmd() {
         params[key] = value;
     }
 
+    if (params.contains("comp")) {
+		if(!setCompressVal(params["comp"])) return false;
+    }
     if (params.contains("dir")) {
         defaultSavePath = params["dir"];
     }
@@ -87,7 +94,24 @@ void App::pinClipboard(const QString& cmd)
         }
     }
     QClipboard* clipboard = QApplication::clipboard();
-    QImage img = clipboard->image();
+    const QMimeData* mimeData = clipboard->mimeData();
+    QImage img;
+    if (mimeData->hasImage()) {
+        img = clipboard->image();
+    }
+    else if (mimeData->hasUrls()) {
+        auto url = mimeData->urls().first();
+        QString filePath = url.toLocalFile();
+		if (Util::isImagePath(filePath)) {
+			img.load(filePath);
+		}
+    }
+    else if (mimeData->hasText()) {
+        QString filePath = clipboard->text();
+        if (Util::isImagePath(filePath)) {
+            img.load(filePath);
+        }
+    }
 	if (img.isNull()) {
         qDebug() << "No image in clipboard.";
         exit(10);
@@ -178,6 +202,28 @@ void App::pinArea(const QString& cmd)
 	QImage img = Util::printScreen(x, y, w, h);
 	new WinPin(QPoint(x1, y1),img);
 }
+bool App::setCompressVal(const QString& cmd)
+{
+    auto arr = cmd.split(",");
+    bool ok;
+    if (arr.size() >= 1) {
+		compressQuality = arr[0].toInt(&ok);
+		if (!ok) {
+			qDebug() << "comp param error.";
+			exit(10);
+			return false;
+		}
+    }
+    if (arr.size() >= 2) {
+		compressSize = arr[1].toInt(&ok);
+		if (!ok) {
+			qDebug() << "comp param error.";
+			exit(10);
+			return false;
+		}
+    }
+    return true;
+}
 void App::exit(const int& code)
 {
 	QTimer::singleShot(10, [code]() {
@@ -201,4 +247,9 @@ void App::dispose()
 QString App::getSavePath()
 {
     return defaultSavePath;
+}
+
+std::tuple<int, int> App::getCompressVal()
+{
+    return {compressQuality,compressSize};
 }

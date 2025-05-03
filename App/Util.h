@@ -17,6 +17,7 @@ public:
 	static void copyColor(const int& key);
 	static QPoint getQtPoint(int x, int y);
 	static bool saveToFile(const QImage& img);
-	static void imgToClipboard(const QImage& img);
+	static void imgToClipboard(const QImage& image);
+	static bool isImagePath(const QString& path);
 };
 

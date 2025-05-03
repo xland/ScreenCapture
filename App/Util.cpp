@@ -49,8 +49,17 @@ QImage Util::printScreen(const int& x, const int& y, const int& w, const int& h)
     ReleaseDC(NULL, hScreen);
     return img;
 }
-void Util::imgToClipboard(const QImage& img)
+void Util::imgToClipboard(const QImage& image)
 {
+    auto [_, compressSize] = App::getCompressVal();
+    QImage img;
+    if (compressSize != 1.0) {
+        img = image.scaled(image.width() * compressSize/100, 
+            image.height() * compressSize/100, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+    }
+    else {
+        img = image;
+    }
     auto width = img.width();
     auto height = img.height();
     HDC screenDC = GetDC(nullptr);
@@ -69,6 +78,15 @@ void Util::imgToClipboard(const QImage& img)
     ReleaseDC(nullptr, screenDC);
     DeleteDC(memoryDC);
     DeleteObject(hBitmap);
+}
+bool Util::isImagePath(const QString& path)
+{
+    QFileInfo fileInfo(path);
+    QString suffix = fileInfo.suffix().toLower();
+    if (fileInfo.isFile() && (suffix == "png" || suffix == "jpg" || suffix == "jpeg" || suffix == "bmp")) {
+        return true;
+    }
+    return false;
 }
 bool Util::posInScreen(const int& x, const int& y)
 {
@@ -153,8 +171,16 @@ QPoint Util::getQtPoint(int x, int y) {
 bool Util::saveToFile(const QImage& img)
 {
     auto savePath = App::getSavePath();
+	auto [compressQuality, compressSize] = App::getCompressVal();
     if (savePath.toUpper().endsWith(".PNG")) {
-        img.save(savePath);
+		if (compressSize != 100) {
+			QImage image = img.scaled(img.width() * compressSize/100, 
+                img.height() * compressSize/100,
+                Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+            image.save(savePath, "PNG", compressQuality);
+            return true;
+		}
+        img.save(savePath, "PNG", compressQuality);
         return true;
     }
     auto fileName = "Img" + QDateTime::currentDateTime().toString("yyyyMMddhhmmsszzz") + ".png";    
@@ -171,6 +197,12 @@ bool Util::saveToFile(const QImage& img)
     else {
 		filePath = QDir::cleanPath(savePath + QDir::separator() + fileName);
     }
-    img.save(filePath);
+    if (compressSize != 1.0) {
+        QImage image = img.scaled(img.width() * compressSize/100, 
+            img.height() * compressSize/100, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+        image.save(filePath, "PNG", compressQuality);
+        return true;
+    }
+    img.save(filePath,"PNG", compressQuality);
     return true;
 }

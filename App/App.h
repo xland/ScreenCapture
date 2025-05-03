@@ -8,12 +8,14 @@ public:
 	static void init();
 	static void dispose();
 	static QString getSavePath();
+	static std::tuple<int, int> getCompressVal();
 public:
 private:
 	static bool parseCmd();
 	static void pinClipboard(const QString& cmd);
 	static void pinFile(const QString& cmd);
 	static void pinArea(const QString& cmd);
+	static bool setCompressVal(const QString& cmd);
 	static void exit(const int& code);
 };
 

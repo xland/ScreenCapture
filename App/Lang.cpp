@@ -73,7 +73,6 @@ void Lang::initZhCn()
 void Lang::initEn()
 {
 	dic.insert("saveFile", "Save File");
-
 	dic.insert("rect", "Rect");
 	dic.insert("ellipse", "Ellipse");
 	dic.insert("arrow", "Arrow");
