@@ -1,3 +1,5 @@
+简体中文 | [English](./README.en.md)
+
 The next major version (2.2.x) is developed in the main branch.
 
 The last stable version is available in the [2.1.x](https://github.com/xland/ScreenCapture/tree/2.1.x) branch.
