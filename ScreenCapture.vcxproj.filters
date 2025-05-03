@@ -243,6 +243,7 @@
     <None Include="Doc\高亮窗口.md" />
     <None Include="Doc\todo.md" />
     <None Include="Doc\qrcode.md" />
+    <None Include="ReadMe.en.md" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="Res\iconfont.ttf" />
