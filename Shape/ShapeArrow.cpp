@@ -89,7 +89,6 @@ bool ShapeArrow::mouseMove(QMouseEvent* event)
         return true;
     }
     else {
-        win->setCursor(Qt::CrossCursor);
         return false;
     }
 }

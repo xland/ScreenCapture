@@ -96,7 +96,6 @@ bool ShapeNumber::mouseMove(QMouseEvent* event)
         win->setCursor(Qt::SizeAllCursor);
     }
     else {
-        win->setCursor(Qt::CrossCursor);
         return false;
     }
 }

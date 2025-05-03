@@ -106,11 +106,21 @@ void Canvas::mouseDrag(QMouseEvent* event)
 
 void Canvas::mouseMove(QMouseEvent* event)
 {
+    auto flag{ false };
     for (int i = shapes.size() - 1; i >= 0; i--)
     {
-        auto flag = shapes[i]->mouseMove(event);
+        flag = shapes[i]->mouseMove(event);
         if (flag) {
             return;
+        }
+    }
+    if (!flag) {
+        auto win = (WinBase*)parent();
+        if (win->state == State::text) {
+            win->setCursor(Qt::IBeamCursor);
+        }
+        else {
+            win->setCursor(Qt::CrossCursor);
         }
     }
 }

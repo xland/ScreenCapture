@@ -1,5 +1,6 @@
 #include <QApplication>
 #include <QClipboard>
+#include <QTimer>
 #include "App.h"
 #include "Lang.h"
 #include "Util.h"
@@ -66,29 +67,27 @@ bool App::parseCmd() {
 void App::pinClipboard(const QString& cmd)
 {
     auto arr = cmd.split(",");
-    if (arr.size() != 3) {
-        qDebug() << "pin clipboard param error.";
-        qApp->exit(10);
-        return;
-    }
+    int x{ 100 }, y{100};
 	bool ok;
-    auto x = arr[1].trimmed().toInt(&ok);
-	if (!ok) {
-		qDebug() << "pin clipboard param error.";
-		qApp->exit(10);
-        return;
-	}
-    auto y = arr[2].trimmed().toInt(&ok);
-    if (!ok) {
-        qDebug() << "pin clipboard param error.";
-        qApp->exit(10);
-        return;
+    if (arr.size() == 3) {
+        x = arr[1].toInt(&ok);
+        if (!ok) {
+            qDebug() << "pin clipboard param error.";
+            exit(10);
+            return;
+        }
+        y = arr[2].toInt(&ok);
+        if (!ok) {
+            qDebug() << "pin clipboard param error.";
+            exit(10);
+            return;
+        }
     }
     QClipboard* clipboard = QApplication::clipboard();
     QImage img = clipboard->image();
 	if (img.isNull()) {
         qDebug() << "No image in clipboard.";
-        qApp->exit(10);
+        exit(10);
 		return;
 	}
     new WinPin(QPoint(x,y), img);
@@ -96,79 +95,91 @@ void App::pinClipboard(const QString& cmd)
 void App::pinFile(const QString& cmd)
 {
     auto arr = cmd.split(",");
-    if (arr.size() != 4) {
-        qDebug() << "pin clipboard param error.";
-        qApp->exit(10);
-        return;
-    }
-    bool ok;
-    auto x = arr[2].trimmed().toInt(&ok);
-    if (!ok) {
-        qDebug() << "pin clipboard param error.";
-        qApp->exit(10);
-        return;
-    }
-    auto y = arr[3].trimmed().toInt(&ok);
-    if (!ok) {
-        qDebug() << "pin clipboard param error.";
-        qApp->exit(10);
-        return;
-    }
+	if (arr.size() < 2) {
+		qDebug() << "pin file param error.";
+		exit(10);
+		return;
+	}
     QImage img(arr[1]);
     if (img.isNull()) {
         qDebug() << "Image Path error.";
-        qApp->exit(10);
+        exit(10);
         return;
+    }
+    int x{ 100 }, y{ 100 };
+    bool ok;
+    if (arr.size() == 4) {
+        x = arr[2].toInt(&ok);
+        if (!ok) {
+            qDebug() << "pin clipboard param error.";
+            exit(10);
+            return;
+        }
+        y = arr[3].toInt(&ok);
+        if (!ok) {
+            qDebug() << "pin clipboard param error.";
+            exit(10);
+            return;
+        }
     }
     new WinPin(QPoint(x, y), img);
 }
 void App::pinArea(const QString& cmd)
 {
     auto arr = cmd.split(",");
-	if (arr.size() != 7) {
+	if (arr.size() < 5) {
 		qDebug() << "pin area param error.";
-		qApp->exit(10);
+		exit(10);
         return;
 	}
-	bool ok;
-	auto x = arr[1].trimmed().toInt(&ok);
+    bool ok;
+	auto x = arr[1].toInt(&ok);
 	if (!ok) {
 		qDebug() << "pin area param error.";
-		qApp->exit(10);
+		exit(10);
         return;
 	}
-	auto y = arr[2].trimmed().toInt(&ok);
+	auto y = arr[2].toInt(&ok);
 	if (!ok) {
 		qDebug() << "pin area param error.";
-		qApp->exit(10);
+		exit(10);
         return;
 	}
-	auto w = arr[3].trimmed().toInt(&ok);
+	auto w = arr[3].toInt(&ok);
 	if (!ok) {
 		qDebug() << "pin area param error.";
-		qApp->exit(10);
+		exit(10);
         return;
 	}
-	auto h = arr[4].trimmed().toInt(&ok);
+	auto h = arr[4].toInt(&ok);
 	if (!ok) {
 		qDebug() << "pin area param error.";
-		qApp->exit(10);
+		exit(10);
         return;
 	}
-    auto x1 = arr[5].trimmed().toInt(&ok);
-    if (!ok) {
-        qDebug() << "pin area param error.";
-        qApp->exit(10);
-        return;
-    }
-    auto y1 = arr[6].trimmed().toInt(&ok);
-    if (!ok) {
-        qDebug() << "pin area param error.";
-        qApp->exit(10);
-        return;
+    int x1{ 100 }, y1{ 100 };
+    if (arr.size() == 7) {
+        x1 = arr[5].toInt(&ok);
+        if (!ok) {
+            qDebug() << "pin area param error.";
+            exit(10);
+            return;
+        }
+        y1 = arr[6].toInt(&ok);
+        if (!ok) {
+            qDebug() << "pin area param error.";
+            exit(10);
+            return;
+        }
     }
 	QImage img = Util::printScreen(x, y, w, h);
 	new WinPin(QPoint(x1, y1),img);
+}
+void App::exit(const int& code)
+{
+	QTimer::singleShot(10, [code]() {
+		qApp->exit(code);
+		});
 }
 void App::init()
 {

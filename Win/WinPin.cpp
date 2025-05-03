@@ -22,7 +22,7 @@
 WinPin::WinPin(const QPoint& pos, QImage& img, QWidget* parent) : WinBase(parent)
 {
     auto dpr = devicePixelRatio();
-    setWindowFlags(Qt::FramelessWindowHint | Qt::Window);
+    setWindowFlags(Qt::FramelessWindowHint | Qt::Window | Qt::WindowStaysOnTopHint);
     if (dpr != img.devicePixelRatio()) {
 		img.setDevicePixelRatio(dpr);
     }

@@ -8,11 +8,11 @@
 
 #include "ShapeText.h"
 #include "ShapeTextInput.h"
-#include "../Win/WinBase.h"
-#include "../Win/WinPin.h"
-#include "../App/App.h"
-#include "../Tool/ToolSub.h"
-#include "../Win/Canvas.h"
+#include "Win/WinBase.h"
+#include "Win/WinPin.h"
+#include "App/App.h"
+#include "Tool/ToolSub.h"
+#include "Win/Canvas.h"
 #include "App/Util.h"
 
 
@@ -51,9 +51,6 @@ bool ShapeText::mouseMove(QMouseEvent* event)
     }
     else {
 		hoverDraggerIndex = -1;
-        if (win->cursor() == Qt::IBeamCursor && win->state != State::text) {
-            win->setCursor(Qt::CrossCursor);
-        }
         return false;
     }
 }
@@ -74,7 +71,7 @@ bool ShapeText::mousePress(QMouseEvent* event)
     }
     if(state == ShapeState::temp) {
         container = new ShapeTextContainer(this,win);
-        container->move(QCursor::pos() + QPoint(-10, -10));
+        container->move(ppp + QPoint(-10, -10));
         container->show();
         container->shapeTextInput->setText("");  //触发一次adjustSize
         return true;

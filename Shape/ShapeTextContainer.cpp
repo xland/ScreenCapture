@@ -61,9 +61,9 @@ void ShapeTextContainer::mouseMoveEvent(QMouseEvent* event)
 {
 	auto win = (WinBase*)window();
 	if (event->buttons() & Qt::LeftButton) {
-		auto pos = QCursor::pos();
+		auto pos = mapToParent(event->pos());
 		auto span = pos - pressPos;
-		auto p = mapToGlobal(QPoint(0, 0)) + span;
+		auto p = mapToParent(QPoint(0, 0)) + span;
 		move(p.x(), p.y());
 		pressPos = pos;
 	}
@@ -71,7 +71,7 @@ void ShapeTextContainer::mouseMoveEvent(QMouseEvent* event)
 
 void ShapeTextContainer::mousePressEvent(QMouseEvent* event)
 {
-	pressPos = QCursor::pos();
+	pressPos = mapToParent(event->pos());
 }
 
 void ShapeTextContainer::mouseReleaseEvent(QMouseEvent* event)

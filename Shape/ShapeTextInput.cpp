@@ -1,4 +1,5 @@
 ﻿#include <QPainter>
+#include <QApplication>
 #include <Windows.h>
 #include <QTimer>
 #include <QWindow>
@@ -34,9 +35,8 @@ ShapeTextInput::~ShapeTextInput()
 void ShapeTextInput::focusOutEvent(QFocusEvent* event)
 {
 	auto p = (ShapeTextContainer*)parent();
-	auto rrr = p->geometry();
-	auto ppp = QCursor::pos();
-	if (rrr.contains(ppp)) return;
+	QWidget* widget = QApplication::widgetAt(QCursor::pos());
+	if (p == widget) return;
 	QTextEdit::focusOutEvent(event);
 	auto cursor = textCursor();
 	cursor.clearSelection();

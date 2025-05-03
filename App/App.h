@@ -14,6 +14,6 @@ private:
 	static void pinClipboard(const QString& cmd);
 	static void pinFile(const QString& cmd);
 	static void pinArea(const QString& cmd);
-
+	static void exit(const int& code);
 };
 
