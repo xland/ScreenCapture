@@ -118,15 +118,11 @@ Simple tutorial for ahk.
 - Double Click the `.ahk` file,then you can start the `ScreenCapture.exe` by press `Ctrl+Alt+A`.
 - The `.ahk` script will be executed when the system startup.
 
-### Third-party project
-
-#### SC_Starter
+### SC_Starter
 
 [SC_Starter](https://github.com/Mikachu2333/sc_starter/)是一个使用Rust编写的快捷键程序，它可以帮助用户简单快捷地修改
 
-[SC_Starter](https://github.com/Mikachu2333/sc_starter/) is a process writen with rust and it could assist you for create/change HotKey easily.
-
-It now support
+特性：
 
 - Start ScreenCapture with Hotkey (Automatically rename pics you shotted with time now).
 - Pin Clipplboard pic to Screen with HotKey
