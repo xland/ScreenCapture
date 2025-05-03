@@ -114,8 +114,6 @@ child.on("close", (code) => {
 
 [SC_Starter](https://github.com/Mikachu2333/sc_starter/)是一个使用Rust编写的快捷键程序，它可以帮助用户简单快捷地修改
 
-特性：
-
 - Start ScreenCapture with Hotkey (Automatically rename pics you shotted with time now).
 - Pin Clipplboard pic to Screen with HotKey
 - Open Settings with Hotkey. (All hotkey settings, etc. are here.)
