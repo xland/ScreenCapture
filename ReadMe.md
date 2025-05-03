@@ -85,7 +85,7 @@ child.on("close", (code) => {
 
 ## 快捷键
 
-### AutoHotKey
+### 方案一：AutoHotKey
 
 - 下载并安装 [AutoHotKey](https://www.autohotkey.com/) 。
 - 在`%AppData%/Microsoft/Windows/Start Menu/Programs/Startup`目录下创建一个 `.ahk` 脚本文件，文件内容如下:
@@ -110,7 +110,7 @@ Win+Ctrl+Alt+P 并设置保存路径
 - 双击此 `.ahk` 文件,然后你就可以通过快捷键 `Ctrl+Alt+A` 启动 ScreenCapture.exe 了.
 - 此 `.ahk` 脚本会随机启动.
 
-### SC_Starter
+### 方案二：SC_Starter
 
 [SC_Starter](https://github.com/Mikachu2333/sc_starter/)是一个使用Rust编写的快捷键程序，它可以帮助用户简单快捷地修改
 
