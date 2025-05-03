@@ -38,7 +38,7 @@ Chinese:
 
 ## Download（下载）
 
-[Release](https://github.com/xland/ScreenCapture/releases/) (7M)
+[Release](https://github.com/xland/ScreenCapture/releases/) (8M)
 
 ## Command line（命令行）
 

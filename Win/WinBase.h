@@ -17,6 +17,7 @@ public:
 	~WinBase();
 	void saveToClipboard();
 	void saveToFile();
+	void keyPressEvent(QKeyEvent* event) override;
 public:
 	int x, y, w, h;
 	HWND hwnd;
@@ -26,7 +27,6 @@ public:
 	Canvas* canvas;
 protected:
 	virtual QImage getTargetImg() = 0;
-	void keyPressEvent(QKeyEvent* event) override;
 	void moveCursor(const QPoint& pos);
 private:
 

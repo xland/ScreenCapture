@@ -48,52 +48,5 @@ void ToolBase::showEvent(QShowEvent* event)
 void ToolBase::keyPressEvent(QKeyEvent* event)
 {
     auto win = (WinBase*)parent();
-    if (event->key() == Qt::Key_Escape) {
-        qApp->exit(3);
-    }
-    /*else if (event->key() == Qt::Key_Delete) {
-        win->removeShape();
-    }
-    else if (event->key() == Qt::Key_Left) {
-        win->moveByKey(0);
-    }
-    else if (event->key() == Qt::Key_Up) {
-        win->moveByKey(1);
-    }
-    else if (event->key() == Qt::Key_Right) {
-        win->moveByKey(2);
-    }
-    else if (event->key() == Qt::Key_Down) {
-        win->moveByKey(3);
-    }
-    */
-    else if (event->modifiers() & Qt::ControlModifier) {
-        if (event->key() == Qt::Key_T) {
-            
-        }
-        //else if (event->key() == Qt::Key_Z) {
-        //    win->undo();
-        //}
-        //else if (event->key() == Qt::Key_Y) {
-        //    win->redo();
-        //}
-        //else if (event->key() == Qt::Key_S) {
-        //    win->saveToFile();
-        //}
-        //else if (event->key() == Qt::Key_C) {
-        //    win->saveToClipboard();
-        //}
-        else if (event->key() == Qt::Key_H) {
-            win->canvas->copyColor(0);
-        }
-        else if (event->key() == Qt::Key_R) {
-            win->canvas->copyColor(1);
-        }
-        else if (event->key() == Qt::Key_K) {
-            win->canvas->copyColor(2);
-        }
-        else if (event->key() == Qt::Key_P) {
-            win->canvas->copyColor(3);
-        }
-    }
+    win->keyPressEvent(event);
 }
