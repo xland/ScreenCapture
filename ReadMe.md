@@ -1,4 +1,4 @@
-简体中文 | [English](./README.en.md)
+简体中文 | [English](./ReadMe.en.md)
 
 The next major version (2.2.x) is developed in the main branch.
 
