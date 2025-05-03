@@ -58,7 +58,7 @@ ScreenCapture.exe --comp:6,60
 
 ## 集成
 
-(With Node.js Or Electron)
+Node.js 或 Electron，Python类似（注意设置工作目录）
 
 ```js
 let spawn = require("child_process").spawn;
@@ -87,36 +87,28 @@ child.on("close", (code) => {
 
 ### AutoHotKey
 
-- Download [AutoHotKey](https://www.autohotkey.com/) and install it.
-- Create a `.ahk` script file in `shell:Startup` folder and set the file's content:
+- 下载并安装 [AutoHotKey](https://www.autohotkey.com/) 。
+- 在`%AppData%/Microsoft/Windows/Start Menu/Programs/Startup`目录下创建一个 `.ahk` 脚本文件，文件内容如下:
 
 ```ahk
 /*
-You need to save this ahk script to the dir on the following place.
-你需要将此文件保存到以下路径中
-
-%AppData%\\Microsoft\\Windows\\Start Menu\\Programs\\Startup
-*/
-
-/*
-Simple tutorial for ahk.
-以下是ahk的简单教程
-
 ^  :  Ctrl
 !  :  Alt
 +  :  Shift
 #  :  Win
-*/
 
-;This hotkey is Ctrl+Alt+A 
+Ctrl+Alt+A 
 ^!A::Run "path/to/ScreenCapture.exe"
 
-;This hotkey is Win+Ctrl+Alt+P
+Win+Ctrl+Alt+P 并设置保存路径
 #^!P::Run "path/to/ScreenCapture.exe" "--dir:`"D:\doc`""
+*/
+
+^!A::Run "path/to/ScreenCapture.exe"
 ```
 
-- Double Click the `.ahk` file,then you can start the `ScreenCapture.exe` by press `Ctrl+Alt+A`.
-- The `.ahk` script will be executed when the system startup.
+- 双击此 `.ahk` 文件,然后你就可以通过快捷键 `Ctrl+Alt+A` 启动 ScreenCapture.exe 了.
+- 此 `.ahk` 脚本会随机启动.
 
 ### SC_Starter
 
