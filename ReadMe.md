@@ -1,32 +1,11 @@
 简体中文 | [English](./ReadMe.en.md)
 
-The next major version (2.2.x) is developed in the main branch.
-
-The last stable version is available in the [2.1.x](https://github.com/xland/ScreenCapture/tree/2.1.x) branch.
-
 ![banner](./Doc/banner.png)
 
-## Features（特性）
-
-### English
-
-- Multi-screen capture, Cross-screen screenshot.
-- Window area highlighting.
-- Camera aperture, Copy pixel color: RGB(`Ctrl+R`), HEX(`Ctrl+H`), CMYK(`Ctrl+K`).
-- Draw circle(`Shift` down), ellipse, square(`Shift` down), rectangle, arrow, ordered numbers in different colors (filled or unfilled).
-- Draw curve, straight line(`Shift` down), opacity line, mosaic, eraser, text.
-- Modify the drawn elements at any time (when `Mouse Over` the element).
-- Undo(`Ctrl+Z`) and Redo(`Ctrl+Y`) support.
-- Pin the cut area on desktop, resize pin window using `Mouse Wheel`.
-- Save to file(`Ctrl+S`) or clipboard(`Ctrl+C`).
-- Very fast, Small memory footprint, Low CPU usage.
-- Only one small executable file (7M, without any DLL).
-- Can be easily integrated into any program.
-
-### 中文
+## 特性
 
 - 跨屏幕截图、高分屏支持、窗口区域高亮。
-- 取景框，支持快捷键复制 RGB 颜色（`Ctrl+R`）和 HEX 颜色（`Ctrl+H`）。
+- 取景框，支持快捷键复制 RGB 颜色（`Ctrl+R`）、 HEX 颜色（`Ctrl+H`）与 CMYK 颜色（`Ctrl+K`）。
 - 绘制填充、非填充的椭圆、正圆（按住`Shift`）、矩形、正方形（按住`Shift`）、箭头、排序标号（`拖拽`调整箭头方向和大小，`滚轮`调整大小）。
 - 绘制曲线、直线（按住`Shift`）、半透明直线、马赛克、橡皮擦、文本。
 - 可以随时修改已绘制的元素（鼠标移到元素上）。
@@ -37,11 +16,11 @@ The last stable version is available in the [2.1.x](https://github.com/xland/Scr
 - 体积小、仅一个可执行文件（7M），无需安装，不依赖任何动态链接库。
 - 可以非常容易地集成到其他应用中。
 
-## Download（下载）
+## 下载
 
 [Release](https://github.com/xland/ScreenCapture/releases/) （7M）
 
-## Command line（命令行）
+## 命令行
 
 **警告**：
 
@@ -77,7 +56,7 @@ ScreenCapture.exe --comp:6,60
 
 ```
 
-## Integration（集成）
+## 集成
 
 (With Node.js Or Electron)
 
@@ -100,11 +79,11 @@ child.on("close", (code) => {
 });
 ```
 
-## Support OS（支持的操作系统）
+## 支持的操作系统
 
 - Windows 10 1607 or Later
 
-## HotKey（快捷键）
+## 快捷键
 
 ### AutoHotKey
 
@@ -154,7 +133,7 @@ It now support
 - Open Settings with Hotkey. (All hotkey settings, etc. are here.)
 - Exit with HotKey.
 
-## Sponsorship（赞助）
+## 赞助
 
 <img alt="ali pay" src="./Doc/alipay.jpg" style="width:160px;height:160px;" /><br />
 alipay(支付宝支付)
@@ -162,7 +141,7 @@ alipay(支付宝支付)
 <img alt="wechat pay" src="./Doc/wechat.png" style="width:160px;height:160px;" /><br />
 wechat(微信支付)
 
-## Author（作者）
+## 作者
 
 <img alt="wechat qrcode" src="./Doc/author.jpg" style="width:160px;height:160px;" />
 
