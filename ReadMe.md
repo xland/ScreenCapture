@@ -20,7 +20,7 @@
 
 [Release](https://github.com/xland/ScreenCapture/releases/) （8M）
 
-## 命令行
+## 命令控制
 
 ```powershell
 //钉住剪切板内的图像，(100,100) 是钉住窗口的坐标
