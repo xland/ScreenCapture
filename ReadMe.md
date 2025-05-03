@@ -54,15 +54,14 @@ ScreenCapture.exe --pin:clipboard,100,100
 //钉住图像文件，(100,100) 是钉住窗口的坐标
 ScreenCapture.exe --pin:file,"D:\\test.png",100,100
 
-//钉住桌面某个区域的图像，(100,100,500,600)是区域矩形，
-//(800,10)是钉住窗口的坐标
+//钉住桌面某个区域的图像，(100,100,500,600)是区域矩形，(800,10)是钉住窗口的坐标
 ScreenCapture.exe --pin:area,100,100,500,600,800,10
 
 //设置本次截图的保存路径与文件名，目前只支持png格式文件
-ScreenCapture.exe --path:"D:\\doc\\测试目录\\test.png"
+ScreenCapture.exe --path:"D:\\doc\\test.png"
 
 //设置本次截图的保存目录，与 --path 命令互斥
-ScreenCapture.exe --dir:"D:\\doc\\测试目录"
+ScreenCapture.exe --dir:"D:\\doc"
 
 //设置应用程序的语言，目前只支持简体中文(zhcn)和英文(en)，默认中文
 ScreenCapture.exe --lang:en
@@ -80,7 +79,7 @@ child.on("close", (code) => {
     /// 0 undefined
     /// 1 quit by press close btn;
     /// 2 quit by press right mouse btn;
-    /// 3 quit by press esc keyboard
+    /// 3 quit by press esc key;
     /// 4 quit when copy rgb color;
     /// 5 quit when copy hex color;
     /// 6 quit when copy cmyk color;
