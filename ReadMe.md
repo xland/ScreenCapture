@@ -110,12 +110,15 @@ child.on("close", (code) => {
 
 ### 方案二：SC_Starter
 
-[SC_Starter](https://github.com/Mikachu2333/sc_starter/)是一个使用Rust编写的快捷键程序，它可以帮助用户简单快捷地修改
+[SC_Starter](https://github.com/Mikachu2333/sc_starter/)是一个使用Rust编写ScreenCapture启动器。
 
-- Start ScreenCapture with Hotkey (Automatically rename pics you shotted with time now).
-- Pin Clipplboard pic to Screen with HotKey
-- Open Settings with Hotkey. (All hotkey settings, etc. are here.)
-- Exit with HotKey.
+- 内置截图程序，无需额外安装
+- 自动注册全局快捷键
+- 支持自定义保存路径
+- 支持以时间戳命名
+- 文件防删除保护
+- 托盘左键单击截图，右键退出
+- 自启动设置
 
 ## 赞助
 
