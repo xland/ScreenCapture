@@ -48,7 +48,9 @@ void ShapeMosaicRect::createMosaicImg()
         QPainter painter(&winImg);
         for (auto& s : win->canvas->shapes)
         {
-            s->paint(&painter);
+            if (s->state != ShapeState::undo) {
+                s->paint(&painter);
+            }
         }
     }
     winImg.setDevicePixelRatio(1.0);
