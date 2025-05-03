@@ -88,14 +88,9 @@ child.on("close", (code) => {
 ```ahk
 /*
 You need to save this ahk script to the dir on the following place.
-你需要将此文件保存到以下路径中
-
 %AppData%\\Microsoft\\Windows\\Start Menu\\Programs\\Startup
-*/
 
-/*
 Simple tutorial for ahk.
-以下是ahk的简单教程
 
 ^  :  Ctrl
 !  :  Alt
@@ -116,8 +111,6 @@ Simple tutorial for ahk.
 ### SC_Starter
 
 [SC_Starter](https://github.com/Mikachu2333/sc_starter/) is a process writen with rust and it could assist you for create/change HotKey easily.
-
-It now support
 
 - Start ScreenCapture with Hotkey (Automatically rename pics you shotted with time now).
 - Pin Clipplboard pic to Screen with HotKey
