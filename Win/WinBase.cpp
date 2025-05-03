@@ -81,3 +81,8 @@ void WinBase::moveCursor(const QPoint& pos)
     auto pos1 = QCursor::pos()+pos;
     QCursor::setPos(pos1);
 }
+
+void WinBase::mouseDoubleClickEvent(QMouseEvent* event)
+{
+    saveToClipboard();
+}

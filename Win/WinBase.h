@@ -28,6 +28,7 @@ public:
 protected:
 	virtual QImage getTargetImg() = 0;
 	void moveCursor(const QPoint& pos);
+	void mouseDoubleClickEvent(QMouseEvent* event) override;
 private:
 
 };
