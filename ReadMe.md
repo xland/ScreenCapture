@@ -54,10 +54,10 @@ ScreenCapture.exe --pin:file,"D:\test.png",100,100
 ScreenCapture.exe --pin:area,100,100,500,600,800,10 
 
 //设置截图图像的默认保存路径，目前只支持png格式文件
-ScreenCapture.exe --path:"D:\doc\测试目录\test.png"
+ScreenCapture.exe --path:"D:\doc\test.png"
 
 //设置截图图像的默认保存目录，与--path命令互斥
-ScreenCapture.exe --dir:"D:\doc\测试目录"
+ScreenCapture.exe --dir:"D:\doc"
 
 //设置应用程序的语言，目前只支持中文(zhcn)和英文(en)，默认是中文
 ScreenCapture.exe --lang:en 
