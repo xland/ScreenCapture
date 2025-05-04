@@ -14,8 +14,10 @@ namespace {
     QString defaultSavePath;
     int compressSize{ 100 };
     int compressQuality{ -1 };
+	int customCap{ -1 };
 }
-bool App::parseCmd() {
+QMap<QString, QString> App::getCmd()
+{
     QStringList args = QCoreApplication::arguments();
     QMap<QString, QString> params;
     for (int i = 1; i < args.size(); ++i) {
@@ -35,14 +37,13 @@ bool App::parseCmd() {
         }
         params[key] = value;
     }
-
+    return params;
+}
+bool App::parseCmd(const QMap<QString, QString>& params) {
     if (params.contains("comp")) {
 		if(!setCompressVal(params["comp"])) return false;
     }
-    if (params.contains("dir")) {
-        defaultSavePath = params["dir"];
-    }
-    else if (params.contains("path")) {
+    if (params.contains("path")) {
         defaultSavePath = params["path"];
     }
     if (params.contains("lang")) {
@@ -72,6 +73,21 @@ bool App::parseCmd() {
             return true;
         }
     }
+	if (params.contains("cap")) {
+		auto cap = params["cap"];
+        if (cap.startsWith("area")) {
+            capArea(cap);
+            return true;
+        }
+        else if (cap.startsWith("fullscreen")) {
+            capFullscreen(cap);
+            return true;
+        }
+        else if (cap.startsWith("custom")) {
+            capCustom(cap);
+            return false;
+        }
+	}
     return false;
 }
 void App::pinClipboard(const QString& cmd)
@@ -224,6 +240,86 @@ bool App::setCompressVal(const QString& cmd)
     }
     return true;
 }
+void App::capArea(const QString& cmd)
+{
+	auto arr = cmd.split(",");
+	if (arr.size() < 5) {
+		qDebug() << "cap area param error.";
+		exit(10);
+		return;
+	}
+	bool ok;
+	auto x = arr[1].toInt(&ok);
+	if (!ok) {
+		qDebug() << "cap area param error.";
+		exit(10);
+		return;
+	}
+	auto y = arr[2].toInt(&ok);
+	if (!ok) {
+		qDebug() << "cap area param error.";
+		exit(10);
+		return;
+	}
+	auto w = arr[3].toInt(&ok);
+	if (!ok) {
+		qDebug() << "cap area param error.";
+		exit(10);
+		return;
+	}
+	auto h = arr[4].toInt(&ok);
+	if (!ok) {
+		qDebug() << "cap area param error.";
+		exit(10);
+		return;
+	}
+	QImage img = Util::printScreen(x, y, w, h);
+	if (arr.size() == 6) {
+        if (arr[5] == "clipboard") {
+            Util::imgToClipboard(img);
+            exit(9);
+        }
+	}
+    else
+    {
+		Util::saveToFile(img);
+        exit(8);
+    }	
+}
+void App::capFullscreen(const QString& cmd)
+{
+    auto x = GetSystemMetrics(SM_XVIRTUALSCREEN);
+    auto y = GetSystemMetrics(SM_YVIRTUALSCREEN);
+    auto w = GetSystemMetrics(SM_CXVIRTUALSCREEN);
+    auto h = GetSystemMetrics(SM_CYVIRTUALSCREEN);
+    auto img = Util::printScreen(x, y, w, h);
+    auto arr = cmd.split(",");
+    if (arr.size() == 2) {
+        if (arr[1] == "clipboard") {
+            Util::imgToClipboard(img);
+            exit(9);
+        }
+    }
+    else
+    {
+        Util::saveToFile(img);
+        exit(8);
+    }
+}
+bool App::capCustom(const QString& cmd)
+{
+    auto arr = cmd.split(",");
+    if (arr.size() == 2) {
+        if (arr[1] == "clipboard") {
+            customCap = 1;
+        }
+    }
+    else
+    {
+        customCap = 0;
+    }
+    return true;
+}
 void App::exit(const int& code)
 {
 	QTimer::singleShot(10, [code]() {
@@ -234,7 +330,8 @@ void App::init()
 {
     QFont font("Microsoft YaHei", 9);
     qApp->setFont(font);
-    auto flag = parseCmd();
+	auto cmds = getCmd();
+    auto flag = parseCmd(cmds);
     if (!flag) {
         new WinFull();
     }
@@ -252,4 +349,9 @@ QString App::getSavePath()
 std::tuple<int, int> App::getCompressVal()
 {
     return {compressQuality,compressSize};
+}
+
+int App::getCustomCap()
+{
+    return customCap;
 }

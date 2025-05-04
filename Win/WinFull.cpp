@@ -86,12 +86,22 @@ void WinFull::mouseReleaseEvent(QMouseEvent* event)
 {
     if (state <= State::tool) {
         cutMask->rectMask = cutMask->rectMask.normalized();
-        state = State::tool;
-        if (!toolMain) {
-            toolMain = new ToolMain(this);
+        auto customCap = App::getCustomCap();
+        if (customCap == 0) {
+            saveToFile();
         }
-        toolMain->confirmPos();
-        toolMain->show();
+        else if (customCap == 1)
+        {
+            saveToClipboard();
+        }
+        else {
+            state = State::tool;
+            if (!toolMain) {
+                toolMain = new ToolMain(this);
+            }
+            toolMain->confirmPos();
+            toolMain->show();
+        }
     }
     else {
         canvas->mouseRelease(event);
