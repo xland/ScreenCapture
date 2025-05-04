@@ -27,8 +27,8 @@
 //如果路径是目录，则保存文件时会自动生成文件名。
 //如果路径包含文件名，则按此文件名保存文件（文件存在则覆盖）。
 //目前只支持png格式文件
-ScreenCapture.exe --path:"D:\\doc\\test.png"
-ScreenCapture.exe --path:"D:\\doc"
+ScreenCapture.exe --path:"D:/doc/test.png"
+ScreenCapture.exe --path:"D:/doc"
 
 //截取屏幕某个区域的图像
 //100,100是坐标，500,600是宽高
@@ -58,7 +58,7 @@ ScreenCapture.exe --pin:clipboard,100,100
 
 //钉住图像文件，100,100是钉住窗口的坐标
 //如忽略窗口坐标，则窗口默认坐标为100,100
-ScreenCapture.exe --pin:file,"D:\\test.png",100,100
+ScreenCapture.exe --pin:file,"D:/test.png",100,100
 
 //钉住桌面某个区域的图像，(100,100,500,600)是区域矩形，(800,10)是钉住窗口的坐标
 //如忽略窗口坐标，则窗口默认坐标为100,100
@@ -79,7 +79,7 @@ ScreenCapture.exe --comp:6,60
 
 ```
 
-- 未注明互斥的参数则可以同时使用
+- `--cap`与`--pin`参数互斥，其他参数可组合使用。
 - 一个独立的参数以 `--` 开头，参数内不能出现空格，参数和参数之间以空格分割。
 - 需根据你的终端来决定使用怎样的路径分隔符：`\\`或`/`。
 

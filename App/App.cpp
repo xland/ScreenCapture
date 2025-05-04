@@ -3,6 +3,12 @@
 #include <QTimer>
 #include <QMimeData>
 #include <QFileInfo>
+#include <iostream>
+#include <fcntl.h>
+#include <Windows.h>
+#include <io.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include "App.h"
 #include "Lang.h"
 #include "Util.h"
@@ -326,11 +332,28 @@ void App::exit(const int& code)
 		qApp->exit(code);
 		});
 }
+void App::attachConsole()
+{
+    if (::AttachConsole(ATTACH_PARENT_PROCESS)) {
+        FILE* unused;
+        if (freopen_s(&unused, "CONOUT$", "w", stdout)) {
+            _dup2(_fileno(stdout), 1);
+        }
+        if (freopen_s(&unused, "CONOUT$", "w", stderr)) {
+            _dup2(_fileno(stdout), 2);
+        }
+        std::ios::sync_with_stdio();
+        qDebug() << "Hello ScreenCapture";
+    }
+}
 void App::init()
 {
     QFont font("Microsoft YaHei", 9);
     qApp->setFont(font);
 	auto cmds = getCmd();
+    if (cmds.size() > 0) {
+        attachConsole();
+    }
     auto flag = parseCmd(cmds);
     if (!flag) {
         new WinFull();

@@ -22,5 +22,6 @@ private:
 	static void capFullscreen(const QString& cmd);
 	static bool capCustom(const QString& cmd);
 	static void exit(const int& code);
+	static void attachConsole();
 };
 
