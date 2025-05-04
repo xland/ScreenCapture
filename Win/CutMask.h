@@ -13,7 +13,6 @@ public:
 	~CutMask();
 	void mousePress(QMouseEvent* event);
 	void mouseDrag(QMouseEvent* event);
-	void mouseRelease(QMouseEvent* event);
 	void mouseMove(QMouseEvent* event);
 	void paint(QPainter& p);
 public:

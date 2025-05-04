@@ -85,6 +85,7 @@ void WinFull::mouseMoveEvent(QMouseEvent* event)
 void WinFull::mouseReleaseEvent(QMouseEvent* event)
 {
     if (state <= State::tool) {
+        cutMask->rectMask = cutMask->rectMask.normalized();
         state = State::tool;
         if (!toolMain) {
             toolMain = new ToolMain(this);
@@ -113,7 +114,11 @@ void WinFull::initWindow()
 {
     setFocusPolicy(Qt::StrongFocus);
     setGeometry(x, y, w, h);
+#ifdef DEBUG
+    setWindowFlags(Qt::FramelessWindowHint | Qt::Tool);
+#else
     setWindowFlags(Qt::FramelessWindowHint | Qt::Tool | Qt::WindowStaysOnTopHint);
+#endif    
     show();
     auto hwnd = (HWND)winId();
     SetWindowPos(hwnd, nullptr, x, y, w, h, SWP_NOZORDER | SWP_SHOWWINDOW);

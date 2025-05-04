@@ -62,6 +62,7 @@ void CutMask::mouseDrag(QMouseEvent* event)
     if (win->state == State::start) {
         if (pos == posPress) return;
         rectMask.setCoords(posPress.x(), posPress.y(), pos.x(), pos.y());
+        rectMask = rectMask.normalized();
         win->update();
     }
     else if (win->state == State::tool) {
@@ -96,15 +97,6 @@ void CutMask::mouseMove(QMouseEvent* event)
     }
     else {
        
-    }
-}
-void CutMask::mouseRelease(QMouseEvent* event)
-{
-    auto win = (WinFull*)parent();
-    if (win->state == State::mask)
-    {
-        rectMask = rectMask.normalized();
-        win->update();
     }
 }
 void CutMask::moveMaskRect(const QPoint& pos)
