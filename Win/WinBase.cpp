@@ -50,6 +50,12 @@ void WinBase::keyPressEvent(QKeyEvent* event)
 	else if (event->key() == Qt::Key_Down) {
 		moveCursor(QPoint(0, 1));
 	}
+    else if (event->key() == Qt::Key_Delete) {
+        canvas->removeShapeHover();
+    }
+    else if (event->key() == Qt::Key_Backspace) {
+        canvas->removeShapeHover();
+    }
     else if (event->modifiers() & Qt::ControlModifier) {
         if (event->key() == Qt::Key_Z) {
             canvas->undo();

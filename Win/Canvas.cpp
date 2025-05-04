@@ -88,6 +88,7 @@ void Canvas::mousePress(QMouseEvent* event)
 {
     for (int i = shapes.size() - 1; i >= 0; i--)
     {
+        if (shapes[i]->state == ShapeState::undo) continue;
         auto flag = shapes[i]->mousePress(event);
         if (flag) {
             return;
@@ -109,6 +110,7 @@ void Canvas::mouseMove(QMouseEvent* event)
     auto flag{ false };
     for (int i = shapes.size() - 1; i >= 0; i--)
     {
+        if (shapes[i]->state == ShapeState::undo) continue;
         flag = shapes[i]->mouseMove(event);
         if (flag) {
             return;
@@ -206,7 +208,7 @@ void Canvas::setHoverShape(ShapeBase* shape)
         timerDragger->setInterval(800);
         timerDragger->setSingleShot(true);
         connect(timerDragger, &QTimer::timeout, [this]() {
-            if (shapeHover->hoverDraggerIndex != -1) {
+            if (shapeHover && shapeHover->hoverDraggerIndex != -1) {
                 timerDragger->start();
             }
             else {
@@ -233,7 +235,7 @@ void Canvas::removeShapeFromBoard(ShapeBase* shape)
     p.setRenderHint(QPainter::TextAntialiasing, true);
     for (auto& s : shapes)
     {
-        if (shape == s) continue;
+        if (shape == s || s->state == ShapeState::undo) continue;
         s->paint(&p);
     }
     shapeCur = shape; //这行主要是为了显示Dragger
@@ -257,6 +259,24 @@ void Canvas::removeShapeCur()
     shapes.removeOne(shapeCur);
     shapeCur->deleteLater();
     shapeCur = nullptr;
+}
+
+void Canvas::removeShapeHover()
+{
+    if (shapeHover == nullptr) return;
+    shapeHover->state = ShapeState::undo;
+    auto win = (WinBase*)parent();
+    imgBoard.fill(Qt::transparent);
+    QPainter p(&imgBoard);
+    p.setRenderHint(QPainter::Antialiasing, true);
+    p.setRenderHint(QPainter::TextAntialiasing, true);
+    for (auto& s : shapes)
+    {
+        if (s->state == ShapeState::undo) continue;
+        s->paint(&p);
+    }
+    shapeHover = nullptr;
+    win->update();
 }
 
 void Canvas::copyColor(const int& key)

@@ -56,11 +56,11 @@ ScreenCapture.exe --comp:6,60
 
 ## 集成
 
-示例为 Node.js 或 Electron，Python类似
+示例为 Node.js 或 Electron，Python类似。
 
 ```js
 let spawn = require("child_process").spawn;
-let child = spawn("./path/to/ScreenCapture.exe")
+let child = spawn("./path/to/ScreenCapture.exe");
 child.on("close", (code) => {
     /// when code is:
     /// 0 undefined
