@@ -166,6 +166,5 @@ child.on("close", (code) => {
 
 <div style="text-align:center">
 <img alt="wechat qrcode" src="./Doc/author.jpg" style="width:160px;height:160px;" />
-
 <p>无论有没有要聊的话题，无论是不是与此产品有关的话题，都很开心能认识你。</p>
 </div>
