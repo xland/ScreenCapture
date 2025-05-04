@@ -151,14 +151,21 @@ child.on("close", (code) => {
 
 ## 赞助
 
-<img alt="ali pay" src="./Doc/alipay.jpg" style="width:160px;height:160px;" /><br />
-支付宝支付
-
-<img alt="wechat pay" src="./Doc/wechat.png" style="width:160px;height:160px;" /><br />
-微信支付
+<div style="display: flex; justify-content: space-between;">
+  <div style="text-align: center;width:50%;">
+    <img alt="ali pay" src="./Doc/alipay.jpg" style="width:160px;height:160px;" />
+    <p>支付宝支付</p>
+  </div>
+  <div style="text-align: center;width:50%;">
+    <img alt="wechat pay" src="./Doc/wechat.png" style="width:160px;height:160px;" />
+    <p>微信支付</p>
+  </div>
+</div>
 
 ## 作者
 
+<div style="text-align:center">
 <img alt="wechat qrcode" src="./Doc/author.jpg" style="width:160px;height:160px;" />
 
-无论有没有要聊的话题，无论是不是与此产品有关的话题，都很开心能认识你。
+<p>无论有没有要聊的话题，无论是不是与此产品有关的话题，都很开心能认识你。</p>
+</div>
