@@ -150,24 +150,6 @@ void Util::copyColor(const int& key)
     Util::setClipboardText(tarStr);
 }
 
-QPoint Util::getQtPoint(int x, int y) {
-    POINT point{ .x{x},.y{y} };
-    HMONITOR hMonitor = MonitorFromPoint(point, MONITOR_DEFAULTTONEAREST);
-    double dpr;
-    if (hMonitor) {
-        UINT dpiX, dpiY;
-        HRESULT hr = GetDpiForMonitor(hMonitor, MDT_EFFECTIVE_DPI, &dpiX, &dpiY);
-        if (FAILED(hr)) {
-            dpr = 1.0;
-        }
-        dpr = static_cast<double>(dpiX) / 96.0;
-    }
-    else {
-        dpr = 1.0;
-    }
-    return QPoint(x / dpr, y / dpr);
-}
-
 bool Util::saveToFile(const QImage& img)
 {
     auto savePath = App::getSavePath();

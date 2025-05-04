@@ -15,7 +15,6 @@ public:
 	static QScreen* getScreen(const int& x, const int& y);
 	static void setClipboardText(const std::wstring& text);
 	static void copyColor(const int& key);
-	static QPoint getQtPoint(int x, int y);
 	static bool saveToFile(const QImage& img);
 	static void imgToClipboard(const QImage& image);
 	static bool isImagePath(const QString& path);

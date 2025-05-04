@@ -113,7 +113,7 @@ void WinFull::initWindow()
 {
     setFocusPolicy(Qt::StrongFocus);
     setGeometry(x, y, w, h);
-    setWindowFlag(Qt::FramelessWindowHint);
+    setWindowFlags(Qt::FramelessWindowHint | Qt::Tool | Qt::WindowStaysOnTopHint);
     show();
     auto hwnd = (HWND)winId();
     SetWindowPos(hwnd, nullptr, x, y, w, h, SWP_NOZORDER | SWP_SHOWWINDOW);
