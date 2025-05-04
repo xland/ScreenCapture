@@ -24,6 +24,7 @@ public:
 	QString text;
 protected:
     void paint(QPainter* painter) override;
+    void paintDragger(QPainter* painter) override;
     bool mouseMove(QMouseEvent* event) override;
     bool mousePress(QMouseEvent* event) override;
     bool mouseRelease(QMouseEvent* event) override;

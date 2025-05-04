@@ -39,6 +39,17 @@ void ShapeText::paint(QPainter* painter)
     painter->setPen(color);
 	painter->drawText(containerRect.adjusted(7,-1,0,0), Qt::AlignLeft | Qt::AlignVCenter, text);
 }
+void ShapeText::paintDragger(QPainter* painter)
+{
+    QPen pen;
+    pen.setColor(color);
+    pen.setStyle(Qt::CustomDashLine);
+    pen.setDashPattern({ 3,3 });
+    pen.setWidth(1);
+    painter->setPen(pen);
+    painter->setBrush(Qt::NoBrush);
+    painter->drawRect(containerRect.adjusted(1,1,-2,-2));
+}
 bool ShapeText::mouseMove(QMouseEvent* event)
 {
     if (state != ShapeState::ready) return false;
@@ -47,6 +58,7 @@ bool ShapeText::mouseMove(QMouseEvent* event)
     if (containerRect.contains(ppp)) {
         win->setCursor(Qt::IBeamCursor);
         hoverDraggerIndex = 8;
+        win->canvas->setHoverShape(this);
         return true;
     }
     else {
@@ -61,6 +73,7 @@ bool ShapeText::mousePress(QMouseEvent* event)
     if (containerRect.contains(ppp)) {
         state = ShapeState::moving;
         win->canvas->shapeCur = nullptr;
+        win->canvas->shapeHover = nullptr;
         win->canvas->removeShapeFromBoard(this);
         container = new ShapeTextContainer(this,win);
         container->move(containerRect.topLeft());

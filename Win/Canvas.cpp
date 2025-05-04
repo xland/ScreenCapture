@@ -41,7 +41,15 @@ void Canvas::undo()
         }
     }
     auto win = (WinBase*)parent();
-    if (shapes.first()->state == ShapeState::undo) {
+    bool hasReady{ false };
+    for (auto& s:shapes)
+    {
+        if (s->state != ShapeState::undo) {
+            hasReady = true;
+            break;
+        }
+    }
+    if (!hasReady) {
         win->toolMain->setBtnEnable("undo", false);
     }
     win->toolMain->setBtnEnable("redo", true);
@@ -68,7 +76,16 @@ void Canvas::redo()
         }
     }
     auto win = (WinBase*)parent();
-    if (shapes.last()->state == ShapeState::ready) {
+
+    bool hasUndo{ false };
+    for (auto& s : shapes)
+    {
+        if (s->state == ShapeState::undo) {
+            hasUndo = true;
+            break;
+        }
+    }
+    if (!hasUndo) {
         win->toolMain->setBtnEnable("redo", false);
     }
     win->toolMain->setBtnEnable("undo", true);
@@ -276,6 +293,18 @@ void Canvas::removeShapeHover()
         s->paint(&p);
     }
     shapeHover = nullptr;
+    bool hasReady{ false };
+    for (auto& s : shapes)
+    {
+        if (s->state != ShapeState::undo) {
+            hasReady = true;
+            break;
+        }
+    }
+    if (!hasReady) {
+        win->toolMain->setBtnEnable("undo", false);
+    }
+    win->toolMain->setBtnEnable("redo", true);
     win->update();
 }
 

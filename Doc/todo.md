@@ -1,5 +1,4 @@
 - 验证多屏幕
-- Del键删除Shape,Del删除文字，设置文字为HoverShape
 
 - `--cap:area,10,10,100,100,clipboard`
 - `--cap:area,10,10,100,100,"D:/doc"`
