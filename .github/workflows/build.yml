@@ -58,7 +58,7 @@ jobs:
           tools: "tools_cmake tools_ninja tools_vcredist"
 
       - name: Build
-        shell: pwsh
+        shell: cmd
         run: |
           IF NOT EXIST "${{ env.BUILD_DIR }}" (mkdir "${{ env.BUILD_DIR }}")
           cd "${{ env.BUILD_DIR }}"
