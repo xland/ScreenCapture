@@ -25,6 +25,9 @@ env:
 jobs:
   build:
     runs-on: windows-latest
+    permissions:
+      contents: write
+      actions: write
 
     env:
       QT_CACHE_DIR: ${{ github.workspace }}/qt-cache
@@ -51,16 +54,16 @@ jobs:
       - name: Install Qt
         uses: jurplel/install-qt-action@v4
         with:
-          aqtversion: '==3.1.*'
-          version: '6.9.0'
-          host: 'windows'
-          target: 'desktop'
-          arch: 'win64_msvc2022_64'
+          aqtversion: "==3.1.*"
+          version: "6.9.0"
+          host: "windows"
+          target: "desktop"
+          arch: "win64_msvc2022_64"
           install-deps: true
           cache: true
           cache-key-prefix: qt-static-cache
           setup-python: true
-          tools: 'tools_cmake tools_ninja tools_opensslv3_x64 tools_vcredist'
+          tools: "tools_cmake tools_ninja tools_opensslv3_x64 tools_vcredist"
 
       - name: Configure Qt Static Build
         run: |
@@ -83,7 +86,7 @@ jobs:
       - name: Build app for release
         run: |
           # 设置环境变量
-          set QTDIR=${{ env.Qt6_DIR }}
+          set QTDIR=${{ env.BUILD_CACHE_DIR }}
           set PATH=%QTDIR%\bin;%PATH%
 
           # 使用静态链接编译
