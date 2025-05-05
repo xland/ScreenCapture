@@ -55,7 +55,7 @@ jobs:
           dir: ${{ env.QT_DIR }}
           cache: true
           setup-python: true
-          tools: "tools_cmake,tools_ninja,tools_opensslv3_x64,tools_vcredist"
+          tools: "tools_cmake tools_ninja tools_opensslv3_x64 tools_vcredist"
 
       - name: Configure Build
         run: |
