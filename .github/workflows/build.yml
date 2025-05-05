@@ -58,8 +58,9 @@ jobs:
           tools: "tools_cmake tools_ninja tools_vcredist"
 
       - name: Configure Build
+        shell: cmd
         run: |
-          if not exist "${{ env.BUILD_DIR }}" mkdir "${{ env.BUILD_DIR }}"
+          IF NOT EXIST "${{ env.BUILD_DIR }}" (mkdir "${{ env.BUILD_DIR }}")
           cd "${{ env.BUILD_DIR }}"
           cmake -G "Ninja" ^
                 -DCMAKE_BUILD_TYPE=Release ^
