@@ -4,16 +4,13 @@
 
 class CutMask;
 class PixelInfo;
-class WinFull : public WinBase
+class WinLong : public WinBase
 {
 	Q_OBJECT
+
 public:
-	WinFull(QWidget* parent = nullptr);
-	~WinFull();
-	void pin();
-public:
-	PixelInfo* pixelInfo;
-	CutMask* cutMask;
+	WinLong(QWidget *parent = nullptr);
+	~WinLong();
 protected:
 	void paintEvent(QPaintEvent* event) override;
 	void mousePressEvent(QMouseEvent* event) override;
@@ -25,4 +22,3 @@ private:
 	void initWindow();
 private:
 };
-

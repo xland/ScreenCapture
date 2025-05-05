@@ -31,7 +31,7 @@ WinPin::WinPin(const QPoint& pos, QImage& img, QWidget* parent) : WinBase(parent
     initWindow();
     btns = new WinPinBtns(this);
     canvas = new Canvas(img, this);
-
+    show();
 }
 
 WinPin::~WinPin()
@@ -124,7 +124,6 @@ void WinPin::initWindow()
     setAttribute(Qt::WA_DontCreateNativeAncestors);
     setMouseTracking(true);
     setCursor(Qt::SizeAllCursor);
-    show();
     HWND hwnd = reinterpret_cast<HWND>(winId());
     MARGINS margins = { 1, 1, 1, 1 };
     DwmExtendFrameIntoClientArea(hwnd, &margins);

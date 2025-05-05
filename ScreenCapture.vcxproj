@@ -152,10 +152,12 @@
     <ClCompile Include="Win\WinBase.cpp" />
     <ClCompile Include="Win\WinFull.cpp" />
     <ClCompile Include="Win\CutMask.cpp" />
+    <ClCompile Include="Win\WinLong.cpp" />
     <ClCompile Include="Win\WinPin.cpp" />
     <ClCompile Include="Win\WinPinBtns.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <QtMoc Include="Win\WinLong.h" />
     <QtMoc Include="Win\WinPinBtns.h" />
     <QtMoc Include="Win\Canvas.h" />
     <QtMoc Include="Tool\BtnCheck.h" />
