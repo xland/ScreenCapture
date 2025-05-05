@@ -11,16 +11,11 @@ on:
       - "LICENSE"
   pull_request:
     branches: ["main", "add_actions"]
-    paths-ignore:
-      - ".github/**"
-      - ".gitignore"
-      - "**/*.md"
-      - "README.md"
-      - "LICENSE"
   workflow_dispatch:
 
 env:
   CARGO_TERM_COLOR: always
+  CMAKE_BUILD_PARALLEL_LEVEL: 4
 
 jobs:
   build:
@@ -31,15 +26,19 @@ jobs:
 
     env:
       QT_DIR: ${{ github.workspace }}/Qt
+      BUILD_DIR: ${{ github.workspace }}/build
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Cache Qt
+      # 缓存Qt和构建目录
+      - name: Cache Qt and Build
         uses: actions/cache@v4
         with:
-          path: ${{ env.QT_DIR }}
-          key: ${{ runner.os }}-qt-${{ hashFiles('**/CMakeLists.txt') }}-qt690
+          path: |
+            ${{ env.QT_DIR }}
+            ${{ env.BUILD_DIR }}
+          key: ${{ runner.os }}-qt-${{ hashFiles('**/CMakeLists.txt') }}-${{ hashFiles('**/*.cmake') }}-qt690
           restore-keys: |
             ${{ runner.os }}-qt-
 
@@ -54,33 +53,48 @@ jobs:
           version: "6.9.0"
           arch: "win64_msvc2022_64"
           dir: ${{ env.QT_DIR }}
+          cache: true
           setup-python: true
-          tools: "tools_cmake tools_ninja tools_opensslv3_x64 tools_vcredist"
+          tools: "tools_cmake,tools_ninja,tools_opensslv3_x64,tools_vcredist"
 
       - name: Configure Build
         run: |
-          mkdir build
-          cd build
+          if not exist "${{ env.BUILD_DIR }}" mkdir "${{ env.BUILD_DIR }}"
+          cd "${{ env.BUILD_DIR }}"
           cmake -G "Ninja" ^
                 -DCMAKE_BUILD_TYPE=Release ^
                 -DCMAKE_PREFIX_PATH="${{ env.QT_DIR }}/6.9.0/msvc2022_64" ^
                 -DBUILD_SHARED_LIBS=OFF ^
+                -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded ^
                 ..
-      - name: Build app for release
-        run: |
-          cd build
-          msbuild ../ScreenCapture.sln ^
-                  -t:rebuild ^
-                  -p:Configuration=Release ^
-                  -p:Platform=x64 ^
-                  -verbosity:normal
 
-      - name: Verify Qt DLLs
+      - name: Build Project
+        working-directory: ${{ env.BUILD_DIR }}
         run: |
-          dumpbin /dependents ./build/Release/ScreenCapture.exe
+          cmake --build . --config Release --parallel %CMAKE_BUILD_PARALLEL_LEVEL%
 
-      - name: Upload
+      - name: Verify Dependencies
+        working-directory: ${{ env.BUILD_DIR }}
+        run: |
+          if not exist "Release/ScreenCapture.exe" (
+            echo "Error: Build failed - executable not found"
+            exit /b 1
+          )
+          dumpbin /dependents Release/ScreenCapture.exe
+
+      - name: Deploy Qt Dependencies
+        working-directory: ${{ env.BUILD_DIR }}
+        run: |
+          windeployqt --release --no-translations --no-system-d3d-compiler Release/ScreenCapture.exe
+
+      - name: Create Release Package
+        run: |
+          mkdir release-package
+          copy "${{ env.BUILD_DIR }}\Release\ScreenCapture.exe" release-package\
+          copy "${{ env.BUILD_DIR }}\Release\*.dll" release-package\
+
+      - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: Preview
-          path: ./build/Release/ScreenCapture.exe
+          name: ScreenCapture-Release
+          path: release-package
