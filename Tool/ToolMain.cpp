@@ -57,7 +57,6 @@ void ToolMain::setBtnEnable(const QString& name, bool flag)
 void ToolMain::confirmPos()
 {
     auto full = (WinFull*)parent();
-    auto dpr = windowHandle()->devicePixelRatio();
     auto rectMask = full->cutMask->rectMask;
     auto br = full->mapToGlobal(rectMask.bottomRight());
     auto tr = full->mapToGlobal(rectMask.topRight());
@@ -69,10 +68,9 @@ void ToolMain::confirmPos()
     auto getScreen = [&screens](int x, int y) {
         for (auto& s : screens)
         {
-            if (s->geometry().contains(x, y)) {
-                return s;
-            }
+            if (s->geometry().contains(x, y)) return s;
         }
+		return (QScreen*)nullptr;
         };
     auto screen = getScreen(br.x(), br.y() + heightSpan); //1. 工具条在截图区域右下角
     if (screen) { //工具条右下角在屏幕中
