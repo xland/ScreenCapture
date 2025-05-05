@@ -30,21 +30,18 @@ jobs:
       actions: write
 
     env:
-      QT_CACHE_DIR: ${{ github.workspace }}/qt-cache
-      BUILD_CACHE_DIR: ${{ github.workspace }}/build-cache
+      QT_DIR: ${{ github.workspace }}/Qt
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Cache Qt static build
+      - name: Cache Qt
         uses: actions/cache@v4
         with:
-          path: |
-            ${{ env.QT_CACHE_DIR }}
-            ${{ env.BUILD_CACHE_DIR }}
-          key: ${{ runner.os }}-qt-static-${{ hashFiles('**/CMakeLists.txt') }}-${{ hashFiles('**/*.cmake') }}
+          path: ${{ env.QT_DIR }}
+          key: ${{ runner.os }}-qt-${{ hashFiles('**/CMakeLists.txt') }}-qt690
           restore-keys: |
-            ${{ runner.os }}-qt-static-
+            ${{ runner.os }}-qt-
 
       - name: Add msbuild to PATH
         uses: microsoft/setup-msbuild@v2
@@ -54,52 +51,31 @@ jobs:
       - name: Install Qt
         uses: jurplel/install-qt-action@v4
         with:
-          aqtversion: "==3.1.*"
           version: "6.9.0"
-          host: "windows"
-          target: "desktop"
           arch: "win64_msvc2022_64"
-          install-deps: true
-          cache: true
-          cache-key-prefix: qt-static-cache
+          dir: ${{ env.QT_DIR }}
           setup-python: true
           tools: "tools_cmake tools_ninja tools_opensslv3_x64 tools_vcredist"
 
-      - name: Configure Qt Static Build
+      - name: Configure Build
         run: |
-          # 检查缓存
-          if not exist "${{ env.BUILD_CACHE_DIR }}" (
-            echo "Cache miss, performing full build..."
-            mkdir build-static
-            cd build-static
-            cmake -G "Ninja" ^
-                  -DCMAKE_BUILD_TYPE=Release ^
-                  -DBUILD_SHARED_LIBS=OFF ^
-                  -DQT_BUILD_STATIC=ON ^
-                  -DCMAKE_INSTALL_PREFIX="${{ env.QT_CACHE_DIR }}" ^
-                  ..
-          ) else (
-            echo "Using cached Qt build..."
-            xcopy /E /I /Y "${{ env.BUILD_CACHE_DIR }}" build-static\
-          )
-
+          mkdir build
+          cd build
+          cmake -G "Ninja" ^
+                -DCMAKE_BUILD_TYPE=Release ^
+                -DCMAKE_PREFIX_PATH="${{ env.QT_DIR }}/6.9.0/msvc2022_64" ^
+                -DBUILD_SHARED_LIBS=OFF ^
+                ..
       - name: Build app for release
         run: |
-          # 设置环境变量
-          set QTDIR=${{ env.BUILD_CACHE_DIR }}
-          set PATH=%QTDIR%\bin;%PATH%
-
-          # 使用静态链接编译
-          msbuild ScreenCapture.sln ^
+          cd build
+          msbuild ../ScreenCapture.sln ^
                   -t:rebuild ^
                   -p:Configuration=Release ^
                   -p:Platform=x64 ^
-                  -p:RuntimeLibrary=MultiThreaded ^
-                  -p:LinkIncremental=false ^
-                  -p:WholeProgramOptimization=true ^
                   -verbosity:normal
 
-      - name: Verify Static Linking
+      - name: Verify Qt DLLs
         run: |
           dumpbin /dependents ./build/Release/ScreenCapture.exe
 
