@@ -2,7 +2,7 @@ name: AutoBuild
 
 on:
   push:
-    branches: ["main"]
+    branches: ["main", "add_actions"]
     paths-ignore:
       - ".github/**"
       - ".gitignore"
@@ -10,7 +10,7 @@ on:
       - "**.txt"
       - "LICENSE"
   pull_request:
-    branches: ["main"]
+    branches: ["main", "add_actions"]
     paths-ignore:
       - ".github/**"
       - ".gitignore"
@@ -24,7 +24,7 @@ env:
 jobs:
   build:
     runs-on: windows-latest
-    
+
     # 添加缓存相关环境变量
     env:
       QT_CACHE_DIR: ${{ github.workspace }}/qt-cache
