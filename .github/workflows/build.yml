@@ -26,7 +26,6 @@ jobs:
   build:
     runs-on: windows-latest
 
-    # 添加缓存相关环境变量
     env:
       QT_CACHE_DIR: ${{ github.workspace }}/qt-cache
       BUILD_CACHE_DIR: ${{ github.workspace }}/build-cache
@@ -34,7 +33,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # 添加 Qt 构建缓存
       - name: Cache Qt static build
         uses: actions/cache@v4
         with:
@@ -53,13 +51,16 @@ jobs:
       - name: Install Qt
         uses: jurplel/install-qt-action@v4
         with:
-          version: "6.9.0"
-          arch: "win64_msvc2022_64"
-          use-official: true
+          aqtversion: '==3.1.*'
+          version: '6.9.0'
+          host: 'windows'
+          target: 'desktop'
+          arch: 'win64_msvc2022_64'
+          install-deps: true
           cache: true
           cache-key-prefix: qt-static-cache
           setup-python: true
-          tools: "tools_openssl_x64,tools_vcredist,tools_ninja"
+          tools: 'tools_cmake tools_ninja tools_opensslv3_x64 tools_vcredist'
 
       - name: Configure Qt Static Build
         run: |
