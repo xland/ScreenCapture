@@ -1,0 +1,105 @@
+name: AutoBuild
+
+on:
+  push:
+    branches: ["main"]
+    paths-ignore:
+      - ".github/**"
+      - ".gitignore"
+      - "*.md"
+      - "**.txt"
+      - "LICENSE"
+  pull_request:
+    branches: ["main"]
+    paths-ignore:
+      - ".github/**"
+      - ".gitignore"
+      - "**/*.md"
+      - "README.md"
+      - "LICENSE"
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    runs-on: windows-latest
+    
+    # 添加缓存相关环境变量
+    env:
+      QT_CACHE_DIR: ${{ github.workspace }}/qt-cache
+      BUILD_CACHE_DIR: ${{ github.workspace }}/build-cache
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # 添加 Qt 构建缓存
+      - name: Cache Qt static build
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ env.QT_CACHE_DIR }}
+            ${{ env.BUILD_CACHE_DIR }}
+          key: ${{ runner.os }}-qt-static-${{ hashFiles('**/CMakeLists.txt') }}-${{ hashFiles('**/*.cmake') }}
+          restore-keys: |
+            ${{ runner.os }}-qt-static-
+
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@v2
+        with:
+          msbuild-architecture: x64
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: "6.9.0"
+          arch: "win64_msvc2022_64"
+          use-official: true
+          cache: true
+          cache-key-prefix: qt-static-cache
+          setup-python: true
+          tools: "tools_openssl_x64,tools_vcredist,tools_ninja"
+
+      - name: Configure Qt Static Build
+        run: |
+          # 检查缓存
+          if not exist "${{ env.BUILD_CACHE_DIR }}" (
+            echo "Cache miss, performing full build..."
+            mkdir build-static
+            cd build-static
+            cmake -G "Ninja" ^
+                  -DCMAKE_BUILD_TYPE=Release ^
+                  -DBUILD_SHARED_LIBS=OFF ^
+                  -DQT_BUILD_STATIC=ON ^
+                  -DCMAKE_INSTALL_PREFIX="${{ env.QT_CACHE_DIR }}" ^
+                  ..
+          ) else (
+            echo "Using cached Qt build..."
+            xcopy /E /I /Y "${{ env.BUILD_CACHE_DIR }}" build-static\
+          )
+
+      - name: Build app for release
+        run: |
+          # 设置环境变量
+          set QTDIR=${{ env.Qt6_DIR }}
+          set PATH=%QTDIR%\bin;%PATH%
+
+          # 使用静态链接编译
+          msbuild ScreenCapture.sln ^
+                  -t:rebuild ^
+                  -p:Configuration=Release ^
+                  -p:Platform=x64 ^
+                  -p:RuntimeLibrary=MultiThreaded ^
+                  -p:LinkIncremental=false ^
+                  -p:WholeProgramOptimization=true ^
+                  -verbosity:normal
+
+      - name: Verify Static Linking
+        run: |
+          dumpbin /dependents ./build/Release/ScreenCapture.exe
+
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: Preview
+          path: ./build/Release/ScreenCapture.exe
