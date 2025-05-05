@@ -58,6 +58,12 @@ jobs:
           setup-python: true
           tools: "tools_cmake tools_ninja tools_vcredist"
 
+      - name: check path
+        shell: bash
+        run: |
+          ls ${{ env.QT_DIR }} --all ^
+          ls ${{ env.QtMSBuild }} --all
+
       - name: Build
         shell: cmd
         run: |
