@@ -68,7 +68,7 @@ jobs:
                  /p:RuntimeLibrary=MultiThreadedDLL ^
                  /t:Rebuild ^
                  /m:%CMAKE_BUILD_PARALLEL_LEVEL% ^
-                 ScreenCapture.sln
+                 ../ScreenCapture.sln
 
       - name: Deploy Qt Dependencies
         working-directory: ${{ env.BUILD_DIR }}
