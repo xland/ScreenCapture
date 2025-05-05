@@ -57,31 +57,18 @@ jobs:
           setup-python: true
           tools: "tools_cmake tools_ninja tools_vcredist"
 
-      - name: Configure Build
-        shell: cmd
+      - name: Build
+        shell: pwsh
         run: |
           IF NOT EXIST "${{ env.BUILD_DIR }}" (mkdir "${{ env.BUILD_DIR }}")
           cd "${{ env.BUILD_DIR }}"
-          cmake -G "Ninja" ^
-                -DCMAKE_BUILD_TYPE=Release ^
-                -DCMAKE_PREFIX_PATH="${{ env.QT_DIR }}/6.9.0/msvc2022_64" ^
-                -DBUILD_SHARED_LIBS=OFF ^
-                -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded ^
-                ..
-
-      - name: Build Project
-        working-directory: ${{ env.BUILD_DIR }}
-        run: |
-          cmake --build . --config Release --parallel %CMAKE_BUILD_PARALLEL_LEVEL%
-
-      - name: Verify Dependencies
-        working-directory: ${{ env.BUILD_DIR }}
-        run: |
-          if not exist "Release/ScreenCapture.exe" (
-            echo "Error: Build failed - executable not found"
-            exit /b 1
-          )
-          dumpbin /dependents Release/ScreenCapture.exe
+          msbuild /p:Configuration=Release ^
+                 /p:Platform=x64 ^
+                 /p:QTDir=${{ env.QT_DIR }}/6.9.0/msvc2022_64 ^
+                 /p:RuntimeLibrary=MultiThreadedDLL ^
+                 /t:Rebuild ^
+                 /m:%CMAKE_BUILD_PARALLEL_LEVEL% ^
+                 ScreenCapture.sln
 
       - name: Deploy Qt Dependencies
         working-directory: ${{ env.BUILD_DIR }}
