@@ -13,5 +13,6 @@ enum class State
     text,
     mosaic,
     eraser,
+    capLong,
     noState
 };

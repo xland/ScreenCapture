@@ -15,6 +15,7 @@ public:
 	void mouseDrag(QMouseEvent* event);
 	void mouseMove(QMouseEvent* event);
 	void paint(QPainter& p);
+	HWND getHwndByPos(const QPoint& pos);
 public:
 	QRect rectMask;
 protected:
@@ -25,6 +26,7 @@ private:
 	void initWinRect();
 private:
 	QList<QRect> rectWins;
+	QList<HWND> hwnds;
 	uint mouseState{ 0 };
 	QPoint posPress;
 	float maskStroke{ 1.5 };

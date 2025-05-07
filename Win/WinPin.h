@@ -24,6 +24,7 @@ protected:
 	void resizeEvent(QResizeEvent* event) override;
 	void leaveEvent(QEvent* event) override;
 	void enterEvent(QEnterEvent* event) override;
+	void closeEvent(QCloseEvent* event) override;
 	QImage getTargetImg() override;
 private:
 	void initWindow();

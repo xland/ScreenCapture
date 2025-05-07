@@ -76,7 +76,6 @@ void WinPinBtns::mousePressEvent(QMouseEvent* event)
 	else if (hoverIndex == 1)
 	{
 		winPin->close();
-		qApp->exit(1);
 	}
 }
 

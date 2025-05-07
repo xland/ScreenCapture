@@ -74,6 +74,9 @@ void WinFull::mouseMoveEvent(QMouseEvent* event)
     }
     else {
         if (state <= State::tool) {
+            if (state == State::start) {
+                pixelInfo->mouseMove(event->pos());
+            }
             cutMask->mouseMove(event);
         }
         else {

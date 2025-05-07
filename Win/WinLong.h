@@ -3,7 +3,7 @@
 
 
 class CutMask;
-class PixelInfo;
+class WinLongTip;
 class WinLong : public WinBase
 {
 	Q_OBJECT
@@ -11,6 +11,9 @@ class WinLong : public WinBase
 public:
 	WinLong(QWidget *parent = nullptr);
 	~WinLong();
+	CutMask* cutMask;
+	QImage imgBg;
+	WinLongTip* winLongTip;
 protected:
 	void paintEvent(QPaintEvent* event) override;
 	void mousePressEvent(QMouseEvent* event) override;

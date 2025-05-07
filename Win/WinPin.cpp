@@ -167,3 +167,9 @@ void WinPin::enterEvent(QEnterEvent* event)
     }
 }
 
+void WinPin::closeEvent(QCloseEvent* event)
+{
+    deleteLater();
+    qApp->exit(1);
+}
+

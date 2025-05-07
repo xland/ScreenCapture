@@ -1,28 +1,43 @@
 #include <Windows.h>
+#include <QTimer>
 #include "WinLong.h"
+#include "CutMask.h"
+#include "Canvas.h"
+#include "App/Util.h"
+#include "WinLongTip.h"
 
 WinLong::WinLong(QWidget *parent) : WinBase(parent)
 {
 
+
+	x = GetSystemMetrics(SM_XVIRTUALSCREEN);
+	y = GetSystemMetrics(SM_YVIRTUALSCREEN);
+	w = GetSystemMetrics(SM_CXVIRTUALSCREEN);
+	h = GetSystemMetrics(SM_CYVIRTUALSCREEN);
+	cutMask = new CutMask(this);
+	imgBg = Util::printScreen(x, y, w, h);
+	imgBg.setDevicePixelRatio(devicePixelRatio());
+	initWindow();
+
 	//UINT scrollLines;
 	//SystemParametersInfo(SPI_GETWHEELSCROLLLINES, 0, &scrollLines, 0);
-	//int lines = delta * scrollLines / WHEEL_DELTA; // ¼ÆËã¹ö¶¯ÐÐÊý
+	//int lines = delta * scrollLines / WHEEL_DELTA; // è®¡ç®—æ»šåŠ¨è¡Œæ•°
 
 
 	//SCROLLINFO si = { sizeof(SCROLLINFO) };
 	//si.fMask = SIF_POS;
 	//GetScrollInfo(hWnd, SB_VERT, &si);
-	//int oldPos = si.nPos; // ¼ÇÂ¼¹ö¶¯Ç°Î»ÖÃ
+	//int oldPos = si.nPos; // è®°å½•æ»šåŠ¨å‰ä½ç½®
 
-	//SetScrollInfo(hWnd, SB_VERT, &si, TRUE); // ¸üÐÂ¹ö¶¯Î»ÖÃ
-	//GetScrollInfo(hWnd, SB_VERT, &si); // »ñÈ¡ÐÂÎ»ÖÃ
-	//int scrollDistance = si.nPos - oldPos; // ¼ÆËã¹ö¶¯¾àÀë£¨µ¥Î»£©
+	//SetScrollInfo(hWnd, SB_VERT, &si, TRUE); // æ›´æ–°æ»šåŠ¨ä½ç½®
+	//GetScrollInfo(hWnd, SB_VERT, &si); // èŽ·å–æ–°ä½ç½®
+	//int scrollDistance = si.nPos - oldPos; // è®¡ç®—æ»šåŠ¨è·ç¦»ï¼ˆå•ä½ï¼‰
 
 
 	//HDC hdc = GetDC(hWnd);
 	//TEXTMETRIC tm;
 	//GetTextMetrics(hdc, &tm);
-	//int lineHeight = tm.tmHeight; // Ã¿ÐÐ¸ß¶È£¨ÏñËØ£©
+	//int lineHeight = tm.tmHeight; // æ¯è¡Œé«˜åº¦ï¼ˆåƒç´ ï¼‰
 	//ReleaseDC(hWnd, hdc);
 }
 
@@ -33,22 +48,74 @@ WinLong::~WinLong()
 
 void WinLong::paintEvent(QPaintEvent* event)
 {
+	QPainter p(this);
+	p.drawImage(0,0, imgBg);
+	cutMask->paint(p);
 }
 
 void WinLong::mousePressEvent(QMouseEvent* event)
 {
+	if (event->buttons() & Qt::LeftButton) {
+		if (state < State::mask) {
+			cutMask->mousePress(event);
+		}
+		else if (state <= State::tool) {
+			cutMask->mousePress(event);
+		}
+	}
+	else {
+		if (state < State::mask) {
+			qApp->exit(2);
+		}
+	}
 }
 
 void WinLong::mouseMoveEvent(QMouseEvent* event)
 {
+	if (event->buttons() & Qt::LeftButton) {
+		if (state <= State::tool) {
+			cutMask->mouseDrag(event);
+		}
+	}
+	else {
+		if (winLongTip) {
+			winLongTip->mouseMove(event->pos());
+		}
+		if (state <= State::tool) {
+			cutMask->mouseMove(event);
+		}
+	}
 }
 
 void WinLong::mouseReleaseEvent(QMouseEvent* event)
 {
+	if (state < State::capLong) {
+		state = State::capLong;
+		setCursor(Qt::BlankCursor);
+		winLongTip = new WinLongTip(this);
+		winLongTip->mouseMove(QCursor::pos());
+		winLongTip->show();
+	}
+	else {		
+		hide();
+		QTimer* timer = new QTimer(this);
+		connect(timer, &QTimer::timeout, []() {
+			INPUT input = { 0 };
+			input.type = INPUT_MOUSE;
+			input.mi.dwFlags = MOUSEEVENTF_WHEEL;
+			input.mi.mouseData = -WHEEL_DELTA;
+			SendInput(1, &input, sizeof(INPUT));
+			qDebug() << "send";
+		});
+		timer->start(600);
+		
+	}
 }
 
 void WinLong::closeEvent(QCloseEvent* event)
 {
+	deleteLater();
+	qApp->exit(1);
 }
 
 QImage WinLong::getTargetImg()
@@ -58,4 +125,19 @@ QImage WinLong::getTargetImg()
 
 void WinLong::initWindow()
 {
+	setAutoFillBackground(false);
+	setAttribute(Qt::WA_OpaquePaintEvent);
+	setAttribute(Qt::WA_NoSystemBackground);
+	setAttribute(Qt::WA_TranslucentBackground, true);
+	setGeometry(x, y, w, h);
+#ifdef DEBUG
+	setWindowFlags(Qt::FramelessWindowHint | Qt::Tool);
+#else
+	setWindowFlags(Qt::FramelessWindowHint | Qt::Tool | Qt::WindowStaysOnTopHint);
+#endif    
+	show();
+	auto hwnd = (HWND)winId();
+	SetWindowPos(hwnd, nullptr, x, y, w, h, SWP_NOZORDER | SWP_SHOWWINDOW);
+	setMouseTracking(true);
+	setCursor(Qt::CrossCursor);
 }

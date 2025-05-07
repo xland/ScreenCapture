@@ -44,6 +44,7 @@ void CutMask::initWinRect()
             QPoint rb(rect.right - win->x, rect.bottom - win->y);
             auto dpr = win->devicePixelRatio();
             self->rectWins.push_back(QRect(lt/dpr, rb/dpr));
+            self->hwnds.push_back(hwnd);
             return TRUE;
         }, (LPARAM)this);
 }
@@ -81,7 +82,6 @@ void CutMask::mouseMove(QMouseEvent* event)
     auto pos = event->pos();
     auto win = (WinFull*)parent();
     if (win->state == State::start) {
-        win->pixelInfo->mouseMove(pos);
         for (const auto& rect : rectWins)
         {
             if (rect.contains(pos)) {
@@ -245,4 +245,15 @@ void CutMask::changeMouseState(const int& x, const int& y)
         win->setCursor(Qt::SizeHorCursor);
         mouseState = 8;
     }
+}
+
+HWND CutMask::getHwndByPos(const QPoint& pos)
+{
+    for (int i = 0; i < rectWins.size(); i++)
+    {
+        if (rectWins[i].contains(pos)) {
+            return hwnds[i];
+        }
+    }
+    return NULL;
 }
