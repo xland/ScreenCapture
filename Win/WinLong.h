@@ -23,5 +23,7 @@ protected:
 	QImage getTargetImg() override;
 private:
 	void initWindow();
+	void joinImg(const QImage& img1, const QImage& img2);
 private:
+	QImage resultImg;
 };
