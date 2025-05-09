@@ -25,6 +25,7 @@ public:
 protected:
 private:
     void resetShape();
+	void resetDraggers();
 private:
     QPointF startPos, endPos,pressPos;
     unsigned int val;

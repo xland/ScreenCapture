@@ -16,7 +16,7 @@ namespace {
 ShapeNumber::ShapeNumber(QObject* parent) : ShapeBase(parent)
 {
     auto win = (WinBase*)parent;
-    prepareDraggers(1);
+    prepareDraggers(2);
     isFill = win->toolSub->getSelectState("numberFill");
     color = win->toolSub->getColor();
     val = ++numVal;
@@ -48,6 +48,22 @@ void ShapeNumber::resetShape()
     
 }
 
+void ShapeNumber::resetDraggers()
+{
+    auto half{ draggerSize / 2 };
+    draggers[0].setRect(endPos.x() - half, endPos.y() - half, draggerSize, draggerSize);
+
+    QLineF line(startPos, endPos);
+    QPointF direction = line.p1() - line.p2(); // startPos - endPos
+    qreal length = line.length();
+    if (length == 0) {
+        draggers[0].setRect(-999999, -999999, draggerSize, draggerSize);
+    }
+    QPointF unitVector = direction / length;
+    auto pos = startPos + unitVector * r; // 从 endPos 延长 r 像素
+    draggers[1].setRect(pos.x() - half, pos.y() - half, draggerSize, draggerSize);
+}
+
 void ShapeNumber::paint(QPainter* painter)
 {
     if (isFill) {
@@ -74,6 +90,7 @@ void ShapeNumber::paintDragger(QPainter* painter)
     painter->setPen(QPen(QBrush(QColor(0, 0, 0)), 1));
     painter->setBrush(Qt::NoBrush);
     painter->drawRect(draggers[0]);
+    painter->drawRect(draggers[1]);
 }
 bool ShapeNumber::mouseMove(QMouseEvent* event)
 {
@@ -123,8 +140,7 @@ bool ShapeNumber::mouseRelease(QMouseEvent* event)
         return false;
     }
     if (state >= ShapeState::sizing0) {
-        auto half{ draggerSize / 2 };
-        draggers[0].setRect(endPos.x() - half, endPos.y() - half, draggerSize, draggerSize);
+        resetDraggers();
         state = ShapeState::ready;
         auto win = (WinBase*)parent();
         win->canvas->setHoverShape(this);
