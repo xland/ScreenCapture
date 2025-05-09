@@ -1,3 +1,5 @@
+
+- `--tool:rect,ellipse,arrow,number,line,text,mosaic,eraser,|,undo,redo,|,pin,clipboard,save,close`
 - 钉图窗口放大/缩小后，就不能在图像上绘制元素了
 - 钉图窗口放大/缩小后，保存的图像应该是放大或缩小后的图像
 - 绘制自由路径马赛克时，应该像橡皮擦一样，先绘制半透明棕色自由路径，待鼠标释放时，在变成马赛克
