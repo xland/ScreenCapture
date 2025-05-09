@@ -4,8 +4,8 @@
 #include "ToolBase.h"
 #include "BtnCheck.h"
 
-BtnCheck::BtnCheck(const QString& name, const QChar& icon, const State& state, QWidget *parent) : BtnBase(name,icon,parent),
-state{state}
+BtnCheck::BtnCheck(const QString& name, const QChar& icon, QWidget* parent, State state, bool isChecked) : BtnBase(name, icon, parent),
+state{state}, isChecked{ isChecked }
 {
 
 }

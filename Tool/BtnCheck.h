@@ -7,7 +7,7 @@ class BtnCheck : public BtnBase
 	Q_OBJECT
 
 public:
-	BtnCheck(const QString& name, const QChar& icon, const State& state, QWidget *parent = nullptr);
+	BtnCheck(const QString& name, const QChar& icon,QWidget *parent = nullptr,const State state = State::noState, bool isChecked = false);
 	~BtnCheck();
 	State state;
 	bool isChecked{ false };

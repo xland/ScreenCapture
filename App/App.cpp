@@ -14,7 +14,6 @@
 #include "Util.h"
 #include "Win/WinFull.h"
 #include "Win/WinPin.h"
-#include "Win/WinLong.h"
 
 namespace {
     std::unique_ptr<App> app;
@@ -90,10 +89,10 @@ bool App::parseCmd(const QMap<QString, QString>& params) {
             capFullscreen(cap);
             return true;
         }
-        else if (cap.startsWith("long")) {
-            new WinLong();
-            return true;
-        }
+        //else if (cap.startsWith("long")) {
+        //    new WinLong();
+        //    return true;
+        //}
         else if (cap.startsWith("custom")) {
             capCustom(cap);
             return false;

@@ -137,11 +137,11 @@ void Util::copyColor(const int& key)
     COLORREF colorNative = GetPixel(hdcScreen, pos.x, pos.y);
     ReleaseDC(NULL, hdcScreen);
     if (key == 0) {
-        QColor color(GetRValue(colorNative), GetGValue(colorNative), GetBValue(colorNative));
-        tarStr = color.name().toUpper().toStdWString();
+        tarStr = QString("%1,%2,%3").arg(GetRValue(colorNative)).arg(GetGValue(colorNative)).arg(GetBValue(colorNative)).toStdWString();
     }
     else if (key == 1) {
-        tarStr = QString("%1,%2,%3").arg(GetRValue(colorNative)).arg(GetGValue(colorNative)).arg(GetBValue(colorNative)).toStdWString();
+        QColor color(GetRValue(colorNative), GetGValue(colorNative), GetBValue(colorNative));
+        tarStr = color.name().toUpper().toStdWString();
     }
     else if (key == 2) {
         QColor cmyk(GetRValue(colorNative), GetGValue(colorNative), GetBValue(colorNative));

@@ -5,7 +5,7 @@
 #include "Canvas.h"
 #include "App/Util.h"
 #include "WinLongTip.h"
-#include "opencv2/opencv.hpp"
+//#include "opencv2/opencv.hpp"
 
 WinLong::WinLong(QWidget *parent) : WinBase(parent)
 {
@@ -86,81 +86,81 @@ void WinLong::mouseMoveEvent(QMouseEvent* event)
 	}
 }
 
-bool findMatchingRegionOptimized(const QImage& image1, const QImage& image2, int& y1, int& y2, int& y3) {
-	auto mat1 = cv::Mat(image1.height(), image1.width(), CV_8UC4, (void*)image1.bits(), image1.bytesPerLine());
-	auto mat2 = cv::Mat(image2.height(), image2.width(), CV_8UC4, (void*)image2.bits(), image2.bytesPerLine());
-	// 转换为灰度以加速匹配
-	cv::cvtColor(mat1, mat1, cv::COLOR_BGRA2GRAY);
-	cv::cvtColor(mat2, mat2, cv::COLOR_BGRA2GRAY);
-	int height = mat1.rows;
-	int width = mat1.cols;
-	// 缩小图像进行粗略匹配
-	cv::Mat mat1Small, mat2Small;
-	cv::resize(mat1, mat1Small, cv::Size(), 0.5, 0.5, cv::INTER_LINEAR);
-	cv::resize(mat2, mat2Small, cv::Size(), 0.5, 0.5, cv::INTER_LINEAR);
-
-	double bestScore = -1;
-	int bestY1 = 0, bestY2 = 0;
-
-	// 粗略匹配
-#pragma omp parallel
-	{
-		double localBestScore = -1;
-		int localBestY1 = 0, localBestY2 = 0;
-
-#pragma omp for nowait
-		for (int y1Small = 0; y1Small < mat1Small.rows; ++y1Small) {
-			int regionHeightSmall = mat1Small.rows - y1Small;
-			if (regionHeightSmall < 20) continue; // 跳过过小的区域
-
-			cv::Mat templateImg = mat2Small(cv::Rect(0, y1Small, mat1Small.cols, regionHeightSmall));
-			cv::Mat result;
-			cv::matchTemplate(mat1Small, templateImg, result, cv::TM_CCOEFF_NORMED);
-
-			double maxVal;
-			cv::Point maxLoc;
-			cv::minMaxLoc(result, nullptr, &maxVal, nullptr, &maxLoc);
-
-			if (maxVal > localBestScore && maxVal > 0.9) {
-				localBestScore = maxVal;
-				localBestY1 = maxLoc.y;
-				localBestY2 = y1Small;
-			}
-		}
-#pragma omp critical
-		{
-			if (localBestScore > bestScore) {
-				bestScore = localBestScore;
-				bestY1 = localBestY1;
-				bestY2 = localBestY2;
-			}
-		}
-	}
-
-	// 验证最佳候选区域
-	if (bestScore > 0.8) {
-		int regionHeight = height - bestY1 * 2;
-		if (bestY2 * 2 + regionHeight <= height) {
-			cv::Mat templateImg = mat2(cv::Rect(0, bestY2 * 2, width, regionHeight));
-			cv::Mat result;
-			cv::matchTemplate(mat1, templateImg, result, cv::TM_CCOEFF_NORMED);
-
-			double maxVal;
-			cv::Point maxLoc;
-			cv::minMaxLoc(result, nullptr, &maxVal, nullptr, &maxLoc);
-
-			if (maxVal > 0.85) { // 更严格的阈值
-				y1 = maxLoc.y;
-				y2 = bestY2 * 2;
-				y3 = y2 + regionHeight;
-				return true;
-			}
-		}
-	}
-
-	std::cerr << "No matching region found!" << std::endl;
-	return false;
-}
+//bool findMatchingRegionOptimized(const QImage& image1, const QImage& image2, int& y1, int& y2, int& y3) {
+//	auto mat1 = cv::Mat(image1.height(), image1.width(), CV_8UC4, (void*)image1.bits(), image1.bytesPerLine());
+//	auto mat2 = cv::Mat(image2.height(), image2.width(), CV_8UC4, (void*)image2.bits(), image2.bytesPerLine());
+//	// 转换为灰度以加速匹配
+//	cv::cvtColor(mat1, mat1, cv::COLOR_BGRA2GRAY);
+//	cv::cvtColor(mat2, mat2, cv::COLOR_BGRA2GRAY);
+//	int height = mat1.rows;
+//	int width = mat1.cols;
+//	// 缩小图像进行粗略匹配
+//	cv::Mat mat1Small, mat2Small;
+//	cv::resize(mat1, mat1Small, cv::Size(), 0.5, 0.5, cv::INTER_LINEAR);
+//	cv::resize(mat2, mat2Small, cv::Size(), 0.5, 0.5, cv::INTER_LINEAR);
+//
+//	double bestScore = -1;
+//	int bestY1 = 0, bestY2 = 0;
+//
+//	// 粗略匹配
+//#pragma omp parallel
+//	{
+//		double localBestScore = -1;
+//		int localBestY1 = 0, localBestY2 = 0;
+//
+//#pragma omp for nowait
+//		for (int y1Small = 0; y1Small < mat1Small.rows; ++y1Small) {
+//			int regionHeightSmall = mat1Small.rows - y1Small;
+//			if (regionHeightSmall < 20) continue; // 跳过过小的区域
+//
+//			cv::Mat templateImg = mat2Small(cv::Rect(0, y1Small, mat1Small.cols, regionHeightSmall));
+//			cv::Mat result;
+//			cv::matchTemplate(mat1Small, templateImg, result, cv::TM_CCOEFF_NORMED);
+//
+//			double maxVal;
+//			cv::Point maxLoc;
+//			cv::minMaxLoc(result, nullptr, &maxVal, nullptr, &maxLoc);
+//
+//			if (maxVal > localBestScore && maxVal > 0.9) {
+//				localBestScore = maxVal;
+//				localBestY1 = maxLoc.y;
+//				localBestY2 = y1Small;
+//			}
+//		}
+//#pragma omp critical
+//		{
+//			if (localBestScore > bestScore) {
+//				bestScore = localBestScore;
+//				bestY1 = localBestY1;
+//				bestY2 = localBestY2;
+//			}
+//		}
+//	}
+//
+//	// 验证最佳候选区域
+//	if (bestScore > 0.8) {
+//		int regionHeight = height - bestY1 * 2;
+//		if (bestY2 * 2 + regionHeight <= height) {
+//			cv::Mat templateImg = mat2(cv::Rect(0, bestY2 * 2, width, regionHeight));
+//			cv::Mat result;
+//			cv::matchTemplate(mat1, templateImg, result, cv::TM_CCOEFF_NORMED);
+//
+//			double maxVal;
+//			cv::Point maxLoc;
+//			cv::minMaxLoc(result, nullptr, &maxVal, nullptr, &maxLoc);
+//
+//			if (maxVal > 0.85) { // 更严格的阈值
+//				y1 = maxLoc.y;
+//				y2 = bestY2 * 2;
+//				y3 = y2 + regionHeight;
+//				return true;
+//			}
+//		}
+//	}
+//
+//	std::cerr << "No matching region found!" << std::endl;
+//	return false;
+//}
 
 void WinLong::mouseReleaseEvent(QMouseEvent* event)
 {
@@ -180,7 +180,7 @@ void WinLong::mouseReleaseEvent(QMouseEvent* event)
 		//img11.save("Doc\\11.png");
 		//img22.save("Doc\\22.png");
 		int y1, y2, y3;
-		findMatchingRegionOptimized(img1, img2, y1, y2, y3);
+		//findMatchingRegionOptimized(img1, img2, y1, y2, y3);
 		// 
 		// 
 		// hide();
