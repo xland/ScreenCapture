@@ -16,7 +16,8 @@ namespace {
 ShapeNumber::ShapeNumber(QObject* parent) : ShapeBase(parent)
 {
     auto win = (WinBase*)parent;
-    prepareDraggers(2);
+    prepareDraggers(1);
+    //prepareDraggers(2);
     isFill = win->toolSub->getSelectState("numberFill");
     color = win->toolSub->getColor();
     val = ++numVal;
@@ -53,15 +54,15 @@ void ShapeNumber::resetDraggers()
     auto half{ draggerSize / 2 };
     draggers[0].setRect(endPos.x() - half, endPos.y() - half, draggerSize, draggerSize);
 
-    QLineF line(startPos, endPos);
-    QPointF direction = line.p1() - line.p2(); // startPos - endPos
-    qreal length = line.length();
-    if (length == 0) {
-        draggers[0].setRect(-999999, -999999, draggerSize, draggerSize);
-    }
-    QPointF unitVector = direction / length;
-    auto pos = startPos + unitVector * r; // 从 endPos 延长 r 像素
-    draggers[1].setRect(pos.x() - half, pos.y() - half, draggerSize, draggerSize);
+    //QLineF line(startPos, endPos);
+    //QPointF direction = line.p1() - line.p2(); // startPos - endPos
+    //qreal length = line.length();
+    //if (length == 0) {
+    //    draggers[0].setRect(-999999, -999999, draggerSize, draggerSize);
+    //}
+    //QPointF unitVector = direction / length;
+    //auto pos = startPos + unitVector * r; // 从 endPos 延长 r 像素
+    //draggers[1].setRect(pos.x() - half, pos.y() - half, draggerSize, draggerSize);
 }
 
 void ShapeNumber::paint(QPainter* painter)
@@ -90,7 +91,7 @@ void ShapeNumber::paintDragger(QPainter* painter)
     painter->setPen(QPen(QBrush(QColor(0, 0, 0)), 1));
     painter->setBrush(Qt::NoBrush);
     painter->drawRect(draggers[0]);
-    painter->drawRect(draggers[1]);
+    //painter->drawRect(draggers[1]);
 }
 bool ShapeNumber::mouseMove(QMouseEvent* event)
 {
@@ -99,7 +100,10 @@ bool ShapeNumber::mouseMove(QMouseEvent* event)
     hoverDraggerIndex = -1;
     if (draggers[0].contains(pos)) {
         hoverDraggerIndex = 0;
-    }
+	}
+	//else if (draggers[1].contains(pos)) {
+	//	hoverDraggerIndex = 1;
+	//}
     else if(shape.contains(pos)) {        
         qreal spanX{ pos.x() - startPos.x() }, spanY{ pos.y() - startPos.y() };
         auto flag = qSqrt(spanX * spanX + spanY * spanY) >= r-2;
@@ -158,6 +162,9 @@ void ShapeNumber::mouseDrag(QMouseEvent* event)
         endPos = event->pos();
         resetShape();
     }
+    //else if (state == ShapeState::sizing1) {
+    //    
+    //}
     else if (state == ShapeState::moving) {
         auto pos = event->pos();
         auto span = pos - pressPos;
