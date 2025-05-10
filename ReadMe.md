@@ -77,7 +77,7 @@ ScreenCapture.exe --lang:en
 //图像存入剪切板时，图像质量参数无效
 ScreenCapture.exe --comp:6,60
 
-//你可以通过此命令控制主工具栏按钮、分割线的顺序，位置及显隐情况。
+//控制主工具栏按钮（及分割线）的顺序，位置及显隐情况。
 `ScreenCapture.exe --tool:"rect,ellipse,arrow,number,line,text,mosaic,eraser,|,undo,redo,|,pin,clipboard,save,close"`
 ```
 
