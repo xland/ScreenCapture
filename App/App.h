@@ -10,6 +10,7 @@ public:
 	static QString getSavePath();
 	static std::tuple<int, int> getCompressVal();
 	static int getCustomCap();
+	static QStringList getTool();
 public:
 private:
 	static QMap<QString, QString> getCmd();

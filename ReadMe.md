@@ -77,6 +77,8 @@ ScreenCapture.exe --lang:en
 //图像存入剪切板时，图像质量参数无效
 ScreenCapture.exe --comp:6,60
 
+//控制工具栏按钮
+`ScreenCapture.exe --tool:"rect,ellipse,arrow,number,line,text,mosaic,eraser,|,undo,redo,|,pin,clipboard,save,close"`
 ```
 
 - `--cap`与`--pin`参数互斥，其他参数可组合使用。

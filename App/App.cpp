@@ -21,6 +21,7 @@ namespace {
     int compressSize{ 100 };
     int compressQuality{ -1 };
 	int customCap{ -1 };
+    QStringList tools;
 }
 QMap<QString, QString> App::getCmd()
 {
@@ -98,6 +99,9 @@ bool App::parseCmd(const QMap<QString, QString>& params) {
             return false;
         }
 	}
+    if (params.contains("tool")) {
+        tools = params["tool"].split(",");
+    }
     return false;
 }
 void App::pinClipboard(const QString& cmd)
@@ -381,4 +385,9 @@ std::tuple<int, int> App::getCompressVal()
 int App::getCustomCap()
 {
     return customCap;
+}
+
+QStringList App::getTool()
+{
+    return tools;
 }

@@ -1,8 +1,9 @@
 
-- `--tool:rect,ellipse,arrow,number,line,text,mosaic,eraser,|,undo,redo,|,pin,clipboard,save,close`
+- `--tool:"rect,ellipse,arrow,number,line,text,mosaic,eraser,|,undo,redo,|,pin,clipboard,save,close"`
 - 钉图窗口放大/缩小后，就不能在图像上绘制元素了
 - 钉图窗口放大/缩小后，保存的图像应该是放大或缩小后的图像
 - 绘制自由路径马赛克时，应该像橡皮擦一样，先绘制半透明棕色自由路径，待鼠标释放时，在变成马赛克
+- 有时，工具条上的按钮无法取消选中，好像没有update
 
 - 马赛克默认方框的形式，鼠标划拉方便
 - 标号

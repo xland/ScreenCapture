@@ -29,9 +29,7 @@ ShapeNumber::~ShapeNumber()
 void ShapeNumber::resetShape()
 {
     shape.clear();
-    // 计算圆弧端点
-    auto x1{ r * qCos(qDegreesToRadians(10.0)) }, y1{ -r * qSin(qDegreesToRadians(10.0)) };
-    //auto x2{ x1 }, y2{ 0 - y1 };
+    auto x1{ r * qCos(qDegreesToRadians(12.0)) }, y1{ -r * qSin(qDegreesToRadians(12.0)) };
     shape.moveTo(x1,y1);
     QRectF rect(-r, -r, 2 * r, 2 * r);
     shape.arcTo(rect, 12, 338);
