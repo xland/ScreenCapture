@@ -183,11 +183,20 @@ void ToolMain::paintEvent(QPaintEvent* event)
     painter.drawRect(rect().toRectF().adjusted(border,border,-border,-border));
     painter.setPen(QColor(190, 190, 190));
     auto y1{ height() - 9 };
-
-    for (size_t i = 0; i < splitters.size(); i++)
-    {
-        auto x{ 4 + splitters[i] * btnW + 0.5 };
+    auto tools = App::getTool();
+    if (tools.isEmpty()) {
+        auto x{ 4 + 8 * btnW + 0.5 };
+        auto y1{ height() - 9 };
         painter.drawLine(x, 9, x, y1);
+        x = 4 + 10 * btnW + 0.5;
+        painter.drawLine(x, 9, x, y1);
+    }
+    else {
+        for (size_t i = 0; i < splitters.size(); i++)
+        {
+            auto x{ 4 + splitters[i] * btnW + 0.5 };
+            painter.drawLine(x, 9, x, y1);
+        }
     }
 }
 
