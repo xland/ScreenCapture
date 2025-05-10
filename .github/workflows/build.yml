@@ -1,0 +1,90 @@
+name: AutoBuild
+
+on:
+  push:
+    branches: ["main", "add_actions"]
+    paths-ignore:
+      - ".github/**"
+      - ".gitignore"
+      - "*.md"
+      - "**.txt"
+      - "LICENSE"
+  pull_request:
+    branches: ["main", "add_actions"]
+  workflow_dispatch:
+
+env:
+  CARGO_TERM_COLOR: always
+  CMAKE_BUILD_PARALLEL_LEVEL: 4
+
+jobs:
+  build:
+    runs-on: windows-latest
+    permissions:
+      contents: write
+      actions: write
+
+    env:
+      QT_DIR: ${{ github.workspace }}/Qt
+      BUILD_DIR: ${{ github.workspace }}/build
+      QtMSBuild: ${{ github.workspace }}/Qt/6.9.0/msvc2022_64/lib/cmake/Qt6
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # 缓存Qt和构建目录
+      - name: Cache Qt and Build
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ env.QT_DIR }}
+            ${{ env.BUILD_DIR }}
+          key: ${{ runner.os }}-qt-${{ hashFiles('**/CMakeLists.txt') }}-${{ hashFiles('**/*.cmake') }}-qt690
+          restore-keys: |
+            ${{ runner.os }}-qt-
+
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@v2
+        with:
+          msbuild-architecture: x64
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: "6.9.0"
+          arch: "win64_msvc2022_64"
+          dir: ${{ env.QT_DIR }}
+          cache: true
+          setup-python: true
+          tools: "tools_cmake tools_ninja tools_vcredist"
+
+      - name: Build
+        shell: cmd
+        run: |
+          IF NOT EXIST "${{ env.BUILD_DIR }}" (mkdir "${{ env.BUILD_DIR }}")
+          cd "${{ env.BUILD_DIR }}"
+          msbuild /p:Configuration=Release ^
+                 /p:Platform=x64 ^
+                 /p:QTDir=${{ env.QT_DIR }}/6.9.0/msvc2022_64 ^
+                 /p:QtMsBuild=${{ env.QtMSBuild }} ^
+                 /p:RuntimeLibrary=MultiThreadedDLL ^
+                 /t:Rebuild ^
+                 /m:%CMAKE_BUILD_PARALLEL_LEVEL% ^
+                 ../ScreenCapture.sln
+
+      - name: Deploy Qt Dependencies
+        working-directory: ${{ env.BUILD_DIR }}
+        run: |
+          windeployqt --release --no-translations --no-system-d3d-compiler Release/ScreenCapture.exe
+
+      - name: Create Release Package
+        run: |
+          mkdir release-package
+          copy "${{ env.BUILD_DIR }}\Release\ScreenCapture.exe" release-package\
+          copy "${{ env.BUILD_DIR }}\Release\*.dll" release-package\
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ScreenCapture-Release
+          path: release-package
