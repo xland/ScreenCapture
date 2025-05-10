@@ -16,8 +16,7 @@ namespace {
 ShapeNumber::ShapeNumber(QObject* parent) : ShapeBase(parent)
 {
     auto win = (WinBase*)parent;
-    prepareDraggers(1);
-    //prepareDraggers(2);
+    prepareDraggers(3);
     isFill = win->toolSub->getSelectState("numberFill");
     color = win->toolSub->getColor();
     val = ++numVal;
@@ -29,40 +28,29 @@ ShapeNumber::~ShapeNumber()
 
 void ShapeNumber::resetShape()
 {
-    //startPos圆心；endPos箭头顶点
-    QLineF line(startPos, endPos);
-    qreal length = line.length();
-    auto angle = line.angle();
-    r = length/4.f*3.f;
-    double y = r * sin(10 * std::numbers::pi / 180.0); // 对应的直角边
-    double x = r * cos(10 * std::numbers::pi / 180.0); // 另一个直角边
     shape.clear();
-    shape.moveTo(x, -y);
-    shape.arcTo(QRectF(-r,-r, 2 * r, 2 * r), 10, 340);
-    shape.lineTo(length,0);
-    shape.lineTo(x, -y);
-    
+    // 计算圆弧端点
+    auto x1{ r * qCos(qDegreesToRadians(10.0)) }, y1{ -r * qSin(qDegreesToRadians(10.0)) };
+    //auto x2{ x1 }, y2{ 0 - y1 };
+    shape.moveTo(x1,y1);
+    QRectF rect(-r, -r, 2 * r, 2 * r);
+    shape.arcTo(rect, 12, 338);
+    shape.lineTo(r+r/3, 0); //三角形箭头的高度为r/3
+    shape.lineTo(x1, y1);
     QTransform transform;
-    transform.translate(startPos.x(), startPos.y());
+    transform.translate(centerPos.x(), centerPos.y());
     transform.rotate(-angle);
     shape = transform.map(shape);
-    
+    sizePos = transform.map(QPointF(-r,0));
+    arrowPos = transform.map(QPointF(r + r / 3, 0));
 }
 
 void ShapeNumber::resetDraggers()
 {
     auto half{ draggerSize / 2 };
-    draggers[0].setRect(endPos.x() - half, endPos.y() - half, draggerSize, draggerSize);
-
-    //QLineF line(startPos, endPos);
-    //QPointF direction = line.p1() - line.p2(); // startPos - endPos
-    //qreal length = line.length();
-    //if (length == 0) {
-    //    draggers[0].setRect(-999999, -999999, draggerSize, draggerSize);
-    //}
-    //QPointF unitVector = direction / length;
-    //auto pos = startPos + unitVector * r; // 从 endPos 延长 r 像素
-    //draggers[1].setRect(pos.x() - half, pos.y() - half, draggerSize, draggerSize);
+    draggers[0].setRect(centerPos.x() - half, centerPos.y() - half, draggerSize, draggerSize);
+    draggers[1].setRect(sizePos.x() - half, sizePos.y() - half, draggerSize, draggerSize);
+    draggers[2].setRect(arrowPos.x() - half, arrowPos.y() - half, draggerSize, draggerSize);
 }
 
 void ShapeNumber::paint(QPainter* painter)
@@ -79,7 +67,7 @@ void ShapeNumber::paint(QPainter* painter)
         painter->drawPath(shape);
         painter->setPen(color);
     }
-    QRectF rect(startPos.x() - r, startPos.y() - r, 2 * r, 2 * r);
+    QRectF rect(centerPos.x() - r, centerPos.y() - r, 2 * r, 2 * r);
     auto font = painter->font();
     font.setPointSizeF(r / 4 * 3);
     painter->setFont(font);
@@ -91,7 +79,8 @@ void ShapeNumber::paintDragger(QPainter* painter)
     painter->setPen(QPen(QBrush(QColor(0, 0, 0)), 1));
     painter->setBrush(Qt::NoBrush);
     painter->drawRect(draggers[0]);
-    //painter->drawRect(draggers[1]);
+    painter->drawRect(draggers[1]);
+    painter->drawRect(draggers[2]);
 }
 bool ShapeNumber::mouseMove(QMouseEvent* event)
 {
@@ -99,17 +88,13 @@ bool ShapeNumber::mouseMove(QMouseEvent* event)
     auto pos = event->pos();
     hoverDraggerIndex = -1;
     if (draggers[0].contains(pos)) {
-        hoverDraggerIndex = 0;
+        hoverDraggerIndex = 8; //移动
 	}
-	//else if (draggers[1].contains(pos)) {
-	//	hoverDraggerIndex = 1;
-	//}
-    else if(shape.contains(pos)) {        
-        qreal spanX{ pos.x() - startPos.x() }, spanY{ pos.y() - startPos.y() };
-        auto flag = qSqrt(spanX * spanX + spanY * spanY) >= r-2;
-        if (flag) {
-            hoverDraggerIndex = 8;
-        }        
+	else if (draggers[1].contains(pos)) {
+		hoverDraggerIndex = 0; //改变大小
+	}
+    else if(draggers[2].contains(pos)) {
+        hoverDraggerIndex = 1; 
     }
     auto win = (WinBase*)parent();
     if (hoverDraggerIndex > -1) {
@@ -123,8 +108,12 @@ bool ShapeNumber::mouseMove(QMouseEvent* event)
 bool ShapeNumber::mousePress(QMouseEvent* event)
 {
     if (state == ShapeState::temp) {
-        startPos = event->position();
-        state = ShapeState::sizing0;
+        centerPos = event->position();
+        pressPos = centerPos;
+        state = ShapeState::moving;
+        resetShape();
+        auto win = (WinBase*)parent();
+        win->update();
         return true;
     }
     else if (hoverDraggerIndex >= 0) {
@@ -159,18 +148,22 @@ void ShapeNumber::mouseDrag(QMouseEvent* event)
         return;
     }
     if (state == ShapeState::sizing0) {
-        endPos = event->pos();
+        QLineF line(centerPos, event->pos());
+        r = line.length();
         resetShape();
     }
-    //else if (state == ShapeState::sizing1) {
-    //    
-    //}
+    else if (state == ShapeState::sizing1) {
+        QLineF line(centerPos, event->pos());
+        angle = line.angle();
+        resetShape();
+    }
     else if (state == ShapeState::moving) {
         auto pos = event->pos();
         auto span = pos - pressPos;
         shape.translate(span);
-        startPos+=span;
-        endPos+=span;
+        centerPos += span;
+        arrowPos += span;
+        sizePos += span;
         pressPos = pos;
     }
     auto win = (WinBase*)parent();

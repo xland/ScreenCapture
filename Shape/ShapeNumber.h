@@ -27,7 +27,7 @@ private:
     void resetShape();
 	void resetDraggers();
 private:
-    QPointF startPos, endPos,pressPos;
+    QPointF centerPos,pressPos,arrowPos,sizePos;
     unsigned int val;
-    qreal r;
+    qreal r{26.f}, angle{ 270.0 };
 };
