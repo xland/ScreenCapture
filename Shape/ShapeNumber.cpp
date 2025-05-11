@@ -24,6 +24,12 @@ ShapeNumber::ShapeNumber(QObject* parent) : ShapeBase(parent)
 
 ShapeNumber::~ShapeNumber()
 {
+
+}
+
+void ShapeNumber::resetValBy(const int& num)
+{
+    numVal += num;
 }
 
 void ShapeNumber::resetShape()

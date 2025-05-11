@@ -37,6 +37,9 @@ void Canvas::undo()
     {
         if (shapes[i]->state != ShapeState::undo) {
 			shapes[i]->state = ShapeState::undo;
+            if (qobject_cast<ShapeNumber*>(shapes[i])) {
+                ShapeNumber::resetValBy(-1);
+            }
 			break;
         }
     }
@@ -72,6 +75,9 @@ void Canvas::redo()
     {
         if (shapes[i]->state == ShapeState::undo) {
             shapes[i]->state = ShapeState::ready;
+            if (qobject_cast<ShapeNumber*>(shapes[i])) {
+                ShapeNumber::resetValBy(1);
+            }
             break;
         }
     }

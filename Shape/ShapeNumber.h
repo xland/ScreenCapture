@@ -12,6 +12,7 @@ class ShapeNumber:public ShapeBase
 public:
     ShapeNumber(QObject* parent = nullptr);
     ~ShapeNumber();
+    static void resetValBy(const int& num);
     virtual void paint(QPainter* painter) override;
     void paintDragger(QPainter* painter) override;
     bool mouseMove(QMouseEvent* event) override;
