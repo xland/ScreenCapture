@@ -148,16 +148,18 @@ child.on("close", (code) => {
 
 ## 赞助
 
-<div style="display: flex; justify-content: space-between;">
-  <div style="text-align: center;width:50%;">
-    <img alt="ali pay" src="./Doc/alipay.jpg" style="width:160px;height:160px;" />
-    <p>支付宝支付</p>
-  </div>
-  <div style="text-align: center;width:50%;">
-    <img alt="wechat pay" src="./Doc/wechat.png" style="width:160px;height:160px;" />
-    <p>微信支付</p>
-  </div>
-</div>
+<table width="100%">
+  <tr>
+    <td align="center" width="50%">
+      <img src="./Doc/alipay.jpg" width="160" height="160"><br>
+      <p>支付宝支付</p>
+    </td>
+    <td align="center" width="50%">
+      <img src="./Doc/wechat.png" width="160" height="160"><br>
+      <p>微信支付</p>
+    </td>
+  </tr>
+</table>
 
 ## 作者
 
