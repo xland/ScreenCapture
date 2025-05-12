@@ -148,7 +148,7 @@ child.on("close", (code) => {
 
 ## 赞助
 
-<table width="100%">
+<table style="width:100%; table-layout:fixed;">
   <tr>
     <td align="center" width="50%">
       <img src="./Doc/alipay.jpg" width="160" height="160"><br>
