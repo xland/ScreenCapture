@@ -85,11 +85,13 @@
     <ClCompile>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <PreprocessorDefinitions>DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>D:\sdk\opencv.4.11.0\opencv\build\include;D:\sdk\opencv.4.11.0\opencv\sources\3rdparty\zlib</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>
+      </AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies>dwmapi.lib;shcore.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>D:\sdk\opencv.4.11.0\opencv\build\x64\vc16\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="Configuration">
