@@ -148,13 +148,13 @@ child.on("close", (code) => {
 
 ## 赞助
 
-<table style="width:100%; table-layout:fixed;">
+<table>
   <tr>
-    <td align="center" width="50%">
+    <td align="center" style="text-align:center; width:300px;">
       <img src="./Doc/alipay.jpg" width="160" height="160"><br>
       <p>支付宝支付</p>
     </td>
-    <td align="center" width="50%">
+    <td align="center" style="text-align:center; width:300px;">
       <img src="./Doc/wechat.png" width="160" height="160"><br>
       <p>微信支付</p>
     </td>
