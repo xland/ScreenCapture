@@ -150,20 +150,17 @@ child.on("close", (code) => {
 
 <table>
   <tr>
-    <td align="center" style="text-align:center; width:300px;">
-      <img src="./Doc/alipay.jpg" width="160" height="160"><br>
-      <p>支付宝支付</p>
+    <td align="center">
+      <img src="./Doc/alipay.jpg" width="160" height="160">
+      <p>支付宝赞助</p>
     </td>
-    <td align="center" style="text-align:center; width:300px;">
-      <img src="./Doc/wechat.png" width="160" height="160"><br>
-      <p>微信支付</p>
+    <td align="center">
+      <img src="./Doc/wechat.png" width="160" height="160">
+      <p>微信赞助</p>
+    </td>
+    <td align="center">
+      <img src="./Doc/author.jpg" width="160" height="160">
+      <p>作者微信</p>
     </td>
   </tr>
 </table>
-
-## 作者
-
-<div style="text-align:center">
-<img alt="wechat qrcode" src="./Doc/author.jpg" style="width:160px;height:160px;" />
-<p>无论有没有要聊的话题，无论是不是与此产品有关的话题，都很开心能认识你。</p>
-</div>
