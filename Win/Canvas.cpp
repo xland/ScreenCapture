@@ -272,7 +272,14 @@ void Canvas::paintShapeOnBoard(ShapeBase* shape)
     shape->paint(&p);
     win->update();
 	if (!shapes.contains(shape)) {
-		shapes.push_back(shape); //防止文本对象重复添加
+        for (int i = shapes.size() - 1; i>=0 ; i--)  //undo之后画新元素，undo的元素都得删掉
+        {
+            if (shapes[i]->state == ShapeState::undo) {
+                auto s = shapes.takeAt(i);
+                s->deleteLater();
+            }
+        }
+		shapes.push_back(shape); 
 		win->toolMain->setBtnEnable("undo", true);
 	}
 }
