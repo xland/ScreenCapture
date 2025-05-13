@@ -20,10 +20,8 @@ protected:
 	void mouseMoveEvent(QMouseEvent* event) override;
 	void mouseReleaseEvent(QMouseEvent* event) override;
 	void closeEvent(QCloseEvent* event) override;
-	QImage getTargetImg() override;
 private:
 	void initWindow();
-	void joinImg(const QImage& img1, const QImage& img2);
 private:
 	QImage resultImg;
 };

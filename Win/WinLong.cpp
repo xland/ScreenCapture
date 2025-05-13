@@ -75,42 +75,26 @@ void WinLong::mouseReleaseEvent(QMouseEvent* event)
 		winLongTip->show();
 	}
 	else {
-		winLongTip->hide();
-		POINT pt;
-		GetCursorPos(&pt);
-		HWND hwnd = WindowFromPoint(pt);
-		auto wlv = new WinLongViewer(this);
-
+		winLongTip->close();
+		imgBg.fill(QColor(0, 0, 0, 60));
 		QPainter p(&imgBg);
 		p.setCompositionMode(QPainter::CompositionMode_Clear); //橡皮擦模式
 		p.setBrush(Qt::transparent);
 		p.drawRect(cutMask->rectMask);
 		p.end();
 		repaint();
-
-
-		QTimer* timer = new QTimer(this);
-		 connect(timer, &QTimer::timeout, [&pt,this]() {
-			INPUT input = { 0 };
-			input.type = INPUT_MOUSE;
-			input.mi.dwFlags = MOUSEEVENTF_WHEEL;
-			input.mi.mouseData = -WHEEL_DELTA;
-			SendInput(1, &input, sizeof(INPUT));
-		 });
-		 timer->start(1200);	
-		 SetCursorPos(pt.x+1, pt.y+1);
+		auto dpr = devicePixelRatio();
+		auto tl = cutMask->rectMask.topLeft();
+		auto br = cutMask->rectMask.bottomRight();
+		tl = Util::getScreenPos(mapToGlobal(tl));
+		br = Util::getScreenPos(mapToGlobal(br));
+		new WinLongViewer(tl.x()+2, tl.y() + 2, br.x() - tl.x()-2, br.y() - tl.y()-2);
 	}
 }
 
 void WinLong::closeEvent(QCloseEvent* event)
 {
 	deleteLater();
-	qApp->exit(1);
-}
-
-QImage WinLong::getTargetImg()
-{
-	return QImage();
 }
 
 void WinLong::initWindow()
@@ -121,7 +105,7 @@ void WinLong::initWindow()
 	setAttribute(Qt::WA_TranslucentBackground, true);
 	setGeometry(x, y, w, h);
 #ifdef DEBUG
-	setWindowFlags(Qt::FramelessWindowHint | Qt::Tool | Qt::WindowStaysOnTopHint);
+	setWindowFlags(Qt::FramelessWindowHint | Qt::Tool);
 #else
 	setWindowFlags(Qt::FramelessWindowHint | Qt::Tool | Qt::WindowStaysOnTopHint);
 #endif    
@@ -130,8 +114,5 @@ void WinLong::initWindow()
 	SetWindowPos(hwnd, nullptr, x, y, w, h, SWP_NOZORDER | SWP_SHOWWINDOW);
 	setMouseTracking(true);
 	setCursor(Qt::CrossCursor);
-}
-
-void WinLong::joinImg(const QImage& img11, const QImage& img22) {
-	
+	setAttribute(Qt::WA_QuitOnClose, false);
 }

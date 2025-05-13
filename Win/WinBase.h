@@ -26,7 +26,7 @@ public:
 	ToolSub* toolSub;
 	Canvas* canvas;
 protected:
-	virtual QImage getTargetImg() = 0;
+	virtual QImage getTargetImg() { return QImage(); };
 	void moveCursor(const QPoint& pos);
 	void mouseDoubleClickEvent(QMouseEvent* event) override;
 private:
