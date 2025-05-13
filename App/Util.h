@@ -18,5 +18,6 @@ public:
 	static bool saveToFile(const QImage& img);
 	static void imgToClipboard(const QImage& image);
 	static bool isImagePath(const QString& path);
+	static QPoint getScreenPos(const QPoint& pos);
 };
 

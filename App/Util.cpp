@@ -88,6 +88,11 @@ bool Util::isImagePath(const QString& path)
     }
     return false;
 }
+QPoint Util::getScreenPos(const QPoint& pos)
+{
+    QScreen* screen = QGuiApplication::screenAt(pos);
+    return pos * screen->devicePixelRatio();
+}
 bool Util::posInScreen(const int& x, const int& y)
 {
     QList<QScreen*> screens = QGuiApplication::screens();
