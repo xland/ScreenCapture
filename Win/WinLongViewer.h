@@ -23,4 +23,5 @@ private:
 	QTimer* stepTimer;
 	int areaX, areaY, areaW, areaH;
 	int topIgnoreSpan{0};
+	bool firstCheck{ true };
 };

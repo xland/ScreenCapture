@@ -73,6 +73,22 @@ int findMostSimilarRegionParallel(const QImage& gray1, const QImage& gray2) {
     return best.y;
 }
 
+size_t findTopSameHeight(const QImage& img1, const QImage& img2) {
+
+    for (size_t y = 0; y < img1.height(); y++)
+    {
+        bool same;
+        for (size_t x = 0; x < img1.width(); x++)
+        {
+            if (img1.pixel(x, y) != img2.pixel(x, y)) {
+                break;
+            }
+        }
+    }
+    return 0;
+}
+
+
 #pragma endregion
 
 
@@ -83,7 +99,11 @@ void WinLongViewer::capStep()
     auto dpr = devicePixelRatio();
     auto imgNew = Util::printScreen(areaX, areaY, areaW, areaH);
     imgNew.setDevicePixelRatio(dpr);
-    QImage imgNewSub = imgNew.copy(0, 0, imgNew.width(), 160);
+    if (firstCheck) {
+        topIgnoreSpan = findTopSameHeight(img, imgNew);
+        firstCheck = false;
+    }
+    QImage imgNewSub = imgNew.copy(0, topIgnoreSpan, imgNew.width(), 160);
     imgNewSub.setDevicePixelRatio(dpr);
     auto img3 = img.convertToFormat(QImage::Format_Grayscale8);
     auto img4 = imgNewSub.convertToFormat(QImage::Format_Grayscale8);
@@ -93,7 +113,14 @@ void WinLongViewer::capStep()
     imgResult.setDevicePixelRatio(dpr);
     QPainter p(&imgResult);
     p.drawImage(0, 0, img);
-    p.drawImage(0, y / dpr, imgNew);
+    if (topIgnoreSpan == 0) {
+        p.drawImage(0, y / dpr, imgNew);
+    }
+    else {
+        imgNew = imgNew.copy(0, topIgnoreSpan, imgNew.width(), imgNew.height() - topIgnoreSpan);
+        p.drawImage(0, (y+ topIgnoreSpan) / dpr, imgNew);
+    }
+    
     img = imgResult;
     p.end();
     adjustPosSize();    
