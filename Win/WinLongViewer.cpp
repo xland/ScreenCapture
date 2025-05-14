@@ -57,7 +57,10 @@ MatchResult computeSSDAtY(int y, const QImage& gray1, const QImage& gray2) {
     return { y, error };
 }
 
-int findMostSimilarRegionParallel(const QImage& gray1, const QImage& gray2) {
+int findMostSimilarRegionParallel(const QImage& img1, const QImage& img2) {
+
+    auto gray1 = img1.convertToFormat(QImage::Format_Grayscale8);
+    auto gray2 = img2.convertToFormat(QImage::Format_Grayscale8);
     const int searchHeight = gray1.height() - gray2.height() + 1;
     // 构造搜索区间
     QList<int> yList;
@@ -75,17 +78,22 @@ int findMostSimilarRegionParallel(const QImage& gray1, const QImage& gray2) {
 
 size_t findTopSameHeight(const QImage& img1, const QImage& img2) {
 
-    for (size_t y = 0; y < img1.height(); y++)
+    size_t y = 0;
+    for (; y < img1.height(); y++)
     {
-        bool same;
+        bool notSameLine{false};
         for (size_t x = 0; x < img1.width(); x++)
         {
             if (img1.pixel(x, y) != img2.pixel(x, y)) {
+                notSameLine = true;
                 break;
             }
         }
+        if (notSameLine) {
+            break;
+        }
     }
-    return 0;
+    return y;
 }
 
 
@@ -102,13 +110,14 @@ void WinLongViewer::capStep()
     if (firstCheck) {
         topIgnoreSpan = findTopSameHeight(img, imgNew);
         firstCheck = false;
+        qDebug() << "topSpan" << topIgnoreSpan;
     }
-    QImage imgNewSub = imgNew.copy(0, topIgnoreSpan, imgNew.width(), 160);
+    QImage imgNewSub = imgNew.copy(0, topIgnoreSpan, imgNew.width(), 260);
     imgNewSub.setDevicePixelRatio(dpr);
-    auto img3 = img.convertToFormat(QImage::Format_Grayscale8);
-    auto img4 = imgNewSub.convertToFormat(QImage::Format_Grayscale8);
-    auto y = findMostSimilarRegionParallel(img3, img4);
-    qDebug() << "top" << y;
+    auto y = findMostSimilarRegionParallel(img, imgNewSub);
+    if (y <= 0) {
+        return;
+    }
     QImage imgResult(img.width(), y + imgNew.height(), QImage::Format_ARGB32);
     imgResult.setDevicePixelRatio(dpr);
     QPainter p(&imgResult);
@@ -118,7 +127,7 @@ void WinLongViewer::capStep()
     }
     else {
         imgNew = imgNew.copy(0, topIgnoreSpan, imgNew.width(), imgNew.height() - topIgnoreSpan);
-        p.drawImage(0, (y+ topIgnoreSpan) / dpr, imgNew);
+        p.drawImage(0, y / dpr, imgNew);
     }
     
     img = imgResult;
