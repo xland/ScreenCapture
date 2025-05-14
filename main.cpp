@@ -1,5 +1,6 @@
 #include <QtWidgets/QApplication>
-
+#include <QtConcurrent>
+#include <QPainter>
 #include "App/App.h"
 
 int main(int argc, char* argv[])
