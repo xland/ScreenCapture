@@ -179,6 +179,7 @@ bool Util::saveToFile(const QImage& img)
         dialog.setDefaultSuffix("png");
         dialog.setAttribute(Qt::WA_QuitOnClose, false);
         dialog.setDirectory(QStandardPaths::writableLocation(QStandardPaths::DesktopLocation));
+        dialog.selectFile(fileName);
         if (dialog.exec() == QDialog::Accepted) {
             filePath = dialog.selectedFiles().first();
         }
