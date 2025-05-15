@@ -126,7 +126,7 @@ void WinFull::closeEvent(QCloseEvent* event)
 void WinFull::initWindow()
 {
     setFocusPolicy(Qt::StrongFocus);
-    setGeometry(x, y, w, h);
+    //setGeometry(x, y, w, h);
 #ifdef DEBUG
     setWindowFlags(Qt::FramelessWindowHint | Qt::Tool);
 #else

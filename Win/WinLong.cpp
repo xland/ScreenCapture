@@ -96,13 +96,20 @@ void WinLong::closeEvent(QCloseEvent* event)
 	deleteLater();
 }
 
+void WinLong::showEvent(QShowEvent* event)
+{
+	//auto hwnd = (HWND)winId();
+	//SetWindowPos(hwnd, nullptr, x, y, w, h, SWP_NOZORDER | SWP_SHOWWINDOW);
+	//auto dpr = devicePixelRatio();
+}
+
 void WinLong::initWindow()
 {
 	setAutoFillBackground(false);
 	setAttribute(Qt::WA_OpaquePaintEvent);
 	setAttribute(Qt::WA_NoSystemBackground);
 	setAttribute(Qt::WA_TranslucentBackground, true);
-	setGeometry(x, y, w, h);
+	//setGeometry(x, y, w, h);
 #ifdef DEBUG
 	setWindowFlags(Qt::FramelessWindowHint | Qt::Tool);
 #else
