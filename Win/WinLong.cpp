@@ -69,7 +69,6 @@ void WinLong::mouseReleaseEvent(QMouseEvent* event)
 {
 	if (state < State::capLong) {
 		state = State::capLong;
-		setCursor(Qt::BlankCursor);
 		winLongTip = new WinLongTip(this);
 		winLongTip->mouseMove(QCursor::pos());
 		winLongTip->show();
@@ -88,7 +87,7 @@ void WinLong::mouseReleaseEvent(QMouseEvent* event)
 		auto br = cutMask->rectMask.bottomRight();
 		tl = Util::getScreenPos(mapToGlobal(tl));
 		br = Util::getScreenPos(mapToGlobal(br));
-		new WinLongViewer(tl.x()+2, tl.y() + 2, br.x() - tl.x()-2, br.y() - tl.y()-2);
+		new WinLongViewer(tl.x()+2, tl.y() + 2, br.x() - tl.x()-2, br.y() - tl.y()-2,this);
 	}
 }
 

@@ -14,6 +14,7 @@
 
 ToolSub::ToolSub(QWidget* parent) : ToolBase(parent)
 {
+	initWindow();
 	QHBoxLayout* layout = new QHBoxLayout(this);
 	layout->setSpacing(0);
 	layout->setContentsMargins(4, 4, 4, 2);

@@ -74,6 +74,10 @@ ScreenCapture.exe --comp:6,60
 
 //控制主工具栏按钮（及分割线）的顺序，位置及显隐情况。
 `ScreenCapture.exe --tool:"rect,ellipse,arrow,number,line,text,mosaic,eraser,|,undo,redo,|,pin,clipboard,save,close"`
+
+//截长图
+//截长图窗口只有四个控制按钮`pin,clipboard,save,close`，也是支持通过`--tool`指令控制的
+--cap:long
 ```
 
 - `--cap`与`--pin`参数互斥，其他参数可组合使用。

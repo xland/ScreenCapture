@@ -15,6 +15,7 @@
 
 ToolMain::ToolMain(QWidget* parent) : ToolBase(parent)
 {
+    initWindow();
     QHBoxLayout* layout = new QHBoxLayout(this);
     layout->setSpacing(0);
     layout->setContentsMargins(4, 2, 4, 2);
@@ -65,34 +66,26 @@ void ToolMain::confirmPos()
     auto left { br.x() - width() };
     auto top { br.y() + 6 };
     auto heightSpan{ 6 * 3 + height() * 2 }; //三个缝隙，两个高度
-    QList<QScreen*> screens = QGuiApplication::screens();
-    auto getScreen = [&screens](int x, int y) {
-        for (auto& s : screens)
-        {
-            if (s->geometry().contains(x, y)) return s;
-        }
-		return (QScreen*)nullptr;
-        };
-    auto screen = getScreen(br.x(), br.y() + heightSpan); //1. 工具条在截图区域右下角
+    auto screen = QGuiApplication::screenAt(QPoint(br.x(), br.y() + heightSpan)); //1. 工具条在截图区域右下角
     if (screen) { //工具条右下角在屏幕中
-        if (!getScreen(left, top)) { //工具条左上角不在屏幕中
+        if (!QGuiApplication::screenAt(QPoint(left, top))) { //工具条左上角不在屏幕中
             left = screen->geometry().left();
         }
     }
     else { //工具条右下角不在屏幕中
-        screen = getScreen(tr.x(), tr.y() - heightSpan); //2. 工具条在截图区域右上角
+        screen = QGuiApplication::screenAt(QPoint(tr.x(), tr.y() - heightSpan)); //2. 工具条在截图区域右上角
         if (screen) {
             top = tr.y() - height() - 6;
             posState = 1;
-            if (!getScreen(left, tr.y() - heightSpan)) {//工具条左上角不在屏幕中
+            if (!QGuiApplication::screenAt(QPoint(left, tr.y() - heightSpan))) {//工具条左上角不在屏幕中
                 left = screen->geometry().left();
             }
         }
         else { //3. 屏幕顶部和屏幕底部都没有足够的空间，工具条只能显示在截图区域内  
             top = br.y() - height() - 6;
             posState = 2;
-            screen = getScreen(br.x(), top);
-            if (!getScreen(left, top)) {//工具条左上角不在屏幕中
+            screen = QGuiApplication::screenAt(QPoint(br.x(), top));
+            if (!QGuiApplication::screenAt(QPoint(left, top))) {//工具条左上角不在屏幕中
                 left = screen->geometry().left();
             }
         }

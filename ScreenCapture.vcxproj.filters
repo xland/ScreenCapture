@@ -134,6 +134,9 @@
     <ClCompile Include="Win\WinLongViewer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Tool\ToolLong.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App\App.h">
@@ -253,6 +256,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="Win\WinLongViewer.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Tool\ToolLong.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

@@ -8,6 +8,8 @@
 #include "CutMask.h"
 #include "App/Util.h"
 #include "WinLongViewer.h"
+#include "Tool/ToolLong.h"
+#include "WinPin.h"
 
 namespace {
     struct MatchResult {
@@ -75,9 +77,7 @@ areaX{ areaX }, areaY{ areaY }, areaW{ areaW }, areaH{ areaH }
 
     setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::Tool);
     setAttribute(Qt::WA_QuitOnClose, false);
-    copyBtn = new QPushButton("拷贝", this);
-    copyBtn->setFixedSize(width, btnHeight);
-    connect(copyBtn, &QPushButton::clicked, this, &WinLongViewer::copyFunc);
+    tools = new ToolLong(this);
 
     img1 = Util::printScreen(areaX, areaY, areaW, areaH);
     imgResult = img1;
@@ -99,30 +99,33 @@ WinLongViewer::~WinLongViewer()
 void WinLongViewer::capStep()
 {
     auto img2 = Util::printScreen(areaX, areaY, areaW, areaH);
-    int startY{ -1 }, startX{ 999999 }, endY{ -1 }, endX{ -1 };
+    static int startY{ -1 }, startX{ 999999 }, endY{ -1 }, endX{ -1 };
     {
-        QList<QPoint> poss;
-        for (size_t y = 0; y < img1.height(); y++)
-        {
-            for (size_t x = 0; x < img1.width(); x++)
+        if (firstCheck) {
+            QList<QPoint> poss;
+            for (size_t y = 0; y < img1.height(); y++)
             {
-                if (img1.pixel(x, y) != img2.pixel(x, y)) {
-                    if (startY == -1) {
-                        startY = y;
+                for (size_t x = 0; x < img1.width(); x++)
+                {
+                    if (img1.pixel(x, y) != img2.pixel(x, y)) {
+                        if (startY == -1) {
+                            startY = y;
+                        }
+                        poss.push_back(QPoint(x, y));
                     }
-                    poss.push_back(QPoint(x, y));
                 }
             }
-        }
-        endY = poss.last().y();
-        for (size_t i = 0; i < poss.size(); i++)
-        {
-            if (poss[i].x() < startX) startX = poss[i].x();
-            if (poss[i].x() > endX) endX = poss[i].x();
+            endY = poss.last().y();
+            for (size_t i = 0; i < poss.size(); i++)
+            {
+                if (poss[i].x() < startX) startX = poss[i].x();
+                if (poss[i].x() > endX) endX = poss[i].x();
+            }
+            firstCheck = false;
         }
     }
     QImage img11 = img1.copy(startX, startY, endX, img1.height() - startY);
-    QImage img22 = img2.copy(startX, startY, endX, 160);
+    QImage img22 = img2.copy(startX, startY, endX, 180);
     auto y = findMostSimilarRegionParallel(img11, img22);
     if (y == 0) {
         return;
@@ -140,11 +143,33 @@ void WinLongViewer::capStep()
     adjustPosSize();
 }
 
-void WinLongViewer::copyFunc()
+void WinLongViewer::saveToClipboard()
 {
     Util::imgToClipboard(imgResult);
     close();
     qApp->exit(9);
+}
+
+void WinLongViewer::saveToFile()
+{
+    auto flag = Util::saveToFile(imgResult);
+    if (flag) {
+        close();
+        qApp->exit(8);
+    }
+}
+
+void WinLongViewer::pin()
+{
+    QScreen* screen = QGuiApplication::primaryScreen();
+    imgResult.setDevicePixelRatio(screen->devicePixelRatio());
+    QRect screenGeometry = screen->availableGeometry();
+    int x = screenGeometry.x() + (screenGeometry.width() - imgResult.width()) / 2;
+    int y = screenGeometry.y() + (screenGeometry.height() - imgResult.height()) / 2;
+    new WinPin(QPoint(x,y), imgResult);
+    auto win = (WinLong*)parent();
+    win->close();
+    win->deleteLater();
 }
 
 void WinLongViewer::timerFunc()
@@ -178,13 +203,23 @@ void WinLongViewer::closeEvent(QCloseEvent* event)
 void WinLongViewer::adjustPosSize()
 {
     auto dpr = devicePixelRatio();
-    auto sn = imgResult.width() / width;
+    auto sn = imgResult.width() / tools->width();
     auto h = imgResult.height() / sn;
-    imgSmall = imgResult.scaled(QSize(width * dpr, h*dpr), Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    imgSmall = imgResult.scaled(QSize(tools->width() * dpr, h*dpr), Qt::KeepAspectRatio, Qt::SmoothTransformation);
     imgSmall.setDevicePixelRatio(dpr);
-    setFixedSize(imgSmall.width()/dpr, imgSmall.height()/dpr + btnHeight);
-    auto x = (areaX + areaW) / dpr+4;
-    auto y = (areaY + areaH) / dpr;
-    move(x, y - height());
-    copyBtn->move(0, height()-btnHeight);
+    setFixedSize(imgSmall.width()/dpr, imgSmall.height()/dpr + tools->height());
+    auto y = (areaY + areaH) / dpr - height();
+    auto x = (areaX + areaW) / dpr + 4;
+    auto screen = QGuiApplication::screenAt(QPoint(x + width(),y));
+    if (screen) {
+        move(x, y);
+    }
+    else {
+        auto x = areaX / dpr - width() - 4;
+        move(x, y);
+    }
+    tools->move(0, height()- tools->height());
+    if (!tools->isVisible()) {
+        tools->setVisible(true);
+    }
 }

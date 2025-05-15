@@ -16,6 +16,7 @@ public:
 public:
 	int selectIndex{ -1 };
 protected:
+	void initWindow();
 	void showEvent(QShowEvent* event) override;
 	void keyPressEvent(QKeyEvent* event) override;
 protected:

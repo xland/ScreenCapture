@@ -11,19 +11,7 @@
 
 ToolBase::ToolBase(QWidget* parent) : QWidget(parent)
 {
-    setMouseTracking(true);
-    setVisible(false);
-    setAutoFillBackground(false);
-    setAttribute(Qt::WA_TranslucentBackground, true);
-    setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::Tool);
-    setAttribute(Qt::WA_QuitOnClose, false);
-    setAttribute(Qt::WA_OpaquePaintEvent);
-    setAttribute(Qt::WA_NoSystemBackground);
-    setAttribute(Qt::WA_Hover);
-    setCursor(Qt::PointingHandCursor);
-    //setFocusPolicy(Qt::FocusPolicy::StrongFocus);
-    //setWindowFlag(Qt::WindowDoesNotAcceptFocus);   //右键Pin菜单，要点两次才会出现
-    setFocusPolicy(Qt::StrongFocus);
+
 }
 ToolBase::~ToolBase()
 {
@@ -35,6 +23,21 @@ void ToolBase::btnCheckChange(BtnCheck* btn)
 
 void ToolBase::btnClick(Btn* btn)
 {
+}
+
+void ToolBase::initWindow()
+{
+    setMouseTracking(true);
+    setVisible(false);
+    setAutoFillBackground(false);
+    setAttribute(Qt::WA_TranslucentBackground, true);
+    setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::Tool);
+    setAttribute(Qt::WA_QuitOnClose, false);
+    setAttribute(Qt::WA_OpaquePaintEvent);
+    setAttribute(Qt::WA_NoSystemBackground);
+    setAttribute(Qt::WA_Hover);
+    setCursor(Qt::PointingHandCursor);
+    setFocusPolicy(Qt::StrongFocus);
 }
 
 void ToolBase::showEvent(QShowEvent* event)

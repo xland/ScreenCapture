@@ -147,6 +147,7 @@
     <ClCompile Include="Tool\BtnCheck.cpp" />
     <ClCompile Include="Tool\ColorCtrl.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Tool\ToolLong.cpp" />
     <ClCompile Include="Win\Canvas.cpp" />
     <ClCompile Include="Win\PixelInfo.cpp" />
     <ClCompile Include="Tool\StrokeCtrl.cpp" />
@@ -164,6 +165,7 @@
     <ClCompile Include="Win\WinPinBtns.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <QtMoc Include="Tool\ToolLong.h" />
     <QtMoc Include="Win\WinLongViewer.h" />
     <QtMoc Include="Win\WinLongTip.h" />
     <QtMoc Include="Win\WinLong.h" />

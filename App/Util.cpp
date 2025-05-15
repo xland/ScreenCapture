@@ -173,11 +173,16 @@ bool Util::saveToFile(const QImage& img)
     auto fileName = "Img" + QDateTime::currentDateTime().toString("yyyyMMddhhmmsszzz") + ".png";    
     QString filePath;
 	if (savePath.isEmpty()) {
-        QString desktopPath = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
-        filePath = QDir::cleanPath(desktopPath + QDir::separator() + fileName);
-        filePath = QFileDialog::getSaveFileName(nullptr, Lang::get("saveFile"), filePath, "ScreenCapture (*.png)");
-        if (filePath.isEmpty())
-        {
+        QFileDialog dialog(nullptr, Lang::get("saveFile"));
+        dialog.setAcceptMode(QFileDialog::AcceptSave);
+        dialog.setNameFilter("ScreenCapture (*.png)");
+        dialog.setDefaultSuffix("png");
+        dialog.setAttribute(Qt::WA_QuitOnClose, false);
+        dialog.setDirectory(QStandardPaths::writableLocation(QStandardPaths::DesktopLocation));
+        if (dialog.exec() == QDialog::Accepted) {
+            filePath = dialog.selectedFiles().first();
+        }
+        else {
             return false;
         }
     }
