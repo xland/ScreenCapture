@@ -9,6 +9,66 @@
 #include "App/Util.h"
 #include "WinLongViewer.h"
 
+namespace {
+    struct MatchResult {
+        int y;
+        double error;
+    };
+
+    MatchResult computeSSDAtY(int y, const QImage& gray1, const QImage& gray2) {
+        const int width = gray1.width();
+        const int blockHeight = gray2.height();
+        double error = 0.0;
+        const uchar* p1 = gray1.constBits() + y * gray1.bytesPerLine();
+        const uchar* p2 = gray2.constBits();
+        for (int row = 0; row < blockHeight; ++row) {
+            const uchar* row1 = p1 + row * gray1.bytesPerLine();
+            const uchar* row2 = p2 + row * gray2.bytesPerLine();
+            for (int x = 0; x < width; ++x) {
+                int diff = int(row1[x]) - int(row2[x]);
+                error += diff * diff;
+            }
+        }
+        return { y, error };
+    }
+
+    int findMostSimilarRegionParallel(const QImage& img1, const QImage& img2) {
+
+        auto gray1 = img1.convertToFormat(QImage::Format_Grayscale8);
+        auto gray2 = img2.convertToFormat(QImage::Format_Grayscale8);
+        const int searchHeight = gray1.height() - gray2.height() + 1;
+        QList<int> yList;
+        for (int y = 0; y < searchHeight; ++y) {
+            yList.append(y);
+        }
+        auto results = QtConcurrent::blockingMapped(yList, [&](int y) { return computeSSDAtY(y, gray1, gray2); });
+        MatchResult best = *std::min_element(results.begin(), results.end(), [](const MatchResult& a, const MatchResult& b) {
+            return a.error < b.error;
+            });
+        return best.y;
+    }
+
+    size_t findTopSameHeight(const QImage& img1, const QImage& img2) {
+
+        size_t y = 0;
+        for (; y < img1.height(); y++)
+        {
+            bool notSameLine{ false };
+            for (size_t x = 0; x < img1.width(); x++)
+            {
+                if (img1.pixel(x, y) != img2.pixel(x, y)) {
+                    notSameLine = true;
+                    break;
+                }
+            }
+            if (notSameLine) {
+                break;
+            }
+        }
+        return y;
+    }
+}
+
 WinLongViewer::WinLongViewer(const int& areaX, const int& areaY, const int& areaW, const int& areaH, QWidget *parent) : QMainWindow(parent),
 areaX{ areaX }, areaY{ areaY }, areaW{ areaW }, areaH{ areaH }
 {
@@ -36,71 +96,8 @@ areaX{ areaX }, areaY{ areaY }, areaW{ areaW }, areaH{ areaH }
 WinLongViewer::~WinLongViewer()
 {}
 
-#pragma region imgJoinMethod
-struct MatchResult {
-    int y;
-    double error;
-};
-
-MatchResult computeSSDAtY(int y, const QImage& gray1, const QImage& gray2) {
-    const int width = gray1.width();
-    const int blockHeight = gray2.height();
-    double error = 0.0;
-    const uchar* p1 = gray1.constBits() + y * gray1.bytesPerLine();
-    const uchar* p2 = gray2.constBits();
-    for (int row = 0; row < blockHeight; ++row) {
-        const uchar* row1 = p1 + row * gray1.bytesPerLine();
-        const uchar* row2 = p2 + row * gray2.bytesPerLine();
-        for (int x = 0; x < width; ++x) {
-            int diff = int(row1[x]) - int(row2[x]);
-            error += diff * diff;
-        }
-    }
-    return { y, error };
-}
-
-int findMostSimilarRegionParallel(const QImage& img1, const QImage& img2) {
-
-    auto gray1 = img1.convertToFormat(QImage::Format_Grayscale8);
-    auto gray2 = img2.convertToFormat(QImage::Format_Grayscale8);
-    const int searchHeight = gray1.height() - gray2.height() + 1;
-    // 构造搜索区间
-    QList<int> yList;
-    for (int y = 0; y < searchHeight; ++y) {
-        yList.append(y);
-    }
-    // 并行计算每个 y 的误差
-    auto results = QtConcurrent::blockingMapped(yList, [&](int y) { return computeSSDAtY(y, gray1, gray2); });
-    // 取最小误差的结果
-    MatchResult best = *std::min_element(results.begin(), results.end(), [](const MatchResult& a, const MatchResult& b) {
-        return a.error < b.error;
-        });
-    return best.y;
-}
-
-size_t findTopSameHeight(const QImage& img1, const QImage& img2) {
-
-    size_t y = 0;
-    for (; y < img1.height(); y++)
-    {
-        bool notSameLine{ false };
-        for (size_t x = 0; x < img1.width(); x++)
-        {
-            if (img1.pixel(x, y) != img2.pixel(x, y)) {
-                notSameLine = true;
-                break;
-            }
-        }
-        if (notSameLine) {
-            break;
-        }
-    }
-    return y;
-}
-#pragma endregion
 void WinLongViewer::capStep()
 {
-    //imgResult.setDevicePixelRatio(1.0);
     auto img2 = Util::printScreen(areaX, areaY, areaW, areaH);
     int startY{ -1 }, startX{ 999999 }, endY{ -1 }, endX{ -1 };
     {
@@ -128,8 +125,6 @@ void WinLongViewer::capStep()
     QImage img22 = img2.copy(startX, startY, endX, 160);
     auto y = findMostSimilarRegionParallel(img11, img22);
     if (y == 0) {
-        img1.save("1.png");
-        img2.save("2.png");
         return;
     }
     auto paintStart = imgResult.height() - (img1.height() - y - startY);
@@ -172,11 +167,7 @@ void WinLongViewer::paintEvent(QPaintEvent* event)
 {
     QPainter p(this);
     p.setRenderHint(QPainter::Antialiasing, true);
-    auto dpr = devicePixelRatio();
-    auto img = imgResult.scaled(QSize(width*dpr, height() * dpr), Qt::KeepAspectRatio, Qt::SmoothTransformation);
-    img.setDevicePixelRatio(dpr);
-    p.drawImage(0,0, img);
-    imgResult.setDevicePixelRatio(1.0);
+    p.drawImage(0,0, imgSmall);
 }
 
 void WinLongViewer::closeEvent(QCloseEvent* event)
@@ -188,10 +179,12 @@ void WinLongViewer::adjustPosSize()
 {
     auto dpr = devicePixelRatio();
     auto sn = imgResult.width() / width;
-    setFixedSize(width, imgResult.height() / sn);
-    auto x = (areaX + areaW) / dpr+6;
+    auto h = imgResult.height() / sn;
+    imgSmall = imgResult.scaled(QSize(width * dpr, h*dpr), Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    imgSmall.setDevicePixelRatio(dpr);
+    setFixedSize(imgSmall.width()/dpr, imgSmall.height()/dpr + btnHeight);
+    auto x = (areaX + areaW) / dpr+4;
     auto y = (areaY + areaH) / dpr;
     move(x, y - height());
     copyBtn->move(0, height()-btnHeight);
-    update();
 }

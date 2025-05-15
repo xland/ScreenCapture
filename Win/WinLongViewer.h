@@ -21,12 +21,13 @@ private:
 private:
 	QImage img1;
 	QImage imgResult;
+	QImage imgSmall;
 	int width{ 220 };
 	HWND targetHwnd;
 	QTimer* stepTimer;
 	int areaX, areaY, areaW, areaH;
 	int topIgnoreSpan{0};
 	bool firstCheck{ true };
+	int btnHeight{ 26 };
 	QPushButton* copyBtn;
-	int btnHeight{ 32 };
 };
