@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 4.0.2)
 project(ScreenCapture LANGUAGES CXX)
 
 # 设置C++标准

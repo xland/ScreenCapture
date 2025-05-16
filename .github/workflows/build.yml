@@ -37,11 +37,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install Wget and Ninja
+      - name: Install Wget, Cmake and Ninja
         shell: pwsh
         run: |
           choco install -y wget
           choco install -y ninja
+          choco install -y cmake
 
       - name: Add msbuild to PATH
         uses: microsoft/setup-msbuild@v2
@@ -84,7 +85,7 @@ jobs:
         run: |
           mkdir build && cd build
           cmake -G "Ninja" ..
-          cmake --build .. --config Release
+          cmake --build . --config Release
           
           tree /F /A ${{ github.workspace }} > ${{ github.workspace }}/1.txt
 
@@ -92,5 +93,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ScreenCapture-Release
-          path: 
-            - ${{ github.workspace }}/1.txt
+          path: |
+            ${{ github.workspace }}/1.txt
