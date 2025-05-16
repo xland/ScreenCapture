@@ -116,7 +116,7 @@ jobs:
           cmake -G "Ninja" ..
           cmake --build . --config Release
 
-          tree /F /A ${{ github.workspace }} > ${{ github.workspace }}/1.txt
+          tree /F /A ${{ github.workspace }}/build
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
