@@ -78,7 +78,7 @@ jobs:
           -p:Configuration=Release `
           -p:Platform=x64 `
           -p:QtInstall=${{ env.QT_VERSION }} `
-          -p:QTDir=${{ env.QT_DIR }}/${{ env.QT_VERSION }}/mingw1420_64_UCRT `
+          -p:QTDir=${{ env.QT_DIR }}/6.9.0-static/msvc2022_64 `
           -p:QtMsBuild=${{ env.QtMSBuild }} `
           ./ScreenCapture.sln
 
