@@ -31,7 +31,8 @@ jobs:
     env:
       QT_DIR: ${{ github.workspace }}/Qt
       QtMSBuild: ${{ github.workspace }}/QtMSBuild
-      QT_VERSION: "6.9.0-static_msvc2022_64"
+      QT_VERSION: "6.9.0-static"
+      QT_ARCH: "msvc2022_64"
 
     steps:
       - uses: actions/checkout@v4
@@ -41,14 +42,14 @@ jobs:
         with:
           msbuild-architecture: x64
 
-      - name: Install Qt # Dir: msvc2022_64
+      - name: Install Qt # Dir: 6.9.0-static/msvc2022_64/...
         shell: pwsh
         run: |
           mkdir ${{ env.QT_DIR }}
-          $url = "https://github.com/yuanpeirong/buildQt/releases/download/Qt6.9.0_rev0/Qt_6.9.0-static-Release_msvc2022_64.7z"
-          $output = "$env:TEMP\qt-static.7z"
+          $url = "https://github.com/yuanpeirong/buildQt/releases/download/Qt6.9.0_rev0/Qt_${{ env.QT_VERSION }}-Release_${{ QT_ARCH }}.7z"
+          $output = "$env:TEMP\qt.7z"
           Invoke-WebRequest -Uri $url -OutFile $output
-          Expand-Archive -Path $output -DestinationPath ${{ env.QT_DIR }} -Force
+          7z x "$output" -o"${{ env.QT_DIR }}" -y
 
       - name: Install QtMSBuild
         shell: pwsh
@@ -77,8 +78,8 @@ jobs:
           msbuild `
           -p:Configuration=Release `
           -p:Platform=x64 `
-          -p:QtInstall=${{ env.QT_VERSION }} `
-          -p:QTDir=${{ env.QT_DIR }}/6.9.0-static/msvc2022_64 `
+          -p:QtInstall=${{ env.QT_VERSION }}_${{ env.QT_ARCH }} `
+          -p:QTDir=${{ env.QT_DIR }}/${{ env.QT_VERSION }}/${{ env.QT_ARCH }} `
           -p:QtMsBuild=${{ env.QtMSBuild }} `
           ./ScreenCapture.sln
 
