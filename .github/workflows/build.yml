@@ -32,7 +32,7 @@ jobs:
       QT_DIR: ${{ github.workspace }}/Qt
       QtMSBuild: ${{ github.workspace }}/QtMSBuild
       QT_VERSION: "6.9.0-static"
-      QT_ARCH: "mingw1310_64"
+      QT_ARCH: "msvc2022_64" # "msvc2022_64"/"mingw1310_64"
       CHOCO_CACHE_DIR: C:\Users\runneradmin\AppData\Local\Temp\chocolatey
 
     steps:
@@ -113,7 +113,7 @@ jobs:
           QT_PATH: ${{ env.QT_DIR }}/${{ env.QT_VERSION }}/${{ env.QT_ARCH }}
         run: |
           mkdir build && cd build
-          cmake -G "Ninja" ..
+          cmake -G "Visual Studio 17 2022" .. # "Visual Studio 17 2022"/"Ninja"
           cmake --build . --config Release
 
           tree /F /A ${{ github.workspace }}/build
