@@ -1,4 +1,4 @@
-name: AutoBuild
+8name: AutoBuild
 
 on:
   push:
@@ -118,8 +118,7 @@ jobs:
           mkdir build && cd build
 
           # 配置CMake使用静态链接
-          cmake -G "Visual Studio 17 2022" -A x64 -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded ^
-                -DBUILD_SHARED_LIBS=OFF ..
+          cmake -G "Visual Studio 17 2022" -A x64 -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded ..
 
           # 使用MSBuild编译项目并设置静态链接参数
           msbuild ScreenCapture.sln /p:Configuration=Release /p:Platform=x64 ^
