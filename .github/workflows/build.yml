@@ -30,38 +30,25 @@ jobs:
 
     env:
       QT_DIR: ${{ github.workspace }}/Qt
-      BUILD_DIR: ${{ github.workspace }}/build
       QtMSBuild: ${{ github.workspace }}/QtMSBuild
-      QT_VERSION: 6.9.0
+      QT_VERSION: "6.9.0-static_msvc2022_64"
 
     steps:
       - uses: actions/checkout@v4
-
-      # 缓存Qt和构建目录
-      - name: Cache Qt and Build
-        uses: actions/cache@v4
-        with:
-          path: |
-            ${{ env.QT_DIR }}
-            ${{ env.BUILD_DIR }}
-          key: ${{ runner.os }}-qt-${{ hashFiles('**/CMakeLists.txt') }}-${{ hashFiles('**/*.cmake') }}-qt690
-          restore-keys: |
-            ${{ runner.os }}-qt-
 
       - name: Add msbuild to PATH
         uses: microsoft/setup-msbuild@v2
         with:
           msbuild-architecture: x64
 
-      - name: Install Qt
-        uses: jurplel/install-qt-action@v4
-        with:
-          version: "${{ env.QT_VERSION }}"
-          arch: "win64_msvc2022_64"
-          dir: ${{ github.workspace }}
-          cache: true
-          setup-python: true
-          tools: "tools_cmake tools_ninja tools_vcredist"
+      - name: Install Qt # Dir: msvc2022_64
+        shell: pwsh
+        run: |
+          mkdir ${{ env.QT_DIR }}
+          $url = "https://github.com/yuanpeirong/buildQt/releases/download/Qt6.9.0_rev0/Qt_6.9.0-static-Release_msvc2022_64.7z"
+          $output = "$env:TEMP\qt-static.7z"
+          Invoke-WebRequest -Uri $url -OutFile $output
+          Expand-Archive -Path $output -DestinationPath ${{ env.QT_DIR }} -Force
 
       - name: Install QtMSBuild
         shell: pwsh
@@ -88,26 +75,12 @@ jobs:
         shell: pwsh
         run: |
           msbuild `
-          -p:Configuration=Debug `
+          -p:Configuration=Release `
           -p:Platform=x64 `
-          -p:QtInstall=${{ env.QT_VERSION }}_msvc2022_64 `
-          -p:QtBuildConfig=debug `
-          -p:QTDir=${{ env.QT_DIR }}/${{ env.QT_VERSION }}/msvc2022_64 `
+          -p:QtInstall=${{ env.QT_VERSION }} `
+          -p:QTDir=${{ env.QT_DIR }}/${{ env.QT_VERSION }}/mingw1420_64_UCRT `
           -p:QtMsBuild=${{ env.QtMSBuild }} `
-          -p:LinkIncremental=true `
-          -p:QT_LINKAGE=dynamic `
           ./ScreenCapture.sln
-
-      - name: Deploy Qt Dependencies
-        working-directory: ${{ env.BUILD_DIR }}
-        run: |
-          windeployqt --release --no-translations --no-system-d3d-compiler Debug/ScreenCapture.exe
-
-      - name: Create Release Package
-        run: |
-          mkdir release-package
-          copy "${{ env.BUILD_DIR }}\Debug\ScreenCapture.exe" release-package\
-          copy "${{ env.BUILD_DIR }}\Debug\*.dll" release-package\
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
