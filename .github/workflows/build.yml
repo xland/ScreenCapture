@@ -93,5 +93,4 @@ jobs:
         with:
           name: ScreenCapture-Release
           path: 
-            - ${{ github.workspace }}/build/CMakeFiles/3.31.6/CompilerIdCXX/a.exe
             - ${{ github.workspace }}/1.txt
