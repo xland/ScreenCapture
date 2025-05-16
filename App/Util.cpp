@@ -165,7 +165,7 @@ bool Util::saveToFile(const QImage& img)
         img.save(savePath, "PNG", compressQuality);
         return true;
     }
-    auto fileName = "Img" + QDateTime::currentDateTime().toString("yyyyMMddhhmmsszzz") + ".png";    
+    auto fileName = "Img" + QDateTime::currentDateTime().toString("yyyy-MM-dd@hh-mm-ss-zzz") + ".png";    
     QString filePath;
 	if (savePath.isEmpty()) {
         QFileDialog dialog(nullptr, Lang::get("saveFile"));
