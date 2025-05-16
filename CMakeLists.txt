@@ -128,13 +128,27 @@ if(WIN32)
     endif()
 endif()
 
+# 处理资源文件
+if(MSVC)
+  # MSVC 环境下直接使用 .rc 文件
+  list(APPEND PROJECT_SOURCES App/Res.rc)
+else()
+  # MinGW 环境下可能需要特殊处理
+  if(WIN32)
+    # 确保 windres 能正确处理资源文件
+    set(CMAKE_RC_COMPILER_INIT windres)
+    enable_language(RC)
+    set(CMAKE_RC_COMPILE_OBJECT
+      "<CMAKE_RC_COMPILER> -O coff -i <SOURCE> -o <OBJECT>")
+    list(APPEND PROJECT_SOURCES App/Res.rc)
+  endif()
+endif()
+
 # 创建可执行文件
 add_executable(${PROJECT_NAME} WIN32 
-    ${SOURCES} 
-    ${HEADERS} 
-    ${MOC_HEADERS} 
+    ${PROJECT_SOURCES} 
+    ${PROJECT_HEADERS} 
     ${RESOURCES}
-    App/Res.rc
     Res/logo.ico
     Res/iconfont.ttf
 )

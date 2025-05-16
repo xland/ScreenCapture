@@ -82,6 +82,7 @@ jobs:
           QTMSBUILDS: ${{ env.QtMSBuild }}
           QT_PATH: ${{ env.QT_DIR }}/${{ env.QT_VERSION }}/${{ env.QT_ARCH }}
           QT6_Dir: ${{ env.QT_DIR }}/${{ env.QT_VERSION }}/${{ env.QT_ARCH }}/lib/cmake
+          Qt6BundledZLIB_DIR: ${{ env.QT_DIR }}/${{ env.QT_VERSION }}/${{ env.QT_ARCH }}/lib/cmake/Qt6BundledZLIB
           # QT_PATH 也可以用这两个之一代替 QT_STATIC_MSVC_DIR/QT_STATIC_MINGW_DIR
         run: |
           # $env:QT_PATH = "C:/Qt/6.9.0-static/mingw1310_64"
