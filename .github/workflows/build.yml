@@ -32,7 +32,7 @@ jobs:
       QT_DIR: ${{ github.workspace }}/Qt
       QtMSBuild: ${{ github.workspace }}/QtMSBuild
       QT_VERSION: "6.9.0-static"
-      QT_ARCH: "msvc2022_64"
+      QT_ARCH: "mingw1310_64"
 
     steps:
       - uses: actions/checkout@v4
@@ -41,6 +41,11 @@ jobs:
         uses: microsoft/setup-msbuild@v2
         with:
           msbuild-architecture: x64
+
+      - name: Install Ninja
+        shell: pwsh
+        run: |
+          choco install ninja -y
 
       - name: Install Qt # Dir: 6.9.0-static/msvc2022_64/...
         shell: pwsh
@@ -76,12 +81,16 @@ jobs:
         shell: pwsh
         env:
           QTMSBUILDS: ${{ env.QtMSBuild }}
+          QT_PATH: ${{ env.QT_DIR }}/${{ env.QT_VERSION }}/${{ env.QT_ARCH }}
+          # QT_PATH 也可以用这两个之一代替 QT_STATIC_MSVC_DIR/QT_STATIC_MINGW_DIR
         run: |
-          msbuild `
-          -p:Configuration=Release `
-          -p:Platform=x64 `
-          -p:QTDir=${{ env.QT_DIR }}/${{ env.QT_VERSION }}/${{ env.QT_ARCH }} `
-          ./ScreenCapture.sln
+          mkdir build && cd build
+          cmake -G "Ninja" ..
+          cmake --build . --config Release
+          
+          # 创建打包目录并复制文件
+          mkdir -p ../release-package
+          cp -r bin/* ../release-package/
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
