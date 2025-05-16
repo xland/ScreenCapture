@@ -67,6 +67,7 @@ set_property(DIRECTORY PROPERTY CMAKE_CONFIGURE_DEPENDS
 
 # 添加资源
 set(RESOURCES
+    App/Res.rc
     res.qrc
 )
 
