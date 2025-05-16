@@ -4,6 +4,7 @@
 
 class CutMask;
 class WinLongTip;
+class ToolLong;
 class WinLong : public WinBase
 {
 	Q_OBJECT
@@ -11,8 +12,8 @@ class WinLong : public WinBase
 public:
 	WinLong(QWidget *parent = nullptr);
 	~WinLong();
+	void pin();
 	CutMask* cutMask;
-	QImage imgBg;
 	WinLongTip* winLongTip;
 protected:
 	void paintEvent(QPaintEvent* event) override;
@@ -20,9 +21,21 @@ protected:
 	void mouseMoveEvent(QMouseEvent* event) override;
 	void mouseReleaseEvent(QMouseEvent* event) override;
 	void closeEvent(QCloseEvent* event) override;
-	void showEvent(QShowEvent* event) override;
+	QImage getTargetImg();
 private:
 	void initWindow();
+	void startCap();
+	void timerFunc();
+	void capStep();
+	void initTool();
 private:
-	QImage resultImg;
+	bool firstCheck{ true };
+	QImage imgBg;
+	int areaX, areaY, areaW, areaH;
+	QImage img1;
+	QImage img2;
+	QImage imgResult;
+	QTimer* stepTimer;
+	HWND targetHwnd;
+	ToolLong* tools;
 };

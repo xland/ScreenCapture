@@ -75,7 +75,6 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>dwmapi.lib;shcore.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <UACUIAccess>true</UACUIAccess>
     </Link>
     <PostBuildEvent>
       <Command>
@@ -92,7 +91,6 @@
       <AdditionalDependencies>dwmapi.lib;shcore.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>
       </AdditionalLibraryDirectories>
-      <UACUIAccess>true</UACUIAccess>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="Configuration">
@@ -159,13 +157,12 @@
     <ClCompile Include="Win\CutMask.cpp" />
     <ClCompile Include="Win\WinLong.cpp" />
     <ClCompile Include="Win\WinLongTip.cpp" />
-    <ClCompile Include="Win\WinLongViewer.cpp" />
     <ClCompile Include="Win\WinPin.cpp" />
     <ClCompile Include="Win\WinPinBtns.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Win\LongCapFuncs.h" />
     <QtMoc Include="Tool\ToolLong.h" />
-    <QtMoc Include="Win\WinLongViewer.h" />
     <QtMoc Include="Win\WinLongTip.h" />
     <QtMoc Include="Win\WinLong.h" />
     <QtMoc Include="Win\WinPinBtns.h" />

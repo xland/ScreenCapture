@@ -3,17 +3,15 @@
 #include "../App/App.h"
 #include "../App/Util.h"
 #include "../App/Lang.h"
-#include "../Win/WinPin.h"
-#include "../Win/WinFull.h"
+#include "../Win/WinLong.h"
 #include "../Win/CutMask.h"
-#include "../Win/Canvas.h"
-#include "../Win/WinLongViewer.h"
 
 #include "ToolLong.h"
 #include "Btn.h"
 
 ToolLong::ToolLong(QWidget* parent) : ToolBase(parent)
 {
+    initWindow();
     QHBoxLayout* layout = new QHBoxLayout(this);
     layout->setSpacing(0);
     layout->setContentsMargins(4, 2, 4, 2);
@@ -39,17 +37,22 @@ ToolLong::~ToolLong()
 
 void ToolLong::btnClick(Btn* btn)
 {
-    auto win = (WinLongViewer*)parent();
 	if (btn->name == "clipboard") {
+        auto win = (WinBase*)parent();
         win->saveToClipboard();
 	}
 	else if (btn->name == "save") {
+        auto win = (WinBase*)parent();
         win->saveToFile();
 	}
 	else if (btn->name == "pin") {
-        win->pin();
+        auto win = dynamic_cast<WinLong*>(parent());
+        if (win) {
+            win->pin();
+        }
 	}
 	else if (btn->name == "close") {
+        auto win = (WinBase*)parent();
         win->close();
         qApp->exit(1);
 	}
@@ -62,12 +65,6 @@ void ToolLong::paintEvent(QPaintEvent* event)
     painter.setBrush(Qt::white);
     painter.setPen(Qt::NoPen);
     painter.drawRect(rect());
-    QPen pen;
-    pen.setColor(QColor(22, 118, 255));
-    pen.setWidthF(1);
-    painter.setBrush(Qt::NoBrush);
-    painter.setPen(pen);
-    painter.drawLine(0, 1, width(), 1);
 }
 
 void ToolLong::closeEvent(QCloseEvent* event)

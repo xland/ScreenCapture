@@ -48,23 +48,23 @@ QMap<QString, QString> App::getCmd()
     return params;
 }
 bool App::parseCmd(const QMap<QString, QString>& params) {
+    if (params.contains("lang")) {
+        QString lang = params["lang"];
+        if (lang == "en") {
+            Lang::init("en");
+        }
+        else {
+            Lang::init("zhcn");
+        }
+    }
+    else {
+        Lang::init("zhcn");
+    }
     if (params.contains("comp")) {
 		if(!setCompressVal(params["comp"])) return false;
     }
     if (params.contains("path")) {
         defaultSavePath = params["path"];
-    }
-    if (params.contains("lang")) {
-		QString lang = params["lang"];
-		if (lang == "en") {
-			Lang::init("en");
-		}
-		else {
-			Lang::init("zhcn");
-		}
-    }
-    else {
-		Lang::init("zhcn");
     }
     if (params.contains("pin")) {
 		auto pinVal = params["pin"];

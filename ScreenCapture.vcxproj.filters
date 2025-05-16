@@ -131,9 +131,6 @@
     <ClCompile Include="Win\WinLongTip.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Win\WinLongViewer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Tool\ToolLong.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -155,6 +152,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="App\Res.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Win\LongCapFuncs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -253,9 +253,6 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="Win\WinLongTip.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="Win\WinLongViewer.h">
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="Tool\ToolLong.h">
