@@ -60,6 +60,9 @@ bool App::parseCmd(const QMap<QString, QString>& params) {
     else {
         Lang::init("zhcn");
     }
+    if (params.contains("tool")) {
+        tools = params["tool"].split(",");
+    }
     if (params.contains("comp")) {
 		if(!setCompressVal(params["comp"])) return false;
     }
@@ -100,9 +103,6 @@ bool App::parseCmd(const QMap<QString, QString>& params) {
             return false;
         }
 	}
-    if (params.contains("tool")) {
-        tools = params["tool"].split(",");
-    }
     return false;
 }
 void App::pinClipboard(const QString& cmd)

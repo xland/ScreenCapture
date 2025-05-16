@@ -22,13 +22,18 @@ void BtnBase::enterEvent(QEnterEvent* event)
 	{
 		auto tip = Lang::get(name);
 		QToolTip::showText(QCursor::pos(), tip, this);
+		isHover = true;
+		update();
 	}
-	isHover = true;
-	update();
+	QWidget::enterEvent(event);
 }
 
 void BtnBase::leaveEvent(QEvent* event)
 {
-	isHover = false;
-	update();
+	if (isHover) {
+		QToolTip::hideText();
+		isHover = false;
+		update();
+	}
+	QWidget::leaveEvent(event);
 }
