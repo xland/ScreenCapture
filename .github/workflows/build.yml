@@ -33,9 +33,19 @@ jobs:
       QtMSBuild: ${{ github.workspace }}/QtMSBuild
       QT_VERSION: "6.9.0-static"
       QT_ARCH: "mingw1310_64"
+      CHOCO_CACHE_DIR: C:\Users\runneradmin\AppData\Local\Temp\chocolatey
 
     steps:
       - uses: actions/checkout@v4
+
+      # 缓存 Chocolatey 包
+      - name: Cache Chocolatey packages
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.CHOCO_CACHE_DIR }}
+          key: chocolatey-${{ runner.os }}-${{ hashFiles('.github/workflows/build.yml') }}
+          restore-keys: |
+            chocolatey-${{ runner.os }}-
 
       - name: Install Wget, Cmake and Ninja
         shell: pwsh
@@ -49,7 +59,17 @@ jobs:
         with:
           msbuild-architecture: x64
 
-      - name: Install Qt # Dir: 6.9.0-static/msvc2022_64/...
+      # 缓存 Qt 库
+      - name: Cache Qt library
+        id: cache-qt
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.QT_DIR }}
+          key: qt-${{ runner.os }}-${{ env.QT_VERSION }}-${{ env.QT_ARCH }}
+
+      # 只有当缓存未命中时才安装 Qt
+      - name: Install Qt
+        if: steps.cache-qt.outputs.cache-hit != 'true'
         shell: pwsh
         run: |
           mkdir ${{ env.QT_DIR }}
@@ -58,7 +78,17 @@ jobs:
           Invoke-WebRequest -Uri $url -OutFile $output
           7z x "$output" -o"${{ env.QT_DIR }}" -y
 
+      # 缓存 QtMSBuild
+      - name: Cache QtMSBuild
+        id: cache-qtmsbuild
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.QtMSBuild }}
+          key: qtmsbuild-${{ runner.os }}-3.3.1
+
+      # 只有当缓存未命中时才安装 QtMSBuild
       - name: Install QtMSBuild
+        if: steps.cache-qtmsbuild.outputs.cache-hit != 'true'
         shell: pwsh
         run: |
           $url = "https://download.qt.io/official_releases/vsaddin/3.3.1/qt-vsaddin-msbuild-3.3.1.zip"
