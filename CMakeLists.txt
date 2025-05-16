@@ -79,7 +79,7 @@ if(NOT DEFINED QT_PATH)
     endif()
 endif()
 
-set(CMAKE_PREFIX_PATH ${QT_PATH}/lib/cmake/Qt6)
+set(CMAKE_PREFIX_PATH ${QT_PATH}/lib/cmake)
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Concurrent)
 
 # 特定于平台的依赖库

@@ -81,12 +81,16 @@ jobs:
         env:
           QTMSBUILDS: ${{ env.QtMSBuild }}
           QT_PATH: ${{ env.QT_DIR }}/${{ env.QT_VERSION }}/${{ env.QT_ARCH }}
+          QT6_Dir: ${{ env.QT_DIR }}/${{ env.QT_VERSION }}/${{ env.QT_ARCH }}/lib/cmake
           # QT_PATH 也可以用这两个之一代替 QT_STATIC_MSVC_DIR/QT_STATIC_MINGW_DIR
         run: |
+          # $env:QT_PATH = "C:/Qt/6.9.0-static/mingw1310_64"
+          # $env:QT6_Dir = "C:/Qt/6.9.0-static/mingw1310_64/lib/cmake"
+          # $env:CXX = "C:/TDM-GCC-64/bin/g++.exe"
           mkdir build && cd build
           cmake -G "Ninja" ..
           cmake --build . --config Release
-          
+
           tree /F /A ${{ github.workspace }} > ${{ github.workspace }}/1.txt
 
       - name: Upload Artifacts
