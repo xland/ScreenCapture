@@ -37,16 +37,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Install Wget and Ninja
+        shell: pwsh
+        run: |
+          choco install -y wget
+          choco install -y ninja
+
       - name: Add msbuild to PATH
         uses: microsoft/setup-msbuild@v2
         with:
           msbuild-architecture: x64
-
-      - name: Install Ninja
-        shell: pwsh
-        run: |
-          wget "https://github.com/ninja-build/ninja/releases/latest/download/ninja-win.zip"
-          7z x "ninja-win.zip" -o"${{ github.workspace }}/ninja.exe" -y
 
       - name: Install Qt # Dir: 6.9.0-static/msvc2022_64/...
         shell: pwsh
