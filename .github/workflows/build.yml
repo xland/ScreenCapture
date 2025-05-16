@@ -81,7 +81,6 @@ jobs:
         env:
           QTMSBUILDS: ${{ env.QtMSBuild }}
           QT_PATH: ${{ env.QT_DIR }}/${{ env.QT_VERSION }}/${{ env.QT_ARCH }}
-          QT_MODULE: ${{ env.QT_DIR }}/${{ env.QT_VERSION }}/${{ env.QT_ARCH }}/lib/cmake
         run: |
           mkdir build && cd build
           cmake -G "Ninja" ..

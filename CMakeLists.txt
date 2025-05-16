@@ -70,17 +70,11 @@ set(RESOURCES
     res.qrc
 )
 
-# 设置Qt静态库路径
-if(NOT DEFINED QT_PATH)
-    if(MSVC)
-        set(QT_PATH $ENV{QT_STATIC_MSVC_DIR})
-    else()
-        set(QT_PATH $ENV{QT_STATIC_MINGW_DIR})
-    endif()
-endif()
-
-list(APPEND CMAKE_PREFIX_PATH "${QT_PATH}")
-list(APPEND CMAKE_MODULE_PATH "${QT_MODULE}")
+# 设置CMake查找Qt模块的路径
+set(CMAKE_PREFIX_PATH "$ENV{QT_PATH}")
+set(CMAKE_INCLUDE_PATH "$ENV{QT_PATH}/include")
+set(CMAKE_LIBRARY_PATH "$ENV{QT_PATH}/lib")
+set(CMAKE_PROGRAM_PATH "$ENV{QT_PATH}/bin")
 
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Concurrent)
 
