@@ -79,7 +79,9 @@ if(NOT DEFINED QT_PATH)
     endif()
 endif()
 
-list(APPEND CMAKE_PREFIX_PATH ${QT_PATH})
+list(APPEND CMAKE_PREFIX_PATH "${QT_PATH}")
+list(APPEND CMAKE_MODULE_PATH "${QT_MODULE}")
+
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Concurrent)
 
 # 特定于平台的依赖库
