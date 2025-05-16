@@ -40,12 +40,12 @@ jobs:
 
       # 缓存 Chocolatey 包
       - name: Cache Chocolatey packages
-        uses: actions/cache@v3
+        uses: actions/cache@v4.2.3
         with:
           path: ${{ env.CHOCO_CACHE_DIR }}
           key: chocolatey-${{ runner.os }}-${{ hashFiles('.github/workflows/build.yml') }}
           restore-keys: |
-            chocolatey-${{ runner.os }}-
+            chocolatey-${{ runner.os }}
 
       - name: Install Wget, Cmake and Ninja
         shell: pwsh
@@ -62,7 +62,7 @@ jobs:
       # 缓存 Qt 库
       - name: Cache Qt library
         id: cache-qt
-        uses: actions/cache@v3
+        uses: actions/cache@v4.2.3
         with:
           path: ${{ env.QT_DIR }}
           key: qt-${{ runner.os }}-${{ env.QT_VERSION }}-${{ env.QT_ARCH }}
@@ -81,7 +81,7 @@ jobs:
       # 缓存 QtMSBuild
       - name: Cache QtMSBuild
         id: cache-qtmsbuild
-        uses: actions/cache@v3
+        uses: actions/cache@v4.2.3
         with:
           path: ${{ env.QtMSBuild }}
           key: qtmsbuild-${{ runner.os }}-3.3.1
@@ -123,4 +123,4 @@ jobs:
         with:
           name: ScreenCapture-Release
           path: |
-            ${{ github.workspace }}/1.txt
+            ${{ github.workspace }}/build
