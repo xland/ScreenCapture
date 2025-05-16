@@ -76,7 +76,6 @@ jobs:
         shell: pwsh
         env:
           QTMSBUILDS: ${{ env.QtMSBuild }}
-          QTVERSION: ${{ env.QT_VERSION }}_${{ env.QT_ARCH }}
         run: |
           msbuild `
           -p:Configuration=Release `
