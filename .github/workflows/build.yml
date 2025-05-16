@@ -45,7 +45,8 @@ jobs:
       - name: Install Ninja
         shell: pwsh
         run: |
-          choco install ninja -y
+          wget "https://github.com/ninja-build/ninja/releases/latest/download/ninja-win.zip"
+          7z x "ninja-win.zip" -o"${{ github.workspace }}/ninja.exe" -y
 
       - name: Install Qt # Dir: 6.9.0-static/msvc2022_64/...
         shell: pwsh
@@ -85,13 +86,10 @@ jobs:
           cmake -G "Ninja" ..
           cmake --build . --config Release
           
-          tree . /f
-          # 创建打包目录并复制文件
-          mkdir -p ../release-package
-          cp -r bin/* ../release-package/
+          tree .. /f
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: ScreenCapture-Release
-          path: release-package
+          path: ${{ github.workspace }}/build/*
