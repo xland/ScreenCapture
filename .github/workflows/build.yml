@@ -74,13 +74,14 @@ jobs:
 
       - name: Build
         shell: pwsh
+        env:
+          QTMSBUILDS: ${{ env.QtMSBuild }}
+          QTVERSION: ${{ env.QT_VERSION }}_${{ env.QT_ARCH }}
         run: |
           msbuild `
           -p:Configuration=Release `
           -p:Platform=x64 `
-          -p:QtInstall=${{ env.QT_VERSION }}_${{ env.QT_ARCH }} `
           -p:QTDir=${{ env.QT_DIR }}/${{ env.QT_VERSION }}/${{ env.QT_ARCH }} `
-          -p:QtMsBuild=${{ env.QtMSBuild }} `
           ./ScreenCapture.sln
 
       - name: Upload Artifacts
