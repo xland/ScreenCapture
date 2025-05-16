@@ -1,0 +1,116 @@
+name: AutoBuild
+
+on:
+  push:
+    branches: ["main", "add_auto_build"]
+    paths-ignore:
+      - ".gitignore"
+      - "*.md"
+      - "**.txt"
+      - "LICENSE"
+  pull_request:
+    branches: ["main", "add_auto_build"]
+    paths-ignore:
+      - ".gitignore"
+      - "*.md"
+      - "**.txt"
+      - "LICENSE"
+  workflow_dispatch:
+
+env:
+  CARGO_TERM_COLOR: always
+  CMAKE_BUILD_PARALLEL_LEVEL: 4
+
+jobs:
+  build:
+    runs-on: windows-latest
+    permissions:
+      contents: write
+      actions: write
+
+    env:
+      QT_DIR: ${{ github.workspace }}/Qt
+      BUILD_DIR: ${{ github.workspace }}/build
+      QtMSBuild: ${{ github.workspace }}/QtMSBuild
+      QT_VERSION: 6.9.0
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # 缓存Qt和构建目录
+      - name: Cache Qt and Build
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ env.QT_DIR }}
+            ${{ env.BUILD_DIR }}
+          key: ${{ runner.os }}-qt-${{ hashFiles('**/CMakeLists.txt') }}-${{ hashFiles('**/*.cmake') }}-qt690
+          restore-keys: |
+            ${{ runner.os }}-qt-
+
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@v2
+        with:
+          msbuild-architecture: x64
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: "${{ env.QT_VERSION }}"
+          arch: "win64_msvc2022_64"
+          dir: ${{ github.workspace }}
+          cache: true
+          setup-python: true
+          tools: "tools_cmake tools_ninja tools_vcredist"
+
+      - name: Install QtMSBuild
+        shell: pwsh
+        run: |
+          $url = "https://download.qt.io/official_releases/vsaddin/3.3.1/qt-vsaddin-msbuild-3.3.1.zip"
+          $output = "$env:TEMP\qt-vsaddin-msbuild.zip"
+          $qtMsBuildDir = "${{ env.QtMSBuild }}"
+
+          Write-Host "Downloading Qt VSADDIN MSBuild from $url"
+          Invoke-WebRequest -Uri $url -OutFile $output
+
+          Write-Host "Creating directory: $qtMsBuildDir"
+          New-Item -ItemType Directory -Force -Path $qtMsBuildDir | Out-Null
+
+          Write-Host "Extracting files to $qtMsBuildDir"
+          Expand-Archive -Path $output -DestinationPath $qtMsBuildDir -Force
+
+          Write-Host "QtMSBuild installation completed"
+
+      - name: Tree
+        run: tree ${{ github.workspace }} /f
+
+      - name: Build
+        shell: pwsh
+        run: |
+          msbuild `
+          -p:Configuration=Debug `
+          -p:Platform=x64 `
+          -p:QtInstall=${{ env.QT_VERSION }}_msvc2022_64 `
+          -p:QtBuildConfig=debug `
+          -p:QTDir=${{ env.QT_DIR }}/${{ env.QT_VERSION }}/msvc2022_64 `
+          -p:QtMsBuild=${{ env.QtMSBuild }} `
+          -p:LinkIncremental=true `
+          -p:QT_LINKAGE=dynamic `
+          ./ScreenCapture.sln
+
+      - name: Deploy Qt Dependencies
+        working-directory: ${{ env.BUILD_DIR }}
+        run: |
+          windeployqt --release --no-translations --no-system-d3d-compiler Debug/ScreenCapture.exe
+
+      - name: Create Release Package
+        run: |
+          mkdir release-package
+          copy "${{ env.BUILD_DIR }}\Debug\ScreenCapture.exe" release-package\
+          copy "${{ env.BUILD_DIR }}\Debug\*.dll" release-package\
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ScreenCapture-Release
+          path: release-package
