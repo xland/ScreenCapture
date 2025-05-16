@@ -43,7 +43,7 @@ jobs:
         uses: actions/cache@v4.2.3
         with:
           path: ${{ env.CHOCO_CACHE_DIR }}
-          key: chocolatey-${{ runner.os }}-${{ hashFiles('.github/workflows/build.yml') }}
+          key: chocolatey-${{ runner.os }}-${{ hashFiles('CMakeLists.txt') }}
           restore-keys: |
             chocolatey-${{ runner.os }}
 
@@ -112,11 +112,21 @@ jobs:
           QTMSBUILDS: ${{ env.QtMSBuild }}
           QT_PATH: ${{ env.QT_DIR }}/${{ env.QT_VERSION }}/${{ env.QT_ARCH }}
         run: |
-          mkdir build && cd build
-          cmake -G "Visual Studio 17 2022" .. # "Visual Studio 17 2022"/"Ninja"
-          cmake --build . --config Release
+          $env:QT_PATH = "${{ env.QT_DIR }}/${{ env.QT_VERSION }}/${{ env.QT_ARCH }}"
+          $env:QTMSBUILDS = "${{ env.QtMSBuild }}"
 
-          tree /F /A ${{ github.workspace }}/build
+          mkdir build && cd build
+
+          # 配置CMake使用静态链接
+          cmake -G "Visual Studio 17 2022" -A x64 -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded ^
+                -DBUILD_SHARED_LIBS=OFF ..
+
+          # 使用MSBuild编译项目并设置静态链接参数
+          msbuild ScreenCapture.sln /p:Configuration=Release /p:Platform=x64 ^
+                  /p:RuntimeLibrary=MultiThreaded /p:LinkIncremental=false /m
+
+          # 显示目录结构
+          tree /F /A ${{ github.workspace }}
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
