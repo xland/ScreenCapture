@@ -74,9 +74,6 @@ jobs:
 
           Write-Host "QtMSBuild installation completed"
 
-      - name: Tree
-        run: tree ${{ github.workspace }} /f
-
       - name: Build
         shell: pwsh
         env:
@@ -88,6 +85,7 @@ jobs:
           cmake -G "Ninja" ..
           cmake --build . --config Release
           
+          tree . /f
           # 创建打包目录并复制文件
           mkdir -p ../release-package
           cp -r bin/* ../release-package/
