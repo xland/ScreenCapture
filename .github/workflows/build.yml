@@ -46,7 +46,7 @@ jobs:
         shell: pwsh
         run: |
           mkdir ${{ env.QT_DIR }}
-          $url = "https://github.com/yuanpeirong/buildQt/releases/download/Qt6.9.0_rev0/Qt_${{ env.QT_VERSION }}-Release_${{ QT_ARCH }}.7z"
+          $url = "https://github.com/yuanpeirong/buildQt/releases/download/Qt6.9.0_rev0/Qt_${{ env.QT_VERSION }}-Release_${{ env.QT_ARCH }}.7z"
           $output = "$env:TEMP\qt.7z"
           Invoke-WebRequest -Uri $url -OutFile $output
           7z x "$output" -o"${{ env.QT_DIR }}" -y
