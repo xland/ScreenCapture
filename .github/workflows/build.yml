@@ -112,16 +112,13 @@ jobs:
           QTMSBUILDS: ${{ env.QtMSBuild }}
           QT_PATH: ${{ env.QT_DIR }}/${{ env.QT_VERSION }}/${{ env.QT_ARCH }}
         run: |
-          $env:QT_PATH = "${{ env.QT_DIR }}/${{ env.QT_VERSION }}/${{ env.QT_ARCH }}"
-          $env:QTMSBUILDS = "${{ env.QtMSBuild }}"
+          msbuild ScreenCapture.sln `
+            /p:Configuration=Release `
+            /p:Platform=x64 `
+            /p:RuntimeLibrary=MultiThreaded `
+            /p:LinkIncremental=false `
+            /m
 
-          mkdir build && cd build
-
-          # 使用MSBuild编译项目并设置静态链接参数
-          msbuild ./ScreenCapture.sln /p:Configuration=Release /p:Platform=x64 ^
-                  /p:RuntimeLibrary=MultiThreaded /p:LinkIncremental=false /m
-
-          # 显示目录结构
           tree /F /A ${{ github.workspace }}
 
       - name: Upload Artifacts

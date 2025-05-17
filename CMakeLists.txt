@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 4.0.2)
+cmake_minimum_required(VERSION 3.16)
 project(ScreenCapture LANGUAGES CXX)
 
 set(CMAKE_MESSAGE_LOG_LEVEL "ERROR")
@@ -22,27 +22,17 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     add_compile_definitions(DEBUG)
 endif()
 
-if(CMAKE_BUILD_TYPE STREQUAL "Release" AND MSVC)
-    # 对应于MultiThreaded设置
-    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded")
-endif()
-
-
 # 设置静态链接运行时库
 if(MSVC)
-    # MSVC 静态链接 C/C++ 运行时
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /MANIFEST:NO")
-    # 禁用自动链接
     add_definitions(-DWIN32_LEAN_AND_MEAN)
 else()
-    # GNU 编译器 (GCC, MinGW) 的静态链接设置
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static -static-libgcc -static-libstdc++")
-    # 对于 MinGW，可能需要下面这行来处理一些链接问题
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-Bstatic,--whole-archive -lwinpthread -Wl,--no-whole-archive")
 endif()
 
-# 使用文件查找函数自动收集源文件
+# 自动收集源文件和头文件
 file(GLOB_RECURSE PROJECT_SOURCES
     "App/*.cpp"
     "Shape/*.cpp"
@@ -50,8 +40,6 @@ file(GLOB_RECURSE PROJECT_SOURCES
     "Win/*.cpp"
     "main.cpp"
 )
-
-# 收集头文件 (.h)
 file(GLOB_RECURSE PROJECT_HEADERS 
     "App/*.h"
     "Shape/*.h"
@@ -69,7 +57,6 @@ set_property(DIRECTORY PROPERTY CMAKE_CONFIGURE_DEPENDS
 
 # 添加资源
 set(RESOURCES
-    App/Res.rc
     res.qrc
 )
 
@@ -87,8 +74,6 @@ if(WIN32)
         dwmapi.lib
         shcore.lib
     )
-    
-    # 静态Qt在Windows上需要的额外依赖库
     if(MSVC)
         list(APPEND PLATFORM_LIBS
             Ws2_32.lib
@@ -107,7 +92,6 @@ if(WIN32)
             Setupapi.lib
         )
     else()
-        # MinGW链接库名称与MSVC不同
         list(APPEND PLATFORM_LIBS
             -lws2_32
             -lwinmm
@@ -129,18 +113,13 @@ endif()
 
 # 处理资源文件
 if(MSVC)
-  # MSVC 环境下直接使用 .rc 文件
-  list(APPEND PROJECT_SOURCES App/Res.rc)
-else()
-  # MinGW 环境下可能需要特殊处理
-  if(WIN32)
-    # 确保 windres 能正确处理资源文件
+    list(APPEND PROJECT_SOURCES App/Res.rc)
+elseif(MINGW AND WIN32)
     set(CMAKE_RC_COMPILER_INIT windres)
     enable_language(RC)
     set(CMAKE_RC_COMPILE_OBJECT
       "<CMAKE_RC_COMPILER> -O coff -i <SOURCE> -o <OBJECT>")
     list(APPEND PROJECT_SOURCES App/Res.rc)
-  endif()
 endif()
 
 # 创建可执行文件
