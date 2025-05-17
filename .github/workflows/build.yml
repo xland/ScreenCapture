@@ -43,9 +43,7 @@ jobs:
         uses: actions/cache@v4.2.3
         with:
           path: ${{ env.CHOCO_CACHE_DIR }}
-          key: chocolatey-${{ runner.os }}-${{ hashFiles('CMakeLists.txt') }}
-          restore-keys: |
-            chocolatey-${{ runner.os }}
+          key: chocolatey-${{ runner.os }}
 
       - name: Install Wget, Cmake and Ninja
         shell: pwsh
