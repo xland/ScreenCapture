@@ -166,5 +166,9 @@ child.on("close", (code) => {
       <img src="./Doc/author.jpg" width="160" height="160">
       <p>作者微信</p>
     </td>
+    <td align="center">
+      <img src="./Doc/gongzhonghao.jpg" width="160" height="160">
+      <p>公众号：桌面软件</p>
+    </td>
   </tr>
 </table>

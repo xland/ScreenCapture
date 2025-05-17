@@ -32,8 +32,12 @@ ToolMain::ToolMain(QWidget* parent) : ToolBase(parent)
                 splitters.push_back(i - splitters.size());
             }
             else {
-                layout->addWidget(getTool(tools[i])); 
-                btnCount += 1;
+                auto btn = getTool(tools[i]);
+                if (btn)
+                {
+                    layout->addWidget(btn);
+                    btnCount += 1;
+                }
             }
         }
         setFixedSize(btnCount * btnW + 8, 32);
