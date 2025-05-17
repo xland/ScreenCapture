@@ -24,8 +24,12 @@ ToolLong::ToolLong(QWidget* parent) : ToolBase(parent)
         int btnCount{0};
         for (size_t i = 0; i < tools.size(); i++)
         {
-            layout->addWidget(getTool(tools[i]));
-            btnCount += 1;
+            auto btn = getTool(tools[i]);
+            if (btn)
+            {
+                layout->addWidget(btn);
+                btnCount += 1;
+            }
         }
         setFixedSize(btnCount * btnW + 8, 32);
     }

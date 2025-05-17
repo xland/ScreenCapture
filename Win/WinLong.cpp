@@ -30,10 +30,13 @@ WinLong::~WinLong()
 void WinLong::pin()
 {
 	QScreen* screen = QGuiApplication::primaryScreen();
-	imgResult.setDevicePixelRatio(screen->devicePixelRatio());
+	auto dpr = screen->devicePixelRatio();
+	imgResult.setDevicePixelRatio(dpr);
+	int imageWidth = imgResult.width() / dpr;
+	int imageHeight = imgResult.height() / dpr;
 	QRect screenGeometry = screen->availableGeometry();
-	int x = screenGeometry.x() + (screenGeometry.width() - imgResult.width()) / 2;
-	int y = screenGeometry.y() + (screenGeometry.height() - imgResult.height()) / 2;
+	int x = screenGeometry.x() + (screenGeometry.width() - imageWidth) / 2;
+	int y = screenGeometry.y() + (screenGeometry.height() - imageHeight) / 2;
 	new WinPin(QPoint(x, y), imgResult);
 	close();
 }
@@ -171,7 +174,7 @@ void WinLong::startCap()
 	connect(stepTimer, &QTimer::timeout, this, &WinLong::timerFunc);
 	stepTimer->start(1200);
 	SetCursorPos(pt.x + 1, pt.y + 1);
-	//update(); //必须再重绘一次，不然小图更新不及时
+	update(); //必须再重绘一次，不然小图更新不及时
 }
 
 void WinLong::timerFunc()
