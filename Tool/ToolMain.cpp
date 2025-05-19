@@ -43,6 +43,12 @@ ToolMain::ToolMain(QWidget* parent) : ToolBase(parent)
         setFixedSize(btnCount * btnW + 8, 32);
     }
     setLayout(layout);
+
+    auto pin = qobject_cast<WinPin*>(parent);
+    if (pin) {
+        setBtnEnable("pin", false);
+    }
+
 }
 ToolMain::~ToolMain()
 {

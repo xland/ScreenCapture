@@ -114,7 +114,8 @@ void WinFull::mouseReleaseEvent(QMouseEvent* event)
 void WinFull::pin()
 {
     auto img = getTargetImg();
-	new WinPin(cutMask->rectMask.topLeft(), img);
+    auto pos = mapToGlobal(cutMask->rectMask.topLeft());
+	new WinPin(pos, img);
     close();
 }
 

@@ -28,6 +28,7 @@ private:
 	void timerFunc();
 	void capStep();
 	void initTool();
+	void initArea();
 private:
 	bool firstCheck{ true };
 	QImage imgBg;

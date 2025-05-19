@@ -21,17 +21,18 @@
 
 WinPin::WinPin(const QPoint& pos, QImage& img, QWidget* parent) : WinBase(parent)
 {
-    auto dpr = devicePixelRatio();
     setWindowFlags(Qt::FramelessWindowHint | Qt::Window | Qt::WindowStaysOnTopHint);
-    if (dpr != img.devicePixelRatio()) {
-		img.setDevicePixelRatio(dpr);
-    }
-	setGeometry(pos.x(), pos.y(), img.width()/dpr, img.height()/dpr);
-    initSize = size();
+    move(pos);
     initWindow();
     btns = new WinPinBtns(this);
     canvas = new Canvas(img, this);
     show();
+    auto dpr = devicePixelRatio();
+    if (dpr != img.devicePixelRatio()) {
+        img.setDevicePixelRatio(dpr);
+    }
+    setFixedSize(img.width() / dpr, img.height() / dpr);
+    initSize = size();
 }
 
 WinPin::~WinPin()
@@ -116,7 +117,7 @@ void WinPin::wheelEvent(QWheelEvent* event)
         scaleNum -= 0.06;
     }
     QSize newSize = initSize * scaleNum;
-    resize(newSize);
+    setFixedSize(newSize);
 }
 
 void WinPin::initWindow()

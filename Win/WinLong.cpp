@@ -64,9 +64,6 @@ void WinLong::mousePressEvent(QMouseEvent* event)
 		if (state < State::mask) {
 			cutMask->mousePress(event);
 		}
-		else if (state <= State::tool) {
-			cutMask->mousePress(event);
-		}
 	}
 	else {
 		qApp->exit(2);
@@ -156,13 +153,7 @@ void WinLong::startCap()
 	p.end();
 	repaint();//必须先重绘，不然图像像素对比不一样
 
-	auto dpr = devicePixelRatio();
-	auto tl = cutMask->rectMask.topLeft() * dpr;
-	auto br = cutMask->rectMask.bottomRight() * dpr;
-	areaX = tl.x()+2; 
-	areaY = tl.y()+2; 
-	areaW = br.x() - tl.x() - 2; 
-	areaH = br.y() - tl.y() - 2;
+	initArea();
 	img1 = Util::printScreen(areaX, areaY, areaW, areaH);
 	imgResult = img1;
 
@@ -220,7 +211,7 @@ void WinLong::capStep()
 		firstCheck = false;
 	}
 	QImage img11 = img1.copy(startX, startY, endX, img1.height() - startY);
-	QImage img22 = img2.copy(startX, startY, endX, 180);
+	QImage img22 = img2.copy(startX, startY, endX, 160);
 	auto y = findMostSimilarRegionParallel(img11, img22);
 	if (y == 0) {
 		return;
@@ -252,4 +243,15 @@ void WinLong::initTool()
 		tools->move(pos.x() - tools->width()- 4, pos.y() - tools->height());
 	}
 	tools->show();
+}
+
+void WinLong::initArea()
+{
+	auto dpr = devicePixelRatio();
+	auto tl = cutMask->rectMask.topLeft()*dpr + QPoint(x,y);
+	auto br = cutMask->rectMask.bottomRight()*dpr + QPoint(x, y);
+	areaX = tl.x() + 2;
+	areaY = tl.y() + 2;
+	areaW = br.x() - tl.x() - 2;
+	areaH = br.y() - tl.y() - 2;
 }
