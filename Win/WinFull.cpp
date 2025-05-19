@@ -145,7 +145,7 @@ QImage WinFull::getTargetImg()
 {
     auto dpr = devicePixelRatio();
     auto tl = cutMask->rectMask.topLeft() * dpr;
-    auto br = cutMask->rectMask.bottomRight() * dpr + QPoint(1, 1);
+    auto br = cutMask->rectMask.bottomRight() * dpr;
     QRect r;
     r.setCoords(tl.x(), tl.y(), br.x(), br.y());
     auto img = canvas->imgBg.copy(r);

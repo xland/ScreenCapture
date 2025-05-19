@@ -39,11 +39,10 @@ void CutMask::initWinRect()
             if (rect.top < win->y) rect.top = win->y;
             if (rect.right > win->x + win->w) rect.right = win->x + win->w;
             if (rect.bottom > win->y + win->h) rect.bottom = win->y + win->h;
-
-            QPoint lt(rect.left - win->x, rect.top - win->y);
-            QPoint rb(rect.right - win->x, rect.bottom - win->y);
             auto dpr = win->devicePixelRatio();
-            self->rectWins.push_back(QRect(lt/dpr, rb/dpr));
+            QRect r;
+            r.setCoords((rect.left - win->x) / dpr, (rect.top - win->y) / dpr, (rect.right - win->x) / dpr, (rect.bottom - win->y) / dpr);
+            self->rectWins.push_back(r);
             self->hwnds.push_back(hwnd);
             return TRUE;
         }, (LPARAM)this);
