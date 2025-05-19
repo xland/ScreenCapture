@@ -40,6 +40,25 @@ WinPin::~WinPin()
    
 }
 
+void WinPin::resetTool()
+{
+    if (toolMain) {
+        toolMain->close();
+        toolMain = nullptr;
+        setCursor(Qt::SizeAllCursor);
+        state = State::start;
+    }
+    else {
+        if (scaleNum != 1.0) {
+            scaleNum = 1.0;
+            setFixedSize(initSize);
+        }
+        toolMain = new ToolMain(this);
+        toolMain->move(pos().x(), pos().y() + height() + 4);
+        toolMain->show();
+    }
+}
+
 void WinPin::paintEvent(QPaintEvent* event)
 {
     QPainter p(this);

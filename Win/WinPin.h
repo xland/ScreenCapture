@@ -13,6 +13,7 @@ class WinPin  : public WinBase
 public:
 	WinPin(const QPoint& pos, QImage& img,QWidget *parent = nullptr);
 	~WinPin();
+	void resetTool();
 	qreal scaleNum{ 1.0 };
 protected:
 	void paintEvent(QPaintEvent* event) override;

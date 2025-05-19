@@ -163,7 +163,7 @@ void WinLong::startCap()
 
 	stepTimer = new QTimer(this);
 	connect(stepTimer, &QTimer::timeout, this, &WinLong::timerFunc);
-	stepTimer->start(1200);
+	stepTimer->start(1000);
 	SetCursorPos(pt.x + 1, pt.y + 1);
 	update(); //必须再重绘一次，不然小图更新不及时
 }

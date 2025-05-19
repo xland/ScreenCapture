@@ -57,21 +57,7 @@ void WinPinBtns::mousePressEvent(QMouseEvent* event)
 	auto winPin = (WinPin*)parent();
 	if (hoverIndex == 0)
 	{
-		if (winPin->scaleNum != 1.0) {
-			return;
-		}
-		if (winPin->toolMain) {
-			winPin->toolMain->close();
-			winPin->toolMain = nullptr;
-			winPin->setCursor(Qt::SizeAllCursor);
-			winPin->state = State::start;
-		}
-		else {
-			winPin->toolMain = new ToolMain(winPin);
-			auto pos = winPin->pos();
-			winPin->toolMain->move(pos.x(), pos.y() + winPin->height() + 4);
-			winPin->toolMain->show();
-		}
+		winPin->resetTool();
 	}
 	else if (hoverIndex == 1)
 	{
