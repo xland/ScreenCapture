@@ -127,13 +127,14 @@ void WinFull::closeEvent(QCloseEvent* event)
 void WinFull::initWindow()
 {
     setFocusPolicy(Qt::StrongFocus);
-    //setGeometry(x, y, w, h);
 #ifdef DEBUG
     setWindowFlags(Qt::FramelessWindowHint | Qt::Tool);
 #else
     setWindowFlags(Qt::FramelessWindowHint | Qt::Tool | Qt::WindowStaysOnTopHint);
 #endif    
     show();
+    setGeometry(x, y, w, h);
+    setScreen(qApp->primaryScreen());
     auto hwnd = (HWND)winId();
     SetWindowPos(hwnd, nullptr, x, y, w, h, SWP_NOZORDER | SWP_SHOWWINDOW);
     setMouseTracking(true);

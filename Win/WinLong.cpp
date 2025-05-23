@@ -131,13 +131,14 @@ void WinLong::initWindow()
 	setAttribute(Qt::WA_OpaquePaintEvent);
 	setAttribute(Qt::WA_NoSystemBackground);
 	setAttribute(Qt::WA_TranslucentBackground, true);
-	//setGeometry(x, y, w, h);
 #ifdef DEBUG
-	setWindowFlags(Qt::FramelessWindowHint | Qt::Tool);
+	setWindowFlags(Qt::FramelessWindowHint);
 #else
 	setWindowFlags(Qt::FramelessWindowHint | Qt::Tool | Qt::WindowStaysOnTopHint);
 #endif    
 	show();
+	setGeometry(x, y, w, h);
+	setScreen(qApp->primaryScreen());
 	auto hwnd = (HWND)winId();
 	SetWindowPos(hwnd, nullptr, x, y, w, h, SWP_NOZORDER | SWP_SHOWWINDOW);
 	setMouseTracking(true);
