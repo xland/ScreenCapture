@@ -30,34 +30,34 @@
 // If the path is a directory, the filename will be auto-generated.
 // If the path includes a filename, the image will be saved with that name (overwrites if exists).
 // Currently, only PNG format is supported.
-ScreenCapture.exe --path:"D:/doc/test.png"
-ScreenCapture.exe --path:"D:/doc"
+ScreenCapture.exe --path:"D:\\doc\\test.png"
+ScreenCapture.exe --path:"D:\\doc"
 
 // Capture a specific screen region. 10,10 is the top-left coordinate, 500x600 is width and height.
 // The captured image will be copied to the clipboard.
 ScreenCapture.exe --cap:area,10,10,500,600,clipboard
 
 // Capture a specific screen region and save the image to the specified path.
-ScreenCapture.exe --cap:area,10,10,500,600 --path:"D:/doc"
+ScreenCapture.exe --cap:area,10,10,500,600 --path:"D:\\doc"
 
 // Capture the entire screen and copy the image to the clipboard.
 ScreenCapture.exe --cap:fullscreen,clipboard
 
 // Capture the entire screen and save the image to the specified path.
-ScreenCapture.exe --cap:fullscreen --path:"D:/doc"
+ScreenCapture.exe --cap:fullscreen --path:"D:\\doc"
 
 // Let the user drag to select a region, then copy the image to the clipboard.
 ScreenCapture.exe --cap:custom,clipboard
 
 // Let the user drag to select a region, then save the image to the specified path.
-ScreenCapture.exe --cap:custom --path:"D:/doc"
+ScreenCapture.exe --cap:custom --path:"D:\\doc"
 
 // Pin the image from the clipboard to a window. 100,100 is the window position.
 // If position is omitted, the default window position is 100,100.
 ScreenCapture.exe --pin:clipboard,100,100
 
 // Pin a specified image file. 100,100 is the window position.
-ScreenCapture.exe --pin:file,"D:/test.png",100,100
+ScreenCapture.exe --pin:file,"D:\\test.png",100,100
 
 // Pin a screen region. (100,100,500,600) is the capture area, (800,10) is the window position.
 ScreenCapture.exe --pin:area,100,100,500,600,800,10

@@ -27,34 +27,34 @@
 //如果路径是目录，则保存文件时会自动生成文件名。
 //如果路径包含文件名，则按此文件名保存文件（文件存在则覆盖）。
 //目前只支持png格式文件
-ScreenCapture.exe --path:"D:/doc/test.png"
-ScreenCapture.exe --path:"D:/doc"
+ScreenCapture.exe --path:"D:\\doc\\test.png"
+ScreenCapture.exe --path:"D:\\doc"
 
 //截取屏幕某个区域的图像，10,10是坐标，500,600是宽高
 //截取完成后图像写入剪切板
 ScreenCapture.exe --cap:area,10,10,500,600,clipboard
 
 //截取屏幕某个区域的图像，截取完成后图像写入指定路径
-ScreenCapture.exe --cap:area,10,10,500,600 --path:"D:/doc"
+ScreenCapture.exe --cap:area,10,10,500,600 --path:"D:\\doc"
 
 //截取整个屏幕并写入剪切板
 ScreenCapture.exe --cap:fullscreen,clipboard
 
 //截取整个屏幕并把图像写入指定路径
-ScreenCapture.exe --cap:fullscreen --path:"D:/doc"
+ScreenCapture.exe --cap:fullscreen --path:"D:\\doc"
 
 //用户拖拽鼠标确定截图区域后，马上把截图区域内的图像写入剪切板
 ScreenCapture.exe --cap:custom,clipboard
 
 //用户拖拽鼠标确定截图区域后，马上把截图区域内的图像写入指定路径
-ScreenCapture.exe --cap:custom --path:"D:/doc"
+ScreenCapture.exe --cap:custom --path:"D:\\doc"
 
 //钉住剪切板内的图像，100,100是钉住窗口的坐标
 //如忽略窗口坐标，则窗口默认坐标为100,100
 ScreenCapture.exe --pin:clipboard,100,100
 
 //钉住指定的图像文件，100,100是钉住窗口的坐标
-ScreenCapture.exe --pin:file,"D:/test.png",100,100
+ScreenCapture.exe --pin:file,"D:\\test.png",100,100
 
 //钉住桌面某个区域的图像，(100,100,500,600)是区域矩形，(800,10)是钉住窗口的坐标
 ScreenCapture.exe --pin:area,100,100,500,600,800,10
