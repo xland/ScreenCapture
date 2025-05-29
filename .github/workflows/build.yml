@@ -1,0 +1,127 @@
+name: AutoBuild
+
+on:
+  push:
+    branches: ["main", "add_auto_build"]
+    paths-ignore:
+      - ".gitignore"
+      - "*.md"
+      - "**.txt"
+      - "LICENSE"
+  pull_request:
+    branches: ["main", "add_auto_build"]
+    paths-ignore:
+      - ".gitignore"
+      - "*.md"
+      - "**.txt"
+      - "LICENSE"
+  workflow_dispatch:
+
+env:
+  CARGO_TERM_COLOR: always
+  CMAKE_BUILD_PARALLEL_LEVEL: 4
+
+jobs:
+  build:
+    runs-on: windows-latest
+    permissions:
+      contents: write
+      actions: write
+
+    env:
+      QT_DIR: ${{ github.workspace }}/Qt
+      QtMSBuild: ${{ github.workspace }}/QtMSBuild
+      QT_VERSION: "6.9.0-static"
+      QT_ARCH: "msvc2022_64" # "msvc2022_64"/"mingw1310_64"
+      CHOCO_CACHE_DIR: C:\Users\runneradmin\AppData\Local\Temp\chocolatey
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # 缓存 Chocolatey 包
+      - name: Cache Chocolatey packages
+        uses: actions/cache@v4.2.3
+        with:
+          path: ${{ env.CHOCO_CACHE_DIR }}
+          key: chocolatey-${{ runner.os }}
+
+      - name: Install Wget, Cmake and Ninja
+        shell: pwsh
+        run: |
+          choco install -y wget
+          choco install -y ninja
+          choco install -y cmake
+
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@v2
+        with:
+          msbuild-architecture: x64
+
+      # 缓存 Qt 库
+      - name: Cache Qt library
+        id: cache-qt
+        uses: actions/cache@v4.2.3
+        with:
+          path: ${{ env.QT_DIR }}
+          key: qt-${{ runner.os }}-${{ env.QT_VERSION }}-${{ env.QT_ARCH }}
+
+      # 只有当缓存未命中时才安装 Qt
+      - name: Install Qt
+        if: steps.cache-qt.outputs.cache-hit != 'true'
+        shell: pwsh
+        run: |
+          mkdir ${{ env.QT_DIR }}
+          $url = "https://github.com/yuanpeirong/buildQt/releases/download/Qt6.9.0_rev0/Qt_${{ env.QT_VERSION }}-Release_${{ env.QT_ARCH }}.7z"
+          $output = "$env:TEMP\qt.7z"
+          Invoke-WebRequest -Uri $url -OutFile $output
+          7z x "$output" -o"${{ env.QT_DIR }}" -y
+
+      # 缓存 QtMSBuild
+      - name: Cache QtMSBuild
+        id: cache-qtmsbuild
+        uses: actions/cache@v4.2.3
+        with:
+          path: ${{ env.QtMSBuild }}
+          key: qtmsbuild-${{ runner.os }}-3.3.1
+
+      # 只有当缓存未命中时才安装 QtMSBuild
+      - name: Install QtMSBuild
+        if: steps.cache-qtmsbuild.outputs.cache-hit != 'true'
+        shell: pwsh
+        run: |
+          $url = "https://download.qt.io/official_releases/vsaddin/3.3.1/qt-vsaddin-msbuild-3.3.1.zip"
+          $output = "$env:TEMP\qt-vsaddin-msbuild.zip"
+          $qtMsBuildDir = "${{ env.QtMSBuild }}"
+
+          Write-Host "Downloading Qt VSADDIN MSBuild from $url"
+          Invoke-WebRequest -Uri $url -OutFile $output
+
+          Write-Host "Creating directory: $qtMsBuildDir"
+          New-Item -ItemType Directory -Force -Path $qtMsBuildDir | Out-Null
+
+          Write-Host "Extracting files to $qtMsBuildDir"
+          Expand-Archive -Path $output -DestinationPath $qtMsBuildDir -Force
+
+          Write-Host "QtMSBuild installation completed"
+
+      - name: Build
+        shell: pwsh
+        env:
+          QTMSBUILDS: ${{ env.QtMSBuild }}
+          QT_PATH: ${{ env.QT_DIR }}/${{ env.QT_VERSION }}/${{ env.QT_ARCH }}
+        run: |
+          msbuild ScreenCapture.sln `
+            /p:Configuration=Release `
+            /p:Platform=x64 `
+            /p:RuntimeLibrary=MultiThreaded `
+            /p:LinkIncremental=false `
+            /m
+
+          tree /F /A ${{ github.workspace }}
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ScreenCapture-Release
+          path: |
+            ${{ github.workspace }}/build
