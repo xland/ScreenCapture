@@ -51,7 +51,7 @@ ToolSub::ToolSub(QWidget* parent) : ToolBase(parent)
 	}
 	else if (win->state == State::line) {
 		layout->addWidget(new BtnCheck("lineTransparent", QChar(0xe607), this));
-		layout->addWidget(new StrokeCtrl(6, 160, 12, this));
+		layout->addWidget(new StrokeCtrl(2, 160, 8, this));
 		layout->addWidget(new ColorCtrl(0, this));
 		setFixedSize(8 + btnW + 84 + 26 * 8, 40);
 		initPos();
