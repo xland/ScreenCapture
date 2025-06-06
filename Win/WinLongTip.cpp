@@ -1,6 +1,6 @@
 #include <Windows.h>
 #include <QPainter>
-
+#include "App/Lang.h"
 #include "App/Util.h"
 #include "WinLongTip.h"
 #include "WinLong.h"
@@ -43,7 +43,7 @@ void WinLongTip::paintEvent(QPaintEvent * event)
     p.setBrush(Qt::NoBrush);
     auto font = Util::getTextFont(16);
     p.setFont(*font);
-    p.drawText(r, Qt::AlignCenter, "开始");
+    p.drawText(r, Qt::AlignCenter, Lang::get("start"));
 }
 
 void WinLongTip::closeEvent(QCloseEvent* event)

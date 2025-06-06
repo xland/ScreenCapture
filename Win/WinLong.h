@@ -25,6 +25,7 @@ protected:
 private:
 	void initWindow();
 	void startCap();
+	void stopCap();
 	void timerFunc();
 	void capStep();
 	void initTool();
@@ -39,4 +40,5 @@ private:
 	QTimer* stepTimer;
 	HWND targetHwnd;
 	ToolLong* tools;
+	int dismissTime{ 0 };
 };

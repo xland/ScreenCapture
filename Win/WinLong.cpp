@@ -6,6 +6,7 @@
 #include "App/Util.h"
 #include "WinLongTip.h"
 #include "LongCapFuncs.h"
+#include "App/Lang.h"
 #include "Tool/ToolLong.h"
 
 WinLong::WinLong(QWidget *parent) : WinBase(parent)
@@ -55,6 +56,22 @@ void WinLong::paintEvent(QPaintEvent* event)
 		smallImg.setDevicePixelRatio(devicePixelRatio());
 		auto pos = mapFromGlobal(tools->pos());
 		p.drawImage(pos.x(),pos.y()- smallH / dpr-1, smallImg);
+	}
+	if (dismissTime > 2 || imgResult.height() > 20000) {
+		QString text = dismissTime>2 ? Lang::get("reachBottom") : Lang::get("tooLong");
+		auto font = Util::getTextFont(13);
+		QFontMetrics fm(*font);
+		p.setFont(*font);
+		int w = fm.horizontalAdvance(text)+16;
+		auto centerX = cutMask->rectMask.center().x();
+		auto bottomY = cutMask->rectMask.bottom();
+		QRect rect(centerX - w / 2, bottomY - 36, w, 30);
+		p.setBrush(QColor(0, 0, 0, 180));
+		p.setPen(Qt::NoPen);
+		p.drawRect(rect);
+		p.setPen(QPen(QBrush(Qt::white), 1));
+		p.setBrush(Qt::NoBrush);
+		p.drawText(rect, Qt::AlignCenter, text);
 	}
 }
 
@@ -169,6 +186,12 @@ void WinLong::startCap()
 	update(); //必须再重绘一次，不然小图更新不及时
 }
 
+void WinLong::stopCap()
+{
+	stepTimer->stop();
+	update();
+}
+
 void WinLong::timerFunc()
 {
 	POINT pt;
@@ -215,18 +238,24 @@ void WinLong::capStep()
 	QImage img22 = img2.copy(startX, startY, endX, 160);
 	auto y = findMostSimilarRegionParallel(img11, img22);
 	if (y == 0) {
+		dismissTime += 1;
+		if (dismissTime > 2) {
+			stopCap();
+		}
 		return;
 	}
 	auto paintStart = imgResult.height() - (img1.height() - y - startY);
 	auto imgResultNew = QImage(imgResult.width(), paintStart + (img2.height() - startY), QImage::Format_ARGB32);
 	auto img3 = img2.copy(0, startY, img2.width(), img2.height() - startY);
-
 	QPainter p(&imgResultNew);
 	p.drawImage(0, 0, imgResult);
 	p.drawImage(0, paintStart, img3);
 	p.end();
 	img1 = img2;
 	imgResult = imgResultNew;
+	if (imgResult.height() > 20000) {
+		stopCap();
+	}
 	update();
 }
 

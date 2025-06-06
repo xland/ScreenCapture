@@ -10,6 +10,7 @@
 
 namespace {
     static int numVal{ 0 };
+    static qreal defalutR{ 18.f };
 }
 
 
@@ -20,6 +21,7 @@ ShapeNumber::ShapeNumber(QObject* parent) : ShapeBase(parent)
     isFill = win->toolSub->getSelectState("numberFill");
     color = win->toolSub->getColor();
     val = ++numVal;
+    r = defalutR;
 }
 
 ShapeNumber::~ShapeNumber()
@@ -154,6 +156,7 @@ void ShapeNumber::mouseDrag(QMouseEvent* event)
     if (state == ShapeState::sizing0) {
         QLineF line(centerPos, event->pos());
         r = line.length();
+		defalutR = r;
         resetShape();
     }
     else if (state == ShapeState::sizing1) {

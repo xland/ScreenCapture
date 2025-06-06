@@ -68,6 +68,10 @@ void Lang::initZhCn()
 	dic.insert("purple", "紫");
 	dic.insert("pink", "粉");
 	dic.insert("black", "黑");
+
+	dic.insert("start", "开始");
+	dic.insert("reachBottom", "已触底，自动滚动停止");
+	dic.insert("tooLong", "长图过长，已自动停止");
 }
 
 void Lang::initEn()
@@ -108,4 +112,8 @@ void Lang::initEn()
 	dic.insert("purple", "Purple");
 	dic.insert("pink", "Pink");
 	dic.insert("black", "Black");
+
+	dic.insert("start", "Start");
+	dic.insert("reachBottom", "Reached the bottom, auto scrolling stopped");
+	dic.insert("tooLong", "Image is too long，auto scrolling stopped");
 }

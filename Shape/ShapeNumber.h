@@ -30,5 +30,5 @@ private:
 private:
     QPointF centerPos,pressPos,arrowPos,sizePos;
     unsigned int val;
-    qreal r{26.f}, angle{ 270.0 };
+    qreal r{18.f}, angle{ 270.0 };
 };
