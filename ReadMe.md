@@ -128,8 +128,8 @@ child.on("close", (code) => {
 示例1：Ctrl+Alt+A 
 ^!A::Run "path/to/ScreenCapture.exe"
 
-示例2：Win+Ctrl+Alt+P 并通过命令行参数设置截图保存路径
-#^!P::Run "path/to/ScreenCapture.exe" "--dir:`"D:\doc`""
+示例2：Win+Ctrl+Alt+P 并通过命令行参数设置截长图
+#^!P::Run "path/to/ScreenCapture.exe --cap:long"
 */
 
 ^!A::Run "path/to/ScreenCapture.exe"

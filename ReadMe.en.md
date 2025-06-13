@@ -125,22 +125,19 @@ child.on("close", (code) => {
 
 ```ahk
 /*
-You need to save this ahk script to the dir on the following place.
-%AppData%\\Microsoft\\Windows\\Start Menu\\Programs\\Startup
-
-Simple tutorial for ahk.
-
 ^  :  Ctrl
 !  :  Alt
 +  :  Shift
 #  :  Win
-*/
 
-;This hotkey is Ctrl+Alt+A 
+example1：Ctrl+Alt+A 
 ^!A::Run "path/to/ScreenCapture.exe"
 
-;This hotkey is Win+Ctrl+Alt+P
-#^!P::Run "path/to/ScreenCapture.exe" "--dir:`"D:\doc`""
+example2：Win+Ctrl+Alt+P cap long image
+#^!P::Run "path/to/ScreenCapture.exe --cap:long"
+*/
+
+^!A::Run "path/to/ScreenCapture.exe"
 ```
 
 - Double Click the `.ahk` file,then you can start the `ScreenCapture.exe` by press `Ctrl+Alt+A`.
