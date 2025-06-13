@@ -1,7 +1,7 @@
 #pragma once
 
 #include <QObject>
-#include <QMap>
+#include <QHash>
 
 class Lang  : public QObject
 {
@@ -17,5 +17,5 @@ public:
 	void initEn();
 private:
 
-	QMap<QString, QString> dic;
+	QHash<QString, QString> dic;
 };
