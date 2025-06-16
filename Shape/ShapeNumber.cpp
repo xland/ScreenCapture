@@ -106,10 +106,9 @@ bool ShapeNumber::mouseMove(QMouseEvent* event)
     if (hoverDraggerIndex > -1) {
         win->canvas->setHoverShape(this);
         win->setCursor(Qt::SizeAllCursor);
+		return true;
     }
-    else {
-        return false;
-    }
+    return false;
 }
 bool ShapeNumber::mousePress(QMouseEvent* event)
 {

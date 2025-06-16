@@ -29,7 +29,7 @@ ToolMain::ToolMain(QWidget* parent) : ToolBase(parent)
         for (size_t i = 0; i < tools.size(); i++)
         {
             if (tools[i] == "|") {
-                splitters.push_back(i - splitters.size());
+                splitters.push_back(i - (int)splitters.size());
             }
             else {
                 auto btn = getTool(tools[i]);
