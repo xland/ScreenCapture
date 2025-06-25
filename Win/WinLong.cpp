@@ -181,7 +181,7 @@ void WinLong::startCap()
 
 	stepTimer = new QTimer(this);
 	connect(stepTimer, &QTimer::timeout, this, &WinLong::timerFunc);
-	stepTimer->start(1000);
+	stepTimer->start(360);
 	SetCursorPos(pt.x + 1, pt.y + 1);
 	update(); //必须再重绘一次，不然小图更新不及时
 }
@@ -204,7 +204,7 @@ void WinLong::timerFunc()
 	input.mi.mouseData = -WHEEL_DELTA;
 	SendInput(1, &input, sizeof(INPUT));
 	//等待滚动完成后，再截图
-	QTimer::singleShot(98, [this]() {  capStep(); });
+	QTimer::singleShot(88, [this]() {  capStep(); });
 }
 
 void WinLong::capStep()
