@@ -1,5 +1,5 @@
 
-English | [简体中文](./ReadMe.zhcn.md)
+**English** | [简体中文](./ReadMe.zhcn.md)
 
 ![banner](./Doc/banner.png)
 
