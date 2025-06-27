@@ -2,6 +2,10 @@
 
 ![banner](./Doc/banner.png)
 
+# ScreenCapture
+
+一个功能强大且轻量级的Windows截图工具，基于Qt/C++开发。支持跨屏截图、滚动截图、绘图标注和丰富的命令行集成功能。
+
 ## 特性
 
 - 跨屏幕截图、滚动截图（截长图）、高分屏支持、窗口区域高亮。
@@ -182,18 +186,18 @@ ScreenCapture.exe --cap:long --tool:"pin,clipboard,save,close"
 let spawn = require("child_process").spawn;
 let child = spawn("./path/to/ScreenCapture.exe");
 child.on("close", (code) => {
-    /// when code is:
-    /// 0 undefined
-    /// 1 quit by press close btn;
-    /// 2 quit by press right mouse btn;
-    /// 3 quit by press esc key;
-    /// 4 quit when copy rgb color;
-    /// 5 quit when copy hex color;
-    /// 6 quit when copy cmyk color;
-    /// 7 quit when copy mouse position;
-    /// 8 quit when save to file;
-    /// 9 quit when save to clipboard;
-    console.log("the quit code is:",code)
+    /// 退出代码说明：
+    /// 0: 未定义
+    /// 1: 点击关闭按钮退出
+    /// 2: 点击鼠标右键退出
+    /// 3: 按ESC键退出
+    /// 4: 复制RGB颜色时退出
+    /// 5: 复制HEX颜色时退出
+    /// 6: 复制CMYK颜色时退出
+    /// 7: 复制鼠标位置时退出
+    /// 8: 保存到文件时退出
+    /// 9: 保存到剪贴板时退出
+    console.log("退出代码:", code);
 });
 ```
 
