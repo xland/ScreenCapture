@@ -244,4 +244,4 @@ Example 2: Win+Ctrl+Alt+P with long screenshot parameter
 - Accidental deletion protection
 - Left-click system tray to screenshot, right-click to exit
 
-Thanks to [EV Sign](https://evsign.cn/) for providing digital signature services
+> Thanks to [EV Sign](https://evsign.cn/) for providing digital signature services
