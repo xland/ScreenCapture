@@ -244,27 +244,4 @@ Example 2: Win+Ctrl+Alt+P with long screenshot parameter
 - Accidental deletion protection
 - Left-click system tray to screenshot, right-click to exit
 
-## Support
-
-<table>
-  <tr>
-    <td align="center">
-      <img alt="Alipay Donation" src="./Doc/alipay.jpg" width="160" height="160">
-      <p>Alipay Donation</p>
-    </td>
-    <td align="center">
-      <img alt="WeChat Donation" src="./Doc/wechat.png" width="160" height="160">
-      <p>WeChat Donation</p>
-    </td>
-    <td align="center">
-      <img alt="Author WeChat" src="./Doc/author.jpg" width="160" height="160">
-      <p>Author WeChat</p>
-    </td>
-    <td align="center">
-      <img alt="WeChat Official Account" src="./Doc/gongzhonghao.jpg" width="160" height="160">
-      <p>Official Account: Desktop Software</p>
-    </td>
-  </tr>
-</table>
-
 Thanks to [EV Sign](https://evsign.cn/) for providing digital signature services
