@@ -1,6 +1,10 @@
-简体中文 | [English](./ReadMe.en.md)
+**简体中文** | [English](./ReadMe.md)
 
 ![banner](./Doc/banner.png)
+
+# ScreenCapture
+
+一个功能强大且轻量级的Windows截图工具，基于Qt/C++开发。支持跨屏截图、滚动截图、绘图标注和丰富的命令行集成功能。
 
 ## 特性
 
@@ -22,62 +26,152 @@
 
 ## 命令控制
 
+### 参数说明
+
+所有命令行参数都是**可选的**，无参数启动时将显示完整的截图界面。
+
+### 基础参数
+
+**--path（可选）**：设置本次截图的文件保存路径
+
 ```powershell
-//设置本次截图的文件保存路径。
-//如果路径是目录，则保存文件时会自动生成文件名。
-//如果路径包含文件名，则按此文件名保存文件（文件存在则覆盖）。
-//目前只支持png格式文件
-ScreenCapture.exe --path:"D:\\doc\\test.png"
+//如果路径是目录，则保存文件时会自动生成文件名
 ScreenCapture.exe --path:"D:\\doc"
 
-//截取屏幕某个区域的图像，10,10是坐标，500,600是宽高
-//截取完成后图像写入剪切板
+//如果路径包含文件名，则按此文件名保存文件（文件存在则覆盖）
+//目前只支持PNG格式文件
+ScreenCapture.exe --path:"D:\\doc\\test.png"
+```
+
+**--lang（可选）**：设置应用程序的语言
+
+```powershell
+//支持简体中文(zhcn)和英文(en)，默认为简体中文
+ScreenCapture.exe --lang:en
+ScreenCapture.exe --lang:zhcn
+```
+
+**--comp（可选）**：保存图像时进行压缩
+
+```powershell
+//格式：--comp:图像质量,缩放百分比
+//图像质量取值范围：-1到9的整数
+//  0：最小压缩级别，文件最大
+//  9：最大压缩，文件最小
+// -1：默认压缩级别，中等压缩
+//缩放百分比取值范围：1到100的整数
+//注意：图像存入剪贴板时，图像质量参数无效
+ScreenCapture.exe --comp:6,60
+```
+
+### 截图参数
+
+**--cap（可选）**：截图功能，与--pin参数互斥
+
+**区域截图**：
+
+```powershell
+//截取指定区域：x,y为左上角坐标，width,height为宽高
+//保存到剪贴板（clipboard参数可选，不指定时保存到文件）
 ScreenCapture.exe --cap:area,10,10,500,600,clipboard
 
-//截取屏幕某个区域的图像，截取完成后图像写入指定路径
+//保存到指定路径
 ScreenCapture.exe --cap:area,10,10,500,600 --path:"D:\\doc"
+```
 
-//截取整个屏幕并写入剪切板
+**全屏截图**：
+
+```powershell
+//截取整个屏幕并保存到剪贴板（clipboard参数可选，不指定时保存到文件）
 ScreenCapture.exe --cap:fullscreen,clipboard
 
-//截取整个屏幕并把图像写入指定路径
+//截取整个屏幕并保存到指定路径
 ScreenCapture.exe --cap:fullscreen --path:"D:\\doc"
+```
 
-//用户拖拽鼠标确定截图区域后，马上把截图区域内的图像写入剪切板
+**自定义截图**：
+
+```powershell
+//用户拖拽鼠标确定截图区域后保存到剪贴板（clipboard参数可选，不指定时保存到文件）
 ScreenCapture.exe --cap:custom,clipboard
 
-//用户拖拽鼠标确定截图区域后，马上把截图区域内的图像写入指定路径
+//用户拖拽鼠标确定截图区域后保存到指定路径
 ScreenCapture.exe --cap:custom --path:"D:\\doc"
+```
 
-//钉住剪切板内的图像，100,100是钉住窗口的坐标
-//如忽略窗口坐标，则窗口默认坐标为100,100
+**长截图**：
+
+```powershell
+//截长图功能，窗口只有四个控制按钮：pin,clipboard,save,close
+//也支持通过--tool指令控制
+ScreenCapture.exe --cap:long
+```
+
+### 钉图参数
+
+**--pin（可选）**：钉图功能，与--cap参数互斥
+
+**钉住剪切板图像**：
+
+```powershell
+//钉住剪贴板内的图像，x,y为钉图窗口坐标（可选）
+//如果省略坐标，默认坐标为100,100
 ScreenCapture.exe --pin:clipboard,100,100
+ScreenCapture.exe --pin:clipboard
+```
 
-//钉住指定的图像文件，100,100是钉住窗口的坐标
+**钉住文件图像**：
+
+```powershell
+//钉住指定的图像文件，x,y为钉图窗口坐标（可选）
+//如果省略坐标，默认坐标为100,100
 ScreenCapture.exe --pin:file,"D:\\test.png",100,100
+ScreenCapture.exe --pin:file,"D:\\test.png"
+```
 
-//钉住桌面某个区域的图像，(100,100,500,600)是区域矩形，(800,10)是钉住窗口的坐标
+**钉住区域图像**：
+
+```powershell
+//钉住桌面某个区域的图像
+//格式：--pin:area,x,y,width,height,windowX,windowY
+//前四个参数为截取区域，后两个为钉图窗口坐标（可选）
+//如果省略窗口坐标，默认坐标为100,100
 ScreenCapture.exe --pin:area,100,100,500,600,800,10
+ScreenCapture.exe --pin:area,100,100,500,600
+```
 
-//设置应用程序的语言，目前只支持简体中文(zhcn)和英文(en)，默认中文
-ScreenCapture.exe --lang:en
+### 界面定制参数
 
-//保存图像时，对图像进行压缩。
-//第一个参数6为图像质量，第二个参数60为缩放百分比
-//图像质量取值范围为 -1到9的整数
-//0：最小压缩级别，文件最大
-//9：最大压缩，文件最小
-//-1：默认压缩级别，中等压缩
-//缩放百分比取值范围为 1到100的整数
-//图像存入剪切板时，图像质量参数无效
-ScreenCapture.exe --comp:6,60
+**--tool（可选）**：控制主工具栏按钮的顺序、位置及显隐情况
 
-//控制主工具栏按钮（及分割线）的顺序，位置及显隐情况。
+```powershell
+//可用的工具名称：
+//绘图工具：rect(矩形), ellipse(椭圆), arrow(箭头), number(序号), line(线条), text(文本), mosaic(马赛克), eraser(橡皮擦)
+//操作工具：undo(撤销), redo(重做), pin(钉图), clipboard(剪贴板), save(保存), close(关闭)
+//分隔符：|
 ScreenCapture.exe --tool:"rect,ellipse,arrow,number,line,text,mosaic,eraser,|,undo,redo,|,pin,clipboard,save,close"
 
-//截长图
-//截长图窗口只有四个控制按钮`pin,clipboard,save,close`，也是支持通过`--tool`指令控制的
-ScreenCapture.exe --cap:long
+//简化工具栏示例
+ScreenCapture.exe --tool:"rect,arrow,|,clipboard,save,close"
+```
+
+### 使用示例
+
+```powershell
+//无参数启动，显示完整截图界面
+ScreenCapture.exe
+
+//英文界面 + 自定义保存路径
+ScreenCapture.exe --lang:en --path:"D:\\screenshots"
+
+//快速截图到剪贴板
+ScreenCapture.exe --cap:custom,clipboard
+
+//高质量截图保存
+ScreenCapture.exe --cap:area,0,0,1920,1080 --comp:-1,100 --path:"D:\\screenshot.png"
+
+//简化工具栏的长截图
+ScreenCapture.exe --cap:long --tool:"pin,clipboard,save,close"
 ```
 
 - `--cap`与`--pin`参数互斥，其他参数可组合使用。
@@ -92,18 +186,18 @@ ScreenCapture.exe --cap:long
 let spawn = require("child_process").spawn;
 let child = spawn("./path/to/ScreenCapture.exe");
 child.on("close", (code) => {
-    /// when code is:
-    /// 0 undefined
-    /// 1 quit by press close btn;
-    /// 2 quit by press right mouse btn;
-    /// 3 quit by press esc key;
-    /// 4 quit when copy rgb color;
-    /// 5 quit when copy hex color;
-    /// 6 quit when copy cmyk color;
-    /// 7 quit when copy mouse position;
-    /// 8 quit when save to file;
-    /// 9 quit when save to clipboard;
-    console.log("the quit code is:",code)
+    /// 退出代码说明：
+    /// 0: 未定义
+    /// 1: 点击关闭按钮退出
+    /// 2: 点击鼠标右键退出
+    /// 3: 按ESC键退出
+    /// 4: 复制RGB颜色时退出
+    /// 5: 复制HEX颜色时退出
+    /// 6: 复制CMYK颜色时退出
+    /// 7: 复制鼠标位置时退出
+    /// 8: 保存到文件时退出
+    /// 9: 保存到剪贴板时退出
+    console.log("退出代码:", code);
 });
 ```
 
@@ -136,42 +230,40 @@ child.on("close", (code) => {
 ```
 
 - 双击此 `.ahk` 文件,然后你就可以通过快捷键 `Ctrl+Alt+A` 启动 ScreenCapture.exe 了.
-- 此 `.ahk` 脚本会随机启动.
+- 此 `.ahk` 脚本会开机自启。
 
 ### 方案二：SC_Starter
 
-[SC_Starter](https://github.com/Mikachu2333/sc_starter/)是一个使用Rust编写ScreenCapture启动器。
+[SC_Starter](https://github.com/Mikachu2333/sc_starter/)是一个使用Rust编写的ScreenCapture启动器。
 
-- 内置截图程序，无需额外安装
-- 自动注册全局快捷键
-- 支持自定义保存路径
-- 支持以时间戳命名
-- 文件防删除保护
+- 支持**开机自启**
+- **内置截图程序**，无需额外安装
+- 自动注册**全局快捷键**
+- 支持自定义默认保存路径
+- 防误删程序保护
 - 托盘左键单击截图，右键退出
-- 提供随机自启动支持
 
 ## 赞助
 
 <table>
   <tr>
     <td align="center">
-      <img src="./Doc/alipay.jpg" width="160" height="160">
+      <img alt="支付宝赞助" src="./Doc/alipay.jpg" width="160" height="160">
       <p>支付宝赞助</p>
     </td>
     <td align="center">
-      <img src="./Doc/wechat.png" width="160" height="160">
+      <img alt="微信赞助" src="./Doc/wechat.png" width="160" height="160">
       <p>微信赞助</p>
     </td>
     <td align="center">
-      <img src="./Doc/author.jpg" width="160" height="160">
+      <img alt="作者微信" src="./Doc/author.jpg" width="160" height="160">
       <p>作者微信</p>
     </td>
     <td align="center">
-      <img src="./Doc/gongzhonghao.jpg" width="160" height="160">
+      <img alt="公众号二维码" src="./Doc/gongzhonghao.jpg" width="160" height="160">
       <p>公众号：桌面软件</p>
     </td>
   </tr>
 </table>
 
 感谢 [EV Sign](https://evsign.cn/) 提供数字签名服务
-
