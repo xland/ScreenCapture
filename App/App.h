@@ -13,7 +13,7 @@ public:
 	static QStringList getTool();
 public:
 private:
-	static QMap<QString, QString> getCmd();
+	inline static QMap<QString, QString> getCmd();
 	static bool parseCmd(const QMap<QString, QString>& params);
 	static void pinClipboard(const QString& cmd);
 	static void pinFile(const QString& cmd);
@@ -22,7 +22,7 @@ private:
 	static void capArea(const QString& cmd);
 	static void capFullscreen(const QString& cmd);
 	static bool capCustom(const QString& cmd);
-	static void exit(const int& code);
 	static void attachConsole();
+	static void exit(const int& code);
 };
 

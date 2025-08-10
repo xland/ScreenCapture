@@ -63,6 +63,11 @@ void Btn::paintEvent(QPaintEvent* event)
 
 void Btn::mousePressEvent(QMouseEvent* event)
 {
-    ToolBase* toolBase = dynamic_cast<ToolBase*>(parent());
-    toolBase->btnClick(this);
+	if (event->buttons() & Qt::LeftButton) {
+		ToolBase* toolBase = dynamic_cast<ToolBase*>(parent());
+		toolBase->btnClick(this);
+	}
+	else {
+		qApp->exit(2);
+	}
 }

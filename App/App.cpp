@@ -337,7 +337,7 @@ bool App::capCustom(const QString& cmd)
 }
 void App::exit(const int& code)
 {
-	QTimer::singleShot(10, [code]() {
+	QTimer::singleShot(100, [code]() {
 		qApp->exit(code);
 		});
 }

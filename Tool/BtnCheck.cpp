@@ -51,8 +51,13 @@ void BtnCheck::paintEvent(QPaintEvent* event)
 
 void BtnCheck::mousePressEvent(QMouseEvent* event)
 {
-    isChecked = !isChecked;
-    update();
-	ToolBase* toolBase = dynamic_cast<ToolBase*>(parent());
-	toolBase->btnCheckChange(this);
+    if (event->buttons() & Qt::LeftButton) {
+        isChecked = !isChecked;
+        update();
+        ToolBase* toolBase = dynamic_cast<ToolBase*>(parent());
+        toolBase->btnCheckChange(this);
+    }
+    else {
+        qApp->exit(2);
+    }
 }

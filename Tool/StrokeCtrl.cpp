@@ -54,8 +54,13 @@ void StrokeCtrl::wheelEvent(QWheelEvent* event)
 
 void StrokeCtrl::mousePressEvent(QMouseEvent* event)
 {
-    setPosByMouse(event->pos());
-    event->accept();
+    if (event->buttons() & Qt::LeftButton) {
+        setPosByMouse(event->pos());
+        event->accept();
+    }
+    else {
+        qApp->exit(2);
+    }
 }
 
 void StrokeCtrl::mouseMoveEvent(QMouseEvent* event)

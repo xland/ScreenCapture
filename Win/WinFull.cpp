@@ -56,9 +56,7 @@ void WinFull::mousePressEvent(QMouseEvent* event)
         }
     }
     else {
-        if (state < State::mask) {
-            qApp->exit(2);
-        }
+        qApp->exit(2);
     }
 }
 
