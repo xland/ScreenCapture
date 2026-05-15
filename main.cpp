@@ -1,11 +1,11 @@
 #include <QtWidgets/QApplication>
 #include "App/App.h"
 
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);  
+    QApplication a(argc, argv);
     App::init();
-    auto resut = a.exec();
+    auto result = a.exec();
     App::dispose();
-    return resut;
+    return result;
 }
