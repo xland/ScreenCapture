@@ -1,3 +1,4 @@
+The next major version (2.4.0) is developed in the main branch. The last stable version is available in the 2.3.x_qt branch.
 
 **English** | [简体中文](./ReadMe.zhcn.md)
 
