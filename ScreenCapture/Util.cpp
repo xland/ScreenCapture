@@ -20,7 +20,7 @@ std::wstring Util::getResName(const std::wstring& url)
     return url.substr(start, end - start);
 }
 
-winrt::com_ptr<IStream> Util::getResStream(const std::wstring& resName)
+ComPtr<IStream> Util::getResStream(const std::wstring& resName)
 {
     HRSRC hRes = FindResource(NULL, resName.data(), RT_RCDATA);
     if (!hRes) return nullptr;
@@ -28,38 +28,37 @@ winrt::com_ptr<IStream> Util::getResStream(const std::wstring& resName)
     if (!hData) return nullptr;
     void* pData = LockResource(hData);
     DWORD size = SizeofResource(NULL, hRes);
-    winrt::com_ptr<IStream> stream;
-    stream.attach(SHCreateMemStream((const BYTE*)pData, size));
+    ComPtr<IStream> stream = SHCreateMemStream((const BYTE*)pData, size);
     return stream;
 }
 
 ID2D1Factory* Util::getD2D()
 {
-    static winrt::com_ptr<ID2D1Factory> D2D;
-    if (!D2D.get()) {
-        auto hr = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, D2D.put());
+    static ComPtr<ID2D1Factory> D2D;
+    if (!D2D.Get()) {
+        auto hr = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, D2D.GetAddressOf());
         if (FAILED(hr)) {
             throw std::runtime_error("D2D create error");
         }
     }
-    return D2D.get();
+    return D2D.Get();
 }
 
 IDWriteFactory5* Util::getWriteFactory()
 {
-    static winrt::com_ptr<IDWriteFactory5> dwriteFactory;
-    if (!dwriteFactory.get()) {
-        auto hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory), reinterpret_cast<::IUnknown**>(dwriteFactory.put()));
+    static ComPtr<IDWriteFactory5> dwriteFactory;
+    if (!dwriteFactory.Get()) {
+        auto hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory), reinterpret_cast<::IUnknown**>(dwriteFactory.GetAddressOf()));
         if (FAILED(hr)) {
             throw std::runtime_error("dwriteFactory create error");
         }
     }
-    return dwriteFactory.get();
+    return dwriteFactory.Get();
 }
 
-winrt::com_ptr<ID2D1HwndRenderTarget> Util::createRender(HWND& hwnd, int& w, int& h)
+ComPtr<ID2D1HwndRenderTarget> Util::createRender(HWND& hwnd, int& w, int& h)
 {
-    winrt::com_ptr<ID2D1HwndRenderTarget> render;
+    ComPtr<ID2D1HwndRenderTarget> render;
     D2D1_RENDER_TARGET_PROPERTIES rtProps = D2D1::RenderTargetProperties(
         D2D1_RENDER_TARGET_TYPE_DEFAULT, //D2D1_RENDER_TARGET_TYPE_DEFAULT,//D2D1_RENDER_TARGET_TYPE_HARDWARE,
         D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED),
@@ -68,7 +67,7 @@ winrt::com_ptr<ID2D1HwndRenderTarget> Util::createRender(HWND& hwnd, int& w, int
     D2D1_SIZE_U size = D2D1::SizeU(w, h);
     D2D1_HWND_RENDER_TARGET_PROPERTIES hwndProps = D2D1::HwndRenderTargetProperties(hwnd, size);
     auto d2d = Util::getD2D();
-    auto hr = d2d->CreateHwndRenderTarget(rtProps, hwndProps, render.put());
+    auto hr = d2d->CreateHwndRenderTarget(rtProps, hwndProps, render.GetAddressOf());
     if (FAILED(hr)) {
         throw std::runtime_error("CreateHwndRenderTarget error");
     }
@@ -77,20 +76,20 @@ winrt::com_ptr<ID2D1HwndRenderTarget> Util::createRender(HWND& hwnd, int& w, int
 
 IDWriteTextFormat* Util::getTextFormat(const float& fontSize)
 {
-    static winrt::com_ptr<IDWriteTextFormat> textFormat;
-    if (!textFormat.get()) {
+    static ComPtr<IDWriteTextFormat> textFormat;
+    if (!textFormat.Get()) {
         auto dwriteFactory = Util::getWriteFactory();
         dwriteFactory->CreateTextFormat(L"Microsoft YaHei", nullptr,
             DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
-            fontSize, L"", textFormat.put());
+            fontSize, L"", textFormat.GetAddressOf());
     }
-    return textFormat.get();
+    return textFormat.Get();
 }
 
 IDWriteTextFormat* Util::getIconFormat()
 {
-    static winrt::com_ptr<IDWriteTextFormat> iconFormat;
-    if (!iconFormat.get()) {
+    static ComPtr<IDWriteTextFormat> iconFormat;
+    if (!iconFormat.Get()) {
         HRSRC hRes = FindResource(NULL, L"iconfont.ttf", RT_RCDATA);
         if (!hRes) return nullptr;
         HGLOBAL hData = LoadResource(NULL, hRes);
@@ -99,22 +98,22 @@ IDWriteTextFormat* Util::getIconFormat()
         DWORD size = SizeofResource(NULL, hRes);
 
         auto dwriteFactory = Util::getWriteFactory();
-        winrt::com_ptr<IDWriteInMemoryFontFileLoader> loader;
-        dwriteFactory->CreateInMemoryFontFileLoader(loader.put());
-        dwriteFactory->RegisterFontFileLoader(loader.get());
-        winrt::com_ptr<IDWriteFontFile> fontFile;
-        loader->CreateInMemoryFontFileReference(dwriteFactory, pData, size, nullptr, fontFile.put());
-        winrt::com_ptr<IDWriteFontSetBuilder1> fontSetBuilder;
-        dwriteFactory->CreateFontSetBuilder(fontSetBuilder.put());
-        fontSetBuilder->AddFontFile(fontFile.get());
-        winrt::com_ptr<IDWriteFontSet> fontSet;
-        fontSetBuilder->CreateFontSet(fontSet.put());
-        winrt::com_ptr<IDWriteFontCollection1> fontCollection;
-        dwriteFactory->CreateFontCollectionFromFontSet(fontSet.get(), fontCollection.put());
+        ComPtr<IDWriteInMemoryFontFileLoader> loader;
+        dwriteFactory->CreateInMemoryFontFileLoader(loader.GetAddressOf());
+        dwriteFactory->RegisterFontFileLoader(loader.Get());
+        ComPtr<IDWriteFontFile> fontFile;
+        loader->CreateInMemoryFontFileReference(dwriteFactory, pData, size, nullptr, fontFile.GetAddressOf());
+        ComPtr<IDWriteFontSetBuilder1> fontSetBuilder;
+        dwriteFactory->CreateFontSetBuilder(fontSetBuilder.GetAddressOf());
+        fontSetBuilder->AddFontFile(fontFile.Get());
+        ComPtr<IDWriteFontSet> fontSet;
+        fontSetBuilder->CreateFontSet(fontSet.GetAddressOf());
+        ComPtr<IDWriteFontCollection1> fontCollection;
+        dwriteFactory->CreateFontCollectionFromFontSet(fontSet.Get(), fontCollection.GetAddressOf());
         //auto win = WinCap::get();
-        dwriteFactory->CreateTextFormat(L"icon", fontCollection.get(),
+        dwriteFactory->CreateTextFormat(L"icon", fontCollection.Get(),
             DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
-            12.f, L"", iconFormat.put());
+            12.f, L"", iconFormat.GetAddressOf());
 
         //ComPtr<IDWriteTextLayout> layout;
         //dwriteFactory->CreateTextLayout(L"asdf", wcslen(L"asdf"), iconFormat.Get(),
@@ -132,27 +131,27 @@ IDWriteTextFormat* Util::getIconFormat()
         //);
     }
 
-    return iconFormat.get();
+    return iconFormat.Get();
 }
 
-winrt::com_ptr<IDWriteTextLayout> Util::getIconLayout(const std::wstring& icon, const float& fontSize, const float& w, const float& h)
+ComPtr<IDWriteTextLayout> Util::getIconLayout(const std::wstring& icon, const float& fontSize, const float& w, const float& h)
 {
     auto format = Util::getIconFormat();
     auto dwrite = Util::getWriteFactory();
-    winrt::com_ptr<IDWriteTextLayout> layout;
-    dwrite->CreateTextLayout(icon.data(), icon.length(), format, w, h, layout.put());
+    ComPtr<IDWriteTextLayout> layout;
+    dwrite->CreateTextLayout(icon.data(), icon.length(), format, w, h, layout.GetAddressOf());
     layout->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
     layout->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
     layout->SetFontSize(fontSize, { 0, static_cast<UINT32>(icon.length()) });
     return layout;
 }
 
-winrt::com_ptr<IDWriteTextLayout> Util::getTextLayout(const std::wstring& str, const float& fontSize, const float& w, const float& h)
+ComPtr<IDWriteTextLayout> Util::getTextLayout(const std::wstring& str, const float& fontSize, const float& w, const float& h)
 {
     auto format = Util::getIconFormat();
     auto dwrite = Util::getWriteFactory();
-    winrt::com_ptr<IDWriteTextLayout> layout;
-    dwrite->CreateTextLayout(str.data(), str.length(), format, w, h, layout.put());
+    ComPtr<IDWriteTextLayout> layout;
+    dwrite->CreateTextLayout(str.data(), str.length(), format, w, h, layout.GetAddressOf());
     layout->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
     layout->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
     layout->SetFontSize(fontSize, { 0, static_cast<UINT32>(str.length()) });
@@ -260,13 +259,13 @@ std::wstring Util::getSaveFilePath(HWND hwnd)
     return result;
 }
 
-winrt::com_ptr<ID2D1PathGeometry> Util::createArrow(const D2D1_POINT_2F& startPos, const D2D1_POINT_2F& endPos)
+ComPtr<ID2D1PathGeometry> Util::createArrow(const D2D1_POINT_2F& startPos, const D2D1_POINT_2F& endPos)
 {
     auto factory = Util::getD2D();
-    winrt::com_ptr<ID2D1PathGeometry> arrow;
-    factory->CreatePathGeometry(arrow.put());
-    winrt::com_ptr<ID2D1GeometrySink> sink;
-    arrow->Open(sink.put());
+    ComPtr<ID2D1PathGeometry> arrow;
+    factory->CreatePathGeometry(arrow.GetAddressOf());
+    ComPtr<ID2D1GeometrySink> sink;
+    arrow->Open(sink.GetAddressOf());
     sink->BeginFigure(startPos, D2D1_FIGURE_BEGIN_FILLED);
     float dx = endPos.x - startPos.x;
     float dy = endPos.y - startPos.y;

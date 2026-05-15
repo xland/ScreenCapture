@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "WinCap.h"
 #include "Util.h"
+#include "CutMask.h"
 
 std::unique_ptr<WinCap> winCap;
 
@@ -20,7 +21,16 @@ void WinCap::init()
     winCap->initPosSize();
     winCap->createWindow();
     winCap->captureScreen();
+    CutMask::init();
     ShowWindow(winCap->hwnd, SW_SHOW);
+}
+WinCap* WinCap::get()
+{
+    return winCap.get();
+}
+void WinCap::refresh()
+{
+    InvalidateRect(hwnd, nullptr, false);
 }
 void WinCap::initPosSize()
 {
@@ -52,7 +62,7 @@ void WinCap::createWindow()
     SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
     dpi = GetDpiForWindow(hwnd) / 96.0f;
     render = Util::createRender(hwnd, w, h);
-    render->CreateSolidColorBrush(D2D1::ColorF(0xE81123), shapeBrush.put());
+    render->CreateSolidColorBrush(D2D1::ColorF(0xE81123), shapeBrush.GetAddressOf());
 }
 void WinCap::captureScreen()
 {
@@ -80,9 +90,9 @@ void WinCap::captureScreen()
         .dpiY{96.0f},
         .bitmapOptions{D2D1_BITMAP_OPTIONS_TARGET},
     };
-    winrt::com_ptr<ID2D1DeviceContext> dc;
-    render->QueryInterface(IID_PPV_ARGS(dc.put()));
-    dc->CreateBitmap(D2D1::SizeU(w, h), data.data(), w * 4, props, screenImg.put());
+    ComPtr<ID2D1DeviceContext> dc;
+    render->QueryInterface(IID_PPV_ARGS(dc.GetAddressOf()));
+    dc->CreateBitmap(D2D1::SizeU(w, h), data.data(), w * 4, props, screenImg.GetAddressOf());
 }
 LRESULT WinCap::winMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -98,29 +108,29 @@ LRESULT WinCap::winMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     {
         self->onPaint();
     }
-    //else if (msg == WM_RBUTTONDOWN)
-    //{
-    //    self->onMouseDown(LOWORD(lParam), HIWORD(lParam), true);
-    //}
-    //else if (msg == WM_LBUTTONDOWN) {
-    //    self->isMouseDown = true;
-    //    self->onMouseDown(LOWORD(lParam), HIWORD(lParam), false);
-    //}
-    //else if (msg == WM_LBUTTONUP) {
-    //    self->isMouseDown = false;
-    //    self->onMouseUp(LOWORD(lParam), HIWORD(lParam));
-    //}
-    //else if (msg == WM_MOUSEMOVE) {
-    //    if (self->isMouseDown) {
-    //        self->onMouseDrag(LOWORD(lParam), HIWORD(lParam));
-    //    }
-    //    else {
-    //        self->onMouseMove(LOWORD(lParam), HIWORD(lParam));
-    //    }
-    //}
-    //else if (msg == WM_MOUSELEAVE) {
-    //    self->onMouseLeave();
-    //}
+    else if (msg == WM_RBUTTONDOWN)
+    {
+        self->onMouseDown(LOWORD(lParam), HIWORD(lParam), true);
+    }
+    else if (msg == WM_LBUTTONDOWN) {
+        self->isMouseDown = true;
+        self->onMouseDown(LOWORD(lParam), HIWORD(lParam), false);
+    }
+    else if (msg == WM_LBUTTONUP) {
+        self->isMouseDown = false;
+        self->onMouseUp(LOWORD(lParam), HIWORD(lParam));
+    }
+    else if (msg == WM_MOUSEMOVE) {
+        if (self->isMouseDown) {
+            self->onMouseDrag(LOWORD(lParam), HIWORD(lParam));
+        }
+        else {
+            self->onMouseMove(LOWORD(lParam), HIWORD(lParam));
+        }
+    }
+    else if (msg == WM_MOUSELEAVE) {
+        self->onMouseLeave();
+    }
     //else if (msg == WM_KEYDOWN) {
     //    self->onKeyDown(wParam);
     //}
@@ -136,9 +146,9 @@ void WinCap::onPaint()
     HDC hdc = BeginPaint(hwnd, &ps);
     render->BeginDraw();
     D2D1_RECT_F destRect = D2D1::RectF(0, 0, w, h);
-    render->DrawBitmap(screenImg.get(), destRect);
-    paintShape(render.get());
-    //cutMask->paint(render.get());
+    render->DrawBitmap(screenImg.Get(), destRect);
+    paintShape(render.Get());
+    CutMask::get()->paint();
     render->EndDraw();
     EndPaint(hwnd, &ps);
 }
@@ -158,4 +168,100 @@ void WinCap::paintShape(ID2D1RenderTarget* render)
     //        render->FillGeometry(g.get(), shapeBrush.get());
     //    }
     //}
+}
+
+void WinCap::onMouseMove(const int& x, const int& y) {
+    if (!mouseIn)
+    {
+        mouseIn = true;
+        Util::trackMouse(hwnd);
+    }
+    if (drawState.empty()) {
+        //if (winTool.get()) {
+        //    cutMask->changeCursor(x, y);
+        //}
+        //else {
+            CutMask::get()->highlight(x, y);
+            //winPix->move(x, y);
+        //}
+    }
+    else {
+        SetCursor(LoadCursor(NULL, IDC_CROSS));
+    }
+
+}
+void WinCap::onMouseDrag(const int& x, const int& y)
+{
+    if (drawState.empty()) {
+        //if (winTool.get()) {
+        //    cutMask->changeRect(x, y);
+        //}
+        //else {
+            CutMask::get()->makeRect(x, y);
+        //}
+    }
+    else {
+        //Shape& last = shapes.back();
+        //last.x2 = x;
+        //last.y2 = y;
+        //last.state = 1;
+        refresh();
+    }
+}
+void WinCap::onMouseDown(const int& x, const int& y, bool isRight)
+{
+    if (isRight) {
+        //App::exit(2);
+        return;
+    }
+    if (drawState.empty()) {
+        //if (winPix.get()) {
+        //    winPix->close();
+        //    winPix.reset();
+        //}
+        //if (winTool.get()) {
+        //    winTool->hide();
+        //    cutMask->startChangeRect(x, y);
+        //}
+        //else {
+            CutMask::get()->startMakeRect(x, y);
+        //}
+    }
+    else {
+        //std::erase_if(shapes, [](const Shape& s) { return s.state == 2; });
+        //Shape shape;
+        //shape.x1 = x;
+        //shape.y1 = y;
+        //shape.x2 = x;
+        //shape.y2 = y;
+        //if (drawState == L"rect") {
+        //    shape.type = 0;
+        //}
+        //else if (drawState == L"arrow") {
+        //    shape.type = 1;
+        //}
+        //shape.state = 0;
+        //shapes.push_back(std::move(shape));
+    }
+}
+void WinCap::onMouseUp(const int& x, const int& y)
+{
+    //if (!winTool.get()) {
+    //    winTool = std::make_unique<WinTool>();
+    //}
+    //if (drawState.empty()) {
+    //    winTool->show();
+    //}
+    //else {
+    //    Shape& last = shapes.back();
+    //    if (last.state == 0) {
+    //        shapes.pop_back();
+    //    }
+    //}
+}
+void WinCap::onMouseLeave()
+{
+    CutMask::get()->cursorIndex = -1;
+    Util::trackMouse(hwnd, true);
+    mouseIn = false;
 }

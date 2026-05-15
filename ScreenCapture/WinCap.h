@@ -6,10 +6,14 @@ public:
 	WinCap();
 	~WinCap();
 	static void init();
+	static WinCap* get();
+	void refresh();
 public:
 	int x, y, w, h;
 	float dpi;
 	HWND hwnd;
+	ComPtr<ID2D1HwndRenderTarget> render;
+	std::wstring drawState;
 private:
 	void initPosSize();
 	void createWindow();
@@ -17,9 +21,15 @@ private:
 	static LRESULT CALLBACK winMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 	void onPaint();
 	void paintShape(ID2D1RenderTarget* render);
+	void onMouseMove(const int& x, const int& y);
+	void onMouseDrag(const int& x, const int& y);
+	void onMouseDown(const int& x, const int& y, bool isRight);
+	void onMouseUp(const int& x, const int& y);
+	void onMouseLeave();
 private:
-	winrt::com_ptr<ID2D1SolidColorBrush> shapeBrush;
-	winrt::com_ptr<ID2D1Bitmap1> screenImg;
-	winrt::com_ptr<ID2D1HwndRenderTarget> render;
+
+	bool isMouseDown{ false }, mouseIn{ false };
+	ComPtr<ID2D1SolidColorBrush> shapeBrush;
+	ComPtr<ID2D1Bitmap1> screenImg;
 };
 

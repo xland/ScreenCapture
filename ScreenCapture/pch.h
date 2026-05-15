@@ -23,7 +23,6 @@
 #include <math.h>
 
 #include <dispatcherqueue.h>
-#include <winrt/base.h> 
 #include <winrt/Windows.System.h>
 #include <winrt/Windows.Storage.h>
 #include <winrt/Windows.Storage.Pickers.h>
