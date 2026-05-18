@@ -158,6 +158,8 @@
     </ClCompile>
     <ClCompile Include="Util.cpp" />
     <ClCompile Include="WinCap.cpp" />
+    <ClCompile Include="WinPix.cpp" />
+    <ClCompile Include="WinTool.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h" />
@@ -165,6 +167,11 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="Util.h" />
     <ClInclude Include="WinCap.h" />
+    <ClInclude Include="WinPix.h" />
+    <ClInclude Include="WinTool.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resource.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

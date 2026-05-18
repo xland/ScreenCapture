@@ -7,6 +7,7 @@ public:
 	~App();
 	static void init();
 	static App* get();
+	static void exit(const int& code);
 public:
 	winrt::Windows::System::DispatcherQueue dq;
 	std::vector<std::wstring> toolBtns;

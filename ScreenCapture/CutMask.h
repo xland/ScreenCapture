@@ -6,8 +6,6 @@ class CutMask
 public:
 	CutMask();
 	~CutMask();
-	static void init();
-	static CutMask* get();
 	bool highlight(const int& x, const int& y);
 	void changeCursor(const int& x, const int& y);
 	void startMakeRect(const int& x, const int& y);
@@ -22,11 +20,11 @@ public:
 private:
 	void initWinRect();
 private:
-	winrt::com_ptr<IDWriteTextFormat> textFormat;
-	winrt::com_ptr<IDWriteTextLayout> textLayout;
-	winrt::com_ptr<ID2D1SolidColorBrush> brushBg;
-	winrt::com_ptr<ID2D1SolidColorBrush> brushBorder;
-	winrt::com_ptr<ID2D1SolidColorBrush> brushText;
+	ComPtr<IDWriteTextFormat> textFormat;
+	ComPtr<IDWriteTextLayout> textLayout;
+	ComPtr<ID2D1SolidColorBrush> brushBg;
+	ComPtr<ID2D1SolidColorBrush> brushBorder;
+	ComPtr<ID2D1SolidColorBrush> brushText;
 	std::vector<D2D1_RECT_F> winRect;
 	int pressX, pressY;
 };

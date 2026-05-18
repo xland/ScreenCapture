@@ -33,6 +33,12 @@
     <ClCompile Include="CutMask.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="WinPix.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="WinTool.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -50,5 +56,16 @@
     <ClInclude Include="CutMask.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="WinPix.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="WinTool.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resource.rc">
+      <Filter>资源文件</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

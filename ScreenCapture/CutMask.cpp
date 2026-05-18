@@ -3,35 +3,22 @@
 #include "WinCap.h"
 #include "CutMask.h"
 
-std::unique_ptr<CutMask> cutMask;
-
 CutMask::CutMask() 
 {
     auto render = WinCap::get()->render.Get();
     //textLayout = Util::getTextLayout(L"\ue8e8", fontSize, btnW, h);
-    render->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White), brushText.put());
-    render->CreateSolidColorBrush(D2D1::ColorF(0x000000, 0.46f), brushBg.put());
-    render->CreateSolidColorBrush(D2D1::ColorF(0x1677ff), brushBorder.put());
+    render->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White), brushText.GetAddressOf());
+    render->CreateSolidColorBrush(D2D1::ColorF(0x000000, 0.46f), brushBg.GetAddressOf());
+    render->CreateSolidColorBrush(D2D1::ColorF(0x1677ff), brushBorder.GetAddressOf());
     auto dwriteFactory = Util::getWriteFactory();
     dwriteFactory->CreateTextFormat(L"Microsoft YaHei", nullptr,
         DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
-        15, L"", textFormat.put());
+        15, L"", textFormat.GetAddressOf());
     initWinRect();
 }
 
 CutMask::~CutMask() {
 
-}
-
-void CutMask::init()
-{
-	cutMask = std::make_unique<CutMask>();
-
-}
-
-CutMask* CutMask::get()
-{
-    return cutMask.get();
 }
 
 bool CutMask::highlight(const int& x, const int& y)
@@ -278,23 +265,23 @@ void CutMask::paint()
     auto render = win->render.Get();
     D2D1_RECT_F destRect = D2D1::RectF(0, 0, win->w, win->h);
     auto d2d = Util::getD2D();
-    winrt::com_ptr<ID2D1RectangleGeometry> outerGeometry;
-    d2d->CreateRectangleGeometry(destRect, outerGeometry.put());
-    winrt::com_ptr<ID2D1RectangleGeometry> innerGeometry;
-    d2d->CreateRectangleGeometry(maskRect, innerGeometry.put());
-    ID2D1Geometry* geometries[] = { outerGeometry.get(), innerGeometry.get() };
-    winrt::com_ptr<ID2D1GeometryGroup> geo;
-    d2d->CreateGeometryGroup(D2D1_FILL_MODE_ALTERNATE,geometries, ARRAYSIZE(geometries), geo.put());
-    render->FillGeometry(geo.get(), brushBg.get());
+    ComPtr<ID2D1RectangleGeometry> outerGeometry;
+    d2d->CreateRectangleGeometry(destRect, outerGeometry.GetAddressOf());
+    ComPtr<ID2D1RectangleGeometry> innerGeometry;
+    d2d->CreateRectangleGeometry(maskRect, innerGeometry.GetAddressOf());
+    ID2D1Geometry* geometries[] = { outerGeometry.Get(), innerGeometry.Get() };
+    ComPtr<ID2D1GeometryGroup> geo;
+    d2d->CreateGeometryGroup(D2D1_FILL_MODE_ALTERNATE,geometries, ARRAYSIZE(geometries), geo.GetAddressOf());
+    render->FillGeometry(geo.Get(), brushBg.Get());
     auto r = D2D1::RectF(maskRect.left - 2, maskRect.top - 2, maskRect.right + 2, maskRect.bottom + 2);
-    render->DrawRectangle(r, brushBorder.get(), 4.f);
+    render->DrawRectangle(r, brushBorder.Get(), 4.f);
 
     auto str = std::format(L"X:{} Y:{} R:{} B:{} W:{} H:{}",
         maskRect.left,maskRect.top,maskRect.right,maskRect.bottom,
         maskRect.right - maskRect.left,maskRect.bottom-maskRect.top);    
     auto dwriteFactory = Util::getWriteFactory();
     winrt::com_ptr<IDWriteTextLayout> layout;
-    dwriteFactory->CreateTextLayout(str.data(),static_cast<UINT32>(str.size()), textFormat.get(), FLT_MAX, FLT_MAX, layout.put());
+    dwriteFactory->CreateTextLayout(str.data(),static_cast<UINT32>(str.size()), textFormat.Get(), FLT_MAX, FLT_MAX, layout.put());
     layout->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
     layout->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
     layout->SetFontSize(10*win->dpi, { 0, static_cast<UINT32>(str.length()) });
@@ -318,9 +305,9 @@ void CutMask::paint()
     layout->SetMaxWidth(rect.right-rect.left );
     layout->SetMaxHeight(rect.bottom - rect.top);
     D2D1_ROUNDED_RECT rr = D2D1::RoundedRect(rect, paddingTop, paddingTop);
-    render->FillRoundedRectangle(rr, brushBg.get());
+    render->FillRoundedRectangle(rr, brushBg.Get());
     D2D1_POINT_2F origin = { rect.left, rect.top };
-    render->DrawTextLayout(origin, layout.get(), brushText.get(), D2D1_DRAW_TEXT_OPTIONS_NONE);
+    render->DrawTextLayout(origin, layout.get(), brushText.Get(), D2D1_DRAW_TEXT_OPTIONS_NONE);
 
 
     //通过这种方式可以擦掉指定的区域

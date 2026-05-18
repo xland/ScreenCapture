@@ -26,7 +26,10 @@ App* App::get()
 {
     return app.get();
 }
-
+void App::exit(const int& code)
+{
+    PostQuitMessage(code);
+}
 void App::initDQ()
 {
     auto optSize = sizeof(DispatcherQueueOptions);
@@ -54,7 +57,7 @@ void App::procCmd()
     }
     LocalFree(argv);
     if (app->toolBtns.empty()) {
-        app->initToolBtns(std::wstring_view(L"close,pin,|,save,clipboard,|,video,long,edit"));
+        app->initToolBtns(std::wstring_view(L"rect,ellipse,arrow,number,line,text,mosaic,eraser,|,undo,redo,|,pin,clipboard,save,close"));
     }
 }
 void App::initToolBtns(const std::wstring_view& argv)

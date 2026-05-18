@@ -1,7 +1,10 @@
 #include "pch.h"
 #include "WinCap.h"
+#include "WinPix.h"
 #include "Util.h"
+#include "App.h"
 #include "CutMask.h"
+#include "WinTool.h"
 
 std::unique_ptr<WinCap> winCap;
 
@@ -21,7 +24,8 @@ void WinCap::init()
     winCap->initPosSize();
     winCap->createWindow();
     winCap->captureScreen();
-    CutMask::init();
+    winCap->winPix = std::make_unique<WinPix>();
+    winCap->cutMask = std::make_unique<CutMask>();
     ShowWindow(winCap->hwnd, SW_SHOW);
 }
 WinCap* WinCap::get()
@@ -31,6 +35,27 @@ WinCap* WinCap::get()
 void WinCap::refresh()
 {
     InvalidateRect(hwnd, nullptr, false);
+}
+ComPtr<ID2D1Bitmap1> WinCap::getImgData(const int& x, const int& y, const int& r, const int& b, bool hasShape)
+{
+    ComPtr<ID2D1Bitmap1> cpuImg;
+    ComPtr<ID2D1DeviceContext> dc;
+    render->QueryInterface(IID_PPV_ARGS(dc.GetAddressOf()));
+    if (hasShape) {
+        dc->SetTarget(screenImg.Get());
+        dc->BeginDraw();
+        paintShape(dc.Get());
+        dc->EndDraw();
+    }
+    D2D1_BITMAP_PROPERTIES1 prop1{};
+    prop1.pixelFormat = screenImg->GetPixelFormat();
+    prop1.bitmapOptions = D2D1_BITMAP_OPTIONS_CPU_READ | D2D1_BITMAP_OPTIONS_CANNOT_DRAW;
+    screenImg->GetDpi(&prop1.dpiX, &prop1.dpiY);
+    dc->CreateBitmap(D2D1::SizeU(r - x, b - y), nullptr, 0, &prop1, cpuImg.GetAddressOf());
+    auto rect = D2D1::RectU(x, y, r, b);
+    auto start = D2D1::Point2U(0, 0);
+    auto hr = cpuImg->CopyFromBitmap(&start, screenImg.Get(), &rect);
+    return cpuImg;
 }
 void WinCap::initPosSize()
 {
@@ -113,11 +138,9 @@ LRESULT WinCap::winMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         self->onMouseDown(LOWORD(lParam), HIWORD(lParam), true);
     }
     else if (msg == WM_LBUTTONDOWN) {
-        self->isMouseDown = true;
         self->onMouseDown(LOWORD(lParam), HIWORD(lParam), false);
     }
     else if (msg == WM_LBUTTONUP) {
-        self->isMouseDown = false;
         self->onMouseUp(LOWORD(lParam), HIWORD(lParam));
     }
     else if (msg == WM_MOUSEMOVE) {
@@ -148,7 +171,7 @@ void WinCap::onPaint()
     D2D1_RECT_F destRect = D2D1::RectF(0, 0, w, h);
     render->DrawBitmap(screenImg.Get(), destRect);
     paintShape(render.Get());
-    CutMask::get()->paint();
+    cutMask->paint();
     render->EndDraw();
     EndPaint(hwnd, &ps);
 }
@@ -177,13 +200,13 @@ void WinCap::onMouseMove(const int& x, const int& y) {
         Util::trackMouse(hwnd);
     }
     if (drawState.empty()) {
-        //if (winTool.get()) {
-        //    cutMask->changeCursor(x, y);
-        //}
-        //else {
-            CutMask::get()->highlight(x, y);
-            //winPix->move(x, y);
-        //}
+        if (winTool.get()) {
+            cutMask->changeCursor(x, y);
+        }
+        else {
+            cutMask->highlight(x, y);
+            winPix->move(x, y);
+        }
     }
     else {
         SetCursor(LoadCursor(NULL, IDC_CROSS));
@@ -193,12 +216,12 @@ void WinCap::onMouseMove(const int& x, const int& y) {
 void WinCap::onMouseDrag(const int& x, const int& y)
 {
     if (drawState.empty()) {
-        //if (winTool.get()) {
-        //    cutMask->changeRect(x, y);
-        //}
-        //else {
-            CutMask::get()->makeRect(x, y);
-        //}
+        if (winTool.get()) {
+            cutMask->changeRect(x, y);
+        }
+        else {
+            cutMask->makeRect(x, y);
+        }
     }
     else {
         //Shape& last = shapes.back();
@@ -210,22 +233,23 @@ void WinCap::onMouseDrag(const int& x, const int& y)
 }
 void WinCap::onMouseDown(const int& x, const int& y, bool isRight)
 {
+    isMouseDown = true;
     if (isRight) {
-        //App::exit(2);
+        App::exit(2);
         return;
     }
     if (drawState.empty()) {
-        //if (winPix.get()) {
-        //    winPix->close();
-        //    winPix.reset();
-        //}
-        //if (winTool.get()) {
-        //    winTool->hide();
-        //    cutMask->startChangeRect(x, y);
-        //}
-        //else {
-            CutMask::get()->startMakeRect(x, y);
-        //}
+        if (winPix.get()) {
+            winPix->close();
+            winPix.reset();
+        }
+        if (winTool.get()) {
+            winTool->hide();
+            cutMask->startChangeRect(x, y);
+        }
+        else {
+            cutMask->startMakeRect(x, y);
+        }
     }
     else {
         //std::erase_if(shapes, [](const Shape& s) { return s.state == 2; });
@@ -246,22 +270,23 @@ void WinCap::onMouseDown(const int& x, const int& y, bool isRight)
 }
 void WinCap::onMouseUp(const int& x, const int& y)
 {
-    //if (!winTool.get()) {
-    //    winTool = std::make_unique<WinTool>();
-    //}
-    //if (drawState.empty()) {
-    //    winTool->show();
-    //}
-    //else {
-    //    Shape& last = shapes.back();
-    //    if (last.state == 0) {
-    //        shapes.pop_back();
-    //    }
-    //}
+    isMouseDown = false;
+    if (!winTool.get()) {
+        winTool = std::make_unique<WinTool>();
+    }
+    if (drawState.empty()) {
+        winTool->show();
+    }
+    else {
+        //Shape& last = shapes.back();
+        //if (last.state == 0) {
+        //    shapes.pop_back();
+        //}
+    }
 }
 void WinCap::onMouseLeave()
 {
-    CutMask::get()->cursorIndex = -1;
+    cutMask->cursorIndex = -1;
     Util::trackMouse(hwnd, true);
     mouseIn = false;
 }

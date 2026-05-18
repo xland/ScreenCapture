@@ -1,0 +1,41 @@
+﻿#define APSTUDIO_READONLY_SYMBOLS
+#include "winres.h"
+#undef APSTUDIO_READONLY_SYMBOLS
+100 ICON "Res/logo.ico"
+// 嵌入资源文件
+iconfont.ttf RCDATA "Res/iconfont.ttf"
+
+
+// 配置可执行文件产品信息
+VS_VERSION_INFO VERSIONINFO
+FILEVERSION 2,3,4,0
+PRODUCTVERSION 2,3,4,0
+FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+FILEFLAGS 0x1L
+#else
+FILEFLAGS 0x0L
+#endif
+FILEOS 0x40004L
+FILETYPE 0x1L
+FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "080404b0"
+        BEGIN
+            VALUE "CompanyName", "LiuXiaoLun"
+            VALUE "FileDescription", "ScreenCapture"
+            VALUE "FileVersion", "2.3.4.0"
+            VALUE "InternalName", "ScreenCapture.exe"
+            VALUE "LegalCopyright", "Copyright (C) LiuXiaoLun 2023-2025"
+            VALUE "OriginalFilename", "ScreenCapture.exe"
+            VALUE "ProductName", "ScreenCapture"
+            VALUE "ProductVersion", "2.3.4.0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x804, 1200
+    END
+END
