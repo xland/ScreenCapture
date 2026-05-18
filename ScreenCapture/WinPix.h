@@ -5,7 +5,6 @@ class WinPix
 public:
 	WinPix();
 	~WinPix();
-	void init();
 	void move(const int& x,const int& y);
 	void close();
 public:

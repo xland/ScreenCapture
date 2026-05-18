@@ -5,6 +5,11 @@
 
 WinPix::WinPix() 
 {
+    imgH = srcH * scaleNum;
+    w = srcW * scaleNum;
+    h = (imgH + 112);
+    createWindow();
+    initRender();
 }
 WinPix::~WinPix() 
 {
@@ -13,15 +18,6 @@ WinPix::~WinPix()
     //borderBrush.Reset();
     //crossBrush.Reset();
     //render.Reset();
-}
-
-void WinPix::init()
-{
-    imgH = srcH * scaleNum;
-    w = srcW * scaleNum;
-    h = (imgH + 112);
-    createWindow();
-    initRender();
 }
 
 void WinPix::createWindow()
