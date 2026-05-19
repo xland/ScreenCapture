@@ -36,7 +36,13 @@
     <ClCompile Include="WinPix.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="WinTool.cpp">
+    <ClCompile Include="WinToolMain.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="WinToolBase.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="WinToolSub.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -59,7 +65,13 @@
     <ClInclude Include="WinPix.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="WinTool.h">
+    <ClInclude Include="WinToolMain.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="WinToolBase.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="WinToolSub.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

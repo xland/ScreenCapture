@@ -4,7 +4,8 @@
 #include "Util.h"
 #include "App.h"
 #include "CutMask.h"
-#include "WinTool.h"
+#include "WinToolMain.h"
+#include "WinToolSub.h"
 
 std::unique_ptr<WinCap> winCap;
 
@@ -57,6 +58,35 @@ ComPtr<ID2D1Bitmap1> WinCap::getImgData(const int& x, const int& y, const int& r
     auto hr = cpuImg->CopyFromBitmap(&start, screenImg.Get(), &rect);
     return cpuImg;
 }
+void WinCap::changeDrawState(const std::wstring& state)
+{
+    if (state == L"close") {
+        App::exit(2);
+    }
+    else if (state == L"save") {
+
+    }
+    else if (state == L"clipboard") {
+
+    }
+    else if (state == L"pin") {
+
+    }
+    else if (state == L"redo") {
+
+    }
+    else if (state == L"undo") {
+
+    }
+    if (drawState == state) {
+        drawState = std::wstring{};
+        toolSub->close();
+    }
+    else {
+        drawState = state;
+    }
+}
+
 void WinCap::initPosSize()
 {
     x = GetSystemMetrics(SM_XVIRTUALSCREEN);
@@ -157,12 +187,15 @@ LRESULT WinCap::winMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     //else if (msg == WM_KEYDOWN) {
     //    self->onKeyDown(wParam);
     //}
-    //else if (msg == WM_SETCURSOR) {
-    //    if (self->onSetCursor()) return 1;
-    //}
+    else if (msg == WM_SETCURSOR) {
+        if (self->onSetCursor()) return 1;
+    }
     return DefWindowProc(hwnd, msg, wParam, lParam);
 }
-
+bool WinCap::onSetCursor()
+{
+    return (bool)toolMain.get();
+}
 void WinCap::onPaint()
 {
     PAINTSTRUCT ps;
@@ -200,7 +233,7 @@ void WinCap::onMouseMove(const int& x, const int& y) {
         Util::trackMouse(hwnd);
     }
     if (drawState.empty()) {
-        if (winTool.get()) {
+        if (toolMain.get()) {
             cutMask->changeCursor(x, y);
         }
         else {
@@ -216,7 +249,7 @@ void WinCap::onMouseMove(const int& x, const int& y) {
 void WinCap::onMouseDrag(const int& x, const int& y)
 {
     if (drawState.empty()) {
-        if (winTool.get()) {
+        if (toolMain.get()) {
             cutMask->changeRect(x, y);
         }
         else {
@@ -243,8 +276,8 @@ void WinCap::onMouseDown(const int& x, const int& y, bool isRight)
             winPix->close();
             winPix.reset();
         }
-        if (winTool.get()) {
-            winTool->hide();
+        if (toolMain.get()) {
+            toolMain->hide();
             cutMask->startChangeRect(x, y);
         }
         else {
@@ -271,11 +304,11 @@ void WinCap::onMouseDown(const int& x, const int& y, bool isRight)
 void WinCap::onMouseUp(const int& x, const int& y)
 {
     isMouseDown = false;
-    if (!winTool.get()) {
-        winTool = std::make_unique<WinTool>();
+    if (!toolMain.get()) {
+        toolMain = std::make_unique<WinToolMain>();
     }
     if (drawState.empty()) {
-        winTool->show();
+        toolMain->show();
     }
     else {
         //Shape& last = shapes.back();

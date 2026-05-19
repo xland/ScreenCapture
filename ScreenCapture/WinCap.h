@@ -2,7 +2,8 @@
 #include "pch.h"
 
 class CutMask;
-class WinTool;
+class WinToolMain;
+class WinToolSub;
 class WinPix;
 class WinCap
 {
@@ -12,6 +13,7 @@ public:
 	static void init();
 	static WinCap* get();
 	void refresh();
+	void changeDrawState(const std::wstring& state);
 	ComPtr<ID2D1Bitmap1> getImgData(const int& x, const int& y, const int& r, const int& b, bool hasShape = false);
 public:
 	int x, y, w, h;
@@ -32,9 +34,11 @@ private:
 	void onMouseDown(const int& x, const int& y, bool isRight);
 	void onMouseUp(const int& x, const int& y);
 	void onMouseLeave();
+	bool onSetCursor();
 private:
 	std::unique_ptr<WinPix> winPix;
-	std::unique_ptr<WinTool> winTool;
+	std::unique_ptr<WinToolMain> toolMain;
+	std::unique_ptr<WinToolSub> toolSub;
 	bool isMouseDown{ false }, mouseIn{ false };
 	ComPtr<ID2D1SolidColorBrush> shapeBrush;
 	ComPtr<ID2D1Bitmap1> screenImg;

@@ -159,7 +159,9 @@
     <ClCompile Include="Util.cpp" />
     <ClCompile Include="WinCap.cpp" />
     <ClCompile Include="WinPix.cpp" />
-    <ClCompile Include="WinTool.cpp" />
+    <ClCompile Include="WinToolMain.cpp" />
+    <ClCompile Include="WinToolBase.cpp" />
+    <ClCompile Include="WinToolSub.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h" />
@@ -168,7 +170,9 @@
     <ClInclude Include="Util.h" />
     <ClInclude Include="WinCap.h" />
     <ClInclude Include="WinPix.h" />
-    <ClInclude Include="WinTool.h" />
+    <ClInclude Include="WinToolMain.h" />
+    <ClInclude Include="WinToolBase.h" />
+    <ClInclude Include="WinToolSub.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc" />
