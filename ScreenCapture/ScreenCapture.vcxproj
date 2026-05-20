@@ -157,10 +157,11 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Util.cpp" />
+    <ClCompile Include="WinBase.cpp" />
     <ClCompile Include="WinCap.cpp" />
+    <ClCompile Include="WinPin.cpp" />
     <ClCompile Include="WinPix.cpp" />
     <ClCompile Include="WinToolMain.cpp" />
-    <ClCompile Include="WinToolBase.cpp" />
     <ClCompile Include="WinToolSub.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -168,10 +169,11 @@
     <ClInclude Include="CutMask.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Util.h" />
+    <ClInclude Include="WinBase.h" />
     <ClInclude Include="WinCap.h" />
+    <ClInclude Include="WinPin.h" />
     <ClInclude Include="WinPix.h" />
     <ClInclude Include="WinToolMain.h" />
-    <ClInclude Include="WinToolBase.h" />
     <ClInclude Include="WinToolSub.h" />
   </ItemGroup>
   <ItemGroup>

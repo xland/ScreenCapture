@@ -3,18 +3,15 @@
 class App
 {
 public:
-	App();
+	App(HINSTANCE hInstance);
 	~App();
-	static void init();
+	static void init(HINSTANCE hInstance);
 	static App* get();
 	static void exit(const int& code);
 public:
 	winrt::Windows::System::DispatcherQueue dq;
-	std::vector<std::wstring> toolBtns;
+	HINSTANCE hInstance;
 private:
 	static void initDQ();
-	void procCmd();
-	void initToolBtns(const std::wstring_view& argv);
-
 };
 

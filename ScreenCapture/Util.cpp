@@ -1,37 +1,6 @@
 ﻿#include "pch.h"
 #include "Util.h"
 
-void Util::createShadow(HWND hwnd)
-{
-    MARGINS margins = { 1,1,1,1 };
-    DwmExtendFrameIntoClientArea(hwnd, &margins);
-    int value = 2;
-    DwmSetWindowAttribute(hwnd, DWMWA_NCRENDERING_POLICY, &value, sizeof(value));
-    DwmSetWindowAttribute(hwnd, DWMWA_ALLOW_NCPAINT, &value, sizeof(value));
-}
-
-std::wstring Util::getResName(const std::wstring& url)
-{
-    size_t slashPos = url.find_last_of(L'/');
-    size_t queryPos = url.find(L'?');
-    size_t start = (slashPos != std::wstring::npos) ? slashPos + 1 : 0;
-    size_t end = (queryPos != std::wstring::npos) ? queryPos : url.length();
-    if (start >= end || start >= url.length()) return L"";
-    return url.substr(start, end - start);
-}
-
-ComPtr<IStream> Util::getResStream(const std::wstring& resName)
-{
-    HRSRC hRes = FindResource(NULL, resName.data(), RT_RCDATA);
-    if (!hRes) return nullptr;
-    HGLOBAL hData = LoadResource(NULL, hRes);
-    if (!hData) return nullptr;
-    void* pData = LockResource(hData);
-    DWORD size = SizeofResource(NULL, hRes);
-    ComPtr<IStream> stream = SHCreateMemStream((const BYTE*)pData, size);
-    return stream;
-}
-
 ID2D1Factory* Util::getD2D()
 {
     static ComPtr<ID2D1Factory> D2D;
@@ -54,24 +23,6 @@ IDWriteFactory5* Util::getWriteFactory()
         }
     }
     return dwriteFactory.Get();
-}
-
-ComPtr<ID2D1HwndRenderTarget> Util::createRender(HWND& hwnd, int& w, int& h)
-{
-    ComPtr<ID2D1HwndRenderTarget> render;
-    D2D1_RENDER_TARGET_PROPERTIES rtProps = D2D1::RenderTargetProperties(
-        D2D1_RENDER_TARGET_TYPE_DEFAULT, //D2D1_RENDER_TARGET_TYPE_DEFAULT,//D2D1_RENDER_TARGET_TYPE_HARDWARE,
-        D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED),
-        96, 96
-    );
-    D2D1_SIZE_U size = D2D1::SizeU(w, h);
-    D2D1_HWND_RENDER_TARGET_PROPERTIES hwndProps = D2D1::HwndRenderTargetProperties(hwnd, size);
-    auto d2d = Util::getD2D();
-    auto hr = d2d->CreateHwndRenderTarget(rtProps, hwndProps, render.GetAddressOf());
-    if (FAILED(hr)) {
-        throw std::runtime_error("CreateHwndRenderTarget error");
-    }
-    return render;
 }
 
 IDWriteTextFormat* Util::getTextFormat(const float& fontSize)
@@ -134,29 +85,7 @@ IDWriteTextFormat* Util::getIconFormat()
     return iconFormat.Get();
 }
 
-ComPtr<IDWriteTextLayout> Util::getIconLayout(const std::wstring& icon, const float& fontSize, const float& w, const float& h)
-{
-    auto format = Util::getIconFormat();
-    auto dwrite = Util::getWriteFactory();
-    ComPtr<IDWriteTextLayout> layout;
-    dwrite->CreateTextLayout(icon.data(), icon.length(), format, w, h, layout.GetAddressOf());
-    layout->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
-    layout->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
-    layout->SetFontSize(fontSize, { 0, static_cast<UINT32>(icon.length()) });
-    return layout;
-}
 
-ComPtr<IDWriteTextLayout> Util::getTextLayout(const std::wstring& str, const float& fontSize, const float& w, const float& h)
-{
-    auto format = Util::getIconFormat();
-    auto dwrite = Util::getWriteFactory();
-    ComPtr<IDWriteTextLayout> layout;
-    dwrite->CreateTextLayout(str.data(), str.length(), format, w, h, layout.GetAddressOf());
-    layout->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
-    layout->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
-    layout->SetFontSize(fontSize, { 0, static_cast<UINT32>(str.length()) });
-    return layout;
-}
 
 void Util::moveMouse(const int& key)
 {
@@ -314,13 +243,25 @@ std::wstring Util::getTextFromClipboard()
     return text;
 }
 
-void Util::enableHwndAlpha(HWND hwnd)
+std::vector<BYTE> Util::captureScreen(const int& x, const int& y, const int& w, const int& h)
 {
-    HRGN region = CreateRectRgn(0, 0, -1, -1);
-    DWM_BLURBEHIND bb = { 0 };
-    bb.dwFlags = DWM_BB_ENABLE | DWM_BB_BLURREGION;
-    bb.hRgnBlur = region;
-    bb.fEnable = TRUE;
-    DwmEnableBlurBehindWindow(hwnd, &bb);
-    DeleteObject(region);
+    HDC hScreen = GetDC(NULL);
+    HDC hDC = CreateCompatibleDC(hScreen);
+    HBITMAP hBitmap = CreateCompatibleBitmap(hScreen, w, h);
+    auto oldObj = SelectObject(hDC, hBitmap);
+    BOOL bRet = BitBlt(hDC, 0, 0, w, h, hScreen, x, y, SRCCOPY);
+    ReleaseDC(NULL, hScreen);
+    std::vector<BYTE> data(w * 4 * h);
+    BITMAPINFO bmi{};
+    bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+    bmi.bmiHeader.biWidth = w;
+    bmi.bmiHeader.biHeight = -h;
+    bmi.bmiHeader.biPlanes = 1;
+    bmi.bmiHeader.biBitCount = 32;
+    bmi.bmiHeader.biCompression = BI_RGB;
+    GetDIBits(hDC, hBitmap, 0, h, data.data(), &bmi, DIB_RGB_COLORS);
+    SelectObject(hDC, oldObj);
+    DeleteDC(hDC);
+    DeleteObject(hBitmap);
+    return data;
 }

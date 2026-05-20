@@ -1,20 +1,27 @@
 ﻿#pragma once
 #include "pch.h"
-#include "WinToolBase.h"
+#include "WinBase.h"
 
-class WinToolMain :public WinToolBase
+class WinToolMain :public WinBase
 {
 public:
-	WinToolMain();
+	WinToolMain(const int& x, const int& y, const int& w, const int& h);
 	~WinToolMain();
-	void show() override;
+	static void popup();
 public:
 protected:
+	void onMouseDown(const int& x, const int& y, bool isRight) override;
+private:
 	void onPaint() override;
-	void onClick() override;
+	bool onCursor() override;
+	void initRes();
 private:
-	IDWriteTextLayout* getIconLayout(const std::wstring& icon);
-private:
-
+	std::unordered_map<std::wstring, ComPtr<IDWriteTextLayout>> btnIcons;
+	ComPtr<ID2D1SolidColorBrush> brushBg;
+	ComPtr<ID2D1SolidColorBrush> brushIcon;
+	ComPtr<ID2D1SolidColorBrush> brushIconHover;
+	ComPtr<ID2D1SolidColorBrush> brushSpliter;
+	int hoverIndex{ -1 };
+	float btnW{ 36.f }, btnH{ 32.f }, btnPadding;
 };
 

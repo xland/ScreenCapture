@@ -39,10 +39,13 @@
     <ClCompile Include="WinToolMain.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="WinToolBase.cpp">
+    <ClCompile Include="WinToolSub.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="WinToolSub.cpp">
+    <ClCompile Include="WinPin.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="WinBase.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -68,10 +71,13 @@
     <ClInclude Include="WinToolMain.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="WinToolBase.h">
+    <ClInclude Include="WinToolSub.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="WinToolSub.h">
+    <ClInclude Include="WinPin.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="WinBase.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

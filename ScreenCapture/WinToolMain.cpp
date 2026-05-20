@@ -4,108 +4,112 @@
 #include "App.h"
 #include "WinCap.h"
 #include "CutMask.h"
-//#include "WinPin.h"
+#include "WinPin.h"
 
+std::unique_ptr<WinToolMain> winToolMain;
 
-WinToolMain::WinToolMain()
+WinToolMain::WinToolMain(const int& x, const int& y, const int& w, const int& h) : WinBase(x,y,w,h)
 {
-    auto app = App::get();
-    auto count = std::count_if(app->toolBtns.begin(), app->toolBtns.end(), [](auto& s) { return s != L"|"; });
-    createWindow(count);
+
 }
 WinToolMain::~WinToolMain()
 {
-    //brushBg.Reset();
-    //brushIcon.Reset();
-    //brushIconHover.Reset();
-    //brushSpliter.Reset();
-    //render.Reset();
 }
 
-
-IDWriteTextLayout* WinToolMain::getIconLayout(const std::wstring& icon)
+void WinToolMain::popup()
 {
-    static std::unordered_map<std::wstring, ComPtr<IDWriteTextLayout>> btnIcons;
-    if (!btnIcons.contains(icon)) {
-        auto fontSize{ 14.f * dpi };
-        btnIcons.clear();
-        btnIcons.insert({ L"rect" ,Util::getIconLayout(L"\ue8e8",fontSize,btnW,h) });
-        btnIcons.insert({ L"ellipse" ,Util::getIconLayout(L"\ue6bc",fontSize,btnW,h) });
-        btnIcons.insert({ L"arrow" ,Util::getIconLayout(L"\ue603",fontSize,btnW,h) });
-        btnIcons.insert({ L"number" ,Util::getIconLayout(L"\ue776",fontSize,btnW,h) });
-        btnIcons.insert({ L"line" ,Util::getIconLayout(L"\ue601",fontSize,btnW,h) });
-        btnIcons.insert({ L"text" ,Util::getIconLayout(L"\ue6ec",fontSize,btnW,h) });
-        btnIcons.insert({ L"mosaic" ,Util::getIconLayout(L"\ue82e",fontSize,btnW,h) });
-        btnIcons.insert({ L"eraser" ,Util::getIconLayout(L"\ue6be",fontSize,btnW,h) });
-        btnIcons.insert({ L"undo" ,Util::getIconLayout(L"\ued85",fontSize,btnW,h) });
-        btnIcons.insert({ L"redo" ,Util::getIconLayout(L"\ued8a",fontSize,btnW,h) });
-        btnIcons.insert({ L"pin" ,Util::getIconLayout(L"\ue6a2",fontSize,btnW,h) });
-        btnIcons.insert({ L"clipboard" ,Util::getIconLayout(L"\ue650",fontSize,btnW,h) });
-        btnIcons.insert({ L"save" ,Util::getIconLayout(L"\ue608",fontSize,btnW,h) });
-        btnIcons.insert({ L"close" ,Util::getIconLayout(L"\ue62d",fontSize,btnW,h) });
+	if (!winToolMain.get()){
+        auto winPin = WinPin::getCur();
+        if (!winPin) {
+			log(L"not find winPin when create toolMain");
+            return;
+        }
+        auto btnW = 36.f * winPin->dpi;
+        auto btnH = 32.f * winPin->dpi;
+        auto btnPadding = 3.f * winPin->dpi;
+        auto w = btnW * 14;
+        auto h = btnH;
+	    auto x = winPin->x;
+	    auto y = winPin->y + winPin->h + btnPadding;
+	    winToolMain = std::make_unique<WinToolMain>(x, y, w, h);
+	    winToolMain->btnW = btnW;
+        winToolMain->btnH = btnH;
+	    winToolMain->btnPadding = btnPadding;
+	    winToolMain->createWindow(WS_EX_TOOLWINDOW | WS_EX_TOPMOST);
+		winToolMain->initRes();
+        winToolMain->show();
     }
-    return btnIcons[icon].Get();
+    else {
+        auto winPin = WinPin::getCur();
+        auto win = winToolMain.get();
+        auto x = winPin->x;
+        auto y = winPin->y + winPin->h + win->btnPadding;
+        win->move(x, y);
+        win->show();
+    }
+}
+bool WinToolMain::onCursor()
+{
+    SetCursor(LoadCursor(NULL, IDC_HAND));
+    return TRUE;
+}
+void WinToolMain::initRes()
+{
+    render->CreateSolidColorBrush(D2D1::ColorF(0xe6f4ff), brushBg.GetAddressOf());
+    render->CreateSolidColorBrush(D2D1::ColorF(0x333333), brushIcon.GetAddressOf());
+    render->CreateSolidColorBrush(D2D1::ColorF(0x1677ff), brushIconHover.GetAddressOf());
+    render->CreateSolidColorBrush(D2D1::ColorF(0xbbbbbb), brushSpliter.GetAddressOf());
+    auto fontSize{ 14.f * dpi };
+    btnIcons.insert({ L"rect" ,getIconLayout(L"\ue8e8",fontSize,btnW,h) });
+    btnIcons.insert({ L"ellipse" ,getIconLayout(L"\ue6bc",fontSize,btnW,h) });
+    btnIcons.insert({ L"arrow" ,getIconLayout(L"\ue603",fontSize,btnW,h) });
+    btnIcons.insert({ L"number" ,getIconLayout(L"\ue776",fontSize,btnW,h) });
+    btnIcons.insert({ L"line" ,getIconLayout(L"\ue601",fontSize,btnW,h) });
+    btnIcons.insert({ L"text" ,getIconLayout(L"\ue6ec",fontSize,btnW,h) });
+    btnIcons.insert({ L"mosaic" ,getIconLayout(L"\ue82e",fontSize,btnW,h) });
+    btnIcons.insert({ L"eraser" ,getIconLayout(L"\ue6be",fontSize,btnW,h) });
+    btnIcons.insert({ L"undo" ,getIconLayout(L"\ued85",fontSize,btnW,h) });
+    btnIcons.insert({ L"redo" ,getIconLayout(L"\ued8a",fontSize,btnW,h) });
+    btnIcons.insert({ L"pin" ,getIconLayout(L"\ue6a2",fontSize,btnW,h) });
+    btnIcons.insert({ L"clipboard" ,getIconLayout(L"\ue650",fontSize,btnW,h) });
+    btnIcons.insert({ L"save" ,getIconLayout(L"\ue608",fontSize,btnW,h) });
+    btnIcons.insert({ L"close" ,getIconLayout(L"\ue62d",fontSize,btnW,h) });
 }
 
 void WinToolMain::onPaint()
 {
-    auto app = App::get();
+    render->Clear(D2D1::ColorF(0xFFFFFF));
     int btnIndex{ 0 };
-    auto win = WinCap::get();
-    for (auto& btn : app->toolBtns)
+    for (auto& pair : btnIcons)
     {
-        if (btn == L"|") {
-            auto lx{ btnW * btnIndex }, lt{ 3.f * btnPadding };
-            render->DrawLine({ lx,lt }, { lx,btnH - lt }, brushSpliter.Get(), 0.8f);
+        if (btnIndex == hoverIndex || pair.first == L"drawState") {
+            auto xStart{ btnW * btnIndex };
+            D2D1_ROUNDED_RECT rr = { { xStart + btnPadding, btnPadding, xStart + btnW - btnPadding, h - btnPadding }, 6, 6 };
+            render->FillRoundedRectangle(rr, brushBg.Get());
+            D2D1_POINT_2F origin = { xStart, 0.f };
+            render->DrawTextLayout(origin, pair.second.Get(), brushIconHover.Get(), D2D1_DRAW_TEXT_OPTIONS_NONE);
         }
-        else
-        {           
-            if (btnIndex == hoverIndex || btn == win->drawState) {
-                auto xStart{ btnW * btnIndex };
-                D2D1_ROUNDED_RECT rr = { { xStart + btnPadding, btnPadding, xStart + btnW - btnPadding, h - btnPadding }, 6, 6 };
-                render->FillRoundedRectangle(rr, brushBg.Get());
-                D2D1_POINT_2F origin = { xStart, 0.f };
-                render->DrawTextLayout(origin, getIconLayout(btn), brushIconHover.Get(), D2D1_DRAW_TEXT_OPTIONS_NONE);
-            }
-            else {
-                D2D1_POINT_2F origin = { btnW * btnIndex, 0.f };
-                render->DrawTextLayout(origin, getIconLayout(btn), brushIcon.Get(), D2D1_DRAW_TEXT_OPTIONS_NONE);
-            }
-            btnIndex += 1;
+        else {
+            D2D1_POINT_2F origin = { btnW * btnIndex, 0.f };
+            render->DrawTextLayout(origin, pair.second.Get(), brushIcon.Get(), D2D1_DRAW_TEXT_OPTIONS_NONE);
         }
+        btnIndex += 1;
     }
+    //auto lx{ btnW * btnIndex }, lt{ 3.f * btnPadding };
+    //render->DrawLine({ lx,lt }, { lx,btnH - lt }, brushSpliter.Get(), 0.8f);
 }
 
-void WinToolMain::onClick()
+void WinToolMain::onMouseDown(const int& x, const int& y, bool isRight)
 {
-    auto index{ 0 };
-    for (auto& btn: App::get()->toolBtns)
-    {
-        if (btn == L"|") continue;
-        if (index == hoverIndex) 
-        {
-            WinCap::get()->changeDrawState(btn);
-            InvalidateRect(hwnd, nullptr, false);
-            break;
-        }
-        index += 1;
-    }
-}
-
-void WinToolMain::show()
-{
-    auto win = WinCap::get();
-    //win->changeDrawState(L"rect");
-    x = static_cast<int>(win->cutMask->maskRect.right - w);
-    y = static_cast<int>(win->cutMask->maskRect.bottom + 7 * win->dpi);
-    if (y + h > win->h) {
-        y = win->cutMask->maskRect.top - 7 * win->dpi - h;
-    }
-    if (y < win->y) {
-        y = win->cutMask->maskRect.bottom - 7 * win->dpi - h;
-        x -= 7 * win->dpi;
-    }
-    SetWindowPos(hwnd, nullptr,x,y, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
-    InvalidateRect(hwnd, nullptr, false);
-    ShowWindow(hwnd, SW_SHOW);
+    //auto index{ 0 };
+    //for (auto& btn: App::get()->toolBtns)
+    //{
+    //    if (btn == L"|") continue;
+    //    if (index == hoverIndex) 
+    //    {
+    //        InvalidateRect(hwnd, nullptr, false);
+    //        break;
+    //    }
+    //    index += 1;
+    //}
 }

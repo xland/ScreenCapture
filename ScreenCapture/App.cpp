@@ -4,7 +4,8 @@
 
 std::unique_ptr<App> app;
 
-App::App() :dq{ winrt::Windows::System::DispatcherQueue::GetForCurrentThread() }
+
+App::App(HINSTANCE hInstance) :dq{ winrt::Windows::System::DispatcherQueue::GetForCurrentThread() }, hInstance(hInstance)
 {
 }
 
@@ -13,11 +14,10 @@ App::~App()
 
 }
 
-void App::init()
+void App::init(HINSTANCE hInstance)
 {
     App::initDQ();
-	app = std::make_unique<App>();
-    app->procCmd();
+	app = std::make_unique<App>(hInstance);
     WinCap::init();
 
 }
@@ -41,30 +41,5 @@ void App::initDQ()
     {
         MessageBox(NULL, L"无法创建DispatcherQueueController", L"系统提示", MB_OK);
         ExitProcess(-1);
-    }
-}
-void App::procCmd()
-{
-    LPWSTR* argv;
-    int argc;
-    LPWSTR cmdLine = GetCommandLine();
-    argv = CommandLineToArgvW(cmdLine, &argc);
-    for (int i = 0; i < argc; ++i) {
-        std::wstring arg{ argv[i] };
-        if (arg.starts_with(L"--tool:")) {
-            app->initToolBtns(std::wstring_view(arg).substr(7));
-        }
-    }
-    LocalFree(argv);
-    if (app->toolBtns.empty()) {
-        app->initToolBtns(std::wstring_view(L"rect,ellipse,arrow,number,line,text,mosaic,eraser,|,undo,redo,|,pin,clipboard,save,close"));
-    }
-}
-void App::initToolBtns(const std::wstring_view& argv)
-{
-    auto items = argv | std::views::split(L',');
-    for (const auto& item : items) {
-        std::wstring temp(item.begin(), item.end());
-        toolBtns.push_back(std::move(temp));
     }
 }

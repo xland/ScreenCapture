@@ -1,27 +1,22 @@
 ﻿#pragma once
 #include "pch.h"
-class WinPix
+#include "WinBase.h"
+class WinPix :public WinBase
 {
 public:
-	WinPix();
+	WinPix(const int& x, const int& y);
 	~WinPix();
 	void move(const int& x,const int& y);
-	void close();
 public:
-	float dpi;
-	HWND hwnd;
-	int x, y, w, h, srcW{ 50 },srcH{ 30 },cursorX,cursorY;
+	int srcW{ 50 },srcH{ 30 },cursorX,cursorY;
 private:
-	void createWindow();
-	void initRender();
+	void initRes();
 	COLORREF paintImg();
 	void paintText(COLORREF& cr, const int& x, const int& y);
-	void onPaint();
-	static LRESULT CALLBACK winMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+	void onPaint() override;
+	LRESULT onHitTest(WPARAM wParam, LPARAM lParam) override;
 private:
-	int scaleNum{ 5 },imgH;
-	ComPtr<IDWriteTextFormat> textFormat;
-	ComPtr<ID2D1HwndRenderTarget> render;
+	int scaleNum{ 5 }, imgH{ 30 * 5 };
 	ComPtr<ID2D1SolidColorBrush> textBrush;
 	ComPtr<ID2D1SolidColorBrush> bgBrush;
 	ComPtr<ID2D1SolidColorBrush> borderBrush;

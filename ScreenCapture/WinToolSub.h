@@ -1,16 +1,14 @@
 #pragma once
 #include "pch.h"
-#include "WinToolBase.h"
-class WinToolSub :public WinToolBase
+#include "WinBase.h"
+class WinToolSub :public WinBase
 {
 public:
-	WinToolSub();
+	WinToolSub(const int& x, const int& y, const int& w, const int& h);
 	~WinToolSub();
-	void show() override;
 public:
 protected:
 	void onPaint() override;
-	void onClick() override;
 
 };
 
