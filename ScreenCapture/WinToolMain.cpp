@@ -10,9 +10,11 @@
 
 std::unique_ptr<WinToolMain> winToolMain;
 
-WinToolMain::WinToolMain(const int& x, const int& y, const int& w, const int& h) : WinToolBase(x,y,w,h)
+WinToolMain::WinToolMain(const int& x, const int& y, const int& w, const int& h) : WinToolBase(x, y, w, h)
 {
-
+    selectIndex = 0;
+    btnSize = (float)h;
+	marginTop = 0.f;
 }
 WinToolMain::~WinToolMain()
 {
@@ -81,23 +83,13 @@ void WinToolMain::onPaint()
     auto margin{ 4.f * dpi };
     for (auto& pair : btnIcons)
     {
-        auto xStart{ h * btnIndex };
-        D2D1_POINT_2F origin = { xStart, 0.f };
-        if(btnIndex == selectIndex) {
-			D2D1_ROUNDED_RECT rr = { { xStart+2*dpi, margin, xStart + h-2*dpi, h - margin }, 8, 8 };
-			render->FillRoundedRectangle(rr, brushSelect.Get());
-            render->DrawTextLayout(origin, pair.second.Get(), brushBlue.Get(), D2D1_DRAW_TEXT_OPTIONS_NONE);
-        }
-        else {
-            auto brush = btnIndex == hoverIndex ? brushBlue.Get() : brushIcon.Get();
-            render->DrawTextLayout(origin, pair.second.Get(), brush, D2D1_DRAW_TEXT_OPTIONS_NONE);
-        }
+		paintIcon(btnSize * btnIndex, pair.second.Get(), btnIndex == hoverIndex, btnIndex == selectIndex);
         btnIndex += 1;
     }
     for (auto index: spliterIndex)
     {
-        auto lx{ (float)h * index }, lt{ 2.f * margin };
-        render->DrawLine({ lx,lt }, { lx,h - lt }, brushSpliter.Get(), 0.8f);
+        auto lx{ (float)btnSize * index }, lt{ 2.f * margin };
+        render->DrawLine({ lx,lt }, { lx,btnSize - lt }, brushSpliter.Get(), 0.8f);
     }
     auto r = D2D1::RectF(0, 0, w, h);
     render->DrawRectangle(r, brushSpliter.Get(), 2 * dpi);
@@ -131,7 +123,7 @@ void WinToolMain::onMouseDown(const int& x, const int& y, bool isRight)
 }
 void WinToolMain::onMouseMove(const int& x, const int& y)
 {
-    auto index = static_cast<int>(x / h);
+    auto index = static_cast<int>(x / btnSize);
     if (index != hoverIndex) {
         hoverIndex = index;
         refresh();

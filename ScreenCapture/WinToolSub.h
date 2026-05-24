@@ -15,9 +15,15 @@ protected:
 	void onPaint() override;
 private:
 	bool onCursor() override;
-	void paintBorder();
+	void buildBorderPath();
 	static void getXW(int& x,int& w,float& arrowX);
+	void onMouseMove(const int& x, const int& y) override;
+	void onMouseLeave() override;
+	void onMouseDown(const int& x, const int& y, bool isRight) override;
+	void paintSlider();
+	void paintColorSelector();
 private:
-	float arrowX, marginTop;
+	float arrowX, posX{0.f};
+	ComPtr<ID2D1PathGeometry> borderPath;
 };
 

@@ -30,14 +30,17 @@ void WinBase::move(const int& x, const int& y)
 {
 	this->x = x;
 	this->y = y;
-	SetWindowPos(hwnd, nullptr, x, y, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+	SetWindowPos(hwnd, nullptr, x, y, 0, 0, SWP_NOSIZE | SWP_NOZORDER| SWP_NOREDRAW);
 }
 
 void WinBase::resize(const int& w, const int& h)
 {
 	this->w = w;
 	this->h = h;
-	SetWindowPos(hwnd, nullptr, 0, 0, w, h, SWP_NOMOVE | SWP_NOZORDER);
+	SetWindowPos(hwnd, nullptr, 0, 0, w, h, SWP_NOMOVE | SWP_NOZORDER| SWP_NOREDRAW);
+	if (render) {
+		render->Resize(D2D1::SizeU(w, h));
+	}
 }
 
 void WinBase::enableShadow()
