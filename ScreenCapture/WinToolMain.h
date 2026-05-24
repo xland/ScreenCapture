@@ -1,27 +1,24 @@
 ﻿#pragma once
 #include "pch.h"
-#include "WinBase.h"
+#include "WinToolBase.h"
 
-class WinToolMain :public WinBase
+class WinToolMain :public WinToolBase
 {
 public:
 	WinToolMain(const int& x, const int& y, const int& w, const int& h);
 	~WinToolMain();
 	static void popup();
+	static WinToolMain* get();
 public:
+	std::wstring state{ L"rect" };
 protected:
-	void onMouseDown(const int& x, const int& y, bool isRight) override;
 private:
 	void onPaint() override;
 	bool onCursor() override;
-	void initRes();
+	void onMouseDown(const int& x, const int& y, bool isRight) override;
+	void onMouseMove(const int& x, const int& y) override;
+	void onMouseLeave() override;
 private:
-	std::unordered_map<std::wstring, ComPtr<IDWriteTextLayout>> btnIcons;
-	ComPtr<ID2D1SolidColorBrush> brushBg;
-	ComPtr<ID2D1SolidColorBrush> brushIcon;
-	ComPtr<ID2D1SolidColorBrush> brushIconHover;
-	ComPtr<ID2D1SolidColorBrush> brushSpliter;
-	int hoverIndex{ -1 };
-	float btnW{ 36.f }, btnH{ 32.f }, btnPadding;
+	int spliterIndex[2]{ 8,10 };
 };
 

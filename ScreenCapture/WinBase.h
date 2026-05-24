@@ -4,15 +4,16 @@ class WinBase
 public:
 	WinBase(const int& x, const int& y, const int& w, const int& h);
 	~WinBase();
-	void enableShadow();
 	void show();
 	void hide();
 	void refresh();
 	void close();
 	void move(const int& x, const int& y);
+	void resize(const int& w, const int& h);
 	void createWindow(const DWORD& exStyle=NULL, const DWORD& style= WS_POPUP);
 	ComPtr<IDWriteTextLayout> getIconLayout(const std::wstring& icon, const float& fontSize, const float& w, const float& h);
 	ComPtr<IDWriteTextLayout> getTextLayout(const std::wstring& str, const float& fontSize, const float& w, const float& h);
+	void enableShadow();
 	void enableAlpha();
 public:
 	HWND hwnd;

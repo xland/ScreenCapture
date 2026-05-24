@@ -9,15 +9,6 @@ WinBase::WinBase(const int& x, const int& y, const int& w, const int& h) : x{x},
 WinBase::~WinBase()
 {}
 
-void WinBase::enableShadow()
-{
-    MARGINS margins = { 1,1,1,1 };
-    DwmExtendFrameIntoClientArea(hwnd, &margins);
-    int value = 2;
-    DwmSetWindowAttribute(hwnd, DWMWA_NCRENDERING_POLICY, &value, sizeof(value));
-    DwmSetWindowAttribute(hwnd, DWMWA_ALLOW_NCPAINT, &value, sizeof(value));
-}
-
 void WinBase::show()
 {
     ShowWindow(hwnd, SW_SHOW);
@@ -39,7 +30,25 @@ void WinBase::move(const int& x, const int& y)
 {
 	this->x = x;
 	this->y = y;
-	SetWindowPos(hwnd, nullptr, x, y, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
+	SetWindowPos(hwnd, nullptr, x, y, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+}
+
+void WinBase::resize(const int& w, const int& h)
+{
+	this->w = w;
+	this->h = h;
+	SetWindowPos(hwnd, nullptr, 0, 0, w, h, SWP_NOMOVE | SWP_NOZORDER);
+}
+
+void WinBase::enableShadow()
+{
+    MARGINS margins = { 1,1,1,1 };
+    DwmExtendFrameIntoClientArea(hwnd, &margins);
+    int value = 2;
+    DwmSetWindowAttribute(hwnd, DWMWA_NCRENDERING_POLICY, &value, sizeof(value));
+    DwmSetWindowAttribute(hwnd, DWMWA_ALLOW_NCPAINT, &value, sizeof(value));
+    DWM_WINDOW_CORNER_PREFERENCE preference = DWMWCP_DONOTROUND;
+    DwmSetWindowAttribute(hwnd, DWMWA_WINDOW_CORNER_PREFERENCE, &preference, sizeof(preference));
 }
 void WinBase::enableAlpha()
 {

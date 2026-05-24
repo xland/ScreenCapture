@@ -83,11 +83,13 @@ void WinPin::onMouseDown(const int& x, const int& y, bool isRight)
     pressPos.x = x;
     pressPos.y = y;
     isMouseDown = true;
+	WinToolMain::get()->hide();
+    WinToolSub::get()->hide();
 }
 
 void WinPin::onMouseUp(const int& x, const int& y)
 {
-
+    WinToolMain::get()->popup();
 }
 
 void WinPin::onMouseLeave()
