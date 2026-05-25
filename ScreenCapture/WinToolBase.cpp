@@ -1,5 +1,6 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "WinToolBase.h"
+#include "App.h"
 
 WinToolBase::WinToolBase(const int& x, const int& y, const int& w, const int& h) :
     WinBase(x, y, w, h)
@@ -54,4 +55,51 @@ IDWriteTextLayout* WinToolBase::getBtnIconLayout(const std::wstring& name)
             return pair.second.Get();
         }
     }
+}
+
+void WinToolBase::initToolTip()
+{
+    INITCOMMONCONTROLSEX iccex = { sizeof(iccex), ICC_BAR_CLASSES };
+    InitCommonControlsEx(&iccex);
+    toolTipHwnd = CreateWindowEx(
+        WS_EX_TOPMOST, TOOLTIPS_CLASS,
+        NULL,
+        WS_POPUP | TTS_NOPREFIX | TTS_ALWAYSTIP,
+        CW_USEDEFAULT, CW_USEDEFAULT,
+        CW_USEDEFAULT, CW_USEDEFAULT,
+        hwnd,
+        NULL,
+        App::get()->hInstance,
+        NULL
+    );
+    SetWindowPos(toolTipHwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+    TOOLINFOW ti = { 0 };
+    ti.cbSize = TTTOOLINFOW_V2_SIZE;
+    ti.uFlags = TTF_TRACK | TTF_ABSOLUTE;
+    ti.hwnd = hwnd;
+    ti.hinst = App::get()->hInstance;
+    ti.uId = 0;
+    ti.lpszText = (LPWSTR)L" ";
+    ti.rect = { 0, 0, 0, 0 };
+    SendMessage(toolTipHwnd, TTM_ADDTOOLW, 0, (LPARAM)&ti);
+    SendMessage(toolTipHwnd, TTM_SETDELAYTIME, TTDT_INITIAL, MAKELONG(0, 0));
+    SendMessage(toolTipHwnd, TTM_SETMAXTIPWIDTH, 0, 600);
+}
+void WinToolBase::showToolTipAt(int x, int y, const wchar_t* text)
+{
+    TOOLINFOW ti = { 0 };
+    ti.cbSize = TTTOOLINFOW_V2_SIZE;
+    ti.uFlags = TTF_TRACK | TTF_ABSOLUTE;
+    ti.hwnd = hwnd;
+    ti.hinst = App::get()->hInstance;
+    ti.uId = 0;
+    ti.lpszText = (LPWSTR)L"测试";
+    // 先更新文本
+    SendMessage(toolTipHwnd, TTM_UPDATETIPTEXTW, 0, (LPARAM)&ti);
+    // 设置位置
+    SendMessage(toolTipHwnd, TTM_TRACKPOSITION, 0, MAKELPARAM(200, 200));
+    // 确保 Tooltip 激活
+    SendMessage(toolTipHwnd, TTM_ACTIVATE, TRUE, 0);
+    // 最后启用跟踪
+    SendMessage(toolTipHwnd, TTM_TRACKACTIVATE, TRUE, (LPARAM)&ti);
 }

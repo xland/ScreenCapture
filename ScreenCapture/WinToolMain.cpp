@@ -32,7 +32,7 @@ void WinToolMain::popup()
 		auto w = btnSize * 14; //主工具条一共有14个按钮；todo dpi change
         auto h = btnSize;
 	    auto x = winPin->x;
-	    auto y = winPin->y + winPin->h + 3.f * winPin->dpi;
+	    auto y = winPin->y + winPin->h + 4.f * winPin->dpi;
 	    winToolMain = std::make_unique<WinToolMain>(x, y, w, h);
 	    winToolMain->createWindow(WS_EX_TOOLWINDOW | WS_EX_TOPMOST);
         winToolMain->initBrush();

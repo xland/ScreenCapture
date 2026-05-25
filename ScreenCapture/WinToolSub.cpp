@@ -6,7 +6,7 @@
 
 std::unique_ptr<WinToolSub> winToolSub;
 
-WinToolSub::WinToolSub(const int& x, const int& y, const int& w, const int& h) :WinToolBase(x, y, w, h)
+WinToolSub::WinToolSub() :WinToolBase(0, 0, 0, 0)
 {
 }
 
@@ -15,20 +15,55 @@ WinToolSub::~WinToolSub()
 
 }
 
+void WinToolSub::initVal()
+{
+    auto toolMain = WinToolMain::get();
+    marginTop =  4.f * toolMain->dpi;
+    auto span{ 8.f * toolMain->dpi };
+    y = toolMain->y + toolMain->h + 3.f * toolMain->dpi;
+    h = int(toolMain->h + marginTop);
+    btnSize = toolMain->h;
+    colorBtnW = toolMain->dpi * 23;
+    if (toolMain->state == L"rect" || toolMain->state == L"ellipse" || toolMain->state == L"arrow" || toolMain->state == L"line") {
+        w = 319 * toolMain->dpi;
+        sliderMax = 22;
+        sliderMin = 12;
+        sliderVal = 16;
+        btnStart = 0;
+        btnEnd = btnStart + btnSize;
+        sliderStart = btnEnd + span;
+        sliderEnd = sliderStart + 120.f;
+        colorStart = sliderEnd + span;
+        colorEnd = w;
+    }
+    else if (toolMain->state == L"number") {
+        w = 250 * toolMain->dpi;
+    }
+    else if (toolMain->state == L"text") {
+        w = 366 * toolMain->dpi;
+    }
+    else if (toolMain->state == L"mosaic" || toolMain->state == L"eraser") {
+        w = 126 * toolMain->dpi;
+    }
+    arrowX = btnSize * toolMain->selectIndex + btnSize / 2;
+    if (arrowX + 6.f * toolMain->dpi > w)
+    {
+        x = toolMain->x + arrowX - w / 2; // 箭头顶点位于子工具条正中间
+        arrowX = w / 2.f;
+    }
+    else
+    {
+        x = toolMain->x; // 子工具条左侧与主工具条左侧对齐
+    }
+}
+
 void WinToolSub::popup()
 {
     if (!winToolSub.get()) {
-        auto toolMain = WinToolMain::get();
-        auto marginTop{ 5.f * toolMain->dpi };
-        int x, y{toolMain->y+toolMain->h}, w, h{ int(toolMain->h+marginTop)};
-        float arrowX;
-		getXW(x, w,arrowX);
-        winToolSub = std::make_unique<WinToolSub>(x, y, w, h);
-        winToolSub->arrowX = arrowX;
-        winToolSub->marginTop = marginTop;
-		winToolSub->btnSize = (float)h - marginTop;
-        winToolSub->colorBtnW = toolMain->dpi * 23;
+        winToolSub = std::make_unique<WinToolSub>();
+        winToolSub->initVal();
         winToolSub->createWindow(WS_EX_TOPMOST);
+        winToolSub->initToolTip();
         winToolSub->initBrush();
         winToolSub->initColor();
         winToolSub->enableAlpha();
@@ -47,10 +82,7 @@ void WinToolSub::popup()
     else {
         auto toolMain = WinToolMain::get();
         auto win = winToolSub.get();
-        win->marginTop = 5.f * toolMain->dpi;
-        int x, y{(int)(toolMain->y + toolMain->h + 3.f * win->dpi) };
-        getXW(x, win->w, win->arrowX);
-        win->move(x, y);
+        win->move(win->x, win->y);
         win->initBorder();
         win->show();
     }
@@ -59,34 +91,6 @@ WinToolSub* WinToolSub::get()
 {
     return winToolSub.get();
 }
-void WinToolSub::getXW(int& x, int& w, float& arrowX)
-{
-    auto toolMain = WinToolMain::get();
-    if (toolMain->state == L"rect" || toolMain->state == L"ellipse" || toolMain->state == L"arrow" || toolMain->state == L"line") {
-        w = 319 * toolMain->dpi;
-    }
-    else if (toolMain->state == L"number") {
-        w = 250 * toolMain->dpi;
-    }
-    else if (toolMain->state == L"text") {
-        w = 366 * toolMain->dpi;
-    }
-    else if (toolMain->state == L"mosaic"|| toolMain->state == L"eraser") {
-        w = 126 * toolMain->dpi;
-    }
-    //计算主工具条选中按钮的中心位置
-	arrowX = toolMain->h * toolMain->selectIndex + toolMain->h / 2; 
-    if (arrowX+6.f*toolMain->dpi > w )
-    {
-		x = toolMain->x + arrowX - w /2; // 箭头顶点位于子工具条正中间
-		arrowX = w / 2.f; 
-    }
-    else
-    {
-        x = toolMain->x; // 子工具条左侧与主工具条左侧对齐
-    }
-
-}
 void WinToolSub::changeState()
 {
 	auto toolMain = WinToolMain::get();
@@ -94,16 +98,9 @@ void WinToolSub::changeState()
 		hide();
     }
     else {
-        int x, w;
-        float arrowX;
-        getXW(x, w, arrowX);
-        if (w != this->w) {
-            resize(w, this->h);
-        }
-        if (x != this->x) {
-            move(x, this->y);
-        }
-		this->arrowX = arrowX;
+        initVal();
+        resize(w, h);
+        move(x, y);
         initBorder();
         refresh();
     }
@@ -120,7 +117,7 @@ void WinToolSub::initBorder()
     sink->BeginFigure({ borderW,marginTop }, D2D1_FIGURE_BEGIN_FILLED);
     D2D1_POINT_2F points[6] = {
         D2D1_POINT_2F{arrowX - 3.f * dpi,marginTop},
-        D2D1_POINT_2F{arrowX,2.f * dpi},
+        D2D1_POINT_2F{arrowX,dpi},
         D2D1_POINT_2F{arrowX + 3.f * dpi,marginTop},
         D2D1_POINT_2F{(float)w - borderW,marginTop},
         D2D1_POINT_2F{(float)w - borderW,(float)h - borderW},
@@ -157,16 +154,10 @@ void WinToolSub::onPaint()
     render->FillGeometry(borderPath.Get(), brushBg.Get());
     render->DrawGeometry(borderPath.Get(), brushSpliter.Get(), dpi);
     auto win = WinToolMain::get();
-    auto span{ 8.f * dpi };
     if (win->state == L"rect") {
         paintIcon(btnStart, getBtnIconLayout(L"rectFill"), hoverIndex == 0, selectIndex == 0);	
-        btnEnd = btnStart + btnSize;
-        sliderStart = btnEnd + span;
         paintSlider();
-        sliderEnd = sliderStart + 120.f;
-        colorStart = sliderEnd + span;
         paintColorSelector();
-        colorEnd = w;
     }
 }
 
@@ -183,6 +174,7 @@ void WinToolSub::onMouseMove(const int& x, const int& y)
         indexBtn = static_cast<int>((x - btnStart) / btnSize);
         if (indexBtn != hoverIndex) {
             hoverIndex = indexBtn;
+            showToolTipAt(btnStart + hoverIndex * btnSize + btnSize / 2, 6, L"测试1");
             flag = true;
         }
     }
@@ -190,10 +182,14 @@ void WinToolSub::onMouseMove(const int& x, const int& y)
         auto indexColor = static_cast<int>((x- colorStart) / colorBtnW);
         if (indexColor != hoverColorIndex) {
             hoverColorIndex = indexColor;
+            static std::wstring text{ L"测试" };
+            showToolTipAt(colorStart + hoverColorIndex * colorBtnW+ colorBtnW/2, 6, text.data());
             flag = true;
         }
     }
-    if (flag) refresh();
+    if (flag) {
+        refresh();
+    }
 }
 void WinToolSub::onMouseLeave()
 {
@@ -229,12 +225,42 @@ void WinToolSub::onMouseDown(const int& x, const int& y, bool isRight)
 
 }
 
+void WinToolSub::onMouseWheel(const int& x, const int& y, const short& delta)
+{
+    if (x > sliderEnd || x < sliderStart) return;
+    if (delta < 0) {
+        if (sliderVal < sliderMin) {
+            sliderVal = sliderMin;
+        }
+        else if(sliderVal > sliderMin) {
+            sliderVal -= 1;
+        }
+        else {
+            return;
+        }
+    }
+    else
+    {
+        if (sliderVal > sliderMax) {
+            sliderVal = sliderMax;
+        }
+        else if(sliderVal < sliderMax) {
+            sliderVal += 1;
+        }
+        else {
+            return;
+        }
+    }
+    refresh();
+}
+
 void WinToolSub::paintSlider()
 {
     auto y{ marginTop + btnSize / 2 };
 	render->DrawLine({ sliderStart,y }, { sliderStart +120.f, y }, brushSpliter.Get(), dpi);
-	D2D1_ELLIPSE circle = { {sliderStart,y}, 4.f * dpi, 4.f * dpi };
-	render->FillEllipse(circle, brushSpliter.Get());
+    auto r{ 4.f * dpi };
+    auto x{ sliderStart + (sliderEnd - sliderStart) * ((sliderVal-sliderMin) / (sliderMax - sliderMin)) };
+	render->FillEllipse({ {x,y}, r, r }, brushSpliter.Get());
 }
 
 void WinToolSub::paintColorSelector()
@@ -255,3 +281,5 @@ void WinToolSub::paintColorSelector()
         index += 1;
     }
 }
+
+
