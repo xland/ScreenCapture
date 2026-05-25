@@ -27,8 +27,10 @@ void WinToolSub::popup()
         winToolSub->arrowX = arrowX;
         winToolSub->marginTop = marginTop;
 		winToolSub->btnSize = (float)h - marginTop;
+        winToolSub->colorBtnW = toolMain->dpi * 23;
         winToolSub->createWindow(WS_EX_TOPMOST);
         winToolSub->initBrush();
+        winToolSub->initColor();
         winToolSub->enableAlpha();
         winToolSub->addBtns({ {L"rectFill" ,L"\ue602"},
         {L"ellipseFill" ,L"\ue600"},
@@ -39,7 +41,7 @@ void WinToolSub::popup()
         {L"italic" ,L"\ue682"},
         {L"check" ,L"\ue721"},
         {L"uncheck" ,L"\ue61d"} });
-        winToolSub->buildBorderPath();
+        winToolSub->initBorder();
         winToolSub->show();
     }
     else {
@@ -49,7 +51,7 @@ void WinToolSub::popup()
         int x, y{(int)(toolMain->y + toolMain->h + 3.f * win->dpi) };
         getXW(x, win->w, win->arrowX);
         win->move(x, y);
-        win->buildBorderPath();
+        win->initBorder();
         win->show();
     }
 }
@@ -61,7 +63,7 @@ void WinToolSub::getXW(int& x, int& w, float& arrowX)
 {
     auto toolMain = WinToolMain::get();
     if (toolMain->state == L"rect" || toolMain->state == L"ellipse" || toolMain->state == L"arrow" || toolMain->state == L"line") {
-        w = 333 * toolMain->dpi;
+        w = 319 * toolMain->dpi;
     }
     else if (toolMain->state == L"number") {
         w = 250 * toolMain->dpi;
@@ -102,12 +104,12 @@ void WinToolSub::changeState()
             move(x, this->y);
         }
 		this->arrowX = arrowX;
-        buildBorderPath();
+        initBorder();
         refresh();
     }
 }
 
-void WinToolSub::buildBorderPath()
+void WinToolSub::initBorder()
 {
     borderPath.Reset();
     auto d2d = Util::getD2D();
@@ -129,20 +131,42 @@ void WinToolSub::buildBorderPath()
     sink->Close();
 }
 
+void WinToolSub::initColor()
+{
+    std::vector<D2D1_COLOR_F> colors = {
+        D2D1::ColorF(0XCF1322),
+        D2D1::ColorF(0XD48806),
+        D2D1::ColorF(0X389E0D),
+        D2D1::ColorF(0X13C2C2),
+        D2D1::ColorF(0X0958D9),
+        D2D1::ColorF(0X722ED1),
+        D2D1::ColorF(0XEB2F96),
+        D2D1::ColorF(0X000000)
+    };
+    for (auto& color : colors)
+    {
+        ComPtr<ID2D1SolidColorBrush> brush;
+        render->CreateSolidColorBrush(color, brush.GetAddressOf());
+        colorBrush.push_back(std::move(brush));
+    }
+}
+
 void WinToolSub::onPaint()
 {
     render->Clear(D2D1::ColorF(0xFFFFFF,0.f));
     render->FillGeometry(borderPath.Get(), brushBg.Get());
     render->DrawGeometry(borderPath.Get(), brushSpliter.Get(), dpi);
     auto win = WinToolMain::get();
-    posX = 0.f;
     auto span{ 8.f * dpi };
     if (win->state == L"rect") {
-        paintIcon(posX, getBtnIconLayout(L"rectFill"), hoverIndex == 0, selectIndex == 0);
-		posX += (btnSize + span);
+        paintIcon(btnStart, getBtnIconLayout(L"rectFill"), hoverIndex == 0, selectIndex == 0);	
+        btnEnd = btnStart + btnSize;
+        sliderStart = btnEnd + span;
         paintSlider();
-        posX += (120.f + span);
+        sliderEnd = sliderStart + 120.f;
+        colorStart = sliderEnd + span;
         paintColorSelector();
+        colorEnd = w;
     }
 }
 
@@ -153,62 +177,81 @@ bool WinToolSub::onCursor()
 }
 void WinToolSub::onMouseMove(const int& x, const int& y)
 {
-    int index{-1};
-    if (x < btnSize) index = 0;
-    if (index != hoverIndex) {
-        hoverIndex = index;
-        refresh();
+    int indexBtn{ -1 }, indexColor{-1};
+    bool flag{ false };
+    if (x > btnStart && x < btnEnd) {
+        indexBtn = static_cast<int>((x - btnStart) / btnSize);
+        if (indexBtn != hoverIndex) {
+            hoverIndex = indexBtn;
+            flag = true;
+        }
     }
+    if (x > colorStart && x < colorEnd) {
+        auto indexColor = static_cast<int>((x- colorStart) / colorBtnW);
+        if (indexColor != hoverColorIndex) {
+            hoverColorIndex = indexColor;
+            flag = true;
+        }
+    }
+    if (flag) refresh();
 }
 void WinToolSub::onMouseLeave()
 {
     hoverIndex = -1;
+    hoverColorIndex = -1;
     InvalidateRect(hwnd, nullptr, false);
 }
 
 void WinToolSub::onMouseDown(const int& x, const int& y, bool isRight)
 {
-    int index{ -1 };
-    if (x < btnSize) index = 0;
-    if (index == hoverIndex)
-    {
-        if (index == selectIndex) {
-            selectIndex = -1;
+    int indexBtn{ -1 };
+    bool flag{ false };
+    if (x > btnStart && x < btnEnd) {
+        indexBtn = static_cast<int>((x - btnStart) / btnSize);
+        if (indexBtn == hoverIndex)
+        {
+            if (indexBtn == selectIndex) {
+                selectIndex = -1;
+            }
+            else {
+                selectIndex = indexBtn;
+            }
+            flag = true;
         }
-        else {
-            selectIndex = index;
-        }
-        refresh();
     }
+    if (x > colorStart && x<colorEnd) {
+        if (selectColorIndex != hoverColorIndex) {
+            selectColorIndex = hoverColorIndex;
+            flag = true;
+        }
+    }
+    if (flag) refresh();
+
 }
 
 void WinToolSub::paintSlider()
 {
     auto y{ marginTop + btnSize / 2 };
-	render->DrawLine({ posX,y }, { posX+120.f, y }, brushSpliter.Get(), dpi);
-	D2D1_ELLIPSE circle = { {posX,y}, 4.f * dpi, 4.f * dpi };
+	render->DrawLine({ sliderStart,y }, { sliderStart +120.f, y }, brushSpliter.Get(), dpi);
+	D2D1_ELLIPSE circle = { {sliderStart,y}, 4.f * dpi, 4.f * dpi };
 	render->FillEllipse(circle, brushSpliter.Get());
 }
 
 void WinToolSub::paintColorSelector()
 {
-    std::vector<D2D1_COLOR_F> colors = {
-            D2D1::ColorF(0XCF1322),
-            D2D1::ColorF(0XD48806),
-            D2D1::ColorF(0X389E0D),
-            D2D1::ColorF(0X13C2C2),
-            D2D1::ColorF(0X0958D9),
-            D2D1::ColorF(0X722ED1),
-            D2D1::ColorF(0XEB2F96),
-            D2D1::ColorF(0X000000)
-    };
-    for (auto& color:colors)
+    int index{ 0 };
+    auto start{ colorStart };
+    for (auto& brush:colorBrush)
     {
-        D2D1_POINT_2F origin = { posX, marginTop };
-        auto icon = getBtnIconLayout(L"uncheck");
-        ComPtr<ID2D1SolidColorBrush> brush;
-        render->CreateSolidColorBrush(color, brush.GetAddressOf());
+        D2D1_POINT_2F origin = { start, marginTop };
+        auto icon = index == selectColorIndex? getBtnIconLayout(L"check") : getBtnIconLayout(L"uncheck");
+        if (index == hoverColorIndex || index == selectColorIndex) {
+            float paddingTopBottom{ 6.f * dpi }, paddingLeftRight{ 5.f * dpi };
+            D2D1_ROUNDED_RECT rr = { { start + paddingLeftRight, paddingTopBottom + marginTop, start + btnSize - paddingLeftRight, h - paddingTopBottom }, 8, 8 };
+            render->FillRoundedRectangle(rr, brushSelect.Get());
+        }
         render->DrawTextLayout(origin, icon, brush.Get(), D2D1_DRAW_TEXT_OPTIONS_NONE);
-        posX += btnSize/3*2;
+        start += colorBtnW;
+        index += 1;
     }
 }

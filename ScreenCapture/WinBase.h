@@ -30,6 +30,7 @@ protected:
 	virtual void onMouseUp(const int& x, const int& y) {};
 	virtual void onKeyDown(const TCHAR& key) {};
 	virtual void onMouseLeave() {};
+	virtual void onMouseWheel(const int& x, const int& y, const short& delta) {};
 	virtual bool onCursor();
 private:
 	std::wstring& getWinClsName();

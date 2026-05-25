@@ -160,6 +160,12 @@ LRESULT WinBase::winProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         self->mouseLeave();
         return 0;
     }
+    else if (msg == WM_MOUSEWHEEL) {
+        POINT pt{ (short)LOWORD(lParam), (short)HIWORD(lParam) };
+        ScreenToClient(hwnd, &pt);
+        self->onMouseWheel(pt.x, pt.y, (short)HIWORD(wParam));
+        return 0;
+    }
     else if (msg == WM_KEYDOWN) {
         self->onKeyDown(wParam);
     }

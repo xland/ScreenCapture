@@ -15,7 +15,8 @@ protected:
 	void onPaint() override;
 private:
 	bool onCursor() override;
-	void buildBorderPath();
+	void initBorder();
+	void initColor();
 	static void getXW(int& x,int& w,float& arrowX);
 	void onMouseMove(const int& x, const int& y) override;
 	void onMouseLeave() override;
@@ -23,7 +24,10 @@ private:
 	void paintSlider();
 	void paintColorSelector();
 private:
-	float arrowX, posX{0.f};
+	float arrowX, btnStart{0.f}, btnEnd,sliderStart,sliderEnd,colorStart,colorEnd, colorBtnW;
 	ComPtr<ID2D1PathGeometry> borderPath;
+	std::vector<ComPtr<ID2D1SolidColorBrush>> colorBrush;
+	int hoverColorIndex{ -1 }, selectColorIndex{0};
+
 };
 
