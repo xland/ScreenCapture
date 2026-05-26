@@ -20,10 +20,14 @@ private:
 	void onMouseMove(const int& x, const int& y) override;
 	void onMouseLeave() override;
 	void onMouseDown(const int& x, const int& y, bool isRight) override;
+	void onMouseDrag(const int& x, const int& y) override;
 	void onMouseWheel(const int& x, const int& y, const short& delta) override;
 	void paintSlider();
 	void paintColorSelector();
 	void initVal();
+	void initBtn();
+	bool hoverBtn(const int& x);
+	bool hoverColor(const int& x);
 private:
 	float arrowX, btnStart{0.f}, btnEnd,sliderStart,sliderEnd,colorStart,colorEnd, colorBtnW, sliderMin,sliderMax, sliderVal;
 	ComPtr<ID2D1PathGeometry> borderPath;

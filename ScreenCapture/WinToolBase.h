@@ -12,8 +12,7 @@ protected:
 	void initBrush();
 	void initTip();
 	void paintIcon(const float& posX,IDWriteTextLayout* icon,bool isHover,bool isSelected);
-	void addBtns(const std::vector<std::pair<std::wstring, std::wstring>>& btns);
-	IDWriteTextLayout* getBtnIconLayout(const std::wstring& name);
+	IDWriteTextLayout* getBtnIconLayout(const std::string& name);
 	void showTipAt(int x, int y);
 	void hideTip();
 protected:
@@ -22,7 +21,9 @@ protected:
 	ComPtr<ID2D1SolidColorBrush> brushIcon;
 	ComPtr<ID2D1SolidColorBrush> brushBlue;
 	ComPtr<ID2D1SolidColorBrush> brushSpliter;
-	std::vector<std::pair<std::wstring, ComPtr<IDWriteTextLayout>>> btnIcons;
+	std::vector<std::string> btnId;
+	std::vector<std::wstring> btnName;
+	std::vector<ComPtr<IDWriteTextLayout>> btnLayout;
 	int hoverIndex{ -1 };
 	float btnSize, marginTop;
 	HWND tipHwnd;

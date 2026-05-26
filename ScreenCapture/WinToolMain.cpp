@@ -35,21 +35,9 @@ void WinToolMain::popup()
 	    auto y = winPin->y + winPin->h + 4.f * winPin->dpi;
 	    winToolMain = std::make_unique<WinToolMain>(x, y, w, h);
 	    winToolMain->createWindow(WS_EX_TOOLWINDOW | WS_EX_TOPMOST);
+        winToolMain->initTip();
         winToolMain->initBrush();
-		winToolMain->addBtns({ {L"rect" ,L"\ue8e8"},
-        {L"ellipse" ,L"\ue6bc"},
-        {L"arrow" ,L"\ue603"},
-        {L"number" ,L"\ue776"},
-        {L"line" ,L"\ue601"} ,
-        {L"text" ,L"\ue6ec"},
-        {L"mosaic" ,L"\ue82e"},
-        {L"eraser" ,L"\ue6be"},
-        {L"undo" ,L"\ued85"},
-        {L"redo" ,L"\ued8a"},
-        {L"pin" ,L"\ue6a2" },
-        {L"clipboard" ,L"\ue650"},
-        {L"save" ,L"\ue608"},
-        {L"close" ,L"\ue62d"} });
+		winToolMain->initBtn();
         winToolMain->show();
         WinToolSub::popup();
     }
@@ -60,7 +48,7 @@ void WinToolMain::popup()
         auto y = winPin->y + winPin->h + 3.f * winPin->dpi;
         win->move(x, y);
         win->show();
-        if(win->state != L"")
+        if(win->state != "")
         {
             WinToolSub::popup();
         }
@@ -81,9 +69,9 @@ void WinToolMain::onPaint()
     render->Clear(D2D1::ColorF(0xFFFFFF));
     int btnIndex{ 0 };
     auto margin{ 4.f * dpi };
-    for (auto& pair : btnIcons)
+    for (auto& layout : btnLayout)
     {
-		paintIcon(btnSize * btnIndex, pair.second.Get(), btnIndex == hoverIndex, btnIndex == selectIndex);
+		paintIcon(btnSize * btnIndex, layout.Get(), btnIndex == hoverIndex, btnIndex == selectIndex);
         btnIndex += 1;
     }
     for (auto index: spliterIndex)
@@ -102,16 +90,16 @@ void WinToolMain::onMouseDown(const int& x, const int& y, bool isRight)
 		return;
 	}
     auto index{ 0 };
-    for (auto& btn: btnIcons)
+    for (auto& btn: btnId)
     {
         if (index == hoverIndex) 
         {
             if (index == selectIndex) {
-                state = L"";
+                state = "";
                 selectIndex = -1;
             }
             else {
-                state = btn.first;
+                state = btn;
 				selectIndex = index;
             }
             refresh();
@@ -124,13 +112,40 @@ void WinToolMain::onMouseDown(const int& x, const int& y, bool isRight)
 void WinToolMain::onMouseMove(const int& x, const int& y)
 {
     auto index = static_cast<int>(x / btnSize);
+    if (index >= btnId.size()) index = btnId.size() - 1;
     if (index != hoverIndex) {
         hoverIndex = index;
+        tipText = btnName[index];
+        showTipAt(this->x + index * btnSize + btnSize / 2, this->y + marginTop + 4 * dpi);
         refresh();
     }
 }
 void WinToolMain::onMouseLeave()
 {
     hoverIndex = -1;
-    InvalidateRect(hwnd, nullptr, false);
+    refresh();
+    hideTip();
+}
+
+void WinToolMain::initBtn()
+{
+    btnId = { "rect" , "ellipse", "arrow", "number" , "line" ,"text" , "mosaic", "eraser", "undo", "redo", "pin", "clipboard" , "save" , "close" };
+    btnName = { L"矩形",L"圆形",L"箭头",L"标号",L"线条",L"文本",L"马赛克",L"橡皮擦",L"撤销",L"重做",L"钉住",L"剪切板",L"保存",L"关闭" };
+    auto fontSize{ 14.f * dpi };
+    btnLayout = {
+        getIconLayout(L"\ue8e8", fontSize, btnSize, btnSize),
+        getIconLayout(L"\ue6bc", fontSize, btnSize, btnSize),
+        getIconLayout(L"\ue603", fontSize, btnSize, btnSize),
+        getIconLayout(L"\ue776", fontSize, btnSize, btnSize),
+        getIconLayout(L"\ue601", fontSize, btnSize, btnSize),
+        getIconLayout(L"\ue6ec", fontSize, btnSize, btnSize),
+        getIconLayout(L"\ue82e", fontSize, btnSize, btnSize),
+        getIconLayout(L"\ue6be", fontSize, btnSize, btnSize),
+        getIconLayout(L"\ued85", fontSize, btnSize, btnSize),
+        getIconLayout(L"\ued8a", fontSize, btnSize, btnSize),
+        getIconLayout(L"\ue6a2", fontSize, btnSize, btnSize),
+        getIconLayout(L"\ue650", fontSize, btnSize, btnSize),
+        getIconLayout(L"\ue608", fontSize, btnSize, btnSize),
+        getIconLayout(L"\ue62d", fontSize, btnSize, btnSize),
+    };
 }

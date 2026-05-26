@@ -36,25 +36,14 @@ void WinToolBase::paintIcon(const float& posX, IDWriteTextLayout* icon, bool isH
     }
 }
 
-void WinToolBase::addBtns(const std::vector<std::pair<std::wstring, std::wstring>>& btns)
+IDWriteTextLayout* WinToolBase::getBtnIconLayout(const std::string& name)
 {
-    auto fontSize{ 14.f * dpi };
-    for (const auto& pair : btns)
-    {
-        btnIcons.push_back({ pair.first ,getIconLayout(pair.second, fontSize, btnSize, btnSize) });
+    auto it = std::ranges::find(btnId, name);
+    if (it != btnId.end()) {
+        auto index = it - btnId.begin();
+        return btnLayout[index].Get();
     }
-}
-
-IDWriteTextLayout* WinToolBase::getBtnIconLayout(const std::wstring& name)
-{
-    //从btnIcons获取图标布局
-    for (const auto& pair : btnIcons)
-    {
-        if (pair.first == name)
-        {
-            return pair.second.Get();
-        }
-    }
+    return nullptr;
 }
 
 void WinToolBase::initTip()
@@ -93,7 +82,6 @@ void WinToolBase::showTipAt(int x, int y)
     ti.hinst = App::get()->hInstance;
     ti.uId = 0;
     ti.lpszText = (LPWSTR)tipText.c_str();
-    //ti.lpszText = (LPWSTR)L"测试";
     // 更新文本
     SendMessage(tipHwnd, TTM_UPDATETIPTEXTW, 0, (LPARAM)&ti);
     // 先用临时位置激活 tooltip，让系统计算尺寸
@@ -115,9 +103,7 @@ void WinToolBase::hideTip()
     ti.cbSize = TTTOOLINFOW_V2_SIZE;
     ti.hwnd = hwnd;
     ti.uId = 0;
-
-    // 关闭跟踪激活
     SendMessage(tipHwnd, TTM_TRACKACTIVATE, FALSE, (LPARAM)&ti);
-    // 同时关闭普通激活（双重保险）
     SendMessage(tipHwnd, TTM_ACTIVATE, FALSE, 0);
+    tipText = L"";
 }

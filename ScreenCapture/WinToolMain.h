@@ -10,7 +10,7 @@ public:
 	static void popup();
 	static WinToolMain* get();
 public:
-	std::wstring state{ L"rect" };
+	std::string state{ "rect" };
 protected:
 private:
 	void onPaint() override;
@@ -18,6 +18,7 @@ private:
 	void onMouseDown(const int& x, const int& y, bool isRight) override;
 	void onMouseMove(const int& x, const int& y) override;
 	void onMouseLeave() override;
+	void initBtn();
 private:
 	int spliterIndex[2]{ 8,10 };
 };
