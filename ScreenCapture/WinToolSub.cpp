@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Util.h"
 #include "WinToolBase.h"
 #include "WinToolSub.h"
@@ -63,7 +63,7 @@ void WinToolSub::popup()
         winToolSub = std::make_unique<WinToolSub>();
         winToolSub->initVal();
         winToolSub->createWindow(WS_EX_TOPMOST);
-        winToolSub->initToolTip();
+        winToolSub->initTip();
         winToolSub->initBrush();
         winToolSub->initColor();
         winToolSub->enableAlpha();
@@ -140,6 +140,9 @@ void WinToolSub::initColor()
         D2D1::ColorF(0XEB2F96),
         D2D1::ColorF(0X000000)
     };
+    colorName = {
+        L"红",L"黄",L"绿",L"青",L"蓝",L"紫",L"粉",L"黑",
+    };
     for (auto& color : colors)
     {
         ComPtr<ID2D1SolidColorBrush> brush;
@@ -172,20 +175,32 @@ void WinToolSub::onMouseMove(const int& x, const int& y)
     bool flag{ false };
     if (x > btnStart && x < btnEnd) {
         indexBtn = static_cast<int>((x - btnStart) / btnSize);
-        if (indexBtn != hoverIndex) {
-            hoverIndex = indexBtn;
-            showToolTipAt(btnStart + hoverIndex * btnSize + btnSize / 2, 6, L"测试1");
-            flag = true;
-        }
+        tipText = L"填充";
+        showTipAt(this->x + btnStart + indexBtn * btnSize + btnSize / 2, this->y + marginTop + 4 * dpi);
+    }
+    else {
+        indexBtn = -1;
+    }
+    if (indexBtn != hoverIndex) {
+        hoverIndex = indexBtn;
+        flag = true;
     }
     if (x > colorStart && x < colorEnd) {
-        auto indexColor = static_cast<int>((x- colorStart) / colorBtnW);
-        if (indexColor != hoverColorIndex) {
-            hoverColorIndex = indexColor;
-            static std::wstring text{ L"测试" };
-            showToolTipAt(colorStart + hoverColorIndex * colorBtnW+ colorBtnW/2, 6, text.data());
-            flag = true;
-        }
+        indexColor = static_cast<int>((x- colorStart) / colorBtnW);
+        tipText = colorName[indexColor];
+        showTipAt(this->x + colorStart + indexColor * colorBtnW + btnSize / 2, this->y + marginTop + 4 * dpi);        
+    }
+    else {
+        indexColor = -1;
+    }
+    if (indexColor != hoverColorIndex) {
+        hoverColorIndex = indexColor;
+        flag = true;
+    }
+    if (x > sliderStart && x < sliderEnd) {
+        float val = ((float)x - sliderStart) / (sliderEnd - sliderStart) * (sliderMax - sliderMin)+sliderMin;
+        tipText = std::format(L"{}", std::round(val));;
+        showTipAt(this->x + x, this->y + marginTop + 4 * dpi);
     }
     if (flag) {
         refresh();
@@ -193,9 +208,11 @@ void WinToolSub::onMouseMove(const int& x, const int& y)
 }
 void WinToolSub::onMouseLeave()
 {
-    hoverIndex = -1;
-    hoverColorIndex = -1;
-    InvalidateRect(hwnd, nullptr, false);
+    auto flag{ false };
+    if (hoverColorIndex != -1) flag = true;
+    if (hoverIndex != -1) flag = true;
+    if (flag) refresh();
+    hideTip();
 }
 
 void WinToolSub::onMouseDown(const int& x, const int& y, bool isRight)
@@ -215,6 +232,10 @@ void WinToolSub::onMouseDown(const int& x, const int& y, bool isRight)
             flag = true;
         }
     }
+    if (x > sliderStart && x < sliderEnd) {
+        sliderVal = ((float)x - sliderStart) / (sliderEnd - sliderStart) * (sliderMax - sliderMin) + sliderMin;
+        flag = true;
+    }
     if (x > colorStart && x<colorEnd) {
         if (selectColorIndex != hoverColorIndex) {
             selectColorIndex = hoverColorIndex;
@@ -233,7 +254,7 @@ void WinToolSub::onMouseWheel(const int& x, const int& y, const short& delta)
             sliderVal = sliderMin;
         }
         else if(sliderVal > sliderMin) {
-            sliderVal -= 1;
+            sliderVal -= 1.f;
         }
         else {
             return;
@@ -245,7 +266,7 @@ void WinToolSub::onMouseWheel(const int& x, const int& y, const short& delta)
             sliderVal = sliderMax;
         }
         else if(sliderVal < sliderMax) {
-            sliderVal += 1;
+            sliderVal += 1.f;
         }
         else {
             return;

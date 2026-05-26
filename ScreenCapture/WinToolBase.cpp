@@ -57,11 +57,11 @@ IDWriteTextLayout* WinToolBase::getBtnIconLayout(const std::wstring& name)
     }
 }
 
-void WinToolBase::initToolTip()
+void WinToolBase::initTip()
 {
     INITCOMMONCONTROLSEX iccex = { sizeof(iccex), ICC_BAR_CLASSES };
     InitCommonControlsEx(&iccex);
-    toolTipHwnd = CreateWindowEx(
+    tipHwnd = CreateWindowEx(
         WS_EX_TOPMOST, TOOLTIPS_CLASS,
         NULL,
         WS_POPUP | TTS_NOPREFIX | TTS_ALWAYSTIP,
@@ -72,7 +72,7 @@ void WinToolBase::initToolTip()
         App::get()->hInstance,
         NULL
     );
-    SetWindowPos(toolTipHwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+    SetWindowPos(tipHwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
     TOOLINFOW ti = { 0 };
     ti.cbSize = TTTOOLINFOW_V2_SIZE;
     ti.uFlags = TTF_TRACK | TTF_ABSOLUTE;
@@ -81,11 +81,10 @@ void WinToolBase::initToolTip()
     ti.uId = 0;
     ti.lpszText = (LPWSTR)L" ";
     ti.rect = { 0, 0, 0, 0 };
-    SendMessage(toolTipHwnd, TTM_ADDTOOLW, 0, (LPARAM)&ti);
-    SendMessage(toolTipHwnd, TTM_SETDELAYTIME, TTDT_INITIAL, MAKELONG(0, 0));
-    SendMessage(toolTipHwnd, TTM_SETMAXTIPWIDTH, 0, 600);
+    SendMessage(tipHwnd, TTM_ADDTOOLW, 0, (LPARAM)&ti);
+    SendMessage(tipHwnd, TTM_SETDELAYTIME, TTDT_INITIAL, MAKELONG(0, 0));
 }
-void WinToolBase::showToolTipAt(int x, int y, const wchar_t* text)
+void WinToolBase::showTipAt(int x, int y)
 {
     TOOLINFOW ti = { 0 };
     ti.cbSize = TTTOOLINFOW_V2_SIZE;
@@ -93,13 +92,32 @@ void WinToolBase::showToolTipAt(int x, int y, const wchar_t* text)
     ti.hwnd = hwnd;
     ti.hinst = App::get()->hInstance;
     ti.uId = 0;
-    ti.lpszText = (LPWSTR)L"测试";
-    // 先更新文本
-    SendMessage(toolTipHwnd, TTM_UPDATETIPTEXTW, 0, (LPARAM)&ti);
-    // 设置位置
-    SendMessage(toolTipHwnd, TTM_TRACKPOSITION, 0, MAKELPARAM(200, 200));
-    // 确保 Tooltip 激活
-    SendMessage(toolTipHwnd, TTM_ACTIVATE, TRUE, 0);
-    // 最后启用跟踪
-    SendMessage(toolTipHwnd, TTM_TRACKACTIVATE, TRUE, (LPARAM)&ti);
+    ti.lpszText = (LPWSTR)tipText.c_str();
+    //ti.lpszText = (LPWSTR)L"测试";
+    // 更新文本
+    SendMessage(tipHwnd, TTM_UPDATETIPTEXTW, 0, (LPARAM)&ti);
+    // 先用临时位置激活 tooltip，让系统计算尺寸
+    SendMessage(tipHwnd, TTM_TRACKPOSITION, 0, MAKELPARAM(x-30.f, y-18.6*dpi));
+    SendMessage(tipHwnd, TTM_ACTIVATE, TRUE, 0);
+    SendMessage(tipHwnd, TTM_TRACKACTIVATE, TRUE, (LPARAM)&ti);
+    // 获取 tooltip 实际尺寸
+    RECT rc = { 0 };
+    GetWindowRect(tipHwnd, &rc);
+    int width = rc.right - rc.left;
+    int height = rc.bottom - rc.top;
+    int centerX = x - width / 2;
+    int centerY = y - height;
+    SendMessage(tipHwnd, TTM_TRACKPOSITION, 0, MAKELPARAM(centerX, centerY));
+}
+void WinToolBase::hideTip()
+{
+    TOOLINFOW ti = { 0 };
+    ti.cbSize = TTTOOLINFOW_V2_SIZE;
+    ti.hwnd = hwnd;
+    ti.uId = 0;
+
+    // 关闭跟踪激活
+    SendMessage(tipHwnd, TTM_TRACKACTIVATE, FALSE, (LPARAM)&ti);
+    // 同时关闭普通激活（双重保险）
+    SendMessage(tipHwnd, TTM_ACTIVATE, FALSE, 0);
 }

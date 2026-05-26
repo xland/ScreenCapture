@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "pch.h"
 #include "WinToolBase.h"
 class WinToolSub :public WinToolBase
@@ -25,11 +25,10 @@ private:
 	void paintColorSelector();
 	void initVal();
 private:
-	float arrowX, btnStart{0.f}, btnEnd,sliderStart,sliderEnd,colorStart,colorEnd, colorBtnW, sliderMax, sliderVal;
+	float arrowX, btnStart{0.f}, btnEnd,sliderStart,sliderEnd,colorStart,colorEnd, colorBtnW, sliderMin,sliderMax, sliderVal;
 	ComPtr<ID2D1PathGeometry> borderPath;
 	std::vector<ComPtr<ID2D1SolidColorBrush>> colorBrush;
-	int hoverColorIndex{ -1 }, selectColorIndex{0},sliderMin;
-	std::wstring tipText;
-
+	std::vector<std::wstring> colorName;
+	int hoverColorIndex{ -1 }, selectColorIndex{0};
 };
 
