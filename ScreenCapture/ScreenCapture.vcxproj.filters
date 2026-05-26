@@ -24,31 +24,37 @@
     <ClCompile Include="App.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="WinCap.cpp">
+    <ClCompile Include="Win\WinCap.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Util.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="CutMask.cpp">
+    <ClCompile Include="Win\CutMask.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="WinPix.cpp">
+    <ClCompile Include="Win\WinPix.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="WinToolMain.cpp">
+    <ClCompile Include="Win\WinToolMain.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="WinToolSub.cpp">
+    <ClCompile Include="Win\WinToolSub.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="WinPin.cpp">
+    <ClCompile Include="Win\WinPin.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="WinBase.cpp">
+    <ClCompile Include="Win\WinBase.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="WinToolBase.cpp">
+    <ClCompile Include="Win\WinToolBase.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Shape\ShapeBase.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Shape\ShapeRect.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -59,36 +65,42 @@
     <ClInclude Include="App.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="WinCap.h">
+    <ClInclude Include="Win\WinCap.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Util.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="CutMask.h">
+    <ClInclude Include="Win\CutMask.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="WinPix.h">
+    <ClInclude Include="Win\WinPix.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="WinToolMain.h">
+    <ClInclude Include="Win\WinToolMain.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="WinToolSub.h">
+    <ClInclude Include="Win\WinToolSub.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="WinPin.h">
+    <ClInclude Include="Win\WinPin.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="WinBase.h">
+    <ClInclude Include="Win\WinBase.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="WinToolBase.h">
+    <ClInclude Include="Win\WinToolBase.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Shape\ShapeBase.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Shape\ShapeRect.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="Resource.rc">
+    <ResourceCompile Include="Res\Resource.rc">
       <Filter>资源文件</Filter>
     </ResourceCompile>
   </ItemGroup>

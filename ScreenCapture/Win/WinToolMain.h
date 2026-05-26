@@ -10,7 +10,7 @@ public:
 	static void popup();
 	static WinToolMain* get();
 public:
-	std::string state{ "rect" };
+	std::string state;
 protected:
 private:
 	void onPaint() override;

@@ -6,6 +6,8 @@
 #include "CutMask.h"
 #include "WinToolMain.h"
 #include "WinToolSub.h"
+#include "Shape/ShapeBase.h"
+#include "Shape/ShapeRect.h"
 
 std::vector<std::unique_ptr<WinPin>> winPins;
 
@@ -46,11 +48,21 @@ void WinPin::onPaint()
 {
     D2D1_RECT_F destRect = D2D1::RectF(0,0, w, h);
     render->DrawBitmap(screenImg.Get(), destRect);
+    for (auto& shape:shapes)
+    {
+        shape->paint();
+    }
 }
 
 bool WinPin::onCursor()
 {
-    SetCursor(LoadCursor(NULL, IDC_SIZEALL));
+    auto toolMain = WinToolMain::get();
+    if (toolMain->state == "") {
+        SetCursor(LoadCursor(NULL, IDC_SIZEALL));
+    }
+    else {
+        SetCursor(LoadCursor(NULL, IDC_CROSS));
+    }
     return TRUE;
 }
 
@@ -73,18 +85,31 @@ void WinPin::onMouseMove(const int& x, const int& y)
 
 void WinPin::onMouseDrag(const int& x, const int& y)
 {
-    this->x += (x - pressPos.x);
-    this->y += (y - pressPos.y);
-    SetWindowPos(hwnd, nullptr, this->x, this->y, 0, 0, SWP_NOSIZE|SWP_NOZORDER|SWP_FRAMECHANGED);
+    auto toolMain = WinToolMain::get();
+    if (toolMain->state == "") {
+        this->x += (x - pressPos.x);
+        this->y += (y - pressPos.y);
+        SetWindowPos(hwnd, nullptr, this->x, this->y, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
+    }
+    else if (toolMain->state == "rect") {
+        shapes[shapes.size() - 1]->mouseDrag(x, y);
+        refresh();
+    }
 }
 
 void WinPin::onMouseDown(const int& x, const int& y, bool isRight)
 {
-    pressPos.x = x;
-    pressPos.y = y;
-    isMouseDown = true;
-	WinToolMain::get()->hide();
-    WinToolSub::get()->hide();
+    auto toolMain = WinToolMain::get();
+    if (toolMain->state == "") {
+        pressPos.x = x;
+        pressPos.y = y;
+        toolMain->hide();
+    }
+    else if(toolMain->state == "rect"){
+        auto rect = std::make_unique<ShapeRect>(this);
+        rect->mouseDown(x, y);
+        shapes.push_back(std::move(rect));
+    }
 }
 
 void WinPin::onMouseUp(const int& x, const int& y)

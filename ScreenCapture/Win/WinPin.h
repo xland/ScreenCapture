@@ -4,6 +4,7 @@
 
 class WinToolMain;
 class WinToolSub;
+class ShapeBase;
 class WinPin :public WinBase
 {
 public:
@@ -24,5 +25,6 @@ private:
 private:
 	ComPtr<ID2D1Bitmap> screenImg;
 	POINT pressPos;
+	std::vector<std::unique_ptr<ShapeBase>> shapes;
 };
 

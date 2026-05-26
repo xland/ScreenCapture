@@ -8,8 +8,6 @@ public:
 	~WinToolSub();
 	static void popup();
 	static WinToolSub* get();
-	void changeState();
-
 public:
 protected:
 	void onPaint() override;

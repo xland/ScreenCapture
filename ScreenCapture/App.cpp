@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "App.h"
-#include "WinCap.h"
+#include "Win/WinCap.h"
 
 std::unique_ptr<App> app;
 

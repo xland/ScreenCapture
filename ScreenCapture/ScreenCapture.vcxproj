@@ -114,6 +114,7 @@
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -137,6 +138,7 @@
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -150,36 +152,40 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp" />
-    <ClCompile Include="CutMask.cpp" />
+    <ClCompile Include="Win\CutMask.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Shape\ShapeRect.cpp" />
+    <ClCompile Include="Shape\ShapeBase.cpp" />
     <ClCompile Include="Util.cpp" />
-    <ClCompile Include="WinBase.cpp" />
-    <ClCompile Include="WinCap.cpp" />
-    <ClCompile Include="WinPin.cpp" />
-    <ClCompile Include="WinPix.cpp" />
-    <ClCompile Include="WinToolBase.cpp" />
-    <ClCompile Include="WinToolMain.cpp" />
-    <ClCompile Include="WinToolSub.cpp" />
+    <ClCompile Include="Win\WinBase.cpp" />
+    <ClCompile Include="Win\WinCap.cpp" />
+    <ClCompile Include="Win\WinPin.cpp" />
+    <ClCompile Include="Win\WinPix.cpp" />
+    <ClCompile Include="Win\WinToolBase.cpp" />
+    <ClCompile Include="Win\WinToolMain.cpp" />
+    <ClCompile Include="Win\WinToolSub.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h" />
-    <ClInclude Include="CutMask.h" />
+    <ClInclude Include="Win\CutMask.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="Shape\ShapeRect.h" />
+    <ClInclude Include="Shape\ShapeBase.h" />
     <ClInclude Include="Util.h" />
-    <ClInclude Include="WinBase.h" />
-    <ClInclude Include="WinCap.h" />
-    <ClInclude Include="WinPin.h" />
-    <ClInclude Include="WinPix.h" />
-    <ClInclude Include="WinToolBase.h" />
-    <ClInclude Include="WinToolMain.h" />
-    <ClInclude Include="WinToolSub.h" />
+    <ClInclude Include="Win\WinBase.h" />
+    <ClInclude Include="Win\WinCap.h" />
+    <ClInclude Include="Win\WinPin.h" />
+    <ClInclude Include="Win\WinPix.h" />
+    <ClInclude Include="Win\WinToolBase.h" />
+    <ClInclude Include="Win\WinToolMain.h" />
+    <ClInclude Include="Win\WinToolSub.h" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="Resource.rc" />
+    <ResourceCompile Include="Res\Resource.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

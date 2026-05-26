@@ -150,7 +150,7 @@ void WinToolSub::popup()
     if (!winToolSub.get()) {
         winToolSub = std::make_unique<WinToolSub>();
         winToolSub->initVal();
-        winToolSub->createWindow(WS_EX_TOPMOST);
+        winToolSub->createWindow(WS_EX_TOOLWINDOW|WS_EX_TOPMOST);
         winToolSub->initTip();
         winToolSub->initBrush();
         winToolSub->initColor();
@@ -162,28 +162,21 @@ void WinToolSub::popup()
     else {
         auto toolMain = WinToolMain::get();
         auto win = winToolSub.get();
+        if (toolMain->state == "") {
+            win->hide();
+            return;
+        }
+        win->initVal();
         win->move(win->x, win->y);
+        win->resize(win->w, win->h);
         win->initBorder();
         win->show();
+        win->refresh();
     }
 }
 WinToolSub* WinToolSub::get()
 {
     return winToolSub.get();
-}
-void WinToolSub::changeState()
-{
-	auto toolMain = WinToolMain::get();
-    if (toolMain->state == "") {
-		hide();
-    }
-    else {
-        initVal();
-        resize(w, h);
-        move(x, y);
-        initBorder();
-        refresh();
-    }
 }
 
 void WinToolSub::initBorder()

@@ -12,7 +12,6 @@ std::unique_ptr<WinToolMain> winToolMain;
 
 WinToolMain::WinToolMain(const int& x, const int& y, const int& w, const int& h) : WinToolBase(x, y, w, h)
 {
-    selectIndex = 0;
     btnSize = (float)h;
 	marginTop = 0.f;
 }
@@ -39,7 +38,6 @@ void WinToolMain::popup()
         winToolMain->initBrush();
 		winToolMain->initBtn();
         winToolMain->show();
-        WinToolSub::popup();
     }
     else {
         auto winPin = WinPin::getCur();
@@ -103,7 +101,7 @@ void WinToolMain::onMouseDown(const int& x, const int& y, bool isRight)
 				selectIndex = index;
             }
             refresh();
-			WinToolSub::get()->changeState();
+			WinToolSub::get()->popup();
             break;
         }
         index += 1;
