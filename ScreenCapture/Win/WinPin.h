@@ -21,10 +21,12 @@ private:
 	void onMouseLeave() override;
 	void onPaint() override;
 	bool onCursor() override;
+	void onTimer(const UINT& timerId) override;
 	void initImg();
 private:
 	ComPtr<ID2D1Bitmap> screenImg;
 	POINT pressPos;
 	std::vector<std::unique_ptr<ShapeBase>> shapes;
+	ShapeBase* shapeHover;
 };
 

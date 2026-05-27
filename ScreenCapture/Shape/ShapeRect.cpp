@@ -22,6 +22,15 @@ void ShapeRect::paint()
 	win->render->DrawRectangle(rect, brush.Get(), strokeWidth);
 }
 
+void ShapeRect::paintDragger()
+{
+	if (state != ShapeState::ready) return;	
+	for (auto& dragger:draggers)
+	{
+		win->render->DrawRectangle(dragger, brushDragger.Get(), win->dpi);
+	}
+}
+
 void ShapeRect::mouseDrag(const int& x, const int& y)
 {
 	auto xf = static_cast<float>(x);
@@ -38,5 +47,22 @@ bool ShapeRect::mouseDown(const int& x, const int& y)
 {
 	pressX = x;
 	pressY = y;
+	return true;
+}
+
+bool ShapeRect::mouseUp(const int& x, const int& y)
+{
+	if (draggers.empty()) {
+		auto half{ draggerSize / 2 }, w{ rect.right - rect.left }, h{ rect.bottom - rect.top };
+		draggers.push_back(D2D1::RectF(rect.left - half, rect.top - half, rect.left +half, rect.top + half));
+		draggers.push_back(D2D1::RectF(rect.left+w/2 - half, rect.top - half, rect.left+w/2 + half, rect.top + half));
+		draggers.push_back(D2D1::RectF(rect.right - half, rect.top - half, rect.right + half, rect.top + half));
+		draggers.push_back(D2D1::RectF(rect.right - half, rect.top + h/2 - half, rect.right + half, rect.top+h/2 + half));
+		draggers.push_back(D2D1::RectF(rect.right - half, rect.bottom - half, rect.right + half, rect.bottom + half));
+		draggers.push_back(D2D1::RectF(rect.left+w/2 - half, rect.bottom - half, rect.left+w/2 + half, rect.bottom + half));
+		draggers.push_back(D2D1::RectF(rect.left - half, rect.bottom - half, rect.left + half, rect.bottom + half));
+		draggers.push_back(D2D1::RectF(rect.left - half, rect.top+h/2 - half, rect.left + half, rect.top+h/2 + half));
+	}
+	state = ShapeState::ready;
 	return true;
 }

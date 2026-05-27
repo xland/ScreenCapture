@@ -15,6 +15,8 @@ public:
 	ComPtr<IDWriteTextLayout> getTextLayout(const std::wstring& str, const float& fontSize, const float& w, const float& h);
 	void enableShadow();
 	void enableAlpha();
+	void setTimer(const UINT& elapse, const UINT& id);
+	void killTimer(const UINT& id);
 public:
 	HWND hwnd;
 	int x, y, w, h;
@@ -31,6 +33,7 @@ protected:
 	virtual void onKeyDown(const TCHAR& key) {};
 	virtual void onMouseLeave() {};
 	virtual void onMouseWheel(const int& x, const int& y, const short& delta) {};
+	virtual void onTimer(const UINT& timerId) {};
 	virtual bool onCursor();
 private:
 	std::wstring& getWinClsName();

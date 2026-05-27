@@ -63,6 +63,16 @@ void WinBase::enableAlpha()
     DwmEnableBlurBehindWindow(hwnd, &bb);
     DeleteObject(region);
 }
+void WinBase::setTimer(const UINT& elapse, const UINT& id)
+{
+    SetTimer(hwnd, WM_APP + id, elapse, nullptr);
+}
+
+void WinBase::killTimer(const UINT& id)
+{
+    KillTimer(hwnd, WM_APP + id);
+}
+
 LRESULT WinBase::onHitTest(WPARAM wParam, LPARAM lParam)
 {
     return DefWindowProc(hwnd, WM_NCHITTEST, wParam, lParam);
@@ -121,12 +131,6 @@ LRESULT WinBase::winProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     if (!self) {
         return DefWindowProc(hwnd, msg, wParam, lParam);
     }
-    //else if (msg == WM_ACTIVATE || msg == WM_NCACTIVATE) {
-    //    return 0;
-    //}
-    //else if (msg == WM_KILLFOCUS || msg == WM_SETFOCUS) {
-    //    return 0;
-    //}
     else if (msg == WM_NCHITTEST)
     {
         return self->onHitTest(wParam, lParam);
@@ -174,6 +178,9 @@ LRESULT WinBase::winProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     }
     else if (msg == WM_KEYDOWN) {
         self->onKeyDown(wParam);
+    }
+    else if (msg == WM_TIMER) {
+        self->onTimer(wParam-WM_APP);
     }
     return DefWindowProc(hwnd, msg, wParam, lParam);
 }

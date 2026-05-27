@@ -52,6 +52,7 @@ void WinPin::onPaint()
     {
         shape->paint();
     }
+    if (shapeHover)shapeHover->paintDragger();
 }
 
 bool WinPin::onCursor()
@@ -64,6 +65,16 @@ bool WinPin::onCursor()
         SetCursor(LoadCursor(NULL, IDC_CROSS));
     }
     return TRUE;
+}
+
+void WinPin::onTimer(const UINT& timerId)
+{
+    if (timerId != 18) return;
+    if (shapeHover) {
+        shapeHover = nullptr;
+        refresh();
+    }
+    killTimer(timerId);
 }
 
 void WinPin::initImg()
@@ -89,7 +100,7 @@ void WinPin::onMouseDrag(const int& x, const int& y)
     if (toolMain->state == "") {
         this->x += (x - pressPos.x);
         this->y += (y - pressPos.y);
-        SetWindowPos(hwnd, nullptr, this->x, this->y, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
+        move(this->x, this->y);
     }
     else if (toolMain->state == "rect") {
         shapes[shapes.size() - 1]->mouseDrag(x, y);
@@ -114,7 +125,16 @@ void WinPin::onMouseDown(const int& x, const int& y, bool isRight)
 
 void WinPin::onMouseUp(const int& x, const int& y)
 {
-    WinToolMain::get()->popup();
+    auto toolMain = WinToolMain::get();
+    if (toolMain->state == "") {
+        WinToolMain::get()->popup();
+    }
+    else {
+        shapeHover = shapes[shapes.size() - 1].get();
+        shapeHover->mouseUp(x, y);
+        refresh();
+        setTimer(800,18);
+    }
 }
 
 void WinPin::onMouseLeave()
