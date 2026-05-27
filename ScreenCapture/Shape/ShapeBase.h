@@ -24,13 +24,15 @@ public:
 	~ShapeBase();
 	virtual void paint() = 0;
 	virtual void paintDragger() {};
-	virtual bool mouseMove(const int& x, const int& y) { return false; };
+	virtual void mouseMove(const int& x, const int& y) { };
 	virtual void mouseDrag(const int& x, const int& y) {};
 	virtual bool mouseDown(const int& x, const int& y) { return false; };
 	virtual bool mouseUp(const int& x, const int& y) { return false; };
+	virtual void setCursor() {};
 public:
 	WinPin* win;
 	ShapeState state{ ShapeState::temp };
+	int hoverDraggerIndex{ -1 };
 protected:
 	float draggerSize;
 	std::vector<D2D1_RECT_F> draggers;

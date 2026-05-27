@@ -14,5 +14,6 @@ public:
 	static ComPtr<ID2D1PathGeometry> createArrow(const D2D1_POINT_2F& startPos, const D2D1_POINT_2F& endPos);
 	static std::wstring getTextFromClipboard();
 	static std::vector<BYTE> captureScreen(const int& x, const int& y, const int& w, const int& h);
+	static bool isInRect(const D2D1_RECT_F& rect, const float& x, const float& y);
 };
 

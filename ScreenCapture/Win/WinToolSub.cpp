@@ -28,9 +28,9 @@ void WinToolSub::initVal()
         w = 316 * toolMain->dpi;
         btnStart = 0;
         btnEnd = btnStart + btnSize;
-        sliderMax = 22;
-        sliderMin = 12;
-        sliderVal = 16;
+        sliderMax = 16;
+        sliderMin = 1;
+        sliderVal = 3;
         sliderStart = btnEnd + span;
         sliderEnd = sliderStart + 120.f;
         colorStart = sliderEnd + span;

@@ -10,6 +10,7 @@ public:
 	static WinToolSub* get();
 	D2D1_COLOR_F getSelectedColor();
 public:
+	float sliderVal;
 protected:
 	void onPaint() override;
 private:
@@ -28,7 +29,7 @@ private:
 	bool hoverBtn(const int& x);
 	bool hoverColor(const int& x);
 private:
-	float arrowX, btnStart{0.f}, btnEnd,sliderStart,sliderEnd,colorStart,colorEnd, colorBtnW, sliderMin,sliderMax, sliderVal;
+	float arrowX, btnStart{0.f}, btnEnd,sliderStart,sliderEnd,colorStart,colorEnd, colorBtnW, sliderMin,sliderMax;
 	ComPtr<ID2D1PathGeometry> borderPath;
 	std::vector<ComPtr<ID2D1SolidColorBrush>> colorBrush;
 	std::vector<std::wstring> colorName;

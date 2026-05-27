@@ -17,6 +17,7 @@ public:
 	void enableAlpha();
 	void setTimer(const UINT& elapse, const UINT& id);
 	void killTimer(const UINT& id);
+	void setCursor(LPCWSTR cursorName);
 public:
 	HWND hwnd;
 	int x, y, w, h;

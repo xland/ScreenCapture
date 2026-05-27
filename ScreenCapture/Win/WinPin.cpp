@@ -59,10 +59,14 @@ bool WinPin::onCursor()
 {
     auto toolMain = WinToolMain::get();
     if (toolMain->state == "") {
-        SetCursor(LoadCursor(NULL, IDC_SIZEALL));
+        setCursor(IDC_SIZEALL);
+        return TRUE;
+    }
+    if (shapeHover) {
+        shapeHover->setCursor();
     }
     else {
-        SetCursor(LoadCursor(NULL, IDC_CROSS));
+        setCursor(IDC_CROSS);
     }
     return TRUE;
 }
@@ -70,11 +74,10 @@ bool WinPin::onCursor()
 void WinPin::onTimer(const UINT& timerId)
 {
     if (timerId != 18) return;
-    if (shapeHover) {
-        shapeHover = nullptr;
+    if (!shapeHover) {
         refresh();
+        killTimer(timerId);
     }
-    killTimer(timerId);
 }
 
 void WinPin::initImg()
@@ -92,6 +95,32 @@ void WinPin::initImg()
 
 void WinPin::onMouseMove(const int& x, const int& y)
 {
+    for (int i = shapes.size() - 1; i >= 0; i--)
+    {
+        auto cur = shapes[i].get();
+        if (cur->state == ShapeState::undo) continue;
+        cur->mouseMove(x,y);
+        if (cur->hoverDraggerIndex>=0) {
+            if (shapeHover != cur) {
+                shapeHover = cur;
+                setTimer(800, 18);
+                refresh();
+            }
+            return;
+        }
+    }
+    if (shapeHover) {
+        shapeHover = nullptr;
+    }
+    //if (!flag) {
+    //    auto win = (WinBase*)parent();
+    //    if (win->state == State::text) {
+    //        win->setCursor(Qt::IBeamCursor);
+    //    }
+    //    else {
+    //        win->setCursor(Qt::CrossCursor);
+    //    }
+    //}
 }
 
 void WinPin::onMouseDrag(const int& x, const int& y)

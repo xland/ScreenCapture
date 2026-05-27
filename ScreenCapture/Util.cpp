@@ -265,3 +265,8 @@ std::vector<BYTE> Util::captureScreen(const int& x, const int& y, const int& w, 
     DeleteObject(hBitmap);
     return data;
 }
+
+bool Util::isInRect(const D2D1_RECT_F& rect, const float& x, const float& y)
+{
+    return (x > rect.left && x<rect.right && y>rect.top && y < rect.bottom);
+}

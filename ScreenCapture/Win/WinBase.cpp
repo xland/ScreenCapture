@@ -73,6 +73,11 @@ void WinBase::killTimer(const UINT& id)
     KillTimer(hwnd, WM_APP + id);
 }
 
+void WinBase::setCursor(LPCWSTR cursorName)
+{
+    SetCursor(LoadCursor(NULL, cursorName));
+}
+
 LRESULT WinBase::onHitTest(WPARAM wParam, LPARAM lParam)
 {
     return DefWindowProc(hwnd, WM_NCHITTEST, wParam, lParam);
