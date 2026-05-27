@@ -7,15 +7,11 @@ public:
 	CutMask();
 	~CutMask();
 	bool highlight(const int& x, const int& y);
-	void changeCursor(const int& x, const int& y);
 	void startMakeRect(const int& x, const int& y);
-	void startChangeRect(const int& x, const int& y);
-	void changeRect(const int& x, const int& y);
 	void makeRect(const int& x, const int& y);
 	void paint();
 public:
 	D2D1_RECT_F maskRect;
-	D2D1_RECT_F originalRect;
 	int cursorIndex{-1};
 private:
 	void initWinRect();

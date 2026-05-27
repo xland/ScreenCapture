@@ -8,6 +8,7 @@ public:
 	~WinToolSub();
 	static void popup();
 	static WinToolSub* get();
+	D2D1_COLOR_F getSelectedColor();
 public:
 protected:
 	void onPaint() override;

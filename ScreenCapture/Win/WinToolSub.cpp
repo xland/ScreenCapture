@@ -179,6 +179,11 @@ WinToolSub* WinToolSub::get()
     return winToolSub.get();
 }
 
+D2D1_COLOR_F WinToolSub::getSelectedColor()
+{
+    return colorBrush[selectColorIndex]->GetColor();
+}
+
 void WinToolSub::initBorder()
 {
     borderPath.Reset();

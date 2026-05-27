@@ -84,27 +84,39 @@ void WinToolMain::onPaint()
 void WinToolMain::onMouseDown(const int& x, const int& y, bool isRight)
 {
 	if (isRight) {
+        state = "";
+        selectIndex = -1;
 		WinToolMain::get()->hide();
 		return;
 	}
-    auto index{ 0 };
-    for (auto& btn: btnId)
-    {
-        if (index == hoverIndex) 
-        {
-            if (index == selectIndex) {
-                state = "";
-                selectIndex = -1;
-            }
-            else {
-                state = btn;
-				selectIndex = index;
-            }
-            refresh();
-			WinToolSub::get()->popup();
-            break;
+    auto& state = btnId[hoverIndex];
+    if (state == "undo") {
+        return;
+    }
+    else if (state == "redo") {
+        return;
+    }
+    else if (state == "clipboard") {
+        return;
+    }
+    else if (state == "save") {
+        return;
+    }
+    else if (state == "close") {
+        App::get()->exit(1);
+        return;
+    }
+    else {
+        if (state == this->state) {
+            state = "";
+            selectIndex = -1;
         }
-        index += 1;
+        else {
+            this->state = state;
+            selectIndex = hoverIndex;
+        }
+        refresh();
+        WinToolSub::get()->popup();
     }
 }
 void WinToolMain::onMouseMove(const int& x, const int& y)

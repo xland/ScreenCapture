@@ -6,7 +6,6 @@
 CutMask::CutMask() 
 {
     auto render = WinCap::get()->render.Get();
-    //textLayout = Util::getTextLayout(L"\ue8e8", fontSize, btnW, h);
     render->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White), brushText.GetAddressOf());
     render->CreateSolidColorBrush(D2D1::ColorF(0x000000, 0.46f), brushBg.GetAddressOf());
     render->CreateSolidColorBrush(D2D1::ColorF(0x1677ff), brushBorder.GetAddressOf());
@@ -36,67 +35,6 @@ bool CutMask::highlight(const int& x, const int& y)
         }
     }
     return false;
-}
-
-void CutMask::changeCursor(const int& x, const int& y)
-{
-    int index{ -1 };
-    if (x <= maskRect.left && y <= maskRect.top) {   
-        index = 0;
-    }
-    else if (x >= maskRect.right && y <= maskRect.top) { 
-        index = 2;
-    }
-    else if (x <= maskRect.left && y >= maskRect.bottom) { 
-        index = 6;
-    }
-    else if (x >= maskRect.right && y >= maskRect.bottom) {
-        index = 8;
-    }
-    else if (y < maskRect.top) { 
-        index = 1;
-    }
-    else if (y > maskRect.bottom) {
-        index = 7;
-    }
-    else if (x < maskRect.left) { 
-        index = 3;
-    }
-    else if (x > maskRect.right) {
-        index = 5;
-    }
-    else { 
-        index = 4;
-    }
-    if (index == cursorIndex) return;
-    switch (index)
-    {
-    case 0:
-    case 8: {
-        SetCursor(LoadCursor(NULL, IDC_SIZENWSE)); 
-        break; // 左上,右下
-    }
-    case 1:
-    case 7: {
-        SetCursor(LoadCursor(NULL, IDC_SIZENS));   
-        break; // 上 下
-    }
-    case 2:
-    case 6: {
-        SetCursor(LoadCursor(NULL, IDC_SIZENESW)); 
-        break; // 右上 左下
-    }
-    case 3:
-    case 5: {
-        SetCursor(LoadCursor(NULL, IDC_SIZEWE));   
-        break; // 左 右
-    }
-    case 4: {
-        SetCursor(LoadCursor(NULL, IDC_SIZEALL));  
-        break; // 中心
-    }
-    }
-    cursorIndex = index;
 }
 
 void CutMask::initWinRect()
@@ -129,133 +67,16 @@ void CutMask::startMakeRect(const int& x, const int& y)
 {
     pressX = x;
     pressY = y;
-    originalRect = maskRect;
-    changeRect(x, y);
-}
-void CutMask::startChangeRect(const int& x, const int& y)
-{
-    switch (cursorIndex)
-    {
-    case 0: // 左上角
-        maskRect.left = x;
-        maskRect.top = y;
-        break;
-    case 1: // 上边
-        maskRect.top = y;
-        break;
-    case 2: // 右上角
-        maskRect.right = x;
-        maskRect.top = y;
-        break;
-    case 3: // 左边
-        maskRect.left = x;
-        break;
-    case 5: // 右边
-        maskRect.right = x;
-        break;
-    case 6: // 左下角
-        maskRect.left = x;
-        maskRect.bottom = y;
-        break;
-    case 7: // 下边
-        maskRect.bottom = y;
-        break;
-    case 8: // 右下角
-        maskRect.right = x;
-        maskRect.bottom = y;
-        break;
-    }
-    pressX = x;
-    pressY = y;
-    originalRect = maskRect;
-    WinCap::get()->refresh();
-}
-void CutMask::changeRect(const int& x, const int& y)
-{
-    int dx = x - pressX;
-    int dy = y - pressY;
-    D2D1_RECT_F newRect = originalRect;
-    if (cursorIndex == 4) {
-        newRect.left += dx;
-        newRect.top += dy;
-        newRect.right += dx;
-        newRect.bottom += dy;
-    }
-    else {
-        switch (cursorIndex)
-        {
-        case 0: // 左上角
-            newRect.left += dx;
-            newRect.top += dy;
-            break;
-        case 1: // 上边
-            newRect.top += dy;
-            break;
-        case 2: // 右上角
-            newRect.right += dx;
-            newRect.top += dy;
-            break;
-        case 3: // 左边
-            newRect.left += dx;
-            break;
-        case 5: // 右边
-            newRect.right += dx;
-            break;
-        case 6: // 左下角
-            newRect.left += dx;
-            newRect.bottom += dy;
-            break;
-        case 7: // 下边
-            newRect.bottom += dy;
-            break;
-        case 8: // 右下角
-            newRect.right += dx;
-            newRect.bottom += dy;
-            break;
-        }
-    }
-    auto win = WinCap::get();
-    bool clamped = false;
-    if (newRect.left < 0) {
-        newRect.right -= newRect.left;
-        newRect.left = 0;
-        clamped = true;
-    }
-    if (newRect.top < 0) {
-        newRect.bottom -= newRect.top;
-        newRect.top = 0;
-        clamped = true;
-    }
-    if (newRect.right > win->w) {
-        newRect.left -= newRect.right-win->w;
-        newRect.right = win->w;
-        clamped = true;
-    }
-    if (newRect.bottom > win->h) {
-        newRect.top -= newRect.bottom-win->h;
-        newRect.bottom = win->h;
-        clamped = true;
-    }
-    if (clamped && cursorIndex == 4) { 
-        float actualDx = newRect.left - originalRect.left;
-        float actualDy = newRect.top - originalRect.top; 
-        pressX = static_cast<int>(x - actualDx);
-        pressY = static_cast<int>(y - actualDy);
-    }
-    if (maskRect.left == newRect.left && maskRect.top == newRect.top &&
-        maskRect.right == newRect.right && maskRect.bottom == newRect.bottom) {
-        return;
-    }
-    maskRect = newRect;
-    WinCap::get()->refresh();
 }
 
 void CutMask::makeRect(const int& x, const int& y)
 {
-    maskRect.left = std::min(pressX,x);
-    maskRect.top = std::min(pressY,y);
-    maskRect.right = std::max(pressX,x);
-    maskRect.bottom = std::max(pressY,y);
+    auto [left, right] = std::minmax(pressX, x);
+    auto [top, bottom] = std::minmax(pressY, y);
+    maskRect.left = left;
+    maskRect.right = right;
+    maskRect.top = top;
+    maskRect.bottom = bottom;
     WinCap::get()->refresh();
 }
 

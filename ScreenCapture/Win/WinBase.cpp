@@ -121,9 +121,12 @@ LRESULT WinBase::winProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     if (!self) {
         return DefWindowProc(hwnd, msg, wParam, lParam);
     }
-    else if (msg == WM_ACTIVATE) {
-        return 0;
-    }
+    //else if (msg == WM_ACTIVATE || msg == WM_NCACTIVATE) {
+    //    return 0;
+    //}
+    //else if (msg == WM_KILLFOCUS || msg == WM_SETFOCUS) {
+    //    return 0;
+    //}
     else if (msg == WM_NCHITTEST)
     {
         return self->onHitTest(wParam, lParam);
