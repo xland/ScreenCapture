@@ -26,8 +26,8 @@ public:
 	virtual void paintDragger() {};
 	virtual void mouseMove(const int& x, const int& y) { };
 	virtual void mouseDrag(const int& x, const int& y) {};
-	virtual bool mouseDown(const int& x, const int& y) { return false; };
-	virtual bool mouseUp(const int& x, const int& y) { return false; };
+	virtual void mouseDown(const int& x, const int& y) { };
+	virtual void mouseUp(const int& x, const int& y) { };
 	virtual void setCursor() {};
 public:
 	WinPin* win;
@@ -35,7 +35,6 @@ public:
 	int hoverDraggerIndex{ -1 };
 protected:
 	float draggerSize;
-	std::vector<D2D1_RECT_F> draggers;
 	ComPtr<ID2D1SolidColorBrush> brushDragger;
 private:
 };

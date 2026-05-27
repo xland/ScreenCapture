@@ -52,7 +52,7 @@ void WinPin::onPaint()
     {
         shape->paint();
     }
-    if (shapeHover)shapeHover->paintDragger();
+    if (!isMouseDown && shapeHover)shapeHover->paintDragger();
 }
 
 bool WinPin::onCursor()
@@ -112,15 +112,6 @@ void WinPin::onMouseMove(const int& x, const int& y)
     if (shapeHover) {
         shapeHover = nullptr;
     }
-    //if (!flag) {
-    //    auto win = (WinBase*)parent();
-    //    if (win->state == State::text) {
-    //        win->setCursor(Qt::IBeamCursor);
-    //    }
-    //    else {
-    //        win->setCursor(Qt::CrossCursor);
-    //    }
-    //}
 }
 
 void WinPin::onMouseDrag(const int& x, const int& y)
@@ -132,7 +123,7 @@ void WinPin::onMouseDrag(const int& x, const int& y)
         move(this->x, this->y);
     }
     else if (toolMain->state == "rect") {
-        shapes[shapes.size() - 1]->mouseDrag(x, y);
+        shapeHover->mouseDrag(x, y);
         refresh();
     }
 }
@@ -144,10 +135,16 @@ void WinPin::onMouseDown(const int& x, const int& y, bool isRight)
         pressPos.x = x;
         pressPos.y = y;
         toolMain->hide();
+        return;
     }
-    else if(toolMain->state == "rect"){
+    if (shapeHover) {
+        shapeHover->mouseDown(x, y);
+        return;
+    }
+    if(toolMain->state == "rect"){
         auto rect = std::make_unique<ShapeRect>(this);
         rect->mouseDown(x, y);
+        shapeHover = rect.get();
         shapes.push_back(std::move(rect));
     }
 }

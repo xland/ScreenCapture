@@ -13,6 +13,7 @@ public:
 	static void init();
 	static WinPin* getCur();
 public:
+	ShapeBase* shapeHover;
 private:
 	void onMouseMove(const int& x, const int& y) override;
 	void onMouseDrag(const int& x, const int& y) override;
@@ -27,6 +28,5 @@ private:
 	ComPtr<ID2D1Bitmap> screenImg;
 	POINT pressPos;
 	std::vector<std::unique_ptr<ShapeBase>> shapes;
-	ShapeBase* shapeHover;
 };
 

@@ -5,7 +5,15 @@
 #include "../Util.h"
 #include "ShapeRect.h"
 
-ShapeRect::ShapeRect(WinPin* win):ShapeBase(win)
+ShapeRect::ShapeRect(WinPin* win) :ShapeBase(win), draggers{ 
+	D2D1::RectF(0,0,0,0),
+	D2D1::RectF(0,0,0,0),
+	D2D1::RectF(0,0,0,0),
+	D2D1::RectF(0,0,0,0),
+	D2D1::RectF(0,0,0,0),
+	D2D1::RectF(0,0,0,0),
+	D2D1::RectF(0,0,0,0),
+	D2D1::RectF(0,0,0,0) }
 {
 	auto toolSub = WinToolSub::get();
 	win->render->CreateSolidColorBrush(toolSub->getSelectedColor(), brush.GetAddressOf());
@@ -35,44 +43,115 @@ void ShapeRect::mouseDrag(const int& x, const int& y)
 {
 	auto xf = static_cast<float>(x);
 	auto yf = static_cast<float>(y);
-	auto [left, right] = std::minmax(pressX, xf);
-	auto [top, bottom] = std::minmax(pressY, yf);
-	rect.left = left;
-	rect.right = right;
-	rect.top = top;
-	rect.bottom = bottom;
+	if (hoverDraggerIndex == 0 || hoverDraggerIndex == 4) {
+		auto [left, right] = std::minmax(pressX, xf);
+		auto [top, bottom] = std::minmax(pressY, yf);
+		rect.left = left;
+		rect.right = right;
+		rect.top = top;
+		rect.bottom = bottom;
+	}
+	else if (hoverDraggerIndex == 1) {
+		auto [top, bottom] = std::minmax(pressY, yf);
+		rect.top = top;
+		rect.bottom = bottom;
+	}
+	else if (hoverDraggerIndex == 1) {
+		auto [top, bottom] = std::minmax(pressY, yf);
+		rect.top = top;
+		rect.bottom = bottom;
+	}
 }
 
-bool ShapeRect::mouseDown(const int& x, const int& y)
+void ShapeRect::mouseDown(const int& x, const int& y)
 {
-	pressX = x;
-	pressY = y;
-	return true;
+	if (hoverDraggerIndex == -1) { //首次创建
+		pressX = (float)x;
+		pressY = (float)y;
+		hoverDraggerIndex = 4;
+	}
+	else if (hoverDraggerIndex == 0) {
+		pressX = rect.right;
+		pressY = rect.bottom;
+	}
+	else if (hoverDraggerIndex == 1) {
+		pressY = rect.bottom;
+	}
+	else if (hoverDraggerIndex == 2) {
+		pressX = rect.left;
+		pressY = rect.bottom;
+	}
+	else if (hoverDraggerIndex == 3) {
+		pressX = rect.left;
+	}
+	else if (hoverDraggerIndex == 4) {
+		pressX = rect.left;
+		pressY = rect.top;
+	}
+	else if (hoverDraggerIndex == 5) {
+		pressY = rect.top;
+	}
+	else if (hoverDraggerIndex == 6) {
+		pressY = rect.top;
+		pressY = rect.right;
+	}
+	else if (hoverDraggerIndex == 7) {
+		pressX = rect.right;
+	}
+	else if (hoverDraggerIndex == 8) {
+		pressX = (float)x;
+		pressY = (float)y;
+	}
 }
 
-bool ShapeRect::mouseUp(const int& x, const int& y)
+void ShapeRect::mouseUp(const int& x, const int& y)
 {
-	if (draggers.empty()) {
-		auto half{ draggerSize / 2 }, w{ rect.right - rect.left }, h{ rect.bottom - rect.top };
-		draggers.push_back(D2D1::RectF(rect.left - half, rect.top - half, rect.left +half, rect.top + half));
-		draggers.push_back(D2D1::RectF(rect.left+w/2 - half, rect.top - half, rect.left+w/2 + half, rect.top + half));
-		draggers.push_back(D2D1::RectF(rect.right - half, rect.top - half, rect.right + half, rect.top + half));
-		draggers.push_back(D2D1::RectF(rect.right - half, rect.top + h/2 - half, rect.right + half, rect.top+h/2 + half));
-		draggers.push_back(D2D1::RectF(rect.right - half, rect.bottom - half, rect.right + half, rect.bottom + half));
-		draggers.push_back(D2D1::RectF(rect.left+w/2 - half, rect.bottom - half, rect.left+w/2 + half, rect.bottom + half));
-		draggers.push_back(D2D1::RectF(rect.left - half, rect.bottom - half, rect.left + half, rect.bottom + half));
-		draggers.push_back(D2D1::RectF(rect.left - half, rect.top+h/2 - half, rect.left + half, rect.top+h/2 + half));
-	}
-	for (size_t i = 0; i < draggers.size(); i++)
-	{
-		auto flag = Util::isInRect(draggers[i], x, y);
-		if (flag) {
-            hoverDraggerIndex = i;
-			break;
-		}
-	}
+	auto half{ draggerSize / 2 }, w{ rect.right - rect.left }, h{ rect.bottom - rect.top };
+	draggers[0].left = rect.left - half;
+	draggers[0].top = rect.top - half;
+	draggers[0].right = rect.left + half;
+	draggers[0].bottom = rect.top + half;
+
+	draggers[1].left = rect.left + w / 2 - half;
+	draggers[1].top = rect.top - half;
+	draggers[1].right = rect.left + w / 2 + half;
+	draggers[1].bottom = rect.top + half;
+
+
+	draggers[2].left = rect.right - half;
+	draggers[2].top = rect.top - half;
+	draggers[2].right = rect.right + half;
+	draggers[2].bottom = rect.top + half;
+
+
+	draggers[3].left = rect.right - half;
+	draggers[3].top = rect.top + h / 2 - half;
+	draggers[3].right = rect.right + half;
+	draggers[3].bottom = rect.top + h / 2 + half;
+
+
+	draggers[4].left = rect.right - half;
+	draggers[4].top = rect.bottom - half;
+	draggers[4].right = rect.right + half;
+	draggers[4].bottom = rect.bottom + half;
+
+
+	draggers[5].left = rect.left + w / 2 - half;
+	draggers[5].top = rect.bottom - half;
+	draggers[5].right = rect.left + w / 2 + half;
+	draggers[5].bottom = rect.bottom + half;
+
+	draggers[6].left = rect.left - half;
+	draggers[6].top = rect.bottom - half;
+	draggers[6].right = rect.left + half;
+	draggers[6].bottom = rect.bottom + half;
+
+	draggers[7].left = rect.left - half;
+	draggers[7].top = rect.top + h / 2 - half;
+	draggers[7].right = rect.left + half;
+	draggers[7].bottom = rect.top + h / 2 + half;
+
 	state = ShapeState::ready;
-	return true;
 }
 
 void ShapeRect::mouseMove(const int& x, const int& y)
