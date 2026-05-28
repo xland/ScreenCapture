@@ -60,6 +60,9 @@
     <ClCompile Include="Shape\ShapeEllipse.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Shape\ShapeArrow.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -102,6 +105,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Shape\ShapeEllipse.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Shape\ShapeArrow.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

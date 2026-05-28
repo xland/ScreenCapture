@@ -1,11 +1,10 @@
 #pragma once
-#include "pch.h"
 #include "ShapeBase.h"
-class ShapeRect : public ShapeBase
+class ShapeArrow : public ShapeBase
 {
 public:
-	ShapeRect(WinPin* win);
-	~ShapeRect();
+	ShapeArrow(WinPin* win);
+	~ShapeArrow();
 	void paint() override;
 	void paintDragger() override;
 	void mouseDrag(const int& x, const int& y) override;
@@ -15,10 +14,10 @@ public:
 	void setCursor() override;
 public:
 private:
-	std::vector<D2D1_RECT_F> draggers;
-	D2D1_RECT_F rect;
+	std::vector<D2D1_RECT_F> draggers; 
+	ComPtr<ID2D1PathGeometry> path;
 	ComPtr<ID2D1SolidColorBrush> brush;
-	float strokeWidth, pressX, pressY;
+	float strokeWidth, pressX, pressY,startX,startY,endX,endY;
 	bool isFill{ false };
 };
 
