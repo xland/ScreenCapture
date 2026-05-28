@@ -33,7 +33,7 @@ void WinToolMain::popup()
 	    auto x = winPin->x;
 	    auto y = winPin->y + winPin->h + 4.f * winPin->dpi;
 	    winToolMain = std::make_unique<WinToolMain>(x, y, w, h);
-	    winToolMain->createWindow(WS_EX_TOOLWINDOW | WS_EX_TOPMOST);
+	    winToolMain->createWindow(WS_EX_TOOLWINDOW | WS_EX_TOPMOST| WS_EX_NOACTIVATE);
         winToolMain->initTip();
         winToolMain->initBrush();
 		winToolMain->initBtn();
@@ -108,15 +108,16 @@ void WinToolMain::onMouseDown(const int& x, const int& y, bool isRight)
     }
     else {
         if (state == this->state) {
-            state = "";
+            this->state = "";
             selectIndex = -1;
+            WinToolSub::get()->hide();
         }
         else {
             this->state = state;
             selectIndex = hoverIndex;
+            WinToolSub::get()->popup();
         }
         refresh();
-        WinToolSub::get()->popup();
     }
 }
 void WinToolMain::onMouseMove(const int& x, const int& y)

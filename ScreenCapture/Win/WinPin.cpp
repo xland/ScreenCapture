@@ -8,6 +8,7 @@
 #include "WinToolSub.h"
 #include "Shape/ShapeBase.h"
 #include "Shape/ShapeRect.h"
+#include "Shape/ShapeEllipse.h"
 
 std::vector<std::unique_ptr<WinPin>> winPins;
 
@@ -25,7 +26,7 @@ void WinPin::init()
     auto cap = WinCap::get();
     auto& r = cap->cutMask->maskRect;
 	auto win = std::make_unique<WinPin>(r.left, r.top, r.right - r.left, r.bottom - r.top);
-    win->createWindow(WS_EX_TOOLWINDOW | WS_EX_TOPMOST, WS_POPUP);
+    win->createWindow(WS_EX_TOOLWINDOW | WS_EX_TOPMOST| WS_EX_NOACTIVATE, WS_POPUP);
     win->initImg();
     win->enableShadow();
     win->show();
@@ -92,9 +93,28 @@ void WinPin::initImg()
     hr = cpuImg->Unmap();
 }
 
+void WinPin::createShape(const int& mouseX, const int& mouseY)
+{
+    auto toolMain = WinToolMain::get();
+    if (toolMain->state == "rect") {
+        auto shape = std::make_unique<ShapeRect>(this);
+        shape->mouseDown(mouseX, mouseY);
+        shapeHover = shape.get();
+        shapes.push_back(std::move(shape));
+    }
+    else if (toolMain->state == "ellipse") {
+        auto shape = std::make_unique<ShapeEllipse>(this);
+        shape->mouseDown(mouseX, mouseY);
+        shapeHover = shape.get();
+        shapes.push_back(std::move(shape));
+    }
+}
+
 
 void WinPin::onMouseMove(const int& x, const int& y)
 {
+    auto toolMain = WinToolMain::get();
+    if (toolMain->state == "") return;
     for (int i = shapes.size() - 1; i >= 0; i--)
     {
         auto cur = shapes[i].get();
@@ -122,7 +142,7 @@ void WinPin::onMouseDrag(const int& x, const int& y)
         this->y += (y - pressPos.y);
         move(this->x, this->y);
     }
-    else if (toolMain->state == "rect") {
+    else if (toolMain->state != "text") {
         shapeHover->mouseDrag(x, y);
         refresh();
     }
@@ -130,7 +150,6 @@ void WinPin::onMouseDrag(const int& x, const int& y)
 
 void WinPin::onMouseDown(const int& x, const int& y, bool isRight)
 {
-    SetCapture(hwnd);
     auto toolMain = WinToolMain::get();
     if (toolMain->state == "") {
         pressPos.x = x;
@@ -142,17 +161,11 @@ void WinPin::onMouseDown(const int& x, const int& y, bool isRight)
         shapeHover->mouseDown(x, y);
         return;
     }
-    if(toolMain->state == "rect"){
-        auto rect = std::make_unique<ShapeRect>(this);
-        rect->mouseDown(x, y);
-        shapeHover = rect.get();
-        shapes.push_back(std::move(rect));
-    }
+    createShape(x, y);
 }
 
 void WinPin::onMouseUp(const int& x, const int& y)
 {
-    ReleaseCapture();
     auto toolMain = WinToolMain::get();
     if (toolMain->state == "") {
         WinToolMain::get()->popup();

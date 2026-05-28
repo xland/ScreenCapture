@@ -24,6 +24,7 @@ private:
 	bool onCursor() override;
 	void onTimer(const UINT& timerId) override;
 	void initImg();
+	void createShape(const int& mouseX, const int& mouseY);
 private:
 	ComPtr<ID2D1Bitmap> screenImg;
 	POINT pressPos;

@@ -152,6 +152,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp" />
+    <ClCompile Include="Shape\ShapeEllipse.cpp" />
     <ClCompile Include="Win\CutMask.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="pch.cpp">
@@ -171,6 +172,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h" />
+    <ClInclude Include="Shape\ShapeEllipse.h" />
     <ClInclude Include="Win\CutMask.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Shape\ShapeRect.h" />

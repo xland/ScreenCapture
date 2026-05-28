@@ -136,6 +136,9 @@ LRESULT WinBase::winProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     if (!self) {
         return DefWindowProc(hwnd, msg, wParam, lParam);
     }
+    else if (msg == WM_MOUSEACTIVATE) {
+        return MA_NOACTIVATE;
+    }
     else if (msg == WM_NCHITTEST)
     {
         return self->onHitTest(wParam, lParam);
@@ -156,10 +159,12 @@ LRESULT WinBase::winProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         self->onMouseDown(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), true);
     }
     else if (msg == WM_LBUTTONDOWN) {
+        SetCapture(hwnd);
         self->isMouseDown = true;
         self->onMouseDown(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), false);
     }
     else if (msg == WM_LBUTTONUP) {
+        ReleaseCapture();
         self->isMouseDown = false;
         self->onMouseUp(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
     }

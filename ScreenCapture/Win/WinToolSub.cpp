@@ -150,7 +150,7 @@ void WinToolSub::popup()
     if (!winToolSub.get()) {
         winToolSub = std::make_unique<WinToolSub>();
         winToolSub->initVal();
-        winToolSub->createWindow(WS_EX_TOOLWINDOW|WS_EX_TOPMOST);
+        winToolSub->createWindow(WS_EX_TOOLWINDOW|WS_EX_TOPMOST| WS_EX_NOACTIVATE);
         winToolSub->initTip();
         winToolSub->initBrush();
         winToolSub->initColor();

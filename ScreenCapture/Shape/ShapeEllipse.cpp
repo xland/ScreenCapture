@@ -1,11 +1,11 @@
-﻿#include "pch.h"
+#include "pch.h"
+#include "ShapeEllipse.h"
 #include "../Win/WinPin.h"
 #include "../Win/WinToolMain.h"
 #include "../Win/WinToolSub.h"
 #include "../Util.h"
-#include "ShapeRect.h"
 
-ShapeRect::ShapeRect(WinPin* win) :ShapeBase(win), draggers{ 
+ShapeEllipse::ShapeEllipse(WinPin* win) :ShapeBase(win), draggers{
 	D2D1::RectF(0,0,0,0),
 	D2D1::RectF(0,0,0,0),
 	D2D1::RectF(0,0,0,0),
@@ -21,34 +21,41 @@ ShapeRect::ShapeRect(WinPin* win) :ShapeBase(win), draggers{
 	isFill = toolSub->selectIndex == 0;
 }
 
-ShapeRect::~ShapeRect()
+ShapeEllipse::~ShapeEllipse()
 {
 
 }
 
-void ShapeRect::paint()
+void ShapeEllipse::paint()
 {
+	auto rx = (rect.right - rect.left) / 2;
+	auto ry = (rect.bottom - rect.top) / 2;
+	D2D1_ELLIPSE ellipse = D2D1::Ellipse({ rect.left + rx,rect.top + ry }, rx, ry);
 	if (isFill) {
-		win->render->FillRectangle(rect, brush.Get());
+		win->render->FillEllipse(ellipse, brush.Get());
 	}
 	else {
-		win->render->DrawRectangle(rect, brush.Get(), strokeWidth);
+		win->render->DrawEllipse(ellipse, brush.Get(), strokeWidth);
+		if (rx > 100) {
+			auto a = 1;
+		}
 	}
 }
 
-void ShapeRect::paintDragger()
+void ShapeEllipse::paintDragger()
 {
-	if (state != ShapeState::ready) return;	
-	for (auto& dragger:draggers)
+	if (state != ShapeState::ready) return;
+	for (auto& dragger : draggers)
 	{
 		win->render->DrawRectangle(dragger, brushDragger.Get(), win->dpi);
 	}
 }
 
-void ShapeRect::mouseDrag(const int& x, const int& y)
+void ShapeEllipse::mouseDrag(const int& x, const int& y)
 {
 	auto xf = static_cast<float>(x);
 	auto yf = static_cast<float>(y);
+	log(L"mouseDrag {} {} {} {}",pressX, pressY, x, y);
 	if (hoverDraggerIndex == 0 || hoverDraggerIndex == 4 || hoverDraggerIndex == 2 || hoverDraggerIndex == 6) {
 		auto [left, right] = std::minmax(pressX, xf);
 		auto [top, bottom] = std::minmax(pressY, yf);
@@ -77,12 +84,13 @@ void ShapeRect::mouseDrag(const int& x, const int& y)
 	}
 }
 
-void ShapeRect::mouseDown(const int& x, const int& y)
+void ShapeEllipse::mouseDown(const int& x, const int& y)
 {
 	if (hoverDraggerIndex == -1) { //首次创建
 		pressX = (float)x;
 		pressY = (float)y;
-		hoverDraggerIndex = 4;
+		hoverDraggerIndex = 0;
+		log(L"mouseDown {} {}", x, y);
 	}
 	else if (hoverDraggerIndex == 0) {
 		pressX = rect.right;
@@ -118,7 +126,7 @@ void ShapeRect::mouseDown(const int& x, const int& y)
 	}
 }
 
-void ShapeRect::mouseUp(const int& x, const int& y)
+void ShapeEllipse::mouseUp(const int& x, const int& y)
 {
 	auto half{ draggerSize / 2 }, w{ rect.right - rect.left }, h{ rect.bottom - rect.top };
 	draggers[0].left = rect.left - half;
@@ -168,54 +176,54 @@ void ShapeRect::mouseUp(const int& x, const int& y)
 	state = ShapeState::ready;
 }
 
-void ShapeRect::mouseMove(const int& x, const int& y)
+void ShapeEllipse::mouseMove(const int& x, const int& y)
 {
-    hoverDraggerIndex = -1;
-    if (Util::isInRect(draggers[0], x, y))
-    {
-        hoverDraggerIndex = 0;
-    }
-    else if (Util::isInRect(draggers[1], x, y))
-    {
-        hoverDraggerIndex = 1;
-    }
-    else if (Util::isInRect(draggers[2], x, y))
-    {
-        hoverDraggerIndex = 2;
-    }
-    else if (Util::isInRect(draggers[3], x, y))
-    {
-        hoverDraggerIndex = 3;
-    }
-    else if (Util::isInRect(draggers[4], x, y))
-    {
-        hoverDraggerIndex = 4;
-    }
-    else if (Util::isInRect(draggers[5], x, y))
-    {
-        hoverDraggerIndex = 5;
-    }
-    else if (Util::isInRect(draggers[6], x, y))
-    {
-        hoverDraggerIndex = 6;
-    }
-    else if (Util::isInRect(draggers[7], x, y))
-    {
-        hoverDraggerIndex = 7;
-    }
-    if (hoverDraggerIndex == -1)
-    {
-        auto half{ strokeWidth / 2.f+win->dpi };//多个一个dpi，让范围更大点
-        if (x >= rect.left - half && x <= rect.right + half && y >= rect.top - half && y <= rect.bottom + half ) 
+	hoverDraggerIndex = -1;
+	if (Util::isInRect(draggers[0], x, y))
+	{
+		hoverDraggerIndex = 0;
+	}
+	else if (Util::isInRect(draggers[1], x, y))
+	{
+		hoverDraggerIndex = 1;
+	}
+	else if (Util::isInRect(draggers[2], x, y))
+	{
+		hoverDraggerIndex = 2;
+	}
+	else if (Util::isInRect(draggers[3], x, y))
+	{
+		hoverDraggerIndex = 3;
+	}
+	else if (Util::isInRect(draggers[4], x, y))
+	{
+		hoverDraggerIndex = 4;
+	}
+	else if (Util::isInRect(draggers[5], x, y))
+	{
+		hoverDraggerIndex = 5;
+	}
+	else if (Util::isInRect(draggers[6], x, y))
+	{
+		hoverDraggerIndex = 6;
+	}
+	else if (Util::isInRect(draggers[7], x, y))
+	{
+		hoverDraggerIndex = 7;
+	}
+	if (hoverDraggerIndex == -1)
+	{
+		auto half{ strokeWidth / 2.f + win->dpi };//多个一个dpi，让范围更大点
+		if (x >= rect.left - half && x <= rect.right + half && y >= rect.top - half && y <= rect.bottom + half)
 		{
 			if (x <= rect.left + half || x >= rect.right - half || y <= rect.top + half || y >= rect.bottom - half) {
 				hoverDraggerIndex = 8;
 			}
-        }
-    }
+		}
+	}
 }
 
-void ShapeRect::setCursor()
+void ShapeEllipse::setCursor()
 {
 	if (hoverDraggerIndex == 0 || hoverDraggerIndex == 4) {
 		win->setCursor(IDC_SIZENWSE);

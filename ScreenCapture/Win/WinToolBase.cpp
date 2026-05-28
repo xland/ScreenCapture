@@ -61,7 +61,6 @@ void WinToolBase::initTip()
         App::get()->hInstance,
         NULL
     );
-    SetWindowPos(tipHwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
     TOOLINFOW ti = { 0 };
     ti.cbSize = TTTOOLINFOW_V2_SIZE;
     ti.uFlags = TTF_TRACK | TTF_ABSOLUTE;
@@ -72,6 +71,7 @@ void WinToolBase::initTip()
     ti.rect = { 0, 0, 0, 0 };
     SendMessage(tipHwnd, TTM_ADDTOOLW, 0, (LPARAM)&ti);
     SendMessage(tipHwnd, TTM_SETDELAYTIME, TTDT_INITIAL, MAKELONG(0, 0));
+    //SetWindowPos(tipHwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
 }
 void WinToolBase::showTipAt(int x, int y)
 {

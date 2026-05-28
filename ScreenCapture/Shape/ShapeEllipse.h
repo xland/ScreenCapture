@@ -1,12 +1,10 @@
 #pragma once
-#include "pch.h"
 #include "ShapeBase.h"
-class WinPin;
-class ShapeRect : public ShapeBase
+class ShapeEllipse : public ShapeBase
 {
 public:
-	ShapeRect(WinPin* win);
-	~ShapeRect();
+	ShapeEllipse(WinPin* win);
+	~ShapeEllipse();
 	void paint() override;
 	void paintDragger() override;
 	void mouseDrag(const int& x, const int& y) override;
