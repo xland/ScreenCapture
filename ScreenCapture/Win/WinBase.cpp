@@ -153,22 +153,22 @@ LRESULT WinBase::winProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     }
     else if (msg == WM_RBUTTONDOWN)
     {
-        self->onMouseDown(LOWORD(lParam), HIWORD(lParam), true);
+        self->onMouseDown(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), true);
     }
     else if (msg == WM_LBUTTONDOWN) {
         self->isMouseDown = true;
-        self->onMouseDown(LOWORD(lParam), HIWORD(lParam), false);
+        self->onMouseDown(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), false);
     }
     else if (msg == WM_LBUTTONUP) {
         self->isMouseDown = false;
-        self->onMouseUp(LOWORD(lParam), HIWORD(lParam));
+        self->onMouseUp(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
     }
     else if (msg == WM_MOUSEMOVE) {
         if (self->isMouseDown) {
-            self->onMouseDrag(LOWORD(lParam), HIWORD(lParam));
+            self->onMouseDrag(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
         }
         else {
-            self->mouseMove(LOWORD(lParam), HIWORD(lParam));
+            self->mouseMove(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
         }
     }
     else if (msg == WM_MOUSELEAVE) {
@@ -176,7 +176,7 @@ LRESULT WinBase::winProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         return 0;
     }
     else if (msg == WM_MOUSEWHEEL) {
-        POINT pt{ (short)LOWORD(lParam), (short)HIWORD(lParam) };
+        POINT pt{ (short)GET_X_LPARAM(lParam), (short)GET_Y_LPARAM(lParam) };
         ScreenToClient(hwnd, &pt);
         self->onMouseWheel(pt.x, pt.y, (short)HIWORD(wParam));
         return 0;

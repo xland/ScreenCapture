@@ -199,7 +199,7 @@ void ShapeRect::mouseMove(const int& x, const int& y)
     }
     if (hoverDraggerIndex == -1)
     {
-        auto half{ strokeWidth / 2.f };
+        auto half{ strokeWidth / 2.f+win->dpi };//多个一个dpi，让范围更大点
         if (x >= rect.left - half && x <= rect.right + half && y >= rect.top - half && y <= rect.bottom + half ) 
 		{
 			if (x <= rect.left + half || x >= rect.right - half || y <= rect.top + half || y >= rect.bottom - half) {

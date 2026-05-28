@@ -130,6 +130,7 @@ void WinPin::onMouseDrag(const int& x, const int& y)
 
 void WinPin::onMouseDown(const int& x, const int& y, bool isRight)
 {
+    SetCapture(hwnd);
     auto toolMain = WinToolMain::get();
     if (toolMain->state == "") {
         pressPos.x = x;
@@ -151,12 +152,12 @@ void WinPin::onMouseDown(const int& x, const int& y, bool isRight)
 
 void WinPin::onMouseUp(const int& x, const int& y)
 {
+    ReleaseCapture();
     auto toolMain = WinToolMain::get();
     if (toolMain->state == "") {
         WinToolMain::get()->popup();
     }
-    else {
-        shapeHover = shapes[shapes.size() - 1].get();
+    else if(shapeHover) {
         shapeHover->mouseUp(x, y);
         refresh();
         setTimer(800,18);
