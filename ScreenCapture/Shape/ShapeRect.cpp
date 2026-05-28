@@ -43,7 +43,7 @@ void ShapeRect::mouseDrag(const int& x, const int& y)
 {
 	auto xf = static_cast<float>(x);
 	auto yf = static_cast<float>(y);
-	if (hoverDraggerIndex == 0 || hoverDraggerIndex == 4) {
+	if (hoverDraggerIndex == 0 || hoverDraggerIndex == 4 || hoverDraggerIndex == 2 || hoverDraggerIndex == 6) {
 		auto [left, right] = std::minmax(pressX, xf);
 		auto [top, bottom] = std::minmax(pressY, yf);
 		rect.left = left;
@@ -51,15 +51,23 @@ void ShapeRect::mouseDrag(const int& x, const int& y)
 		rect.top = top;
 		rect.bottom = bottom;
 	}
-	else if (hoverDraggerIndex == 1) {
+	else if (hoverDraggerIndex == 1 || hoverDraggerIndex == 5) {
 		auto [top, bottom] = std::minmax(pressY, yf);
 		rect.top = top;
 		rect.bottom = bottom;
 	}
-	else if (hoverDraggerIndex == 1) {
-		auto [top, bottom] = std::minmax(pressY, yf);
-		rect.top = top;
-		rect.bottom = bottom;
+	else if (hoverDraggerIndex == 3 || hoverDraggerIndex == 7) {
+		auto [left, right] = std::minmax(pressX, xf);
+		rect.left = left;
+		rect.right = right;
+	}
+	else if (hoverDraggerIndex == 8) {
+		auto w = rect.right - rect.left;
+		auto h = rect.bottom - rect.top;
+		rect.left = (float)x - pressX;
+		rect.top = (float)y - pressY;
+		rect.right = rect.left + w;
+		rect.bottom = rect.top + h;
 	}
 }
 
@@ -99,8 +107,8 @@ void ShapeRect::mouseDown(const int& x, const int& y)
 		pressX = rect.right;
 	}
 	else if (hoverDraggerIndex == 8) {
-		pressX = (float)x;
-		pressY = (float)y;
+		pressX = (float)x - rect.left;
+		pressY = (float)y - rect.top;
 	}
 }
 
