@@ -28,23 +28,17 @@ ShapeEllipse::~ShapeEllipse()
 
 void ShapeEllipse::paint()
 {
-	auto rx = (rect.right - rect.left) / 2;
-	auto ry = (rect.bottom - rect.top) / 2;
-	D2D1_ELLIPSE ellipse = D2D1::Ellipse({ rect.left + rx,rect.top + ry }, rx, ry);
+	D2D1_ELLIPSE ellipse = D2D1::Ellipse({ cx,cy }, rx, ry);
 	if (isFill) {
 		win->render->FillEllipse(ellipse, brush.Get());
 	}
 	else {
 		win->render->DrawEllipse(ellipse, brush.Get(), strokeWidth);
-		if (rx > 100) {
-			auto a = 1;
-		}
 	}
 }
 
 void ShapeEllipse::paintDragger()
 {
-	if (state != ShapeState::ready) return;
 	for (auto& dragger : draggers)
 	{
 		win->render->DrawRectangle(dragger, brushDragger.Get(), win->dpi);
@@ -55,7 +49,6 @@ void ShapeEllipse::mouseDrag(const int& x, const int& y)
 {
 	auto xf = static_cast<float>(x);
 	auto yf = static_cast<float>(y);
-	log(L"mouseDrag {} {} {} {}",pressX, pressY, x, y);
 	if (hoverDraggerIndex == 0 || hoverDraggerIndex == 4 || hoverDraggerIndex == 2 || hoverDraggerIndex == 6) {
 		auto [left, right] = std::minmax(pressX, xf);
 		auto [top, bottom] = std::minmax(pressY, yf);
@@ -63,16 +56,24 @@ void ShapeEllipse::mouseDrag(const int& x, const int& y)
 		rect.right = right;
 		rect.top = top;
 		rect.bottom = bottom;
+		cx = (rect.left + rect.right) / 2.f;
+		cy = (rect.top + rect.bottom) / 2.f;
+		rx = (rect.right - rect.left) / 2.f;
+		ry = (rect.bottom - rect.top) / 2.f;
 	}
 	else if (hoverDraggerIndex == 1 || hoverDraggerIndex == 5) {
 		auto [top, bottom] = std::minmax(pressY, yf);
 		rect.top = top;
 		rect.bottom = bottom;
+		cy = (rect.top + rect.bottom) / 2.f;
+		ry = (rect.bottom - rect.top) / 2.f;
 	}
 	else if (hoverDraggerIndex == 3 || hoverDraggerIndex == 7) {
 		auto [left, right] = std::minmax(pressX, xf);
 		rect.left = left;
 		rect.right = right;
+		cx = (rect.left + rect.right) / 2.f;
+		rx = (rect.right - rect.left) / 2.f;
 	}
 	else if (hoverDraggerIndex == 8) {
 		auto w = rect.right - rect.left;
@@ -81,6 +82,8 @@ void ShapeEllipse::mouseDrag(const int& x, const int& y)
 		rect.top = (float)y - pressY;
 		rect.right = rect.left + w;
 		rect.bottom = rect.top + h;
+		cx = (rect.left + rect.right) / 2.f;
+		cy = (rect.top + rect.bottom) / 2.f;
 	}
 }
 
@@ -90,7 +93,6 @@ void ShapeEllipse::mouseDown(const int& x, const int& y)
 		pressX = (float)x;
 		pressY = (float)y;
 		hoverDraggerIndex = 0;
-		log(L"mouseDown {} {}", x, y);
 	}
 	else if (hoverDraggerIndex == 0) {
 		pressX = rect.right;
@@ -172,8 +174,6 @@ void ShapeEllipse::mouseUp(const int& x, const int& y)
 	draggers[7].top = rect.top + h / 2 - half;
 	draggers[7].right = rect.left + half;
 	draggers[7].bottom = rect.top + h / 2 + half;
-
-	state = ShapeState::ready;
 }
 
 void ShapeEllipse::mouseMove(const int& x, const int& y)
@@ -213,12 +213,16 @@ void ShapeEllipse::mouseMove(const int& x, const int& y)
 	}
 	if (hoverDraggerIndex == -1)
 	{
-		auto half{ strokeWidth / 2.f + win->dpi };//多个一个dpi，让范围更大点
-		if (x >= rect.left - half && x <= rect.right + half && y >= rect.top - half && y <= rect.bottom + half)
-		{
-			if (x <= rect.left + half || x >= rect.right - half || y <= rect.top + half || y >= rect.bottom - half) {
-				hoverDraggerIndex = 8;
-			}
+		auto half{ strokeWidth / 2.f + win->dpi };
+		auto dx = (float)x - cx;
+		auto dy = (float)y - cy;
+		auto outerRx = rx + half, outerRy = ry + half;
+		auto innerRx = rx - half > 0 ? rx - half : 0.f;
+		auto innerRy = ry - half > 0 ? ry - half : 0.f;
+		bool insideOuter = (dx / outerRx) * (dx / outerRx) + (dy / outerRy) * (dy / outerRy) <= 1.f;
+		bool insideInner = innerRx > 0 && innerRy > 0 && (dx / innerRx) * (dx / innerRx) + (dy / innerRy) * (dy / innerRy) <= 1.f;
+		if (insideOuter && !insideInner) {
+			hoverDraggerIndex = 8;
 		}
 	}
 }

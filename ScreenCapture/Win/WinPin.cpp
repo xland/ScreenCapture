@@ -53,7 +53,9 @@ void WinPin::onPaint()
     {
         shape->paint();
     }
-    if (!isMouseDown && shapeHover)shapeHover->paintDragger();
+    if (!isMouseDown && shapeHover) {
+        shapeHover->paintDragger();
+    }
 }
 
 bool WinPin::onCursor()
@@ -118,7 +120,7 @@ void WinPin::onMouseMove(const int& x, const int& y)
     for (int i = shapes.size() - 1; i >= 0; i--)
     {
         auto cur = shapes[i].get();
-        if (cur->state == ShapeState::undo) continue;
+        if (cur->isUndo) continue;
         cur->mouseMove(x,y);
         if (cur->hoverDraggerIndex>=0) {
             if (shapeHover != cur) {

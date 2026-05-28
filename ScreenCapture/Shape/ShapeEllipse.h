@@ -17,7 +17,7 @@ private:
 	std::vector<D2D1_RECT_F> draggers;
 	D2D1_RECT_F rect;
 	ComPtr<ID2D1SolidColorBrush> brush;
-	float strokeWidth, pressX, pressY;
+	float strokeWidth, pressX, pressY,cx,cy,rx,ry;
 	bool isFill{ false };
 };
 

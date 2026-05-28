@@ -38,7 +38,6 @@ void ShapeRect::paint()
 
 void ShapeRect::paintDragger()
 {
-	if (state != ShapeState::ready) return;	
 	for (auto& dragger:draggers)
 	{
 		win->render->DrawRectangle(dragger, brushDragger.Get(), win->dpi);
@@ -164,8 +163,6 @@ void ShapeRect::mouseUp(const int& x, const int& y)
 	draggers[7].top = rect.top + h / 2 - half;
 	draggers[7].right = rect.left + half;
 	draggers[7].bottom = rect.top + h / 2 + half;
-
-	state = ShapeState::ready;
 }
 
 void ShapeRect::mouseMove(const int& x, const int& y)

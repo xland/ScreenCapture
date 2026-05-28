@@ -1,21 +1,5 @@
 #pragma once
 #include "pch.h"
-
-enum class ShapeState
-{
-	temp = 0,
-	ready,
-	undo,
-	sizing0,
-	sizing1,
-	sizing2,
-	sizing3,
-	sizing4,
-	sizing5,
-	sizing6,
-	sizing7,
-	moving,
-};
 class WinPin;
 class ShapeBase
 {
@@ -31,7 +15,7 @@ public:
 	virtual void setCursor() {};
 public:
 	WinPin* win;
-	ShapeState state{ ShapeState::temp };
+	bool isUndo;
 	int hoverDraggerIndex{ -1 };
 protected:
 	float draggerSize;
