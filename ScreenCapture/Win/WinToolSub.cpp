@@ -24,11 +24,23 @@ void WinToolSub::initVal()
     h = int(toolMain->h + marginTop);
     btnSize = toolMain->h;
     colorBtnW = toolMain->dpi * 23;
-    if (toolMain->state == "rect" || toolMain->state == "ellipse" || toolMain->state == "arrow" || toolMain->state == "line") {
+    if (toolMain->state == "rect" || toolMain->state == "ellipse" || toolMain->state == "arrow") {
         w = 316 * toolMain->dpi;
         btnStart = 0;
         btnEnd = btnStart + btnSize;
         sliderMax = 16;
+        sliderMin = 1;
+        sliderVal = 3;
+        sliderStart = btnEnd + span;
+        sliderEnd = sliderStart + 120.f;
+        colorStart = sliderEnd + span;
+        colorEnd = w;
+    }
+    else if (toolMain->state == "line") {
+        w = 316 * toolMain->dpi;
+        btnStart = 0;
+        btnEnd = btnStart + btnSize;
+        sliderMax = 60;
         sliderMin = 1;
         sliderVal = 3;
         sliderStart = btnEnd + span;

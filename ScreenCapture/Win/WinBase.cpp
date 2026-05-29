@@ -96,6 +96,7 @@ void WinBase::createWindow(const DWORD& exStyle, const DWORD& style)
     D2D1_HWND_RENDER_TARGET_PROPERTIES hwndProps = D2D1::HwndRenderTargetProperties(hwnd, size);
     auto d2d = Util::getD2D();
     auto hr = d2d->CreateHwndRenderTarget(rtProps, hwndProps, render.GetAddressOf());
+    render->SetAntialiasMode(D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
     if (FAILED(hr))  log(L"CreateHwndRenderTarget error");
 }
 

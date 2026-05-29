@@ -35,8 +35,7 @@ void ShapeNumber::paint()
 	else {
 		render->DrawGeometry(path.Get(), brush.Get(), win->dpi); 
 		render->DrawTextLayout({ cx - r,cy - r }, layoutText.Get(), brush.Get(), D2D1_DRAW_TEXT_OPTIONS_NONE);
-	}
-	
+	}	
 }
 
 void ShapeNumber::paintDragger()

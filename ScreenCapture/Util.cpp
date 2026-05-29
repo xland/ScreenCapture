@@ -270,3 +270,26 @@ bool Util::isInRect(const D2D1_RECT_F& rect, const float& x, const float& y)
 {
     return (x > rect.left && x<rect.right && y>rect.top && y < rect.bottom);
 }
+
+ID2D1StrokeStyle* Util::getRoundStrokeStyle()
+{
+    static ComPtr<ID2D1StrokeStyle> roundStrokeStyle;
+    if (!roundStrokeStyle.Get()) {
+        auto d2d = getD2D();
+        d2d->CreateStrokeStyle(
+            D2D1::StrokeStyleProperties(
+                D2D1_CAP_STYLE_ROUND,    // 起点线帽：圆角
+                D2D1_CAP_STYLE_ROUND,    // 终点线帽：圆角
+                D2D1_CAP_STYLE_ROUND,    // 虚线端点（如有）
+                D2D1_LINE_JOIN_ROUND,    // 线段连接处：圆角
+                8.f,                     // miterLimit
+                D2D1_DASH_STYLE_SOLID,
+                0.0f
+            ),
+            nullptr,
+            0,
+            roundStrokeStyle.GetAddressOf()
+        );
+    }
+    return roundStrokeStyle.Get();
+}

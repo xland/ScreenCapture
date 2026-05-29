@@ -11,6 +11,7 @@
 #include "Shape/ShapeEllipse.h"
 #include "Shape/ShapeArrow.h"
 #include "Shape/ShapeNumber.h"
+#include "Shape/ShapeLine.h"
 
 std::vector<std::unique_ptr<WinPin>> winPins;
 
@@ -102,26 +103,33 @@ void WinPin::createShape(const int& mouseX, const int& mouseY)
     auto toolMain = WinToolMain::get();
     if (toolMain->state == "rect") {
         auto shape = std::make_unique<ShapeRect>(this);
-        shape->mouseDown(mouseX, mouseY);
         shapeHover = shape.get();
+        shape->mouseDown(mouseX, mouseY);
         shapes.push_back(std::move(shape));
     }
     else if (toolMain->state == "ellipse") {
         auto shape = std::make_unique<ShapeEllipse>(this);
-        shape->mouseDown(mouseX, mouseY);
         shapeHover = shape.get();
+        shape->mouseDown(mouseX, mouseY);
         shapes.push_back(std::move(shape));
     }
     else if (toolMain->state == "arrow") {
         auto shape = std::make_unique<ShapeArrow>(this);
-        shape->mouseDown(mouseX, mouseY);
         shapeHover = shape.get();
+        shape->mouseDown(mouseX, mouseY);
         shapes.push_back(std::move(shape));
     }
     else if (toolMain->state == "number") {
         auto shape = std::make_unique<ShapeNumber>(this);
-        shape->mouseDown(mouseX, mouseY);
         shapeHover = shape.get();
+        shape->mouseDown(mouseX, mouseY);
+        shapes.push_back(std::move(shape));
+        refresh();
+    }
+    else if (toolMain->state == "line") {
+        auto shape = std::make_unique<ShapeLine>(this);
+        shapeHover = shape.get();
+        shape->mouseDown(mouseX, mouseY);
         shapes.push_back(std::move(shape));
         refresh();
     }
