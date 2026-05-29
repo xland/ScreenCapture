@@ -38,16 +38,26 @@ void ShapeArrow::paintDragger()
 	}
 }
 
-void ShapeArrow::mouseDrag(const int& x, const int& y)
+void ShapeArrow::mouseDrag(const int& x, const int& y, const UINT_PTR& modifiers)
 {
 	if (hoverDraggerIndex == 0) {
-		startX = static_cast<float>(x);
-		startY = static_cast<float>(y);
+		if ((modifiers & MK_SHIFT) != 0) {
+			constrainToEightDirections(endX, endY, x, y, startX, startY);
+		}
+		else {
+			startX = static_cast<float>(x);
+			startY = static_cast<float>(y);
+		}
 		makeArrow();
 	}
 	else if (hoverDraggerIndex == 1) {
-		endX = static_cast<float>(x);
-		endY = static_cast<float>(y);
+		if ((modifiers & MK_SHIFT) != 0) {
+			constrainToEightDirections(startX, startY, x, y, endX, endY);
+		}
+		else {
+			endX = static_cast<float>(x);
+			endY = static_cast<float>(y);
+		}
 		makeArrow();
 	}
 	else if (hoverDraggerIndex == 8) {
@@ -155,4 +165,25 @@ void ShapeArrow::makeArrow()
 	sink->AddLine({ endX - arrowSize * ux + v1 * vx, endY - arrowSize * uy + v1 * vy });
 	sink->EndFigure(D2D1_FIGURE_END_CLOSED);
 	sink->Close();
+}
+
+void ShapeArrow::constrainToEightDirections(const float& anchorX, const float& anchorY, const int& mouseX, const int& mouseY, float& targetX, float& targetY)
+{
+	float dx = static_cast<float>(mouseX) - anchorX;
+	float dy = static_cast<float>(mouseY) - anchorY;
+	float absX = fabsf(dx);
+	float absY = fabsf(dy);
+	if (absY <= absX * 0.41421356237f) {
+		targetX = anchorX + dx;
+		targetY = anchorY;
+	}
+	else if (absX <= absY * 0.41421356237f) {
+		targetX = anchorX;
+		targetY = anchorY + dy;
+	}
+	else {
+		float span = absX > absY ? absX : absY;
+		targetX = anchorX + (dx >= 0.f ? span : -span);
+		targetY = anchorY + (dy >= 0.f ? span : -span);
+	}
 }

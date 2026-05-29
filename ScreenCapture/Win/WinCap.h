@@ -19,7 +19,7 @@ public:
 private:
 	void onPaint() override;
 	void onMouseMove(const int& x, const int& y) override;
-	void onMouseDrag(const int& x, const int& y) override;
+	void onMouseDrag(const int& x, const int& y, const UINT_PTR& modifiers) override;
 	void onMouseDown(const int& x, const int& y, bool isRight) override;
 	void onMouseUp(const int& x, const int& y) override;
 	void initImg(const std::vector<BYTE>& data);

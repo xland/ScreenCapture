@@ -339,7 +339,7 @@ void WinToolSub::onMouseDown(const int& x, const int& y, bool isRight)
 
 }
 
-void WinToolSub::onMouseDrag(const int& x, const int& y)
+void WinToolSub::onMouseDrag(const int& x, const int& y, const UINT_PTR& modifiers)
 {
     if (x < sliderStart || x > sliderEnd) return;
     sliderVal = ((float)x - sliderStart) / (sliderEnd - sliderStart) * (sliderMax - sliderMin) + sliderMin;

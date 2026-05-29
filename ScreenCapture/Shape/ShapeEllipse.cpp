@@ -45,7 +45,7 @@ void ShapeEllipse::paintDragger()
 	}
 }
 
-void ShapeEllipse::mouseDrag(const int& x, const int& y)
+void ShapeEllipse::mouseDrag(const int& x, const int& y, const UINT_PTR& modifiers)
 {
 	auto xf = static_cast<float>(x);
 	auto yf = static_cast<float>(y);
@@ -84,6 +84,21 @@ void ShapeEllipse::mouseDrag(const int& x, const int& y)
 		rect.bottom = rect.top + h;
 		cx = (rect.left + rect.right) / 2.f;
 		cy = (rect.top + rect.bottom) / 2.f;
+	}
+	if (hoverDraggerIndex != 8 && (modifiers & MK_SHIFT) != 0) {
+		auto w = rect.right - rect.left;
+		auto h = rect.bottom - rect.top;
+		if (w > h) {
+			rect.bottom = rect.top + w;
+		}
+		else
+		{
+			rect.right = rect.left + h;
+		}
+		cx = (rect.left + rect.right) / 2.f;
+		cy = (rect.top + rect.bottom) / 2.f;
+		rx = (rect.right - rect.left) / 2.f;
+		ry = rx;
 	}
 }
 

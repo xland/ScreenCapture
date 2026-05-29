@@ -44,7 +44,7 @@ void ShapeRect::paintDragger()
 	}
 }
 
-void ShapeRect::mouseDrag(const int& x, const int& y)
+void ShapeRect::mouseDrag(const int& x, const int& y, const UINT_PTR& modifiers)
 {
 	auto xf = static_cast<float>(x);
 	auto yf = static_cast<float>(y);
@@ -73,6 +73,17 @@ void ShapeRect::mouseDrag(const int& x, const int& y)
 		rect.top = (float)y - pressY;
 		rect.right = rect.left + w;
 		rect.bottom = rect.top + h;
+	}
+	if (hoverDraggerIndex != 8&&(modifiers & MK_SHIFT) != 0) {
+		auto w = rect.right - rect.left;
+		auto h = rect.bottom - rect.top;
+		if (w > h) {
+			rect.bottom = rect.top + w;
+		}
+		else
+		{
+			rect.right = rect.left + h;
+		}
 	}
 }
 

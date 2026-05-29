@@ -84,7 +84,7 @@ void WinCap::onMouseMove(const int& x, const int& y) {
     cutMask->highlight(x, y);
     winPix->move(x, y);
 }
-void WinCap::onMouseDrag(const int& x, const int& y)
+void WinCap::onMouseDrag(const int& x, const int& y, const UINT_PTR& modifiers)
 {
     cutMask->makeRect(x, y);
 }

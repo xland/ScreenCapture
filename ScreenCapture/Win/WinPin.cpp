@@ -143,7 +143,7 @@ void WinPin::onMouseMove(const int& x, const int& y)
     }
 }
 
-void WinPin::onMouseDrag(const int& x, const int& y)
+void WinPin::onMouseDrag(const int& x, const int& y, const UINT_PTR& modifiers)
 {
     auto toolMain = WinToolMain::get();
     if (toolMain->state == "") {
@@ -152,7 +152,7 @@ void WinPin::onMouseDrag(const int& x, const int& y)
         move(this->x, this->y);
     }
     else if (toolMain->state != "text") {
-        shapeHover->mouseDrag(x, y);
+        shapeHover->mouseDrag(x, y,modifiers);
         refresh();
     }
 }

@@ -20,7 +20,7 @@ private:
 	void onMouseMove(const int& x, const int& y) override;
 	void onMouseLeave() override;
 	void onMouseDown(const int& x, const int& y, bool isRight) override;
-	void onMouseDrag(const int& x, const int& y) override;
+	void onMouseDrag(const int& x, const int& y, const UINT_PTR& modifiers) override;
 	void onMouseWheel(const int& x, const int& y, const short& delta) override;
 	void paintSlider();
 	void paintColorSelector();

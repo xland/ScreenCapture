@@ -170,7 +170,7 @@ LRESULT WinBase::winProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     }
     else if (msg == WM_MOUSEMOVE) {
         if (self->isMouseDown) {
-            self->onMouseDrag(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+            self->onMouseDrag(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), wParam);
         }
         else {
             self->mouseMove(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));

@@ -7,7 +7,7 @@ public:
 	~ShapeArrow();
 	void paint() override;
 	void paintDragger() override;
-	void mouseDrag(const int& x, const int& y) override;
+	void mouseDrag(const int& x, const int& y, const UINT_PTR& modifiers) override;
 	void mouseDown(const int& x, const int& y) override;
 	void mouseUp(const int& x, const int& y) override;
 	void mouseMove(const int& x, const int& y) override;
@@ -15,6 +15,7 @@ public:
 public:
 private:
 	void makeArrow();
+	void constrainToEightDirections(const float& anchorX, const float& anchorY, const int& mouseX, const int& mouseY, float& targetX, float& targetY);
 private:
 	std::vector<D2D1_RECT_F> draggers; 
 	ComPtr<ID2D1PathGeometry> path;
