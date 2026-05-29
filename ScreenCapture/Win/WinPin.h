@@ -25,6 +25,7 @@ private:
 	void onPaint() override;
 	bool onCursor() override;
 	void onTimer(const UINT& timerId) override;
+	void onKeyDown(const TCHAR& key) override;
 	void initImg();
 private:
 	ComPtr<ID2D1Bitmap> screenImg;

@@ -18,9 +18,9 @@ public:
 	void killTimer(const UINT& id);
 	void setCursor(LPCWSTR cursorName);
 public:
-	HWND hwnd;
+	HWND hwnd{nullptr};
 	int x, y, w, h;
-	float dpi;
+	float dpi{1.0};
 	bool isMouseDown{ false },isMouseIn{ false };
 	ComPtr<ID2D1HwndRenderTarget> render;
 protected:

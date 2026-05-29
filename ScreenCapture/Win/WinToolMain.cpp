@@ -19,19 +19,14 @@ WinToolMain::~WinToolMain()
 {
 }
 
-void WinToolMain::popup()
+void WinToolMain::popup(WinPin* win)
 {
 	if (!winToolMain.get()){
-        auto winPin = WinPin::getCur();
-        if (!winPin) {
-			log(L"not find winPin when create toolMain");
-            return;
-        }
-        auto btnSize{32.f * winPin->dpi}; //todo dpi change
+        auto btnSize{32.f * win->dpi}; //todo dpi change
 		auto w = btnSize * 14; //主工具条一共有14个按钮；todo dpi change
         auto h = btnSize;
-	    auto x = winPin->x;
-	    auto y = winPin->y + winPin->h + 4.f * winPin->dpi;
+	    auto x = win->x;
+	    auto y = win->y + win->h + 4.f * win->dpi;
 	    winToolMain = std::make_unique<WinToolMain>((int)x, (int)y, (int)w, (int)h);
 	    winToolMain->createWindow(WS_EX_TOOLWINDOW | WS_EX_TOPMOST| WS_EX_NOACTIVATE);
         winToolMain->initTip();
@@ -40,10 +35,9 @@ void WinToolMain::popup()
         winToolMain->show();
     }
     else {
-        auto winPin = WinPin::getCur();
         auto win = winToolMain.get();
-        auto x = winPin->x;
-        auto y = (int)(winPin->y + winPin->h + 3.f * winPin->dpi);
+        auto x = win->x;
+        auto y = (int)(win->y + win->h + 3.f * win->dpi);
         win->move(x, y);
         win->show();
         if(win->state != "")

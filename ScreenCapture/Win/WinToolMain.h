@@ -2,12 +2,13 @@
 #include "pch.h"
 #include "WinToolBase.h"
 
+class WinPin;
 class WinToolMain :public WinToolBase
 {
 public:
 	WinToolMain(const int& x, const int& y, const int& w, const int& h);
 	~WinToolMain();
-	static void popup();
+	static void popup(WinPin* win);
 	static WinToolMain* get();
 public:
 	std::string state;
@@ -21,5 +22,6 @@ private:
 	void initBtn();
 private:
 	int spliterIndex[2]{ 8,10 };
+	WinPin* win;
 };
 

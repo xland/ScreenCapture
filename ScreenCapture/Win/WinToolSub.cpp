@@ -24,7 +24,7 @@ void WinToolSub::initVal()
     h = int(toolMain->h + marginTop);
     btnSize = toolMain->h;
     colorBtnW = toolMain->dpi * 23;
-    if (toolMain->state == "rect" || toolMain->state == "ellipse" || toolMain->state == "arrow") {
+    if (toolMain->state == "rect" || toolMain->state == "ellipse") {
         w = 316 * toolMain->dpi;
         btnStart = 0;
         btnEnd = btnStart + btnSize;
@@ -36,8 +36,21 @@ void WinToolSub::initVal()
         colorStart = sliderEnd + span;
         colorEnd = w;
     }
-    else if (toolMain->state == "line") {
+    else if (toolMain->state == "arrow") {
         w = 316 * toolMain->dpi;
+        btnStart = 0;
+        btnEnd = btnStart + btnSize;
+        sliderMax = 16;
+        sliderMin = 1;
+        sliderVal = 3;
+        selectIndex = 0;
+        sliderStart = btnEnd + span;
+        sliderEnd = sliderStart + 120.f;
+        colorStart = sliderEnd + span;
+        colorEnd = w;
+    }
+    else if (toolMain->state == "line") {
+        w = (int)(316 * toolMain->dpi);
         btnStart = 0;
         btnEnd = btnStart + btnSize;
         sliderMax = 60;
@@ -49,7 +62,7 @@ void WinToolSub::initVal()
         colorEnd = w;
     }
     else if (toolMain->state == "number") {
-        w = 228 * toolMain->dpi;
+        w = (int)(228 * toolMain->dpi);
         btnStart = 0;
         btnEnd = btnStart + btnSize;
         sliderStart = 0;
@@ -59,7 +72,7 @@ void WinToolSub::initVal()
         colorEnd = w;
     }
     else if (toolMain->state == "text") {
-        w = 348 * toolMain->dpi;
+        w = (int)(348 * toolMain->dpi);
         btnStart = 0;
         btnEnd = btnStart + btnSize*2;
         sliderMax = 22;
@@ -130,7 +143,7 @@ bool WinToolSub::hoverBtn(const int& x)
             if (toolMain->state == "line")startIndex = 4;
             if (toolMain->state == "text")startIndex = 5;
             tipText = btnName[startIndex + indexBtn];
-            showTipAt(this->x + btnStart + indexBtn * btnSize + btnSize / 2, this->y + marginTop + 4 * dpi);
+            showTipAt((int)(this->x + btnStart + indexBtn * btnSize + btnSize / 2), (int)(this->y + marginTop + 4 * dpi));
         }
         return true;
     }
@@ -142,7 +155,7 @@ bool WinToolSub::hoverColor(const int& x)
     int indexColor;
     if (x > colorStart && x < colorEnd) {
         indexColor = static_cast<int>((x - colorStart) / colorBtnW);
-        if (indexColor >= colorName.size()) indexColor = colorName.size() - 1;
+        if (indexColor >= colorName.size()) indexColor = (int)colorName.size() - 1;
     }
     else {
         indexColor = -1;

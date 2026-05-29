@@ -148,16 +148,7 @@ void ShapeArrow::makeArrow()
 	float arrowSize = 16.f * win->dpi;
 	float v1 = arrowSize / 4.0f;        // 箭杆半宽
 	float v2 = arrowSize * 2.0f / 3.0f; // 箭头半宽
-
-	// =========================================================
-	// 用户点击的 startX/startY
-	// 应该对应“视觉上的箭头起点”
-	// 但当前几何尖点会让视觉中心向前偏移，
-	// 所以真正绘制时，需要把几何起点向后挪一点
-	// =========================================================
-	float realStartX = startX + ux * v1*2;
-	float realStartY = startY + uy * v1*2;
-	sink->BeginFigure( { realStartX, realStartY }, D2D1_FIGURE_BEGIN_FILLED);
+	sink->BeginFigure( { startX, startY }, D2D1_FIGURE_BEGIN_FILLED);
 	sink->AddLine({ endX - arrowSize * ux - v1 * vx, endY - arrowSize * uy - v1 * vy });
 	sink->AddLine({ endX - (arrowSize + v1) * ux - v2 * vx, endY - (arrowSize + v1) * uy - v2 * vy });
 	sink->AddLine({ endX, endY });

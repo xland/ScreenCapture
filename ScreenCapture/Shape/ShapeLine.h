@@ -24,7 +24,7 @@ private:
 	ComPtr<ID2D1PathGeometry> path;
 	ComPtr<ID2D1StrokeStyle> roundStyle;
 	ComPtr<ID2D1SolidColorBrush> brush;
-	float strokeWidth, pressX, pressY;
+	float strokeWidth{ 1.f }, pressX{0.f}, pressY{ 0.f };
 	bool isTransparent{ false };
 };
 

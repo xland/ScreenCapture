@@ -38,8 +38,8 @@ void WinPin::init()
     win->initImg();
     win->enableShadow();
     win->show();
+    WinToolMain::popup(win.get());
 	winPins.push_back(std::move(win));
-    WinToolMain::popup();
 }
 
 WinPin* WinPin::getCur()
@@ -88,6 +88,14 @@ void WinPin::onTimer(const UINT& timerId)
     if (!shapeHover) {
         refresh();
         killTimer(timerId);
+    }
+}
+
+void WinPin::onKeyDown(const TCHAR& key)
+{
+    if (key == 'Z' && (GetKeyState(VK_CONTROL) & 0x8000) != 0)
+    {
+        auto a = 1;
     }
 }
 
@@ -162,7 +170,7 @@ void WinPin::onMouseUp(const int& x, const int& y)
 {
     auto toolMain = WinToolMain::get();
     if (toolMain->state == "") {
-        WinToolMain::get()->popup();
+        WinToolMain::get()->popup(this);
     }
     else if(shapeHover) {
         shapeHover->mouseUp((float)x, (float)y);

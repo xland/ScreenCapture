@@ -81,6 +81,9 @@
     <ClCompile Include="History.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Tray.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -144,6 +147,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="History.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Tray.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
