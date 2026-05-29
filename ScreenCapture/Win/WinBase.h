@@ -12,7 +12,9 @@ public:
 	void resize(const int& w, const int& h);
 	void createWindow(const DWORD& exStyle=NULL, const DWORD& style= WS_POPUP);
 	ComPtr<IDWriteTextLayout> getIconLayout(const std::wstring& icon, const float& fontSize, const float& w, const float& h);
-	ComPtr<IDWriteTextLayout> getTextLayout(const std::wstring& str, const float& fontSize, const float& w, const float& h);
+	ComPtr<IDWriteTextLayout> getTextLayout(const std::wstring& str, const float& fontSize, const float& w, const float& h, 
+		DWRITE_TEXT_ALIGNMENT textAlignment = DWRITE_TEXT_ALIGNMENT_LEADING,
+		DWRITE_PARAGRAPH_ALIGNMENT paragraphAlignment = DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
 	void enableShadow();
 	void enableAlpha();
 	void setTimer(const UINT& elapse, const UINT& id);

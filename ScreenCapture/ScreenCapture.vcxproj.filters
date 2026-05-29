@@ -63,6 +63,9 @@
     <ClCompile Include="Shape\ShapeArrow.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Shape\ShapeNumber.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -108,6 +111,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Shape\ShapeArrow.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Shape\ShapeNumber.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

@@ -10,6 +10,7 @@
 #include "Shape/ShapeRect.h"
 #include "Shape/ShapeEllipse.h"
 #include "Shape/ShapeArrow.h"
+#include "Shape/ShapeNumber.h"
 
 std::vector<std::unique_ptr<WinPin>> winPins;
 
@@ -116,6 +117,13 @@ void WinPin::createShape(const int& mouseX, const int& mouseY)
         shape->mouseDown(mouseX, mouseY);
         shapeHover = shape.get();
         shapes.push_back(std::move(shape));
+    }
+    else if (toolMain->state == "number") {
+        auto shape = std::make_unique<ShapeNumber>(this);
+        shape->mouseDown(mouseX, mouseY);
+        shapeHover = shape.get();
+        shapes.push_back(std::move(shape));
+        refresh();
     }
 }
 

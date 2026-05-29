@@ -1,0 +1,169 @@
+﻿#include "pch.h"
+#include "../Win/WinPin.h"
+#include "../Win/WinToolMain.h"
+#include "../Win/WinToolSub.h"
+#include "../Util.h"
+#include "ShapeNumber.h"
+
+static int numVal{ 0 };
+
+ShapeNumber::ShapeNumber(WinPin* win) :ShapeBase(win), draggers{
+	D2D1::RectF(0,0,0,0),
+	D2D1::RectF(0,0,0,0),
+	D2D1::RectF(0,0,0,0) }, 
+	r{ 16.f * win->dpi },
+	val{++numVal}
+{
+	auto toolSub = WinToolSub::get();
+	win->render->CreateSolidColorBrush(toolSub->getSelectedColor(), brush.GetAddressOf());
+	win->render->CreateSolidColorBrush(D2D1::ColorF(0XFFFFFF), brushText.GetAddressOf());
+	isFill = toolSub->selectIndex == 0;
+}
+
+ShapeNumber::~ShapeNumber()
+{
+
+}
+
+void ShapeNumber::paint()
+{
+	if (isFill) {
+		win->render->FillGeometry(path.Get(), brush.Get());
+	}
+	else {
+		win->render->DrawGeometry(path.Get(), brush.Get(), win->dpi);
+	}
+	win->render->DrawTextLayout({cx-r,cy-r}, layoutText.Get(), brushText.Get(), D2D1_DRAW_TEXT_OPTIONS_NONE);
+}
+
+void ShapeNumber::paintDragger()
+{
+	for (auto& dragger:draggers)
+	{
+		win->render->DrawRectangle(dragger, brushDragger.Get(), win->dpi);
+	}
+}
+
+void ShapeNumber::mouseDrag(const int& x, const int& y, const UINT_PTR& modifiers)
+{
+	auto xf = static_cast<float>(x);
+	auto yf = static_cast<float>(y);
+	if (hoverDraggerIndex == 0) {
+
+	}
+	else if (hoverDraggerIndex == 1) {
+
+	}
+	else if (hoverDraggerIndex == 2) {
+
+	}
+}
+
+void ShapeNumber::mouseDown(const int& x, const int& y)
+{
+	if (hoverDraggerIndex == -1) { //首次创建
+		cx = (float)x;
+		cy = (float)y;
+		hoverDraggerIndex = 0;
+		makePath();
+		makeTextLayout();
+	}
+	else if (hoverDraggerIndex >= 0) {
+		pressX = (float)x;
+		pressY = (float)y;
+	}
+}
+
+void ShapeNumber::mouseUp(const int& x, const int& y)
+{
+	auto half{ draggerSize / 2 };
+	draggers[0].left = cx - half;
+	draggers[0].top = cy - half;
+	draggers[0].right = cx + half;
+	draggers[0].bottom = cy + half;
+
+	draggers[1].left = 1;
+	draggers[1].top = 1;
+	draggers[1].right = 1;
+	draggers[1].bottom = 1;
+
+
+	draggers[2].left = 1;
+	draggers[2].top = 1;
+	draggers[2].right = 1;
+	draggers[2].bottom = 1;
+}
+
+void ShapeNumber::mouseMove(const int& x, const int& y)
+{
+    hoverDraggerIndex = -1;
+    if (Util::isInRect(draggers[0], x, y))
+    {
+        hoverDraggerIndex = 0;
+    }
+    else if (Util::isInRect(draggers[1], x, y))
+    {
+        hoverDraggerIndex = 1;
+    }
+    else if (Util::isInRect(draggers[2], x, y))
+    {
+        hoverDraggerIndex = 2;
+    }
+}
+
+void ShapeNumber::setCursor()
+{
+	if (hoverDraggerIndex >=0) {
+		win->setCursor(IDC_SIZEALL);
+	}
+}
+
+D2D1_POINT_2F ShapeNumber::localPoint(const float& degrees)
+{
+	float radians = degrees * 3.14159265358979323846f / 180.f;
+	return D2D1::Point2F(r * cosf(radians), -r * sinf(radians));	
+}
+
+D2D1_POINT_2F ShapeNumber::transformPoint(const D2D1_POINT_2F& point)
+{
+	float radians = -angle * 3.14159265358979323846f / 180.f;
+	float cosValue = cosf(radians);
+	float sinValue = sinf(radians);
+	return D2D1::Point2F(
+		cx + point.x * cosValue - point.y * sinValue,
+		cy + point.x * sinValue + point.y * cosValue
+	);
+}
+
+void ShapeNumber::makePath()
+{
+	path.Reset();
+	auto d2d = Util::getD2D();
+	d2d->CreatePathGeometry(path.GetAddressOf());
+	ComPtr<ID2D1GeometrySink> sink;
+	path->Open(sink.GetAddressOf());
+	auto start = transformPoint(localPoint(12.f));
+	auto mid = transformPoint(localPoint(181.f));
+	auto end = transformPoint(localPoint(350.f));
+	auto tip = transformPoint(D2D1::Point2F(r + r / 3.f, 0.f));
+	sink->BeginFigure(start, D2D1_FIGURE_BEGIN_FILLED);
+	sink->AddArc(D2D1::ArcSegment( mid, D2D1::SizeF(r, r), 0.f, D2D1_SWEEP_DIRECTION_COUNTER_CLOCKWISE, D2D1_ARC_SIZE_SMALL));
+	sink->AddArc(D2D1::ArcSegment( end, D2D1::SizeF(r, r), 0.f, D2D1_SWEEP_DIRECTION_COUNTER_CLOCKWISE, D2D1_ARC_SIZE_SMALL ));
+	sink->AddLine(tip);
+	sink->AddLine(start);
+	sink->EndFigure(D2D1_FIGURE_END_CLOSED);
+	sink->Close();
+}
+
+void ShapeNumber::makeTextLayout()
+{
+	layoutText.Reset();
+	auto valStr = std::to_wstring(val);
+	auto d = r * 2;
+	auto format = Util::getIconFormat();
+	auto dwrite = Util::getWriteFactory();
+	dwrite->CreateTextLayout(valStr.data(), valStr.length(), format, d, d, layoutText.GetAddressOf());
+	layoutText->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+	layoutText->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+	layoutText->SetFontSize(r, { 0, static_cast<UINT32>(valStr.length()) });
+}

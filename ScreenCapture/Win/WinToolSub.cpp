@@ -42,6 +42,7 @@ void WinToolSub::initVal()
         btnEnd = btnStart + btnSize;
         sliderStart = 0;
         sliderEnd = 0;
+        selectIndex = 0;
         colorStart = btnEnd ;
         colorEnd = w;
     }

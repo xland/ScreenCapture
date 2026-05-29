@@ -154,6 +154,7 @@
     <ClCompile Include="App.cpp" />
     <ClCompile Include="Shape\ShapeArrow.cpp" />
     <ClCompile Include="Shape\ShapeEllipse.cpp" />
+    <ClCompile Include="Shape\ShapeNumber.cpp" />
     <ClCompile Include="Win\CutMask.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="pch.cpp">
@@ -175,6 +176,7 @@
     <ClInclude Include="App.h" />
     <ClInclude Include="Shape\ShapeArrow.h" />
     <ClInclude Include="Shape\ShapeEllipse.h" />
+    <ClInclude Include="Shape\ShapeNumber.h" />
     <ClInclude Include="Win\CutMask.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Shape\ShapeRect.h" />
