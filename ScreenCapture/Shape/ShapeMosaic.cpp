@@ -3,9 +3,9 @@
 #include "../Win/WinToolMain.h"
 #include "../Win/WinToolSub.h"
 #include "../Util.h"
-#include "ShapeRect.h"
+#include "ShapeMosaic.h"
 
-ShapeRect::ShapeRect(WinPin* win) :ShapeBase(win), draggers{ 
+ShapeMosaic::ShapeMosaic(WinPin* win) :ShapeBase(win), draggers{
 	D2D1::RectF(0,0,0,0),
 	D2D1::RectF(0,0,0,0),
 	D2D1::RectF(0,0,0,0),
@@ -21,12 +21,12 @@ ShapeRect::ShapeRect(WinPin* win) :ShapeBase(win), draggers{
 	isFill = toolSub->selectIndex == 0;
 }
 
-ShapeRect::~ShapeRect()
+ShapeMosaic::~ShapeMosaic()
 {
 
 }
 
-void ShapeRect::paint()
+void ShapeMosaic::paint()
 {
 	if (isFill) {
 		win->render->FillRectangle(rect, brush.Get());
@@ -36,7 +36,7 @@ void ShapeRect::paint()
 	}
 }
 
-void ShapeRect::paintDragger()
+void ShapeMosaic::paintDragger()
 {
 	for (auto& dragger:draggers)
 	{
@@ -44,48 +44,12 @@ void ShapeRect::paintDragger()
 	}
 }
 
-void ShapeRect::mouseDrag(const float& x, const float& y, const UINT_PTR& modifiers)
+void ShapeMosaic::mouseDrag(const float& x, const float& y, const UINT_PTR& modifiers)
 {
-	if (hoverDraggerIndex == 0 || hoverDraggerIndex == 4 || hoverDraggerIndex == 2 || hoverDraggerIndex == 6) {
-		auto [left, right] = std::minmax(pressX, x);
-		auto [top, bottom] = std::minmax(pressY, y);
-		rect.left = left;
-		rect.right = right;
-		rect.top = top;
-		rect.bottom = bottom;
-	}
-	else if (hoverDraggerIndex == 1 || hoverDraggerIndex == 5) {
-		auto [top, bottom] = std::minmax(pressY, y);
-		rect.top = top;
-		rect.bottom = bottom;
-	}
-	else if (hoverDraggerIndex == 3 || hoverDraggerIndex == 7) {
-		auto [left, right] = std::minmax(pressX, x);
-		rect.left = left;
-		rect.right = right;
-	}
-	else if (hoverDraggerIndex == 8) {
-		auto w = rect.right - rect.left;
-		auto h = rect.bottom - rect.top;
-		rect.left = x - pressX;
-		rect.top = y - pressY;
-		rect.right = rect.left + w;
-		rect.bottom = rect.top + h;
-	}
-	if (hoverDraggerIndex != 8&&(modifiers & MK_SHIFT) != 0) {
-		auto w = rect.right - rect.left;
-		auto h = rect.bottom - rect.top;
-		if (w > h) {
-			rect.bottom = rect.top + w;
-		}
-		else
-		{
-			rect.right = rect.left + h;
-		}
-	}
+	
 }
 
-void ShapeRect::mouseDown(const float& x, const float& y)
+void ShapeMosaic::mouseDown(const float& x, const float& y)
 {
 	if (hoverDraggerIndex == -1) { //首次创建
 		pressX = x;
@@ -126,7 +90,7 @@ void ShapeRect::mouseDown(const float& x, const float& y)
 	}
 }
 
-void ShapeRect::mouseUp(const float& x, const float& y)
+void ShapeMosaic::mouseUp(const float& x, const float& y)
 {
 	auto half{ draggerSize / 2 }, w{ rect.right - rect.left }, h{ rect.bottom - rect.top };
 	draggers[0].left = rect.left - half;
@@ -174,7 +138,7 @@ void ShapeRect::mouseUp(const float& x, const float& y)
 	draggers[7].bottom = rect.top + h / 2 + half;
 }
 
-void ShapeRect::mouseMove(const float& x, const float& y)
+void ShapeMosaic::mouseMove(const float& x, const float& y)
 {
     hoverDraggerIndex = -1;
     if (Util::isInRect(draggers[0], x, y))
@@ -221,7 +185,7 @@ void ShapeRect::mouseMove(const float& x, const float& y)
     }
 }
 
-void ShapeRect::setCursor()
+void ShapeMosaic::setCursor()
 {
 	if (hoverDraggerIndex == 0 || hoverDraggerIndex == 4) {
 		win->setCursor(IDC_SIZENWSE);

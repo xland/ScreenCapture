@@ -5,6 +5,7 @@
 class WinToolMain;
 class WinToolSub;
 class ShapeBase;
+class History;
 class WinPin :public WinBase
 {
 public:
@@ -13,7 +14,8 @@ public:
 	static void init();
 	static WinPin* getCur();
 public:
-	ShapeBase* shapeHover;
+	ShapeBase* shapeHover{ nullptr };
+	std::unique_ptr<History> history;
 private:
 	void onMouseMove(const int& x, const int& y) override;
 	void onMouseDrag(const int& x, const int& y, const UINT_PTR& modifiers) override;
@@ -24,10 +26,8 @@ private:
 	bool onCursor() override;
 	void onTimer(const UINT& timerId) override;
 	void initImg();
-	void createShape(const int& mouseX, const int& mouseY);
 private:
 	ComPtr<ID2D1Bitmap> screenImg;
-	POINT pressPos;
-	std::vector<std::unique_ptr<ShapeBase>> shapes;
+	POINT pressPos{0,0};
 };
 

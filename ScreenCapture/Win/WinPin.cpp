@@ -6,16 +6,21 @@
 #include "CutMask.h"
 #include "WinToolMain.h"
 #include "WinToolSub.h"
+#include "History.h"
 #include "Shape/ShapeBase.h"
 #include "Shape/ShapeRect.h"
 #include "Shape/ShapeEllipse.h"
 #include "Shape/ShapeArrow.h"
 #include "Shape/ShapeNumber.h"
 #include "Shape/ShapeLine.h"
+#include "Shape/ShapeText.h"
+#include "Shape/ShapeMosaic.h"
+#include "Shape/ShapeEraser.h"
 
 std::vector<std::unique_ptr<WinPin>> winPins;
 
-WinPin::WinPin(const int& x, const int& y, const int& w, const int& h) :WinBase(x, y, w, h)
+WinPin::WinPin(const int& x, const int& y, const int& w, const int& h) :
+    WinBase(x, y, w, h), history{std::make_unique<History>(this)}
 {
 }
 
@@ -28,7 +33,7 @@ void WinPin::init()
 {
     auto cap = WinCap::get();
     auto& r = cap->cutMask->maskRect;
-	auto win = std::make_unique<WinPin>(r.left, r.top, r.right - r.left, r.bottom - r.top);
+	auto win = std::make_unique<WinPin>((int)r.left, (int)r.top, (int)(r.right - r.left), (int)(r.bottom - r.top));
     win->createWindow(WS_EX_TOOLWINDOW | WS_EX_TOPMOST| WS_EX_NOACTIVATE, WS_POPUP);
     win->initImg();
     win->enableShadow();
@@ -50,9 +55,9 @@ WinPin* WinPin::getCur()
 
 void WinPin::onPaint()
 {
-    D2D1_RECT_F destRect = D2D1::RectF(0,0, w, h);
+    D2D1_RECT_F destRect = D2D1::RectF(0,0, (float)w, (float)h);
     render->DrawBitmap(screenImg.Get(), destRect);
-    for (auto& shape:shapes)
+    for (auto& shape:history->shapes)
     {
         shape->paint();
     }
@@ -98,53 +103,17 @@ void WinPin::initImg()
     hr = cpuImg->Unmap();
 }
 
-void WinPin::createShape(const int& mouseX, const int& mouseY)
-{
-    auto toolMain = WinToolMain::get();
-    if (toolMain->state == "rect") {
-        auto shape = std::make_unique<ShapeRect>(this);
-        shapeHover = shape.get();
-        shape->mouseDown(mouseX, mouseY);
-        shapes.push_back(std::move(shape));
-    }
-    else if (toolMain->state == "ellipse") {
-        auto shape = std::make_unique<ShapeEllipse>(this);
-        shapeHover = shape.get();
-        shape->mouseDown(mouseX, mouseY);
-        shapes.push_back(std::move(shape));
-    }
-    else if (toolMain->state == "arrow") {
-        auto shape = std::make_unique<ShapeArrow>(this);
-        shapeHover = shape.get();
-        shape->mouseDown(mouseX, mouseY);
-        shapes.push_back(std::move(shape));
-    }
-    else if (toolMain->state == "number") {
-        auto shape = std::make_unique<ShapeNumber>(this);
-        shapeHover = shape.get();
-        shape->mouseDown(mouseX, mouseY);
-        shapes.push_back(std::move(shape));
-        refresh();
-    }
-    else if (toolMain->state == "line") {
-        auto shape = std::make_unique<ShapeLine>(this);
-        shapeHover = shape.get();
-        shape->mouseDown(mouseX, mouseY);
-        shapes.push_back(std::move(shape));
-        refresh();
-    }
-}
-
 
 void WinPin::onMouseMove(const int& x, const int& y)
 {
     auto toolMain = WinToolMain::get();
     if (toolMain->state == "") return;
-    for (int i = shapes.size() - 1; i >= 0; i--)
+    int i{ (int)(history->shapes.size() - 1) };
+    for (; i >= 0; i--)
     {
-        auto cur = shapes[i].get();
+        auto cur = history->shapes[i].get();
         if (cur->isUndo) continue;
-        cur->mouseMove(x,y);
+        cur->mouseMove((float)x, (float)y);
         if (cur->hoverDraggerIndex>=0) {
             if (shapeHover != cur) {
                 shapeHover = cur;
@@ -168,7 +137,7 @@ void WinPin::onMouseDrag(const int& x, const int& y, const UINT_PTR& modifiers)
         move(this->x, this->y);
     }
     else if (toolMain->state != "text") {
-        shapeHover->mouseDrag(x, y,modifiers);
+        shapeHover->mouseDrag((float)x, (float)y,modifiers);
         refresh();
     }
 }
@@ -183,10 +152,10 @@ void WinPin::onMouseDown(const int& x, const int& y, bool isRight)
         return;
     }
     if (shapeHover) {
-        shapeHover->mouseDown(x, y);
+        shapeHover->mouseDown((float)x, (float)y);
         return;
     }
-    createShape(x, y);
+    shapeHover = history->createShape(toolMain->state, x, y);
 }
 
 void WinPin::onMouseUp(const int& x, const int& y)
@@ -196,7 +165,7 @@ void WinPin::onMouseUp(const int& x, const int& y)
         WinToolMain::get()->popup();
     }
     else if(shapeHover) {
-        shapeHover->mouseUp(x, y);
+        shapeHover->mouseUp((float)x, (float)y);
         refresh();
         setTimer(800,18);
     }

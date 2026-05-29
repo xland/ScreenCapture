@@ -7,10 +7,10 @@ public:
 	~ShapeArrow();
 	void paint() override;
 	void paintDragger() override;
-	void mouseDrag(const int& x, const int& y, const UINT_PTR& modifiers) override;
-	void mouseDown(const int& x, const int& y) override;
-	void mouseUp(const int& x, const int& y) override;
-	void mouseMove(const int& x, const int& y) override;
+	void mouseDrag(const float& x, const float& y, const UINT_PTR& modifiers) override;
+	void mouseDown(const float& x, const float& y) override;
+	void mouseUp(const float& x, const float& y) override;
+	void mouseMove(const float& x, const float& y) override;
 	void setCursor() override;
 public:
 private:

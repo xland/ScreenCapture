@@ -1,0 +1,71 @@
+#include "pch.h"
+#include "History.h"
+#include "Win/WinPin.h"
+#include "Win/WinToolMain.h"
+#include "Win/WinToolSub.h"
+#include "Shape/ShapeBase.h"
+#include "Shape/ShapeRect.h"
+#include "Shape/ShapeEllipse.h"
+#include "Shape/ShapeArrow.h"
+#include "Shape/ShapeNumber.h"
+#include "Shape/ShapeLine.h"
+#include "Shape/ShapeText.h"
+#include "Shape/ShapeMosaic.h"
+#include "Shape/ShapeEraser.h"
+
+History::History(WinPin* win):win{win}
+{
+
+}
+
+History::~History()
+{
+
+}
+ShapeBase* History::createShape(const std::string& state, const int& x, const int& y)
+{
+    ShapeBase* result{nullptr};
+    auto toolMain = WinToolMain::get();
+    if (toolMain->state == "rect") {
+        auto shape = std::make_unique<ShapeRect>(win);
+        result = shape.get();
+        shapes.push_back(std::move(shape));
+    }
+    else if (toolMain->state == "ellipse") {
+        auto shape = std::make_unique<ShapeEllipse>(win);
+        result = shape.get();
+        shapes.push_back(std::move(shape));
+    }
+    else if (toolMain->state == "arrow") {
+        auto shape = std::make_unique<ShapeArrow>(win);
+        result = shape.get();
+        shapes.push_back(std::move(shape));
+    }
+    else if (toolMain->state == "number") {
+        auto shape = std::make_unique<ShapeNumber>(win);
+        result = shape.get();
+        shapes.push_back(std::move(shape));
+    }
+    else if (toolMain->state == "line") {
+        auto shape = std::make_unique<ShapeLine>(win);
+        result = shape.get();
+        shapes.push_back(std::move(shape));
+    }
+    else if (toolMain->state == "text") {
+        auto shape = std::make_unique<ShapeText>(win);
+        result = shape.get();
+        shapes.push_back(std::move(shape));
+    }
+    else if (toolMain->state == "mosaic") {
+        auto shape = std::make_unique<ShapeMosaic>(win);
+        result = shape.get();
+        shapes.push_back(std::move(shape));
+    }
+    else if (toolMain->state == "eraser") {
+        auto shape = std::make_unique<ShapeEraser>(win);
+        result = shape.get();
+        shapes.push_back(std::move(shape));
+    }
+    result->mouseDown((float)x, (float)y);
+    return result;
+}

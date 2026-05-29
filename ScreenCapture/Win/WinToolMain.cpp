@@ -32,7 +32,7 @@ void WinToolMain::popup()
         auto h = btnSize;
 	    auto x = winPin->x;
 	    auto y = winPin->y + winPin->h + 4.f * winPin->dpi;
-	    winToolMain = std::make_unique<WinToolMain>(x, y, w, h);
+	    winToolMain = std::make_unique<WinToolMain>((int)x, (int)y, (int)w, (int)h);
 	    winToolMain->createWindow(WS_EX_TOOLWINDOW | WS_EX_TOPMOST| WS_EX_NOACTIVATE);
         winToolMain->initTip();
         winToolMain->initBrush();
@@ -43,7 +43,7 @@ void WinToolMain::popup()
         auto winPin = WinPin::getCur();
         auto win = winToolMain.get();
         auto x = winPin->x;
-        auto y = winPin->y + winPin->h + 3.f * winPin->dpi;
+        auto y = (int)(winPin->y + winPin->h + 3.f * winPin->dpi);
         win->move(x, y);
         win->show();
         if(win->state != "")
@@ -77,7 +77,7 @@ void WinToolMain::onPaint()
         auto lx{ (float)btnSize * index }, lt{ 2.f * margin };
         render->DrawLine({ lx,lt }, { lx,btnSize - lt }, brushSpliter.Get(), 0.8f);
     }
-    auto r = D2D1::RectF(0, 0, w, h);
+    auto r = D2D1::RectF(0, 0, (float)w, (float)h);
     render->DrawRectangle(r, brushSpliter.Get(), 2 * dpi);
 }
 
@@ -122,12 +122,12 @@ void WinToolMain::onMouseDown(const int& x, const int& y, bool isRight)
 }
 void WinToolMain::onMouseMove(const int& x, const int& y)
 {
-    auto index = static_cast<int>(x / btnSize);
+    size_t index = static_cast<int>(x / btnSize);
     if (index >= btnId.size()) index = btnId.size() - 1;
     if (index != hoverIndex) {
-        hoverIndex = index;
+        hoverIndex = (int)index;
         tipText = btnName[index];
-        showTipAt(this->x + index * btnSize + btnSize / 2, this->y + marginTop + 4 * dpi);
+        showTipAt((int)(this->x + index * btnSize + btnSize / 2), (int)(this->y + marginTop + 4 * dpi));
         refresh();
     }
 }

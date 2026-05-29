@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "ShapeArrow.h"
 #include "../Win/WinPin.h"
 #include "../Win/WinToolMain.h"
@@ -38,57 +38,55 @@ void ShapeArrow::paintDragger()
 	}
 }
 
-void ShapeArrow::mouseDrag(const int& x, const int& y, const UINT_PTR& modifiers)
+void ShapeArrow::mouseDrag(const float& x, const float& y, const UINT_PTR& modifiers)
 {
-	auto xf = static_cast<float>(x);
-	auto yf = static_cast<float>(y);
 	if (hoverDraggerIndex == 0) {
 		if ((modifiers & MK_SHIFT) != 0) {
-			constrainToEightDirections(endX, endY, xf, yf, startX, startY);
+			constrainToEightDirections(endX, endY, x, y, startX, startY);
 		}
 		else {
-			startX = xf;
-			startY = yf;
+			startX = x;
+			startY = y;
 		}
 		makeArrow();
 	}
 	else if (hoverDraggerIndex == 1) {
 		if ((modifiers & MK_SHIFT) != 0) {
-			constrainToEightDirections(startX, startY, xf, yf, endX, endY);
+			constrainToEightDirections(startX, startY, x, y, endX, endY);
 		}
 		else {
-			endX = xf;
-			endY = yf;
+			endX = x;
+			endY = y;
 		}
 		makeArrow();
 	}
 	else if (hoverDraggerIndex == 8) {
-		auto spanX{ xf - pressX };
-		auto spanY{ yf - pressY };
+		auto spanX{ x - pressX };
+		auto spanY{ y - pressY };
 		startX += spanX;
 		startY += spanY;
 		endX += spanX;
 		endY += spanY;
 		makeArrow();
-		pressX = xf;
-		pressY = yf;
+		pressX = x;
+		pressY = y;
 	}
 }
 
-void ShapeArrow::mouseDown(const int& x, const int& y)
+void ShapeArrow::mouseDown(const float& x, const float& y)
 {
 	if (hoverDraggerIndex == -1) { //首次创建
-		startX = (float)x;
-		startY = (float)y;
+		startX = x;
+		startY = y;
 		hoverDraggerIndex = 1;
 	}
 	else if (hoverDraggerIndex == 8) {
-		pressX = (float)x;
-		pressY = (float)y;
+		pressX = x;
+		pressY = y;
 	}
 }
 
-void ShapeArrow::mouseUp(const int& x, const int& y)
+void ShapeArrow::mouseUp(const float& x, const float& y)
 {
 	auto half{ draggerSize / 2 };
 	draggers[0].left = startX - half;
@@ -102,7 +100,7 @@ void ShapeArrow::mouseUp(const int& x, const int& y)
 	draggers[1].bottom = endY + half;
 }
 
-void ShapeArrow::mouseMove(const int& x, const int& y)
+void ShapeArrow::mouseMove(const float& x, const float& y)
 {
 	hoverDraggerIndex = -1;
 	if (Util::isInRect(draggers[0], x, y))
@@ -116,7 +114,7 @@ void ShapeArrow::mouseMove(const int& x, const int& y)
 	if (hoverDraggerIndex == -1)
 	{
 		BOOL contains = FALSE;
-		path->FillContainsPoint( D2D1::Point2F((float)x, (float)y), nullptr, &contains);
+		path->FillContainsPoint({ x, y }, nullptr, &contains);
 		if (contains) hoverDraggerIndex = 8;
 	}
 }
@@ -171,8 +169,8 @@ void ShapeArrow::makeArrow()
 
 void ShapeArrow::constrainToEightDirections(const float& anchorX, const float& anchorY, const float& mouseX, const float& mouseY, float& targetX, float& targetY)
 {
-	float dx = static_cast<float>(mouseX) - anchorX;
-	float dy = static_cast<float>(mouseY) - anchorY;
+	float dx = mouseX - anchorX;
+	float dy = mouseY - anchorY;
 	float absX = fabsf(dx);
 	float absY = fabsf(dy);
 	if (absY <= absX * 0.41421356237f) {

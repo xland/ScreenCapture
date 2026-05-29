@@ -46,28 +46,26 @@ void ShapeNumber::paintDragger()
 	}
 }
 
-void ShapeNumber::mouseDrag(const int& x, const int& y, const UINT_PTR& modifiers)
+void ShapeNumber::mouseDrag(const float& x, const float& y, const UINT_PTR& modifiers)
 {
-	auto xf = static_cast<float>(x);
-	auto yf = static_cast<float>(y);
 	(void)modifiers;
 	if (hoverDraggerIndex == 0) {
-		auto spanX{ xf - pressX };
-		auto spanY{ yf - pressY };
+		auto spanX{ x - pressX };
+		auto spanY{ y - pressY };
 		cx += spanX;
 		cy += spanY;
 		makePath();
 		makeTextLayout();
-		pressX = xf;
-		pressY = yf;
+		pressX = x;
+		pressY = y;
 	}
 	else if (hoverDraggerIndex == 1) {
-		angle = -atan2f(yf - cy, xf - cx) * 180.f / 3.14159265358979323846f;
+		angle = -atan2f(y - cy, x - cx) * 180.f / 3.14159265358979323846f;
 		makePath();
 	}
 	else if (hoverDraggerIndex == 2) {
-		auto dx{ xf - cx };
-		auto dy{ yf - cy };
+		auto dx{ x - cx };
+		auto dy{ y - cy };
 		r = sqrtf(dx * dx + dy * dy);
 		auto minR{ 8.f * win->dpi };
 		if (r < minR) r = minR;
@@ -76,24 +74,25 @@ void ShapeNumber::mouseDrag(const int& x, const int& y, const UINT_PTR& modifier
 	}
 }
 
-void ShapeNumber::mouseDown(const int& x, const int& y)
+void ShapeNumber::mouseDown(const float& x, const float& y)
 {
 	if (hoverDraggerIndex == -1) { //首次创建
-		cx = (float)x;
-		cy = (float)y;
+		cx = x;
+		cy = y;
 		pressX = cx;
 		pressY = cy;
 		hoverDraggerIndex = 0;
 		makePath();
 		makeTextLayout();
+		win->refresh();
 	}
 	else if (hoverDraggerIndex >= 0) {
-		pressX = (float)x;
-		pressY = (float)y;
+		pressX = x;
+		pressY = y;
 	}
 }
 
-void ShapeNumber::mouseUp(const int& x, const int& y)
+void ShapeNumber::mouseUp(const float& x, const float& y)
 {
 	auto half{ draggerSize / 2 };
 	draggers[0].left = cx - half;
@@ -113,7 +112,7 @@ void ShapeNumber::mouseUp(const int& x, const int& y)
 	draggers[2].bottom = mid.y + half;
 }
 
-void ShapeNumber::mouseMove(const int& x, const int& y)
+void ShapeNumber::mouseMove(const float& x, const float& y)
 {
     hoverDraggerIndex = -1;
     if (Util::isInRect(draggers[0], x, y))
@@ -181,7 +180,7 @@ void ShapeNumber::makeTextLayout()
 	auto d = r * 2;
 	auto format = Util::getIconFormat();
 	auto dwrite = Util::getWriteFactory();
-	dwrite->CreateTextLayout(valStr.data(), valStr.length(), format, d, d, layoutText.GetAddressOf());
+	dwrite->CreateTextLayout(valStr.data(), (UINT32)valStr.length(), format, d, d, layoutText.GetAddressOf());
 	layoutText->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
 	layoutText->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
 	layoutText->SetFontSize(r, { 0, static_cast<UINT32>(valStr.length()) });

@@ -5,6 +5,7 @@
 #include "CutMask.h"
 #include "WinPix.h"
 #include "WinPin.h"
+#include "History.h"
 
 std::unique_ptr<WinCap> winCap;
 
@@ -33,7 +34,7 @@ void WinCap::init()
 	winCap->initImg(data);
     POINT pt;
     GetCursorPos(&pt);
-    winCap->winPix = std::make_unique<WinPix>(pt.x, pt.y);
+    winCap->winPix = std::make_unique<WinPix>((int)pt.x, (int)pt.y);
     winCap->cutMask = std::make_unique<CutMask>();
     winCap->show();
 }
@@ -55,7 +56,7 @@ void WinCap::release()
 ComPtr<ID2D1Bitmap1> WinCap::getCutImg()
 {
     auto& r = cutMask->maskRect;
-    auto rect = D2D1::RectU(r.left, r.top, r.right, r.bottom);
+    auto rect = D2D1::RectU((UINT32)r.left, (UINT32)r.top, (UINT32)r.right, (UINT32)r.bottom);
 	return getImgByRect(rect);
 }
 ComPtr<ID2D1Bitmap1> WinCap::getImgByRect(D2D1_RECT_U& rect)
@@ -75,7 +76,7 @@ ComPtr<ID2D1Bitmap1> WinCap::getImgByRect(D2D1_RECT_U& rect)
 
 void WinCap::onPaint()
 {
-    D2D1_RECT_F destRect = D2D1::RectF(0, 0, w, h);
+    D2D1_RECT_F destRect = D2D1::RectF(0, 0, (float)w, (float)h);
     render->DrawBitmap(screenImg.Get(), destRect);
     cutMask->paint();
 }

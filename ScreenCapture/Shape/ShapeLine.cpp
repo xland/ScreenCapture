@@ -36,63 +36,62 @@ void ShapeLine::paintDragger()
 	}
 }
 
-void ShapeLine::mouseDrag(const int& x, const int& y, const UINT_PTR& modifiers)
+void ShapeLine::mouseDrag(const float& x, const float& y, const UINT_PTR& modifiers)
 {
-	auto xf = static_cast<float>(x);
-	auto yf = static_cast<float>(y);
 	if (hoverDraggerIndex == 0) {
 		if ((modifiers & MK_SHIFT) != 0) {
 			auto& p = linePoints[0];
-			p.x = xf;
-			p.y = yf;
+			p.x = x;
+			p.y = y;
 		}
 		else {
-			linePoints.insert(linePoints.begin(), { xf,yf });
+			linePoints.insert(linePoints.begin(), { x,y });
 		}		
 		makePath();
 	}
 	else if (hoverDraggerIndex == 1) {
 		if ((modifiers & MK_SHIFT) != 0) {
 			auto& p = linePoints[linePoints.size() - 1];
-			p.x = xf;
-			p.y = yf;
+			p.x = x;
+			p.y = y;
 		}
 		else {
-			linePoints.push_back({ xf,yf });
+			linePoints.push_back({ x,y });
 		}
 		makePath();
 	}
 	else if (hoverDraggerIndex == 8) {
-		auto spanX{ xf - pressX };
-		auto spanY{ yf - pressY };
+		auto spanX{ x - pressX };
+		auto spanY{ y - pressY };
 		for (auto& p:linePoints)
 		{
 			p.x += spanX;
 			p.y += spanY;
 		}
 		makePath();
-		pressX = xf;
-		pressY = yf;
+		pressX = x;
+		pressY = y;
 	}
 }
 
-void ShapeLine::mouseDown(const int& x, const int& y)
+void ShapeLine::mouseDown(const float& x, const float& y)
 {
 	if (hoverDraggerIndex == -1) { //首次创建
-		linePoints.push_back({ (float)x,(float)y }); 
+		linePoints.push_back({ x,y }); 
 		if (GetKeyState(VK_SHIFT) & 0x8000) {
-			linePoints.push_back({ (float)x,(float)y });
+			linePoints.push_back({ x,y });
 		}
 		makePath();
 		hoverDraggerIndex = 1;
+		win->refresh();
 	}
 	else if (hoverDraggerIndex == 8) {
-		pressX = (float)x;
-		pressY = (float)y;
+		pressX = x;
+		pressY = y;
 	}
 }
 
-void ShapeLine::mouseUp(const int& x, const int& y)
+void ShapeLine::mouseUp(const float& x, const float& y)
 {
 	auto half{ draggerSize / 2 };
 	auto& start = linePoints[0];
@@ -107,7 +106,7 @@ void ShapeLine::mouseUp(const int& x, const int& y)
 	draggers[1].bottom = end.y + half;
 }
 
-void ShapeLine::mouseMove(const int& x, const int& y)
+void ShapeLine::mouseMove(const float& x, const float& y)
 {
     hoverDraggerIndex = -1;
     if (Util::isInRect(draggers[0], x, y))
@@ -120,7 +119,7 @@ void ShapeLine::mouseMove(const int& x, const int& y)
     }
     if (hoverDraggerIndex == -1)
     {
-		hitTest({ (float)x,(float)y });
+		hitTest({ x,y });
     }
 }
 
@@ -140,7 +139,7 @@ void ShapeLine::makePath()
 	path->Open(sink.GetAddressOf());
 	sink->BeginFigure(linePoints[0], D2D1_FIGURE_BEGIN_HOLLOW);
 	if (linePoints.size() > 1) {
-		sink->AddLines(&linePoints[1], linePoints.size() - 1);
+		sink->AddLines(&linePoints[1], (UINT32)(linePoints.size() - 1));
 	}	
 	sink->EndFigure(D2D1_FIGURE_END_OPEN);
 	sink->Close();
