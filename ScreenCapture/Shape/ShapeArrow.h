@@ -14,6 +14,8 @@ public:
 	void setCursor() override;
 public:
 private:
+	void makeArrow();
+private:
 	std::vector<D2D1_RECT_F> draggers; 
 	ComPtr<ID2D1PathGeometry> path;
 	ComPtr<ID2D1SolidColorBrush> brush;

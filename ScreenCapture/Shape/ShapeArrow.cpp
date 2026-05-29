@@ -40,13 +40,26 @@ void ShapeArrow::paintDragger()
 
 void ShapeArrow::mouseDrag(const int& x, const int& y)
 {
-	auto xf = static_cast<float>(x);
-	auto yf = static_cast<float>(y);
 	if (hoverDraggerIndex == 0) {
+		startX = static_cast<float>(x);
+		startY = static_cast<float>(y);
+		makeArrow();
 	}
 	else if (hoverDraggerIndex == 1) {
+		endX = static_cast<float>(x);
+		endY = static_cast<float>(y);
+		makeArrow();
 	}
 	else if (hoverDraggerIndex == 8) {
+		auto spanX{ static_cast<float>(x) - pressX };
+		auto spanY{ static_cast<float>(y) - pressY };
+		startX += spanX;
+		startY += spanY;
+		endX += spanX;
+		endY += spanY;
+		makeArrow();
+		pressX = static_cast<float>(x);
+		pressY = static_cast<float>(y);
 	}
 }
 
@@ -55,19 +68,11 @@ void ShapeArrow::mouseDown(const int& x, const int& y)
 	if (hoverDraggerIndex == -1) { //首次创建
 		startX = (float)x;
 		startY = (float)y;
-		hoverDraggerIndex = 4;
-	}
-	else if (hoverDraggerIndex == 0) {
-		endX = (float)x;
-		endY = (float)y;
-	}
-	else if (hoverDraggerIndex == 1) {
-		startX = (float)x;
-		startY = (float)y;
+		hoverDraggerIndex = 1;
 	}
 	else if (hoverDraggerIndex == 8) {
-		pressX = (float)x - startX;
-		pressY = (float)y - startY;
+		pressX = (float)x;
+		pressY = (float)y;
 	}
 }
 
@@ -98,10 +103,56 @@ void ShapeArrow::mouseMove(const int& x, const int& y)
 	}
 	if (hoverDraggerIndex == -1)
 	{
+		BOOL contains = FALSE;
+		path->FillContainsPoint( D2D1::Point2F((float)x, (float)y), nullptr, &contains);
+		if (contains) hoverDraggerIndex = 8;
 	}
 }
 
 void ShapeArrow::setCursor()
 {
 	win->setCursor(IDC_SIZEALL);
+}
+
+void ShapeArrow::makeArrow()
+{
+	path.Reset();
+	auto d2d = Util::getD2D();
+	d2d->CreatePathGeometry(path.GetAddressOf());
+	ComPtr<ID2D1GeometrySink> sink;
+	path->Open(sink.GetAddressOf());
+	float dx = endX - startX;
+	float dy = endY - startY;
+	float length = sqrtf(dx * dx + dy * dy);
+	if (length < 1.f)
+	{
+		sink->BeginFigure( { startX, startY }, D2D1_FIGURE_BEGIN_FILLED );
+		sink->EndFigure(D2D1_FIGURE_END_CLOSED);
+		sink->Close();
+		return;
+	}
+	float ux = dx / length;
+	float uy = dy / length;
+	float vx = -uy;
+	float vy = ux;
+	float arrowSize = 16.f * win->dpi;
+	float v1 = arrowSize / 4.0f;        // 箭杆半宽
+	float v2 = arrowSize * 2.0f / 3.0f; // 箭头半宽
+
+	// =========================================================
+	// 用户点击的 startX/startY
+	// 应该对应“视觉上的箭头起点”
+	// 但当前几何尖点会让视觉中心向前偏移，
+	// 所以真正绘制时，需要把几何起点向后挪一点
+	// =========================================================
+	float realStartX = startX + ux * v1*2;
+	float realStartY = startY + uy * v1*2;
+	sink->BeginFigure( { realStartX, realStartY }, D2D1_FIGURE_BEGIN_FILLED);
+	sink->AddLine({ endX - arrowSize * ux - v1 * vx, endY - arrowSize * uy - v1 * vy });
+	sink->AddLine({ endX - (arrowSize + v1) * ux - v2 * vx, endY - (arrowSize + v1) * uy - v2 * vy });
+	sink->AddLine({ endX, endY });
+	sink->AddLine({ endX - (arrowSize + v1) * ux + v2 * vx, endY - (arrowSize + v1) * uy + v2 * vy });
+	sink->AddLine({ endX - arrowSize * ux + v1 * vx, endY - arrowSize * uy + v1 * vy });
+	sink->EndFigure(D2D1_FIGURE_END_CLOSED);
+	sink->Close();
 }
