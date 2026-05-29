@@ -26,6 +26,7 @@ private:
 	ComPtr<ID2D1SolidColorBrush> brushText;
 	ComPtr<IDWriteTextLayout> layoutText;
 	float pressX, pressY,cx,cy,r,angle{ 270.f };
+	D2D1_POINT_2F tip,mid;
 	bool isFill{ false };
 	int val;
 };

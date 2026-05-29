@@ -40,36 +40,38 @@ void ShapeArrow::paintDragger()
 
 void ShapeArrow::mouseDrag(const int& x, const int& y, const UINT_PTR& modifiers)
 {
+	auto xf = static_cast<float>(x);
+	auto yf = static_cast<float>(y);
 	if (hoverDraggerIndex == 0) {
 		if ((modifiers & MK_SHIFT) != 0) {
-			constrainToEightDirections(endX, endY, x, y, startX, startY);
+			constrainToEightDirections(endX, endY, xf, yf, startX, startY);
 		}
 		else {
-			startX = static_cast<float>(x);
-			startY = static_cast<float>(y);
+			startX = xf;
+			startY = yf;
 		}
 		makeArrow();
 	}
 	else if (hoverDraggerIndex == 1) {
 		if ((modifiers & MK_SHIFT) != 0) {
-			constrainToEightDirections(startX, startY, x, y, endX, endY);
+			constrainToEightDirections(startX, startY, xf, yf, endX, endY);
 		}
 		else {
-			endX = static_cast<float>(x);
-			endY = static_cast<float>(y);
+			endX = xf;
+			endY = yf;
 		}
 		makeArrow();
 	}
 	else if (hoverDraggerIndex == 8) {
-		auto spanX{ static_cast<float>(x) - pressX };
-		auto spanY{ static_cast<float>(y) - pressY };
+		auto spanX{ xf - pressX };
+		auto spanY{ yf - pressY };
 		startX += spanX;
 		startY += spanY;
 		endX += spanX;
 		endY += spanY;
 		makeArrow();
-		pressX = static_cast<float>(x);
-		pressY = static_cast<float>(y);
+		pressX = xf;
+		pressY = yf;
 	}
 }
 
@@ -167,7 +169,7 @@ void ShapeArrow::makeArrow()
 	sink->Close();
 }
 
-void ShapeArrow::constrainToEightDirections(const float& anchorX, const float& anchorY, const int& mouseX, const int& mouseY, float& targetX, float& targetY)
+void ShapeArrow::constrainToEightDirections(const float& anchorX, const float& anchorY, const float& mouseX, const float& mouseY, float& targetX, float& targetY)
 {
 	float dx = static_cast<float>(mouseX) - anchorX;
 	float dy = static_cast<float>(mouseY) - anchorY;

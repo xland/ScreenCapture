@@ -15,7 +15,7 @@ public:
 public:
 private:
 	void makeArrow();
-	void constrainToEightDirections(const float& anchorX, const float& anchorY, const int& mouseX, const int& mouseY, float& targetX, float& targetY);
+	void constrainToEightDirections(const float& anchorX, const float& anchorY, const float& mouseX, const float& mouseY, float& targetX, float& targetY);
 private:
 	std::vector<D2D1_RECT_F> draggers; 
 	ComPtr<ID2D1PathGeometry> path;

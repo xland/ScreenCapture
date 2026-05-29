@@ -27,13 +27,16 @@ ShapeNumber::~ShapeNumber()
 
 void ShapeNumber::paint()
 {
+	auto render = win->render.Get();
 	if (isFill) {
-		win->render->FillGeometry(path.Get(), brush.Get());
+		render->FillGeometry(path.Get(), brush.Get());
+		render->DrawTextLayout({ cx - r,cy - r }, layoutText.Get(), brushText.Get(), D2D1_DRAW_TEXT_OPTIONS_NONE);
 	}
 	else {
-		win->render->DrawGeometry(path.Get(), brush.Get(), win->dpi);
+		render->DrawGeometry(path.Get(), brush.Get(), win->dpi); 
+		render->DrawTextLayout({ cx - r,cy - r }, layoutText.Get(), brush.Get(), D2D1_DRAW_TEXT_OPTIONS_NONE);
 	}
-	win->render->DrawTextLayout({cx-r,cy-r}, layoutText.Get(), brushText.Get(), D2D1_DRAW_TEXT_OPTIONS_NONE);
+	
 }
 
 void ShapeNumber::paintDragger()
@@ -48,14 +51,29 @@ void ShapeNumber::mouseDrag(const int& x, const int& y, const UINT_PTR& modifier
 {
 	auto xf = static_cast<float>(x);
 	auto yf = static_cast<float>(y);
+	(void)modifiers;
 	if (hoverDraggerIndex == 0) {
-
+		auto spanX{ xf - pressX };
+		auto spanY{ yf - pressY };
+		cx += spanX;
+		cy += spanY;
+		makePath();
+		makeTextLayout();
+		pressX = xf;
+		pressY = yf;
 	}
 	else if (hoverDraggerIndex == 1) {
-
+		angle = -atan2f(yf - cy, xf - cx) * 180.f / 3.14159265358979323846f;
+		makePath();
 	}
 	else if (hoverDraggerIndex == 2) {
-
+		auto dx{ xf - cx };
+		auto dy{ yf - cy };
+		r = sqrtf(dx * dx + dy * dy);
+		auto minR{ 8.f * win->dpi };
+		if (r < minR) r = minR;
+		makePath();
+		makeTextLayout();
 	}
 }
 
@@ -64,6 +82,8 @@ void ShapeNumber::mouseDown(const int& x, const int& y)
 	if (hoverDraggerIndex == -1) { //首次创建
 		cx = (float)x;
 		cy = (float)y;
+		pressX = cx;
+		pressY = cy;
 		hoverDraggerIndex = 0;
 		makePath();
 		makeTextLayout();
@@ -82,16 +102,16 @@ void ShapeNumber::mouseUp(const int& x, const int& y)
 	draggers[0].right = cx + half;
 	draggers[0].bottom = cy + half;
 
-	draggers[1].left = 1;
-	draggers[1].top = 1;
-	draggers[1].right = 1;
-	draggers[1].bottom = 1;
+	draggers[1].left = tip.x - half;
+	draggers[1].top = tip.y - half;
+	draggers[1].right = tip.x + half;
+	draggers[1].bottom = tip.y + half;
 
 
-	draggers[2].left = 1;
-	draggers[2].top = 1;
-	draggers[2].right = 1;
-	draggers[2].bottom = 1;
+	draggers[2].left = mid.x - half;
+	draggers[2].top = mid.y - half;
+	draggers[2].right = mid.x + half;
+	draggers[2].bottom = mid.y + half;
 }
 
 void ShapeNumber::mouseMove(const int& x, const int& y)
@@ -142,10 +162,10 @@ void ShapeNumber::makePath()
 	d2d->CreatePathGeometry(path.GetAddressOf());
 	ComPtr<ID2D1GeometrySink> sink;
 	path->Open(sink.GetAddressOf());
-	auto start = transformPoint(localPoint(12.f));
-	auto mid = transformPoint(localPoint(181.f));
+	auto start = transformPoint(localPoint(10.f));
+	mid = transformPoint(localPoint(180.f));
 	auto end = transformPoint(localPoint(350.f));
-	auto tip = transformPoint(D2D1::Point2F(r + r / 3.f, 0.f));
+	tip = transformPoint(D2D1::Point2F(r + r / 3.f, 0.f));
 	sink->BeginFigure(start, D2D1_FIGURE_BEGIN_FILLED);
 	sink->AddArc(D2D1::ArcSegment( mid, D2D1::SizeF(r, r), 0.f, D2D1_SWEEP_DIRECTION_COUNTER_CLOCKWISE, D2D1_ARC_SIZE_SMALL));
 	sink->AddArc(D2D1::ArcSegment( end, D2D1::SizeF(r, r), 0.f, D2D1_SWEEP_DIRECTION_COUNTER_CLOCKWISE, D2D1_ARC_SIZE_SMALL ));

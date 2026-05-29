@@ -241,15 +241,3 @@ ComPtr<IDWriteTextLayout> WinBase::getIconLayout(const std::wstring& icon, const
     return layout;
 }
 
-ComPtr<IDWriteTextLayout> WinBase::getTextLayout(const std::wstring& str, const float& fontSize, const float& w, const float& h, 
-    DWRITE_TEXT_ALIGNMENT textAlignment, DWRITE_PARAGRAPH_ALIGNMENT paragraphAlignment)
-{
-    auto format = Util::getIconFormat();
-    auto dwrite = Util::getWriteFactory();
-    ComPtr<IDWriteTextLayout> layout;
-    dwrite->CreateTextLayout(str.data(), str.length(), format, w, h, layout.GetAddressOf());
-    layout->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
-    layout->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
-    layout->SetFontSize(fontSize, { 0, static_cast<UINT32>(str.length()) });
-    return layout;
-}
