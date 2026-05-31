@@ -23,7 +23,7 @@ WinBase::~WinBase()
 void WinBase::show()
 {
     ShowWindow(hwnd, SW_SHOW);
-    UpdateWindow(hwnd);
+    //UpdateWindow(hwnd);
 }
 void WinBase::hide()
 {
@@ -375,13 +375,15 @@ void WinBase::mouseLeave()
 
 void WinBase::paint()
 {
+    PAINTSTRUCT ps;
+    BeginPaint(hwnd, &ps);
     render->BeginDraw();
-    //self->render->Clear(D2D1::ColorF(0xfff00f, 0.8f));
     onPaint();
     render->EndDraw();
     UINT presentFlags = 0;
     if (allowTearing) presentFlags |= DXGI_PRESENT_ALLOW_TEARING;
     swap->Present(0, presentFlags);
+    EndPaint(hwnd, &ps);
 }
 
 ComPtr<IDWriteTextLayout> WinBase::getIconLayout(const std::wstring& icon, const float& fontSize, const float& w, const float& h)

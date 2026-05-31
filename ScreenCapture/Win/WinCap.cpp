@@ -41,6 +41,7 @@ void WinCap::init()
     winCap->winPix = std::make_unique<WinPix>((int)pt.x, (int)pt.y);
     winCap->cutMask = std::make_unique<CutMask>();
     winCap->show();
+    UpdateWindow(winCap->hwnd);
 
 }
 WinCap* WinCap::get()

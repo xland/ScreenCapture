@@ -33,6 +33,7 @@ void WinToolBase::paintIcon(const float& posX, IDWriteTextLayout* icon, bool isH
         auto brush = isHover ? brushBlue.Get() : brushIcon.Get();
         render->DrawTextLayout(origin, icon, brush, D2D1_DRAW_TEXT_OPTIONS_NONE);
     }
+    log(L"111");
 }
 
 IDWriteTextLayout* WinToolBase::getBtnIconLayout(const std::string& name)
