@@ -69,3 +69,25 @@ ShapeBase* History::createShape(const std::string& state, const int& x, const in
     result->mouseDown((float)x, (float)y);
     return result;
 }
+
+void History::undo()
+{
+    int i{ (int)(shapes.size() - 1) };
+    for (; i >= 0; i--)
+    {
+        auto cur = shapes[i].get();
+        if (!cur->isUndo) {
+            cur->isUndo = true;
+            if (cur == win->shapeHover) {
+                win->shapeHover = nullptr;
+            }
+            win->refresh();
+            break;
+        }
+    }
+}
+
+void History::redo()
+{
+    auto a = 1;
+}

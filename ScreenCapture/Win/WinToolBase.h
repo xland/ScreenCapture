@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "pch.h"
 #include "WinBase.h"
+class WinPin;
 class WinToolBase :public WinBase
 {
 public:
@@ -28,6 +29,7 @@ protected:
 	float btnSize, marginTop;
 	HWND tipHwnd;
 	std::wstring tipText;
+	WinPin* parent;
 private:
 private:
 	TOOLINFO ti{ 0 };

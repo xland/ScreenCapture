@@ -3,6 +3,8 @@
 #include "WinToolBase.h"
 #include "WinToolSub.h"
 #include "WinToolMain.h"
+#include "WinPin.h"
+#include "History.h"
 
 std::unique_ptr<WinToolSub> winToolSub;
 
@@ -171,10 +173,11 @@ bool WinToolSub::hoverColor(const int& x)
     return false;
 }
 
-void WinToolSub::popup()
+void WinToolSub::popup(WinPin* parent)
 {
     if (!winToolSub.get()) {
         winToolSub = std::make_unique<WinToolSub>();
+        winToolSub->parent = parent;
         winToolSub->initVal();
         winToolSub->createWindow(WS_EX_TOOLWINDOW|WS_EX_TOPMOST| WS_EX_NOACTIVATE);
         winToolSub->initTip();
@@ -188,6 +191,7 @@ void WinToolSub::popup()
     else {
         auto toolMain = WinToolMain::get();
         auto win = winToolSub.get();
+        win->parent = parent;
         if (toolMain->state == "") {
             win->hide();
             return;
@@ -401,6 +405,14 @@ void WinToolSub::onMouseWheel(const int& x, const int& y, const short& delta)
         }
     }
     refresh();
+}
+
+void WinToolSub::onKeyDown(const TCHAR& key)
+{
+    if (key == 'Z' && (GetKeyState(VK_CONTROL) & 0x8000) != 0)
+    {
+        parent->history->undo();
+    }
 }
 
 void WinToolSub::paintSlider()

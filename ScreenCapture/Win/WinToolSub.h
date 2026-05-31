@@ -6,7 +6,7 @@ class WinToolSub :public WinToolBase
 public:
 	WinToolSub();
 	~WinToolSub();
-	static void popup();
+	static void popup(WinPin* parent);
 	static WinToolSub* get();
 	D2D1_COLOR_F getSelectedColor();
 public:
@@ -22,6 +22,7 @@ private:
 	void onMouseDown(const int& x, const int& y, bool isRight) override;
 	void onMouseDrag(const int& x, const int& y, const UINT_PTR& modifiers) override;
 	void onMouseWheel(const int& x, const int& y, const short& delta) override;
+	void onKeyDown(const TCHAR& key) override;
 	void paintSlider();
 	void paintColorSelector();
 	void initVal();

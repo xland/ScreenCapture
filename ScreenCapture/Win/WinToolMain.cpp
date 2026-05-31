@@ -7,6 +7,7 @@
 #include "WinToolBase.h"
 #include "WinToolMain.h"
 #include "WinToolSub.h"
+#include "History.h"
 
 std::unique_ptr<WinToolMain> winToolMain;
 
@@ -19,15 +20,16 @@ WinToolMain::~WinToolMain()
 {
 }
 
-void WinToolMain::popup(WinPin* win)
+void WinToolMain::popup(WinPin* parent)
 {
 	if (!winToolMain.get()){
-        auto btnSize{32.f * win->dpi}; //todo dpi change
+        auto btnSize{32.f * parent->dpi}; //todo dpi change
 		auto w = btnSize * 14; //主工具条一共有14个按钮；todo dpi change
         auto h = btnSize;
-	    auto x = win->x;
-	    auto y = win->y + win->h + 4.f * win->dpi;
+	    auto x = parent->x;
+	    auto y = parent->y + parent->h + 4.f * parent->dpi;
 	    winToolMain = std::make_unique<WinToolMain>((int)x, (int)y, (int)w, (int)h);
+        winToolMain->parent = parent;
 	    winToolMain->createWindow(WS_EX_TOOLWINDOW | WS_EX_TOPMOST| WS_EX_NOACTIVATE);
         winToolMain->initTip();
         winToolMain->initBrush();
@@ -36,13 +38,14 @@ void WinToolMain::popup(WinPin* win)
     }
     else {
         auto win = winToolMain.get();
+        win->parent = parent;
         auto x = win->x;
         auto y = (int)(win->y + win->h + 3.f * win->dpi);
         win->move(x, y);
         win->show();
         if(win->state != "")
         {
-            WinToolSub::popup();
+            WinToolSub::popup(parent);
         }
     }
 }
@@ -109,7 +112,7 @@ void WinToolMain::onMouseDown(const int& x, const int& y, bool isRight)
         else {
             this->state = state;
             selectIndex = hoverIndex;
-            WinToolSub::get()->popup();
+            WinToolSub::get()->popup(parent);
         }
         refresh();
     }
@@ -130,6 +133,14 @@ void WinToolMain::onMouseLeave()
     hoverIndex = -1;
     refresh();
     hideTip();
+}
+
+void WinToolMain::onKeyDown(const TCHAR& key)
+{
+    if (key == 'Z' && (GetKeyState(VK_CONTROL) & 0x8000) != 0)
+    {
+        parent->history->undo();
+    }
 }
 
 void WinToolMain::initBtn()

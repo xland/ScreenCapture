@@ -59,7 +59,9 @@ void WinPin::onPaint()
     render->DrawBitmap(screenImg.Get(), destRect);
     for (auto& shape:history->shapes)
     {
-        shape->paint();
+        if (!shape->isUndo) {
+            shape->paint();
+        }
     }
     if (!isMouseDown && shapeHover) {
         shapeHover->paintDragger();
@@ -95,7 +97,7 @@ void WinPin::onKeyDown(const TCHAR& key)
 {
     if (key == 'Z' && (GetKeyState(VK_CONTROL) & 0x8000) != 0)
     {
-        auto a = 1;
+        history->undo();
     }
 }
 
