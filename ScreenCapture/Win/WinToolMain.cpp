@@ -88,9 +88,11 @@ void WinToolMain::onMouseDown(const int& x, const int& y, bool isRight)
 	}
     auto& state = btnId[hoverIndex];
     if (state == "undo") {
+        parent->history->undo();
         return;
     }
     else if (state == "redo") {
+        parent->history->redo();
         return;
     }
     else if (state == "clipboard") {
