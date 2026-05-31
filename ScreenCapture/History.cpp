@@ -24,6 +24,7 @@ History::~History()
 }
 ShapeBase* History::createShape(const std::string& state, const int& x, const int& y)
 {
+    removeUndoShape();
     ShapeBase* result{nullptr};
     auto toolMain = WinToolMain::get();
     if (toolMain->state == "rect") {
@@ -97,5 +98,18 @@ void History::redo()
             win->refresh();
             break;
         }
+    }
+}
+
+void History::removeUndoShape()
+{
+    int i{ (int)(shapes.size() - 1) };
+    for (; i >= 0; i--)
+    {
+        auto cur = shapes[i].get();
+        if (!cur->isUndo) {
+            break;
+        }
+        shapes.erase(shapes.begin() + i);
     }
 }

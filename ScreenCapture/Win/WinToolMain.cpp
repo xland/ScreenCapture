@@ -39,8 +39,8 @@ void WinToolMain::popup(WinPin* parent)
     else {
         auto win = winToolMain.get();
         win->parent = parent;
-        auto x = win->x;
-        auto y = (int)(win->y + win->h + 3.f * win->dpi);
+        auto x = parent->x;
+        auto y = (int)(parent->y + parent->h + 3.f * parent->dpi);
         win->move(x, y);
         win->show();
         if(win->state != "")

@@ -13,6 +13,7 @@ public:
 public:
 	std::vector<std::unique_ptr<ShapeBase>> shapes;
 private:
+	void removeUndoShape();
 private:
 	WinPin* win;
 };
