@@ -22,6 +22,9 @@ public:
 	void killTimer(const UINT& id);
 	void setCursor(LPCWSTR cursorName);
 	ID2D1Factory1* getD2D();
+	IDWriteFactory5* getWriteFactory();
+	IDWriteTextFormat* getTextFormat(const float& fontSize);
+	IDWriteTextFormat* getIconFormat();
 public:
 	HWND hwnd{nullptr};
 	int x, y, w, h;

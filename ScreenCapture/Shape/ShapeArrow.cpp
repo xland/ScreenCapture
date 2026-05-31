@@ -127,8 +127,7 @@ void ShapeArrow::setCursor()
 void ShapeArrow::makeArrow()
 {
 	path.Reset();
-	auto d2d = Util::getD2D();
-	d2d->CreatePathGeometry(path.GetAddressOf());
+	win->getD2D()->CreatePathGeometry(path.GetAddressOf());
 	ComPtr<ID2D1GeometrySink> sink;
 	path->Open(sink.GetAddressOf());
 	float dx = endX - startX;

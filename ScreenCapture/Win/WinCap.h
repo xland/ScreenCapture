@@ -22,7 +22,6 @@ private:
 	void onMouseDrag(const int& x, const int& y, const UINT_PTR& modifiers) override;
 	void onMouseDown(const int& x, const int& y, bool isRight) override;
 	void onMouseUp(const int& x, const int& y) override;
-	void initImg(const std::vector<BYTE>& data);
 private:
 	std::unique_ptr<WinPix> winPix;
 	ComPtr<ID2D1Bitmap1> screenImg;

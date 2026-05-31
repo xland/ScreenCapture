@@ -217,8 +217,7 @@ D2D1_COLOR_F WinToolSub::getSelectedColor()
 void WinToolSub::initBorder()
 {
     borderPath.Reset();
-    auto d2d = Util::getD2D();
-    d2d->CreatePathGeometry(borderPath.GetAddressOf());
+    getD2D()->CreatePathGeometry(borderPath.GetAddressOf());
     ComPtr<ID2D1GeometrySink> sink;
     borderPath->Open(sink.GetAddressOf());
     auto borderW{ dpi };

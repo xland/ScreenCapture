@@ -25,7 +25,7 @@ ShapeLine::~ShapeLine()
 
 void ShapeLine::paint()
 {
-	win->render->DrawGeometry(path.Get(), brush.Get(), strokeWidth,Util::getRoundStrokeStyle());
+	win->render->DrawGeometry(path.Get(), brush.Get(), strokeWidth,getRoundStrokeStyle());
 }
 
 void ShapeLine::paintDragger()
@@ -133,8 +133,7 @@ void ShapeLine::setCursor()
 void ShapeLine::makePath()
 {
 	path.Reset();
-	auto d2d = Util::getD2D();
-	d2d->CreatePathGeometry(path.GetAddressOf());
+	win->getD2D()->CreatePathGeometry(path.GetAddressOf());
 	ComPtr<ID2D1GeometrySink> sink;
 	path->Open(sink.GetAddressOf());
 	sink->BeginFigure(linePoints[0], D2D1_FIGURE_BEGIN_HOLLOW);

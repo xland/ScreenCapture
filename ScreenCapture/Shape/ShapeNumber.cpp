@@ -156,8 +156,7 @@ D2D1_POINT_2F ShapeNumber::transformPoint(const D2D1_POINT_2F& point)
 void ShapeNumber::makePath()
 {
 	path.Reset();
-	auto d2d = Util::getD2D();
-	d2d->CreatePathGeometry(path.GetAddressOf());
+	win->getD2D()->CreatePathGeometry(path.GetAddressOf());
 	ComPtr<ID2D1GeometrySink> sink;
 	path->Open(sink.GetAddressOf());
 	auto start = transformPoint(localPoint(10.f));
@@ -178,8 +177,8 @@ void ShapeNumber::makeTextLayout()
 	layoutText.Reset();
 	auto valStr = std::to_wstring(val);
 	auto d = r * 2;
-	auto format = Util::getIconFormat();
-	auto dwrite = Util::getWriteFactory();
+	auto format = win->getIconFormat();
+	auto dwrite = win->getWriteFactory();
 	dwrite->CreateTextLayout(valStr.data(), (UINT32)valStr.length(), format, d, d, layoutText.GetAddressOf());
 	layoutText->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
 	layoutText->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);

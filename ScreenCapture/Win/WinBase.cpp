@@ -23,6 +23,7 @@ WinBase::~WinBase()
 void WinBase::show()
 {
     ShowWindow(hwnd, SW_SHOW);
+    UpdateWindow(hwnd);
 }
 void WinBase::hide()
 {
@@ -97,7 +98,7 @@ void WinBase::setCursor(LPCWSTR cursorName)
 }
 void WinBase::createWindow(const DWORD& exStyle, const DWORD& style)
 {
-    hwnd = CreateWindowEx(exStyle, getWinClsName().c_str(), NULL, style, x, y, w, h, NULL, NULL, App::get()->hInstance, NULL);
+    hwnd = CreateWindowEx(exStyle | WS_EX_NOREDIRECTIONBITMAP, getWinClsName().c_str(), NULL, style, x, y, w, h, NULL, NULL, App::get()->hInstance, NULL);
     SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
 	dpi = GetDpiForWindow(hwnd) / 96.0f;
     initDevice();
@@ -172,8 +173,8 @@ HRESULT WinBase::createBitmap()
     hr = render->CreateBitmapFromDxgiSurface(surf.get(), &bp, targetBmp.GetAddressOf());
     if (FAILED(hr)) return S_FALSE;
     render->SetTarget(targetBmp.Get());
-    //auto dpi{ this->dpi * 96.0f };
-    //render->SetDpi(dpi, dpi);
+    // auto dpi{ this->dpi * 96.0f };
+    // render->SetDpi(dpi, dpi);
     return S_OK;
 }
 
@@ -190,6 +191,69 @@ bool WinBase::onCursor()
 ID2D1Factory1* WinBase::getD2D()
 {
     return d2dFactory.Get();
+}
+
+IDWriteFactory5* WinBase::getWriteFactory()
+{
+    return dwriteFactory.Get();
+}
+
+IDWriteTextFormat* WinBase::getTextFormat(const float& fontSize)
+{
+    static ComPtr<IDWriteTextFormat> textFormat;
+    if (!textFormat.Get()) {
+        dwriteFactory->CreateTextFormat(L"Microsoft YaHei", nullptr,
+            DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
+            fontSize, L"", textFormat.GetAddressOf());
+    }
+    return textFormat.Get();
+}
+
+IDWriteTextFormat* WinBase::getIconFormat()
+{
+    static ComPtr<IDWriteTextFormat> iconFormat;
+    if (!iconFormat.Get()) {
+        HRSRC hRes = FindResource(NULL, L"iconfont.ttf", RT_RCDATA);
+        if (!hRes) return nullptr;
+        HGLOBAL hData = LoadResource(NULL, hRes);
+        if (!hData) return nullptr;
+        void* pData = LockResource(hData);
+        DWORD size = SizeofResource(NULL, hRes);
+
+        ComPtr<IDWriteInMemoryFontFileLoader> loader;
+        dwriteFactory->CreateInMemoryFontFileLoader(loader.GetAddressOf());
+        dwriteFactory->RegisterFontFileLoader(loader.Get());
+        ComPtr<IDWriteFontFile> fontFile;
+        loader->CreateInMemoryFontFileReference(dwriteFactory.Get(), pData, size, nullptr, fontFile.GetAddressOf());
+        ComPtr<IDWriteFontSetBuilder1> fontSetBuilder;
+        dwriteFactory->CreateFontSetBuilder(fontSetBuilder.GetAddressOf());
+        fontSetBuilder->AddFontFile(fontFile.Get());
+        ComPtr<IDWriteFontSet> fontSet;
+        fontSetBuilder->CreateFontSet(fontSet.GetAddressOf());
+        ComPtr<IDWriteFontCollection1> fontCollection;
+        dwriteFactory->CreateFontCollectionFromFontSet(fontSet.Get(), fontCollection.GetAddressOf());
+        //auto win = WinCap::get();
+        dwriteFactory->CreateTextFormat(L"icon", fontCollection.Get(),
+            DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
+            12.f, L"", iconFormat.GetAddressOf());
+
+        //ComPtr<IDWriteTextLayout> layout;
+        //dwriteFactory->CreateTextLayout(L"asdf", wcslen(L"asdf"), iconFormat.Get(),
+        //    1000, 800, layout.GetAddressOf());
+        //layout->SetFontSize(1212.f, { 0, 0 });
+        //ComPtr<ID2D1SolidColorBrush> brush;
+        //rt->CreateSolidColorBrush(fontColor, brush.GetAddressOf());
+        //// 2. 在哪画、怎么画
+        //D2D1_POINT_2F origin = { 10.0f, 20.0f }; // 左上角起点（逻辑坐标）
+        //rt->DrawTextLayout(
+        //    origin,
+        //    layout.Get(),
+        //    brush.Get(),
+        //    D2D1_DRAW_TEXT_OPTIONS_NONE // 或 ENABLE_COLOR_FONT / CLIP 等
+        //);
+    }
+
+    return iconFormat.Get();
 }
 
 std::wstring& WinBase::getWinClsName()
@@ -322,10 +386,9 @@ void WinBase::paint()
 
 ComPtr<IDWriteTextLayout> WinBase::getIconLayout(const std::wstring& icon, const float& fontSize, const float& w, const float& h)
 {
-    auto format = Util::getIconFormat();
-    auto dwrite = Util::getWriteFactory();
+    auto format = getIconFormat();
     ComPtr<IDWriteTextLayout> layout;
-    dwrite->CreateTextLayout(icon.data(), icon.length(), format, w, h, layout.GetAddressOf());
+    dwriteFactory->CreateTextLayout(icon.data(), icon.length(), format, w, h, layout.GetAddressOf());
     layout->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
     layout->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
     layout->SetFontSize(fontSize, { 0, static_cast<UINT32>(icon.length()) });

@@ -9,7 +9,7 @@ namespace {
 
 WinPix::WinPix(const int& x, const int& y) : WinBase(x, y, srcW* scaleNum, imgH + 112)
 {
-    createWindow();
+    createWindow(WS_EX_TOOLWINDOW);
     enableAlpha();
     initRes();
     show();
@@ -98,7 +98,7 @@ void WinPix::paintText(COLORREF& cr, const int& x, const int& y) {
 
     auto fontSize{ 15.0 };
     auto padding{ 9.0 };
-    auto format = Util::getTextFormat(fontSize);
+    auto format = getTextFormat(fontSize);
     BYTE r = GetRValue(cr), g = GetGValue(cr), b = GetBValue(cr);
     wchar_t hex[8];
     swprintf_s(hex, L"#%02X%02X%02X", r, g, b);

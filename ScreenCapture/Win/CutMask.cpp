@@ -5,11 +5,12 @@
 
 CutMask::CutMask() 
 {
-    auto render = WinCap::get()->render.Get();
+    auto win = WinCap::get();
+    auto render = win->render.Get();
     render->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White), brushText.GetAddressOf());
     render->CreateSolidColorBrush(D2D1::ColorF(0x000000, 0.46f), brushBg.GetAddressOf());
     render->CreateSolidColorBrush(D2D1::ColorF(0x1677ff), brushBorder.GetAddressOf());
-    auto dwriteFactory = Util::getWriteFactory();
+    auto dwriteFactory = win->getWriteFactory();
     dwriteFactory->CreateTextFormat(L"Microsoft YaHei", nullptr,
         DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
         15, L"", textFormat.GetAddressOf());
@@ -103,7 +104,7 @@ void CutMask::paint()
     auto str = std::format(L"X:{} Y:{} R:{} B:{} W:{} H:{}",
         maskRect.left,maskRect.top,maskRect.right,maskRect.bottom,
         maskRect.right - maskRect.left,maskRect.bottom-maskRect.top);    
-    auto dwriteFactory = Util::getWriteFactory();
+    auto dwriteFactory = win->getWriteFactory();
     winrt::com_ptr<IDWriteTextLayout> layout;
     dwriteFactory->CreateTextLayout(str.data(),static_cast<UINT32>(str.size()), textFormat.Get(), FLT_MAX, FLT_MAX, layout.put());
     layout->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);

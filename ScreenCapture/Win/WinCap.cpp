@@ -30,13 +30,18 @@ void WinCap::init()
 		winCap->close();
 	}
 	winCap = std::make_unique<WinCap>(x, y, w, h);
-    winCap->createWindow();
-	winCap->initImg(data);
+    winCap->createWindow(WS_EX_TOOLWINDOW);
+    D2D1_BITMAP_PROPERTIES1 props = {
+        .pixelFormat{D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED)},
+        .dpiX{96.0f}, .dpiY{96.0f}, .bitmapOptions{D2D1_BITMAP_OPTIONS_TARGET}
+    };
+    winCap->render->CreateBitmap(D2D1::SizeU(w, h), data.data(), w * 4, props, winCap->screenImg.GetAddressOf());
     POINT pt;
     GetCursorPos(&pt);
     winCap->winPix = std::make_unique<WinPix>((int)pt.x, (int)pt.y);
     winCap->cutMask = std::make_unique<CutMask>();
     winCap->show();
+
 }
 WinCap* WinCap::get()
 {
@@ -96,6 +101,7 @@ void WinCap::onMouseDown(const int& x, const int& y, bool isRight)
         return;
     }
     if (winPix.get()) {
+        winPix->hide(); //必须先hide再释放，不然会闪烁一下
         winPix->close();
         winPix.reset();
     }
@@ -105,17 +111,4 @@ void WinCap::onMouseUp(const int& x, const int& y)
 {
     WinPin::init();
     release();
-}
-
-void WinCap::initImg(const std::vector<BYTE>& data)
-{
-    D2D1_BITMAP_PROPERTIES1 props = {
-        .pixelFormat{D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED)},
-        .dpiX{96.0f},
-        .dpiY{96.0f},
-        .bitmapOptions{D2D1_BITMAP_OPTIONS_TARGET},
-    };
-    ComPtr<ID2D1DeviceContext> dc;
-    render->QueryInterface(IID_PPV_ARGS(dc.GetAddressOf()));
-    dc->CreateBitmap(D2D1::SizeU(w, h), data.data(), w * 4, props, screenImg.GetAddressOf());
 }
