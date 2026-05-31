@@ -77,6 +77,10 @@ bool WinPin::onCursor()
     }
     if (shapeHover) {
         shapeHover->setCursor();
+        return TRUE;
+    }
+    if (toolMain->state == "text") {
+        setCursor(IDC_IBEAM);
     }
     else {
         setCursor(IDC_CROSS);

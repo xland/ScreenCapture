@@ -5,11 +5,17 @@
 #include <shlobj.h>
 #include <shlwapi.h>
 #include <wrl.h>
+#include <wincodec.h>
+
 #include <d2d1.h>
 #include <d2d1_1.h>
+#include <dxgi1_3.h>
+#include <d3d11_4.h>
+#include <d2d1_3.h>
+#include <d2d1_3helper.h>
+#include <dcomp.h>
 #include <dwrite_3.h>
 #include <dwmapi.h>
-#include <wincodec.h>
 
 #include <string>
 #include <string_view>

@@ -84,6 +84,9 @@
     <ClCompile Include="Tray.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Shape\ShapeTextWin.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -150,6 +153,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Tray.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Shape\ShapeTextWin.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

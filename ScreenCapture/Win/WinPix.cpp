@@ -3,6 +3,10 @@
 #include "WinPix.h"
 #include "WinCap.h"
 
+namespace {
+    static constexpr int scaleNum{ 5 }, imgH{5*30}, srcW{ 50 }, srcH{ 30 };
+}
+
 WinPix::WinPix(const int& x, const int& y) : WinBase(x, y, srcW* scaleNum, imgH + 112)
 {
     createWindow();
@@ -57,12 +61,12 @@ COLORREF WinPix::paintImg()
     auto x{ cursorX - wHalf }, y{ cursorY - hHalf }, r{ cursorX + wHalf }, b{ cursorY + hHalf };
     D2D1_RECT_F destRect = D2D1::RectF(0, 0, w, imgH);
     if (x < 0) {
-        destRect.left = -x * scaleNum;
+        destRect.left = (float)(-x * scaleNum);
         wHalf += x;
         x = 0;
     }
     if (y < 0) {
-        destRect.top = -y * scaleNum;
+        destRect.top = (float)(-y * scaleNum);
         hHalf += y;
         y = 0;
     }

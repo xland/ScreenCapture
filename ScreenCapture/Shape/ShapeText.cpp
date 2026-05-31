@@ -9,10 +9,6 @@ ShapeText::ShapeText(WinPin* win) :ShapeBase(win), draggers{
 	D2D1::RectF(0,0,0,0),
 	D2D1::RectF(0,0,0,0),
 	D2D1::RectF(0,0,0,0),
-	D2D1::RectF(0,0,0,0),
-	D2D1::RectF(0,0,0,0),
-	D2D1::RectF(0,0,0,0),
-	D2D1::RectF(0,0,0,0),
 	D2D1::RectF(0,0,0,0) }
 {
 	auto toolSub = WinToolSub::get();
@@ -46,42 +42,15 @@ void ShapeText::paintDragger()
 
 void ShapeText::mouseDrag(const float& x, const float& y, const UINT_PTR& modifiers)
 {
-	if (hoverDraggerIndex == 0 || hoverDraggerIndex == 4 || hoverDraggerIndex == 2 || hoverDraggerIndex == 6) {
-		auto [left, right] = std::minmax(pressX, x);
-		auto [top, bottom] = std::minmax(pressY, y);
-		rect.left = left;
-		rect.right = right;
-		rect.top = top;
-		rect.bottom = bottom;
+	if (hoverDraggerIndex == 0 ) {
+
 	}
-	else if (hoverDraggerIndex == 1 || hoverDraggerIndex == 5) {
-		auto [top, bottom] = std::minmax(pressY, y);
-		rect.top = top;
-		rect.bottom = bottom;
+	else if (hoverDraggerIndex == 1) {
+
 	}
-	else if (hoverDraggerIndex == 3 || hoverDraggerIndex == 7) {
-		auto [left, right] = std::minmax(pressX, x);
-		rect.left = left;
-		rect.right = right;
+	else if (hoverDraggerIndex == 2) {
 	}
-	else if (hoverDraggerIndex == 8) {
-		auto w = rect.right - rect.left;
-		auto h = rect.bottom - rect.top;
-		rect.left = x - pressX;
-		rect.top = y - pressY;
-		rect.right = rect.left + w;
-		rect.bottom = rect.top + h;
-	}
-	if (hoverDraggerIndex != 8&&(modifiers & MK_SHIFT) != 0) {
-		auto w = rect.right - rect.left;
-		auto h = rect.bottom - rect.top;
-		if (w > h) {
-			rect.bottom = rect.top + w;
-		}
-		else
-		{
-			rect.right = rect.left + h;
-		}
+	else if (hoverDraggerIndex == 3) {
 	}
 }
 
@@ -151,27 +120,6 @@ void ShapeText::mouseUp(const float& x, const float& y)
 	draggers[3].right = rect.right + half;
 	draggers[3].bottom = rect.top + h / 2 + half;
 
-
-	draggers[4].left = rect.right - half;
-	draggers[4].top = rect.bottom - half;
-	draggers[4].right = rect.right + half;
-	draggers[4].bottom = rect.bottom + half;
-
-
-	draggers[5].left = rect.left + w / 2 - half;
-	draggers[5].top = rect.bottom - half;
-	draggers[5].right = rect.left + w / 2 + half;
-	draggers[5].bottom = rect.bottom + half;
-
-	draggers[6].left = rect.left - half;
-	draggers[6].top = rect.bottom - half;
-	draggers[6].right = rect.left + half;
-	draggers[6].bottom = rect.bottom + half;
-
-	draggers[7].left = rect.left - half;
-	draggers[7].top = rect.top + h / 2 - half;
-	draggers[7].right = rect.left + half;
-	draggers[7].bottom = rect.top + h / 2 + half;
 }
 
 void ShapeText::mouseMove(const float& x, const float& y)

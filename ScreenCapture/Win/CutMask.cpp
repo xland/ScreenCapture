@@ -85,7 +85,8 @@ void CutMask::paint()
     auto win = WinCap::get();
     auto render = win->render.Get();
     D2D1_RECT_F destRect = D2D1::RectF(0, 0, win->w, win->h);
-    auto d2d = Util::getD2D();
+
+    auto d2d = win->getD2D();
     ComPtr<ID2D1RectangleGeometry> outerGeometry;
     d2d->CreateRectangleGeometry(destRect, outerGeometry.GetAddressOf());
     ComPtr<ID2D1RectangleGeometry> innerGeometry;
@@ -93,6 +94,8 @@ void CutMask::paint()
     ID2D1Geometry* geometries[] = { outerGeometry.Get(), innerGeometry.Get() };
     ComPtr<ID2D1GeometryGroup> geo;
     d2d->CreateGeometryGroup(D2D1_FILL_MODE_ALTERNATE,geometries, ARRAYSIZE(geometries), geo.GetAddressOf());
+
+
     render->FillGeometry(geo.Get(), brushBg.Get());
     auto r = D2D1::RectF(maskRect.left - 2, maskRect.top - 2, maskRect.right + 2, maskRect.bottom + 2);
     render->DrawRectangle(r, brushBorder.Get(), 4.f);

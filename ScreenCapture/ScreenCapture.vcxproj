@@ -153,6 +153,7 @@
   <ItemGroup>
     <ClCompile Include="App.cpp" />
     <ClCompile Include="History.cpp" />
+    <ClCompile Include="Shape\ShapeTextWin.cpp" />
     <ClCompile Include="Shape\ShapeArrow.cpp" />
     <ClCompile Include="Shape\ShapeEllipse.cpp" />
     <ClCompile Include="Shape\ShapeEraser.cpp" />
@@ -181,6 +182,7 @@
   <ItemGroup>
     <ClInclude Include="App.h" />
     <ClInclude Include="History.h" />
+    <ClInclude Include="Shape\ShapeTextWin.h" />
     <ClInclude Include="Shape\ShapeArrow.h" />
     <ClInclude Include="Shape\ShapeEllipse.h" />
     <ClInclude Include="Shape\ShapeEraser.h" />
