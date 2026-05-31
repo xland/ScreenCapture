@@ -99,6 +99,10 @@ void WinPin::onKeyDown(const TCHAR& key)
     {
         history->undo();
     }
+    else if (key == 'Y' && (GetKeyState(VK_CONTROL) & 0x8000) != 0)
+    {
+        history->redo();
+    }
 }
 
 void WinPin::initImg()

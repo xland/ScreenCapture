@@ -89,5 +89,13 @@ void History::undo()
 
 void History::redo()
 {
-    auto a = 1;
+    for (size_t i = 0; i < shapes.size(); i++)
+    {
+        auto cur = shapes[i].get();
+        if (cur->isUndo) {
+            cur->isUndo = false;
+            win->refresh();
+            break;
+        }
+    }
 }

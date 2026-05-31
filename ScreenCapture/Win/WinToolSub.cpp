@@ -413,6 +413,10 @@ void WinToolSub::onKeyDown(const TCHAR& key)
     {
         parent->history->undo();
     }
+    else if (key == 'Y' && (GetKeyState(VK_CONTROL) & 0x8000) != 0)
+    {
+        parent->history->redo();
+    }
 }
 
 void WinToolSub::paintSlider()

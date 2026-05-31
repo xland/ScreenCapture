@@ -141,6 +141,10 @@ void WinToolMain::onKeyDown(const TCHAR& key)
     {
         parent->history->undo();
     }
+    else if (key == 'Y' && (GetKeyState(VK_CONTROL) & 0x8000) != 0)
+    {
+        parent->history->redo();
+    }
 }
 
 void WinToolMain::initBtn()
