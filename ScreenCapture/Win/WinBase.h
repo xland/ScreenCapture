@@ -11,20 +11,17 @@ public:
 	void close();
 	void move(const int& x, const int& y);
 	void resize(const int& w, const int& h);
-	void createWindow(const DWORD& exStyle=NULL, const DWORD& style= WS_POPUP);
+	void createWindow(const DWORD& exStyle=NULL, const DWORD& style=NULL);
 	void initDevice();
 	HRESULT initDC();
 	HRESULT createBitmap();
 	ComPtr<IDWriteTextLayout> getIconLayout(const std::wstring& icon, const float& fontSize, const float& w, const float& h);
 	void enableShadow();
-	void enableAlpha();
 	void setTimer(const UINT& elapse, const UINT& id);
 	void killTimer(const UINT& id);
 	void setCursor(LPCWSTR cursorName);
 	ID2D1Factory1* getD2D();
 	IDWriteFactory5* getWriteFactory();
-	IDWriteTextFormat* getTextFormat(const float& fontSize);
-	IDWriteTextFormat* getIconFormat();
 public:
 	HWND hwnd{nullptr};
 	int x, y, w, h;

@@ -77,9 +77,9 @@ void WinToolSub::initVal()
         w = (int)(348 * toolMain->dpi);
         btnStart = 0;
         btnEnd = btnStart + btnSize*2;
-        sliderMax = 22;
-        sliderMin = 12;
-        sliderVal = 16;
+        sliderMax = 38.f;
+        sliderMin = 10.f;
+        sliderVal = 16.f;
         sliderStart = btnEnd + span;
         sliderEnd = sliderStart + 120.f;
         colorStart = sliderEnd + span;
@@ -89,9 +89,9 @@ void WinToolSub::initVal()
         w = int(126 * toolMain->dpi);
         btnStart = 0;
         btnEnd = btnStart + btnSize;
-        sliderMax = 22;
-        sliderMin = 12;
-        sliderVal = 16;
+        sliderMax = 22.f;
+        sliderMin = 12.f;
+        sliderVal = 16.f;
         sliderStart = btnEnd + span;
         sliderEnd = sliderStart + 120.f;
     }
@@ -179,11 +179,10 @@ void WinToolSub::popup(WinPin* parent)
         winToolSub = std::make_unique<WinToolSub>();
         winToolSub->parent = parent;
         winToolSub->initVal();
-        winToolSub->createWindow(WS_EX_TOOLWINDOW|WS_EX_TOPMOST| WS_EX_NOACTIVATE);
+        winToolSub->createWindow(WS_EX_TOPMOST| WS_EX_NOACTIVATE);
         winToolSub->initTip();
         winToolSub->initBrush();
         winToolSub->initColor();
-        winToolSub->enableAlpha();
         winToolSub->initBtn();
         winToolSub->initBorder();
         winToolSub->show();
@@ -260,7 +259,6 @@ void WinToolSub::initColor()
 
 void WinToolSub::onPaint()
 {
-    render->Clear(D2D1::ColorF(0xFFFFFF,0.f));
     render->FillGeometry(borderPath.Get(), brushBg.Get());
     render->DrawGeometry(borderPath.Get(), brushSpliter.Get(), dpi);
     auto win = WinToolMain::get();

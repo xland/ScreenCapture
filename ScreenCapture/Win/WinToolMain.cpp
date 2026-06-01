@@ -30,7 +30,7 @@ void WinToolMain::popup(WinPin* parent)
 	    auto y = parent->y + parent->h + 4.f * parent->dpi;
 	    winToolMain = std::make_unique<WinToolMain>((int)x, (int)y, (int)w, (int)h);
         winToolMain->parent = parent;
-	    winToolMain->createWindow(WS_EX_TOOLWINDOW | WS_EX_TOPMOST| WS_EX_NOACTIVATE);
+	    winToolMain->createWindow(WS_EX_TOPMOST| WS_EX_NOACTIVATE);
         winToolMain->initTip();
         winToolMain->initBrush();
 		winToolMain->initBtn();

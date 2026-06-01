@@ -30,7 +30,7 @@ void WinCap::init()
 		winCap->close();
 	}
 	winCap = std::make_unique<WinCap>(x, y, w, h);
-    winCap->createWindow(WS_EX_TOOLWINDOW);
+    winCap->createWindow();
     D2D1_BITMAP_PROPERTIES1 props = {
         .pixelFormat{D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED)},
         .dpiX{96.0f}, .dpiY{96.0f}, .bitmapOptions{D2D1_BITMAP_OPTIONS_TARGET}

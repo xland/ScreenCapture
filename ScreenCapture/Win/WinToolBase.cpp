@@ -49,8 +49,7 @@ void WinToolBase::initTip()
 {
     INITCOMMONCONTROLSEX iccex = { sizeof(iccex), ICC_BAR_CLASSES };
     InitCommonControlsEx(&iccex);
-    tipHwnd = CreateWindowEx(
-        WS_EX_TOPMOST, TOOLTIPS_CLASS,
+    tipHwnd = CreateWindowEx(WS_EX_TOPMOST, TOOLTIPS_CLASS,
         NULL,
         WS_POPUP | TTS_NOPREFIX | TTS_ALWAYSTIP,
         CW_USEDEFAULT, CW_USEDEFAULT,

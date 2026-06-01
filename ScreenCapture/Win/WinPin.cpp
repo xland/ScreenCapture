@@ -17,6 +17,7 @@
 #include "Shape/ShapeMosaic.h"
 #include "Shape/ShapeEraser.h"
 
+static constexpr int timerID{ 18 };
 std::vector<std::unique_ptr<WinPin>> winPins;
 
 WinPin::WinPin(const int& x, const int& y, const int& w, const int& h) :
@@ -34,7 +35,7 @@ void WinPin::init()
     auto cap = WinCap::get();
     auto& r = cap->cutMask->maskRect;
 	auto win = std::make_unique<WinPin>((int)r.left, (int)r.top, (int)(r.right - r.left), (int)(r.bottom - r.top));
-    win->createWindow(WS_EX_TOOLWINDOW | WS_EX_TOPMOST| WS_EX_NOACTIVATE, WS_POPUP);
+    win->createWindow(WS_EX_TOPMOST| WS_EX_NOACTIVATE);
     win->initImg();
     win->enableShadow();
     win->show();
@@ -90,7 +91,7 @@ bool WinPin::onCursor()
 
 void WinPin::onTimer(const UINT& timerId)
 {
-    if (timerId != 18) return;
+    if (timerId != timerID) return;
     if (!shapeHover) {
         refresh();
         killTimer(timerId);
@@ -185,7 +186,7 @@ void WinPin::onMouseUp(const int& x, const int& y)
     else if(shapeHover) {
         shapeHover->mouseUp((float)x, (float)y);
         refresh();
-        setTimer(800,18);
+        setTimer(800, timerID);
     }
 }
 

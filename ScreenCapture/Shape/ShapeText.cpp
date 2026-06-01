@@ -4,17 +4,15 @@
 #include "../Win/WinToolSub.h"
 #include "../Util.h"
 #include "ShapeText.h"
+#include "ShapeTextWin.h"
 
-ShapeText::ShapeText(WinPin* win) :ShapeBase(win), draggers{
-	D2D1::RectF(0,0,0,0),
-	D2D1::RectF(0,0,0,0),
-	D2D1::RectF(0,0,0,0),
-	D2D1::RectF(0,0,0,0) }
+ShapeText::ShapeText(WinPin* win) :ShapeBase(win)
 {
 	auto toolSub = WinToolSub::get();
-	win->render->CreateSolidColorBrush(toolSub->getSelectedColor(), brush.GetAddressOf());
-	strokeWidth = toolSub->sliderVal;
-	isFill = toolSub->selectIndex == 0;
+	color = toolSub->getSelectedColor();
+	fontSize = toolSub->sliderVal;
+	isBold = toolSub->selectIndex == 0;
+	isItalic = toolSub->selectIndex == 1;
 }
 
 ShapeText::~ShapeText()
@@ -24,34 +22,14 @@ ShapeText::~ShapeText()
 
 void ShapeText::paint()
 {
-	if (isFill) {
-		win->render->FillRectangle(rect, brush.Get());
-	}
-	else {
-		win->render->DrawRectangle(rect, brush.Get(), strokeWidth);
-	}
 }
 
 void ShapeText::paintDragger()
 {
-	for (auto& dragger:draggers)
-	{
-		win->render->DrawRectangle(dragger, brushDragger.Get(), win->dpi);
-	}
 }
 
 void ShapeText::mouseDrag(const float& x, const float& y, const UINT_PTR& modifiers)
 {
-	if (hoverDraggerIndex == 0 ) {
-
-	}
-	else if (hoverDraggerIndex == 1) {
-
-	}
-	else if (hoverDraggerIndex == 2) {
-	}
-	else if (hoverDraggerIndex == 3) {
-	}
 }
 
 void ShapeText::mouseDown(const float& x, const float& y)
@@ -59,131 +37,28 @@ void ShapeText::mouseDown(const float& x, const float& y)
 	if (hoverDraggerIndex == -1) { //首次创建
 		pressX = x;
 		pressY = y;
-		hoverDraggerIndex = 4;
-	}
-	else if (hoverDraggerIndex == 0) {
-		pressX = rect.right;
-		pressY = rect.bottom;
-	}
-	else if (hoverDraggerIndex == 1) {
-		pressY = rect.bottom;
-	}
-	else if (hoverDraggerIndex == 2) {
-		pressX = rect.left;
-		pressY = rect.bottom;
-	}
-	else if (hoverDraggerIndex == 3) {
-		pressX = rect.left;
-	}
-	else if (hoverDraggerIndex == 4) {
-		pressX = rect.left;
-		pressY = rect.top;
-	}
-	else if (hoverDraggerIndex == 5) {
-		pressY = rect.top;
-	}
-	else if (hoverDraggerIndex == 6) {
-		pressY = rect.top;
-		pressY = rect.right;
-	}
-	else if (hoverDraggerIndex == 7) {
-		pressX = rect.right;
-	}
-	else if (hoverDraggerIndex == 8) {
-		pressX = x - rect.left;
-		pressY = y - rect.top;
+		auto textWin = ShapeTextWin::get();
+		textWin->setShape(this);
+		textWin->show();
 	}
 }
 
 void ShapeText::mouseUp(const float& x, const float& y)
 {
-	auto half{ draggerSize / 2 }, w{ rect.right - rect.left }, h{ rect.bottom - rect.top };
-	draggers[0].left = rect.left - half;
-	draggers[0].top = rect.top - half;
-	draggers[0].right = rect.left + half;
-	draggers[0].bottom = rect.top + half;
-
-	draggers[1].left = rect.left + w / 2 - half;
-	draggers[1].top = rect.top - half;
-	draggers[1].right = rect.left + w / 2 + half;
-	draggers[1].bottom = rect.top + half;
-
-
-	draggers[2].left = rect.right - half;
-	draggers[2].top = rect.top - half;
-	draggers[2].right = rect.right + half;
-	draggers[2].bottom = rect.top + half;
-
-
-	draggers[3].left = rect.right - half;
-	draggers[3].top = rect.top + h / 2 - half;
-	draggers[3].right = rect.right + half;
-	draggers[3].bottom = rect.top + h / 2 + half;
 
 }
 
 void ShapeText::mouseMove(const float& x, const float& y)
 {
-    hoverDraggerIndex = -1;
-    if (Util::isInRect(draggers[0], x, y))
+    if (Util::isInRect(rect, x, y))
     {
-        hoverDraggerIndex = 0;
-    }
-    else if (Util::isInRect(draggers[1], x, y))
-    {
-        hoverDraggerIndex = 1;
-    }
-    else if (Util::isInRect(draggers[2], x, y))
-    {
-        hoverDraggerIndex = 2;
-    }
-    else if (Util::isInRect(draggers[3], x, y))
-    {
-        hoverDraggerIndex = 3;
-    }
-    else if (Util::isInRect(draggers[4], x, y))
-    {
-        hoverDraggerIndex = 4;
-    }
-    else if (Util::isInRect(draggers[5], x, y))
-    {
-        hoverDraggerIndex = 5;
-    }
-    else if (Util::isInRect(draggers[6], x, y))
-    {
-        hoverDraggerIndex = 6;
-    }
-    else if (Util::isInRect(draggers[7], x, y))
-    {
-        hoverDraggerIndex = 7;
-    }
-    if (hoverDraggerIndex == -1)
-    {
-        auto half{ strokeWidth / 2.f+win->dpi };//多个一个dpi，让范围更大点
-        if (x >= rect.left - half && x <= rect.right + half && y >= rect.top - half && y <= rect.bottom + half ) 
-		{
-			if (x <= rect.left + half || x >= rect.right - half || y <= rect.top + half || y >= rect.bottom - half) {
-				hoverDraggerIndex = 8;
-			}
-        }
+		hoverDraggerIndex = 8;
     }
 }
 
 void ShapeText::setCursor()
 {
-	if (hoverDraggerIndex == 0 || hoverDraggerIndex == 4) {
-		win->setCursor(IDC_SIZENWSE);
-	}
-	else if (hoverDraggerIndex == 1 || hoverDraggerIndex == 5) {
-		win->setCursor(IDC_SIZENS);
-	}
-	else if (hoverDraggerIndex == 2 || hoverDraggerIndex == 6) {
-		win->setCursor(IDC_SIZENESW);
-	}
-	else if (hoverDraggerIndex == 3 || hoverDraggerIndex == 7) {
-		win->setCursor(IDC_SIZEWE);
-	}
-	else if (hoverDraggerIndex == 8) {
-		win->setCursor(IDC_SIZEALL);
+	if (hoverDraggerIndex == 8) {
+		win->setCursor(IDC_IBEAM);
 	}
 }

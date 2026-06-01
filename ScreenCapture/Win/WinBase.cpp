@@ -9,6 +9,7 @@ namespace {
     static ComPtr<ID2D1Device1> d2dDev;
     static ComPtr<IDXGIFactory5> fac5;
     static ComPtr<IDWriteFactory5> dwriteFactory;
+    static ComPtr<IDWriteTextFormat> iconFormat;
     static BOOL allowTearing = FALSE; //是否允许撕裂呈现（允许的话效果稍弱，但渲染更快，咱这个应用尽可能的允许）
 }
 
@@ -55,10 +56,11 @@ void WinBase::resize(const int& w, const int& h)
         targetBmp = nullptr;
         if (w > 0 && h > 0)
         {
-            swap->ResizeBuffers(0, w, h, DXGI_FORMAT_UNKNOWN, 0);
+            UINT flags = allowTearing ? DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING : 0;
+            auto hr = swap->ResizeBuffers(0, w, h, DXGI_FORMAT_UNKNOWN, flags);
             createBitmap();
         }
-        InvalidateRect(hwnd, nullptr, false); //todo感觉不需要
+        InvalidateRect(hwnd, nullptr, false);
     }
 }
 
@@ -71,16 +73,6 @@ void WinBase::enableShadow()
     DwmSetWindowAttribute(hwnd, DWMWA_ALLOW_NCPAINT, &value, sizeof(value));
     DWM_WINDOW_CORNER_PREFERENCE preference = DWMWCP_DONOTROUND;
     DwmSetWindowAttribute(hwnd, DWMWA_WINDOW_CORNER_PREFERENCE, &preference, sizeof(preference));
-}
-void WinBase::enableAlpha()
-{
-    HRGN region = CreateRectRgn(0, 0, -1, -1);
-    DWM_BLURBEHIND bb = { 0 };
-    bb.dwFlags = DWM_BB_ENABLE | DWM_BB_BLURREGION;
-    bb.hRgnBlur = region;
-    bb.fEnable = TRUE;
-    DwmEnableBlurBehindWindow(hwnd, &bb);
-    DeleteObject(region);
 }
 void WinBase::setTimer(const UINT& elapse, const UINT& id)
 {
@@ -98,7 +90,7 @@ void WinBase::setCursor(LPCWSTR cursorName)
 }
 void WinBase::createWindow(const DWORD& exStyle, const DWORD& style)
 {
-    hwnd = CreateWindowEx(exStyle | WS_EX_NOREDIRECTIONBITMAP, getWinClsName().c_str(), NULL, style, x, y, w, h, NULL, NULL, App::get()->hInstance, NULL);
+    hwnd = CreateWindowEx(exStyle | WS_EX_NOREDIRECTIONBITMAP| WS_EX_TOOLWINDOW, getWinClsName().c_str(), NULL, style| WS_POPUP, x, y, w, h, NULL, NULL, App::get()->hInstance, NULL);
     SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
 	dpi = GetDpiForWindow(hwnd) / 96.0f;
     initDevice();
@@ -126,7 +118,32 @@ void WinBase::initDevice()
         hr = CreateDXGIFactory2(0, IID_PPV_ARGS(&fac5));
         hr = fac5->CheckFeatureSupport(DXGI_FEATURE_PRESENT_ALLOW_TEARING, &allowTearing, sizeof(allowTearing));//判断设备是否允许撕裂呈现
         hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory), reinterpret_cast<::IUnknown**>(dwriteFactory.GetAddressOf()));
-        });
+        
+		//加载内置图标字体
+        HRSRC hRes = FindResource(NULL, L"iconfont.ttf", RT_RCDATA);
+        if (!hRes) return nullptr;
+        HGLOBAL hData = LoadResource(NULL, hRes);
+        if (!hData) return nullptr;
+        void* pData = LockResource(hData);
+        DWORD size = SizeofResource(NULL, hRes);
+        ComPtr<IDWriteInMemoryFontFileLoader> loader;
+        dwriteFactory->CreateInMemoryFontFileLoader(loader.GetAddressOf());
+        dwriteFactory->RegisterFontFileLoader(loader.Get());
+        ComPtr<IDWriteFontFile> fontFile;
+        loader->CreateInMemoryFontFileReference(dwriteFactory.Get(), pData, size, nullptr, fontFile.GetAddressOf());
+        ComPtr<IDWriteFontSetBuilder1> fontSetBuilder;
+        dwriteFactory->CreateFontSetBuilder(fontSetBuilder.GetAddressOf());
+        fontSetBuilder->AddFontFile(fontFile.Get());
+        ComPtr<IDWriteFontSet> fontSet;
+        fontSetBuilder->CreateFontSet(fontSet.GetAddressOf());
+        ComPtr<IDWriteFontCollection1> fontCollection;
+        dwriteFactory->CreateFontCollectionFromFontSet(fontSet.Get(), fontCollection.GetAddressOf());
+        //auto win = WinCap::get();
+        dwriteFactory->CreateTextFormat(L"icon", fontCollection.Get(),
+            DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
+            12.f, L"", iconFormat.GetAddressOf());
+
+    });
 }
 
 HRESULT WinBase::initDC()
@@ -164,13 +181,13 @@ HRESULT WinBase::initDC()
 
 HRESULT WinBase::createBitmap()
 {
-    winrt::com_ptr<IDXGISurface> surf;
+    ComPtr<IDXGISurface> surf;
     auto hr = swap->GetBuffer(0, IID_PPV_ARGS(&surf));
     if (FAILED(hr)) return S_FALSE;
     D2D1_BITMAP_PROPERTIES1 bp{};
     bp.bitmapOptions = D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW;
     bp.pixelFormat = D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED);
-    hr = render->CreateBitmapFromDxgiSurface(surf.get(), &bp, targetBmp.GetAddressOf());
+    hr = render->CreateBitmapFromDxgiSurface(surf.Get(), &bp, targetBmp.GetAddressOf());
     if (FAILED(hr)) return S_FALSE;
     render->SetTarget(targetBmp.Get());
     // auto dpi{ this->dpi * 96.0f };
@@ -198,63 +215,8 @@ IDWriteFactory5* WinBase::getWriteFactory()
     return dwriteFactory.Get();
 }
 
-IDWriteTextFormat* WinBase::getTextFormat(const float& fontSize)
-{
-    static ComPtr<IDWriteTextFormat> textFormat;
-    if (!textFormat.Get()) {
-        dwriteFactory->CreateTextFormat(L"Microsoft YaHei", nullptr,
-            DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
-            fontSize, L"", textFormat.GetAddressOf());
-    }
-    return textFormat.Get();
-}
 
-IDWriteTextFormat* WinBase::getIconFormat()
-{
-    static ComPtr<IDWriteTextFormat> iconFormat;
-    if (!iconFormat.Get()) {
-        HRSRC hRes = FindResource(NULL, L"iconfont.ttf", RT_RCDATA);
-        if (!hRes) return nullptr;
-        HGLOBAL hData = LoadResource(NULL, hRes);
-        if (!hData) return nullptr;
-        void* pData = LockResource(hData);
-        DWORD size = SizeofResource(NULL, hRes);
 
-        ComPtr<IDWriteInMemoryFontFileLoader> loader;
-        dwriteFactory->CreateInMemoryFontFileLoader(loader.GetAddressOf());
-        dwriteFactory->RegisterFontFileLoader(loader.Get());
-        ComPtr<IDWriteFontFile> fontFile;
-        loader->CreateInMemoryFontFileReference(dwriteFactory.Get(), pData, size, nullptr, fontFile.GetAddressOf());
-        ComPtr<IDWriteFontSetBuilder1> fontSetBuilder;
-        dwriteFactory->CreateFontSetBuilder(fontSetBuilder.GetAddressOf());
-        fontSetBuilder->AddFontFile(fontFile.Get());
-        ComPtr<IDWriteFontSet> fontSet;
-        fontSetBuilder->CreateFontSet(fontSet.GetAddressOf());
-        ComPtr<IDWriteFontCollection1> fontCollection;
-        dwriteFactory->CreateFontCollectionFromFontSet(fontSet.Get(), fontCollection.GetAddressOf());
-        //auto win = WinCap::get();
-        dwriteFactory->CreateTextFormat(L"icon", fontCollection.Get(),
-            DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
-            12.f, L"", iconFormat.GetAddressOf());
-
-        //ComPtr<IDWriteTextLayout> layout;
-        //dwriteFactory->CreateTextLayout(L"asdf", wcslen(L"asdf"), iconFormat.Get(),
-        //    1000, 800, layout.GetAddressOf());
-        //layout->SetFontSize(1212.f, { 0, 0 });
-        //ComPtr<ID2D1SolidColorBrush> brush;
-        //rt->CreateSolidColorBrush(fontColor, brush.GetAddressOf());
-        //// 2. 在哪画、怎么画
-        //D2D1_POINT_2F origin = { 10.0f, 20.0f }; // 左上角起点（逻辑坐标）
-        //rt->DrawTextLayout(
-        //    origin,
-        //    layout.Get(),
-        //    brush.Get(),
-        //    D2D1_DRAW_TEXT_OPTIONS_NONE // 或 ENABLE_COLOR_FONT / CLIP 等
-        //);
-    }
-
-    return iconFormat.Get();
-}
 
 std::wstring& WinBase::getWinClsName()
 {
@@ -388,12 +350,10 @@ void WinBase::paint()
 
 ComPtr<IDWriteTextLayout> WinBase::getIconLayout(const std::wstring& icon, const float& fontSize, const float& w, const float& h)
 {
-    auto format = getIconFormat();
     ComPtr<IDWriteTextLayout> layout;
-    dwriteFactory->CreateTextLayout(icon.data(), icon.length(), format, w, h, layout.GetAddressOf());
+    dwriteFactory->CreateTextLayout(icon.data(), icon.length(), iconFormat.Get(), w, h, layout.GetAddressOf());
     layout->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
     layout->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
     layout->SetFontSize(fontSize, { 0, static_cast<UINT32>(icon.length()) });
     return layout;
 }
-

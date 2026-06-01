@@ -70,6 +70,9 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Label="Vcpkg">
+    <VcpkgEnabled>false</VcpkgEnabled>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -120,6 +123,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>comctl32.lib;d2d1.lib;dcomp.lib;dwmapi.lib;dwrite.lib;imm32.lib;mf.lib;mfreadwrite.lib;mfplat.lib;mfuuid.lib;ole32.lib;shcore.lib;shell32.lib;shlwapi.lib;ws2_32.lib;winmm.lib;windowsapp.lib;userenv.lib;uuid.lib;ntdll.lib;D:\sdk\gifski\target\release\gifski.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <ManifestFile />
     </Link>
     <Manifest>
       <EnableSegmentHeap>true</EnableSegmentHeap>
@@ -139,11 +143,15 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DebugInformationFormat>None</DebugInformationFormat>
+      <Optimization>MinSpace</Optimization>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>comctl32.lib;d2d1.lib;dcomp.lib;dwmapi.lib;dwrite.lib;imm32.lib;mf.lib;mfreadwrite.lib;mfplat.lib;mfuuid.lib;ole32.lib;shcore.lib;shell32.lib;shlwapi.lib;ws2_32.lib;winmm.lib;windowsapp.lib;userenv.lib;uuid.lib;ntdll.lib;D:\sdk\gifski\target\release\gifski.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <ManifestFile />
     </Link>
     <Manifest>
       <EnableSegmentHeap>true</EnableSegmentHeap>

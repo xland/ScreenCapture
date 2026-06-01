@@ -3,14 +3,14 @@
 #include "WinPix.h"
 #include "WinCap.h"
 
+//todo 这个类里很多尺寸数据都没用到dpi;
 namespace {
     static constexpr int scaleNum{ 5 }, imgH{5*30}, srcW{ 50 }, srcH{ 30 };
 }
 
 WinPix::WinPix(const int& x, const int& y) : WinBase(x, y, srcW* scaleNum, imgH + 112)
 {
-    createWindow(WS_EX_TOOLWINDOW);
-    enableAlpha();
+    createWindow();
     initRes();
     show();
 }
@@ -52,6 +52,9 @@ void WinPix::initRes()
     crossRect1 = D2D1::RectF(w / 2 + crossWHalf, imgH / 2 - crossWHalf, w, imgH / 2 + crossWHalf);
     crossRect2 = D2D1::RectF(w / 2 - crossWHalf, 0.f, w / 2 + crossWHalf, imgH / 2 - crossWHalf);
     crossRect3 = D2D1::RectF(w / 2 - crossWHalf, imgH / 2 + crossWHalf, w / 2 + crossWHalf, imgH);
+    getWriteFactory()->CreateTextFormat(L"Microsoft YaHei", nullptr,
+        DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
+        fontSize, L"", textFormat.GetAddressOf());
 }
 
 COLORREF WinPix::paintImg()
@@ -95,21 +98,18 @@ COLORREF WinPix::paintImg()
 }
 
 void WinPix::paintText(COLORREF& cr, const int& x, const int& y) {
-
-    float fontSize{ 15.0 };
     float padding{ 9.0 };
-    auto format = getTextFormat(fontSize);
     BYTE r = GetRValue(cr), g = GetGValue(cr), b = GetBValue(cr);
     wchar_t hex[8];
     swprintf_s(hex, L"#%02X%02X%02X", r, g, b);
     auto str = std::format(L"HEX (Ctrl+H) : {}", hex);
     D2D1_RECT_F rect = D2D1::RectF(padding, imgH+ padding, w, imgH + padding + fontSize );    
-    render->DrawText(str.data(), str.length(), format, rect, textBrush.Get());
+    render->DrawText(str.data(), str.length(), textFormat.Get(), rect, textBrush.Get());
 
     rect.top = rect.bottom+padding;
     rect.bottom = rect.top+fontSize;
     str = std::format(L"RGB (Ctrl+R) : {},{},{}", r, g, b);
-    render->DrawText(str.data(), str.length(), format, rect, textBrush.Get());
+    render->DrawText(str.data(), str.length(), textFormat.Get(), rect, textBrush.Get());
 
     double R = r / 255.0, G = g / 255.0, B = b / 255.0;
     double K = 1.0 - (std::max)(R, (std::max)(G, B));
@@ -123,11 +123,11 @@ void WinPix::paintText(COLORREF& cr, const int& x, const int& y) {
     rect.top = rect.bottom + padding;
     rect.bottom = rect.top + fontSize;
     str = std::format(L"CMYK (Ctrl+K) : {},{},{},{}", c, m, y1, k);
-    render->DrawText(str.data(), str.length(), format, rect, textBrush.Get());
+    render->DrawText(str.data(), str.length(), textFormat.Get(), rect, textBrush.Get());
     rect.top = rect.bottom + padding;
     rect.bottom = rect.top + fontSize;
     str = std::format(L"POS (Ctrl+P) : X:{} Y:{}", cursorX, cursorY);
-    render->DrawText(str.data(), str.length(), format, rect, textBrush.Get());
+    render->DrawText(str.data(), str.length(), textFormat.Get(), rect, textBrush.Get());
 }
 
 void WinPix::onPaint()

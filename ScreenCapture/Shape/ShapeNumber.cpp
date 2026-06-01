@@ -177,10 +177,13 @@ void ShapeNumber::makeTextLayout()
 	layoutText.Reset();
 	auto valStr = std::to_wstring(val);
 	auto d = r * 2;
-	auto format = win->getIconFormat();
+
+	ComPtr<IDWriteTextFormat> textFormat;
+	win->getWriteFactory()->CreateTextFormat(L"Microsoft YaHei", nullptr,
+		DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
+		r, L"", textFormat.GetAddressOf());
 	auto dwrite = win->getWriteFactory();
-	dwrite->CreateTextLayout(valStr.data(), (UINT32)valStr.length(), format, d, d, layoutText.GetAddressOf());
+	dwrite->CreateTextLayout(valStr.data(), (UINT32)valStr.length(), textFormat.Get(), d, d, layoutText.GetAddressOf());
 	layoutText->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
 	layoutText->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
-	layoutText->SetFontSize(r, { 0, static_cast<UINT32>(valStr.length()) });
 }
