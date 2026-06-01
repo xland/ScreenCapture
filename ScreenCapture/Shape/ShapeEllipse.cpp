@@ -129,8 +129,8 @@ void ShapeEllipse::mouseDown(const float& x, const float& y)
 		pressY = rect.top;
 	}
 	else if (hoverDraggerIndex == 6) {
+		pressX = rect.right;
 		pressY = rect.top;
-		pressY = rect.right;
 	}
 	else if (hoverDraggerIndex == 7) {
 		pressX = rect.right;

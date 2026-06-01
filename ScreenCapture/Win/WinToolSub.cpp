@@ -22,56 +22,56 @@ void WinToolSub::initVal()
     auto toolMain = WinToolMain::get();
     marginTop =  4.f * toolMain->dpi;
     auto span{ 4.f * toolMain->dpi };
-    y = toolMain->y + toolMain->h + 3.f * toolMain->dpi;
-    h = int(toolMain->h + marginTop);
-    btnSize = toolMain->h;
+    y = int(toolMain->y + toolMain->h + 3.f * toolMain->dpi+0.5);
+    h = int(toolMain->h + marginTop + 0.5);
+    btnSize = float(toolMain->h);
     colorBtnW = toolMain->dpi * 23;
     if (toolMain->state == "rect" || toolMain->state == "ellipse") {
-        w = 316 * toolMain->dpi;
+        w = int(316 * toolMain->dpi);
         btnStart = 0;
         btnEnd = btnStart + btnSize;
-        sliderMax = 16;
-        sliderMin = 1;
-        sliderVal = 3;
+        sliderMax = 16.f;
+        sliderMin = 1.f;
+        sliderVal = 3.f;
         sliderStart = btnEnd + span;
         sliderEnd = sliderStart + 120.f;
         colorStart = sliderEnd + span;
-        colorEnd = w;
+        colorEnd = float(w);
     }
     else if (toolMain->state == "arrow") {
-        w = 316 * toolMain->dpi;
+        w = int(316 * toolMain->dpi);
         btnStart = 0;
         btnEnd = btnStart + btnSize;
-        sliderMax = 16;
-        sliderMin = 1;
-        sliderVal = 3;
+        sliderMax = 16.f;
+        sliderMin = 1.f;
+        sliderVal = 3.f;
         selectIndex = 0;
         sliderStart = btnEnd + span;
         sliderEnd = sliderStart + 120.f;
         colorStart = sliderEnd + span;
-        colorEnd = w;
+        colorEnd = float(w);
     }
     else if (toolMain->state == "line") {
         w = (int)(316 * toolMain->dpi);
         btnStart = 0;
         btnEnd = btnStart + btnSize;
-        sliderMax = 60;
-        sliderMin = 1;
-        sliderVal = 3;
+        sliderMax = 60.f;
+        sliderMin = 1.f;
+        sliderVal = 3.f;
         sliderStart = btnEnd + span;
         sliderEnd = sliderStart + 120.f;
         colorStart = sliderEnd + span;
-        colorEnd = w;
+        colorEnd = float(w);
     }
     else if (toolMain->state == "number") {
         w = (int)(228 * toolMain->dpi);
         btnStart = 0;
         btnEnd = btnStart + btnSize;
-        sliderStart = 0;
-        sliderEnd = 0;
+        sliderStart = 0.f;
+        sliderEnd = 0.f;
         selectIndex = 0;
         colorStart = btnEnd ;
-        colorEnd = w;
+        colorEnd = float(w);
     }
     else if (toolMain->state == "text") {
         w = (int)(348 * toolMain->dpi);
@@ -83,10 +83,10 @@ void WinToolSub::initVal()
         sliderStart = btnEnd + span;
         sliderEnd = sliderStart + 120.f;
         colorStart = sliderEnd + span;
-        colorEnd = w;
+        colorEnd = float(w);
     }
     else if (toolMain->state == "mosaic" || toolMain->state == "eraser") {
-        w = 126 * toolMain->dpi;
+        w = int(126 * toolMain->dpi);
         btnStart = 0;
         btnEnd = btnStart + btnSize;
         sliderMax = 22;
@@ -98,7 +98,7 @@ void WinToolSub::initVal()
     arrowX = btnSize * toolMain->selectIndex + btnSize / 2;
     if (arrowX + 6.f * toolMain->dpi > w)
     {
-        x = toolMain->x + arrowX - w / 2; // 箭头顶点位于子工具条正中间
+        x = int(toolMain->x + arrowX - w / 2+0.5); // 箭头顶点位于子工具条正中间
         arrowX = w / 2.f;
     }
     else
@@ -166,7 +166,7 @@ bool WinToolSub::hoverColor(const int& x)
         hoverColorIndex = indexColor; 
         if (indexColor >= 0) {
             tipText = colorName[indexColor];
-            showTipAt(this->x + colorStart + indexColor * colorBtnW + btnSize / 2, this->y + marginTop + 4 * dpi);
+            showTipAt(int(this->x + colorStart + indexColor * colorBtnW + btnSize / 2+0.5), int(this->y + marginTop + 4 * dpi+0.5));
         }
         return true;
     }
@@ -314,7 +314,7 @@ void WinToolSub::onMouseMove(const int& x, const int& y)
     if (x > sliderStart && x < sliderEnd) {
         float val = ((float)x - sliderStart) / (sliderEnd - sliderStart) * (sliderMax - sliderMin)+sliderMin;
         tipText = std::format(L"{}", std::round(val));;
-        showTipAt(this->x + x, this->y + marginTop + 4 * dpi);
+        showTipAt(this->x + x, int(this->y + marginTop + 4 * dpi+0.5));
     }
     bool needRefreshBtn = hoverBtn(x);
     bool needRefreshColor = hoverColor(x);
@@ -373,7 +373,7 @@ void WinToolSub::onMouseDrag(const int& x, const int& y, const UINT_PTR& modifie
     if (x < sliderStart || x > sliderEnd) return;
     sliderVal = ((float)x - sliderStart) / (sliderEnd - sliderStart) * (sliderMax - sliderMin) + sliderMin;
     tipText = std::format(L"{}", std::round(sliderVal));
-    showTipAt(this->x + x, this->y + marginTop + 4 * dpi);
+    showTipAt(this->x + x, int(this->y + marginTop + 4 * dpi+0.5));
     refresh();
 }
 

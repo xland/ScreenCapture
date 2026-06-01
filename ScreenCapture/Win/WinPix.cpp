@@ -29,13 +29,13 @@ void WinPix::move(const int& x, const int& y)
     cursorY = y;
     auto win = WinCap::get();
     auto span{ 10*dpi };
-    this->x = x + span;
+    this->x = int(x + span+0.5f);
     if (this->x + w > win->w) {
-        this->x = x - span - w;
+        this->x = int(x - span - w+0.5f);
     }
-    this->y = y + span;
+    this->y = int(y + span+0.5f);
     if (this->y + h > win->h) {
-        this->y = y - span - h;
+        this->y = int(y - span - h+0.5f);
     }
     WinBase::move(this->x, this->y);
     refresh();
@@ -96,8 +96,8 @@ COLORREF WinPix::paintImg()
 
 void WinPix::paintText(COLORREF& cr, const int& x, const int& y) {
 
-    auto fontSize{ 15.0 };
-    auto padding{ 9.0 };
+    float fontSize{ 15.0 };
+    float padding{ 9.0 };
     auto format = getTextFormat(fontSize);
     BYTE r = GetRValue(cr), g = GetGValue(cr), b = GetBValue(cr);
     wchar_t hex[8];
@@ -132,7 +132,7 @@ void WinPix::paintText(COLORREF& cr, const int& x, const int& y) {
 
 void WinPix::onPaint()
 {
-    render->Clear(D2D1::ColorF(0x000000, 0.3));
+    render->Clear(D2D1::ColorF(0x000000, 0.3f));
     auto r = D2D1::RectF(0, 0, w, h);
     render->FillRectangle(r, bgBrush.Get());
     auto cr = paintImg();
