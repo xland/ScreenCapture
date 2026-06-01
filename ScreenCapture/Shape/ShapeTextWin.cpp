@@ -40,7 +40,7 @@ void ShapeTextWin::setShape(ShapeText* shape)
     dwriteFactory->CreateTextLayout(shape->text.data(), static_cast<UINT32>(shape->text.size()), textFormat.Get(), FLT_MAX, FLT_MAX, shape->textLayout.GetAddressOf());
     shape->textLayout->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
     shape->textLayout->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
-    shape->textLayout->SetFontSize(shape->fontSize * dpi, { 0, static_cast<UINT32>(shape->text.length()) });
+    shape->textLayout->SetFontSize(fontSize, { 0, static_cast<UINT32>(shape->text.length()) });
     DWRITE_TEXT_METRICS tm = {};
     shape->textLayout->GetMetrics(&tm);
     auto winW = (int)tm.widthIncludingTrailingWhitespace+padding*2;
@@ -52,7 +52,7 @@ void ShapeTextWin::setShape(ShapeText* shape)
     setTimer(800, timerID);
 }
 
-void ShapeTextWin::onMouseDrag(const int& x, const int& y, const UINT_PTR& modifiers)
+void ShapeTextWin::onMouseDrag(const int& x, const int& y, const UINT_PTR& modifiers) // 测试
 {
 
 }
@@ -66,6 +66,7 @@ bool ShapeTextWin::onCursor()
 void ShapeTextWin::onPaint()
 {
 	//render->Clear(D2D1::ColorF(0xff6688, 0.8));
+    render->Clear(0);
     auto r = D2D1::RectF(0, 0, w, h);
     render->DrawRectangle(r, shape->textBrush.Get(), 2.0f * dpi);
     D2D1_POINT_2F origin = { padding, padding };

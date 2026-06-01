@@ -259,6 +259,7 @@ void WinToolSub::initColor()
 
 void WinToolSub::onPaint()
 {
+    render->Clear(0);
     render->FillGeometry(borderPath.Get(), brushBg.Get());
     render->DrawGeometry(borderPath.Get(), brushSpliter.Get(), dpi);
     auto win = WinToolMain::get();

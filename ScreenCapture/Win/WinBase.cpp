@@ -10,6 +10,7 @@ namespace {
     static ComPtr<IDXGIFactory5> fac5;
     static ComPtr<IDWriteFactory5> dwriteFactory;
     static ComPtr<IDWriteTextFormat> iconFormat;
+    //static ComPtr<IDWriteRenderingParams> renderingParams;
     static BOOL allowTearing = FALSE; //是否允许撕裂呈现（允许的话效果稍弱，但渲染更快，咱这个应用尽可能的允许）
 }
 
@@ -52,10 +53,10 @@ void WinBase::resize(const int& w, const int& h)
 	this->h = h;
 	SetWindowPos(hwnd, nullptr, 0, 0, w, h, SWP_NOMOVE | SWP_NOZORDER| SWP_NOREDRAW);
     if (render.Get()) {
-        render->SetTarget(nullptr);
-        targetBmp = nullptr;
         if (w > 0 && h > 0)
         {
+            render->SetTarget(nullptr);
+            targetBmp.Reset();
             UINT flags = allowTearing ? DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING : 0;
             auto hr = swap->ResizeBuffers(0, w, h, DXGI_FORMAT_UNKNOWN, flags);
             createBitmap();
@@ -118,7 +119,7 @@ void WinBase::initDevice()
         hr = CreateDXGIFactory2(0, IID_PPV_ARGS(&fac5));
         hr = fac5->CheckFeatureSupport(DXGI_FEATURE_PRESENT_ALLOW_TEARING, &allowTearing, sizeof(allowTearing));//判断设备是否允许撕裂呈现
         hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory), reinterpret_cast<::IUnknown**>(dwriteFactory.GetAddressOf()));
-        
+        //dwriteFactory->CreateCustomRenderingParams( 1.0f, 0.0f, 1.0f, DWRITE_PIXEL_GEOMETRY_RGB, DWRITE_RENDERING_MODE_GDI_NATURAL, renderingParams.GetAddressOf());
 		//加载内置图标字体
         HRSRC hRes = FindResource(NULL, L"iconfont.ttf", RT_RCDATA);
         if (!hRes) return nullptr;
@@ -152,6 +153,7 @@ HRESULT WinBase::initDC()
     d3d.As(&dxgiDev);
     auto hr = d2dDev->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE, render.GetAddressOf());
     if (FAILED(hr)) return S_FALSE;
+    //render->SetTextRenderingParams(renderingParams.Get());
     DXGI_SWAP_CHAIN_DESC1 scd{};
     scd.Width = w;
     scd.Height = h;
