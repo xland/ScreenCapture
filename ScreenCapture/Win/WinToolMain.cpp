@@ -55,7 +55,7 @@ WinToolMain* WinToolMain::get()
 }
 bool WinToolMain::onCursor()
 {
-    SetCursor(LoadCursor(NULL, IDC_HAND));
+    setCursor(IDC_HAND);
     return TRUE;
 }
 

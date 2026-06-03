@@ -84,5 +84,6 @@ private:
 	int caretSelectionDown{ 0 };
 
 	ComPtr<IDWriteTextFormat> textFormat;
+	ComPtr<ID2D1StrokeStyle> dashedStrokeStyle;
 };
 

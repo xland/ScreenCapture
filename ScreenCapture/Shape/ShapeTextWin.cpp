@@ -12,6 +12,21 @@ ShapeTextWin::ShapeTextWin(const int& x, const int& y, const int& w, const int& 
     dwriteFactory->CreateTextFormat(L"Microsoft YaHei", nullptr,
         DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
         12.f, L"", textFormat.GetAddressOf());
+    float dashes[] = { 2.0f, 2.0f };
+    getD2D()->CreateStrokeStyle(
+        D2D1::StrokeStyleProperties(
+            D2D1_CAP_STYLE_FLAT,      // 起始端点样式
+            D2D1_CAP_STYLE_FLAT,      // 结束端点样式
+            D2D1_CAP_STYLE_ROUND,     // 拐角处线帽（对矩形无影响）
+            D2D1_LINE_JOIN_MITER,     // 线段连接方式
+            10.0f,                    // Miter limit（斜接限制）
+            D2D1_DASH_STYLE_CUSTOM,   // 自定义虚线样式（关键！）
+            0.0f                      // 虚线起始偏移
+        ),
+        dashes,                       // 虚线数组
+        ARRAYSIZE(dashes),            // 数组长度
+        &dashedStrokeStyle
+    );
 }
 
 ShapeTextWin::~ShapeTextWin()
@@ -25,7 +40,7 @@ ShapeTextWin* ShapeTextWin::get()
 		shapeTextWin = std::make_unique<ShapeTextWin>(-99999, -99999, 120, 44);
 		shapeTextWin->createWindow(WS_EX_TOPMOST);
         shapeTextWin->render->CreateSolidColorBrush(D2D1::ColorF(0x99C9EF,0.6), shapeTextWin->textSelectionBgBrush.GetAddressOf());
-		shapeTextWin->padding = 8.f * shapeTextWin->dpi;
+		shapeTextWin->padding = 12.f * shapeTextWin->dpi; //dragger 边框 拖拽移动区域都在这里
 	}
 	return shapeTextWin.get();
 }
@@ -69,15 +84,25 @@ void ShapeTextWin::onMouseDrag(const int& x, const int& y, const UINT_PTR& modif
 
 bool ShapeTextWin::onCursor()
 {
-	setCursor(IDC_IBEAM);
+    POINT pt;
+    GetCursorPos(&pt);
+    ScreenToClient(hwnd, &pt);
+	if (pt.x > padding && pt.x < w - padding && pt.y > padding && pt.y < h - padding)
+	{
+        setCursor(IDC_IBEAM);
+    }
+    else {
+        setCursor(IDC_SIZEALL);
+    }	
 	return TRUE;
 }
 
 void ShapeTextWin::onPaint()
 {
     render->Clear(0);
-    auto r = D2D1::RectF(0, 0, w, h);
-    render->DrawRectangle(r, shape->textBrush.Get(), 2.0f * dpi);
+    auto borderPadding{ 6.f * dpi };
+    auto r = D2D1::RectF(borderPadding, borderPadding, w - borderPadding, h - borderPadding);
+    render->DrawRectangle(r, shape->textBrush.Get(), dpi, dashedStrokeStyle.Get());
     D2D1_POINT_2F origin = { padding, padding };
     paintSelectionBg();
     // 绘制文本
@@ -391,7 +416,7 @@ void ShapeTextWin::paintSelectionBgOneRown(const int& start, const int& end)
     DWRITE_HIT_TEST_METRICS hitStart;
     shape->textLayout->HitTestTextPosition(start, FALSE, &xStart, &yStart, &hitStart);
     shape->textLayout->HitTestTextPosition(end, FALSE, &xEnd, &yStart, &hitStart);
-    xStart += 12.f; yStart += 12.f; xEnd += 12.f;
+    xStart += padding; yStart += padding; xEnd += padding;
     D2D1_RECT_F rect = D2D1::RectF(xStart, yStart, xEnd, yStart + caretHeight);
     render->FillRectangle(rect, textSelectionBgBrush.Get());
 }
