@@ -13,10 +13,6 @@ ShapeText::ShapeText(WinPin* win) :ShapeBase(win)
 	fontSize = toolSub->sliderVal;
 	isBold = toolSub->selectIndex == 0;
 	isItalic = toolSub->selectIndex == 1;
-	auto dwriteFactory = win->getWriteFactory();
-	dwriteFactory->CreateTextFormat(L"Microsoft YaHei", nullptr,
-		DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
-		12.f, L"", textFormat.GetAddressOf());
 }
 
 ShapeText::~ShapeText()
@@ -26,6 +22,8 @@ ShapeText::~ShapeText()
 
 void ShapeText::paint()
 {
+	if (isEditing) return;
+	win->render->DrawTextLayout({ x, y }, textLayout.Get(), textBrush.Get(), D2D1_DRAW_TEXT_OPTIONS_NONE);
 }
 
 void ShapeText::paintDragger()
@@ -38,12 +36,12 @@ void ShapeText::mouseDrag(const float& x, const float& y, const UINT_PTR& modifi
 
 void ShapeText::mouseDown(const float& x, const float& y)
 {
+	pressX = x;
+	pressY = y;
 	if (hoverDraggerIndex == -1) { //首次创建
-		pressX = x;
-		pressY = y;
 		auto textWin = ShapeTextWin::get();
 		textWin->setShape(this);
-		textWin->show();
+		isEditing = true;
 	}
 }
 
@@ -67,12 +65,9 @@ void ShapeText::setCursor()
 	}
 }
 
-void ShapeText::setTextLayout()
+void ShapeText::finishEdit()
 {
-	textLayout.Reset();
-	auto dwriteFactory = win->getWriteFactory();
-	dwriteFactory->CreateTextLayout(text.data(), static_cast<UINT32>(text.size()), textFormat.Get(), FLT_MAX, FLT_MAX, textLayout.GetAddressOf());
-	textLayout->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
-	textLayout->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
-	textLayout->SetFontSize(fontSize, { 0, static_cast<UINT32>(text.length()) });
+
 }
+
+

@@ -8,7 +8,10 @@ std::unique_ptr<ShapeTextWin> shapeTextWin;
 
 ShapeTextWin::ShapeTextWin(const int& x, const int& y, const int& w, const int& h) : WinBase(x, y, w, h)
 {
-
+    auto dwriteFactory = getWriteFactory();
+    dwriteFactory->CreateTextFormat(L"Microsoft YaHei", nullptr,
+        DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
+        12.f, L"", textFormat.GetAddressOf());
 }
 
 ShapeTextWin::~ShapeTextWin()
@@ -22,7 +25,6 @@ ShapeTextWin* ShapeTextWin::get()
 		shapeTextWin = std::make_unique<ShapeTextWin>(-99999, -99999, 120, 44);
 		shapeTextWin->createWindow(WS_EX_TOPMOST);
         shapeTextWin->render->CreateSolidColorBrush(D2D1::ColorF(0x99C9EF,0.6), shapeTextWin->textSelectionBgBrush.GetAddressOf());
-        shapeTextWin->show();
 		shapeTextWin->padding = 8.f * shapeTextWin->dpi;
 	}
 	return shapeTextWin.get();
@@ -30,20 +32,19 @@ ShapeTextWin* ShapeTextWin::get()
 
 void ShapeTextWin::setShape(ShapeText* shape)
 {
+    if (GetFocus() == hwnd) {
+        onBlur();
+    }
     this->shape = shape;
     shape->fontSize = shape->fontSize * dpi;
     render->CreateSolidColorBrush(shape->color, shape->textBrush.GetAddressOf());
-    shape->setTextLayout();
-    DWRITE_TEXT_METRICS tm = {};
-    shape->textLayout->GetMetrics(&tm);
-    auto winW = (int)tm.widthIncludingTrailingWhitespace+padding*2;
-    auto winH = (int)tm.height + padding*2;
-    resize(winW, winH);
-    move((int)(shape->win->x + shape->pressX-winW/2+padding), (int)(shape->win->y + shape->pressY-winH/2+padding));
+    setTextLayout();
+    move((int)(shape->win->x + shape->pressX), (int)(shape->win->y + shape->pressY));
 	setCaretByMousePos(0, 0);
     caretVisible = true;
     refresh();
     setTimer(800, timerID);
+    show();
 }
 
 void ShapeTextWin::onMouseDrag(const int& x, const int& y, const UINT_PTR& modifiers) // 测试
@@ -54,11 +55,11 @@ void ShapeTextWin::onMouseDrag(const int& x, const int& y, const UINT_PTR& modif
     shape->textLayout->HitTestPoint(x - padding, y - padding, &isTrailingHit, &isInside, &caretMetrics);
     auto textPos = caretMetrics.textPosition;
     if (isTrailingHit) textPos += 1;
-    if (caretMetrics.textPosition < caretSelectionDown) {
+    if (caretMetrics.textPosition < caretSelectionDown) { //向后拖拽鼠标
         caretSelectionStart = textPos;
         caretSelectionEnd = caretSelectionDown;
     }
-    if (caretMetrics.textPosition > caretSelectionStart) {
+    if (caretMetrics.textPosition > caretSelectionStart) { //向前拖拽鼠标
         caretSelectionEnd = textPos;
         caretSelectionStart = caretSelectionDown;
     }
@@ -74,14 +75,15 @@ bool ShapeTextWin::onCursor()
 
 void ShapeTextWin::onPaint()
 {
-	//render->Clear(D2D1::ColorF(0xff6688, 0.8));
     render->Clear(0);
     auto r = D2D1::RectF(0, 0, w, h);
     render->DrawRectangle(r, shape->textBrush.Get(), 2.0f * dpi);
     D2D1_POINT_2F origin = { padding, padding };
     paintSelectionBg();
+    // 绘制文本
     render->DrawTextLayout(origin, shape->textLayout.Get(), shape->textBrush.Get(), D2D1_DRAW_TEXT_OPTIONS_NONE);
     if (caretVisible) {
+        //绘制输入光标（caretVisible用于控制闪烁）
         render->DrawLine(caretPos, { caretPos.x,caretPos.y + caretHeight }, shape->textBrush.Get(), 1.0f * dpi);
     }
 }
@@ -89,7 +91,7 @@ void ShapeTextWin::onIME()
 {
     if (HIMC himc = ImmGetContext(hwnd))
     {
-        POINT pt{ caretPos.x, caretPos.y };
+        POINT pt{ caretPos.x, caretPos.y*dpi };
         COMPOSITIONFORM comp{};
         comp.dwStyle = CFS_FORCE_POSITION;
         comp.ptCurrentPos = pt;
@@ -100,6 +102,19 @@ void ShapeTextWin::onIME()
         ImmSetCandidateWindow(himc, &cand);
         ImmReleaseContext(hwnd, himc);
     }
+}
+void ShapeTextWin::onBlur()
+{
+	killTimer(timerID);
+	caretVisible = false;
+    hide();
+	POINT screenPos{ x + padding, y + padding };
+	ScreenToClient(shape->win->hwnd, &screenPos);
+	shape->x = screenPos.x;
+	shape->y = screenPos.y;
+	shape->win->refresh();
+    shape->isEditing = false;
+    //shape->finishEdit();
 }
 void ShapeTextWin::onChar(const UINT& code)
 {
@@ -116,7 +131,7 @@ void ShapeTextWin::onChar(const UINT& code)
         charsLength++;
     }
     shape->text.insert(caretSelectionDown, chars, charsLength);
-    shape->setTextLayout();
+    setTextLayout();
     caretSelectionDown += 1;
     resetCaretPos(caretSelectionDown);
     refresh();
@@ -130,6 +145,7 @@ void ShapeTextWin::onTimer(const UINT& timerId)
 }
 void ShapeTextWin::onMouseDown(const int& x, const int& y, bool isRight)
 {
+    SetFocus(hwnd);
     BOOL isTrailingHit;
     BOOL isInside;
     DWRITE_HIT_TEST_METRICS caretMetrics;
@@ -157,16 +173,16 @@ void ShapeTextWin::onKeyDown(const TCHAR& key)
     if (key == VK_RETURN) {
         delSelection();
         shape->text.insert(caretSelectionDown, 1, L'\n');
-        shape->setTextLayout();
+        setTextLayout();
         caretSelectionDown += 1;
         resetCaretPos(caretSelectionDown);
-        refresh();
+        refresh(); //todo 多一次refresh
     }
     else if (key == VK_BACK) {
         if (!delSelection()) {
             if (caretSelectionDown == 0) return;
             shape->text.erase(caretSelectionDown - 1, 1);
-            shape->setTextLayout();
+            setTextLayout();
             caretSelectionDown -= 1;
             resetCaretPos(caretSelectionDown);
             refresh();
@@ -176,7 +192,7 @@ void ShapeTextWin::onKeyDown(const TCHAR& key)
         if (!delSelection()) {
             if (caretSelectionDown == shape->text.length() - 1) return;
             shape->text.erase(caretSelectionDown, 1);
-            shape->setTextLayout();
+            setTextLayout();
             resetCaretPos(caretSelectionDown);
             refresh();
         }
@@ -185,7 +201,7 @@ void ShapeTextWin::onKeyDown(const TCHAR& key)
         delSelection();
         std::wstring tabStr{ L"    " };
         shape->text.insert(caretSelectionDown, tabStr);
-        shape->setTextLayout();
+        setTextLayout();
         caretSelectionDown += tabStr.length();
         resetCaretPos(caretSelectionDown);
         refresh();
@@ -262,10 +278,10 @@ void ShapeTextWin::onKeyDown(const TCHAR& key)
     else if (key == 'V') {
         auto str = Util::getTextFromClipboard();
         shape->text.insert(caretSelectionDown, str);
-        shape->setTextLayout();
+        setTextLayout();
         caretSelectionDown += str.size();
         resetCaretPos(caretSelectionDown);
-        InvalidateRect(hwnd, nullptr, FALSE);
+        refresh();
         //auto strOp = Util::getTextFromClipboard2();
         //strOp.Completed([this](auto const& sender, auto status) {
         //    auto str = sender.GetResults();
@@ -299,7 +315,7 @@ bool ShapeTextWin::delSelection()
     caretSelectionDown = caretSelectionStart;
     caretSelectionStart = 0;
     caretSelectionEnd = 0;
-    shape->setTextLayout();
+    setTextLayout();
     resetCaretPos(caretSelectionDown);
     refresh();
     return true;
@@ -309,10 +325,11 @@ void ShapeTextWin::setCaretByMousePos(const float& x, const float& y)
     BOOL isTrailingHit;
     BOOL isInside;
     DWRITE_HIT_TEST_METRICS caretMetrics;
+    //给定一个相对于文本布局左上角的像素坐标点，判断该点是否落在文本区域内，并返回与该点对应的文本位置和命中信息。
     shape->textLayout->HitTestPoint(x - padding, y - padding, &isTrailingHit, &isInside, &caretMetrics);
     caretPos.x = caretMetrics.left + padding;
-    auto textPos = caretMetrics.textPosition;
-    if (isTrailingHit) {
+    auto textPos = caretMetrics.textPosition;//命中字符索引
+    if (isTrailingHit) { //用户点击的位置更靠近某个字符的“后导边”还是“前导边”
         caretPos.x += caretMetrics.width;
         textPos += 1;
     }
@@ -326,6 +343,7 @@ void ShapeTextWin::resetCaretPos(const int& textIndex)
 {
     FLOAT xStart, yStart;
     DWRITE_HIT_TEST_METRICS hitStart;
+    //从文本位置推算坐标（输入光标所在的文本的位置->输入光标的坐标）
     shape->textLayout->HitTestTextPosition(textIndex, FALSE, &xStart, &yStart, &hitStart);
     caretPos.x = xStart + padding;
     caretPos.y = yStart + padding;
@@ -376,4 +394,20 @@ void ShapeTextWin::paintSelectionBgOneRown(const int& start, const int& end)
     xStart += 12.f; yStart += 12.f; xEnd += 12.f;
     D2D1_RECT_F rect = D2D1::RectF(xStart, yStart, xEnd, yStart + caretHeight);
     render->FillRectangle(rect, textSelectionBgBrush.Get());
+}
+
+void ShapeTextWin::setTextLayout()
+{
+    shape->textLayout.Reset();
+    auto dwriteFactory = getWriteFactory();
+    dwriteFactory->CreateTextLayout(shape->text.data(), static_cast<UINT32>(shape->text.size()), textFormat.Get(), FLT_MAX, FLT_MAX, shape->textLayout.GetAddressOf());
+    shape->textLayout->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
+    shape->textLayout->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
+    shape->textLayout->SetFontSize(shape->fontSize, { 0, static_cast<UINT32>(shape->text.length()) });
+
+    DWRITE_TEXT_METRICS tm = {}; //文本布局后度量信息的结构体
+    shape->textLayout->GetMetrics(&tm);
+    auto winW = (int)tm.widthIncludingTrailingWhitespace + padding * 2; //包含尾随空白字符（trailing whitespace）在内的文本行宽度
+    auto winH = (int)tm.height + padding * 2;
+    resize(winW, winH);
 }

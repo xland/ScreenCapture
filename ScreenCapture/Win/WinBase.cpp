@@ -289,6 +289,9 @@ LRESULT WinBase::winProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     else if (msg == WM_TIMER) {
         self->onTimer(wParam-WM_APP);
     }
+    else if (msg == WM_KILLFOCUS) {
+        self->onBlur();
+    }
     return DefWindowProc(hwnd, msg, wParam, lParam);
 }
 

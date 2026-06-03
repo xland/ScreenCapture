@@ -41,6 +41,7 @@ protected:
 	virtual void onTimer(const UINT& timerId) {};
 	virtual bool onCursor();
 	virtual void onIME() {};
+	virtual void onBlur() {};
 private:
 	std::wstring& getWinClsName();
 	static LRESULT CALLBACK winProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
