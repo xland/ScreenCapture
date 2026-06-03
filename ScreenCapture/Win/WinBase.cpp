@@ -280,6 +280,9 @@ LRESULT WinBase::winProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     else if (msg == WM_KEYDOWN) {
         self->onKeyDown(wParam);
     }
+    else if (msg == WM_CHAR) {
+        self->onChar(static_cast<UINT>(wParam));
+    }
     else if (msg == WM_IME_STARTCOMPOSITION) {
         self->onIME();
     }

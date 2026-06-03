@@ -59,6 +59,14 @@ void Util::saveToClipboard(int& w, int& h, BYTE* data)
     DeleteObject(hBmp);
 }
 
+void Util::setTextToClipboard(const std::wstring& text)
+{
+    DataPackage dataPackage;
+    dataPackage.SetText(text);
+    Clipboard::SetContent(dataPackage);
+    Clipboard::Flush();
+}
+
 std::wstring Util::getSaveFilePath(HWND hwnd)
 {
     std::wstring result;

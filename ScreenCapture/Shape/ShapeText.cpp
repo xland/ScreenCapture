@@ -13,6 +13,10 @@ ShapeText::ShapeText(WinPin* win) :ShapeBase(win)
 	fontSize = toolSub->sliderVal;
 	isBold = toolSub->selectIndex == 0;
 	isItalic = toolSub->selectIndex == 1;
+	auto dwriteFactory = win->getWriteFactory();
+	dwriteFactory->CreateTextFormat(L"Microsoft YaHei", nullptr,
+		DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
+		12.f, L"", textFormat.GetAddressOf());
 }
 
 ShapeText::~ShapeText()
@@ -61,4 +65,14 @@ void ShapeText::setCursor()
 	if (hoverDraggerIndex == 8) {
 		win->setCursor(IDC_IBEAM);
 	}
+}
+
+void ShapeText::setTextLayout()
+{
+	textLayout.Reset();
+	auto dwriteFactory = win->getWriteFactory();
+	dwriteFactory->CreateTextLayout(text.data(), static_cast<UINT32>(text.size()), textFormat.Get(), FLT_MAX, FLT_MAX, textLayout.GetAddressOf());
+	textLayout->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
+	textLayout->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
+	textLayout->SetFontSize(fontSize, { 0, static_cast<UINT32>(text.length()) });
 }

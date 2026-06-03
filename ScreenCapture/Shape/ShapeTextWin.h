@@ -13,16 +13,21 @@ protected:
 	void onMouseDrag(const int& x, const int& y, const UINT_PTR& modifiers) override;
 	bool onCursor() override;
 	void onPaint() override;
-	void onTimer(const UINT& timerId) override;
 	void onMouseDown(const int& x, const int& y, bool isRight);
+	void onMouseUp(const int& x, const int& y);
 	//void onMouseUp(const int& x, const int& y);
 	//void onMouseLeave();
-	//void onTimer(const int& id);
-	//void onChar(const UINT& code);
-	//void onKey(const UINT& key);
 	//void onIME();
 private:
+	void onIME() override;
+	void onChar(const UINT& code);
+	void onTimer(const UINT& timerId) override;
+	void onKeyDown(const TCHAR& key) override;
 	void setCaretByMousePos(const float& x, const float& y);
+	void resetCaretPos(const int& textIndex);
+	void paintSelectionBg();
+	void paintSelectionBgOneRown(const int& start, const int& end);
+	bool delSelection();
 private:
 	ShapeText* shape{ nullptr };
 	bool caretVisible{ false };
