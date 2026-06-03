@@ -111,18 +111,15 @@ void WinToolSub::initBtn()
 {
     btnId = { "rectFill" , "ellipseFill", "arrowFill", "numberFill" , "lineTransparent" ,"bold" , "italic", "check", "uncheck" };
     btnName = { L"矩形填充",L"圆形填充",L"箭头填充",L"标号填充",L"半透明",L"粗体",L"斜体" };
-    auto fontSize{ 14.f * dpi };
-    btnLayout = {
-        getIconLayout(L"\ue602", fontSize, btnSize, btnSize),
-        getIconLayout(L"\ue600", fontSize, btnSize, btnSize),
-        getIconLayout(L"\ue604", fontSize, btnSize, btnSize),
-        getIconLayout(L"\ue605", fontSize, btnSize, btnSize),
-        getIconLayout(L"\ue607", fontSize, btnSize, btnSize),
-        getIconLayout(L"\ue634", fontSize, btnSize, btnSize),
-        getIconLayout(L"\ue682", fontSize, btnSize, btnSize),
-        getIconLayout(L"\ue721", fontSize, btnSize, btnSize),
-        getIconLayout(L"\ue61d", fontSize, btnSize, btnSize)
-    };
+    addIconLayout(L"\ue602");
+    addIconLayout(L"\ue600");
+    addIconLayout(L"\ue604");
+    addIconLayout(L"\ue605");
+    addIconLayout(L"\ue607");
+    addIconLayout(L"\ue634");
+    addIconLayout(L"\ue682");
+    addIconLayout(L"\ue721");
+    addIconLayout(L"\ue61d");
 }
 
 bool WinToolSub::hoverBtn(const int& x)

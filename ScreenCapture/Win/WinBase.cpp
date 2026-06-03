@@ -9,7 +9,6 @@ namespace {
     static ComPtr<ID2D1Device1> d2dDev;
     static ComPtr<IDXGIFactory5> fac5;
     static ComPtr<IDWriteFactory5> dwriteFactory;
-    static ComPtr<IDWriteTextFormat> iconFormat;
     //static ComPtr<IDWriteRenderingParams> renderingParams;
     static BOOL allowTearing = FALSE; //是否允许撕裂呈现（允许的话效果稍弱，但渲染更快，咱这个应用尽可能的允许）
 }
@@ -120,30 +119,6 @@ void WinBase::initDevice()
         hr = fac5->CheckFeatureSupport(DXGI_FEATURE_PRESENT_ALLOW_TEARING, &allowTearing, sizeof(allowTearing));//判断设备是否允许撕裂呈现
         hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory), reinterpret_cast<::IUnknown**>(dwriteFactory.GetAddressOf()));
         //dwriteFactory->CreateCustomRenderingParams( 1.0f, 0.0f, 1.0f, DWRITE_PIXEL_GEOMETRY_RGB, DWRITE_RENDERING_MODE_GDI_NATURAL, renderingParams.GetAddressOf());
-		//加载内置图标字体
-        HRSRC hRes = FindResource(NULL, L"iconfont.ttf", RT_RCDATA);
-        if (!hRes) return nullptr;
-        HGLOBAL hData = LoadResource(NULL, hRes);
-        if (!hData) return nullptr;
-        void* pData = LockResource(hData);
-        DWORD size = SizeofResource(NULL, hRes);
-        ComPtr<IDWriteInMemoryFontFileLoader> loader;
-        dwriteFactory->CreateInMemoryFontFileLoader(loader.GetAddressOf());
-        dwriteFactory->RegisterFontFileLoader(loader.Get());
-        ComPtr<IDWriteFontFile> fontFile;
-        loader->CreateInMemoryFontFileReference(dwriteFactory.Get(), pData, size, nullptr, fontFile.GetAddressOf());
-        ComPtr<IDWriteFontSetBuilder1> fontSetBuilder;
-        dwriteFactory->CreateFontSetBuilder(fontSetBuilder.GetAddressOf());
-        fontSetBuilder->AddFontFile(fontFile.Get());
-        ComPtr<IDWriteFontSet> fontSet;
-        fontSetBuilder->CreateFontSet(fontSet.GetAddressOf());
-        ComPtr<IDWriteFontCollection1> fontCollection;
-        dwriteFactory->CreateFontCollectionFromFontSet(fontSet.Get(), fontCollection.GetAddressOf());
-        //auto win = WinCap::get();
-        dwriteFactory->CreateTextFormat(L"icon", fontCollection.Get(),
-            DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
-            12.f, L"", iconFormat.GetAddressOf());
-
     });
 }
 
@@ -348,14 +323,4 @@ void WinBase::paint()
     if (allowTearing) presentFlags |= DXGI_PRESENT_ALLOW_TEARING;
     swap->Present(0, presentFlags);
     EndPaint(hwnd, &ps);
-}
-
-ComPtr<IDWriteTextLayout> WinBase::getIconLayout(const std::wstring& icon, const float& fontSize, const float& w, const float& h)
-{
-    ComPtr<IDWriteTextLayout> layout;
-    dwriteFactory->CreateTextLayout(icon.data(), icon.length(), iconFormat.Get(), w, h, layout.GetAddressOf());
-    layout->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
-    layout->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
-    layout->SetFontSize(fontSize, { 0, static_cast<UINT32>(icon.length()) });
-    return layout;
 }

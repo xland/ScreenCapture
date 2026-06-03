@@ -154,20 +154,18 @@ void WinToolMain::initBtn()
     btnId = { "rect" , "ellipse", "arrow", "number" , "line" ,"text" , "mosaic", "eraser", "undo", "redo", "pin", "clipboard" , "save" , "close" };
     btnName = { L"矩形",L"圆形",L"箭头",L"标号",L"线条",L"文本",L"马赛克",L"橡皮擦",L"撤销",L"重做",L"钉住",L"剪切板",L"保存",L"关闭" };
     auto fontSize{ 14.f * dpi };
-    btnLayout = {
-        getIconLayout(L"\ue8e8", fontSize, btnSize, btnSize),
-        getIconLayout(L"\ue6bc", fontSize, btnSize, btnSize),
-        getIconLayout(L"\ue603", fontSize, btnSize, btnSize),
-        getIconLayout(L"\ue776", fontSize, btnSize, btnSize),
-        getIconLayout(L"\ue601", fontSize, btnSize, btnSize),
-        getIconLayout(L"\ue6ec", fontSize, btnSize, btnSize),
-        getIconLayout(L"\ue82e", fontSize, btnSize, btnSize),
-        getIconLayout(L"\ue6be", fontSize, btnSize, btnSize),
-        getIconLayout(L"\ued85", fontSize, btnSize, btnSize),
-        getIconLayout(L"\ued8a", fontSize, btnSize, btnSize),
-        getIconLayout(L"\ue6a2", fontSize, btnSize, btnSize),
-        getIconLayout(L"\ue650", fontSize, btnSize, btnSize),
-        getIconLayout(L"\ue608", fontSize, btnSize, btnSize),
-        getIconLayout(L"\ue62d", fontSize, btnSize, btnSize),
-    };
+    addIconLayout(L"\ue8e8");
+    addIconLayout(L"\ue6bc");
+    addIconLayout(L"\ue603");
+    addIconLayout(L"\ue776");
+    addIconLayout(L"\ue601");
+    addIconLayout(L"\ue6ec");
+    addIconLayout(L"\ue82e");
+    addIconLayout(L"\ue6be");
+    addIconLayout(L"\ued85");
+    addIconLayout(L"\ued8a");
+    addIconLayout(L"\ue6a2");
+    addIconLayout(L"\ue650");
+    addIconLayout(L"\ue608");
+    addIconLayout(L"\ue62d");
 }

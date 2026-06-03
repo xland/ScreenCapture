@@ -71,6 +71,42 @@ void WinToolBase::initTip()
     SendMessage(tipHwnd, TTM_SETDELAYTIME, TTDT_INITIAL, MAKELONG(0, 0));
     //SetWindowPos(tipHwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
 }
+void WinToolBase::addIconLayout(const std::wstring& icon)
+{
+    auto dwriteFactory = getWriteFactory();
+    static ComPtr<IDWriteTextFormat> iconFormat;
+	if (!iconFormat.Get()) {
+        //加载内置图标字体
+        HRSRC hRes = FindResource(NULL, L"iconfont.ttf", RT_RCDATA);
+        if (!hRes) return;
+        HGLOBAL hData = LoadResource(NULL, hRes);
+        if (!hData) return;
+        void* pData = LockResource(hData);
+        DWORD size = SizeofResource(NULL, hRes);
+        ComPtr<IDWriteInMemoryFontFileLoader> loader;
+        dwriteFactory->CreateInMemoryFontFileLoader(loader.GetAddressOf());
+        dwriteFactory->RegisterFontFileLoader(loader.Get());
+        ComPtr<IDWriteFontFile> fontFile;
+        loader->CreateInMemoryFontFileReference(dwriteFactory, pData, size, nullptr, fontFile.GetAddressOf());
+        ComPtr<IDWriteFontSetBuilder1> fontSetBuilder;
+        dwriteFactory->CreateFontSetBuilder(fontSetBuilder.GetAddressOf());
+        fontSetBuilder->AddFontFile(fontFile.Get());
+        ComPtr<IDWriteFontSet> fontSet;
+        fontSetBuilder->CreateFontSet(fontSet.GetAddressOf());
+        ComPtr<IDWriteFontCollection1> fontCollection;
+        dwriteFactory->CreateFontCollectionFromFontSet(fontSet.Get(), fontCollection.GetAddressOf());
+        dwriteFactory->CreateTextFormat(L"icon", fontCollection.Get(),
+            DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
+            12.f, L"", iconFormat.GetAddressOf());
+	}
+    ComPtr<IDWriteTextLayout> layout;
+    dwriteFactory->CreateTextLayout(icon.data(), icon.length(), iconFormat.Get(), btnSize, btnSize, layout.GetAddressOf());
+    layout->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+    layout->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+    layout->SetFontSize(14.f * dpi, { 0, static_cast<UINT32>(icon.length()) });
+	btnLayout.push_back(std::move(layout));
+
+}
 void WinToolBase::showTipAt(int x, int y)
 {
     TOOLINFOW ti = { 0 };

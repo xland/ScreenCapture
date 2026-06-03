@@ -12,6 +12,7 @@ public:
 protected:
 	void initBrush();
 	void initTip();
+	void addIconLayout(const std::wstring& icon);
 	void paintIcon(const float& posX,IDWriteTextLayout* icon,bool isHover,bool isSelected);
 	IDWriteTextLayout* getBtnIconLayout(const std::string& name);
 	void showTipAt(int x, int y);

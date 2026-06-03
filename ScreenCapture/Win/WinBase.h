@@ -15,7 +15,6 @@ public:
 	void initDevice();
 	HRESULT initDC();
 	HRESULT createBitmap();
-	ComPtr<IDWriteTextLayout> getIconLayout(const std::wstring& icon, const float& fontSize, const float& w, const float& h);
 	void enableShadow();
 	void setTimer(const UINT& elapse, const UINT& id);
 	void killTimer(const UINT& id);
