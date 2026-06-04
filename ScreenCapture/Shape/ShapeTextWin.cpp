@@ -30,14 +30,14 @@ ShapeTextWin* ShapeTextWin::get()
 
 void ShapeTextWin::setShape(ShapeText* shape)
 {
-    if (GetFocus() == hwnd) {
-        onBlur();
-    }
     this->shape = shape;
     render->CreateSolidColorBrush(shape->color, shape->textBrush.GetAddressOf());
     move((int)shape->winX, (int)shape->winY);
     shape->setTextLayout();
-	setCaretByMousePos(0, 0);
+    POINT mousePos{0,0};
+    GetCursorPos(&mousePos);
+	ScreenToClient(hwnd, &mousePos);
+	setCaretByMousePos(mousePos.x, mousePos.y);
     caretVisible = true;
     refresh();
     setTimer(800, timerID);
@@ -124,6 +124,7 @@ void ShapeTextWin::onHidden()
 void ShapeTextWin::onChar(const UINT& code)
 {
     if (code < 0x20 && code != 9) return;
+    delSelection();
     caretSelectionStart = 0;
     caretSelectionEnd = 0;
     UINT32 charsLength = 1;

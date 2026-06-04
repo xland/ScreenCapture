@@ -69,8 +69,6 @@ void ShapeText::mouseDrag(const float& x, const float& y, const UINT_PTR& modifi
 
 void ShapeText::mouseDown(const float& x, const float& y)
 {
-	pressX = x;
-	pressY = y;
 	if (hoverDraggerIndex == -1) { //首次创建
 		auto textWin = ShapeTextWin::get();
 		winX = win->x + x;
@@ -80,11 +78,15 @@ void ShapeText::mouseDown(const float& x, const float& y)
 		win->refresh();
 	}
 	else if (hoverDraggerIndex == 8) {
+		pressX = x;
+		pressY = y;
 		isEditing = false;
 		ShapeTextWin::get()->hide();
 		win->refresh();
 	}
 	else if (hoverDraggerIndex == 1) {
+		pressX = x;
+		pressY = y;
 		auto textWin = ShapeTextWin::get();
 		textWin->setShape(this);
 		isEditing = true;
