@@ -14,10 +14,11 @@ public:
 	void mouseMove(const float& x, const float& y) override;
 	void setCursor() override;
 	void finishEdit();
+	void setTextLayout();
 public:
 	bool isEditing{ false };
 	D2D1_COLOR_F color;
-	float pressX, pressY, fontSize,x,y, borderPadding;
+	float pressX, pressY, fontSize,x,y, borderPadding,winX,winY;
 	bool isBold{ false }, isItalic{ false };
 	std::wstring text{ LR"(‌‌ )" };
 	ComPtr<IDWriteTextLayout> textLayout;
@@ -25,6 +26,5 @@ public:
 	D2D1_RECT_F rect;
 	ComPtr<ID2D1StrokeStyle> dashedStrokeStyle;
 private:
-	std::vector<D2D1_RECT_F> draggers;
 };
 

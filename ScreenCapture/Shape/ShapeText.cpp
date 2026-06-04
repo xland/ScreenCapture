@@ -6,11 +6,7 @@
 #include "ShapeText.h"
 #include "ShapeTextWin.h"
 
-ShapeText::ShapeText(WinPin* win) :ShapeBase(win), borderPadding{ 6.f * win->dpi }, draggers{
-	D2D1::RectF(0,0,0,0),
-	D2D1::RectF(0,0,0,0),
-	D2D1::RectF(0,0,0,0),
-	D2D1::RectF(0,0,0,0) }
+ShapeText::ShapeText(WinPin* win) :ShapeBase(win), borderPadding{ 6.f * win->dpi }
 {
 	auto toolSub = WinToolSub::get();
 	color = toolSub->getSelectedColor();
@@ -52,10 +48,6 @@ void ShapeText::paint()
 
 void ShapeText::paintDragger()
 {
-	for (auto& dragger : draggers)
-	{
-		win->render->DrawRectangle(dragger, brushDragger.Get(), win->dpi);
-	}
 }
 
 void ShapeText::mouseDrag(const float& x, const float& y, const UINT_PTR& modifiers)
@@ -68,6 +60,8 @@ void ShapeText::mouseDrag(const float& x, const float& y, const UINT_PTR& modifi
 		rect.right += spanX;
 		rect.top += spanY;
 		rect.bottom += spanY;
+		winX += spanX;
+		winY += spanY;
 		pressX = x;
 		pressY = y;
 	}
@@ -79,6 +73,8 @@ void ShapeText::mouseDown(const float& x, const float& y)
 	pressY = y;
 	if (hoverDraggerIndex == -1) { //首次创建
 		auto textWin = ShapeTextWin::get();
+		winX = win->x + x;
+		winY = win->y + y;
 		textWin->setShape(this);
 		isEditing = true;
 		win->refresh();
@@ -88,54 +84,33 @@ void ShapeText::mouseDown(const float& x, const float& y)
 		ShapeTextWin::get()->hide();
 		win->refresh();
 	}
+	else if (hoverDraggerIndex == 1) {
+		auto textWin = ShapeTextWin::get();
+		textWin->setShape(this);
+		isEditing = true;
+		win->refresh();
+	}
 }
 
 void ShapeText::mouseUp(const float& x, const float& y)
 {
-	auto half{ draggerSize / 2 }, w{ rect.right - rect.left }, h{ rect.bottom - rect.top };
-	draggers[0].left = rect.left - half;
-	draggers[0].top = rect.top - half;
-	draggers[0].right = rect.left + half;
-	draggers[0].bottom = rect.top + half;
-
-
-	draggers[1].left = rect.right - half;
-	draggers[1].top = rect.top - half;
-	draggers[1].right = rect.right + half;
-	draggers[1].bottom = rect.top + half;
-
-
-	draggers[2].left = rect.right - half;
-	draggers[2].top = rect.bottom - half;
-	draggers[2].right = rect.right + half;
-	draggers[2].bottom = rect.bottom + half;
-
-	draggers[3].left = rect.left - half;
-	draggers[3].top = rect.bottom - half;
-	draggers[3].right = rect.left + half;
-	draggers[3].bottom = rect.bottom + half;
 }
 
 void ShapeText::mouseMove(const float& x, const float& y)
 {
+	hoverDraggerIndex = -1;
 	auto half{ borderPadding / 2.f + win->dpi };//多个一个dpi，让范围更大点
-	auto hoverIndex{-1};
 	if (x >= rect.left - half && x <= rect.right + half && y >= rect.top - half && y <= rect.bottom + half)
 	{
 		if (x <= rect.left + half || x >= rect.right - half || y <= rect.top + half || y >= rect.bottom - half) {
-			hoverIndex = 8;
+			hoverDraggerIndex = 8;
 		}
 		else {
-			hoverIndex = 1;
+			hoverDraggerIndex = 1;
 		}
 	}
-	else {
-		hoverIndex = 0;
-	}
-	if (hoverIndex != hoverDraggerIndex)
-	{
-		hoverDraggerIndex = hoverIndex;
-		win->refresh();
+	else if(isEditing) {
+		hoverDraggerIndex = 0; //必须让当前形状是shapeHover
 	}
 }
 
@@ -144,17 +119,44 @@ void ShapeText::setCursor()
 	if (hoverDraggerIndex == 8) {
 		win->setCursor(IDC_SIZEALL);
 	}
+	else if (hoverDraggerIndex == 1 ) {
+		win->setCursor(IDC_IBEAM);
+	}
 	else if (hoverDraggerIndex == 0) {
 		win->setCursor(IDC_ARROW);
-	}
-	else if (hoverDraggerIndex == 1) {
-		win->setCursor(IDC_IBEAM);
 	}
 }
 
 void ShapeText::finishEdit()
 {
 
+}
+
+void ShapeText::setTextLayout()
+{
+	auto textWin = ShapeTextWin::get();
+	textLayout.Reset();
+	auto dwriteFactory = win->getWriteFactory();
+	dwriteFactory->CreateTextLayout(text.data(), static_cast<UINT32>(text.size()), textWin->textFormat.Get(), FLT_MAX, FLT_MAX, textLayout.GetAddressOf());
+	textLayout->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
+	textLayout->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
+	textLayout->SetFontSize(fontSize, { 0, static_cast<UINT32>(text.length()) });
+	textLayout->SetFontWeight(isBold ? DWRITE_FONT_WEIGHT_BOLD : DWRITE_FONT_WEIGHT_NORMAL, { 0, static_cast<UINT32>(text.length()) });
+	textLayout->SetFontStyle(isItalic ? DWRITE_FONT_STYLE_ITALIC : DWRITE_FONT_STYLE_NORMAL, { 0, static_cast<UINT32>(text.length()) });
+
+	DWRITE_TEXT_METRICS tm = {}; //文本布局后度量信息的结构体
+	textLayout->GetMetrics(&tm);
+	auto winW = (int)tm.widthIncludingTrailingWhitespace; //包含尾随空白字符（trailing whitespace）在内的文本行宽度
+	auto winH = (int)tm.height;
+	textWin->resize(winW, winH);
+
+	POINT pos{ winX, winY };
+	ScreenToClient(win->hwnd, &pos);
+	rect = D2D1::RectF(pos.x - borderPadding, pos.y - borderPadding,
+		pos.x + winW + borderPadding,
+		pos.y + winH + borderPadding);
+
+	win->refresh();
 }
 
 

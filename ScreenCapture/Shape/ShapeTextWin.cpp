@@ -34,10 +34,9 @@ void ShapeTextWin::setShape(ShapeText* shape)
         onBlur();
     }
     this->shape = shape;
-    shape->fontSize = shape->fontSize * dpi;
     render->CreateSolidColorBrush(shape->color, shape->textBrush.GetAddressOf());
-    move((int)(shape->win->x + shape->pressX), (int)(shape->win->y + shape->pressY));
-    setTextLayout();
+    move((int)shape->winX, (int)shape->winY);
+    shape->setTextLayout();
 	setCaretByMousePos(0, 0);
     caretVisible = true;
     refresh();
@@ -137,7 +136,7 @@ void ShapeTextWin::onChar(const UINT& code)
         charsLength++;
     }
     shape->text.insert(caretSelectionDown, chars, charsLength);
-    setTextLayout();
+    shape->setTextLayout();
     caretSelectionDown += 1;
     resetCaretPos(caretSelectionDown);
     refresh();
@@ -179,7 +178,7 @@ void ShapeTextWin::onKeyDown(const TCHAR& key)
     if (key == VK_RETURN) {
         delSelection();
         shape->text.insert(caretSelectionDown, 1, L'\n');
-        setTextLayout();
+        shape->setTextLayout();
         caretSelectionDown += 1;
         resetCaretPos(caretSelectionDown);
         refresh(); //todo 多一次refresh
@@ -188,7 +187,7 @@ void ShapeTextWin::onKeyDown(const TCHAR& key)
         if (!delSelection()) {
             if (caretSelectionDown == 0) return;
             shape->text.erase(caretSelectionDown - 1, 1);
-            setTextLayout();
+            shape->setTextLayout();
             caretSelectionDown -= 1;
             resetCaretPos(caretSelectionDown);
             refresh();
@@ -198,7 +197,7 @@ void ShapeTextWin::onKeyDown(const TCHAR& key)
         if (!delSelection()) {
             if (caretSelectionDown == shape->text.length() - 1) return;
             shape->text.erase(caretSelectionDown, 1);
-            setTextLayout();
+            shape->setTextLayout();
             resetCaretPos(caretSelectionDown);
             refresh();
         }
@@ -207,7 +206,7 @@ void ShapeTextWin::onKeyDown(const TCHAR& key)
         delSelection();
         std::wstring tabStr{ L"    " };
         shape->text.insert(caretSelectionDown, tabStr);
-        setTextLayout();
+        shape->setTextLayout();
         caretSelectionDown += tabStr.length();
         resetCaretPos(caretSelectionDown);
         refresh();
@@ -284,7 +283,7 @@ void ShapeTextWin::onKeyDown(const TCHAR& key)
     else if (key == 'V') {
         auto str = Util::getTextFromClipboard();
         shape->text.insert(caretSelectionDown, str);
-        setTextLayout();
+        shape->setTextLayout();
         caretSelectionDown += str.size();
         resetCaretPos(caretSelectionDown);
         refresh();
@@ -321,7 +320,7 @@ bool ShapeTextWin::delSelection()
     caretSelectionDown = caretSelectionStart;
     caretSelectionStart = 0;
     caretSelectionEnd = 0;
-    setTextLayout();
+    shape->setTextLayout();
     resetCaretPos(caretSelectionDown);
     refresh();
     return true;
@@ -399,31 +398,4 @@ void ShapeTextWin::paintSelectionBgOneRown(const int& start, const int& end)
     shape->textLayout->HitTestTextPosition(end, FALSE, &xEnd, &yStart, &hitStart);
     D2D1_RECT_F rect = D2D1::RectF(xStart, yStart, xEnd, yStart + caretHeight);
     render->FillRectangle(rect, textSelectionBgBrush.Get());
-}
-
-void ShapeTextWin::setTextLayout()
-{
-    shape->textLayout.Reset();
-    auto dwriteFactory = getWriteFactory();
-    dwriteFactory->CreateTextLayout(shape->text.data(), static_cast<UINT32>(shape->text.size()), textFormat.Get(), FLT_MAX, FLT_MAX, shape->textLayout.GetAddressOf());
-    shape->textLayout->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
-    shape->textLayout->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
-    shape->textLayout->SetFontSize(shape->fontSize, { 0, static_cast<UINT32>(shape->text.length()) });
-    shape->textLayout->SetFontWeight(shape->isBold? DWRITE_FONT_WEIGHT_BOLD: DWRITE_FONT_WEIGHT_NORMAL, { 0, static_cast<UINT32>(shape->text.length()) });
-    shape->textLayout->SetFontStyle(shape->isItalic? DWRITE_FONT_STYLE_ITALIC: DWRITE_FONT_STYLE_NORMAL, { 0, static_cast<UINT32>(shape->text.length()) });
-
-    DWRITE_TEXT_METRICS tm = {}; //文本布局后度量信息的结构体
-    shape->textLayout->GetMetrics(&tm);
-    auto winW = (int)tm.widthIncludingTrailingWhitespace; //包含尾随空白字符（trailing whitespace）在内的文本行宽度
-    auto winH = (int)tm.height;
-    resize(winW, winH);
-
-    POINT pos{ x, y };
-    ScreenToClient(shape->win->hwnd, &pos);
-    shape->rect = D2D1::RectF(pos.x - shape->borderPadding, 
-        pos.y - shape->borderPadding, 
-        pos.x + w + shape->borderPadding, 
-        pos.y + h + shape->borderPadding);
-
-    shape->win->refresh();
 }

@@ -10,6 +10,7 @@ public:
 	static ShapeTextWin* get();
 	void setShape(ShapeText* shape);
 public:
+	ComPtr<IDWriteTextFormat> textFormat;
 protected:
 private:
 	void onCreated() override;
@@ -51,10 +52,6 @@ private:
 	/// </summary>
 	/// <returns></returns>
 	bool delSelection();
-	/// <summary>
-	/// 
-	/// </summary>
-	void setTextLayout();
 private:
 	/// <summary>
 	/// 形状对象指针，用于访问文本内容和布局等信息
@@ -84,7 +81,5 @@ private:
 	/// 选中文本动作，鼠标按下的位置
 	/// </summary>
 	int caretSelectionDown{ 0 };
-
-	ComPtr<IDWriteTextFormat> textFormat;
 };
 

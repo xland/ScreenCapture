@@ -136,7 +136,7 @@ void WinPin::onMouseMove(const int& x, const int& y)
         if (cur->hoverDraggerIndex>=0) {
             if (shapeHover != cur) {
                 shapeHover = cur;
-                setTimer(800, 18);
+                setTimer(800, timerID);
                 refresh();
             }
             return;
