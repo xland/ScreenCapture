@@ -90,7 +90,8 @@ void ShapeTextWin::onIME()
 {
     if (HIMC himc = ImmGetContext(hwnd))
     {
-        POINT pt{ caretPos.x+1, caretPos.y*dpi+1 };
+        POINT pt{ caretPos.x+1, std::min((float)h-1,caretPos.y)};
+		log(L"IME position: {}, {},{}", pt.x, pt.y,h);
         COMPOSITIONFORM comp{};
         comp.dwStyle = CFS_FORCE_POSITION;
         comp.ptCurrentPos = pt;
@@ -111,9 +112,8 @@ void ShapeTextWin::onBlur()
 	//ScreenToClient(shape->win->hwnd, &screenPos);
 	//shape->x = screenPos.x;
 	//shape->y = screenPos.y;
-	//shape->win->refresh();
     shape->isEditing = false;
-    //shape->finishEdit();
+	shape->win->refresh();
 }
 void ShapeTextWin::onShown()
 {
