@@ -39,8 +39,6 @@ ShapeTextWin* ShapeTextWin::get()
 	if (!shapeTextWin.get()) {
 		shapeTextWin = std::make_unique<ShapeTextWin>(-99999, -99999, 120, 44);
 		shapeTextWin->createWindow(WS_EX_TOPMOST);
-        shapeTextWin->render->CreateSolidColorBrush(D2D1::ColorF(0x99C9EF,0.6), shapeTextWin->textSelectionBgBrush.GetAddressOf());
-		shapeTextWin->padding = 12.f * shapeTextWin->dpi; //dragger 边框 拖拽移动区域都在这里
 	}
 	return shapeTextWin.get();
 }
@@ -61,7 +59,24 @@ void ShapeTextWin::setShape(ShapeText* shape)
     setTimer(800, timerID);
     show();
 }
+void ShapeTextWin::onCreated()
+{
+    render->CreateSolidColorBrush(D2D1::ColorF(0x99C9EF, 0.6), textSelectionBgBrush.GetAddressOf());
+    padding = shapeTextWin->dpi; //dragger 边框 拖拽移动区域都在这里
+}
 
+void ShapeTextWin::onPaint()
+{
+    render->Clear(0);
+    D2D1_POINT_2F origin = { padding, padding };
+    paintSelectionBg();
+    // 绘制文本
+    render->DrawTextLayout(origin, shape->textLayout.Get(), shape->textBrush.Get(), D2D1_DRAW_TEXT_OPTIONS_NONE);
+    if (caretVisible) {
+        //绘制输入光标（caretVisible用于控制闪烁）
+        render->DrawLine(caretPos, { caretPos.x,caretPos.y + caretHeight }, shape->textBrush.Get(), 1.0f * dpi);
+    }
+}
 void ShapeTextWin::onMouseDrag(const int& x, const int& y, const UINT_PTR& modifiers) // 测试
 {
     BOOL isTrailingHit;
@@ -97,21 +112,7 @@ bool ShapeTextWin::onCursor()
 	return TRUE;
 }
 
-void ShapeTextWin::onPaint()
-{
-    render->Clear(0);
-    auto borderPadding{ 6.f * dpi };
-    auto r = D2D1::RectF(borderPadding, borderPadding, w - borderPadding, h - borderPadding);
-    render->DrawRectangle(r, shape->textBrush.Get(), dpi, dashedStrokeStyle.Get());
-    D2D1_POINT_2F origin = { padding, padding };
-    paintSelectionBg();
-    // 绘制文本
-    render->DrawTextLayout(origin, shape->textLayout.Get(), shape->textBrush.Get(), D2D1_DRAW_TEXT_OPTIONS_NONE);
-    if (caretVisible) {
-        //绘制输入光标（caretVisible用于控制闪烁）
-        render->DrawLine(caretPos, { caretPos.x,caretPos.y + caretHeight }, shape->textBrush.Get(), 1.0f * dpi);
-    }
-}
+
 void ShapeTextWin::onIME()
 {
     if (HIMC himc = ImmGetContext(hwnd))
@@ -133,11 +134,11 @@ void ShapeTextWin::onBlur()
 	killTimer(timerID);
 	caretVisible = false;
     hide();
-	POINT screenPos{ x + padding, y + padding };
-	ScreenToClient(shape->win->hwnd, &screenPos);
-	shape->x = screenPos.x;
-	shape->y = screenPos.y;
-	shape->win->refresh();
+	//POINT screenPos{ x + padding, y + padding };
+	//ScreenToClient(shape->win->hwnd, &screenPos);
+	//shape->x = screenPos.x;
+	//shape->y = screenPos.y;
+	//shape->win->refresh();
     shape->isEditing = false;
     //shape->finishEdit();
 }
@@ -429,6 +430,8 @@ void ShapeTextWin::setTextLayout()
     shape->textLayout->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
     shape->textLayout->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
     shape->textLayout->SetFontSize(shape->fontSize, { 0, static_cast<UINT32>(shape->text.length()) });
+    shape->textLayout->SetFontWeight(shape->isBold? DWRITE_FONT_WEIGHT_BOLD: DWRITE_FONT_WEIGHT_NORMAL, { 0, static_cast<UINT32>(shape->text.length()) });
+    shape->textLayout->SetFontStyle(shape->isItalic? DWRITE_FONT_STYLE_ITALIC: DWRITE_FONT_STYLE_NORMAL, { 0, static_cast<UINT32>(shape->text.length()) });
 
     DWRITE_TEXT_METRICS tm = {}; //文本布局后度量信息的结构体
     shape->textLayout->GetMetrics(&tm);

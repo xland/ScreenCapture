@@ -9,11 +9,14 @@ public:
 	~ShapeTextWin();
 	static ShapeTextWin* get();
 	void setShape(ShapeText* shape);
+public:
+	ComPtr<ID2D1StrokeStyle> dashedStrokeStyle;
 protected:
 private:
+	void onCreated() override;
+	void onPaint() override;
 	void onMouseDrag(const int& x, const int& y, const UINT_PTR& modifiers) override;
 	bool onCursor() override;
-	void onPaint() override;
 	void onMouseDown(const int& x, const int& y, bool isRight);
 	void onMouseUp(const int& x, const int& y);
 	void onTimer(const UINT& timerId) override;
@@ -84,6 +87,5 @@ private:
 	int caretSelectionDown{ 0 };
 
 	ComPtr<IDWriteTextFormat> textFormat;
-	ComPtr<ID2D1StrokeStyle> dashedStrokeStyle;
 };
 

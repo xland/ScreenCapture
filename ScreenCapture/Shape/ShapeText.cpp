@@ -22,8 +22,15 @@ ShapeText::~ShapeText()
 
 void ShapeText::paint()
 {
-	if (isEditing) return;
-	win->render->DrawTextLayout({ x, y }, textLayout.Get(), textBrush.Get(), D2D1_DRAW_TEXT_OPTIONS_NONE);
+	auto textWin = ShapeTextWin::get();
+	POINT pos{ textWin->x, textWin->y };
+	ScreenToClient(win->hwnd, &pos);
+	if (isEditing) {
+		auto borderPadding{ 6.f * win->dpi };
+		auto r = D2D1::RectF(pos.x-borderPadding, pos.y-borderPadding, pos.x+textWin->w + borderPadding, pos.y+textWin->h + borderPadding);
+		win->render->DrawRectangle(r, textBrush.Get(), win->dpi, textWin->dashedStrokeStyle.Get());
+	}
+	win->render->DrawTextLayout({ (float)pos.x, (float)pos.y }, textLayout.Get(), textBrush.Get(), D2D1_DRAW_TEXT_OPTIONS_NONE);
 }
 
 void ShapeText::paintDragger()
@@ -42,6 +49,7 @@ void ShapeText::mouseDown(const float& x, const float& y)
 		auto textWin = ShapeTextWin::get();
 		textWin->setShape(this);
 		isEditing = true;
+		win->refresh();
 	}
 }
 

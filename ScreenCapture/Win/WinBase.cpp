@@ -96,6 +96,7 @@ void WinBase::createWindow(const DWORD& exStyle, const DWORD& style)
     initDevice();
     initDC();
     createBitmap();
+    onCreated();
 }
 
 void WinBase::initDevice()

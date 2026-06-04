@@ -29,6 +29,7 @@ public:
 	ComPtr<ID2D1DeviceContext> render;
 protected:
 	virtual LRESULT onHitTest(WPARAM wParam, LPARAM lParam);
+	virtual void onCreated() {};
 	virtual void onPaint() = 0;
 	virtual void onMouseMove(const int& x, const int& y) {};
 	virtual void onMouseDrag(const int& x, const int& y,const UINT_PTR& modifiers) {};
