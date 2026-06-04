@@ -238,6 +238,14 @@ LRESULT WinBase::winProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     {
         return 1;
     }
+    else if (msg == WM_SHOWWINDOW) {
+        if (wParam) {
+            self->onShown();
+        }
+        else {
+            self->onHidden();
+        }
+    }
     else if (msg == WM_PAINT)
     {
         self->paint();

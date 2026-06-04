@@ -12,21 +12,6 @@ ShapeTextWin::ShapeTextWin(const int& x, const int& y, const int& w, const int& 
     dwriteFactory->CreateTextFormat(L"Microsoft YaHei", nullptr,
         DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
         12.f, L"", textFormat.GetAddressOf());
-    float dashes[] = { 2.0f, 2.0f };
-    getD2D()->CreateStrokeStyle(
-        D2D1::StrokeStyleProperties(
-            D2D1_CAP_STYLE_FLAT,      // 起始端点样式
-            D2D1_CAP_STYLE_FLAT,      // 结束端点样式
-            D2D1_CAP_STYLE_ROUND,     // 拐角处线帽（对矩形无影响）
-            D2D1_LINE_JOIN_MITER,     // 线段连接方式
-            10.0f,                    // Miter limit（斜接限制）
-            D2D1_DASH_STYLE_CUSTOM,   // 自定义虚线样式（关键！）
-            0.0f                      // 虚线起始偏移
-        ),
-        dashes,                       // 虚线数组
-        ARRAYSIZE(dashes),            // 数组长度
-        &dashedStrokeStyle
-    );
 }
 
 ShapeTextWin::~ShapeTextWin()
@@ -51,8 +36,8 @@ void ShapeTextWin::setShape(ShapeText* shape)
     this->shape = shape;
     shape->fontSize = shape->fontSize * dpi;
     render->CreateSolidColorBrush(shape->color, shape->textBrush.GetAddressOf());
-    setTextLayout();
     move((int)(shape->win->x + shape->pressX), (int)(shape->win->y + shape->pressY));
+    setTextLayout();
 	setCaretByMousePos(0, 0);
     caretVisible = true;
     refresh();
@@ -62,16 +47,14 @@ void ShapeTextWin::setShape(ShapeText* shape)
 void ShapeTextWin::onCreated()
 {
     render->CreateSolidColorBrush(D2D1::ColorF(0x99C9EF, 0.6), textSelectionBgBrush.GetAddressOf());
-    padding = shapeTextWin->dpi; //dragger 边框 拖拽移动区域都在这里
 }
 
 void ShapeTextWin::onPaint()
 {
     render->Clear(0);
-    D2D1_POINT_2F origin = { padding, padding };
     paintSelectionBg();
     // 绘制文本
-    render->DrawTextLayout(origin, shape->textLayout.Get(), shape->textBrush.Get(), D2D1_DRAW_TEXT_OPTIONS_NONE);
+    render->DrawTextLayout(D2D1_POINT_2F{ 0, 0 }, shape->textLayout.Get(), shape->textBrush.Get(), D2D1_DRAW_TEXT_OPTIONS_NONE);
     if (caretVisible) {
         //绘制输入光标（caretVisible用于控制闪烁）
         render->DrawLine(caretPos, { caretPos.x,caretPos.y + caretHeight }, shape->textBrush.Get(), 1.0f * dpi);
@@ -82,7 +65,7 @@ void ShapeTextWin::onMouseDrag(const int& x, const int& y, const UINT_PTR& modif
     BOOL isTrailingHit;
     BOOL isInside;
     DWRITE_HIT_TEST_METRICS caretMetrics;
-    shape->textLayout->HitTestPoint(x - padding, y - padding, &isTrailingHit, &isInside, &caretMetrics);
+    shape->textLayout->HitTestPoint(x, y, &isTrailingHit, &isInside, &caretMetrics);
     auto textPos = caretMetrics.textPosition;
     if (isTrailingHit) textPos += 1;
     if (caretMetrics.textPosition < caretSelectionDown) { //向后拖拽鼠标
@@ -99,16 +82,7 @@ void ShapeTextWin::onMouseDrag(const int& x, const int& y, const UINT_PTR& modif
 
 bool ShapeTextWin::onCursor()
 {
-    POINT pt;
-    GetCursorPos(&pt);
-    ScreenToClient(hwnd, &pt);
-	if (pt.x > padding && pt.x < w - padding && pt.y > padding && pt.y < h - padding)
-	{
-        setCursor(IDC_IBEAM);
-    }
-    else {
-        setCursor(IDC_SIZEALL);
-    }	
+    setCursor(IDC_IBEAM);
 	return TRUE;
 }
 
@@ -117,7 +91,7 @@ void ShapeTextWin::onIME()
 {
     if (HIMC himc = ImmGetContext(hwnd))
     {
-        POINT pt{ caretPos.x, caretPos.y*dpi };
+        POINT pt{ caretPos.x+1, caretPos.y*dpi+1 };
         COMPOSITIONFORM comp{};
         comp.dwStyle = CFS_FORCE_POSITION;
         comp.ptCurrentPos = pt;
@@ -142,6 +116,12 @@ void ShapeTextWin::onBlur()
     shape->isEditing = false;
     //shape->finishEdit();
 }
+void ShapeTextWin::onShown()
+{
+    SetFocus(hwnd);
+}
+void ShapeTextWin::onHidden()
+{}
 void ShapeTextWin::onChar(const UINT& code)
 {
     if (code < 0x20 && code != 9) return;
@@ -175,14 +155,14 @@ void ShapeTextWin::onMouseDown(const int& x, const int& y, bool isRight)
     BOOL isTrailingHit;
     BOOL isInside;
     DWRITE_HIT_TEST_METRICS caretMetrics;
-    shape->textLayout->HitTestPoint(x - padding, y - padding, &isTrailingHit, &isInside, &caretMetrics);
-    caretPos.x = caretMetrics.left + padding;
+    shape->textLayout->HitTestPoint(x, y, &isTrailingHit, &isInside, &caretMetrics);
+    caretPos.x = caretMetrics.left;
     auto textPos = caretMetrics.textPosition;
     if (isTrailingHit) {
         caretPos.x += caretMetrics.width;
         textPos += 1;
     }
-    caretPos.y = caretMetrics.top + padding;
+    caretPos.y = caretMetrics.top;
     caretHeight = caretMetrics.height;
     caretSelectionDown = textPos;
     caretSelectionStart = 0;
@@ -352,14 +332,14 @@ void ShapeTextWin::setCaretByMousePos(const float& x, const float& y)
     BOOL isInside;
     DWRITE_HIT_TEST_METRICS caretMetrics;
     //给定一个相对于文本布局左上角的像素坐标点，判断该点是否落在文本区域内，并返回与该点对应的文本位置和命中信息。
-    shape->textLayout->HitTestPoint(x - padding, y - padding, &isTrailingHit, &isInside, &caretMetrics);
-    caretPos.x = caretMetrics.left + padding;
+    shape->textLayout->HitTestPoint(x, y, &isTrailingHit, &isInside, &caretMetrics);
+    caretPos.x = caretMetrics.left;
     auto textPos = caretMetrics.textPosition;//命中字符索引
     if (isTrailingHit) { //用户点击的位置更靠近某个字符的“后导边”还是“前导边”
         caretPos.x += caretMetrics.width;
         textPos += 1;
     }
-    caretPos.y = caretMetrics.top + padding;
+    caretPos.y = caretMetrics.top;
     caretHeight = caretMetrics.height;
     caretSelectionDown = textPos;
     caretSelectionStart = 0;
@@ -371,8 +351,8 @@ void ShapeTextWin::resetCaretPos(const int& textIndex)
     DWRITE_HIT_TEST_METRICS hitStart;
     //从文本位置推算坐标（输入光标所在的文本的位置->输入光标的坐标）
     shape->textLayout->HitTestTextPosition(textIndex, FALSE, &xStart, &yStart, &hitStart);
-    caretPos.x = xStart + padding;
-    caretPos.y = yStart + padding;
+    caretPos.x = xStart;
+    caretPos.y = yStart;
     caretVisible = true;
 }
 void ShapeTextWin::paintSelectionBg()
@@ -417,7 +397,6 @@ void ShapeTextWin::paintSelectionBgOneRown(const int& start, const int& end)
     DWRITE_HIT_TEST_METRICS hitStart;
     shape->textLayout->HitTestTextPosition(start, FALSE, &xStart, &yStart, &hitStart);
     shape->textLayout->HitTestTextPosition(end, FALSE, &xEnd, &yStart, &hitStart);
-    xStart += padding; yStart += padding; xEnd += padding;
     D2D1_RECT_F rect = D2D1::RectF(xStart, yStart, xEnd, yStart + caretHeight);
     render->FillRectangle(rect, textSelectionBgBrush.Get());
 }
@@ -435,7 +414,16 @@ void ShapeTextWin::setTextLayout()
 
     DWRITE_TEXT_METRICS tm = {}; //文本布局后度量信息的结构体
     shape->textLayout->GetMetrics(&tm);
-    auto winW = (int)tm.widthIncludingTrailingWhitespace + padding * 2; //包含尾随空白字符（trailing whitespace）在内的文本行宽度
-    auto winH = (int)tm.height + padding * 2;
+    auto winW = (int)tm.widthIncludingTrailingWhitespace; //包含尾随空白字符（trailing whitespace）在内的文本行宽度
+    auto winH = (int)tm.height;
     resize(winW, winH);
+
+    POINT pos{ x, y };
+    ScreenToClient(shape->win->hwnd, &pos);
+    shape->rect = D2D1::RectF(pos.x - shape->borderPadding, 
+        pos.y - shape->borderPadding, 
+        pos.x + w + shape->borderPadding, 
+        pos.y + h + shape->borderPadding);
+
+    shape->win->refresh();
 }

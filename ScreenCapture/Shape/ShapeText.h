@@ -17,12 +17,14 @@ public:
 public:
 	bool isEditing{ false };
 	D2D1_COLOR_F color;
-	float pressX, pressY, fontSize,x,y;
+	float pressX, pressY, fontSize,x,y, borderPadding;
 	bool isBold{ false }, isItalic{ false };
-	std::wstring text{ LR"(‌‌)" };
+	std::wstring text{ LR"(‌‌ )" };
 	ComPtr<IDWriteTextLayout> textLayout;
 	ComPtr<ID2D1SolidColorBrush> textBrush;
 	D2D1_RECT_F rect;
+	ComPtr<ID2D1StrokeStyle> dashedStrokeStyle;
 private:
+	std::vector<D2D1_RECT_F> draggers;
 };
 

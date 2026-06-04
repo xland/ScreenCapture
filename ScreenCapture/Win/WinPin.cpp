@@ -155,7 +155,7 @@ void WinPin::onMouseDrag(const int& x, const int& y, const UINT_PTR& modifiers)
         this->y += (y - pressPos.y);
         move(this->x, this->y);
     }
-    else if (toolMain->state != "text") {
+    else{
         shapeHover->mouseDrag((float)x, (float)y,modifiers);
         refresh();
     }

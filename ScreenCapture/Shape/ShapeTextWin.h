@@ -10,7 +10,6 @@ public:
 	static ShapeTextWin* get();
 	void setShape(ShapeText* shape);
 public:
-	ComPtr<ID2D1StrokeStyle> dashedStrokeStyle;
 protected:
 private:
 	void onCreated() override;
@@ -24,6 +23,8 @@ private:
 	void onChar(const UINT& code) override;
 	void onIME() override;
 	void onBlur() override;
+	void onShown() override;
+	void onHidden() override;
 	/// <summary>
 	/// 通过鼠标坐标设置输入光标的位置
 	/// </summary>
@@ -67,8 +68,6 @@ private:
 	D2D1_POINT_2F caretPos;
 	// 光标高度
 	float caretHeight{ 0.f };
-	// 文本与窗口边界的距离
-	float padding{ 0.f };
 	/// <summary>
 	/// 选中文本的背景画刷
 	/// </summary>
