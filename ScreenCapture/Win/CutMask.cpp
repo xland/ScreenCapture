@@ -1,4 +1,5 @@
 ﻿#include "pch.h"
+#include "App.h"
 #include "Util.h"
 #include "WinCap.h"
 #include "CutMask.h"
@@ -10,8 +11,8 @@ CutMask::CutMask()
     render->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White), brushText.GetAddressOf());
     render->CreateSolidColorBrush(D2D1::ColorF(0x000000, 0.46f), brushBg.GetAddressOf());
     render->CreateSolidColorBrush(D2D1::ColorF(0x1677ff), brushBorder.GetAddressOf());
-    auto dwriteFactory = win->getWriteFactory();
-    dwriteFactory->CreateTextFormat(L"Microsoft YaHei", nullptr,
+    auto writer = App::getWriter();
+    writer->CreateTextFormat(L"Microsoft YaHei", nullptr,
         DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
         15, L"", textFormat.GetAddressOf());
     initWinRect();
@@ -87,7 +88,7 @@ void CutMask::paint()
     auto render = win->render.Get();
     D2D1_RECT_F destRect = D2D1::RectF(0, 0, win->w, win->h);
 
-    auto d2d = win->getD2D();
+    auto d2d = App::getD2D();
     ComPtr<ID2D1RectangleGeometry> outerGeometry;
     d2d->CreateRectangleGeometry(destRect, outerGeometry.GetAddressOf());
     ComPtr<ID2D1RectangleGeometry> innerGeometry;
@@ -104,9 +105,9 @@ void CutMask::paint()
     auto str = std::format(L"X:{} Y:{} R:{} B:{} W:{} H:{}",
         maskRect.left,maskRect.top,maskRect.right,maskRect.bottom,
         maskRect.right - maskRect.left,maskRect.bottom-maskRect.top);    
-    auto dwriteFactory = win->getWriteFactory();
+    auto writer = App::getWriter();
     winrt::com_ptr<IDWriteTextLayout> layout;
-    dwriteFactory->CreateTextLayout(str.data(),static_cast<UINT32>(str.size()), textFormat.Get(), FLT_MAX, FLT_MAX, layout.put());
+    writer->CreateTextLayout(str.data(),static_cast<UINT32>(str.size()), textFormat.Get(), FLT_MAX, FLT_MAX, layout.put());
     layout->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
     layout->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
     layout->SetFontSize(10*win->dpi, { 0, static_cast<UINT32>(str.length()) });

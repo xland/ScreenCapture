@@ -11,6 +11,7 @@ public:
 	D2D1_COLOR_F getSelectedColor();
 public:
 	float sliderVal;
+	int selectIndex2{ -1 };
 protected:
 	void onPaint() override;
 private:

@@ -1,8 +1,9 @@
 ﻿#include "pch.h"
-#include "../Win/WinPin.h"
-#include "../Win/WinToolMain.h"
-#include "../Win/WinToolSub.h"
-#include "../Util.h"
+#include "App.h"
+#include "Win/WinPin.h"
+#include "Win/WinToolMain.h"
+#include "Win/WinToolSub.h"
+#include "Util.h"
 #include "ShapeNumber.h"
 
 static int numVal{ 0 };
@@ -156,7 +157,7 @@ D2D1_POINT_2F ShapeNumber::transformPoint(const D2D1_POINT_2F& point)
 void ShapeNumber::makePath()
 {
 	path.Reset();
-	win->getD2D()->CreatePathGeometry(path.GetAddressOf());
+	App::getD2D()->CreatePathGeometry(path.GetAddressOf());
 	ComPtr<ID2D1GeometrySink> sink;
 	path->Open(sink.GetAddressOf());
 	auto start = transformPoint(localPoint(10.f));
@@ -179,11 +180,11 @@ void ShapeNumber::makeTextLayout()
 	auto d = r * 2;
 
 	ComPtr<IDWriteTextFormat> textFormat;
-	win->getWriteFactory()->CreateTextFormat(L"Microsoft YaHei", nullptr,
+	auto writer = App::getWriter();
+	writer->CreateTextFormat(L"Microsoft YaHei", nullptr,
 		DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
 		r, L"", textFormat.GetAddressOf());
-	auto dwrite = win->getWriteFactory();
-	dwrite->CreateTextLayout(valStr.data(), (UINT32)valStr.length(), textFormat.Get(), d, d, layoutText.GetAddressOf());
+	writer->CreateTextLayout(valStr.data(), (UINT32)valStr.length(), textFormat.Get(), d, d, layoutText.GetAddressOf());
 	layoutText->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
 	layoutText->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
 }

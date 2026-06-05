@@ -2,6 +2,7 @@
 class Render;
 class WinBase
 {
+	friend class App;
 public:
 	WinBase(const int& x, const int& y, const int& w, const int& h);
 	~WinBase();
@@ -12,15 +13,11 @@ public:
 	void move(const int& x, const int& y);
 	void resize(const int& w, const int& h);
 	void createWindow(const DWORD& exStyle=NULL, const DWORD& style=NULL);
-	void initDevice();
-	HRESULT initDC();
 	HRESULT createBitmap();
 	void enableShadow();
 	void setTimer(const UINT& elapse, const UINT& id);
 	void killTimer(const UINT& id);
 	void setCursor(LPCWSTR cursorName);
-	ID2D1Factory1* getD2D();
-	IDWriteFactory5* getWriteFactory();
 public:
 	HWND hwnd{nullptr};
 	int x, y, w, h;

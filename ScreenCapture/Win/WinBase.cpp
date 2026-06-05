@@ -3,15 +3,7 @@
 #include "Win/WinBase.h"
 #include "App.h"
 
-namespace {
-    static ComPtr<ID2D1Factory1> d2dFactory;
-    static ComPtr<ID3D11Device> d3d;
-    static ComPtr<ID2D1Device1> d2dDev;
-    static ComPtr<IDXGIFactory5> fac5;
-    static ComPtr<IDWriteFactory5> dwriteFactory;
-    //static ComPtr<IDWriteRenderingParams> renderingParams;
-    static BOOL allowTearing = FALSE; //是否允许撕裂呈现（允许的话效果稍弱，但渲染更快，咱这个应用尽可能的允许）
-}
+
 
 WinBase::WinBase(const int& x, const int& y, const int& w, const int& h) : x{x}, y{y}, w{w}, h{h}
 {
@@ -56,7 +48,7 @@ void WinBase::resize(const int& w, const int& h)
         {
             render->SetTarget(nullptr);
             targetBmp.Reset();
-            UINT flags = allowTearing ? DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING : 0;
+            UINT flags = App::allowTearing ? DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING : 0;
             auto hr = swap->ResizeBuffers(0, w, h, DXGI_FORMAT_UNKNOWN, flags);
             createBitmap();
         }
@@ -93,68 +85,9 @@ void WinBase::createWindow(const DWORD& exStyle, const DWORD& style)
     hwnd = CreateWindowEx(exStyle | WS_EX_NOREDIRECTIONBITMAP| WS_EX_TOOLWINDOW, getWinClsName().c_str(), NULL, style| WS_POPUP, x, y, w, h, NULL, NULL, App::get()->hInstance, NULL);
     SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
 	dpi = GetDpiForWindow(hwnd) / 96.0f;
-    initDevice();
-    initDC();
+    App::makeDC(this);
     createBitmap();
     onCreated();
-}
-
-void WinBase::initDevice()
-{
-    static std::once_flag deviceInitFlag;
-    std::call_once(deviceInitFlag, []() {
-        D2D1_FACTORY_OPTIONS opt{};
-#ifdef DEBUG
-        opt.debugLevel = D2D1_DEBUG_LEVEL_INFORMATION;
-#endif
-        auto hr = D2D1CreateFactory(D2D1_FACTORY_TYPE_MULTI_THREADED, opt, d2dFactory.GetAddressOf());
-        hr = D3D11CreateDevice(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr,
-            D3D11_CREATE_DEVICE_BGRA_SUPPORT | D3D11_CREATE_DEVICE_SINGLETHREADED,
-            nullptr, 0, D3D11_SDK_VERSION, d3d.GetAddressOf(), nullptr, nullptr);
-        ComPtr<IDXGIDevice1> dxgiDev;
-        d3d.As(&dxgiDev);
-        ComPtr<ID2D1Device> d2d;
-        hr = d2dFactory->CreateDevice(dxgiDev.Get(), d2d.GetAddressOf());
-        d2d.As(&d2dDev);
-        hr = CreateDXGIFactory2(0, IID_PPV_ARGS(&fac5));
-        hr = fac5->CheckFeatureSupport(DXGI_FEATURE_PRESENT_ALLOW_TEARING, &allowTearing, sizeof(allowTearing));//判断设备是否允许撕裂呈现
-        hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory), reinterpret_cast<::IUnknown**>(dwriteFactory.GetAddressOf()));
-        //dwriteFactory->CreateCustomRenderingParams( 1.0f, 0.0f, 1.0f, DWRITE_PIXEL_GEOMETRY_RGB, DWRITE_RENDERING_MODE_GDI_NATURAL, renderingParams.GetAddressOf());
-    });
-}
-
-HRESULT WinBase::initDC()
-{
-    ComPtr<IDXGIDevice1> dxgiDev;
-    d3d.As(&dxgiDev);
-    auto hr = d2dDev->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE, render.GetAddressOf());
-    if (FAILED(hr)) return S_FALSE;
-    //render->SetTextRenderingParams(renderingParams.Get());
-    DXGI_SWAP_CHAIN_DESC1 scd{};
-    scd.Width = w;
-    scd.Height = h;
-    scd.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
-    scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-    scd.BufferCount = 2;
-    scd.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
-    scd.SampleDesc.Count = 1;
-    scd.AlphaMode = DXGI_ALPHA_MODE_PREMULTIPLIED;
-    if (allowTearing) scd.Flags |= DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING;
-    hr = fac5->CreateSwapChainForComposition(d3d.Get(), &scd, nullptr, swap.GetAddressOf());
-    if (FAILED(hr)) return S_FALSE;
-    hr = DCompositionCreateDevice(dxgiDev.Get(), IID_PPV_ARGS(compDev.GetAddressOf()));
-    if (FAILED(hr)) return S_FALSE;
-    hr = compDev->CreateTargetForHwnd(hwnd, TRUE, compTgt.GetAddressOf());
-    if (FAILED(hr)) return S_FALSE;
-    hr = compDev->CreateVisual(compVis.GetAddressOf());
-    if (FAILED(hr)) return S_FALSE;
-    hr = compVis->SetContent(swap.Get());
-    if (FAILED(hr)) return S_FALSE;
-    hr = compTgt->SetRoot(compVis.Get());
-    if (FAILED(hr)) return S_FALSE;
-    hr = compDev->Commit();
-    if (FAILED(hr)) return S_FALSE;
-    return S_OK;
 }
 
 HRESULT WinBase::createBitmap()
@@ -181,16 +114,6 @@ bool WinBase::onCursor()
 {
     SetCursor(LoadCursor(NULL, IDC_CROSS));
     return TRUE;
-}
-
-ID2D1Factory1* WinBase::getD2D()
-{
-    return d2dFactory.Get();
-}
-
-IDWriteFactory5* WinBase::getWriteFactory()
-{
-    return dwriteFactory.Get();
 }
 
 
@@ -335,7 +258,7 @@ void WinBase::paint()
     onPaint();
     render->EndDraw();
     UINT presentFlags = 0;
-    if (allowTearing) presentFlags |= DXGI_PRESENT_ALLOW_TEARING;
+    if (App::allowTearing) presentFlags |= DXGI_PRESENT_ALLOW_TEARING;
     swap->Present(0, presentFlags);
     EndPaint(hwnd, &ps);
 }

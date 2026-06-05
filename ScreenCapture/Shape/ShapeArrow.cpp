@@ -1,9 +1,10 @@
 ﻿#include "pch.h"
 #include "ShapeArrow.h"
-#include "../Win/WinPin.h"
-#include "../Win/WinToolMain.h"
-#include "../Win/WinToolSub.h"
-#include "../Util.h"
+#include "App.h"
+#include "Win/WinPin.h"
+#include "Win/WinToolMain.h"
+#include "Win/WinToolSub.h"
+#include "Util.h"
 
 ShapeArrow::ShapeArrow(WinPin* win) :ShapeBase(win), draggers{
 	D2D1::RectF(0,0,0,0),
@@ -127,7 +128,7 @@ void ShapeArrow::setCursor()
 void ShapeArrow::makeArrow()
 {
 	path.Reset();
-	win->getD2D()->CreatePathGeometry(path.GetAddressOf());
+	App::getD2D()->CreatePathGeometry(path.GetAddressOf());
 	ComPtr<ID2D1GeometrySink> sink;
 	path->Open(sink.GetAddressOf());
 	float dx = endX - startX;

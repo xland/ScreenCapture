@@ -1,5 +1,6 @@
 ﻿#include "pch.h"
-#include "../Win/WinPin.h"
+#include "App.h"
+#include "Win/WinPin.h"
 #include "ShapeBase.h"
 
 ShapeBase::ShapeBase(WinPin* win):win{win}, draggerSize{6*win->dpi}
@@ -14,7 +15,7 @@ ID2D1StrokeStyle* ShapeBase::getRoundStrokeStyle()
 {
     static ComPtr<ID2D1StrokeStyle> roundStrokeStyle;
     if (!roundStrokeStyle.Get()) {
-        win->getD2D()->CreateStrokeStyle(
+        App::getD2D()->CreateStrokeStyle(
             D2D1::StrokeStyleProperties(
                 D2D1_CAP_STYLE_ROUND,    // 起点线帽：圆角
                 D2D1_CAP_STYLE_ROUND,    // 终点线帽：圆角

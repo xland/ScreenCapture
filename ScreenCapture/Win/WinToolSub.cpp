@@ -1,10 +1,12 @@
 ﻿#include "pch.h"
 #include "Util.h"
+#include "App.h"
 #include "WinToolBase.h"
 #include "WinToolSub.h"
 #include "WinToolMain.h"
 #include "WinPin.h"
 #include "History.h"
+#include "Shape/ShapeTextWin.h"
 
 std::unique_ptr<WinToolSub> winToolSub;
 
@@ -213,7 +215,7 @@ D2D1_COLOR_F WinToolSub::getSelectedColor()
 void WinToolSub::initBorder()
 {
     borderPath.Reset();
-    getD2D()->CreatePathGeometry(borderPath.GetAddressOf());
+    App::getD2D()->CreatePathGeometry(borderPath.GetAddressOf());
     ComPtr<ID2D1GeometrySink> sink;
     borderPath->Open(sink.GetAddressOf());
     auto borderW{ dpi };
@@ -286,7 +288,7 @@ void WinToolSub::onPaint()
     }
     else if (win->state == "text") {
         paintIcon(btnStart, getBtnIconLayout("bold"), hoverIndex == 0, selectIndex == 0);
-        paintIcon(btnStart+btnSize, getBtnIconLayout("italic"), hoverIndex == 1, selectIndex == 1);
+        paintIcon(btnStart+btnSize, getBtnIconLayout("italic"), hoverIndex == 1, selectIndex2 == 1);
         paintSlider();
         paintColorSelector();
     }
@@ -338,26 +340,37 @@ void WinToolSub::onMouseDown(const int& x, const int& y, bool isRight)
     int indexBtn{ -1 };
     bool flag{ false };
     if (x > btnStart && x < btnEnd) {
-        indexBtn = static_cast<int>((x - btnStart) / btnSize);
-        if (indexBtn == hoverIndex)
-        {
-            if (indexBtn == selectIndex) {
-                selectIndex = -1;
-            }
-            else {
-                selectIndex = indexBtn;
-            }
+        if (hoverIndex == 0 && selectIndex == 0) {
+            selectIndex = -1;
             flag = true;
+            ShapeTextWin::get()->changeState();
+        }
+        else if (hoverIndex == 1 && selectIndex2 == 1) {
+            selectIndex2 = -1;
+            flag = true;
+            ShapeTextWin::get()->changeState();
+        }
+        else if (hoverIndex == 0) {
+            selectIndex = hoverIndex;
+            flag = true;
+            ShapeTextWin::get()->changeState();
+        }
+        else if (hoverIndex == 1) {
+            selectIndex2 = hoverIndex;
+            flag = true;
+            ShapeTextWin::get()->changeState();
         }
     }
     if (x > sliderStart && x < sliderEnd) {
         sliderVal = ((float)x - sliderStart) / (sliderEnd - sliderStart) * (sliderMax - sliderMin) + sliderMin;
         flag = true;
+        ShapeTextWin::get()->changeState();
     }
     if (x > colorStart && x<colorEnd) {
         if (selectColorIndex != hoverColorIndex) {
             selectColorIndex = hoverColorIndex;
             flag = true;
+            ShapeTextWin::get()->changeState();
         }
     }
     if (flag) refresh();

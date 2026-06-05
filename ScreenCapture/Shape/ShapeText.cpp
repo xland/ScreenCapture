@@ -1,20 +1,17 @@
 ﻿#include "pch.h"
-#include "../Win/WinPin.h"
-#include "../Win/WinToolMain.h"
-#include "../Win/WinToolSub.h"
-#include "../Util.h"
+#include "App.h"
+#include "Win/WinPin.h"
+#include "Win/WinToolMain.h"
+#include "Win/WinToolSub.h"
+#include "Util.h"
 #include "ShapeText.h"
 #include "ShapeTextWin.h"
 
 ShapeText::ShapeText(WinPin* win) :ShapeBase(win), borderPadding{ 6.f * win->dpi }
 {
-	auto toolSub = WinToolSub::get();
-	color = toolSub->getSelectedColor();
-	fontSize = toolSub->sliderVal;
-	isBold = toolSub->selectIndex == 0;
-	isItalic = toolSub->selectIndex == 1;
+	setAttr();
 	float dashes[] = { 2.0f, 2.0f };
-	win->getD2D()->CreateStrokeStyle(
+	App::getD2D()->CreateStrokeStyle(
 		D2D1::StrokeStyleProperties(
 			D2D1_CAP_STYLE_FLAT,      // 起始端点样式
 			D2D1_CAP_STYLE_FLAT,      // 结束端点样式
@@ -77,20 +74,24 @@ void ShapeText::mouseDown(const float& x, const float& y)
 		isEditing = true;
 		win->refresh();
 	}
-	else if (hoverDraggerIndex == 8) {
+	else if (hoverDraggerIndex == 8) { //拖拽
 		pressX = x;
 		pressY = y;
 		isEditing = false;
 		ShapeTextWin::get()->hide();
 		win->refresh();
 	}
-	else if (hoverDraggerIndex == 1) {
+	else if (hoverDraggerIndex == 1) { //编辑
 		pressX = x;
 		pressY = y;
 		auto textWin = ShapeTextWin::get();
 		textWin->setShape(this);
 		isEditing = true;
 		win->refresh();
+	}
+	else if (hoverDraggerIndex == 0) { //结束编辑
+		auto textWin = ShapeTextWin::get();
+		textWin->hide();//会触发onBlur事件
 	}
 }
 
@@ -138,7 +139,7 @@ void ShapeText::setTextLayout()
 {
 	auto textWin = ShapeTextWin::get();
 	textLayout.Reset();
-	auto dwriteFactory = win->getWriteFactory();
+	auto dwriteFactory = App::getWriter();
 	dwriteFactory->CreateTextLayout(text.data(), static_cast<UINT32>(text.size()), textWin->textFormat.Get(), FLT_MAX, FLT_MAX, textLayout.GetAddressOf());
 	textLayout->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
 	textLayout->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
@@ -159,6 +160,15 @@ void ShapeText::setTextLayout()
 		pos.y + winH + borderPadding);
 
 	win->refresh();
+}
+
+void ShapeText::setAttr()
+{
+	auto toolSub = WinToolSub::get();
+	color = toolSub->getSelectedColor();
+	fontSize = toolSub->sliderVal;
+	isBold = toolSub->selectIndex == 0;
+	isItalic = toolSub->selectIndex2 == 1;
 }
 
 

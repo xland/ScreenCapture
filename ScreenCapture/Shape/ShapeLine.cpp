@@ -1,8 +1,9 @@
 ﻿#include "pch.h"
-#include "../Win/WinPin.h"
-#include "../Win/WinToolMain.h"
-#include "../Win/WinToolSub.h"
-#include "../Util.h"
+#include "App.h"
+#include "Win/WinPin.h"
+#include "Win/WinToolMain.h"
+#include "Win/WinToolSub.h"
+#include "Util.h"
 #include "ShapeLine.h"
 
 ShapeLine::ShapeLine(WinPin* win) :ShapeBase(win), draggers{
@@ -133,7 +134,7 @@ void ShapeLine::setCursor()
 void ShapeLine::makePath()
 {
 	path.Reset();
-	win->getD2D()->CreatePathGeometry(path.GetAddressOf());
+	App::getD2D()->CreatePathGeometry(path.GetAddressOf());
 	ComPtr<ID2D1GeometrySink> sink;
 	path->Open(sink.GetAddressOf());
 	sink->BeginFigure(linePoints[0], D2D1_FIGURE_BEGIN_HOLLOW);

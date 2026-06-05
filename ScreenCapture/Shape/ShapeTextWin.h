@@ -9,6 +9,7 @@ public:
 	~ShapeTextWin();
 	static ShapeTextWin* get();
 	void setShape(ShapeText* shape);
+	void changeState();
 public:
 	ComPtr<IDWriteTextFormat> textFormat;
 protected:

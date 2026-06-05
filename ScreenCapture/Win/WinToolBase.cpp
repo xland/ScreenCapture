@@ -73,7 +73,7 @@ void WinToolBase::initTip()
 }
 void WinToolBase::addIconLayout(const std::wstring& icon)
 {
-    auto dwriteFactory = getWriteFactory();
+    auto writer = App::getWriter();
     static ComPtr<IDWriteTextFormat> iconFormat;
 	if (!iconFormat.Get()) {
         //加载内置图标字体
@@ -84,23 +84,23 @@ void WinToolBase::addIconLayout(const std::wstring& icon)
         void* pData = LockResource(hData);
         DWORD size = SizeofResource(NULL, hRes);
         ComPtr<IDWriteInMemoryFontFileLoader> loader;
-        dwriteFactory->CreateInMemoryFontFileLoader(loader.GetAddressOf());
-        dwriteFactory->RegisterFontFileLoader(loader.Get());
+        writer->CreateInMemoryFontFileLoader(loader.GetAddressOf());
+        writer->RegisterFontFileLoader(loader.Get());
         ComPtr<IDWriteFontFile> fontFile;
-        loader->CreateInMemoryFontFileReference(dwriteFactory, pData, size, nullptr, fontFile.GetAddressOf());
+        loader->CreateInMemoryFontFileReference(writer, pData, size, nullptr, fontFile.GetAddressOf());
         ComPtr<IDWriteFontSetBuilder1> fontSetBuilder;
-        dwriteFactory->CreateFontSetBuilder(fontSetBuilder.GetAddressOf());
+        writer->CreateFontSetBuilder(fontSetBuilder.GetAddressOf());
         fontSetBuilder->AddFontFile(fontFile.Get());
         ComPtr<IDWriteFontSet> fontSet;
         fontSetBuilder->CreateFontSet(fontSet.GetAddressOf());
         ComPtr<IDWriteFontCollection1> fontCollection;
-        dwriteFactory->CreateFontCollectionFromFontSet(fontSet.Get(), fontCollection.GetAddressOf());
-        dwriteFactory->CreateTextFormat(L"icon", fontCollection.Get(),
+        writer->CreateFontCollectionFromFontSet(fontSet.Get(), fontCollection.GetAddressOf());
+        writer->CreateTextFormat(L"icon", fontCollection.Get(),
             DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
             12.f, L"", iconFormat.GetAddressOf());
 	}
     ComPtr<IDWriteTextLayout> layout;
-    dwriteFactory->CreateTextLayout(icon.data(), icon.length(), iconFormat.Get(), btnSize, btnSize, layout.GetAddressOf());
+    writer->CreateTextLayout(icon.data(), icon.length(), iconFormat.Get(), btnSize, btnSize, layout.GetAddressOf());
     layout->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
     layout->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
     layout->SetFontSize(14.f * dpi, { 0, static_cast<UINT32>(icon.length()) });

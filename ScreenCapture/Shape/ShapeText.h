@@ -15,6 +15,7 @@ public:
 	void setCursor() override;
 	void finishEdit();
 	void setTextLayout();
+	void setAttr();
 public:
 	bool isEditing{ false };
 	D2D1_COLOR_F color;

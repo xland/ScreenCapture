@@ -1,5 +1,6 @@
 ﻿#include "pch.h"
-#include "../Win/WinPin.h"
+#include "App.h"
+#include "Win/WinPin.h"
 #include "ShapeTextWin.h"
 #include "ShapeText.h"
 #include "Util.h"
@@ -8,7 +9,7 @@ std::unique_ptr<ShapeTextWin> shapeTextWin;
 
 ShapeTextWin::ShapeTextWin(const int& x, const int& y, const int& w, const int& h) : WinBase(x, y, w, h)
 {
-    auto dwriteFactory = getWriteFactory();
+    auto dwriteFactory = App::getWriter();
     dwriteFactory->CreateTextFormat(L"Microsoft YaHei", nullptr,
         DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
         12.f, L"", textFormat.GetAddressOf());
@@ -42,6 +43,14 @@ void ShapeTextWin::setShape(ShapeText* shape)
     refresh();
     setTimer(800, timerID);
     show();
+}
+void ShapeTextWin::changeState()
+{
+    if (!shape || !shape->isEditing) return;
+    shape->setAttr();
+    render->CreateSolidColorBrush(shape->color, shape->textBrush.GetAddressOf());
+    shape->setTextLayout();
+    refresh();
 }
 void ShapeTextWin::onCreated()
 {
@@ -90,8 +99,8 @@ void ShapeTextWin::onIME()
 {
     if (HIMC himc = ImmGetContext(hwnd))
     {
-        POINT pt{ caretPos.x+1, std::min((float)h-1,caretPos.y)};
-		log(L"IME position: {}, {},{}", pt.x, pt.y,h);
+		//输入法提示框位置，设置在输入光标附近（不能在窗口边缘，不然提示框位置会出现在屏幕右上角）
+        POINT pt{ std::min(caretPos.x + 1,(float)w-1), std::min((float)h - 1,caretPos.y)};
         COMPOSITIONFORM comp{};
         comp.dwStyle = CFS_FORCE_POSITION;
         comp.ptCurrentPos = pt;
@@ -108,10 +117,6 @@ void ShapeTextWin::onBlur()
 	killTimer(timerID);
 	caretVisible = false;
     hide();
-	//POINT screenPos{ x + padding, y + padding };
-	//ScreenToClient(shape->win->hwnd, &screenPos);
-	//shape->x = screenPos.x;
-	//shape->y = screenPos.y;
     shape->isEditing = false;
 	shape->win->refresh();
 }

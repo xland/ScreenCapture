@@ -1,4 +1,5 @@
 ﻿#include "pch.h"
+#include "App.h"
 #include "Util.h"
 #include "WinPix.h"
 #include "WinCap.h"
@@ -52,7 +53,7 @@ void WinPix::initRes()
     crossRect1 = D2D1::RectF(w / 2 + crossWHalf, imgH / 2 - crossWHalf, w, imgH / 2 + crossWHalf);
     crossRect2 = D2D1::RectF(w / 2 - crossWHalf, 0.f, w / 2 + crossWHalf, imgH / 2 - crossWHalf);
     crossRect3 = D2D1::RectF(w / 2 - crossWHalf, imgH / 2 + crossWHalf, w / 2 + crossWHalf, imgH);
-    getWriteFactory()->CreateTextFormat(L"Microsoft YaHei", nullptr,
+    App::getWriter()->CreateTextFormat(L"Microsoft YaHei", nullptr,
         DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
         fontSize, L"", textFormat.GetAddressOf());
 }
