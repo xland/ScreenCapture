@@ -12,7 +12,7 @@ ShapeArrow::ShapeArrow(WinPin* win) :ShapeBase(win), draggers{
 {
 	auto toolSub = WinToolSub::get();
 	win->render->CreateSolidColorBrush(toolSub->getSelectedColor(), brush.GetAddressOf());
-	strokeWidth = toolSub->sliderVal;
+	arrowSize = toolSub->sliderVal;
 	isFill = toolSub->selectIndex == 0;
 }
 
@@ -27,7 +27,7 @@ void ShapeArrow::paint()
 		win->render->FillGeometry(path.Get(), brush.Get());
 	}
 	else {
-		win->render->DrawGeometry(path.Get(), brush.Get(),strokeWidth);
+		win->render->DrawGeometry(path.Get(), brush.Get(),win->dpi);
 	}
 }
 
@@ -145,7 +145,6 @@ void ShapeArrow::makeArrow()
 	float uy = dy / length;
 	float vx = -uy;
 	float vy = ux;
-	float arrowSize = 16.f * win->dpi;
 	float v1 = arrowSize / 4.0f;        // 箭杆半宽
 	float v2 = arrowSize * 2.0f / 3.0f; // 箭头半宽
 	sink->BeginFigure( { startX, startY }, D2D1_FIGURE_BEGIN_FILLED);

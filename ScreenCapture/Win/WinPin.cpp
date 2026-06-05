@@ -108,16 +108,91 @@ void WinPin::onKeyDown(const TCHAR& key)
     {
         history->redo();
     }
+    else if (key == 'C' && (GetKeyState(VK_CONTROL) & 0x8000) != 0)
+    {
+        copyToClipboard();
+    }
+}
+
+void WinPin::copyToClipboard()
+{
+    if (w <= 0 || h <= 0) return;
+    auto size = D2D1::SizeU((UINT32)w, (UINT32)h);
+
+    // 直接以 screenImg 为渲染目标，把尚未撤销的 shape 叠画到背景上
+    render->SetTarget(screenImg.Get());
+    render->SetTransform(D2D1::Matrix3x2F::Identity());
+    render->BeginDraw();
+    for (auto& shape : history->shapes) {
+        if (!shape->isUndo) {
+            shape->paint();
+        }
+    }
+    auto hr = render->EndDraw();
+    if (FAILED(hr)) return;
+
+    // EndDraw 后 screenImg 仍挂在 render target 上，必须先解绑才能作为 CopyFromBitmap 的 source
+    render->SetTarget(nullptr);
+
+    // 创建 CPU 可读副本，从 screenImg 拷贝像素
+    D2D1_BITMAP_PROPERTIES1 cpuProps{};
+    cpuProps.pixelFormat = screenImg->GetPixelFormat();
+    cpuProps.bitmapOptions = D2D1_BITMAP_OPTIONS_CPU_READ | D2D1_BITMAP_OPTIONS_CANNOT_DRAW;
+    cpuProps.dpiX = 96.0f;
+    cpuProps.dpiY = 96.0f;
+    ComPtr<ID2D1Bitmap1> cpuBmp;
+    hr = render->CreateBitmap(size, nullptr, 0, &cpuProps, cpuBmp.GetAddressOf());
+    if (FAILED(hr)) return;
+
+    hr = cpuBmp->CopyFromBitmap(nullptr, screenImg.Get(), nullptr);
+    if (FAILED(hr)) return;
+
+    D2D1_MAPPED_RECT mapped{};
+    hr = cpuBmp->Map(D2D1_MAP_OPTIONS_READ, &mapped);
+    if (FAILED(hr)) return;
+
+    // D2D CPU 位图的 mapped.pitch 按 GPU 行对齐，可能 > w*4
+    // SetDIBitsToDevice 固定以 w*4 为步长，必须逐行紧缩后再传入
+    UINT32 rowBytes = (UINT32)w * 4;
+    if (mapped.pitch == rowBytes) {
+        Util::saveToClipboard(w, h, mapped.bits);
+    } else {
+        std::vector<BYTE> packed((size_t)rowBytes * h);
+        for (int row = 0; row < h; ++row) {
+            CopyMemory(
+                packed.data() + (size_t)row * rowBytes,
+                mapped.bits   + (size_t)row * mapped.pitch,
+                rowBytes);
+        }
+        Util::saveToClipboard(w, h, packed.data());
+    }
+    cpuBmp->Unmap();
+    cpuBmp.Reset();
+
+    // 写入剪切板后销毁当前 WinPin
+    WinToolMain::get()->hide();
+    if (auto* ts = WinToolSub::get()) ts->hide();
+    close(); // 销毁窗口句柄
+    winPins.erase(
+        std::remove_if(winPins.begin(), winPins.end(),
+            [this](auto& p) { return p.get() == this; }),
+        winPins.end());
+    // this 已被析构，后续不再访问任何成员
 }
 
 void WinPin::initImg()
 {
     auto win = WinCap::get();
-    auto props = D2D1::BitmapProperties(D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED));
     auto rect = D2D1::RectU(x, y, x+w, y+h);
     auto cpuImg = win->getImgByRect(rect);
     D2D1_MAPPED_RECT mapped{};
     auto hr = cpuImg->Map(D2D1_MAP_OPTIONS_READ, &mapped);
+    // 创建带 TARGET 标志的 Bitmap1，使其可直接作为渲染目标
+    D2D1_BITMAP_PROPERTIES1 props{};
+    props.pixelFormat = D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED);
+    props.bitmapOptions = D2D1_BITMAP_OPTIONS_TARGET;
+    props.dpiX = 96.0f;
+    props.dpiY = 96.0f;
     hr = render->CreateBitmap(cpuImg->GetPixelSize(), mapped.bits, mapped.pitch, &props, screenImg.GetAddressOf());
     hr = cpuImg->Unmap();
 }

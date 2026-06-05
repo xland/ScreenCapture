@@ -13,10 +13,11 @@ public:
 	~WinPin();
 	static void init();
 	static WinPin* getCur();
+	void copyToClipboard();
 public:
 	ShapeBase* shapeHover{ nullptr };
 	std::unique_ptr<History> history;
-	ComPtr<ID2D1Bitmap> screenImg;
+	ComPtr<ID2D1Bitmap1> screenImg;
 private:
 	void onMouseMove(const int& x, const int& y) override;
 	void onMouseDrag(const int& x, const int& y, const UINT_PTR& modifiers) override;

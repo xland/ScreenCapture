@@ -20,7 +20,7 @@ private:
 	std::vector<D2D1_RECT_F> draggers; 
 	ComPtr<ID2D1PathGeometry> path;
 	ComPtr<ID2D1SolidColorBrush> brush;
-	float strokeWidth, pressX, pressY,startX,startY,endX,endY;
+	float arrowSize, pressX, pressY,startX,startY,endX,endY;
 	bool isFill{ false };
 };
 

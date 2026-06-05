@@ -28,26 +28,40 @@ void WinToolSub::initVal()
     h = int(toolMain->h + marginTop + 0.5);
     btnSize = float(toolMain->h);
     colorBtnW = toolMain->dpi * 23;
+    btnStart = 0.f;
+    btnEnd = btnStart + btnSize;
+    sliderStart = 0.f;
+    sliderEnd = 0.f;
+    colorStart = 0.f;
+    colorEnd = 0.f;
+    hasSlider = false;
+    hasColorSelector = false;
     if (toolMain->state == "rect" || toolMain->state == "ellipse") {
-        w = int(316 * toolMain->dpi);
-        btnStart = 0;
-        btnEnd = btnStart + btnSize;
+        auto isFillMode{ selectIndex == 0 };
+        w = int((isFillMode ? 316 * toolMain->dpi - 120.f - span : 316 * toolMain->dpi) + 0.5f);
         sliderMax = 16.f;
         sliderMin = 1.f;
         sliderVal = 3.f;
-        sliderStart = btnEnd + span;
-        sliderEnd = sliderStart + 120.f;
-        colorStart = sliderEnd + span;
+        hasSlider = !isFillMode;
+        hasColorSelector = true;
+        if (hasSlider) {
+            sliderStart = btnEnd + span;
+            sliderEnd = sliderStart + 120.f;
+            colorStart = sliderEnd + span;
+        }
+        else {
+            colorStart = btnEnd + span;
+        }
         colorEnd = float(w);
     }
     else if (toolMain->state == "arrow") {
         w = int(316 * toolMain->dpi);
-        btnStart = 0;
-        btnEnd = btnStart + btnSize;
-        sliderMax = 16.f;
-        sliderMin = 1.f;
-        sliderVal = 3.f;
+        sliderMax = 60.f;
+        sliderMin = 8.f;
+        sliderVal = 18.f;
         selectIndex = 0;
+        hasSlider = true;
+        hasColorSelector = true;
         sliderStart = btnEnd + span;
         sliderEnd = sliderStart + 120.f;
         colorStart = sliderEnd + span;
@@ -55,11 +69,11 @@ void WinToolSub::initVal()
     }
     else if (toolMain->state == "line") {
         w = (int)(316 * toolMain->dpi);
-        btnStart = 0;
-        btnEnd = btnStart + btnSize;
         sliderMax = 60.f;
         sliderMin = 1.f;
         sliderVal = 3.f;
+        hasSlider = true;
+        hasColorSelector = true;
         sliderStart = btnEnd + span;
         sliderEnd = sliderStart + 120.f;
         colorStart = sliderEnd + span;
@@ -67,35 +81,35 @@ void WinToolSub::initVal()
     }
     else if (toolMain->state == "number") {
         w = (int)(228 * toolMain->dpi);
-        btnStart = 0;
-        btnEnd = btnStart + btnSize;
-        sliderStart = 0.f;
-        sliderEnd = 0.f;
         selectIndex = 0;
-        colorStart = btnEnd ;
+        hasColorSelector = true;
+        colorStart = btnEnd;
         colorEnd = float(w);
     }
     else if (toolMain->state == "text") {
         w = (int)(348 * toolMain->dpi);
-        btnStart = 0;
         btnEnd = btnStart + btnSize*2;
         sliderMax = 66.f;
         sliderMin = 16.f;
         sliderVal = 26.f;
+        hasSlider = true;
+        hasColorSelector = true;
         sliderStart = btnEnd + span;
         sliderEnd = sliderStart + 120.f;
         colorStart = sliderEnd + span;
         colorEnd = float(w);
     }
     else if (toolMain->state == "mosaic" || toolMain->state == "eraser") {
-        w = int(126 * toolMain->dpi);
-        btnStart = 0;
-        btnEnd = btnStart + btnSize;
+        auto isRectMode{ selectIndex == 0 };
+        w = int((isRectMode ? btnEnd : 126 * toolMain->dpi) + 0.5f);
         sliderMax = 86.f;
         sliderMin = 26.f;
         sliderVal = 32.f;
-        sliderStart = btnEnd + span;
-        sliderEnd = sliderStart + 120.f;
+        hasSlider = !isRectMode;
+        if (hasSlider) {
+            sliderStart = btnEnd + span;
+            sliderEnd = sliderStart + 120.f;
+        }
     }
     arrowX = btnSize * toolMain->selectIndex + btnSize / 2;
     if (arrowX + 6.f * toolMain->dpi > w)
@@ -153,6 +167,13 @@ bool WinToolSub::hoverBtn(const int& x)
 
 bool WinToolSub::hoverColor(const int& x)
 {
+    if (!hasColorSelector) {
+        if (hoverColorIndex != -1) {
+            hoverColorIndex = -1;
+            return true;
+        }
+        return false;
+    }
     int indexColor;
     if (x > colorStart && x < colorEnd) {
         indexColor = static_cast<int>((x - colorStart) / colorBtnW);
@@ -205,6 +226,21 @@ void WinToolSub::popup(WinPin* parent)
 WinToolSub* WinToolSub::get()
 {
     return winToolSub.get();
+}
+
+void WinToolSub::refreshLayout()
+{
+    auto oldSliderVal{ sliderVal };
+    initVal();
+    if (hasSlider) {
+        if (oldSliderVal < sliderMin) oldSliderVal = sliderMin;
+        if (oldSliderVal > sliderMax) oldSliderVal = sliderMax;
+    }
+    sliderVal = oldSliderVal;
+    move(x, y);
+    resize(w, h);
+    initBorder();
+    refresh();
 }
 
 D2D1_COLOR_F WinToolSub::getSelectedColor()
@@ -261,44 +297,35 @@ void WinToolSub::onPaint()
     render->Clear(0);
     render->FillGeometry(borderPath.Get(), brushBg.Get());
     render->DrawGeometry(borderPath.Get(), brushSpliter.Get(), dpi);
+    paintToolButtons();
+    if (hasSlider) paintSlider();
+    if (hasColorSelector) paintColorSelector();
+}
+
+void WinToolSub::paintToolButtons()
+{
     auto win = WinToolMain::get();
     if (win->state == "rect") {
-        paintIcon(btnStart, getBtnIconLayout("rectFill"), hoverIndex == 0, selectIndex == 0);	
-        paintSlider();
-        paintColorSelector();
+        paintIcon(btnStart, getBtnIconLayout("rectFill"), hoverIndex == 0, selectIndex == 0);
     }
     else if (win->state == "ellipse") {
         paintIcon(btnStart, getBtnIconLayout("ellipseFill"), hoverIndex == 0, selectIndex == 0);
-        paintSlider();
-        paintColorSelector();
     }
     else if (win->state == "arrow") {
         paintIcon(btnStart, getBtnIconLayout("arrowFill"), hoverIndex == 0, selectIndex == 0);
-        paintSlider();
-        paintColorSelector();
     }
     else if (win->state == "number") {
         paintIcon(btnStart, getBtnIconLayout("numberFill"), hoverIndex == 0, selectIndex == 0);
-        paintColorSelector();
     }
     else if (win->state == "line") {
         paintIcon(btnStart, getBtnIconLayout("lineTransparent"), hoverIndex == 0, selectIndex == 0);
-        paintSlider();
-        paintColorSelector();
     }
     else if (win->state == "text") {
         paintIcon(btnStart, getBtnIconLayout("bold"), hoverIndex == 0, selectIndex == 0);
-        paintIcon(btnStart+btnSize, getBtnIconLayout("italic"), hoverIndex == 1, selectIndex2 == 1);
-        paintSlider();
-        paintColorSelector();
+        paintIcon(btnStart + btnSize, getBtnIconLayout("italic"), hoverIndex == 1, selectIndex2 == 1);
     }
-    else if (win->state == "mosaic") {
+    else if (win->state == "mosaic" || win->state == "eraser") {
         paintIcon(btnStart, getBtnIconLayout("rectFill"), hoverIndex == 0, selectIndex == 0);
-        paintSlider();
-    }
-    else if (win->state == "eraser") {
-        paintIcon(btnStart, getBtnIconLayout("rectFill"), hoverIndex == 0, selectIndex == 0);
-        paintSlider();
     }
 }
 
@@ -309,7 +336,7 @@ bool WinToolSub::onCursor()
 }
 void WinToolSub::onMouseMove(const int& x, const int& y)
 {
-    if (x > sliderStart && x < sliderEnd) {
+    if (hasSlider && x > sliderStart && x < sliderEnd) {
         float val = ((float)x - sliderStart) / (sliderEnd - sliderStart) * (sliderMax - sliderMin)+sliderMin;
         tipText = std::format(L"{}", std::round(val));;
         showTipAt(this->x + x, int(this->y + marginTop + 4 * dpi+0.5));
@@ -337,8 +364,9 @@ void WinToolSub::onMouseLeave()
 
 void WinToolSub::onMouseDown(const int& x, const int& y, bool isRight)
 {
-    int indexBtn{ -1 };
     bool flag{ false };
+    auto toolMain = WinToolMain::get();
+    auto oldSelectIndex{ selectIndex };
     if (x > btnStart && x < btnEnd) {
         if (hoverIndex == 0 && selectIndex == 0) {
             selectIndex = -1;
@@ -361,25 +389,28 @@ void WinToolSub::onMouseDown(const int& x, const int& y, bool isRight)
             ShapeTextWin::get()->changeState();
         }
     }
-    if (x > sliderStart && x < sliderEnd) {
+    if (hasSlider && x > sliderStart && x < sliderEnd) {
         sliderVal = ((float)x - sliderStart) / (sliderEnd - sliderStart) * (sliderMax - sliderMin) + sliderMin;
         flag = true;
         ShapeTextWin::get()->changeState();
     }
-    if (x > colorStart && x<colorEnd) {
+    if (hasColorSelector && x > colorStart && x<colorEnd) {
         if (selectColorIndex != hoverColorIndex) {
             selectColorIndex = hoverColorIndex;
             flag = true;
             ShapeTextWin::get()->changeState();
         }
     }
-    if (flag) refresh();
+    if ((toolMain->state == "rect" || toolMain->state == "ellipse" || toolMain->state == "mosaic" || toolMain->state == "eraser") && oldSelectIndex != selectIndex) {
+        refreshLayout();
+    }
+    else if (flag) refresh();
 
 }
 
 void WinToolSub::onMouseDrag(const int& x, const int& y, const UINT_PTR& modifiers)
 {
-    if (x < sliderStart || x > sliderEnd) return;
+    if (!hasSlider || x < sliderStart || x > sliderEnd) return;
     sliderVal = ((float)x - sliderStart) / (sliderEnd - sliderStart) * (sliderMax - sliderMin) + sliderMin;
     tipText = std::format(L"{}", std::round(sliderVal));
     showTipAt(this->x + x, int(this->y + marginTop + 4 * dpi+0.5));
@@ -388,7 +419,7 @@ void WinToolSub::onMouseDrag(const int& x, const int& y, const UINT_PTR& modifie
 
 void WinToolSub::onMouseWheel(const int& x, const int& y, const short& delta)
 {
-    if (x > sliderEnd || x < sliderStart) return;
+    if (!hasSlider || x > sliderEnd || x < sliderStart) return;
     if (delta < 0) {
         if (sliderVal < sliderMin) {
             sliderVal = sliderMin;
@@ -429,6 +460,7 @@ void WinToolSub::onKeyDown(const TCHAR& key)
 
 void WinToolSub::paintSlider()
 {
+    if (!hasSlider) return;
     auto y{ marginTop + btnSize / 2 };
 	render->DrawLine({ sliderStart,y }, { sliderStart +120.f, y }, brushSpliter.Get(), dpi);
     auto r{ 4.f * dpi };

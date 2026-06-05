@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "App.h"
 #include "Util.h"
 #include "WinCap.h"

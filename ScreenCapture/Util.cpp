@@ -36,27 +36,30 @@ void Util::trackMouse(HWND hwnd, bool cancel)
 
 void Util::saveToClipboard(int& w, int& h, BYTE* data)
 {
-    BITMAPINFO bmi{};
-    bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-    bmi.bmiHeader.biWidth = w;
-    bmi.bmiHeader.biHeight = -h;
-    bmi.bmiHeader.biPlanes = 1;
-    bmi.bmiHeader.biBitCount = 32;
-    bmi.bmiHeader.biCompression = BI_RGB;
-    HDC screenDC = GetDC(nullptr);
-    HDC memDC = CreateCompatibleDC(screenDC);
-    HBITMAP hBmp = CreateCompatibleBitmap(screenDC, w, h);
-    auto oldObj = SelectObject(memDC, hBmp);
-    SetDIBitsToDevice(memDC, 0, 0, w, h, 0, 0, 0, h, data, &bmi, DIB_RGB_COLORS);
-
+    // 直接将原始像素写入全局内存，以 CF_DIB 写入剪切板
+    // 避免 CreateCompatibleBitmap 引入屏幕 DPI 元数据导致粘贴旹缩放模糊
+    DWORD rowBytes = (DWORD)w * 4;
+    DWORD imgBytes = rowBytes * (DWORD)h;
+    HGLOBAL hGlobal = GlobalAlloc(GMEM_MOVEABLE, sizeof(BITMAPINFOHEADER) + imgBytes);
+    if (!hGlobal) return;
+    auto* p = static_cast<BYTE*>(GlobalLock(hGlobal));
+    if (!p) { GlobalFree(hGlobal); return; }
+    auto* bih = reinterpret_cast<BITMAPINFOHEADER*>(p);
+    *bih = {};
+    bih->biSize        = sizeof(BITMAPINFOHEADER);
+    bih->biWidth       = w;
+    bih->biHeight      = -h;      // 负数 = top-down DIB
+    bih->biPlanes      = 1;
+    bih->biBitCount    = 32;
+    bih->biCompression = BI_RGB;
+    bih->biSizeImage   = imgBytes;
+    CopyMemory(p + sizeof(BITMAPINFOHEADER), data, imgBytes);
+    GlobalUnlock(hGlobal);
     OpenClipboard(nullptr);
     EmptyClipboard();
-    SetClipboardData(CF_BITMAP, hBmp);
+    SetClipboardData(CF_DIB, hGlobal);
     CloseClipboard();
-    SelectObject(memDC, oldObj);
-    DeleteDC(memDC);
-    ReleaseDC(nullptr, screenDC);
-    DeleteObject(hBmp);
+    // SetClipboardData 成功后剪切板接管 hGlobal，不可再 GlobalFree
 }
 
 void Util::setTextToClipboard(const std::wstring& text)
