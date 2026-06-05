@@ -24,7 +24,7 @@ void WinToolMain::popup(WinPin* parent)
 {
 	if (!winToolMain.get()){
         auto btnSize{32.f * parent->dpi}; //todo dpi change
-		auto w = btnSize * 14; //主工具条一共有14个按钮；todo dpi change
+		auto w = btnSize * 13; //主工具条一共有13个按钮；todo dpi change
         auto h = btnSize;
 	    auto x = parent->x;
 	    auto y = parent->y + parent->h + 4.f * parent->dpi;
@@ -86,6 +86,7 @@ void WinToolMain::onMouseDown(const int& x, const int& y, bool isRight)
 		WinToolMain::get()->hide();
 		return;
 	}
+    if (hoverIndex < 0) return;
     auto& state = btnId[hoverIndex];
     if (state == "undo") {
         parent->history->undo();
@@ -151,9 +152,8 @@ void WinToolMain::onKeyDown(const TCHAR& key)
 
 void WinToolMain::initBtn()
 {
-    btnId = { "rect" , "ellipse", "arrow", "number" , "line" ,"text" , "mosaic", "eraser", "undo", "redo", "pin", "clipboard" , "save" , "close" };
-    btnName = { L"矩形",L"圆形",L"箭头",L"标号",L"线条",L"文本",L"马赛克",L"橡皮擦",L"撤销",L"重做",L"钉住",L"剪切板",L"保存",L"关闭" };
-    auto fontSize{ 14.f * dpi };
+    btnId = { "rect" , "ellipse", "arrow", "number" , "line" ,"text" , "mosaic", "eraser", "undo", "redo", "clipboard" , "save" , "close" };
+    btnName = { L"矩形",L"圆形",L"箭头",L"标号",L"线条",L"文本",L"马赛克",L"橡皮擦",L"撤销",L"重做",L"剪切板",L"保存",L"关闭" };
     addIconLayout(L"\ue8e8");
     addIconLayout(L"\ue6bc");
     addIconLayout(L"\ue603");
@@ -164,7 +164,6 @@ void WinToolMain::initBtn()
     addIconLayout(L"\ue6be");
     addIconLayout(L"\ued85");
     addIconLayout(L"\ued8a");
-    addIconLayout(L"\ue6a2");
     addIconLayout(L"\ue650");
     addIconLayout(L"\ue608");
     addIconLayout(L"\ue62d");

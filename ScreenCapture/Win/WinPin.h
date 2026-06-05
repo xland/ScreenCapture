@@ -16,6 +16,7 @@ public:
 public:
 	ShapeBase* shapeHover{ nullptr };
 	std::unique_ptr<History> history;
+	ComPtr<ID2D1Bitmap> screenImg;
 private:
 	void onMouseMove(const int& x, const int& y) override;
 	void onMouseDrag(const int& x, const int& y, const UINT_PTR& modifiers) override;
@@ -28,7 +29,6 @@ private:
 	void onKeyDown(const TCHAR& key) override;
 	void initImg();
 private:
-	ComPtr<ID2D1Bitmap> screenImg;
 	POINT pressPos{0,0};
 };
 
