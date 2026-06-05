@@ -37,7 +37,7 @@ void Util::trackMouse(HWND hwnd, bool cancel)
 void Util::saveToClipboard(int& w, int& h, BYTE* data)
 {
     // 直接将原始像素写入全局内存，以 CF_DIB 写入剪切板
-    // 避免 CreateCompatibleBitmap 引入屏幕 DPI 元数据导致粘贴旹缩放模糊
+    // 避免 CreateCompatibleBitmap 引入屏幕 DPI 元数据导致粘贴时缩放模糊
     DWORD rowBytes = (DWORD)w * 4;
     DWORD imgBytes = rowBytes * (DWORD)h;
     HGLOBAL hGlobal = GlobalAlloc(GMEM_MOVEABLE, sizeof(BITMAPINFOHEADER) + imgBytes);
@@ -60,6 +60,48 @@ void Util::saveToClipboard(int& w, int& h, BYTE* data)
     SetClipboardData(CF_DIB, hGlobal);
     CloseClipboard();
     // SetClipboardData 成功后剪切板接管 hGlobal，不可再 GlobalFree
+}
+
+bool Util::saveToFile(const std::wstring& path, int& w, int& h, BYTE* data)
+{
+    if (path.empty() || w <= 0 || h <= 0 || !data) return false;
+    UINT rowBytes = (UINT)w * 4;
+    UINT imgBytes = rowBytes * (UINT)h;
+
+    ComPtr<IWICImagingFactory> factory;
+    auto hr = CoCreateInstance(CLSID_WICImagingFactory, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(factory.GetAddressOf()));
+    if (FAILED(hr)) return false;
+
+    ComPtr<IWICStream> stream;
+    hr = factory->CreateStream(stream.GetAddressOf());
+    if (FAILED(hr)) return false;
+    hr = stream->InitializeFromFilename(path.c_str(), GENERIC_WRITE);
+    if (FAILED(hr)) return false;
+
+    ComPtr<IWICBitmapEncoder> encoder;
+    hr = factory->CreateEncoder(GUID_ContainerFormatPng, nullptr, encoder.GetAddressOf());
+    if (FAILED(hr)) return false;
+    hr = encoder->Initialize(stream.Get(), WICBitmapEncoderNoCache);
+    if (FAILED(hr)) return false;
+
+    ComPtr<IWICBitmapFrameEncode> frame;
+    hr = encoder->CreateNewFrame(frame.GetAddressOf(), nullptr);
+    if (FAILED(hr)) return false;
+    hr = frame->Initialize(nullptr);
+    if (FAILED(hr)) return false;
+    hr = frame->SetSize((UINT)w, (UINT)h);
+    if (FAILED(hr)) return false;
+
+    WICPixelFormatGUID format = GUID_WICPixelFormat32bppBGRA;
+    hr = frame->SetPixelFormat(&format);
+    if (FAILED(hr) || !IsEqualGUID(format, GUID_WICPixelFormat32bppBGRA)) return false;
+
+    hr = frame->WritePixels((UINT)h, rowBytes, imgBytes, data);
+    if (FAILED(hr)) return false;
+    hr = frame->Commit();
+    if (FAILED(hr)) return false;
+    hr = encoder->Commit();
+    return SUCCEEDED(hr);
 }
 
 void Util::setTextToClipboard(const std::wstring& text)

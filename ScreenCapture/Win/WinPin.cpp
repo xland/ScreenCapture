@@ -112,11 +112,35 @@ void WinPin::onKeyDown(const TCHAR& key)
     {
         copyToClipboard();
     }
+    else if (key == 'S' && (GetKeyState(VK_CONTROL) & 0x8000) != 0)
+    {
+        saveToFile();
+    }
 }
 
 void WinPin::copyToClipboard()
 {
-    if (w <= 0 || h <= 0) return;
+    std::vector<BYTE> pixels;
+    if (!getImagePixels(pixels)) return;
+    Util::saveToClipboard(w, h, pixels.data());
+    closeAfterOutput();
+}
+
+void WinPin::saveToFile()
+{
+    auto path = Util::getSaveFilePath(hwnd);
+    if (path.empty()) return;
+
+    std::vector<BYTE> pixels;
+    if (!getImagePixels(pixels)) return;
+    if (Util::saveToFile(path, w, h, pixels.data())) {
+        closeAfterOutput();
+    }
+}
+
+bool WinPin::getImagePixels(std::vector<BYTE>& pixels)
+{
+    if (w <= 0 || h <= 0) return false;
     auto size = D2D1::SizeU((UINT32)w, (UINT32)h);
 
     // 直接以 screenImg 为渲染目标，把尚未撤销的 shape 叠画到背景上
@@ -129,7 +153,7 @@ void WinPin::copyToClipboard()
         }
     }
     auto hr = render->EndDraw();
-    if (FAILED(hr)) return;
+    if (FAILED(hr)) return false;
 
     // EndDraw 后 screenImg 仍挂在 render target 上，必须先解绑才能作为 CopyFromBitmap 的 source
     render->SetTarget(nullptr);
@@ -142,34 +166,31 @@ void WinPin::copyToClipboard()
     cpuProps.dpiY = 96.0f;
     ComPtr<ID2D1Bitmap1> cpuBmp;
     hr = render->CreateBitmap(size, nullptr, 0, &cpuProps, cpuBmp.GetAddressOf());
-    if (FAILED(hr)) return;
+    if (FAILED(hr)) return false;
 
     hr = cpuBmp->CopyFromBitmap(nullptr, screenImg.Get(), nullptr);
-    if (FAILED(hr)) return;
+    if (FAILED(hr)) return false;
 
     D2D1_MAPPED_RECT mapped{};
     hr = cpuBmp->Map(D2D1_MAP_OPTIONS_READ, &mapped);
-    if (FAILED(hr)) return;
+    if (FAILED(hr)) return false;
 
     // D2D CPU 位图的 mapped.pitch 按 GPU 行对齐，可能 > w*4
-    // SetDIBitsToDevice 固定以 w*4 为步长，必须逐行紧缩后再传入
+    // 剪切板和 WIC PNG 都使用紧凑的 w*4 行步长，必须逐行紧缩
     UINT32 rowBytes = (UINT32)w * 4;
-    if (mapped.pitch == rowBytes) {
-        Util::saveToClipboard(w, h, mapped.bits);
-    } else {
-        std::vector<BYTE> packed((size_t)rowBytes * h);
-        for (int row = 0; row < h; ++row) {
-            CopyMemory(
-                packed.data() + (size_t)row * rowBytes,
-                mapped.bits   + (size_t)row * mapped.pitch,
-                rowBytes);
-        }
-        Util::saveToClipboard(w, h, packed.data());
+    pixels.resize((size_t)rowBytes * h);
+    for (int row = 0; row < h; ++row) {
+        CopyMemory(
+            pixels.data() + (size_t)row * rowBytes,
+            mapped.bits   + (size_t)row * mapped.pitch,
+            rowBytes);
     }
     cpuBmp->Unmap();
-    cpuBmp.Reset();
+    return true;
+}
 
-    // 写入剪切板后销毁当前 WinPin
+void WinPin::closeAfterOutput()
+{
     WinToolMain::get()->hide();
     if (auto* ts = WinToolSub::get()) ts->hide();
     close(); // 销毁窗口句柄

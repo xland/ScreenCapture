@@ -456,6 +456,14 @@ void WinToolSub::onKeyDown(const TCHAR& key)
     {
         parent->history->redo();
     }
+    else if (key == 'C' && (GetKeyState(VK_CONTROL) & 0x8000) != 0)
+    {
+        parent->copyToClipboard();
+    }
+    else if (key == 'S' && (GetKeyState(VK_CONTROL) & 0x8000) != 0)
+    {
+        parent->saveToFile();
+    }
 }
 
 void WinToolSub::paintSlider()

@@ -14,6 +14,7 @@ public:
 	static void init();
 	static WinPin* getCur();
 	void copyToClipboard();
+	void saveToFile();
 public:
 	ShapeBase* shapeHover{ nullptr };
 	std::unique_ptr<History> history;
@@ -28,6 +29,8 @@ private:
 	bool onCursor() override;
 	void onTimer(const UINT& timerId) override;
 	void onKeyDown(const TCHAR& key) override;
+	bool getImagePixels(std::vector<BYTE>& pixels);
+	void closeAfterOutput();
 	void initImg();
 private:
 	POINT pressPos{0,0};

@@ -122,7 +122,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>comctl32.lib;d2d1.lib;dcomp.lib;dwmapi.lib;dwrite.lib;imm32.lib;mf.lib;mfreadwrite.lib;mfplat.lib;mfuuid.lib;ole32.lib;shcore.lib;shell32.lib;shlwapi.lib;ws2_32.lib;winmm.lib;windowsapp.lib;userenv.lib;uuid.lib;ntdll.lib;D:\sdk\gifski\target\release\gifski.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>comctl32.lib;d2d1.lib;dcomp.lib;dwmapi.lib;dwrite.lib;imm32.lib;mf.lib;mfreadwrite.lib;mfplat.lib;mfuuid.lib;ole32.lib;shcore.lib;shell32.lib;shlwapi.lib;windowscodecs.lib;ws2_32.lib;winmm.lib;windowsapp.lib;userenv.lib;uuid.lib;ntdll.lib;D:\sdk\gifski\target\release\gifski.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ManifestFile />
     </Link>
     <Manifest>
@@ -150,7 +150,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>comctl32.lib;d2d1.lib;dcomp.lib;dwmapi.lib;dwrite.lib;imm32.lib;mf.lib;mfreadwrite.lib;mfplat.lib;mfuuid.lib;ole32.lib;shcore.lib;shell32.lib;shlwapi.lib;ws2_32.lib;winmm.lib;windowsapp.lib;userenv.lib;uuid.lib;ntdll.lib;D:\sdk\gifski\target\release\gifski.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>comctl32.lib;d2d1.lib;dcomp.lib;dwmapi.lib;dwrite.lib;imm32.lib;mf.lib;mfreadwrite.lib;mfplat.lib;mfuuid.lib;ole32.lib;shcore.lib;shell32.lib;shlwapi.lib;windowscodecs.lib;ws2_32.lib;winmm.lib;windowsapp.lib;userenv.lib;uuid.lib;ntdll.lib;D:\sdk\gifski\target\release\gifski.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ManifestFile />
     </Link>
     <Manifest>

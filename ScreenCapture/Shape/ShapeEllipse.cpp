@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "ShapeEllipse.h"
 #include "../Win/WinPin.h"
 #include "../Win/WinToolMain.h"

@@ -101,6 +101,7 @@ void WinToolMain::onMouseDown(const int& x, const int& y, bool isRight)
         return;
     }
     else if (state == "save") {
+        parent->saveToFile();
         return;
     }
     else if (state == "close") {
@@ -152,6 +153,10 @@ void WinToolMain::onKeyDown(const TCHAR& key)
     else if (key == 'C' && (GetKeyState(VK_CONTROL) & 0x8000) != 0)
     {
         parent->copyToClipboard();
+    }
+    else if (key == 'S' && (GetKeyState(VK_CONTROL) & 0x8000) != 0)
+    {
+        parent->saveToFile();
     }
 }
 

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "pch.h"
 class WinBase;
 class App
@@ -18,9 +18,7 @@ public:
 	/// </summary>
 	static BOOL allowTearing;
 public:
-	winrt::Windows::System::DispatcherQueue dq;
 	HINSTANCE hInstance;
 private:
-	static void initDQ();
 };
 
