@@ -118,12 +118,22 @@ void WinPin::onKeyDown(const TCHAR& key)
     }
 }
 
+void WinPin::onDestroy()
+{
+    WinToolMain::get()->hide();
+    if (auto* ts = WinToolSub::get()) ts->hide();
+    winPins.erase(
+        std::remove_if(winPins.begin(), winPins.end(),
+            [this](auto& p) { return p.get() == this; }),
+        winPins.end());
+}
+
 void WinPin::copyToClipboard()
 {
     std::vector<BYTE> pixels;
     if (!getImagePixels(pixels)) return;
     Util::saveToClipboard(w, h, pixels.data());
-    closeAfterOutput();
+    close();
 }
 
 void WinPin::saveToFile()
@@ -134,7 +144,7 @@ void WinPin::saveToFile()
     std::vector<BYTE> pixels;
     if (!getImagePixels(pixels)) return;
     if (Util::saveToFile(path, w, h, pixels.data())) {
-        closeAfterOutput();
+        close();
     }
 }
 
@@ -187,18 +197,6 @@ bool WinPin::getImagePixels(std::vector<BYTE>& pixels)
     }
     cpuBmp->Unmap();
     return true;
-}
-
-void WinPin::closeAfterOutput()
-{
-    WinToolMain::get()->hide();
-    if (auto* ts = WinToolSub::get()) ts->hide();
-    close(); // 销毁窗口句柄
-    winPins.erase(
-        std::remove_if(winPins.begin(), winPins.end(),
-            [this](auto& p) { return p.get() == this; }),
-        winPins.end());
-    // this 已被析构，后续不再访问任何成员
 }
 
 void WinPin::initImg()

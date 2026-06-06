@@ -11,8 +11,8 @@ public:
 private:
 	void createWin();
 	void createTray();
-	void onTrayClick();
-	void onTrayRightClick();
+	void onTrayClick(const int&x,const int& y);
+	void onTrayRightClick(const int& x, const int& y);
 	static LRESULT CALLBACK wndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 private:
 	std::unique_ptr<NOTIFYICONDATA> tray;

@@ -29,8 +29,8 @@ private:
 	bool onCursor() override;
 	void onTimer(const UINT& timerId) override;
 	void onKeyDown(const TCHAR& key) override;
+	void onDestroy() override;
 	bool getImagePixels(std::vector<BYTE>& pixels);
-	void closeAfterOutput();
 	void initImg();
 private:
 	POINT pressPos{0,0};

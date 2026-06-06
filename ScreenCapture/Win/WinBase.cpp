@@ -30,6 +30,7 @@ void WinBase::close()
 {
     SetWindowLongPtr(hwnd, GWLP_USERDATA, NULL);
     DestroyWindow(hwnd);
+    onDestroy();
 }
 void WinBase::move(const int& x, const int& y)
 {

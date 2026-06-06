@@ -42,6 +42,7 @@ protected:
 	virtual bool onCursor();
 	virtual void onIME() {};
 	virtual void onBlur() {};
+	virtual void onDestroy() {};
 private:
 	std::wstring& getWinClsName();
 	static LRESULT CALLBACK winProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);

@@ -46,7 +46,7 @@ void Tray::createTray()
 	Shell_NotifyIcon(NIM_ADD, tray.get()); //添加托盘图标
 }
 
-void Tray::onTrayClick()
+void Tray::onTrayClick(const int& x, const int& y)
 {
 
 }
@@ -60,31 +60,47 @@ LRESULT CALLBACK Tray::wndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
     else if(msg == WM_APP + 100)
     {
 		if (lParam == WM_LBUTTONDOWN) {
-			self->onTrayClick();
+			self->onTrayClick(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 		}
 		else if (lParam == WM_RBUTTONDOWN)
 		{
-			self->onTrayRightClick();
+			self->onTrayRightClick(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 		}
     }
+	else if (msg == WM_COMMAND) {
+		int menuId = LOWORD(wParam);
+		if (menuId == 0)
+		{
+			// 截图
+		}
+		else if (menuId == 1)
+		{
+			// 截长图
+		}
+		else if (menuId == 2)
+		{
+			// 录屏
+		}
+		else if (menuId == 3)
+		{
+			// 设置
+		}
+		else if (menuId == 4)
+		{
+			App::exit(0);
+		}
+	}
     return DefWindowProc(hWnd, msg, wParam, lParam);
 }
-void Tray::onTrayRightClick()
+void Tray::onTrayRightClick(const int& x, const int& y)
 {
-	auto menu = CreatePopupMenu(); //创建弹出菜单
-	AppendMenu(menu, MF_STRING, 0, L"显示窗口"); //设置菜单项
-	AppendMenu(menu, MF_STRING, 1, L"测试菜单");
-	AppendMenu(menu, MF_STRING, 2, L"退出");
-	POINT pt;
-	GetCursorPos(&pt); //获取鼠标位置
-	//显示菜单（阻塞方法）
-	int cmd = TrackPopupMenuEx(menu, TPM_RETURNCMD | TPM_RIGHTBUTTON, pt.x, pt.y, hwnd, nullptr);
-	if (cmd == 0) {
-		ShowWindow(hwnd, SW_SHOW);
-		SetForegroundWindow(hwnd);
-	}
-	else if (cmd == 2) {
-		App::exit(0);
-	}
+	auto menu = CreatePopupMenu();
+	AppendMenu(menu, MF_STRING, 0, L"截图");
+	AppendMenu(menu, MF_STRING, 1, L"截长图");
+	AppendMenu(menu, MF_STRING, 2, L"录屏");
+	AppendMenu(menu, MF_SEPARATOR, 0, NULL);
+	AppendMenu(menu, MF_STRING, 3, L"设置");
+	AppendMenu(menu, MF_STRING, 4, L"退出");
+	TrackPopupMenuEx(menu, TPM_RIGHTBUTTON,  x, y, hwnd, nullptr);
 	DestroyMenu(menu);
 }

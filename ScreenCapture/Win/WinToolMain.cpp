@@ -105,7 +105,7 @@ void WinToolMain::onMouseDown(const int& x, const int& y, bool isRight)
         return;
     }
     else if (state == "close") {
-        App::get()->exit(1);
+        parent->close();
         return;
     }
     else {
