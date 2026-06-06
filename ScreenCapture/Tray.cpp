@@ -28,7 +28,7 @@ Tray* Tray::get()
 
 void Tray::createWin()
 {
-	hwnd = CreateWindow(L"STATIC", L"MsgWnd", 0, 0, 0, 0, 0, HWND_MESSAGE, NULL, App::get()->hInstance, NULL);
+	hwnd = CreateWindow(L"STATIC", L"ScreenCaptureMsgWnd", 0, 0, 0, 0, 0, HWND_MESSAGE, NULL, App::get()->hInstance, NULL);
 	SetWindowLongPtr(hwnd, GWLP_WNDPROC, (LONG_PTR)Tray::wndProc);
 	SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
 }
@@ -46,10 +46,6 @@ void Tray::createTray()
 	Shell_NotifyIcon(NIM_ADD, tray.get()); //添加托盘图标
 }
 
-void Tray::onTrayClick(const int& x, const int& y)
-{
-
-}
 
 LRESULT CALLBACK Tray::wndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -60,11 +56,11 @@ LRESULT CALLBACK Tray::wndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
     else if(msg == WM_APP + 100)
     {
 		if (lParam == WM_LBUTTONDOWN) {
-			self->onTrayClick(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+			self->onTrayClick();
 		}
 		else if (lParam == WM_RBUTTONDOWN)
 		{
-			self->onTrayRightClick(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+			self->onTrayRightClick();
 		}
     }
 	else if (msg == WM_COMMAND) {
@@ -92,7 +88,11 @@ LRESULT CALLBACK Tray::wndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 	}
     return DefWindowProc(hWnd, msg, wParam, lParam);
 }
-void Tray::onTrayRightClick(const int& x, const int& y)
+void Tray::onTrayClick()
+{
+
+}
+void Tray::onTrayRightClick()
 {
 	auto menu = CreatePopupMenu();
 	AppendMenu(menu, MF_STRING, 0, L"截图");
@@ -101,6 +101,8 @@ void Tray::onTrayRightClick(const int& x, const int& y)
 	AppendMenu(menu, MF_SEPARATOR, 0, NULL);
 	AppendMenu(menu, MF_STRING, 3, L"设置");
 	AppendMenu(menu, MF_STRING, 4, L"退出");
-	TrackPopupMenuEx(menu, TPM_RIGHTBUTTON,  x, y, hwnd, nullptr);
+	POINT pt;
+	GetCursorPos(&pt); //获取鼠标位置
+	TrackPopupMenuEx(menu, TPM_RIGHTBUTTON,  pt.x, pt.y, hwnd, nullptr);
 	DestroyMenu(menu);
 }

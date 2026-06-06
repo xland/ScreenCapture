@@ -12,6 +12,7 @@
 #include "Shape/ShapeText.h"
 #include "Shape/ShapeMosaic.h"
 #include "Shape/ShapeEraser.h"
+#include "Shape/ShapeTextWin.h"
 
 History::History(WinPin* win):win{win}
 {
@@ -99,6 +100,31 @@ void History::redo()
             break;
         }
     }
+}
+
+/// <summary>
+/// 进删除除 hover 状态的 shape
+/// </summary>
+void History::removeHoverShape()
+{
+    if (!win->shapeHover) return;
+    auto target = win->shapeHover;
+    // 如果正在编辑文本，先隐藏编辑窗口
+    if (auto txt = dynamic_cast<ShapeText*>(target)) {
+        if (txt->isEditing) {
+            if (auto tw = ShapeTextWin::get()) tw->hide();
+            txt->isEditing = false;
+        }
+    }
+    // 从历史中移除目标 shape
+    for (auto it = shapes.begin(); it != shapes.end(); ++it) {
+        if (it->get() == target) {
+            shapes.erase(it);
+            break;
+        }
+    }
+    win->shapeHover = nullptr;
+    win->refresh();
 }
 
 void History::removeUndoShape()

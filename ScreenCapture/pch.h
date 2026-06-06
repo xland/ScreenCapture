@@ -1,7 +1,8 @@
 ﻿#pragma once
 
-#include <Windows.h>
+#include <windows.h>
 #include <windowsx.h>
+#include <winuser.h>
 #include <shlobj.h>
 #include <shlwapi.h>
 #include <wrl.h>

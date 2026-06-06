@@ -98,7 +98,7 @@ void WinPin::onTimer(const UINT& timerId)
     }
 }
 
-void WinPin::onKeyDown(const TCHAR& key)
+void WinPin::onKeyDown(const UINT& key)
 {
     if (key == 'Z' && (GetKeyState(VK_CONTROL) & 0x8000) != 0)
     {

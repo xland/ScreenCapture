@@ -15,6 +15,7 @@ protected:
 	void addIconLayout(const std::wstring& icon);
 	void paintIcon(const float& posX,IDWriteTextLayout* icon,bool isHover,bool isSelected);
 	IDWriteTextLayout* getBtnIconLayout(const std::string& name);
+	void onKeyDown(const UINT& key) override;
 	void showTipAt(int x, int y);
 	void hideTip();
 protected:

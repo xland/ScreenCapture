@@ -25,6 +25,12 @@ App::~App()
 
 void App::init(HINSTANCE hInstance)
 {
+    auto hwnd = FindWindow(L"STATIC", L"ScreenCaptureMsgWnd");
+    if (hwnd) {
+        PostMessage(hwnd, WM_APP + 666, 0, 0);
+        App::exit(0);
+        return;
+    }
     App::initDevice();
 	app = std::make_unique<App>(hInstance);
     Tray::init();

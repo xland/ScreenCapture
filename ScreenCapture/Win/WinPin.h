@@ -28,7 +28,7 @@ private:
 	void onPaint() override;
 	bool onCursor() override;
 	void onTimer(const UINT& timerId) override;
-	void onKeyDown(const TCHAR& key) override;
+	void onKeyDown(const UINT& key) override;
 	void onDestroy() override;
 	bool getImagePixels(std::vector<BYTE>& pixels);
 	void initImg();

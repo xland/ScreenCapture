@@ -140,26 +140,6 @@ void WinToolMain::onMouseLeave()
     hideTip();
 }
 
-void WinToolMain::onKeyDown(const TCHAR& key)
-{
-    if (key == 'Z' && (GetKeyState(VK_CONTROL) & 0x8000) != 0)
-    {
-        parent->history->undo();
-    }
-    else if (key == 'Y' && (GetKeyState(VK_CONTROL) & 0x8000) != 0)
-    {
-        parent->history->redo();
-    }
-    else if (key == 'C' && (GetKeyState(VK_CONTROL) & 0x8000) != 0)
-    {
-        parent->copyToClipboard();
-    }
-    else if (key == 'S' && (GetKeyState(VK_CONTROL) & 0x8000) != 0)
-    {
-        parent->saveToFile();
-    }
-}
-
 void WinToolMain::initBtn()
 {
     btnId = { "rect" , "ellipse", "arrow", "number" , "line" ,"text" , "mosaic", "eraser", "undo", "redo", "clipboard" , "save" , "close" };

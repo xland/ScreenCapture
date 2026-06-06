@@ -179,7 +179,7 @@ void ShapeTextWin::onMouseUp(const int& x, const int& y)
     caretVisible = true;
     refresh();
 }
-void ShapeTextWin::onKeyDown(const TCHAR& key)
+void ShapeTextWin::onKeyDown(const UINT& key)
 {
     if (key == VK_RETURN) {
         delSelection();

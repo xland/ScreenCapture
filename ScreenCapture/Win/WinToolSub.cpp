@@ -446,26 +446,6 @@ void WinToolSub::onMouseWheel(const int& x, const int& y, const short& delta)
     refresh();
 }
 
-void WinToolSub::onKeyDown(const TCHAR& key)
-{
-    if (key == 'Z' && (GetKeyState(VK_CONTROL) & 0x8000) != 0)
-    {
-        parent->history->undo();
-    }
-    else if (key == 'Y' && (GetKeyState(VK_CONTROL) & 0x8000) != 0)
-    {
-        parent->history->redo();
-    }
-    else if (key == 'C' && (GetKeyState(VK_CONTROL) & 0x8000) != 0)
-    {
-        parent->copyToClipboard();
-    }
-    else if (key == 'S' && (GetKeyState(VK_CONTROL) & 0x8000) != 0)
-    {
-        parent->saveToFile();
-    }
-}
-
 void WinToolSub::paintSlider()
 {
     if (!hasSlider) return;
