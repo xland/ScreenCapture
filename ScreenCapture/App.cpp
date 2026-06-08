@@ -25,7 +25,7 @@ App::~App()
 
 void App::init(HINSTANCE hInstance)
 {
-    if(App::secondIns()) return;
+    if (Tray::secondIns()) return;
     App::initDevice();
 	app = std::make_unique<App>(hInstance);
     Tray::init();
@@ -105,13 +105,4 @@ IDWriteFactory5* App::getWriter()
     return dwriteFactory.Get();
 }
 
-bool App::secondIns()
-{
-    auto hwnd = FindWindow(L"STATIC", L"ScreenCaptureMsgWnd");
-    if (hwnd) {
-        PostMessage(hwnd, WM_APP + 666, 0, 0);
-        App::exit(0);
-        return true;
-    }
-    return false;
-}
+

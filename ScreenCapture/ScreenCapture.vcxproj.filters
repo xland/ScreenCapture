@@ -87,6 +87,9 @@
     <ClCompile Include="Shape\ShapeTextWin.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Win\WinSetting.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -158,10 +161,16 @@
     <ClInclude Include="Shape\ShapeTextWin.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="Win\WinSetting.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Res\Resource.rc">
       <Filter>资源文件</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="todo.md" />
   </ItemGroup>
 </Project>

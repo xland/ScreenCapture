@@ -170,6 +170,7 @@
     <ClCompile Include="Shape\ShapeNumber.cpp" />
     <ClCompile Include="Shape\ShapeText.cpp" />
     <ClCompile Include="Tray.cpp" />
+    <ClCompile Include="Win\WinSetting.cpp" />
     <ClCompile Include="Win\CutMask.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="pch.cpp">
@@ -199,6 +200,7 @@
     <ClInclude Include="Shape\ShapeNumber.h" />
     <ClInclude Include="Shape\ShapeText.h" />
     <ClInclude Include="Tray.h" />
+    <ClInclude Include="Win\WinSetting.h" />
     <ClInclude Include="Win\CutMask.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Shape\ShapeRect.h" />

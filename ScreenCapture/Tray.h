@@ -7,8 +7,10 @@ public:
 	~Tray();
 	static void init();
 	static Tray* get();
+	static bool secondIns();
 public:
 private:
+	void regHotKey();
 	void createWin();
 	void createTray();
 	void onTrayClick();
