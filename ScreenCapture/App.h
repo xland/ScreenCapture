@@ -20,5 +20,6 @@ public:
 public:
 	HINSTANCE hInstance;
 private:
+	static bool secondIns();
 };
 

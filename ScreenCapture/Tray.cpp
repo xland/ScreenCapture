@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "Tray.h"
 #include "App.h"
+#include "Win/WinCap.h"
 
 std::unique_ptr<Tray> trayIns;
 
@@ -53,6 +54,10 @@ LRESULT CALLBACK Tray::wndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 	if (!self) {
 		return DefWindowProc(hWnd, msg, wParam, lParam);
 	}
+	else if (msg == WM_APP + 666)
+	{
+		WinCap::init();
+	}
     else if(msg == WM_APP + 100)
     {
 		if (lParam == WM_LBUTTONDOWN) {
@@ -67,7 +72,7 @@ LRESULT CALLBACK Tray::wndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 		int menuId = LOWORD(wParam);
 		if (menuId == 0)
 		{
-			// 截图
+			WinCap::init();
 		}
 		else if (menuId == 1)
 		{
