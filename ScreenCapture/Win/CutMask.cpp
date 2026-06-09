@@ -3,10 +3,10 @@
 #include "Util.h"
 #include "WinCap.h"
 #include "CutMask.h"
+#include "WinBase.h"
 
-CutMask::CutMask() 
+CutMask::CutMask(WinBase* win):win{win}
 {
-    auto win = WinCap::get();
     auto render = win->render.Get();
     render->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White), brushText.GetAddressOf());
     render->CreateSolidColorBrush(D2D1::ColorF(0x000000, 0.46f), brushBg.GetAddressOf());
@@ -30,7 +30,7 @@ bool CutMask::highlight(const int& x, const int& y)
             if (maskRect.left != rect.left||maskRect.top != rect.top || 
                 maskRect.right != rect.right || maskRect.bottom != rect.bottom) {
                 maskRect = rect;
-                WinCap::get()->refresh();
+                win->refresh();
                 return true;
             }
             break;
@@ -51,16 +51,15 @@ void CutMask::initWinRect()
             RECT rect;
             DwmGetWindowAttribute(hwnd, DWMWA_EXTENDED_FRAME_BOUNDS, &rect, sizeof(RECT));
             if (rect.right - rect.left <= 6 || rect.bottom - rect.top <= 6) return TRUE;
-            auto winCap = WinCap::get();
-            if (rect.left < winCap->x) rect.left = winCap->x;
-            if (rect.top < winCap->y) rect.top = winCap->y;
-            if (rect.right > winCap->x + winCap->w) rect.right = winCap->x + winCap->w;
-            if (rect.bottom > winCap->y + winCap->h) rect.bottom = winCap->y + winCap->h;
-            auto x = (rect.left - winCap->x);
-            auto y = (rect.top - winCap->y);
-            auto r = (rect.right - winCap->x);
-            auto b = (rect.bottom - winCap->y);
             auto self = (CutMask*)lparam;
+            if (rect.left < self->win->x) rect.left = self->win->x;
+            if (rect.top < self->win->y) rect.top = self->win->y;
+            if (rect.right > self->win->x + self->win->w) rect.right = self->win->x + self->win->w;
+            if (rect.bottom > self->win->y + self->win->h) rect.bottom = self->win->y + self->win->h;
+            auto x = (rect.left - self->win->x);
+            auto y = (rect.top - self->win->y);
+            auto r = (rect.right - self->win->x);
+            auto b = (rect.bottom - self->win->y);
             self->winRect.push_back(D2D1::RectF(x, y, r, b));
             return TRUE;
         }, (LPARAM)this);
@@ -79,12 +78,11 @@ void CutMask::makeRect(const int& x, const int& y)
     maskRect.right = right;
     maskRect.top = top;
     maskRect.bottom = bottom;
-    WinCap::get()->refresh();
+    win->refresh();
 }
 
 void CutMask::paint()
 {
-    auto win = WinCap::get();
     auto render = win->render.Get();
     D2D1_RECT_F destRect = D2D1::RectF(0, 0, win->w, win->h);
 

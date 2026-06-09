@@ -12,6 +12,7 @@ public:
 	virtual void mouseDrag(const float& x, const float& y, const UINT_PTR& modifiers) {};
 	virtual void mouseDown(const float& x, const float& y) { };
 	virtual void mouseUp(const float& x, const float& y) { };
+	virtual void mouseWheel(const float& x, const float& y, const short& delta) {};
 	virtual void setCursor() {};
 public:
 	WinPin* win;

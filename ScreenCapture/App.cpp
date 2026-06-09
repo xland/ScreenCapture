@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "App.h"
 #include "Win/WinCap.h"
+#include "Win/WinLong.h"
 #include "Tray.h"
 
 namespace {
@@ -29,7 +30,8 @@ void App::init(HINSTANCE hInstance)
     App::initDevice();
 	app = std::make_unique<App>(hInstance);
     Tray::init();
-    WinCap::init();
+    WinLong::init();
+    //WinCap::init();
 }
 
 App* App::get()

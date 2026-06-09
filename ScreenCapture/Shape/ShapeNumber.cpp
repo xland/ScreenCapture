@@ -41,6 +41,7 @@ void ShapeNumber::paint()
 
 void ShapeNumber::paintDragger()
 {
+	if (isWheel) return;
 	for (auto& dragger:draggers)
 	{
 		win->render->DrawRectangle(dragger, brushDragger.Get(), win->dpi);
@@ -128,6 +129,29 @@ void ShapeNumber::mouseMove(const float& x, const float& y)
     {
         hoverDraggerIndex = 2;
     }
+	if (isWheel) {
+		isWheel = false;
+		mouseUp(x, y);
+		win->refresh();
+	}
+}
+
+void ShapeNumber::mouseWheel(const float& x, const float& y, const short& delta)
+{
+	isWheel = true;
+	if (delta < 0) {
+		if (r <= 6.f * win->dpi) return;
+		r--;
+		makePath();
+		makeTextLayout();
+		win->refresh();
+	}
+	else {
+		r++;		
+		makePath();
+		makeTextLayout();
+		win->refresh();
+	}
 }
 
 void ShapeNumber::setCursor()

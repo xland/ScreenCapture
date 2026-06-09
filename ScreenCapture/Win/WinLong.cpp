@@ -1,69 +1,62 @@
 ﻿#include "pch.h"
 #include "App.h"
 #include "Util.h"
-#include "WinCap.h"
+#include "WinLong.h"
 #include "CutMask.h"
-#include "WinPix.h"
-#include "WinPin.h"
-#include "History.h"
 
-std::unique_ptr<WinCap> winCap;
+std::unique_ptr<WinLong> winLong;
 
-WinCap::WinCap(const int& x, const int& y, const int& w, const int& h) : WinBase(x, y, w, h)
+WinLong::WinLong(const int& x, const int& y, const int& w, const int& h) : WinBase(x, y, w, h)
 {
 
 }
 
-WinCap::~WinCap()
+WinLong::~WinLong()
 {
 
 }
 
-void WinCap::init()
+void WinLong::init()
 {
-    WinCap::release();
+    WinLong::release();
     auto x = GetSystemMetrics(SM_XVIRTUALSCREEN);
     auto y = GetSystemMetrics(SM_YVIRTUALSCREEN);
     auto w = GetSystemMetrics(SM_CXVIRTUALSCREEN);
     auto h = GetSystemMetrics(SM_CYVIRTUALSCREEN);
 	std::vector<BYTE> data = Util::captureScreen(x, y, w, h);
-	winCap = std::make_unique<WinCap>(x, y, w, h);
-    winCap->createWindow();
+    winLong = std::make_unique<WinLong>(x, y, w, h);
+    winLong->createWindow();
     D2D1_BITMAP_PROPERTIES1 props = {
         .pixelFormat{D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED)},
         .dpiX{96.0f}, .dpiY{96.0f}, .bitmapOptions{D2D1_BITMAP_OPTIONS_TARGET}
     };
-    winCap->render->CreateBitmap(D2D1::SizeU(w, h), data.data(), w * 4, props, winCap->screenImg.GetAddressOf());
+    winLong->render->CreateBitmap(D2D1::SizeU(w, h), data.data(), w * 4, props, winLong->screenImg.GetAddressOf());
     POINT pt;
     GetCursorPos(&pt);
-    winCap->winPix = std::make_unique<WinPix>((int)pt.x, (int)pt.y);
-    winCap->cutMask = std::make_unique<CutMask>(winCap.get());
-    winCap->show();
-    UpdateWindow(winCap->hwnd);
+    winLong->cutMask = std::make_unique<CutMask>(winLong.get());
+    winLong->show();
+    UpdateWindow(winLong->hwnd);
 
 }
-WinCap* WinCap::get()
+WinLong* WinLong::get()
 {
-    return winCap.get();
+    return winLong.get();
 }
 
-void WinCap::release()
+void WinLong::release()
 {
-    if (winCap.get()) {
-        if (winCap->winPix) {
-            winCap->winPix->close();
-        }
-        winCap->close();
-        winCap.reset();
+    if (winLong.get()) {
+        winLong->close();
+        winLong.reset();
     }
 }
-ComPtr<ID2D1Bitmap1> WinCap::getCutImg()
+ComPtr<ID2D1Bitmap1> WinLong::getCutImg()
 {
     auto& r = cutMask->maskRect;
     auto rect = D2D1::RectU((UINT32)r.left, (UINT32)r.top, (UINT32)r.right, (UINT32)r.bottom);
 	return getImgByRect(rect);
 }
-ComPtr<ID2D1Bitmap1> WinCap::getImgByRect(D2D1_RECT_U& rect)
+ComPtr<ID2D1Bitmap1> WinLong::getImgByRect(D2D1_RECT_U& rect)
 {
     ComPtr<ID2D1Bitmap1> cpuImg;
     ComPtr<ID2D1DeviceContext> dc;
@@ -78,36 +71,33 @@ ComPtr<ID2D1Bitmap1> WinCap::getImgByRect(D2D1_RECT_U& rect)
     return cpuImg;
 }
 
-void WinCap::onPaint()
+void WinLong::onPaint()
 {
     D2D1_RECT_F destRect = D2D1::RectF(0, 0, (float)w, (float)h);
     render->DrawBitmap(screenImg.Get(), destRect);
     cutMask->paint();
 }
 
-void WinCap::onMouseMove(const int& x, const int& y) {
+void WinLong::onMouseMove(const int& x, const int& y) {
     cutMask->highlight(x, y);
-    winPix->move(x, y);
 }
-void WinCap::onMouseDrag(const int& x, const int& y, const UINT_PTR& modifiers)
+void WinLong::onMouseDrag(const int& x, const int& y, const UINT_PTR& modifiers)
 {
     cutMask->makeRect(x, y);
 }
-void WinCap::onMouseDown(const int& x, const int& y, bool isRight)
+void WinLong::onMouseDown(const int& x, const int& y, bool isRight)
 {
     if (isRight) {
         App::exit(2);
         return;
     }
-    if (winPix.get()) {
-        winPix->hide(); //必须先hide再释放，不然会闪烁一下
-        winPix->close();
-        winPix.reset();
-    }
     cutMask->startMakeRect(x, y);
 }
-void WinCap::onMouseUp(const int& x, const int& y)
+void WinLong::onMouseUp(const int& x, const int& y)
 {
-    WinPin::init();
-    WinCap::release();
+    HRGN rgn1 = CreateRectRgn(0, 0, w, h);
+    auto& r = cutMask->maskRect;
+    HRGN rgn2 = CreateRectRgn(r.left, r.top, r.right, r.bottom);
+    CombineRgn(rgn1, rgn1, rgn2, RGN_DIFF);
+    SetWindowRgn(hwnd, rgn1, true); //为窗口指定裁剪区域
 }

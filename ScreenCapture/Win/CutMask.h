@@ -1,10 +1,11 @@
 ﻿#pragma once
 #include "pch.h"
 
+class WinBase;
 class CutMask
 {
 public:
-	CutMask();
+	CutMask(WinBase* win);
 	~CutMask();
 	bool highlight(const int& x, const int& y);
 	void startMakeRect(const int& x, const int& y);
@@ -23,5 +24,6 @@ private:
 	ComPtr<ID2D1SolidColorBrush> brushText;
 	std::vector<D2D1_RECT_F> winRect;
 	int pressX, pressY;
+	WinBase* win;
 };
 

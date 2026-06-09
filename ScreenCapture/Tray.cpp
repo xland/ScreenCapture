@@ -126,7 +126,7 @@ LRESULT CALLBACK Tray::wndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 }
 void Tray::onTrayClick()
 {
-
+	WinCap::init();
 }
 void Tray::onTrayRightClick()
 {

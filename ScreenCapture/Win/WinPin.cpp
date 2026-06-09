@@ -288,3 +288,10 @@ void WinPin::onMouseLeave()
 {
 
 }
+
+void WinPin::onMouseWheel(const int& x, const int& y, const short& delta)
+{
+    if (shapeHover) {
+        shapeHover->mouseWheel(x,y,delta);
+    }
+}

@@ -3,14 +3,13 @@
 #include "WinBase.h"
 
 class CutMask;
-class WinPix;
-class WinCap:public WinBase
+class WinLong:public WinBase
 {
 public:
-	WinCap(const int& x, const int& y, const int& w, const int& h);
-	~WinCap();
+	WinLong(const int& x, const int& y, const int& w, const int& h);
+	~WinLong();
 	static void init();
-	static WinCap* get();
+	static WinLong* get();
 	static void release();
 	ComPtr<ID2D1Bitmap1> getCutImg();
 	ComPtr<ID2D1Bitmap1> getImgByRect(D2D1_RECT_U& rect);
@@ -23,7 +22,6 @@ private:
 	void onMouseDown(const int& x, const int& y, bool isRight) override;
 	void onMouseUp(const int& x, const int& y) override;
 private:
-	std::unique_ptr<WinPix> winPix;
 	ComPtr<ID2D1Bitmap1> screenImg;
 };
 

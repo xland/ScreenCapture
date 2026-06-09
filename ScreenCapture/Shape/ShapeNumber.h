@@ -12,6 +12,7 @@ public:
 	void mouseDown(const float& x, const float& y) override;
 	void mouseUp(const float& x, const float& y) override;
 	void mouseMove(const float& x, const float& y) override;
+	void mouseWheel(const float& x, const float& y, const short& delta) override;
 	void setCursor() override;
 public:
 private:
@@ -27,7 +28,7 @@ private:
 	ComPtr<IDWriteTextLayout> layoutText;
 	float pressX, pressY,cx,cy,r,angle{ 270.f };
 	D2D1_POINT_2F tip,mid;
-	bool isFill{ false };
+	bool isFill{ false }, isWheel{false};
 	int val;
 };
 
