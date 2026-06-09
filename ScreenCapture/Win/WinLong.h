@@ -3,6 +3,7 @@
 #include "WinBase.h"
 
 class CutMask;
+class WinStart;
 class WinLong:public WinBase
 {
 public:
@@ -22,6 +23,8 @@ private:
 	void onMouseDown(const int& x, const int& y, bool isRight) override;
 	void onMouseUp(const int& x, const int& y) override;
 private:
+	std::unique_ptr<WinStart> winStart;
 	ComPtr<ID2D1Bitmap1> screenImg;
+	bool isFinishCutMask{ false };
 };
 

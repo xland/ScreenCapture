@@ -18,3 +18,4 @@
 - 钉图窗口放大、缩小功能（边框、滚轮）
 - shape mosaic mouseDrag的时候多次执行 resetMosaic();
 - 支持命令行集成
+- 按ESC推出截屏
