@@ -69,7 +69,7 @@ void WinPin::onPaint()
     }
 }
 
-bool WinPin::onCursor()
+BOOL WinPin::onCursor()
 {
     auto toolMain = WinToolMain::get();
     if (toolMain->state == "") {

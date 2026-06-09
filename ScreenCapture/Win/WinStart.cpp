@@ -21,7 +21,7 @@ WinStart::WinStart(const int& x, const int& y, const int& w, const int& h) : Win
 	POINT pt;
 	GetCursorPos(&pt);
 	move(pt.x-w/2, pt.y-h/2);
-	SetCapture(hwnd);
+	setTimer(600, WM_APP+100);
 }
 
 WinStart::~WinStart()
@@ -38,6 +38,7 @@ void WinStart::onPaint()
 }
 
 void WinStart::onMouseMove(const int& x, const int& y) {
+	SetCursor(NULL);
 	POINT pt;
 	GetCursorPos(&pt);
 	move(pt.x - w / 2, pt.y - h / 2);
@@ -48,9 +49,18 @@ void WinStart::onMouseDrag(const int& x, const int& y, const UINT_PTR& modifiers
 }
 void WinStart::onMouseDown(const int& x, const int& y, bool isRight)
 {
-
+	if (isRight) {
+		ReleaseCapture();
+		close();
+	}
 }
 void WinStart::onMouseUp(const int& x, const int& y)
 {
 
+}
+
+BOOL WinStart::onCursor()
+{
+	SetCursor(NULL);
+	return TRUE;
 }

@@ -88,7 +88,7 @@ void ShapeTextWin::onMouseDrag(const int& x, const int& y, const UINT_PTR& modif
     refresh();
 }
 
-bool ShapeTextWin::onCursor()
+BOOL ShapeTextWin::onCursor()
 {
     setCursor(IDC_IBEAM);
 	return TRUE;

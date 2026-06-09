@@ -17,7 +17,7 @@ private:
 	void onCreated() override;
 	void onPaint() override;
 	void onMouseDrag(const int& x, const int& y, const UINT_PTR& modifiers) override;
-	bool onCursor() override;
+	BOOL onCursor() override;
 	void onMouseDown(const int& x, const int& y, bool isRight);
 	void onMouseUp(const int& x, const int& y);
 	void onTimer(const UINT& timerId) override;

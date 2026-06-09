@@ -27,7 +27,7 @@ private:
 	void onMouseLeave() override;
 	void onMouseWheel(const int& x, const int& y, const short& delta) override;
 	void onPaint() override;
-	bool onCursor() override;
+	BOOL onCursor() override;
 	void onTimer(const UINT& timerId) override;
 	void onKeyDown(const UINT& key) override;
 	void onDestroy() override;

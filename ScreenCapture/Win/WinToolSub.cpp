@@ -329,7 +329,7 @@ void WinToolSub::paintToolButtons()
     }
 }
 
-bool WinToolSub::onCursor()
+BOOL WinToolSub::onCursor()
 {
     SetCursor(LoadCursor(NULL, IDC_HAND));
     return TRUE;

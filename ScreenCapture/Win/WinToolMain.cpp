@@ -53,7 +53,7 @@ WinToolMain* WinToolMain::get()
 {
     return winToolMain.get();
 }
-bool WinToolMain::onCursor()
+BOOL WinToolMain::onCursor()
 {
     setCursor(IDC_HAND);
     return TRUE;

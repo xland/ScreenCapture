@@ -39,7 +39,7 @@ protected:
 	virtual void onMouseLeave() {};
 	virtual void onMouseWheel(const int& x, const int& y, const short& delta) {};
 	virtual void onTimer(const UINT& timerId) {};
-	virtual bool onCursor();
+	virtual BOOL onCursor();
 	virtual void onIME() {};
 	virtual void onBlur() {};
 	virtual void onDestroy() {};

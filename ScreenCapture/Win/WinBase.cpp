@@ -111,15 +111,11 @@ LRESULT WinBase::onHitTest(WPARAM wParam, LPARAM lParam)
 {
     return DefWindowProc(hwnd, WM_NCHITTEST, wParam, lParam);
 }
-bool WinBase::onCursor()
+BOOL WinBase::onCursor()
 {
     SetCursor(LoadCursor(NULL, IDC_CROSS));
     return TRUE;
 }
-
-
-
-
 std::wstring& WinBase::getWinClsName()
 {
     static std::wstring clsName = [] {

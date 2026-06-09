@@ -15,7 +15,7 @@ public:
 protected:
 	void onPaint() override;
 private:
-	bool onCursor() override;
+	BOOL onCursor() override;
 	void initBorder();
 	void initColor();
 	void onMouseMove(const int& x, const int& y) override;
