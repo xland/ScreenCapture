@@ -43,12 +43,14 @@ protected:
 	virtual void onIME() {};
 	virtual void onBlur() {};
 	virtual void onDestroy() {};
+	virtual void onDpiChanged() {};
 private:
 	std::wstring& getWinClsName();
 	static LRESULT CALLBACK winProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 	void mouseMove(const int& x, const int& y);
 	void mouseLeave();
 	void paint();
+	void dpiChange(WPARAM wParam, LPARAM lParam);
 private:
 	ComPtr<IDXGISwapChain1>     swap;
 	ComPtr<IDCompositionDevice> compDev;

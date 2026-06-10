@@ -121,10 +121,14 @@ void WinPin::onDestroy()
 {
     toolMain->hide();
     toolSub->hide();
-    winPins.erase(
-        std::remove_if(winPins.begin(), winPins.end(),
+    winPins.erase(std::remove_if(winPins.begin(), winPins.end(),
             [this](auto& p) { return p.get() == this; }),
         winPins.end());
+}
+
+void WinPin::onDpiChanged()
+{
+    toolMain->move(x, y + h + 5.f * dpi);
 }
 
 void WinPin::copyToClipboard()
@@ -217,7 +221,7 @@ void WinPin::initImg()
 
 void WinPin::initTool()
 {
-    toolBtnSize =  32.f * dpi;
+    auto toolBtnSize{ 32.f * dpi };
     auto toolStyle{ WS_EX_TOPMOST | WS_EX_NOACTIVATE };
     toolMain = std::make_unique<WinToolMain>(x, y + h + 5.f * dpi, toolBtnSize * 13, toolBtnSize,this);
     toolMain->createWindow(toolStyle);

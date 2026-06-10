@@ -12,10 +12,15 @@
 
 WinToolMain::WinToolMain(const int& x, const int& y, const int& w, const int& h, WinPin* parent) : WinToolBase(x, y, w, h,parent)
 {
-	marginTop = 0.f;
+    btnId = { "rect" , "ellipse", "arrow", "number" , "line" ,"text" , "mosaic", "eraser", "undo", "redo", "clipboard" , "save" , "close" };
+    btnName = { L"矩形",L"圆形",L"箭头",L"标号",L"线条",L"文本",L"马赛克",L"橡皮擦",L"撤销",L"重做",L"剪切板",L"保存",L"关闭" };
 }
 WinToolMain::~WinToolMain()
 {
+}
+void WinToolMain::onCreated()
+{
+    toolBtnSize = 32.f * dpi;
 }
 BOOL WinToolMain::onCursor()
 {
@@ -30,13 +35,13 @@ void WinToolMain::onPaint()
     auto margin{ 4.f * dpi };
     for (auto& layout : btnLayout)
     {
-		paintIcon(parent->toolBtnSize * btnIndex, layout.Get(), btnIndex == hoverIndex, btnIndex == selectIndex);
+		paintIcon(toolBtnSize * btnIndex, layout.Get(), btnIndex == hoverIndex, btnIndex == selectIndex);
         btnIndex += 1;
     }
     for (auto index: spliterIndex)
     {
-        auto lx{ (float)parent->toolBtnSize * index }, lt{ 2.f * margin };
-        render->DrawLine({ lx,lt }, { lx,parent->toolBtnSize - lt }, brushSpliter.Get(), 0.8f);
+        auto lx{ (float)toolBtnSize * index }, lt{ 2.f * margin };
+        render->DrawLine({ lx,lt }, { lx,toolBtnSize - lt }, brushSpliter.Get(), 0.8f);
     }
     auto r = D2D1::RectF(0, 0, (float)w, (float)h);
     render->DrawRectangle(r, brushSpliter.Get(), 2 * dpi);
@@ -69,6 +74,8 @@ void WinToolMain::onMouseDown(const int& x, const int& y, bool isRight)
         return;
     }
     else if (state == "close") {
+        parent->toolSub->close();
+        parent->toolMain->close();
         parent->close();
         return;
     }
@@ -91,12 +98,12 @@ void WinToolMain::onMouseDown(const int& x, const int& y, bool isRight)
 }
 void WinToolMain::onMouseMove(const int& x, const int& y)
 {
-    size_t index = static_cast<int>(x / parent->toolBtnSize);
+    size_t index = static_cast<int>(x / toolBtnSize);
     if (index >= btnId.size()) index = btnId.size() - 1;
     if (index != hoverIndex) {
         hoverIndex = (int)index;
         tipText = btnName[index];
-        showTipAt((int)(this->x + index * parent->toolBtnSize + parent->toolBtnSize / 2), (int)(this->y + marginTop + 4 * dpi));
+        showTipAt((int)(this->x + index * toolBtnSize + toolBtnSize / 2), (int)(this->y + 4 * dpi));
         refresh();
     }
 }
@@ -107,10 +114,17 @@ void WinToolMain::onMouseLeave()
     hideTip();
 }
 
+void WinToolMain::onDpiChanged()
+{
+    toolBtnSize = 32.f * dpi;
+    initBtn();
+}
+
+
+
 void WinToolMain::initBtn()
 {
-    btnId = { "rect" , "ellipse", "arrow", "number" , "line" ,"text" , "mosaic", "eraser", "undo", "redo", "clipboard" , "save" , "close" };
-    btnName = { L"矩形",L"圆形",L"箭头",L"标号",L"线条",L"文本",L"马赛克",L"橡皮擦",L"撤销",L"重做",L"剪切板",L"保存",L"关闭" };
+    btnLayout.clear();
     addIconLayout(L"\ue8e8");
     addIconLayout(L"\ue6bc");
     addIconLayout(L"\ue603");

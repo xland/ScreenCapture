@@ -18,6 +18,8 @@ private:
 	void onMouseDown(const int& x, const int& y, bool isRight) override;
 	void onMouseMove(const int& x, const int& y) override;
 	void onMouseLeave() override;
+	void onDpiChanged() override;
+	void onCreated() override;
 private:
 	int spliterIndex[2]{ 8,10 };
 };

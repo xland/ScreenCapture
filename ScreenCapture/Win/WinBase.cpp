@@ -52,8 +52,8 @@ void WinBase::resize(const int& w, const int& h)
             UINT flags = App::allowTearing ? DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING : 0;
             auto hr = swap->ResizeBuffers(0, w, h, DXGI_FORMAT_UNKNOWN, flags);
             createBitmap();
+            refresh();
         }
-        InvalidateRect(hwnd, nullptr, false);
     }
 }
 
@@ -221,6 +221,9 @@ LRESULT WinBase::winProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     else if (msg == WM_KILLFOCUS) {
         self->onBlur();
     }
+    else if (msg == WM_DPICHANGED) {
+        self->dpiChange(wParam,lParam);
+    }
     return DefWindowProc(hwnd, msg, wParam, lParam);
 }
 
@@ -258,4 +261,22 @@ void WinBase::paint()
     if (App::allowTearing) presentFlags |= DXGI_PRESENT_ALLOW_TEARING;
     swap->Present(0, presentFlags);
     EndPaint(hwnd, &ps);
+}
+
+void WinBase::dpiChange(WPARAM wParam, LPARAM lParam)
+{
+    dpi = LOWORD(wParam) / 96.f;
+    const RECT* prcNewWindow = (RECT*)lParam;
+    w = prcNewWindow->right - prcNewWindow->left;
+    h = prcNewWindow->bottom - prcNewWindow->top;
+    x = prcNewWindow->left;
+    y = prcNewWindow->top;
+    SetWindowPos(hwnd, NULL,x,y,w,h,SWP_NOZORDER | SWP_NOREDRAW);
+    render->SetTarget(nullptr);
+    targetBmp.Reset();
+    UINT flags = App::allowTearing ? DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING : 0;
+    auto hr = swap->ResizeBuffers(0, w, h, DXGI_FORMAT_UNKNOWN, flags);
+    createBitmap();
+    onDpiChanged();
+    refresh();
 }

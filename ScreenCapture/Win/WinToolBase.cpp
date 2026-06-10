@@ -29,7 +29,7 @@ void WinToolBase::paintIcon(const float& posX, IDWriteTextLayout* icon, bool isH
     D2D1_POINT_2F origin = { posX, marginTop };
     if (isSelected) {
         float paddingTopBottom{ 4.f * dpi }, paddingLeftRight{ 2.6f * dpi };
-        D2D1_ROUNDED_RECT rr = { { posX + paddingLeftRight, paddingTopBottom+marginTop, posX + parent->toolBtnSize - paddingLeftRight, h - paddingTopBottom }, 8, 8 };
+        D2D1_ROUNDED_RECT rr = { { posX + paddingLeftRight, paddingTopBottom+marginTop, posX + toolBtnSize - paddingLeftRight, h - paddingTopBottom }, 8, 8 };
         render->FillRoundedRectangle(rr, brushSelect.Get());
         render->DrawTextLayout(origin, icon, brushBlue.Get(), D2D1_DRAW_TEXT_OPTIONS_NONE);
     }
@@ -104,7 +104,7 @@ void WinToolBase::addIconLayout(const std::wstring& icon)
             12.f, L"", iconFormat.GetAddressOf());
 	}
     ComPtr<IDWriteTextLayout> layout;
-    writer->CreateTextLayout(icon.data(), icon.length(), iconFormat.Get(), parent->toolBtnSize, parent->toolBtnSize, layout.GetAddressOf());
+    writer->CreateTextLayout(icon.data(), icon.length(), iconFormat.Get(), toolBtnSize, toolBtnSize, layout.GetAddressOf());
     layout->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
     layout->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
     layout->SetFontSize(14.f * dpi, { 0, static_cast<UINT32>(icon.length()) });
