@@ -5,6 +5,8 @@
 #include "CutMask.h"
 
 std::unique_ptr<WinLong> winLong;
+static constexpr UINT scrollMsgId = 18;
+static constexpr UINT scrollEndMsgId = 19;
 
 WinLong::WinLong(const int& x, const int& y, const int& w, const int& h) : WinBase(x, y, w, h)
 {
@@ -80,13 +82,43 @@ void WinLong::onMouseDown(const int& x, const int& y, bool isRight)
 }
 void WinLong::onMouseUp(const int& x, const int& y)
 {
-    isFinishCutMask = true;;
-    //HRGN rgn1 = CreateRectRgn(0, 0, w, h);
- //   auto& r = cutMask->maskRect;
- //   HRGN rgn2 = CreateRectRgn(r.left, r.top, r.right, r.bottom);
- //   CombineRgn(rgn1, rgn1, rgn2, RGN_DIFF);
- //   SetWindowRgn(hwnd, rgn1, true);
-	//winStart = std::make_unique<WinStart>(x, y, 60*dpi, 60 * dpi);
+    if (!isFinishCutMask) {
+        isFinishCutMask = true;
+        return;
+    }
+    if (isShowStartBtn) {
+       HRGN rgn1 = CreateRectRgn(0, 0, w, h);
+       auto& r = cutMask->maskRect;
+       HRGN rgn2 = CreateRectRgn(r.left, r.top, r.right, r.bottom);
+       CombineRgn(rgn1, rgn1, rgn2, RGN_DIFF);
+       SetWindowRgn(hwnd, rgn1, true);
+	   isScrolling = true;
+       capStep();
+    }
+}
+
+void WinLong::onTimer(const UINT& timerId)
+{
+    if (timerId == scrollMsgId) {
+        POINT pt;
+        GetCursorPos(&pt);
+        auto tarHwnd = WindowFromPoint(pt);
+        if (targetHwnd == nullptr) {
+            targetHwnd = tarHwnd;
+        }
+        if (tarHwnd != targetHwnd) return;
+        killTimer(scrollMsgId);
+        INPUT input = { 0 };
+        input.type = INPUT_MOUSE;
+        input.mi.dwFlags = MOUSEEVENTF_WHEEL;
+        input.mi.mouseData = -WHEEL_DELTA;
+        SendInput(1, &input, sizeof(INPUT));
+        setTimer(88, scrollEndMsgId);
+    }
+	else if (scrollEndMsgId == timerId) {
+		killTimer(scrollEndMsgId);
+        capStep();
+	}
 }
 
 void WinLong::initRes()
@@ -126,4 +158,20 @@ BOOL WinLong::onCursor()
         isShowStartBtn = false;
     }
     return TRUE;
+}
+
+void WinLong::capStep()
+{
+    auto& maskRect = cutMask->maskRect;
+    auto maskW{ maskRect.right - maskRect.left }, maskH{ maskRect.bottom - maskRect.top };
+    POINT p{ .x{(int)maskRect.left},.y{(int)maskRect.top} };
+    ClientToScreen(hwnd, &p);
+    auto imgData = Util::captureScreen(p.x, p.y, maskW, h);
+
+
+    //static int name{ 1 };
+    //auto path = std::format(L"D:\\{}.png", name);
+    //Util::saveToFile(path, (int)maskW, (int)maskH, imgData.data());
+    //name += 1;
+    setTimer(500, scrollMsgId);
 }

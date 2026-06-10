@@ -5,7 +5,7 @@ class WinBase
 	friend class App;
 public:
 	WinBase(const int& x, const int& y, const int& w, const int& h);
-	~WinBase();
+	virtual ~WinBase();
 	void show();
 	void hide();
 	void refresh();

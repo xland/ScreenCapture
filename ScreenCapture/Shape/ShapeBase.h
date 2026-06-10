@@ -5,7 +5,7 @@ class ShapeBase
 {
 public:
 	ShapeBase(WinPin* win);
-	~ShapeBase();
+	virtual ~ShapeBase();
 	virtual void paint() = 0;
 	virtual void paintDragger() {};
 	virtual void mouseMove(const float& x, const float& y) { };

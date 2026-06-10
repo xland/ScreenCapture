@@ -19,3 +19,4 @@
 - shape mosaic mouseDrag的时候多次执行 resetMosaic();
 - 支持命令行集成
 - 按ESC推出截屏
+- 取色快捷键我好像还没做

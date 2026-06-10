@@ -6,7 +6,7 @@ class WinToolBase :public WinBase
 {
 public:
 	WinToolBase(const int& x, const int& y, const int& w, const int& h);
-	~WinToolBase();
+	virtual ~WinToolBase();
 public:
 	int selectIndex{-1};
 protected:

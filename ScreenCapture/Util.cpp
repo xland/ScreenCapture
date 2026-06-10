@@ -62,7 +62,7 @@ void Util::saveToClipboard(int& w, int& h, BYTE* data)
     // SetClipboardData 成功后剪切板接管 hGlobal，不可再 GlobalFree
 }
 
-bool Util::saveToFile(const std::wstring& path, int& w, int& h, BYTE* data)
+bool Util::saveToFile(const std::wstring& path, const int& w, const int& h, BYTE* data)
 {
     if (path.empty() || w <= 0 || h <= 0 || !data) return false;
     UINT rowBytes = (UINT)w * 4;

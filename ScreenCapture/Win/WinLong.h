@@ -19,14 +19,17 @@ private:
 	void onMouseDrag(const int& x, const int& y, const UINT_PTR& modifiers) override;
 	void onMouseDown(const int& x, const int& y, bool isRight) override;
 	void onMouseUp(const int& x, const int& y) override;
+	void onTimer(const UINT& timerId) override;
 	void initRes();
 	BOOL onCursor() override;
+	void capStep();
 private:
-	bool isFinishCutMask{ false }, isShowStartBtn{false};
+	bool isFinishCutMask{ false }, isShowStartBtn{ false }, isScrolling{false};
 	ComPtr<ID2D1SolidColorBrush> textBrush;
 	ComPtr<ID2D1SolidColorBrush> bgBrush;
 	ComPtr<IDWriteTextLayout> layoutText;
 	float startCircleR{ 30.f };
 	POINT circleCenter;
+	HWND targetHwnd{ nullptr };
 };
 
