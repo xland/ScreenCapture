@@ -4,11 +4,13 @@
 class WinToolSub :public WinToolBase
 {
 public:
-	WinToolSub();
+	WinToolSub(WinPin* parent);
 	~WinToolSub();
-	static void popup(WinPin* parent);
-	static WinToolSub* get();
 	D2D1_COLOR_F getSelectedColor();
+	void initBtn();
+	void initColor();
+	void resetVal();
+	void setBorderPath();
 public:
 	float sliderVal;
 	int selectIndex2{ -1 };
@@ -16,8 +18,6 @@ protected:
 	void onPaint() override;
 private:
 	BOOL onCursor() override;
-	void initBorder();
-	void initColor();
 	void onMouseMove(const int& x, const int& y) override;
 	void onMouseLeave() override;
 	void onMouseDown(const int& x, const int& y, bool isRight) override;
@@ -26,8 +26,6 @@ private:
 	void paintSlider();
 	void paintColorSelector();
 	void paintToolButtons();
-	void initVal();
-	void initBtn();
 	void refreshLayout();
 	bool hoverBtn(const int& x);
 	bool hoverColor(const int& x);

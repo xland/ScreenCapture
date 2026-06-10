@@ -39,7 +39,7 @@ void WinPin::init()
     win->initImg();
     win->enableShadow();
     win->show();
-    WinToolMain::popup(win.get());
+    win->initTool();
 	winPins.push_back(std::move(win));
 }
 
@@ -71,7 +71,6 @@ void WinPin::onPaint()
 
 BOOL WinPin::onCursor()
 {
-    auto toolMain = WinToolMain::get();
     if (toolMain->state == "") {
         setCursor(IDC_SIZEALL);
         return TRUE;
@@ -120,8 +119,8 @@ void WinPin::onKeyDown(const UINT& key)
 
 void WinPin::onDestroy()
 {
-    WinToolMain::get()->hide();
-    if (auto* ts = WinToolSub::get()) ts->hide();
+    toolMain->hide();
+    toolSub->hide();
     winPins.erase(
         std::remove_if(winPins.begin(), winPins.end(),
             [this](auto& p) { return p.get() == this; }),
@@ -216,10 +215,27 @@ void WinPin::initImg()
     hr = cpuImg->Unmap();
 }
 
+void WinPin::initTool()
+{
+    auto btnSize{ 32.f * dpi };
+    auto toolStyle{ WS_EX_TOPMOST | WS_EX_NOACTIVATE };
+    toolMain = std::make_unique<WinToolMain>(x, y + h + 5.f * dpi, btnSize * 13, btnSize,this);
+    toolMain->createWindow(toolStyle);
+    toolMain->initTip();
+    toolMain->initBrush();
+    toolMain->initBtn();
+    toolMain->show();
+    toolSub = std::make_unique<WinToolSub>(this);
+    toolSub->createWindow(toolStyle);
+    toolSub->initTip();
+    toolSub->initBrush();
+    toolSub->initColor();
+    toolSub->initBtn();
+}
+
 
 void WinPin::onMouseMove(const int& x, const int& y)
 {
-    auto toolMain = WinToolMain::get();
     if (toolMain->state == "") return;
     int i{ (int)(history->shapes.size() - 1) };
     for (; i >= 0; i--)
@@ -243,7 +259,6 @@ void WinPin::onMouseMove(const int& x, const int& y)
 
 void WinPin::onMouseDrag(const int& x, const int& y, const UINT_PTR& modifiers)
 {
-    auto toolMain = WinToolMain::get();
     if (toolMain->state == "") {
         this->x += (x - pressPos.x);
         this->y += (y - pressPos.y);
@@ -257,7 +272,6 @@ void WinPin::onMouseDrag(const int& x, const int& y, const UINT_PTR& modifiers)
 
 void WinPin::onMouseDown(const int& x, const int& y, bool isRight)
 {
-    auto toolMain = WinToolMain::get();
     if (toolMain->state == "") {
         pressPos.x = x;
         pressPos.y = y;
@@ -273,9 +287,9 @@ void WinPin::onMouseDown(const int& x, const int& y, bool isRight)
 
 void WinPin::onMouseUp(const int& x, const int& y)
 {
-    auto toolMain = WinToolMain::get();
-    if (toolMain->state == "") {
-        WinToolMain::get()->popup(this);
+    if (toolMain->state == "") { //state为空时，是在拖动窗口
+        toolMain->move(this->x, this->y + h + 5.f * dpi);
+        toolMain->show();
     }
     else if(shapeHover) {
         shapeHover->mouseUp((float)x, (float)y);

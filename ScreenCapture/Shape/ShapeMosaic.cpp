@@ -18,7 +18,7 @@ ShapeMosaic::ShapeMosaic(WinPin* win) :ShapeBase(win), draggers{
 	D2D1::RectF(0,0,0,0)
 }
 {
-	auto toolSub = WinToolSub::get();
+	auto toolSub = win->toolSub.get();
 	win->render->CreateSolidColorBrush(D2D1::ColorF(0xF00FF0, 0.38f), brush.GetAddressOf());
 	strokeWidth = toolSub->sliderVal;
 	isRect = toolSub->selectIndex == 0;

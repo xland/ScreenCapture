@@ -9,49 +9,14 @@
 #include "WinToolSub.h"
 #include "History.h"
 
-std::unique_ptr<WinToolMain> winToolMain;
 
-WinToolMain::WinToolMain(const int& x, const int& y, const int& w, const int& h) : WinToolBase(x, y, w, h)
+WinToolMain::WinToolMain(const int& x, const int& y, const int& w, const int& h, WinPin* parent) : WinToolBase(x, y, w, h,parent)
 {
     btnSize = (float)h;
 	marginTop = 0.f;
 }
 WinToolMain::~WinToolMain()
 {
-}
-
-void WinToolMain::popup(WinPin* parent)
-{
-	if (!winToolMain.get()){
-        auto btnSize{32.f * parent->dpi}; //todo dpi change
-		auto w = btnSize * 13; //主工具条一共有13个按钮；todo dpi change
-        auto h = btnSize;
-	    auto x = parent->x;
-	    auto y = parent->y + parent->h + 4.f * parent->dpi;
-	    winToolMain = std::make_unique<WinToolMain>((int)x, (int)y, (int)w, (int)h);
-        winToolMain->parent = parent;
-	    winToolMain->createWindow(WS_EX_TOPMOST| WS_EX_NOACTIVATE);
-        winToolMain->initTip();
-        winToolMain->initBrush();
-		winToolMain->initBtn();
-        winToolMain->show();
-    }
-    else {
-        auto win = winToolMain.get();
-        win->parent = parent;
-        auto x = parent->x;
-        auto y = (int)(parent->y + parent->h + 3.f * parent->dpi);
-        win->move(x, y);
-        win->show();
-        if(win->state != "")
-        {
-            WinToolSub::popup(parent);
-        }
-    }
-}
-WinToolMain* WinToolMain::get()
-{
-    return winToolMain.get();
 }
 BOOL WinToolMain::onCursor()
 {
@@ -83,7 +48,7 @@ void WinToolMain::onMouseDown(const int& x, const int& y, bool isRight)
 	if (isRight) {
         state = "";
         selectIndex = -1;
-		WinToolMain::get()->hide();
+        hide();
 		return;
 	}
     if (hoverIndex < 0) return;
@@ -112,12 +77,15 @@ void WinToolMain::onMouseDown(const int& x, const int& y, bool isRight)
         if (state == this->state) {
             this->state = "";
             selectIndex = -1;
-            WinToolSub::get()->hide();
+            parent->toolSub->hide();
         }
         else {
             this->state = state;
             selectIndex = hoverIndex;
-            WinToolSub::get()->popup(parent);
+            parent->toolSub->resetVal();
+            parent->toolSub->setBorderPath();
+            parent->toolSub->show();
+            parent->toolSub->refresh();
         }
         refresh();
     }

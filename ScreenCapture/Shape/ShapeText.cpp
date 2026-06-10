@@ -164,7 +164,7 @@ void ShapeText::setTextLayout()
 
 void ShapeText::setAttr()
 {
-	auto toolSub = WinToolSub::get();
+	auto toolSub = win->toolSub.get();
 	color = toolSub->getSelectedColor();
 	fontSize = toolSub->sliderVal;
 	isBold = toolSub->selectIndex == 0;

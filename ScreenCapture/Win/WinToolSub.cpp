@@ -8,9 +8,7 @@
 #include "History.h"
 #include "Shape/ShapeTextWin.h"
 
-std::unique_ptr<WinToolSub> winToolSub;
-
-WinToolSub::WinToolSub() :WinToolBase(0, 0, 0, 0)
+WinToolSub::WinToolSub(WinPin* parent) :WinToolBase(-999999, -999999, 1, 1,parent)
 {
 }
 
@@ -19,9 +17,9 @@ WinToolSub::~WinToolSub()
 
 }
 
-void WinToolSub::initVal()
+void WinToolSub::resetVal()
 {
-    auto toolMain = WinToolMain::get();
+    auto toolMain = parent->toolMain.get();
     marginTop =  4.f * toolMain->dpi;
     auto span{ 4.f * toolMain->dpi };
     y = int(toolMain->y + toolMain->h + 3.f * toolMain->dpi+0.5);
@@ -121,6 +119,9 @@ void WinToolSub::initVal()
     {
         x = toolMain->x; // 子工具条左侧与主工具条左侧对齐
     }
+    move(x, y);
+    resize(w, h);
+    setBorderPath();
 }
 
 void WinToolSub::initBtn()
@@ -151,7 +152,7 @@ bool WinToolSub::hoverBtn(const int& x)
         hoverIndex = indexBtn;
         if (indexBtn >= 0) {
             int startIndex = 0; //rect/mosaic/eraser
-            auto toolMain = WinToolMain::get();
+            auto toolMain = parent->toolMain.get();
             if (toolMain->state == "ellipse") startIndex = 1;
             if (toolMain->state == "arrow")startIndex = 2;
             if (toolMain->state == "number")startIndex = 3;
@@ -193,53 +194,15 @@ bool WinToolSub::hoverColor(const int& x)
     return false;
 }
 
-void WinToolSub::popup(WinPin* parent)
-{
-    if (!winToolSub.get()) {
-        winToolSub = std::make_unique<WinToolSub>();
-        winToolSub->parent = parent;
-        winToolSub->initVal();
-        winToolSub->createWindow(WS_EX_TOPMOST| WS_EX_NOACTIVATE);
-        winToolSub->initTip();
-        winToolSub->initBrush();
-        winToolSub->initColor();
-        winToolSub->initBtn();
-        winToolSub->initBorder();
-        winToolSub->show();
-    }
-    else {
-        auto toolMain = WinToolMain::get();
-        auto win = winToolSub.get();
-        win->parent = parent;
-        if (toolMain->state == "") {
-            win->hide();
-            return;
-        }
-        win->initVal();
-        win->move(win->x, win->y);
-        win->resize(win->w, win->h);
-        win->initBorder();
-        win->show();
-        win->refresh();
-    }
-}
-WinToolSub* WinToolSub::get()
-{
-    return winToolSub.get();
-}
-
 void WinToolSub::refreshLayout()
 {
     auto oldSliderVal{ sliderVal };
-    initVal();
+    resetVal();
     if (hasSlider) {
         if (oldSliderVal < sliderMin) oldSliderVal = sliderMin;
         if (oldSliderVal > sliderMax) oldSliderVal = sliderMax;
     }
     sliderVal = oldSliderVal;
-    move(x, y);
-    resize(w, h);
-    initBorder();
     refresh();
 }
 
@@ -248,7 +211,7 @@ D2D1_COLOR_F WinToolSub::getSelectedColor()
     return colorBrush[selectColorIndex]->GetColor();
 }
 
-void WinToolSub::initBorder()
+void WinToolSub::setBorderPath()
 {
     borderPath.Reset();
     App::getD2D()->CreatePathGeometry(borderPath.GetAddressOf());
@@ -304,7 +267,7 @@ void WinToolSub::onPaint()
 
 void WinToolSub::paintToolButtons()
 {
-    auto win = WinToolMain::get();
+    auto win = parent->toolMain.get();
     if (win->state == "rect") {
         paintIcon(btnStart, getBtnIconLayout("rectFill"), hoverIndex == 0, selectIndex == 0);
     }
@@ -365,7 +328,7 @@ void WinToolSub::onMouseLeave()
 void WinToolSub::onMouseDown(const int& x, const int& y, bool isRight)
 {
     bool flag{ false };
-    auto toolMain = WinToolMain::get();
+    auto toolMain = parent->toolMain.get();
     auto oldSelectIndex{ selectIndex };
     if (x > btnStart && x < btnEnd) {
         if (hoverIndex == 0 && selectIndex == 0) {

@@ -18,6 +18,8 @@ public:
 public:
 	ShapeBase* shapeHover{ nullptr };
 	std::unique_ptr<History> history;
+	std::unique_ptr<WinToolMain> toolMain;
+	std::unique_ptr<WinToolSub> toolSub;
 	ComPtr<ID2D1Bitmap1> screenImg;
 private:
 	void onMouseMove(const int& x, const int& y) override;
@@ -33,6 +35,7 @@ private:
 	void onDestroy() override;
 	bool getImagePixels(std::vector<BYTE>& pixels);
 	void initImg();
+	void initTool();
 private:
 	POINT pressPos{0,0};
 };

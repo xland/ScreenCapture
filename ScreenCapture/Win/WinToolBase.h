@@ -5,13 +5,13 @@ class WinPin;
 class WinToolBase :public WinBase
 {
 public:
-	WinToolBase(const int& x, const int& y, const int& w, const int& h);
+	WinToolBase(const int& x, const int& y, const int& w, const int& h, WinPin* parent);
 	virtual ~WinToolBase();
+	void initBrush();
+	void initTip();
 public:
 	int selectIndex{-1};
 protected:
-	void initBrush();
-	void initTip();
 	void addIconLayout(const std::wstring& icon);
 	void paintIcon(const float& posX,IDWriteTextLayout* icon,bool isHover,bool isSelected);
 	IDWriteTextLayout* getBtnIconLayout(const std::string& name);

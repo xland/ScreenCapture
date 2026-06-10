@@ -15,7 +15,7 @@ ShapeNumber::ShapeNumber(WinPin* win) :ShapeBase(win), draggers{
 	r{ 16.f * win->dpi },
 	val{++numVal}
 {
-	auto toolSub = WinToolSub::get();
+	auto toolSub = win->toolSub.get();
 	win->render->CreateSolidColorBrush(toolSub->getSelectedColor(), brush.GetAddressOf());
 	win->render->CreateSolidColorBrush(D2D1::ColorF(0XFFFFFF), brushText.GetAddressOf());
 	isFill = toolSub->selectIndex == 0;

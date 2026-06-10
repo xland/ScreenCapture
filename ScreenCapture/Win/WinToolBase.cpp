@@ -4,8 +4,10 @@
 #include "History.h"
 #include "App.h"
 
-WinToolBase::WinToolBase(const int& x, const int& y, const int& w, const int& h) : WinBase(x, y, w, h)
-{}
+WinToolBase::WinToolBase(const int& x, const int& y, const int& w, const int& h, WinPin* parent) : WinBase(x, y, w, h),parent{parent}
+{
+
+}
 
 
 WinToolBase::~WinToolBase()

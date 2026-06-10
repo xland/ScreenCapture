@@ -10,7 +10,7 @@ ShapeArrow::ShapeArrow(WinPin* win) :ShapeBase(win), draggers{
 	D2D1::RectF(0,0,0,0),
 	D2D1::RectF(0,0,0,0) }
 {
-	auto toolSub = WinToolSub::get();
+	auto toolSub = win->toolSub.get();
 	win->render->CreateSolidColorBrush(toolSub->getSelectedColor(), brush.GetAddressOf());
 	arrowSize = toolSub->sliderVal;
 	isFill = toolSub->selectIndex == 0;

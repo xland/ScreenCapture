@@ -27,7 +27,7 @@ ShapeBase* History::createShape(const std::string& state, const int& x, const in
 {
     removeUndoShape();
     ShapeBase* result{nullptr};
-    auto toolMain = WinToolMain::get();
+    auto toolMain = win->toolMain.get();
     if (toolMain->state == "rect") {
         auto shape = std::make_unique<ShapeRect>(win);
         result = shape.get();
