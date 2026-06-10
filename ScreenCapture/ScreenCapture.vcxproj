@@ -185,7 +185,6 @@
     <ClCompile Include="Win\WinCap.cpp" />
     <ClCompile Include="Win\WinPin.cpp" />
     <ClCompile Include="Win\WinPix.cpp" />
-    <ClCompile Include="Win\WinStart.cpp" />
     <ClCompile Include="Win\WinToolBase.cpp" />
     <ClCompile Include="Win\WinToolMain.cpp" />
     <ClCompile Include="Win\WinToolSub.cpp" />
@@ -213,7 +212,6 @@
     <ClInclude Include="Win\WinCap.h" />
     <ClInclude Include="Win\WinPin.h" />
     <ClInclude Include="Win\WinPix.h" />
-    <ClInclude Include="Win\WinStart.h" />
     <ClInclude Include="Win\WinToolBase.h" />
     <ClInclude Include="Win\WinToolMain.h" />
     <ClInclude Include="Win\WinToolSub.h" />

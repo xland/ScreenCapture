@@ -93,9 +93,6 @@
     <ClCompile Include="Win\WinLong.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Win\WinStart.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -171,9 +168,6 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Win\WinLong.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Win\WinStart.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

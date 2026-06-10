@@ -3,7 +3,6 @@
 #include "WinBase.h"
 
 class CutMask;
-class WinStart;
 class WinLong:public WinBase
 {
 public:
@@ -12,8 +11,6 @@ public:
 	static void init();
 	static WinLong* get();
 	static void release();
-	ComPtr<ID2D1Bitmap1> getCutImg();
-	ComPtr<ID2D1Bitmap1> getImgByRect(D2D1_RECT_U& rect);
 public:
 	std::unique_ptr<CutMask> cutMask;
 private:
@@ -22,9 +19,13 @@ private:
 	void onMouseDrag(const int& x, const int& y, const UINT_PTR& modifiers) override;
 	void onMouseDown(const int& x, const int& y, bool isRight) override;
 	void onMouseUp(const int& x, const int& y) override;
+	void initRes();
+	BOOL onCursor() override;
 private:
-	std::unique_ptr<WinStart> winStart;
-	ComPtr<ID2D1Bitmap1> screenImg;
 	bool isFinishCutMask{ false };
+	ComPtr<ID2D1SolidColorBrush> textBrush;
+	ComPtr<ID2D1SolidColorBrush> bgBrush;
+	ComPtr<IDWriteTextLayout> layoutText;
+	float startCircleR{ 30.f };
 };
 
