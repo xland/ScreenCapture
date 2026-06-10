@@ -23,7 +23,7 @@ void WinLong::init()
     auto w = GetSystemMetrics(SM_CXVIRTUALSCREEN);
     auto h = GetSystemMetrics(SM_CYVIRTUALSCREEN);
     winLong = std::make_unique<WinLong>(x, y, w, h);
-    winLong->createWindow(WS_EX_TOPMOST);
+    winLong->createWindow();//WS_EX_TOPMOST
     winLong->initRes();
     POINT pt;
     GetCursorPos(&pt);
@@ -50,11 +50,9 @@ void WinLong::onPaint()
 {
     render->Clear(0);
     cutMask->paint();
-    if (isFinishCutMask) {
-        POINT pt;
-        GetCursorPos(&pt);
-        render->FillEllipse(D2D1::Ellipse(D2D1::Point2F(pt.x, pt.y), startCircleR, startCircleR), bgBrush.Get());
-        render->DrawTextLayout({ pt.x- startCircleR, pt.y - startCircleR }, layoutText.Get(), textBrush.Get(), D2D1_DRAW_TEXT_OPTIONS_NONE);
+    if (isShowStartBtn) {
+        render->FillEllipse(D2D1::Ellipse(D2D1::Point2F(circleCenter.x, circleCenter.y), startCircleR, startCircleR), bgBrush.Get());
+        render->DrawTextLayout({ circleCenter.x- startCircleR, circleCenter.y - startCircleR }, layoutText.Get(), textBrush.Get(), D2D1_DRAW_TEXT_OPTIONS_NONE);
     }
 }
 
@@ -110,10 +108,22 @@ void WinLong::initRes()
 BOOL WinLong::onCursor()
 {
     if (isFinishCutMask) {
-        SetCursor(NULL);
+        GetCursorPos(&circleCenter);
+		ScreenToClient(hwnd, &circleCenter);
+        auto& r = cutMask->maskRect;
+        auto rect = D2D1::RectU((UINT32)r.left, (UINT32)r.top, (UINT32)r.right, (UINT32)r.bottom);
+        if (circleCenter.x > r.left && circleCenter.y > r.top && circleCenter.x < r.right && circleCenter.y < r.bottom) {
+            SetCursor(NULL);
+            isShowStartBtn = true;
+        }
+        else {
+            setCursor(IDC_ARROW);
+            isShowStartBtn = false;
+        }
     }
     else {
         setCursor(IDC_CROSS);
+        isShowStartBtn = false;
     }
     return TRUE;
 }

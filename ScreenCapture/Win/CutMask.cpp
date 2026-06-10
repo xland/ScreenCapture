@@ -11,6 +11,7 @@ CutMask::CutMask(WinBase* win):win{win}
     render->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White), brushText.GetAddressOf());
     render->CreateSolidColorBrush(D2D1::ColorF(0x000000, 0.46f), brushBg.GetAddressOf());
     render->CreateSolidColorBrush(D2D1::ColorF(0x1677ff), brushBorder.GetAddressOf());
+	paddingTop *= win->dpi;
     auto writer = App::getWriter();
     writer->CreateTextFormat(L"Microsoft YaHei", nullptr,
         DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
@@ -30,6 +31,7 @@ bool CutMask::highlight(const int& x, const int& y)
             if (maskRect.left != rect.left||maskRect.top != rect.top || 
                 maskRect.right != rect.right || maskRect.bottom != rect.bottom) {
                 maskRect = rect;
+				makeLayout();
                 win->refresh();
                 return true;
             }
@@ -64,6 +66,32 @@ void CutMask::initWinRect()
             return TRUE;
         }, (LPARAM)this);
 }
+void CutMask::makeLayout()
+{
+    layout.Reset();
+    auto layoutStr = std::format(L"X:{} Y:{} R:{} B:{} W:{} H:{}",
+        maskRect.left, maskRect.top, maskRect.right, maskRect.bottom,
+        maskRect.right - maskRect.left, maskRect.bottom - maskRect.top);
+    auto writer = App::getWriter();
+    writer->CreateTextLayout(layoutStr.data(), static_cast<UINT32>(layoutStr.size()), textFormat.Get(), FLT_MAX, FLT_MAX, layout.GetAddressOf());
+    layout->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+    layout->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+    layout->SetFontSize(10 * win->dpi, { 0, static_cast<UINT32>(layoutStr.length()) });
+    DWRITE_TEXT_METRICS tm = {};
+    layout->GetMetrics(&tm);
+    float paddingLeft{ 5 * win->dpi }, margin{ 5 * win->dpi };
+    layoutRect = D2D1::RectF(maskRect.left, maskRect.top - margin - tm.height - paddingTop * 2, maskRect.left + tm.width + paddingLeft * 2, maskRect.top - margin);
+    if (layoutRect.top < win->y) {
+        auto h = layoutRect.bottom - layoutRect.top;
+        auto w = layoutRect.right - layoutRect.left;
+        layoutRect.top = maskRect.top + margin / 2;
+        layoutRect.bottom = layoutRect.top + h;
+        layoutRect.left = maskRect.left + margin;
+        layoutRect.right = layoutRect.left + w;
+    }
+    layout->SetMaxWidth(layoutRect.right - layoutRect.left);
+    layout->SetMaxHeight(layoutRect.bottom - layoutRect.top);
+}
 void CutMask::startMakeRect(const int& x, const int& y)
 {
     pressX = x;
@@ -78,60 +106,21 @@ void CutMask::makeRect(const int& x, const int& y)
     maskRect.right = right;
     maskRect.top = top;
     maskRect.bottom = bottom;
+    makeLayout();
     win->refresh();
 }
 
 void CutMask::paint()
 {
+	if (!layout.Get()) return;
     auto render = win->render.Get();
-    D2D1_RECT_F destRect = D2D1::RectF(0, 0, win->w, win->h);
-
-    auto d2d = App::getD2D();
-    ComPtr<ID2D1RectangleGeometry> outerGeometry;
-    d2d->CreateRectangleGeometry(destRect, outerGeometry.GetAddressOf());
-    ComPtr<ID2D1RectangleGeometry> innerGeometry;
-    d2d->CreateRectangleGeometry(maskRect, innerGeometry.GetAddressOf());
-    ID2D1Geometry* geometries[] = { outerGeometry.Get(), innerGeometry.Get() };
-    ComPtr<ID2D1GeometryGroup> geo;
-    d2d->CreateGeometryGroup(D2D1_FILL_MODE_ALTERNATE,geometries, ARRAYSIZE(geometries), geo.GetAddressOf());
-
-
-    render->FillGeometry(geo.Get(), brushBg.Get());
-    auto r = D2D1::RectF(maskRect.left - 2, maskRect.top - 2, maskRect.right + 2, maskRect.bottom + 2);
-    render->DrawRectangle(r, brushBorder.Get(), 4.f);
-
-    auto str = std::format(L"X:{} Y:{} R:{} B:{} W:{} H:{}",
-        maskRect.left,maskRect.top,maskRect.right,maskRect.bottom,
-        maskRect.right - maskRect.left,maskRect.bottom-maskRect.top);    
-    auto writer = App::getWriter();
-    winrt::com_ptr<IDWriteTextLayout> layout;
-    writer->CreateTextLayout(str.data(),static_cast<UINT32>(str.size()), textFormat.Get(), FLT_MAX, FLT_MAX, layout.put());
-    layout->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
-    layout->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
-    layout->SetFontSize(10*win->dpi, { 0, static_cast<UINT32>(str.length()) });
-    DWRITE_TEXT_METRICS tm = {};
-    layout->GetMetrics(&tm);
-
-    
-    float paddingTop{ 3 * win->dpi }, paddingLeft{ 5 * win->dpi }, margin{5*win->dpi};
-    D2D1_RECT_F rect = D2D1::RectF(maskRect.left, maskRect.top - margin - tm.height - paddingTop*2, maskRect.left+tm.width+ paddingLeft *2, maskRect.top - margin);
-
-    if (rect.top < win->y) {
-        auto h = rect.bottom - rect.top;
-        auto w = rect.right - rect.left;
-        rect.top = maskRect.top + margin/2;
-        rect.bottom = rect.top + h;
-        rect.left = maskRect.left + margin;
-        rect.right = rect.left + w;
-    }
-
-
-    layout->SetMaxWidth(rect.right-rect.left );
-    layout->SetMaxHeight(rect.bottom - rect.top);
-    D2D1_ROUNDED_RECT rr = D2D1::RoundedRect(rect, paddingTop, paddingTop);
-    render->FillRoundedRectangle(rr, brushBg.Get());
-    D2D1_POINT_2F origin = { rect.left, rect.top };
-    render->DrawTextLayout(origin, layout.get(), brushText.Get(), D2D1_DRAW_TEXT_OPTIONS_NONE);
+    render->FillRectangle(D2D1::RectF(0.f, 0.f,win->w, maskRect.top), brushBg.Get());
+    render->FillRectangle(D2D1::RectF(0.f, maskRect.bottom, win->w, win->h), brushBg.Get());
+    render->FillRectangle(D2D1::RectF(0.f, maskRect.top, maskRect.left, maskRect.bottom), brushBg.Get());
+    render->FillRectangle(D2D1::RectF(maskRect.right, maskRect.top, win->w, maskRect.bottom), brushBg.Get());
+    render->DrawRectangle(D2D1::RectF(maskRect.left - 2, maskRect.top - 2, maskRect.right + 2, maskRect.bottom + 2), brushBorder.Get(), 4.f);
+    render->FillRoundedRectangle(D2D1::RoundedRect(layoutRect, paddingTop, paddingTop), brushBg.Get());
+    render->DrawTextLayout({ layoutRect.left, layoutRect.top }, layout.Get(), brushText.Get(), D2D1_DRAW_TEXT_OPTIONS_NONE);
 
 
     //通过这种方式可以擦掉指定的区域

@@ -22,10 +22,11 @@ private:
 	void initRes();
 	BOOL onCursor() override;
 private:
-	bool isFinishCutMask{ false };
+	bool isFinishCutMask{ false }, isShowStartBtn{false};
 	ComPtr<ID2D1SolidColorBrush> textBrush;
 	ComPtr<ID2D1SolidColorBrush> bgBrush;
 	ComPtr<IDWriteTextLayout> layoutText;
 	float startCircleR{ 30.f };
+	POINT circleCenter;
 };
 
