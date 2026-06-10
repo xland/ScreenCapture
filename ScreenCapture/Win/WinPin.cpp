@@ -217,9 +217,9 @@ void WinPin::initImg()
 
 void WinPin::initTool()
 {
-    auto btnSize{ 32.f * dpi };
+    toolBtnSize =  32.f * dpi;
     auto toolStyle{ WS_EX_TOPMOST | WS_EX_NOACTIVATE };
-    toolMain = std::make_unique<WinToolMain>(x, y + h + 5.f * dpi, btnSize * 13, btnSize,this);
+    toolMain = std::make_unique<WinToolMain>(x, y + h + 5.f * dpi, toolBtnSize * 13, toolBtnSize,this);
     toolMain->createWindow(toolStyle);
     toolMain->initTip();
     toolMain->initBrush();

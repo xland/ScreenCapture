@@ -24,10 +24,9 @@ void WinToolSub::resetVal()
     auto span{ 4.f * toolMain->dpi };
     y = int(toolMain->y + toolMain->h + 3.f * toolMain->dpi+0.5);
     h = int(toolMain->h + marginTop + 0.5);
-    btnSize = float(toolMain->h);
     colorBtnW = toolMain->dpi * 23;
     btnStart = 0.f;
-    btnEnd = btnStart + btnSize;
+    btnEnd = btnStart + parent->toolBtnSize;
     sliderStart = 0.f;
     sliderEnd = 0.f;
     colorStart = 0.f;
@@ -86,7 +85,7 @@ void WinToolSub::resetVal()
     }
     else if (toolMain->state == "text") {
         w = (int)(348 * toolMain->dpi);
-        btnEnd = btnStart + btnSize*2;
+        btnEnd = btnStart + parent->toolBtnSize *2;
         sliderMax = 66.f;
         sliderMin = 16.f;
         sliderVal = 26.f;
@@ -109,7 +108,7 @@ void WinToolSub::resetVal()
             sliderEnd = sliderStart + 120.f;
         }
     }
-    arrowX = btnSize * toolMain->selectIndex + btnSize / 2;
+    arrowX = parent->toolBtnSize * toolMain->selectIndex + parent->toolBtnSize / 2;
     if (arrowX + 6.f * toolMain->dpi > w)
     {
         x = int(toolMain->x + arrowX - w / 2+0.5); // 箭头顶点位于子工具条正中间
@@ -143,7 +142,7 @@ bool WinToolSub::hoverBtn(const int& x)
 {
     int indexBtn{ -1 };
     if (x > btnStart && x < btnEnd) {
-        indexBtn = static_cast<int>((x - btnStart) / btnSize);
+        indexBtn = static_cast<int>((x - btnStart) / parent->toolBtnSize);
     }
     else {
         indexBtn = -1;
@@ -159,7 +158,7 @@ bool WinToolSub::hoverBtn(const int& x)
             if (toolMain->state == "line")startIndex = 4;
             if (toolMain->state == "text")startIndex = 5;
             tipText = btnName[startIndex + indexBtn];
-            showTipAt((int)(this->x + btnStart + indexBtn * btnSize + btnSize / 2), (int)(this->y + marginTop + 4 * dpi));
+            showTipAt((int)(this->x + btnStart + indexBtn * parent->toolBtnSize + parent->toolBtnSize / 2), (int)(this->y + marginTop + 4 * dpi));
         }
         return true;
     }
@@ -187,7 +186,7 @@ bool WinToolSub::hoverColor(const int& x)
         hoverColorIndex = indexColor; 
         if (indexColor >= 0) {
             tipText = colorName[indexColor];
-            showTipAt(int(this->x + colorStart + indexColor * colorBtnW + btnSize / 2+0.5), int(this->y + marginTop + 4 * dpi+0.5));
+            showTipAt(int(this->x + colorStart + indexColor * colorBtnW + parent->toolBtnSize / 2+0.5), int(this->y + marginTop + 4 * dpi+0.5));
         }
         return true;
     }
@@ -285,7 +284,7 @@ void WinToolSub::paintToolButtons()
     }
     else if (win->state == "text") {
         paintIcon(btnStart, getBtnIconLayout("bold"), hoverIndex == 0, selectIndex == 0);
-        paintIcon(btnStart + btnSize, getBtnIconLayout("italic"), hoverIndex == 1, selectIndex2 == 1);
+        paintIcon(btnStart + parent->toolBtnSize, getBtnIconLayout("italic"), hoverIndex == 1, selectIndex2 == 1);
     }
     else if (win->state == "mosaic" || win->state == "eraser") {
         paintIcon(btnStart, getBtnIconLayout("rectFill"), hoverIndex == 0, selectIndex == 0);
@@ -412,7 +411,7 @@ void WinToolSub::onMouseWheel(const int& x, const int& y, const short& delta)
 void WinToolSub::paintSlider()
 {
     if (!hasSlider) return;
-    auto y{ marginTop + btnSize / 2 };
+    auto y{ marginTop + parent->toolBtnSize / 2 };
 	render->DrawLine({ sliderStart,y }, { sliderStart +120.f, y }, brushSpliter.Get(), dpi);
     auto r{ 4.f * dpi };
     auto x{ sliderStart + (sliderEnd - sliderStart) * ((sliderVal-sliderMin) / (sliderMax - sliderMin)) };
@@ -429,7 +428,7 @@ void WinToolSub::paintColorSelector()
         auto icon = index == selectColorIndex? getBtnIconLayout("check") : getBtnIconLayout("uncheck");
         if (index == hoverColorIndex || index == selectColorIndex) {
             float paddingTopBottom{ 6.f * dpi }, paddingLeftRight{ 5.f * dpi };
-            D2D1_ROUNDED_RECT rr = { { start + paddingLeftRight, paddingTopBottom + marginTop, start + btnSize - paddingLeftRight, h - paddingTopBottom }, 8, 8 };
+            D2D1_ROUNDED_RECT rr = { { start + paddingLeftRight, paddingTopBottom + marginTop, start + parent->toolBtnSize - paddingLeftRight, h - paddingTopBottom }, 8, 8 };
             render->FillRoundedRectangle(rr, brushSelect.Get());
         }
         render->DrawTextLayout(origin, icon, brush.Get(), D2D1_DRAW_TEXT_OPTIONS_NONE);

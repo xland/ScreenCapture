@@ -12,7 +12,6 @@
 
 WinToolMain::WinToolMain(const int& x, const int& y, const int& w, const int& h, WinPin* parent) : WinToolBase(x, y, w, h,parent)
 {
-    btnSize = (float)h;
 	marginTop = 0.f;
 }
 WinToolMain::~WinToolMain()
@@ -31,13 +30,13 @@ void WinToolMain::onPaint()
     auto margin{ 4.f * dpi };
     for (auto& layout : btnLayout)
     {
-		paintIcon(btnSize * btnIndex, layout.Get(), btnIndex == hoverIndex, btnIndex == selectIndex);
+		paintIcon(parent->toolBtnSize * btnIndex, layout.Get(), btnIndex == hoverIndex, btnIndex == selectIndex);
         btnIndex += 1;
     }
     for (auto index: spliterIndex)
     {
-        auto lx{ (float)btnSize * index }, lt{ 2.f * margin };
-        render->DrawLine({ lx,lt }, { lx,btnSize - lt }, brushSpliter.Get(), 0.8f);
+        auto lx{ (float)parent->toolBtnSize * index }, lt{ 2.f * margin };
+        render->DrawLine({ lx,lt }, { lx,parent->toolBtnSize - lt }, brushSpliter.Get(), 0.8f);
     }
     auto r = D2D1::RectF(0, 0, (float)w, (float)h);
     render->DrawRectangle(r, brushSpliter.Get(), 2 * dpi);
@@ -92,12 +91,12 @@ void WinToolMain::onMouseDown(const int& x, const int& y, bool isRight)
 }
 void WinToolMain::onMouseMove(const int& x, const int& y)
 {
-    size_t index = static_cast<int>(x / btnSize);
+    size_t index = static_cast<int>(x / parent->toolBtnSize);
     if (index >= btnId.size()) index = btnId.size() - 1;
     if (index != hoverIndex) {
         hoverIndex = (int)index;
         tipText = btnName[index];
-        showTipAt((int)(this->x + index * btnSize + btnSize / 2), (int)(this->y + marginTop + 4 * dpi));
+        showTipAt((int)(this->x + index * parent->toolBtnSize + parent->toolBtnSize / 2), (int)(this->y + marginTop + 4 * dpi));
         refresh();
     }
 }

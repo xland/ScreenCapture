@@ -18,6 +18,7 @@ public:
 public:
 	ShapeBase* shapeHover{ nullptr };
 	std::unique_ptr<History> history;
+	float toolBtnSize;
 	std::unique_ptr<WinToolMain> toolMain;
 	std::unique_ptr<WinToolSub> toolSub;
 	ComPtr<ID2D1Bitmap1> screenImg;
