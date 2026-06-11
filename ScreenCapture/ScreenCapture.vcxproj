@@ -175,7 +175,7 @@
     <ClCompile Include="Tool\ToolSubSlider.cpp" />
     <ClCompile Include="Win\WinLong.cpp" />
     <ClCompile Include="Win\WinSetting.cpp" />
-    <ClCompile Include="Win\CutMask.cpp" />
+    <ClCompile Include="Win\WinCutMask.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -209,7 +209,7 @@
     <ClInclude Include="Tool\ToolSubSlider.h" />
     <ClInclude Include="Win\WinLong.h" />
     <ClInclude Include="Win\WinSetting.h" />
-    <ClInclude Include="Win\CutMask.h" />
+    <ClInclude Include="Win\WinCutMask.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Shape\ShapeRect.h" />
     <ClInclude Include="Shape\ShapeBase.h" />

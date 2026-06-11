@@ -2,7 +2,7 @@
 #include "App.h"
 #include "Util.h"
 #include "WinCap.h"
-#include "CutMask.h"
+#include "WinCutMask.h"
 #include "WinPix.h"
 #include "WinPin.h"
 #include "History.h"
@@ -37,7 +37,7 @@ void WinCap::init()
     POINT pt;
     GetCursorPos(&pt);
     winCap->winPix = std::make_unique<WinPix>((int)pt.x, (int)pt.y);
-    winCap->cutMask = std::make_unique<CutMask>(winCap.get());
+    winCap->cutMask = std::make_unique<WinCutMask>(winCap.get());
     winCap->show();
     UpdateWindow(winCap->hwnd);
 

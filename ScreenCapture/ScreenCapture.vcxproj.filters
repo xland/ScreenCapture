@@ -30,7 +30,7 @@
     <ClCompile Include="Util.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Win\CutMask.cpp">
+    <ClCompile Include="Win\WinCutMask.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Win\WinPix.cpp">
@@ -116,7 +116,7 @@
     <ClInclude Include="Util.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Win\CutMask.h">
+    <ClInclude Include="Win\WinCutMask.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Win\WinPix.h">

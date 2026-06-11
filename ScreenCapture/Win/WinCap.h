@@ -2,7 +2,7 @@
 #include "pch.h"
 #include "WinBase.h"
 
-class CutMask;
+class WinCutMask;
 class WinPix;
 class WinCap:public WinBase
 {
@@ -15,7 +15,7 @@ public:
 	ComPtr<ID2D1Bitmap1> getCutImg();
 	ComPtr<ID2D1Bitmap1> getImgByRect(D2D1_RECT_U& rect);
 public:
-	std::unique_ptr<CutMask> cutMask;
+	std::unique_ptr<WinCutMask> cutMask;
 private:
 	void onPaint() override;
 	void onMouseMove(const int& x, const int& y) override;

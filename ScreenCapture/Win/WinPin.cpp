@@ -3,7 +3,7 @@
 #include "App.h"
 #include "WinPin.h"
 #include "WinCap.h"
-#include "CutMask.h"
+#include "WinCutMask.h"
 #include "Tool/ToolMain.h"
 #include "Tool/ToolSub.h"
 #include "History.h"

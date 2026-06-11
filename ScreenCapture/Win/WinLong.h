@@ -2,7 +2,7 @@
 #include "pch.h"
 #include "WinBase.h"
 
-class CutMask;
+class WinCutMask;
 class WinLong:public WinBase
 {
 public:
@@ -12,7 +12,7 @@ public:
 	static WinLong* get();
 	static void release();
 public:
-	std::unique_ptr<CutMask> cutMask;
+	std::unique_ptr<WinCutMask> cutMask;
 private:
 	void onPaint() override;
 	void onMouseMove(const int& x, const int& y) override;

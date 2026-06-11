@@ -2,10 +2,10 @@
 #include "App.h"
 #include "Util.h"
 #include "WinCap.h"
-#include "CutMask.h"
+#include "WinCutMask.h"
 #include "WinBase.h"
 
-CutMask::CutMask(WinBase* win):win{win}
+WinCutMask::WinCutMask(WinBase* win):win{win}
 {
     auto render = win->render.Get();
     render->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White), brushText.GetAddressOf());
@@ -19,11 +19,11 @@ CutMask::CutMask(WinBase* win):win{win}
     initWinRect();
 }
 
-CutMask::~CutMask() {
+WinCutMask::~WinCutMask() {
 
 }
 
-bool CutMask::highlight(const int& x, const int& y)
+bool WinCutMask::highlight(const int& x, const int& y)
 {
     for (auto& rect : winRect)
     {
@@ -41,7 +41,7 @@ bool CutMask::highlight(const int& x, const int& y)
     return false;
 }
 
-void CutMask::initWinRect()
+void WinCutMask::initWinRect()
 {
     winRect.clear();
     EnumWindows([](HWND hwnd, LPARAM lparam)
@@ -53,7 +53,7 @@ void CutMask::initWinRect()
             RECT rect;
             DwmGetWindowAttribute(hwnd, DWMWA_EXTENDED_FRAME_BOUNDS, &rect, sizeof(RECT));
             if (rect.right - rect.left <= 6 || rect.bottom - rect.top <= 6) return TRUE;
-            auto self = (CutMask*)lparam;
+            auto self = (WinCutMask*)lparam;
             if (rect.left < self->win->x) rect.left = self->win->x;
             if (rect.top < self->win->y) rect.top = self->win->y;
             if (rect.right > self->win->x + self->win->w) rect.right = self->win->x + self->win->w;
@@ -66,7 +66,7 @@ void CutMask::initWinRect()
             return TRUE;
         }, (LPARAM)this);
 }
-void CutMask::makeLayout()
+void WinCutMask::makeLayout()
 {
     layout.Reset();
     auto layoutStr = std::format(L"X:{} Y:{} R:{} B:{} W:{} H:{}",
@@ -92,13 +92,13 @@ void CutMask::makeLayout()
     layout->SetMaxWidth(layoutRect.right - layoutRect.left);
     layout->SetMaxHeight(layoutRect.bottom - layoutRect.top);
 }
-void CutMask::startMakeRect(const int& x, const int& y)
+void WinCutMask::startMakeRect(const int& x, const int& y)
 {
     pressX = x;
     pressY = y;
 }
 
-void CutMask::makeRect(const int& x, const int& y)
+void WinCutMask::makeRect(const int& x, const int& y)
 {
     auto [left, right] = std::minmax(pressX, x);
     auto [top, bottom] = std::minmax(pressY, y);
@@ -110,7 +110,7 @@ void CutMask::makeRect(const int& x, const int& y)
     win->refresh();
 }
 
-void CutMask::paint()
+void WinCutMask::paint()
 {
 	if (!layout.Get()) return;
     auto render = win->render.Get();

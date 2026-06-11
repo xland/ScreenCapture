@@ -2,7 +2,6 @@
 #include "Util.h"
 #include "App.h"
 #include "Win/WinCap.h"
-#include "Win/CutMask.h"
 #include "Win/WinPin.h"
 #include "ToolBase.h"
 #include "ToolMain.h"

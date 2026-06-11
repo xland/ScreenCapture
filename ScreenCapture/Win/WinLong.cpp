@@ -2,7 +2,7 @@
 #include "App.h"
 #include "Util.h"
 #include "WinLong.h"
-#include "CutMask.h"
+#include "WinCutMask.h"
 
 std::unique_ptr<WinLong> winLong;
 static constexpr UINT scrollMsgId = 18;
@@ -29,7 +29,7 @@ void WinLong::init()
     winLong->initRes();
     POINT pt;
     GetCursorPos(&pt);
-    winLong->cutMask = std::make_unique<CutMask>(winLong.get());
+    winLong->cutMask = std::make_unique<WinCutMask>(winLong.get());
     winLong->show();
     UpdateWindow(winLong->hwnd);
 

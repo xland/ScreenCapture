@@ -2,11 +2,11 @@
 #include "pch.h"
 
 class WinBase;
-class CutMask
+class WinCutMask
 {
 public:
-	CutMask(WinBase* win);
-	~CutMask();
+	WinCutMask(WinBase* win);
+	~WinCutMask();
 	bool highlight(const int& x, const int& y);
 	void startMakeRect(const int& x, const int& y);
 	void makeRect(const int& x, const int& y);
