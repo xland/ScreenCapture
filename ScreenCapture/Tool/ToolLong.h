@@ -21,6 +21,5 @@ private:
 	void onDpiChanged() override;
 	void onCreated() override;
 private:
-	int spliterIndex[2]{ 8,10 };
 };
 

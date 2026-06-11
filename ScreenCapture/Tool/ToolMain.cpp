@@ -20,6 +20,9 @@ ToolMain::~ToolMain()
 void ToolMain::onCreated()
 {
     btnSize = 32.f * dpi;
+    initTip();
+    initBrush();
+    initBtn();
 }
 BOOL ToolMain::onCursor()
 {

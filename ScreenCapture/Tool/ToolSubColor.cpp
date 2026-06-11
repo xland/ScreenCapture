@@ -58,7 +58,7 @@ bool ToolSubColor::hover(const int& x)
         indexHovered = indexColor;
         if (indexColor >= 0) {
             win->tipText = names[indexColor];
-            win->showTipAt(int(win->x + start + indexColor * btnSize + btnSize / 2 + 0.5), int(win->y + win->marginTop + 4 * win->dpi + 0.5));
+            win->showTipAt(win->x + start + indexColor * btnSize + win->btnSize/2, int(win->y + win->marginTop + 4 * win->dpi + 0.5));
         }
         return true;
     }

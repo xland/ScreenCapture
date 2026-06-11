@@ -11,8 +11,8 @@
 
 ToolLong::ToolLong(const int& x, const int& y, const int& w, const int& h, WinPin* parent) : ToolBase(x, y, w, h,parent)
 {
-    btnId = { "rect" , "ellipse", "arrow", "number" , "line" ,"text" , "mosaic", "eraser", "undo", "redo", "clipboard" , "save" , "close" };
-    btnName = { L"矩形",L"圆形",L"箭头",L"标号",L"线条",L"文本",L"马赛克",L"橡皮擦",L"撤销",L"重做",L"剪切板",L"保存",L"关闭" };
+    btnId = { "pin", "clipboard" , "save" , "close" };
+    btnName = { L"钉住",L"剪切板",L"保存",L"关闭" };
 }
 ToolLong::~ToolLong()
 {
@@ -37,11 +37,6 @@ void ToolLong::onPaint()
 		paintIcon(btnSize * btnIndex, layout.Get(), btnIndex == hoverIndex, btnIndex == selectIndex);
         btnIndex += 1;
     }
-    for (auto index: spliterIndex)
-    {
-        auto lx{ (float)btnSize * index }, lt{ 2.f * margin };
-        render->DrawLine({ lx,lt }, { lx,btnSize - lt }, brushSpliter.Get(), 0.8f);
-    }
     auto r = D2D1::RectF(0, 0, (float)w, (float)h);
     render->DrawRectangle(r, brushSpliter.Get(), 2 * dpi);
 }
@@ -56,12 +51,8 @@ void ToolLong::onMouseDown(const int& x, const int& y, bool isRight)
 	}
     if (hoverIndex < 0) return;
     auto& state = btnId[hoverIndex];
-    if (state == "undo") {
-        parent->history->undo();
-        return;
-    }
-    else if (state == "redo") {
-        parent->history->redo();
+    if (state == "pin") {
+        parent->copyToClipboard();
         return;
     }
     else if (state == "clipboard") {
@@ -76,22 +67,6 @@ void ToolLong::onMouseDown(const int& x, const int& y, bool isRight)
         parent->toolSub->close();
         parent->close();
         return;
-    }
-    else {
-        if (state == this->state) {
-            this->state = "";
-            selectIndex = -1;
-            parent->toolSub->hide();
-        }
-        else {
-            this->state = state;
-            selectIndex = hoverIndex;
-            parent->toolSub->resetVal();
-            parent->toolSub->setBorderPath();
-            parent->toolSub->show();
-            parent->toolSub->refresh();
-        }
-        refresh();
     }
 }
 void ToolLong::onMouseMove(const int& x, const int& y)
@@ -123,15 +98,6 @@ void ToolLong::onDpiChanged()
 void ToolLong::initBtn()
 {
     btnLayout.clear();
-    addIconLayout(L"\ue8e8");
-    addIconLayout(L"\ue6bc");
-    addIconLayout(L"\ue603");
-    addIconLayout(L"\ue776");
-    addIconLayout(L"\ue601");
-    addIconLayout(L"\ue6ec");
-    addIconLayout(L"\ue82e");
-    addIconLayout(L"\ue6be");
-    addIconLayout(L"\ued85");
     addIconLayout(L"\ued8a");
     addIconLayout(L"\ue650");
     addIconLayout(L"\ue608");

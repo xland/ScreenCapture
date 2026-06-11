@@ -15,7 +15,7 @@ void ToolSubSlider::paint()
 {
 	if (!visible) return;
 	auto y{ win->marginTop + win->btnSize / 2 };
-	win->render->DrawLine({ start,y }, { start + 120.f, y }, win->brushSpliter.Get(), win->dpi);
+	win->render->DrawLine({ start,y }, { end, y }, win->brushSpliter.Get(), win->dpi);
 	auto r{ 4.f * win->dpi };
 	auto x{ start + (end - start) * ((val - min) / (max - min)) };
 	win->render->FillEllipse({ {x,y}, r, r }, win->brushSpliter.Get());

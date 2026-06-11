@@ -81,8 +81,7 @@ void ToolSub::resetVal()
 
 void ToolSub::initBtn()
 {
-    btnId = { "rectFill" , "ellipseFill", "arrowFill", "numberFill" , "lineTransparent" ,"bold" , "italic", "check", "uncheck" };
-    btnName = { L"矩形填充",L"圆形填充",L"箭头填充",L"标号填充",L"半透明",L"粗体",L"斜体" };
+    btnLayout.clear();
     addIconLayout(L"\ue602");
     addIconLayout(L"\ue600");
     addIconLayout(L"\ue604");
@@ -183,6 +182,11 @@ void ToolSub::onCreated()
 {
     btnSize = 32.f * dpi;
     marginTop = 4.f * dpi;
+    btnId = { "rectFill" , "ellipseFill", "arrowFill", "numberFill" , "lineTransparent" ,"bold" , "italic", "check", "uncheck" };
+    btnName = { L"矩形填充",L"圆形填充",L"箭头填充",L"标号填充",L"半透明",L"粗体",L"斜体" };
+    initTip();
+    initBrush();
+    initBtn();
     colorer->winReady();
 }
 
@@ -266,7 +270,9 @@ void ToolSub::onMouseWheel(const int& x, const int& y, const short& delta)
 
 void ToolSub::onDpiChanged()
 {
-
+    btnSize = 32.f * dpi;
+    colorer->btnSize = 23 * dpi;
+    initBtn();
 }
 
 

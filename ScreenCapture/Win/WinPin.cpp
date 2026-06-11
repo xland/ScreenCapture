@@ -129,6 +129,10 @@ void WinPin::onDestroy()
 void WinPin::onDpiChanged()
 {
     toolMain->move(x, y + h + 5.f * dpi);
+    if (toolMain->state != "") {
+        //toolSub->move(toolMain->x, toolMain->y + toolMain->h + 3.f * toolSub->dpi + 0.5);
+        toolSub->resetVal();
+    }
 }
 
 void WinPin::copyToClipboard()
@@ -225,15 +229,9 @@ void WinPin::initTool()
     auto toolStyle{ WS_EX_TOPMOST | WS_EX_NOACTIVATE };
     toolMain = std::make_unique<ToolMain>(x, y + h + 5.f * dpi, btnSize * 13, btnSize,this);
     toolMain->createWindow(toolStyle);
-    toolMain->initTip();
-    toolMain->initBrush();
-    toolMain->initBtn();
     toolMain->show();
     toolSub = std::make_unique<ToolSub>(this);
     toolSub->createWindow(toolStyle);
-    toolSub->initTip();
-    toolSub->initBrush();
-    toolSub->initBtn();
 }
 
 

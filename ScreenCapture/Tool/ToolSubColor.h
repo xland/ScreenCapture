@@ -15,12 +15,12 @@ public:
 	bool visible{ false };
 	float start, end;
 	int indexSelected{ 0 }, indexHovered{-1};
+	float btnSize;
 private:
 	void createOneBrush(const int& color);
 private:
 	ToolSub* win;
 	std::vector<ComPtr<ID2D1SolidColorBrush>> brushes;
 	std::vector<std::wstring> names;
-	float btnSize;
 };
 
