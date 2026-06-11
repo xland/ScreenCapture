@@ -96,6 +96,9 @@
     <ClCompile Include="Tool\WinToolSubSlider.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Tool\WinToolSubColor.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -174,6 +177,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Tool\WinToolSubSlider.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Tool\WinToolSubColor.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

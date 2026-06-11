@@ -4,6 +4,7 @@
 #include "Tool/WinToolMain.h"
 #include "Tool/WinToolSub.h"
 #include "Tool/WinToolSubSlider.h"
+#include "Tool/WinToolSubColor.h"
 #include "Util.h"
 #include "ShapeText.h"
 #include "ShapeTextWin.h"
@@ -166,7 +167,7 @@ void ShapeText::setTextLayout()
 void ShapeText::setAttr()
 {
 	auto toolSub = win->toolSub.get();
-	color = toolSub->getSelectedColor();
+	color = toolSub->colorer->getSelectedColor();
 	fontSize = toolSub->slider->val;
 	isBold = toolSub->selectIndex == 0;
 	isItalic = toolSub->selectIndex2 == 1;

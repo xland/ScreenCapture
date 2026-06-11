@@ -3,6 +3,7 @@
 #include "Win/WinPin.h"
 #include "Tool/WinToolMain.h"
 #include "Tool/WinToolSub.h"
+#include "Tool/WinToolSubColor.h"
 #include "Util.h"
 #include "ShapeNumber.h"
 
@@ -16,7 +17,7 @@ ShapeNumber::ShapeNumber(WinPin* win) :ShapeBase(win), draggers{
 	val{++numVal}
 {
 	auto toolSub = win->toolSub.get();
-	win->render->CreateSolidColorBrush(toolSub->getSelectedColor(), brush.GetAddressOf());
+	win->render->CreateSolidColorBrush(toolSub->colorer->getSelectedColor(), brush.GetAddressOf());
 	win->render->CreateSolidColorBrush(D2D1::ColorF(0XFFFFFF), brushText.GetAddressOf());
 	isFill = toolSub->selectIndex == 0;
 }

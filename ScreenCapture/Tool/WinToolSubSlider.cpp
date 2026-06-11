@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "WinToolSubSlider.h"
 #include "Shape/ShapeTextWin.h"
 #include "WinToolSub.h"
@@ -14,7 +14,7 @@ WinToolSubSlider::~WinToolSubSlider()
 void WinToolSubSlider::paint()
 {
 	if (!visible) return;
-	auto y{ win->marginTop + win->toolBtnSize / 2 };
+	auto y{ win->marginTop + win->btnSize / 2 };
 	win->render->DrawLine({ start,y }, { start + 120.f, y }, win->brushSpliter.Get(), win->dpi);
 	auto r{ 4.f * win->dpi };
 	auto x{ start + (end - start) * ((val - min) / (max - min)) };
@@ -64,11 +64,12 @@ void WinToolSubSlider::mouseMove(const int& x, const int& y)
     win->showTipAt(win->x + x, int(win->y + win->marginTop + 4 * win->dpi + 0.5));
 }
 
-void WinToolSubSlider::mouseDown(const int& x, const int& y)
+bool WinToolSubSlider::mouseDown(const int& x, const int& y)
 {
-    if (!visible || x < start || x > end) return;
+    if (!visible || x < start || x > end) return false;
     val = ((float)x - start) / (end - start) * (max - min) + min;
     ShapeTextWin::get()->changeState();
+    return true;
 }
 
 void WinToolSubSlider::setVals(const float& max, const float& min, const float& val, const float& start, bool visible)

@@ -8,10 +8,12 @@
 #include "History.h"
 #include "Shape/ShapeTextWin.h"
 #include "WinToolSubSlider.h"
+#include "WinToolSubColor.h"
 
 WinToolSub::WinToolSub(WinPin* parent) :WinToolBase(-999999, -999999, 1, 1,parent)
 {
     slider = std::make_unique<WinToolSubSlider>(this);
+    colorer = std::make_unique<WinToolSubColor>(this);
 }
 
 WinToolSub::~WinToolSub()
@@ -25,62 +27,44 @@ void WinToolSub::resetVal()
     auto span{ 4.f * dpi };
     y = int(toolMain->y + toolMain->h + 3.f * dpi+0.5);
     h = int(toolMain->h + marginTop + 0.5);
-    colorBtnW = toolMain->dpi * 23;
     btnStart = 0.f;
-    btnEnd = btnStart + toolBtnSize;
-    colorStart = 0.f;
-    colorEnd = 0.f;
-    hasColorSelector = false;
+    btnEnd = btnStart + btnSize;
     if (toolMain->state == "rect" || toolMain->state == "ellipse") {
         auto isFillMode{ selectIndex == 0 };
         w = int((isFillMode ? 316 * toolMain->dpi - 120.f - span : 316 * toolMain->dpi) + 0.5f);
         slider->setVals(16.f, 1.f, 3.f, btnEnd + span, !isFillMode);
-        hasColorSelector = true;
-        if (isFillMode) {
-            colorStart = btnEnd + span;
-        }
-        else {
-            colorStart = slider->end + span;
-        }
-        colorEnd = float(w);
+        colorer->setVals(isFillMode ? btnEnd : slider->end + span, true);
     }
     else if (toolMain->state == "arrow") {
         w = int(316 * toolMain->dpi);
         slider->setVals(60.f, 8.f, 18.f, btnEnd + span, true);
+        colorer->setVals(slider->end + span, true);
         selectIndex = 0;
-        hasColorSelector = true;
-        colorStart = slider->end + span;
-        colorEnd = float(w);
     }
     else if (toolMain->state == "line") {
         w = (int)(316 * toolMain->dpi);
         slider->setVals(60.f, 1.f, 3.f, btnEnd + span, true);
-        hasColorSelector = true;
-        colorStart = slider->end + span;
-        colorEnd = float(w);
+        colorer->setVals(slider->end + span, true);
     }
     else if (toolMain->state == "number") {
         w = (int)(228 * toolMain->dpi);
         selectIndex = 0;
-        hasColorSelector = true;
         slider->setVals(0.f, 0.f, 0.f, 0.f, false);
-        colorStart = btnEnd;
-        colorEnd = float(w);
+        colorer->setVals(btnEnd, true);
     }
     else if (toolMain->state == "text") {
         w = (int)(348 * toolMain->dpi);
-        btnEnd = btnStart + toolBtnSize *2;
+        btnEnd = btnStart + btnSize *2;
         slider->setVals(66.f, 16.f, 26.f, btnEnd + span, true);
-        hasColorSelector = true;
-        colorStart = slider->end + span;
-        colorEnd = float(w);
+        colorer->setVals(slider->end + span, true);
     }
     else if (toolMain->state == "mosaic" || toolMain->state == "eraser") {
         auto isRectMode{ selectIndex == 0 };
         w = int((isRectMode ? btnEnd : 126 * toolMain->dpi) + 0.5f);
         slider->setVals(86.f, 26.f, 32.f, btnEnd + span, !isRectMode);
+        colorer->setVals(0, false);
     }
-    arrowX = toolBtnSize * toolMain->selectIndex + toolBtnSize / 2;
+    arrowX = btnSize * toolMain->selectIndex + btnSize / 2;
     if (arrowX + 6.f * toolMain->dpi > w)
     {
         x = int(toolMain->x + arrowX - w / 2+0.5); // 箭头顶点位于子工具条正中间
@@ -114,7 +98,7 @@ bool WinToolSub::hoverBtn(const int& x)
 {
     int indexBtn{ -1 };
     if (x > btnStart && x < btnEnd) {
-        indexBtn = static_cast<int>((x - btnStart) / toolBtnSize);
+        indexBtn = static_cast<int>((x - btnStart) / btnSize);
     }
     else {
         indexBtn = -1;
@@ -130,44 +114,11 @@ bool WinToolSub::hoverBtn(const int& x)
             if (toolMain->state == "line")startIndex = 4;
             if (toolMain->state == "text")startIndex = 5;
             tipText = btnName[startIndex + indexBtn];
-            showTipAt((int)(this->x + btnStart + indexBtn * toolBtnSize + toolBtnSize / 2), (int)(this->y + marginTop + 4 * dpi));
+            showTipAt((int)(this->x + btnStart + indexBtn * btnSize + btnSize / 2), (int)(this->y + marginTop + 4 * dpi));
         }
         return true;
     }
     return false;
-}
-
-bool WinToolSub::hoverColor(const int& x)
-{
-    if (!hasColorSelector) {
-        if (hoverColorIndex != -1) {
-            hoverColorIndex = -1;
-            return true;
-        }
-        return false;
-    }
-    int indexColor;
-    if (x > colorStart && x < colorEnd) {
-        indexColor = static_cast<int>((x - colorStart) / colorBtnW);
-        if (indexColor >= colorName.size()) indexColor = (int)colorName.size() - 1;
-    }
-    else {
-        indexColor = -1;
-    }
-    if (indexColor != hoverColorIndex) {
-        hoverColorIndex = indexColor; 
-        if (indexColor >= 0) {
-            tipText = colorName[indexColor];
-            showTipAt(int(this->x + colorStart + indexColor * colorBtnW + toolBtnSize / 2+0.5), int(this->y + marginTop + 4 * dpi+0.5));
-        }
-        return true;
-    }
-    return false;
-}
-
-D2D1_COLOR_F WinToolSub::getSelectedColor()
-{
-    return colorBrush[selectColorIndex]->GetColor();
 }
 
 void WinToolSub::setBorderPath()
@@ -191,29 +142,6 @@ void WinToolSub::setBorderPath()
     sink->Close();
 }
 
-void WinToolSub::initColor()
-{
-    std::vector<D2D1_COLOR_F> colors = {
-        D2D1::ColorF(0XCF1322),
-        D2D1::ColorF(0XD48806),
-        D2D1::ColorF(0X389E0D),
-        D2D1::ColorF(0X13C2C2),
-        D2D1::ColorF(0X0958D9),
-        D2D1::ColorF(0X722ED1),
-        D2D1::ColorF(0XEB2F96),
-        D2D1::ColorF(0X000000)
-    };
-    colorName = {
-        L"红",L"黄",L"绿",L"青",L"蓝",L"紫",L"粉",L"黑",
-    };
-    for (auto& color : colors)
-    {
-        ComPtr<ID2D1SolidColorBrush> brush;
-        render->CreateSolidColorBrush(color, brush.GetAddressOf());
-        colorBrush.push_back(std::move(brush));
-    }
-}
-
 void WinToolSub::onPaint()
 {
     render->Clear(0);
@@ -221,7 +149,7 @@ void WinToolSub::onPaint()
     render->DrawGeometry(borderPath.Get(), brushSpliter.Get(), dpi);
     paintToolButtons();
     slider->paint();
-    if (hasColorSelector) paintColorSelector();
+    colorer->paint();
 }
 
 void WinToolSub::paintToolButtons()
@@ -244,7 +172,7 @@ void WinToolSub::paintToolButtons()
     }
     else if (win->state == "text") {
         paintIcon(btnStart, getBtnIconLayout("bold"), hoverIndex == 0, selectIndex == 0);
-        paintIcon(btnStart + toolBtnSize, getBtnIconLayout("italic"), hoverIndex == 1, selectIndex2 == 1);
+        paintIcon(btnStart + btnSize, getBtnIconLayout("italic"), hoverIndex == 1, selectIndex2 == 1);
     }
     else if (win->state == "mosaic" || win->state == "eraser") {
         paintIcon(btnStart, getBtnIconLayout("rectFill"), hoverIndex == 0, selectIndex == 0);
@@ -253,8 +181,9 @@ void WinToolSub::paintToolButtons()
 
 void WinToolSub::onCreated()
 {
-    toolBtnSize = 32.f * dpi;
+    btnSize = 32.f * dpi;
     marginTop = 4.f * dpi;
+    colorer->winReady();
 }
 
 BOOL WinToolSub::onCursor()
@@ -266,7 +195,7 @@ void WinToolSub::onMouseMove(const int& x, const int& y)
 {
     slider->mouseMove(x, y);
     bool needRefreshBtn = hoverBtn(x);
-    bool needRefreshColor = hoverColor(x);
+    bool needRefreshColor = colorer->hover(x);
     if (needRefreshBtn|| needRefreshColor) {
         refresh();
     }
@@ -274,8 +203,8 @@ void WinToolSub::onMouseMove(const int& x, const int& y)
 void WinToolSub::onMouseLeave()
 {
     auto flag{ false };
-    if (hoverColorIndex != -1) {
-        hoverColorIndex = -1;
+    if (colorer->indexHovered != -1) {
+        colorer->indexHovered = -1;
         flag = true;
     }
     if (hoverIndex != -1) {
@@ -313,18 +242,14 @@ void WinToolSub::onMouseDown(const int& x, const int& y, bool isRight)
             ShapeTextWin::get()->changeState();
         }
     }
-    slider->mouseDown(x, y);
-    if (hasColorSelector && x > colorStart && x<colorEnd) {
-        if (selectColorIndex != hoverColorIndex) {
-            selectColorIndex = hoverColorIndex;
-            flag = true;
-            ShapeTextWin::get()->changeState();
-        }
-    }
+    auto sliderRefresh = slider->mouseDown(x, y);
+    auto colorRefresh = colorer->mouseDown(x, y);
     if ((toolMain->state == "rect" || toolMain->state == "ellipse" || toolMain->state == "mosaic" || toolMain->state == "eraser") && oldSelectIndex != selectIndex) {
         resetVal();
     }
-    else if (flag) refresh();
+    else if (flag || colorRefresh || sliderRefresh) {
+        refresh();
+    }
 
 }
 
@@ -342,25 +267,6 @@ void WinToolSub::onMouseWheel(const int& x, const int& y, const short& delta)
 void WinToolSub::onDpiChanged()
 {
 
-}
-
-void WinToolSub::paintColorSelector()
-{
-    int index{ 0 };
-    auto start{ colorStart };
-    for (auto& brush:colorBrush)
-    {
-        D2D1_POINT_2F origin = { start, marginTop };
-        auto icon = index == selectColorIndex? getBtnIconLayout("check") : getBtnIconLayout("uncheck");
-        if (index == hoverColorIndex || index == selectColorIndex) {
-            float paddingTopBottom{ 6.f * dpi }, paddingLeftRight{ 5.f * dpi };
-            D2D1_ROUNDED_RECT rr = { { start + paddingLeftRight, paddingTopBottom + marginTop, start + toolBtnSize - paddingLeftRight, h - paddingTopBottom }, 8, 8 };
-            render->FillRoundedRectangle(rr, brushSelect.Get());
-        }
-        render->DrawTextLayout(origin, icon, brush.Get(), D2D1_DRAW_TEXT_OPTIONS_NONE);
-        start += colorBtnW;
-        index += 1;
-    }
 }
 
 

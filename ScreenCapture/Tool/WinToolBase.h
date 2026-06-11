@@ -28,7 +28,7 @@ protected:
 	std::vector<std::wstring> btnName;
 	std::vector<ComPtr<IDWriteTextLayout>> btnLayout;
 	int hoverIndex{ -1 };
-	float marginTop,toolBtnSize;
+	float marginTop,btnSize;
 	HWND tipHwnd;
 	std::wstring tipText;
 	WinPin* parent;

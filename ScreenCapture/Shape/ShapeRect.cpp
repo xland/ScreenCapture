@@ -3,6 +3,7 @@
 #include "Tool/WinToolMain.h"
 #include "Tool/WinToolSub.h"
 #include "Tool/WinToolSubSlider.h"
+#include "Tool/WinToolSubColor.h"
 #include "Util.h"
 #include "ShapeRect.h"
 
@@ -17,7 +18,7 @@ ShapeRect::ShapeRect(WinPin* win) :ShapeBase(win), draggers{
 	D2D1::RectF(0,0,0,0) }
 {
 	auto toolSub = win->toolSub.get();
-	win->render->CreateSolidColorBrush(toolSub->getSelectedColor(), brush.GetAddressOf());
+	win->render->CreateSolidColorBrush(toolSub->colorer->getSelectedColor(), brush.GetAddressOf());
 	strokeWidth = toolSub->slider->val;
 	isFill = toolSub->selectIndex == 0;
 }

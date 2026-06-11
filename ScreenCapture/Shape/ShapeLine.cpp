@@ -4,6 +4,7 @@
 #include "Tool/WinToolMain.h"
 #include "Tool/WinToolSub.h"
 #include "Tool/WinToolSubSlider.h"
+#include "Tool/WinToolSubColor.h"
 #include "Util.h"
 #include "ShapeLine.h"
 
@@ -12,7 +13,7 @@ ShapeLine::ShapeLine(WinPin* win) :ShapeBase(win), draggers{
 	D2D1::RectF(0,0,0,0)}
 {
 	auto toolSub = win->toolSub.get();
-	auto color = toolSub->getSelectedColor();
+	auto color = toolSub->colorer->getSelectedColor();
 	if (toolSub->selectIndex == 0) {
 		color.a = 0.5f;
 	}
