@@ -1,21 +1,21 @@
 ﻿#include "pch.h"
-#include "WinToolBase.h"
+#include "ToolBase.h"
 #include "Win/WinPin.h"
 #include "History.h"
 #include "App.h"
 
-WinToolBase::WinToolBase(const int& x, const int& y, const int& w, const int& h, WinPin* parent) : WinBase(x, y, w, h),parent{parent}
+ToolBase::ToolBase(const int& x, const int& y, const int& w, const int& h, WinPin* parent) : WinBase(x, y, w, h),parent{parent}
 {
 
 }
 
 
-WinToolBase::~WinToolBase()
+ToolBase::~ToolBase()
 {
 
 }
 
-void WinToolBase::initBrush()
+void ToolBase::initBrush()
 {
     render->CreateSolidColorBrush(D2D1::ColorF(0xffffff), brushBg.GetAddressOf());
     render->CreateSolidColorBrush(D2D1::ColorF(0xe6f4ff), brushSelect.GetAddressOf());
@@ -24,7 +24,7 @@ void WinToolBase::initBrush()
     render->CreateSolidColorBrush(D2D1::ColorF(0x888888), brushSpliter.GetAddressOf());
 }
 
-void WinToolBase::paintIcon(const float& posX, IDWriteTextLayout* icon, bool isHover, bool isSelected)
+void ToolBase::paintIcon(const float& posX, IDWriteTextLayout* icon, bool isHover, bool isSelected)
 {
     D2D1_POINT_2F origin = { posX, marginTop };
     if (isSelected) {
@@ -39,7 +39,7 @@ void WinToolBase::paintIcon(const float& posX, IDWriteTextLayout* icon, bool isH
     }
 }
 
-IDWriteTextLayout* WinToolBase::getBtnIconLayout(const std::string& name)
+IDWriteTextLayout* ToolBase::getBtnIconLayout(const std::string& name)
 {
     auto it = std::ranges::find(btnId, name);
     if (it != btnId.end()) {
@@ -49,7 +49,7 @@ IDWriteTextLayout* WinToolBase::getBtnIconLayout(const std::string& name)
     return nullptr;
 }
 
-void WinToolBase::initTip()
+void ToolBase::initTip()
 {
     INITCOMMONCONTROLSEX iccex = { sizeof(iccex), ICC_BAR_CLASSES };
     InitCommonControlsEx(&iccex);
@@ -75,7 +75,7 @@ void WinToolBase::initTip()
     SendMessage(tipHwnd, TTM_SETDELAYTIME, TTDT_INITIAL, MAKELONG(0, 0));
     //SetWindowPos(tipHwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
 }
-void WinToolBase::addIconLayout(const std::wstring& icon)
+void ToolBase::addIconLayout(const std::wstring& icon)
 {
     auto writer = App::getWriter();
     static ComPtr<IDWriteTextFormat> iconFormat;
@@ -111,7 +111,7 @@ void WinToolBase::addIconLayout(const std::wstring& icon)
 	btnLayout.push_back(std::move(layout));
 
 }
-void WinToolBase::showTipAt(int x, int y)
+void ToolBase::showTipAt(int x, int y)
 {
     TOOLINFOW ti = { 0 };
     ti.cbSize = TTTOOLINFOW_V2_SIZE;
@@ -135,7 +135,7 @@ void WinToolBase::showTipAt(int x, int y)
     int centerY = y - height;
     SendMessage(tipHwnd, TTM_TRACKPOSITION, 0, MAKELPARAM(centerX, centerY));
 }
-void WinToolBase::hideTip()
+void ToolBase::hideTip()
 {
     TOOLINFOW ti = { 0 };
     ti.cbSize = TTTOOLINFOW_V2_SIZE;
@@ -145,7 +145,7 @@ void WinToolBase::hideTip()
     SendMessage(tipHwnd, TTM_ACTIVATE, FALSE, 0);
     tipText = L"";
 }
-void WinToolBase::onKeyDown(const UINT& key)
+void ToolBase::onKeyDown(const UINT& key)
 {
     if (key == 'Z' && (GetKeyState(VK_CONTROL) & 0x8000) != 0)
     {

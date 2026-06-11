@@ -1,27 +1,27 @@
 ﻿#include "pch.h"
 #include "Util.h"
 #include "App.h"
-#include "WinToolBase.h"
-#include "WinToolSub.h"
-#include "WinToolMain.h"
+#include "ToolBase.h"
+#include "ToolSub.h"
+#include "ToolMain.h"
 #include "Win/WinPin.h"
 #include "History.h"
 #include "Shape/ShapeTextWin.h"
-#include "WinToolSubSlider.h"
-#include "WinToolSubColor.h"
+#include "ToolSubSlider.h"
+#include "ToolSubColor.h"
 
-WinToolSub::WinToolSub(WinPin* parent) :WinToolBase(-999999, -999999, 1, 1,parent)
+ToolSub::ToolSub(WinPin* parent) :ToolBase(-999999, -999999, 1, 1,parent)
 {
-    slider = std::make_unique<WinToolSubSlider>(this);
-    colorer = std::make_unique<WinToolSubColor>(this);
+    slider = std::make_unique<ToolSubSlider>(this);
+    colorer = std::make_unique<ToolSubColor>(this);
 }
 
-WinToolSub::~WinToolSub()
+ToolSub::~ToolSub()
 {
 
 }
 
-void WinToolSub::resetVal()
+void ToolSub::resetVal()
 {
     auto toolMain = parent->toolMain.get();
     auto span{ 4.f * dpi };
@@ -79,7 +79,7 @@ void WinToolSub::resetVal()
     setBorderPath();
 }
 
-void WinToolSub::initBtn()
+void ToolSub::initBtn()
 {
     btnId = { "rectFill" , "ellipseFill", "arrowFill", "numberFill" , "lineTransparent" ,"bold" , "italic", "check", "uncheck" };
     btnName = { L"矩形填充",L"圆形填充",L"箭头填充",L"标号填充",L"半透明",L"粗体",L"斜体" };
@@ -94,7 +94,7 @@ void WinToolSub::initBtn()
     addIconLayout(L"\ue61d");
 }
 
-bool WinToolSub::hoverBtn(const int& x)
+bool ToolSub::hoverBtn(const int& x)
 {
     int indexBtn{ -1 };
     if (x > btnStart && x < btnEnd) {
@@ -121,7 +121,7 @@ bool WinToolSub::hoverBtn(const int& x)
     return false;
 }
 
-void WinToolSub::setBorderPath()
+void ToolSub::setBorderPath()
 {
     borderPath.Reset();
     App::getD2D()->CreatePathGeometry(borderPath.GetAddressOf());
@@ -142,7 +142,7 @@ void WinToolSub::setBorderPath()
     sink->Close();
 }
 
-void WinToolSub::onPaint()
+void ToolSub::onPaint()
 {
     render->Clear(0);
     render->FillGeometry(borderPath.Get(), brushBg.Get());
@@ -152,7 +152,7 @@ void WinToolSub::onPaint()
     colorer->paint();
 }
 
-void WinToolSub::paintToolButtons()
+void ToolSub::paintToolButtons()
 {
     auto win = parent->toolMain.get();
     if (win->state == "rect") {
@@ -179,19 +179,19 @@ void WinToolSub::paintToolButtons()
     }
 }
 
-void WinToolSub::onCreated()
+void ToolSub::onCreated()
 {
     btnSize = 32.f * dpi;
     marginTop = 4.f * dpi;
     colorer->winReady();
 }
 
-BOOL WinToolSub::onCursor()
+BOOL ToolSub::onCursor()
 {
     SetCursor(LoadCursor(NULL, IDC_HAND));
     return TRUE;
 }
-void WinToolSub::onMouseMove(const int& x, const int& y)
+void ToolSub::onMouseMove(const int& x, const int& y)
 {
     slider->mouseMove(x, y);
     bool needRefreshBtn = hoverBtn(x);
@@ -200,7 +200,7 @@ void WinToolSub::onMouseMove(const int& x, const int& y)
         refresh();
     }
 }
-void WinToolSub::onMouseLeave()
+void ToolSub::onMouseLeave()
 {
     auto flag{ false };
     if (colorer->indexHovered != -1) {
@@ -215,7 +215,7 @@ void WinToolSub::onMouseLeave()
     hideTip();
 }
 
-void WinToolSub::onMouseDown(const int& x, const int& y, bool isRight)
+void ToolSub::onMouseDown(const int& x, const int& y, bool isRight)
 {
     bool flag{ false };
     auto toolMain = parent->toolMain.get();
@@ -253,18 +253,18 @@ void WinToolSub::onMouseDown(const int& x, const int& y, bool isRight)
 
 }
 
-void WinToolSub::onMouseDrag(const int& x, const int& y, const UINT_PTR& modifiers)
+void ToolSub::onMouseDrag(const int& x, const int& y, const UINT_PTR& modifiers)
 {
     slider->mouseDrag(x, y);
 }
 
-void WinToolSub::onMouseWheel(const int& x, const int& y, const short& delta)
+void ToolSub::onMouseWheel(const int& x, const int& y, const short& delta)
 {
 
     slider->mouseWheel(x, y,delta);
 }
 
-void WinToolSub::onDpiChanged()
+void ToolSub::onDpiChanged()
 {
 
 }

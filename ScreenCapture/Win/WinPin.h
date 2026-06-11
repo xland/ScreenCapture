@@ -2,8 +2,8 @@
 #include "pch.h"
 #include "WinBase.h"
 
-class WinToolMain;
-class WinToolSub;
+class ToolMain;
+class ToolSub;
 class ShapeBase;
 class History;
 class WinPin :public WinBase
@@ -18,8 +18,8 @@ public:
 public:
 	ShapeBase* shapeHover{ nullptr };
 	std::unique_ptr<History> history;
-	std::unique_ptr<WinToolMain> toolMain;
-	std::unique_ptr<WinToolSub> toolSub;
+	std::unique_ptr<ToolMain> toolMain;
+	std::unique_ptr<ToolSub> toolSub;
 	ComPtr<ID2D1Bitmap1> screenImg;
 private:
 	void onMouseMove(const int& x, const int& y) override;

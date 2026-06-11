@@ -1,24 +1,24 @@
 ﻿#pragma once
 #include "pch.h"
-#include "WinToolBase.h"
+#include "ToolBase.h"
 
-class WinToolSubSlider;
-class WinToolSubColor;
-class WinToolSub :public WinToolBase
+class ToolSubSlider;
+class ToolSubColor;
+class ToolSub :public ToolBase
 {
-	friend class WinToolSubSlider;
-	friend class WinToolSubColor;
+	friend class ToolSubSlider;
+	friend class ToolSubColor;
 public:
-	WinToolSub(WinPin* parent);
-	~WinToolSub();
+	ToolSub(WinPin* parent);
+	~ToolSub();
 	D2D1_COLOR_F getSelectedColor();
 	void initBtn();
 	void resetVal();
 	void setBorderPath();
 public:
 	int selectIndex2{ -1 };
-	std::unique_ptr<WinToolSubSlider> slider;
-	std::unique_ptr<WinToolSubColor> colorer;
+	std::unique_ptr<ToolSubSlider> slider;
+	std::unique_ptr<ToolSubColor> colorer;
 protected:
 	void onPaint() override;
 private:

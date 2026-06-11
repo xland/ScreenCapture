@@ -1,9 +1,9 @@
 ﻿#include "pch.h"
 #include "App.h"
 #include "Win/WinPin.h"
-#include "Tool/WinToolMain.h"
-#include "Tool/WinToolSub.h"
-#include "Tool/WinToolSubColor.h"
+#include "Tool/ToolMain.h"
+#include "Tool/ToolSub.h"
+#include "Tool/ToolSubColor.h"
 #include "Util.h"
 #include "ShapeNumber.h"
 

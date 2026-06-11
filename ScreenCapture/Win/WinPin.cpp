@@ -4,8 +4,8 @@
 #include "WinPin.h"
 #include "WinCap.h"
 #include "CutMask.h"
-#include "Tool/WinToolMain.h"
-#include "Tool/WinToolSub.h"
+#include "Tool/ToolMain.h"
+#include "Tool/ToolSub.h"
 #include "History.h"
 #include "Shape/ShapeBase.h"
 #include "Shape/ShapeRect.h"
@@ -223,13 +223,13 @@ void WinPin::initTool()
 {
     auto btnSize{ 32.f * dpi };
     auto toolStyle{ WS_EX_TOPMOST | WS_EX_NOACTIVATE };
-    toolMain = std::make_unique<WinToolMain>(x, y + h + 5.f * dpi, btnSize * 13, btnSize,this);
+    toolMain = std::make_unique<ToolMain>(x, y + h + 5.f * dpi, btnSize * 13, btnSize,this);
     toolMain->createWindow(toolStyle);
     toolMain->initTip();
     toolMain->initBrush();
     toolMain->initBtn();
     toolMain->show();
-    toolSub = std::make_unique<WinToolSub>(this);
+    toolSub = std::make_unique<ToolSub>(this);
     toolSub->createWindow(toolStyle);
     toolSub->initTip();
     toolSub->initBrush();

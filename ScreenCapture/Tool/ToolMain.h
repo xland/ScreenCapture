@@ -1,13 +1,13 @@
 ﻿#pragma once
 #include "pch.h"
-#include "WinToolBase.h"
+#include "ToolBase.h"
 
 
-class WinToolMain :public WinToolBase
+class ToolMain :public ToolBase
 {
 public:
-	WinToolMain(const int& x, const int& y, const int& w, const int& h, WinPin* parent);
-	~WinToolMain();
+	ToolMain(const int& x, const int& y, const int& w, const int& h, WinPin* parent);
+	~ToolMain();
 	void initBtn();
 public:
 	std::string state;

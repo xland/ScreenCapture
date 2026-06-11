@@ -1,10 +1,10 @@
 ﻿#pragma once
-class WinToolSub;
-class WinToolSubColor
+class ToolSub;
+class ToolSubColor
 {
 public:
-	WinToolSubColor(WinToolSub* win);
-	~WinToolSubColor();
+	ToolSubColor(ToolSub* win);
+	~ToolSubColor();
 	void paint();
 	void winReady();
 	bool hover(const int& x);
@@ -18,7 +18,7 @@ public:
 private:
 	void createOneBrush(const int& color);
 private:
-	WinToolSub* win;
+	ToolSub* win;
 	std::vector<ComPtr<ID2D1SolidColorBrush>> brushes;
 	std::vector<std::wstring> names;
 	float btnSize;

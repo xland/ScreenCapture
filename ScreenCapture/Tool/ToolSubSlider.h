@@ -1,10 +1,10 @@
 ﻿#pragma once
-class WinToolSub;
-class WinToolSubSlider
+class ToolSub;
+class ToolSubSlider
 {
 public:
-	WinToolSubSlider(WinToolSub* win);
-	~WinToolSubSlider();
+	ToolSubSlider(ToolSub* win);
+	~ToolSubSlider();
 	void paint();
 	void mouseWheel(const int& x, const int& y, const short& delta);
 	void mouseDrag(const int& x, const int& y);
@@ -15,6 +15,6 @@ public:
 	bool visible{ false };
 	float start, end, val, min, max;
 private:
-	WinToolSub* win;
+	ToolSub* win;
 };
 

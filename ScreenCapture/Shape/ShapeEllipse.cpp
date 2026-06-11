@@ -1,10 +1,10 @@
 ﻿#include "pch.h"
 #include "ShapeEllipse.h"
 #include "Win/WinPin.h"
-#include "Tool/WinToolMain.h"
-#include "Tool/WinToolSub.h"
-#include "Tool/WinToolSubSlider.h"
-#include "Tool/WinToolSubColor.h"
+#include "Tool/ToolMain.h"
+#include "Tool/ToolSub.h"
+#include "Tool/ToolSubSlider.h"
+#include "Tool/ToolSubColor.h"
 #include "Util.h"
 
 ShapeEllipse::ShapeEllipse(WinPin* win) :ShapeBase(win), draggers{

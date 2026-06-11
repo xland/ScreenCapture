@@ -1,17 +1,17 @@
 ﻿#include "pch.h"
-#include "WinToolSubSlider.h"
+#include "ToolSubSlider.h"
 #include "Shape/ShapeTextWin.h"
-#include "WinToolSub.h"
+#include "ToolSub.h"
 
-WinToolSubSlider::WinToolSubSlider(WinToolSub* win):win{win}
+ToolSubSlider::ToolSubSlider(ToolSub* win):win{win}
 {
 }
 
-WinToolSubSlider::~WinToolSubSlider()
+ToolSubSlider::~ToolSubSlider()
 {
 }
 
-void WinToolSubSlider::paint()
+void ToolSubSlider::paint()
 {
 	if (!visible) return;
 	auto y{ win->marginTop + win->btnSize / 2 };
@@ -20,7 +20,7 @@ void WinToolSubSlider::paint()
 	auto x{ start + (end - start) * ((val - min) / (max - min)) };
 	win->render->FillEllipse({ {x,y}, r, r }, win->brushSpliter.Get());
 }
-void WinToolSubSlider::mouseWheel(const int& x, const int& y, const short& delta)
+void ToolSubSlider::mouseWheel(const int& x, const int& y, const short& delta)
 {
     if (!visible || x > end || x < start) return;
     if (delta < 0) {
@@ -48,7 +48,7 @@ void WinToolSubSlider::mouseWheel(const int& x, const int& y, const short& delta
     }
     win->refresh();
 }
-void WinToolSubSlider::mouseDrag(const int& x, const int& y)
+void ToolSubSlider::mouseDrag(const int& x, const int& y)
 {
     if (!visible || x < start || x > end) return;
     val = ((float)x - start) / (end - start) * (max - min) + min;
@@ -56,7 +56,7 @@ void WinToolSubSlider::mouseDrag(const int& x, const int& y)
     win->showTipAt(win->x + x, int(win->y + win->marginTop + 4 * win->dpi + 0.5));
     win->refresh();
 }
-void WinToolSubSlider::mouseMove(const int& x, const int& y)
+void ToolSubSlider::mouseMove(const int& x, const int& y)
 {
     if (!visible || x < start || x > end) return;
     float val = ((float)x - start) / (end - start) * (max - min) + min;
@@ -64,7 +64,7 @@ void WinToolSubSlider::mouseMove(const int& x, const int& y)
     win->showTipAt(win->x + x, int(win->y + win->marginTop + 4 * win->dpi + 0.5));
 }
 
-bool WinToolSubSlider::mouseDown(const int& x, const int& y)
+bool ToolSubSlider::mouseDown(const int& x, const int& y)
 {
     if (!visible || x < start || x > end) return false;
     val = ((float)x - start) / (end - start) * (max - min) + min;
@@ -72,7 +72,7 @@ bool WinToolSubSlider::mouseDown(const int& x, const int& y)
     return true;
 }
 
-void WinToolSubSlider::setVals(const float& max, const float& min, const float& val, const float& start, bool visible)
+void ToolSubSlider::setVals(const float& max, const float& min, const float& val, const float& start, bool visible)
 {
     this->max = max;
     this->min = min;

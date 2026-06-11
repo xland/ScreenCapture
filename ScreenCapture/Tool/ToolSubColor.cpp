@@ -1,17 +1,17 @@
 ﻿#include "pch.h"
-#include "WinToolSubColor.h"
-#include "WinToolSub.h"
+#include "ToolSubColor.h"
+#include "ToolSub.h"
 #include "Shape/ShapeTextWin.h"
 
-WinToolSubColor::WinToolSubColor(WinToolSub* win):win{win}
+ToolSubColor::ToolSubColor(ToolSub* win):win{win}
 {
 }
 
-WinToolSubColor::~WinToolSubColor()
+ToolSubColor::~ToolSubColor()
 {
 }
 
-void WinToolSubColor::paint()
+void ToolSubColor::paint()
 {
 	if (!visible) return;
     int index{ 0 };
@@ -29,7 +29,7 @@ void WinToolSubColor::paint()
         index += 1;
     }
 }
-void WinToolSubColor::winReady()
+void ToolSubColor::winReady()
 {
     btnSize = 23 * win->dpi;
     names = { L"红",L"黄",L"绿",L"青",L"蓝",L"紫",L"粉",L"黑"};
@@ -43,7 +43,7 @@ void WinToolSubColor::winReady()
     createOneBrush(0X000000);
 }
 
-bool WinToolSubColor::hover(const int& x)
+bool ToolSubColor::hover(const int& x)
 {
     if (!visible) return false;
     int indexColor;
@@ -65,7 +65,7 @@ bool WinToolSubColor::hover(const int& x)
     return false;
 }
 
-bool WinToolSubColor::mouseDown(const int& x, const int& y)
+bool ToolSubColor::mouseDown(const int& x, const int& y)
 {
     if (!visible || x < start|| x > end) return false;
     if (indexSelected != indexHovered) {
@@ -76,18 +76,18 @@ bool WinToolSubColor::mouseDown(const int& x, const int& y)
     return false;
 }
 
-void WinToolSubColor::createOneBrush(const int& color)
+void ToolSubColor::createOneBrush(const int& color)
 {
     ComPtr<ID2D1SolidColorBrush> brush;
     win->render->CreateSolidColorBrush(D2D1::ColorF(color), brush.GetAddressOf());
     brushes.push_back(std::move(brush));
 }
-D2D1_COLOR_F WinToolSubColor::getSelectedColor()
+D2D1_COLOR_F ToolSubColor::getSelectedColor()
 {
     return brushes[indexSelected]->GetColor();
 }
 
-void WinToolSubColor::setVals(const float& start, bool visible)
+void ToolSubColor::setVals(const float& start, bool visible)
 {
     this->start = start;
     this->end = win->w;

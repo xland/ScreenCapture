@@ -4,31 +4,31 @@
 #include "Win/WinCap.h"
 #include "Win/CutMask.h"
 #include "Win/WinPin.h"
-#include "WinToolBase.h"
-#include "WinToolMain.h"
-#include "WinToolSub.h"
+#include "ToolBase.h"
+#include "ToolMain.h"
+#include "ToolSub.h"
 #include "History.h"
 
 
-WinToolMain::WinToolMain(const int& x, const int& y, const int& w, const int& h, WinPin* parent) : WinToolBase(x, y, w, h,parent)
+ToolMain::ToolMain(const int& x, const int& y, const int& w, const int& h, WinPin* parent) : ToolBase(x, y, w, h,parent)
 {
     btnId = { "rect" , "ellipse", "arrow", "number" , "line" ,"text" , "mosaic", "eraser", "undo", "redo", "clipboard" , "save" , "close" };
     btnName = { L"矩形",L"圆形",L"箭头",L"标号",L"线条",L"文本",L"马赛克",L"橡皮擦",L"撤销",L"重做",L"剪切板",L"保存",L"关闭" };
 }
-WinToolMain::~WinToolMain()
+ToolMain::~ToolMain()
 {
 }
-void WinToolMain::onCreated()
+void ToolMain::onCreated()
 {
     btnSize = 32.f * dpi;
 }
-BOOL WinToolMain::onCursor()
+BOOL ToolMain::onCursor()
 {
     setCursor(IDC_HAND);
     return TRUE;
 }
 
-void WinToolMain::onPaint()
+void ToolMain::onPaint()
 {
     render->Clear(D2D1::ColorF(0xFFFFFF));
     int btnIndex{ 0 };
@@ -47,7 +47,7 @@ void WinToolMain::onPaint()
     render->DrawRectangle(r, brushSpliter.Get(), 2 * dpi);
 }
 
-void WinToolMain::onMouseDown(const int& x, const int& y, bool isRight)
+void ToolMain::onMouseDown(const int& x, const int& y, bool isRight)
 {
 	if (isRight) {
         state = "";
@@ -96,7 +96,7 @@ void WinToolMain::onMouseDown(const int& x, const int& y, bool isRight)
         refresh();
     }
 }
-void WinToolMain::onMouseMove(const int& x, const int& y)
+void ToolMain::onMouseMove(const int& x, const int& y)
 {
     size_t index = static_cast<int>(x / btnSize);
     if (index >= btnId.size()) index = btnId.size() - 1;
@@ -107,14 +107,14 @@ void WinToolMain::onMouseMove(const int& x, const int& y)
         refresh();
     }
 }
-void WinToolMain::onMouseLeave()
+void ToolMain::onMouseLeave()
 {
     hoverIndex = -1;
     refresh();
     hideTip();
 }
 
-void WinToolMain::onDpiChanged()
+void ToolMain::onDpiChanged()
 {
     btnSize = 32.f * dpi;
     initBtn();
@@ -122,7 +122,7 @@ void WinToolMain::onDpiChanged()
 
 
 
-void WinToolMain::initBtn()
+void ToolMain::initBtn()
 {
     btnLayout.clear();
     addIconLayout(L"\ue8e8");

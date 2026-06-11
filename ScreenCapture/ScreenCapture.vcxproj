@@ -169,9 +169,10 @@
     <ClCompile Include="Shape\ShapeMosaic.cpp" />
     <ClCompile Include="Shape\ShapeNumber.cpp" />
     <ClCompile Include="Shape\ShapeText.cpp" />
-    <ClCompile Include="Tool\WinToolSubColor.cpp" />
+    <ClCompile Include="Tool\ToolLong.cpp" />
+    <ClCompile Include="Tool\ToolSubColor.cpp" />
     <ClCompile Include="Tray.cpp" />
-    <ClCompile Include="Tool\WinToolSubSlider.cpp" />
+    <ClCompile Include="Tool\ToolSubSlider.cpp" />
     <ClCompile Include="Win\WinLong.cpp" />
     <ClCompile Include="Win\WinSetting.cpp" />
     <ClCompile Include="Win\CutMask.cpp" />
@@ -187,9 +188,9 @@
     <ClCompile Include="Win\WinCap.cpp" />
     <ClCompile Include="Win\WinPin.cpp" />
     <ClCompile Include="Win\WinPix.cpp" />
-    <ClCompile Include="Tool\WinToolBase.cpp" />
-    <ClCompile Include="Tool\WinToolMain.cpp" />
-    <ClCompile Include="Tool\WinToolSub.cpp" />
+    <ClCompile Include="Tool\ToolBase.cpp" />
+    <ClCompile Include="Tool\ToolMain.cpp" />
+    <ClCompile Include="Tool\ToolSub.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h" />
@@ -202,9 +203,10 @@
     <ClInclude Include="Shape\ShapeMosaic.h" />
     <ClInclude Include="Shape\ShapeNumber.h" />
     <ClInclude Include="Shape\ShapeText.h" />
-    <ClInclude Include="Tool\WinToolSubColor.h" />
+    <ClInclude Include="Tool\ToolLong.h" />
+    <ClInclude Include="Tool\ToolSubColor.h" />
     <ClInclude Include="Tray.h" />
-    <ClInclude Include="Tool\WinToolSubSlider.h" />
+    <ClInclude Include="Tool\ToolSubSlider.h" />
     <ClInclude Include="Win\WinLong.h" />
     <ClInclude Include="Win\WinSetting.h" />
     <ClInclude Include="Win\CutMask.h" />
@@ -216,9 +218,9 @@
     <ClInclude Include="Win\WinCap.h" />
     <ClInclude Include="Win\WinPin.h" />
     <ClInclude Include="Win\WinPix.h" />
-    <ClInclude Include="Tool\WinToolBase.h" />
-    <ClInclude Include="Tool\WinToolMain.h" />
-    <ClInclude Include="Tool\WinToolSub.h" />
+    <ClInclude Include="Tool\ToolBase.h" />
+    <ClInclude Include="Tool\ToolMain.h" />
+    <ClInclude Include="Tool\ToolSub.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Res\Resource.rc" />

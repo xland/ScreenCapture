@@ -2,11 +2,11 @@
 #include "pch.h"
 #include "Win/WinBase.h"
 class WinPin;
-class WinToolBase :public WinBase
+class ToolBase :public WinBase
 {
 public:
-	WinToolBase(const int& x, const int& y, const int& w, const int& h, WinPin* parent);
-	virtual ~WinToolBase();
+	ToolBase(const int& x, const int& y, const int& w, const int& h, WinPin* parent);
+	virtual ~ToolBase();
 	void initBrush();
 	void initTip();
 public:
