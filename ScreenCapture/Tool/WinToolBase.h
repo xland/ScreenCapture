@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "pch.h"
-#include "WinBase.h"
+#include "Win/WinBase.h"
 class WinPin;
 class WinToolBase :public WinBase
 {

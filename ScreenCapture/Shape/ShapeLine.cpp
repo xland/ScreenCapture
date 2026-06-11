@@ -1,8 +1,9 @@
 ﻿#include "pch.h"
 #include "App.h"
 #include "Win/WinPin.h"
-#include "Win/WinToolMain.h"
-#include "Win/WinToolSub.h"
+#include "Tool/WinToolMain.h"
+#include "Tool/WinToolSub.h"
+#include "Tool/WinToolSubSlider.h"
 #include "Util.h"
 #include "ShapeLine.h"
 
@@ -16,7 +17,7 @@ ShapeLine::ShapeLine(WinPin* win) :ShapeBase(win), draggers{
 		color.a = 0.5f;
 	}
 	win->render->CreateSolidColorBrush(color, brush.GetAddressOf());
-	strokeWidth = toolSub->sliderVal;
+	strokeWidth = toolSub->slider->val;
 }
 
 ShapeLine::~ShapeLine()

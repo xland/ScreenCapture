@@ -1,8 +1,9 @@
 ﻿#include "pch.h"
 #include "App.h"
 #include "Win/WinPin.h"
-#include "Win/WinToolMain.h"
-#include "Win/WinToolSub.h"
+#include "Tool/WinToolMain.h"
+#include "Tool/WinToolSub.h"
+#include "Tool/WinToolSubSlider.h"
 #include "History.h"
 #include "Util.h"
 #include "ShapeMosaic.h"
@@ -20,7 +21,7 @@ ShapeMosaic::ShapeMosaic(WinPin* win) :ShapeBase(win), draggers{
 {
 	auto toolSub = win->toolSub.get();
 	win->render->CreateSolidColorBrush(D2D1::ColorF(0xF00FF0, 0.38f), brush.GetAddressOf());
-	strokeWidth = toolSub->sliderVal;
+	strokeWidth = toolSub->slider->val;
 	isRect = toolSub->selectIndex == 0;
 }
 

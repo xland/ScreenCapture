@@ -1,8 +1,8 @@
 ﻿#include "pch.h"
 #include "App.h"
 #include "Win/WinPin.h"
-#include "Win/WinToolMain.h"
-#include "Win/WinToolSub.h"
+#include "Tool/WinToolMain.h"
+#include "Tool/WinToolSub.h"
 #include "Util.h"
 #include "ShapeNumber.h"
 

@@ -1,6 +1,6 @@
 ﻿#include "pch.h"
 #include "WinToolBase.h"
-#include "WinPin.h"
+#include "Win/WinPin.h"
 #include "History.h"
 #include "App.h"
 

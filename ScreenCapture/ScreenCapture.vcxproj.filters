@@ -36,10 +36,10 @@
     <ClCompile Include="Win\WinPix.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Win\WinToolMain.cpp">
+    <ClCompile Include="Tool\WinToolMain.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Win\WinToolSub.cpp">
+    <ClCompile Include="Tool\WinToolSub.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Win\WinPin.cpp">
@@ -48,7 +48,7 @@
     <ClCompile Include="Win\WinBase.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Win\WinToolBase.cpp">
+    <ClCompile Include="Tool\WinToolBase.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Shape\ShapeBase.cpp">
@@ -93,6 +93,9 @@
     <ClCompile Include="Win\WinLong.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Tool\WinToolSubSlider.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -113,10 +116,10 @@
     <ClInclude Include="Win\WinPix.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Win\WinToolMain.h">
+    <ClInclude Include="Tool\WinToolMain.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Win\WinToolSub.h">
+    <ClInclude Include="Tool\WinToolSub.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Win\WinPin.h">
@@ -125,7 +128,7 @@
     <ClInclude Include="Win\WinBase.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Win\WinToolBase.h">
+    <ClInclude Include="Tool\WinToolBase.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Shape\ShapeBase.h">
@@ -168,6 +171,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Win\WinLong.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Tool\WinToolSubSlider.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

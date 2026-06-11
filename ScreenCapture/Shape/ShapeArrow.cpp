@@ -2,8 +2,9 @@
 #include "ShapeArrow.h"
 #include "App.h"
 #include "Win/WinPin.h"
-#include "Win/WinToolMain.h"
-#include "Win/WinToolSub.h"
+#include "Tool/WinToolMain.h"
+#include "Tool/WinToolSub.h"
+#include "Tool/WinToolSubSlider.h"
 #include "Util.h"
 
 ShapeArrow::ShapeArrow(WinPin* win) :ShapeBase(win), draggers{
@@ -12,7 +13,7 @@ ShapeArrow::ShapeArrow(WinPin* win) :ShapeBase(win), draggers{
 {
 	auto toolSub = win->toolSub.get();
 	win->render->CreateSolidColorBrush(toolSub->getSelectedColor(), brush.GetAddressOf());
-	arrowSize = toolSub->sliderVal;
+	arrowSize = toolSub->slider->val;
 	isFill = toolSub->selectIndex == 0;
 }
 

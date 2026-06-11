@@ -1,8 +1,9 @@
 ﻿#include "pch.h"
-#include "../Win/WinPin.h"
-#include "../Win/WinToolMain.h"
-#include "../Win/WinToolSub.h"
-#include "../Util.h"
+#include "Win/WinPin.h"
+#include "Tool/WinToolMain.h"
+#include "Tool/WinToolSub.h"
+#include "Tool/WinToolSubSlider.h"
+#include "Util.h"
 #include "ShapeRect.h"
 
 ShapeRect::ShapeRect(WinPin* win) :ShapeBase(win), draggers{ 
@@ -17,7 +18,7 @@ ShapeRect::ShapeRect(WinPin* win) :ShapeBase(win), draggers{
 {
 	auto toolSub = win->toolSub.get();
 	win->render->CreateSolidColorBrush(toolSub->getSelectedColor(), brush.GetAddressOf());
-	strokeWidth = toolSub->sliderVal;
+	strokeWidth = toolSub->slider->val;
 	isFill = toolSub->selectIndex == 0;
 }
 

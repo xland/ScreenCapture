@@ -1,8 +1,9 @@
 ﻿#include "pch.h"
 #include "App.h"
 #include "Win/WinPin.h"
-#include "Win/WinToolMain.h"
-#include "Win/WinToolSub.h"
+#include "Tool/WinToolMain.h"
+#include "Tool/WinToolSub.h"
+#include "Tool/WinToolSubSlider.h"
 #include "Util.h"
 #include "ShapeText.h"
 #include "ShapeTextWin.h"
@@ -166,7 +167,7 @@ void ShapeText::setAttr()
 {
 	auto toolSub = win->toolSub.get();
 	color = toolSub->getSelectedColor();
-	fontSize = toolSub->sliderVal;
+	fontSize = toolSub->slider->val;
 	isBold = toolSub->selectIndex == 0;
 	isItalic = toolSub->selectIndex2 == 1;
 }
