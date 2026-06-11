@@ -10,7 +10,7 @@
 #include "ToolSubSlider.h"
 #include "ToolSubColor.h"
 
-ToolSub::ToolSub(WinPin* parent) :ToolBase(-999999, -999999, 1, 1,parent)
+ToolSub::ToolSub(WinPin* parent) :ToolBase(-999999, -999999, 1, 1), parent{ parent }
 {
     slider = std::make_unique<ToolSubSlider>(this);
     colorer = std::make_unique<ToolSubColor>(this);
@@ -275,4 +275,26 @@ void ToolSub::onDpiChanged()
     initBtn();
 }
 
-
+void ToolSub::onKeyDown(const UINT& key)
+{
+    if (key == 'Z' && (GetKeyState(VK_CONTROL) & 0x8000) != 0)
+    {
+        parent->history->undo();
+    }
+    else if (key == 'Y' && (GetKeyState(VK_CONTROL) & 0x8000) != 0)
+    {
+        parent->history->redo();
+    }
+    else if (key == 'C' && (GetKeyState(VK_CONTROL) & 0x8000) != 0)
+    {
+        parent->copyToClipboard();
+    }
+    else if (key == 'S' && (GetKeyState(VK_CONTROL) & 0x8000) != 0)
+    {
+        parent->saveToFile();
+    }
+    else if (key == VK_DELETE)
+    {
+        parent->history->removeHoverShape();
+    }
+}

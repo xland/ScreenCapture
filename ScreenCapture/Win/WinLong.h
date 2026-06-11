@@ -3,6 +3,7 @@
 #include "WinBase.h"
 
 class WinCutMask;
+class ToolLong;
 class WinLong:public WinBase
 {
 public:
@@ -23,6 +24,8 @@ private:
 	void initRes();
 	BOOL onCursor() override;
 	void capStep();
+	void hollowWin();
+	void makeTool();
 private:
 	bool isFinishCutMask{ false }, isShowStartBtn{ false }, isScrolling{false};
 	ComPtr<ID2D1SolidColorBrush> textBrush;
@@ -31,5 +34,8 @@ private:
 	float startCircleR{ 30.f };
 	POINT circleCenter;
 	HWND targetHwnd{ nullptr };
+	std::unique_ptr<ToolLong> tool;
+	ComPtr<ID2D1Bitmap1> imgPreview;
+	std::vector<BYTE> imgData;
 };
 

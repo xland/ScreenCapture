@@ -2,14 +2,14 @@
 #include "Util.h"
 #include "App.h"
 #include "Win/WinCap.h"
-#include "Win/WinPin.h"
+#include "Win/WinLong.h"
 #include "ToolBase.h"
 #include "ToolLong.h"
 #include "ToolSub.h"
 #include "History.h"
 
 
-ToolLong::ToolLong(const int& x, const int& y, const int& w, const int& h, WinPin* parent) : ToolBase(x, y, w, h,parent)
+ToolLong::ToolLong(const int& x, const int& y, const int& w, const int& h, WinLong* parent) : ToolBase(x, y, w, h), parent{ parent }
 {
     btnId = { "pin", "clipboard" , "save" , "close" };
     btnName = { L"钉住",L"剪切板",L"保存",L"关闭" };
@@ -20,6 +20,10 @@ ToolLong::~ToolLong()
 void ToolLong::onCreated()
 {
     btnSize = 32.f * dpi;
+    addIconLayout(L"\ued8a");
+    addIconLayout(L"\ue650");
+    addIconLayout(L"\ue608");
+    addIconLayout(L"\ue62d");
 }
 BOOL ToolLong::onCursor()
 {
@@ -51,23 +55,23 @@ void ToolLong::onMouseDown(const int& x, const int& y, bool isRight)
 	}
     if (hoverIndex < 0) return;
     auto& state = btnId[hoverIndex];
-    if (state == "pin") {
-        parent->copyToClipboard();
-        return;
-    }
-    else if (state == "clipboard") {
-        parent->copyToClipboard();
-        return;
-    }
-    else if (state == "save") {
-        parent->saveToFile();
-        return;
-    }
-    else if (state == "close") {
-        parent->toolSub->close();
-        parent->close();
-        return;
-    }
+    //if (state == "pin") {
+    //    parent->copyToClipboard();
+    //    return;
+    //}
+    //else if (state == "clipboard") {
+    //    parent->copyToClipboard();
+    //    return;
+    //}
+    //else if (state == "save") {
+    //    parent->saveToFile();
+    //    return;
+    //}
+    //else if (state == "close") {
+    //    parent->toolSub->close();
+    //    parent->close();
+    //    return;
+    //}
 }
 void ToolLong::onMouseMove(const int& x, const int& y)
 {
@@ -90,13 +94,6 @@ void ToolLong::onMouseLeave()
 void ToolLong::onDpiChanged()
 {
     btnSize = 32.f * dpi;
-    initBtn();
-}
-
-
-
-void ToolLong::initBtn()
-{
     btnLayout.clear();
     addIconLayout(L"\ued8a");
     addIconLayout(L"\ue650");

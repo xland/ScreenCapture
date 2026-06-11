@@ -30,11 +30,13 @@ private:
 	void onMouseDrag(const int& x, const int& y, const UINT_PTR& modifiers) override;
 	void onMouseWheel(const int& x, const int& y, const short& delta) override;
 	void onDpiChanged() override;
+	void onKeyDown(const UINT& key) override;
 	void paintColorSelector();
 	void paintToolButtons();
 	bool hoverBtn(const int& x);
 private:
 	float arrowX{ 0.f }, btnStart{ 0.f }, btnEnd{ 0.f };
 	ComPtr<ID2D1PathGeometry> borderPath;
+	WinPin* parent;
 };
 

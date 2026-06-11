@@ -2,13 +2,12 @@
 #include "pch.h"
 #include "ToolBase.h"
 
-
+class WinLong;
 class ToolLong :public ToolBase
 {
 public:
-	ToolLong(const int& x, const int& y, const int& w, const int& h, WinPin* parent);
+	ToolLong(const int& x, const int& y, const int& w, const int& h, WinLong* parent);
 	~ToolLong();
-	void initBtn();
 public:
 	std::string state;
 protected:
@@ -21,5 +20,6 @@ private:
 	void onDpiChanged() override;
 	void onCreated() override;
 private:
+	WinLong* parent;
 };
 

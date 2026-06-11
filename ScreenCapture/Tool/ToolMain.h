@@ -20,7 +20,9 @@ private:
 	void onMouseLeave() override;
 	void onDpiChanged() override;
 	void onCreated() override;
+	void onKeyDown(const UINT& key) override;
 private:
 	int spliterIndex[2]{ 8,10 };
+	WinPin* parent;
 };
 

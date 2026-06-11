@@ -9,7 +9,7 @@
 #include "History.h"
 
 
-ToolMain::ToolMain(const int& x, const int& y, const int& w, const int& h, WinPin* parent) : ToolBase(x, y, w, h,parent)
+ToolMain::ToolMain(const int& x, const int& y, const int& w, const int& h, WinPin* parent) : ToolBase(x, y, w, h), parent{parent}
 {
     btnId = { "rect" , "ellipse", "arrow", "number" , "line" ,"text" , "mosaic", "eraser", "undo", "redo", "clipboard" , "save" , "close" };
     btnName = { L"矩形",L"圆形",L"箭头",L"标号",L"线条",L"文本",L"马赛克",L"橡皮擦",L"撤销",L"重做",L"剪切板",L"保存",L"关闭" };
@@ -140,4 +140,28 @@ void ToolMain::initBtn()
     addIconLayout(L"\ue650");
     addIconLayout(L"\ue608");
     addIconLayout(L"\ue62d");
+}
+
+void ToolMain::onKeyDown(const UINT& key)
+{
+    if (key == 'Z' && (GetKeyState(VK_CONTROL) & 0x8000) != 0)
+    {
+        parent->history->undo();
+    }
+    else if (key == 'Y' && (GetKeyState(VK_CONTROL) & 0x8000) != 0)
+    {
+        parent->history->redo();
+    }
+    else if (key == 'C' && (GetKeyState(VK_CONTROL) & 0x8000) != 0)
+    {
+        parent->copyToClipboard();
+    }
+    else if (key == 'S' && (GetKeyState(VK_CONTROL) & 0x8000) != 0)
+    {
+        parent->saveToFile();
+    }
+    else if (key == VK_DELETE)
+    {
+        parent->history->removeHoverShape();
+    }
 }

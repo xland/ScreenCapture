@@ -4,7 +4,7 @@
 #include "History.h"
 #include "App.h"
 
-ToolBase::ToolBase(const int& x, const int& y, const int& w, const int& h, WinPin* parent) : WinBase(x, y, w, h),parent{parent}
+ToolBase::ToolBase(const int& x, const int& y, const int& w, const int& h) : WinBase(x, y, w, h)
 {
 
 }
@@ -144,27 +144,4 @@ void ToolBase::hideTip()
     SendMessage(tipHwnd, TTM_TRACKACTIVATE, FALSE, (LPARAM)&ti);
     SendMessage(tipHwnd, TTM_ACTIVATE, FALSE, 0);
     tipText = L"";
-}
-void ToolBase::onKeyDown(const UINT& key)
-{
-    if (key == 'Z' && (GetKeyState(VK_CONTROL) & 0x8000) != 0)
-    {
-        parent->history->undo();
-    }
-    else if (key == 'Y' && (GetKeyState(VK_CONTROL) & 0x8000) != 0)
-    {
-        parent->history->redo();
-    }
-    else if (key == 'C' && (GetKeyState(VK_CONTROL) & 0x8000) != 0)
-    {
-        parent->copyToClipboard();
-    }
-    else if (key == 'S' && (GetKeyState(VK_CONTROL) & 0x8000) != 0)
-    {
-        parent->saveToFile();
-    }
-    else if (key == VK_DELETE)
-    {
-        parent->history->removeHoverShape();
-    }
 }

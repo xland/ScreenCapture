@@ -5,7 +5,7 @@ class WinPin;
 class ToolBase :public WinBase
 {
 public:
-	ToolBase(const int& x, const int& y, const int& w, const int& h, WinPin* parent);
+	ToolBase(const int& x, const int& y, const int& w, const int& h);
 	virtual ~ToolBase();
 	void initBrush();
 	void initTip();
@@ -15,7 +15,6 @@ protected:
 	void addIconLayout(const std::wstring& icon);
 	void paintIcon(const float& posX,IDWriteTextLayout* icon,bool isHover,bool isSelected);
 	IDWriteTextLayout* getBtnIconLayout(const std::string& name);
-	void onKeyDown(const UINT& key) override;
 	void showTipAt(int x, int y);
 	void hideTip();
 protected:
@@ -31,7 +30,6 @@ protected:
 	float marginTop,btnSize;
 	HWND tipHwnd;
 	std::wstring tipText;
-	WinPin* parent;
 private:
 private:
 	TOOLINFO ti{ 0 };

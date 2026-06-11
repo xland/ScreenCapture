@@ -2,6 +2,7 @@
 #include "App.h"
 #include "Util.h"
 #include "WinLong.h"
+#include "Tool/ToolLong.h"
 #include "WinCutMask.h"
 
 std::unique_ptr<WinLong> winLong;
@@ -56,6 +57,24 @@ void WinLong::onPaint()
         render->FillEllipse(D2D1::Ellipse(D2D1::Point2F(circleCenter.x, circleCenter.y), startCircleR, startCircleR), bgBrush.Get());
         render->DrawTextLayout({ circleCenter.x- startCircleR, circleCenter.y - startCircleR }, layoutText.Get(), textBrush.Get(), D2D1_DRAW_TEXT_OPTIONS_NONE);
     }
+    if (imgPreview.Get()) {
+        float imgW, imgH;
+        auto imgSize = imgPreview->GetSize();
+        if (imgSize.width < tool->w) {
+            imgW = tool->w;
+            auto scaleNum{ tool->w / imgSize.width };
+            imgH = imgSize.height * scaleNum;
+        }
+        else {
+            imgW = tool->w;
+            auto scaleNum{ imgSize.width/tool->w };
+            imgH = imgSize.height / scaleNum;
+        }
+        POINT pos{ tool->x,tool->y - imgH };
+        ScreenToClient(hwnd, &pos);
+        D2D1_RECT_F destRect = D2D1::RectF(pos.x, pos.y, imgW, imgH);
+        render->DrawBitmap(imgPreview.Get(), destRect);
+    }
 }
 
 void WinLong::onMouseMove(const int& x, const int& y) {
@@ -87,13 +106,10 @@ void WinLong::onMouseUp(const int& x, const int& y)
         return;
     }
     if (isShowStartBtn) {
-       HRGN rgn1 = CreateRectRgn(0, 0, w, h);
-       auto& r = cutMask->maskRect;
-       HRGN rgn2 = CreateRectRgn(r.left, r.top, r.right, r.bottom);
-       CombineRgn(rgn1, rgn1, rgn2, RGN_DIFF);
-       SetWindowRgn(hwnd, rgn1, true);
-	   isScrolling = true;
-       capStep();
+        isScrolling = true;
+        hollowWin();
+        makeTool();
+        capStep();
     }
 }
 
@@ -166,12 +182,52 @@ void WinLong::capStep()
     auto maskW{ maskRect.right - maskRect.left }, maskH{ maskRect.bottom - maskRect.top };
     POINT p{ .x{(int)maskRect.left},.y{(int)maskRect.top} };
     ClientToScreen(hwnd, &p);
-    auto imgData = Util::captureScreen(p.x, p.y, maskW, h);
-
-
+    if (imgData.empty()) { 
+        //首次执行截取
+        imgData = Util::captureScreen(p.x, p.y, maskW, maskH);
+    }
+    else {
+        auto data = Util::captureScreen(p.x, p.y, maskW, maskH);//截图区域的像素数据
+        //与imgData融合，这里的代码还没写
+        //.....
+    }
+    imgPreview.Reset();
+    D2D1_BITMAP_PROPERTIES1 props = {
+        .pixelFormat{D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED)},
+        .dpiX{96.0f}, .dpiY{96.0f}, .bitmapOptions{D2D1_BITMAP_OPTIONS_TARGET}
+    };
+    render->CreateBitmap(D2D1::SizeU(w, h), imgData.data(), w * 4, props, imgPreview.GetAddressOf());
+    refresh();
     //static int name{ 1 };
     //auto path = std::format(L"D:\\{}.png", name);
     //Util::saveToFile(path, (int)maskW, (int)maskH, imgData.data());
     //name += 1;
     setTimer(500, scrollMsgId);
+}
+
+void WinLong::hollowWin()
+{
+    HRGN rgn1 = CreateRectRgn(0, 0, w, h);
+    auto& r = cutMask->maskRect;
+    HRGN rgn2 = CreateRectRgn(r.left, r.top, r.right, r.bottom);
+    CombineRgn(rgn1, rgn1, rgn2, RGN_DIFF);
+    SetWindowRgn(hwnd, rgn1, true);
+}
+
+void WinLong::makeTool()
+{
+    auto btnSize{ 32.f * dpi };
+    auto toolW{ btnSize * 4 };
+    POINT pos{ 0,0 };
+    if (w - cutMask->maskRect.right - dpi < toolW) {
+        pos.x = cutMask->maskRect.left - toolW - dpi;
+    }
+    else {
+        pos.x = cutMask->maskRect.right + dpi;
+    }
+    pos.y = cutMask->maskRect.bottom - btnSize;
+    ClientToScreen(hwnd, &pos);
+    tool = std::make_unique<ToolLong>(pos.x, pos.y, toolW, btnSize, this);
+    tool->createWindow(WS_EX_TOPMOST | WS_EX_NOACTIVATE);
+    tool->show();
 }
