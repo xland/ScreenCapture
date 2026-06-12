@@ -20,6 +20,7 @@ ToolLong::~ToolLong()
 void ToolLong::onCreated()
 {
     btnSize = 32.f * dpi;
+    initBrush();
     addIconLayout(L"\ued8a");
     addIconLayout(L"\ue650");
     addIconLayout(L"\ue608");
@@ -35,14 +36,11 @@ void ToolLong::onPaint()
 {
     render->Clear(D2D1::ColorF(0xFFFFFF));
     int btnIndex{ 0 };
-    auto margin{ 4.f * dpi };
     for (auto& layout : btnLayout)
     {
 		paintIcon(btnSize * btnIndex, layout.Get(), btnIndex == hoverIndex, btnIndex == selectIndex);
         btnIndex += 1;
     }
-    auto r = D2D1::RectF(0, 0, (float)w, (float)h);
-    render->DrawRectangle(r, brushSpliter.Get(), 2 * dpi);
 }
 
 void ToolLong::onMouseDown(const int& x, const int& y, bool isRight)
@@ -55,23 +53,22 @@ void ToolLong::onMouseDown(const int& x, const int& y, bool isRight)
 	}
     if (hoverIndex < 0) return;
     auto& state = btnId[hoverIndex];
-    //if (state == "pin") {
-    //    parent->copyToClipboard();
-    //    return;
-    //}
-    //else if (state == "clipboard") {
-    //    parent->copyToClipboard();
-    //    return;
-    //}
-    //else if (state == "save") {
-    //    parent->saveToFile();
-    //    return;
-    //}
-    //else if (state == "close") {
-    //    parent->toolSub->close();
-    //    parent->close();
-    //    return;
-    //}
+    if (state == "pin") {
+        parent->pin();
+        return;
+    }
+    else if (state == "clipboard") {
+        parent->copyToClipboard();
+        return;
+    }
+    else if (state == "save") {
+        parent->saveToFile();
+        return;
+    }
+    else if (state == "close") {
+        App::exit(2);
+        return;
+    }
 }
 void ToolLong::onMouseMove(const int& x, const int& y)
 {

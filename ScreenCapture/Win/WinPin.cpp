@@ -54,6 +54,17 @@ WinPin* WinPin::getCur()
 	return nullptr;
 }
 
+void WinPin::initFromData(int x, int y, int w, int h, std::vector<BYTE>& data)
+{
+    auto win = std::make_unique<WinPin>(x, y, w, h);
+    win->createWindow(WS_EX_TOPMOST | WS_EX_NOACTIVATE);
+    win->initImgFromData(data);
+    win->enableShadow();
+    win->show();
+    win->initTool();
+    winPins.push_back(std::move(win));
+}
+
 void WinPin::onPaint()
 {
     D2D1_RECT_F destRect = D2D1::RectF(0,0, (float)w, (float)h);
@@ -221,6 +232,16 @@ void WinPin::initImg()
     props.dpiY = 96.0f;
     hr = render->CreateBitmap(cpuImg->GetPixelSize(), mapped.bits, mapped.pitch, &props, screenImg.GetAddressOf());
     hr = cpuImg->Unmap();
+}
+
+void WinPin::initImgFromData(std::vector<BYTE>& data)
+{
+    D2D1_BITMAP_PROPERTIES1 props{};
+    props.pixelFormat = D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED);
+    props.bitmapOptions = D2D1_BITMAP_OPTIONS_TARGET;
+    props.dpiX = 96.0f;
+    props.dpiY = 96.0f;
+    render->CreateBitmap(D2D1::SizeU(w, h), data.data(), w * 4, &props, screenImg.GetAddressOf());
 }
 
 void WinPin::initTool()

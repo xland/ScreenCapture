@@ -12,6 +12,7 @@ public:
 	WinPin(const int& x, const int& y, const int& w, const int& h);
 	~WinPin();
 	static void init();
+	static void initFromData(int x, int y, int w, int h, std::vector<BYTE>& data);
 	static WinPin* getCur();
 	void copyToClipboard();
 	void saveToFile();
@@ -36,6 +37,7 @@ private:
 	void onDpiChanged() override;
 	bool getImagePixels(std::vector<BYTE>& pixels);
 	void initImg();
+	void initImgFromData(std::vector<BYTE>& data);
 	void initTool();
 private:
 	POINT pressPos{0,0};

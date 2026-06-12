@@ -14,6 +14,9 @@ public:
 	static void release();
 public:
 	std::unique_ptr<WinCutMask> cutMask;
+	void copyToClipboard();
+	void saveToFile();
+	void pin();
 private:
 	void onPaint() override;
 	void onMouseMove(const int& x, const int& y) override;
@@ -23,19 +26,33 @@ private:
 	void onTimer(const UINT& timerId) override;
 	void initRes();
 	BOOL onCursor() override;
+	void firstStep();
+	void makeImgPreview();
 	void capStep();
 	void hollowWin();
 	void makeTool();
+	void paintImgPreview();
+	void stopCap();
 private:
 	bool isFinishCutMask{ false }, isShowStartBtn{ false }, isScrolling{false};
+	bool firstCheck{true};
+	int dismissTime{0};
+	int changeStartY{-1};
 	ComPtr<ID2D1SolidColorBrush> textBrush;
 	ComPtr<ID2D1SolidColorBrush> bgBrush;
-	ComPtr<IDWriteTextLayout> layoutText;
+	ComPtr<IDWriteTextLayout> layoutTextStart;
+	ComPtr<IDWriteTextLayout> layoutTextEnd;
 	float startCircleR{ 30.f };
 	POINT circleCenter;
 	HWND targetHwnd{ nullptr };
 	std::unique_ptr<ToolLong> tool;
 	ComPtr<ID2D1Bitmap1> imgPreview;
 	std::vector<BYTE> imgData;
+	std::vector<BYTE> img1;
+	int imgW{0}, imgH{0};
+	int resultH{0};
+	ComPtr<ID2D1SolidColorBrush> tipBrushBg;
+	ComPtr<ID2D1SolidColorBrush> tipBrushText;
+	POINT capStartPos;
 };
 

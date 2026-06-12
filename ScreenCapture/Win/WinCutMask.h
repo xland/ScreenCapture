@@ -14,6 +14,7 @@ public:
 public:
 	D2D1_RECT_F maskRect;
 	int cursorIndex{-1};
+	float strokeWidth;
 private:
 	void initWinRect();
 	void makeLayout();

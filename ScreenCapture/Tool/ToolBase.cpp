@@ -53,16 +53,8 @@ void ToolBase::initTip()
 {
     INITCOMMONCONTROLSEX iccex = { sizeof(iccex), ICC_BAR_CLASSES };
     InitCommonControlsEx(&iccex);
-    tipHwnd = CreateWindowEx(WS_EX_TOPMOST, TOOLTIPS_CLASS,
-        NULL,
-        WS_POPUP | TTS_NOPREFIX | TTS_ALWAYSTIP,
-        CW_USEDEFAULT, CW_USEDEFAULT,
-        CW_USEDEFAULT, CW_USEDEFAULT,
-        hwnd,
-        NULL,
-        App::get()->hInstance,
-        NULL
-    );
+    tipHwnd = CreateWindowEx(WS_EX_TOPMOST, TOOLTIPS_CLASS, NULL, WS_POPUP | TTS_NOPREFIX | TTS_ALWAYSTIP,
+        CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, hwnd, NULL, App::get()->hInstance, NULL);
     TOOLINFOW ti = { 0 };
     ti.cbSize = TTTOOLINFOW_V2_SIZE;
     ti.uFlags = TTF_TRACK | TTF_ABSOLUTE;

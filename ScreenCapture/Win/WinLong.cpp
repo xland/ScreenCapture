@@ -4,10 +4,51 @@
 #include "WinLong.h"
 #include "Tool/ToolLong.h"
 #include "WinCutMask.h"
+#include "WinPin.h"
 
 std::unique_ptr<WinLong> winLong;
 static constexpr UINT scrollMsgId = 18;
 static constexpr UINT scrollEndMsgId = 19;
+static constexpr int comparisonH = 100;  // 匹配比较用的条带高度
+
+// 将 BGRA 像素条带转为灰度图
+static std::vector<BYTE> toGrayscale(const BYTE* bgra, int width, int height, int stride)
+{
+    std::vector<BYTE> gray(width * height);
+    for (int y = 0; y < height; y++) {
+        const BYTE* src = bgra + y * stride;
+        BYTE* dst = gray.data() + y * width;
+        for (int x = 0; x < width; x++) {
+            dst[x] = (BYTE)((src[x * 4] * 114 + src[x * 4 + 1] * 587 + src[x * 4 + 2] * 299) / 1000);
+        }
+    }
+    return gray;
+}
+
+// 在 gray1 中搜索与 gray2 最相似的偏移 y（SSD 匹配）
+static int findMostSimilarY(const BYTE* gray1, int gray1H, const BYTE* gray2, int gray2H, int width)
+{
+    int searchH = gray1H - gray2H + 1;
+    if (searchH <= 0) return 0;
+    double minError = DBL_MAX;
+    int bestY = 0;
+    for (int y = 0; y < searchH; y++) {
+        double error = 0.0;
+        for (int row = 0; row < gray2H && error < minError; row++) {
+            const BYTE* row1 = gray1 + (y + row) * width;
+            const BYTE* row2 = gray2 + row * width;
+            for (int x = 0; x < width; x++) {
+                int diff = (int)row1[x] - (int)row2[x];
+                error += diff * diff;
+            }
+        }
+        if (error < minError) {
+            minError = error;
+            bestY = y;
+        }
+    }
+    return bestY;
+}
 
 WinLong::WinLong(const int& x, const int& y, const int& w, const int& h) : WinBase(x, y, w, h)
 {
@@ -55,26 +96,20 @@ void WinLong::onPaint()
     cutMask->paint();
     if (isShowStartBtn) {
         render->FillEllipse(D2D1::Ellipse(D2D1::Point2F(circleCenter.x, circleCenter.y), startCircleR, startCircleR), bgBrush.Get());
-        render->DrawTextLayout({ circleCenter.x- startCircleR, circleCenter.y - startCircleR }, layoutText.Get(), textBrush.Get(), D2D1_DRAW_TEXT_OPTIONS_NONE);
+        render->DrawTextLayout({ circleCenter.x- startCircleR, circleCenter.y - startCircleR }, layoutTextStart.Get(), textBrush.Get(), D2D1_DRAW_TEXT_OPTIONS_NONE);
     }
-    if (imgPreview.Get()) {
-        float imgW, imgH;
-        auto imgSize = imgPreview->GetSize();
-        if (imgSize.width < tool->w) {
-            imgW = tool->w;
-            auto scaleNum{ tool->w / imgSize.width };
-            imgH = imgSize.height * scaleNum;
-        }
-        else {
-            imgW = tool->w;
-            auto scaleNum{ imgSize.width/tool->w };
-            imgH = imgSize.height / scaleNum;
-        }
-        POINT pos{ tool->x,tool->y - imgH };
-        ScreenToClient(hwnd, &pos);
-        D2D1_RECT_F destRect = D2D1::RectF(pos.x, pos.y, imgW, imgH);
-        render->DrawBitmap(imgPreview.Get(), destRect);
-    }
+    paintImgPreview();
+    //// 滚动结束时显示提示
+    //if (!isScrolling && !imgData.empty() && tool && (dismissTime > 2 || resultH > 20000)) {
+    //    std::wstring tipText = dismissTime > 2 ? L"已到底部" : L"图片过长";
+    //    POINT tipPos{ tool->x, tool->y + (int)tool->h };
+    //    ScreenToClient(hwnd, &tipPos);
+    //    float tipW = tool->w;
+    //    float tipH = 28.f * dpi;
+    //    D2D1_RECT_F tipRect = D2D1::RectF(tipPos.x, tipPos.y + 2 * dpi, tipPos.x + tipW, tipPos.y + 2 * dpi + tipH);
+    //    render->FillRectangle(tipRect, tipBrushBg.Get());
+    //    render->DrawText(tipText.c_str(), (UINT32)tipText.length(), tipTextFormat.Get(), tipRect, tipBrushText.Get());
+    //}
 }
 
 void WinLong::onMouseMove(const int& x, const int& y) {
@@ -109,7 +144,7 @@ void WinLong::onMouseUp(const int& x, const int& y)
         isScrolling = true;
         hollowWin();
         makeTool();
-        capStep();
+        firstStep(); //首次截图
     }
 }
 
@@ -122,17 +157,17 @@ void WinLong::onTimer(const UINT& timerId)
         if (targetHwnd == nullptr) {
             targetHwnd = tarHwnd;
         }
-        if (tarHwnd != targetHwnd) return;
-        killTimer(scrollMsgId);
+        if (tarHwnd != targetHwnd) return; //鼠标没在截屏区域直接退出，定时器仍在检查
+        killTimer(scrollMsgId); 
         INPUT input = { 0 };
         input.type = INPUT_MOUSE;
         input.mi.dwFlags = MOUSEEVENTF_WHEEL;
         input.mi.mouseData = -WHEEL_DELTA;
         SendInput(1, &input, sizeof(INPUT));
-        setTimer(88, scrollEndMsgId);
+        setTimer(88, scrollEndMsgId); //滚动开始
     }
 	else if (scrollEndMsgId == timerId) {
-		killTimer(scrollEndMsgId);
+		killTimer(scrollEndMsgId); //滚动完成
         capStep();
 	}
 }
@@ -142,15 +177,24 @@ void WinLong::initRes()
     startCircleR *= dpi;
     render->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White), textBrush.GetAddressOf());
     render->CreateSolidColorBrush(D2D1::ColorF(0x000000, 0.68f), bgBrush.GetAddressOf());
+    render->CreateSolidColorBrush(D2D1::ColorF(0x000000, 0.75f), tipBrushBg.GetAddressOf());
+    render->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White), tipBrushText.GetAddressOf());
     ComPtr<IDWriteTextFormat> textFormat;
     auto writer = App::getWriter();
-    writer->CreateTextFormat(L"Microsoft YaHei", nullptr,
-        DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
+    writer->CreateTextFormat(L"Microsoft YaHei", nullptr, DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
         16 * dpi, L"", textFormat.GetAddressOf());
-    std::wstring text = L"开始";
-    writer->CreateTextLayout(text.data(), (UINT32)text.length(), textFormat.Get(), startCircleR*2, startCircleR*2, layoutText.GetAddressOf());
-    layoutText->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
-    layoutText->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+    {
+        std::wstring text = L"开始";
+        writer->CreateTextLayout(text.data(), (UINT32)text.length(), textFormat.Get(), startCircleR * 2, startCircleR * 2, layoutTextStart.GetAddressOf());
+        layoutTextStart->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+        layoutTextStart->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+    } 
+    {
+        std::wstring text = L"已触底，自动滚动停止";
+        writer->CreateTextLayout(text.data(), (UINT32)text.length(), textFormat.Get(), startCircleR * 2, startCircleR * 2, layoutTextEnd.GetAddressOf());
+        layoutTextEnd->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+        layoutTextEnd->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+    }
 }
 
 BOOL WinLong::onCursor()
@@ -176,33 +220,113 @@ BOOL WinLong::onCursor()
     return TRUE;
 }
 
-void WinLong::capStep()
+void WinLong::firstStep()
 {
     auto& maskRect = cutMask->maskRect;
-    auto maskW{ maskRect.right - maskRect.left }, maskH{ maskRect.bottom - maskRect.top };
-    POINT p{ .x{(int)maskRect.left},.y{(int)maskRect.top} };
-    ClientToScreen(hwnd, &p);
-    if (imgData.empty()) { 
-        //首次执行截取
-        imgData = Util::captureScreen(p.x, p.y, maskW, maskH);
-    }
-    else {
-        auto data = Util::captureScreen(p.x, p.y, maskW, maskH);//截图区域的像素数据
-        //与imgData融合，这里的代码还没写
-        //.....
-    }
-    imgPreview.Reset();
-    D2D1_BITMAP_PROPERTIES1 props = {
-        .pixelFormat{D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED)},
-        .dpiX{96.0f}, .dpiY{96.0f}, .bitmapOptions{D2D1_BITMAP_OPTIONS_TARGET}
-    };
-    render->CreateBitmap(D2D1::SizeU(w, h), imgData.data(), w * 4, props, imgPreview.GetAddressOf());
+    imgW = int(maskRect.right - maskRect.left);
+    imgH = int(maskRect.bottom - maskRect.top);
+    resultH = imgH;
+    capStartPos.x = (int)maskRect.left;
+    capStartPos.y = (int)maskRect.top;
+    ClientToScreen(hwnd, &capStartPos);
+    imgData = Util::captureScreen(capStartPos.x, capStartPos.y, imgW, imgH);
+    img1 = imgData;
+    makeImgPreview();
     refresh();
-    //static int name{ 1 };
-    //auto path = std::format(L"D:\\{}.png", name);
-    //Util::saveToFile(path, (int)maskW, (int)maskH, imgData.data());
-    //name += 1;
-    setTimer(500, scrollMsgId);
+    setTimer(88, scrollMsgId); //准备滚动
+}
+
+void WinLong::makeImgPreview()
+{
+    imgPreview.Reset();
+    float previewScaleW = tool ? (float)tool->w / (float)imgW : 1.0f;
+    int previewW = (int)((float)imgW * previewScaleW);
+    int previewH = (int)((float)resultH * previewScaleW);
+    if (previewW > 0 && previewH > 0) {
+        std::vector<BYTE> scaledData(previewW * 4 * previewH);
+        for (int y = 0; y < previewH; y++) {
+            int srcY = (int)((float)y / previewScaleW);
+            if (srcY >= resultH) srcY = resultH - 1;
+            for (int x = 0; x < previewW; x++) {
+                int srcX = (int)((float)x / previewScaleW);
+                if (srcX >= imgW) srcX = imgW - 1;
+                int srcIdx = (srcY * imgW + srcX) * 4;
+                int dstIdx = (y * previewW + x) * 4;
+                scaledData[dstIdx] = imgData[srcIdx];
+                scaledData[dstIdx + 1] = imgData[srcIdx + 1];
+                scaledData[dstIdx + 2] = imgData[srcIdx + 2];
+                scaledData[dstIdx + 3] = imgData[srcIdx + 3];
+            }
+        }
+        D2D1_BITMAP_PROPERTIES1 props = {
+            .pixelFormat{D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED)},
+            .dpiX{96.0f}, .dpiY{96.0f}, .bitmapOptions{D2D1_BITMAP_OPTIONS_NONE}
+        };
+        render->CreateBitmap(D2D1::SizeU(previewW, previewH), scaledData.data(), previewW * 4, props, imgPreview.GetAddressOf());
+    }
+}
+
+void WinLong::capStep()
+{
+    auto data = Util::captureScreen(capStartPos.x, capStartPos.y, imgW, imgH);
+    // 检测滚动区域：首次时找出前后两帧的像素差异边界
+    if (firstCheck) {
+        changeStartY = -1;
+        for (int y = 0; y < imgH; y++) {
+            for (int x = 0; x < imgW; x++) {
+                int idx = (y * imgW + x) * 4;
+                if (img1[idx] != data[idx] || img1[idx + 1] != data[idx + 1] || img1[idx + 2] != data[idx + 2]) {
+                    if (changeStartY == -1) changeStartY = y;
+                    break;
+                }
+            }
+            if (changeStartY != -1) break;
+        }
+        if (changeStartY == -1) {
+            // 没有检测到变化，可能滚动未生效
+            dismissTime++;
+            if (dismissTime > 5) { stopCap(); return; }
+            setTimer(500, scrollMsgId);
+            return;
+        }
+        firstCheck = false;
+    }
+    // 从 changeStartY 开始，裁剪用于匹配的条带
+    int stripH = std::min(comparisonH, imgH - changeStartY);
+    if (stripH <= 0) { setTimer(500, scrollMsgId); return; }
+    int img1StripH = imgH - changeStartY;
+    auto gray1 = toGrayscale(img1.data() + changeStartY * imgW * 4, imgW, img1StripH, imgW * 4);
+    auto gray2 = toGrayscale(data.data() + changeStartY * imgW * 4, imgW, stripH, imgW * 4);
+    int y = findMostSimilarY(gray1.data(), img1StripH, gray2.data(), stripH, imgW);
+    if (y == 0) { // 未检测到滚动
+        dismissTime++;
+        if (dismissTime > 2) { stopCap(); return; }
+        setTimer(500, scrollMsgId);
+        return;
+    }
+    dismissTime = 0;
+
+    // 计算拼接位置
+    int paintStart = resultH - (imgH - y - changeStartY);
+    int newResultH = paintStart + (imgH - changeStartY);
+
+    // 创建新的结果图像
+    std::vector<BYTE> newResult(imgW * 4 * newResultH);
+    // 拷贝旧结果
+    CopyMemory(newResult.data(), imgData.data(), imgData.size());
+    // 拷贝新截图从 changeStartY 到底部的内容
+    for (int row = 0; row < imgH - changeStartY; row++) {
+        CopyMemory( newResult.data() + (paintStart + row) * imgW * 4,
+            data.data() + (changeStartY + row) * imgW * 4, imgW * 4);
+    }
+
+    imgData = std::move(newResult);
+    img1 = data;
+    resultH = newResultH;
+    if (resultH > 20000) { stopCap(); return; }
+    makeImgPreview();
+    refresh();
+    setTimer(500, scrollMsgId); //准备下次滚动
 }
 
 void WinLong::hollowWin()
@@ -219,15 +343,69 @@ void WinLong::makeTool()
     auto btnSize{ 32.f * dpi };
     auto toolW{ btnSize * 4 };
     POINT pos{ 0,0 };
-    if (w - cutMask->maskRect.right - dpi < toolW) {
-        pos.x = cutMask->maskRect.left - toolW - dpi;
+    if (w - cutMask->maskRect.right - 2*dpi < toolW) {
+        pos.x = cutMask->maskRect.left - toolW - cutMask->strokeWidth - 2*dpi;
     }
     else {
-        pos.x = cutMask->maskRect.right + dpi;
+        pos.x = cutMask->maskRect.right + cutMask->strokeWidth + 2 * dpi;
     }
     pos.y = cutMask->maskRect.bottom - btnSize;
     ClientToScreen(hwnd, &pos);
     tool = std::make_unique<ToolLong>(pos.x, pos.y, toolW, btnSize, this);
     tool->createWindow(WS_EX_TOPMOST | WS_EX_NOACTIVATE);
     tool->show();
+}
+
+void WinLong::paintImgPreview()
+{
+    if (!imgPreview.Get() || !tool) return;
+    auto bitmapSize = imgPreview->GetPixelSize();
+    float drawW = (float)bitmapSize.width;
+    float drawH = (float)bitmapSize.height;
+    POINT pos{ tool->x, tool->y - (int)drawH - 2 * dpi };
+    ScreenToClient(hwnd, &pos);
+    D2D1_RECT_F destRect = D2D1::RectF(pos.x, pos.y, pos.x + drawW, pos.y + drawH);
+    render->DrawBitmap(imgPreview.Get(), destRect);
+}
+
+void WinLong::stopCap()
+{
+    SetWindowRgn(hwnd, NULL, TRUE);
+    isScrolling = false;
+    killTimer(scrollMsgId);
+    killTimer(scrollEndMsgId);
+    refresh();
+}
+
+void WinLong::copyToClipboard()
+{
+    if (imgData.empty()) return;
+    Util::saveToClipboard(imgW, resultH, imgData.data());
+    App::exit(0);
+}
+
+void WinLong::saveToFile()
+{
+    if (imgData.empty()) return;
+    auto path = Util::getSaveFilePath(hwnd);
+    if (path.empty()) return;
+    if (Util::saveToFile(path, imgW, resultH, imgData.data())) {
+        App::exit(0);
+    }
+}
+
+void WinLong::pin()
+{
+    if (imgData.empty()) return;
+    // 居中放置在主显示器
+    auto monitor = MonitorFromPoint({ 0, 0 }, MONITOR_DEFAULTTOPRIMARY);
+    MONITORINFO mi{ sizeof(MONITORINFO) };
+    GetMonitorInfo(monitor, &mi);
+    auto& workArea = mi.rcWork;
+    int screenW = workArea.right - workArea.left;
+    int screenH = workArea.bottom - workArea.top;
+    int posX = workArea.left + (screenW - imgW) / 2;
+    int posY = workArea.top + (screenH - std::min(resultH, screenH)) / 2;
+    WinPin::initFromData(posX, posY, imgW, resultH, imgData);
+    App::exit(0);
 }

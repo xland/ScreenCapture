@@ -7,6 +7,7 @@
 
 WinCutMask::WinCutMask(WinBase* win):win{win}
 {
+    strokeWidth = 2 * win->dpi;
     auto render = win->render.Get();
     render->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White), brushText.GetAddressOf());
     render->CreateSolidColorBrush(D2D1::ColorF(0x000000, 0.46f), brushBg.GetAddressOf());
@@ -118,7 +119,8 @@ void WinCutMask::paint()
     render->FillRectangle(D2D1::RectF(0.f, maskRect.bottom, win->w, win->h), brushBg.Get());
     render->FillRectangle(D2D1::RectF(0.f, maskRect.top, maskRect.left, maskRect.bottom), brushBg.Get());
     render->FillRectangle(D2D1::RectF(maskRect.right, maskRect.top, win->w, maskRect.bottom), brushBg.Get());
-    render->DrawRectangle(D2D1::RectF(maskRect.left - 2, maskRect.top - 2, maskRect.right + 2, maskRect.bottom + 2), brushBorder.Get(), 4.f);
+    auto halfStrokeWidth{ strokeWidth / 2.f };
+    render->DrawRectangle(D2D1::RectF(maskRect.left - halfStrokeWidth, maskRect.top - halfStrokeWidth, maskRect.right + halfStrokeWidth, maskRect.bottom + halfStrokeWidth), brushBorder.Get(), strokeWidth);
     render->FillRoundedRectangle(D2D1::RoundedRect(layoutRect, paddingTop, paddingTop), brushBg.Get());
     render->DrawTextLayout({ layoutRect.left, layoutRect.top }, layout.Get(), brushText.Get(), D2D1_DRAW_TEXT_OPTIONS_NONE);
 
