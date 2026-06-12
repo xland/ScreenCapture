@@ -12,7 +12,6 @@ public:
 public:
 	int selectIndex{-1};
 protected:
-	void addIconLayout(const std::wstring& icon);
 	void paintIcon(const float& posX,IDWriteTextLayout* icon,bool isHover,bool isSelected);
 	IDWriteTextLayout* getBtnIconLayout(const std::string& name);
 	void showTipAt(int x, int y);

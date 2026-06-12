@@ -18,6 +18,7 @@ public:
 	void setTimer(const UINT& elapse, const UINT& id);
 	void killTimer(const UINT& id);
 	void setCursor(LPCWSTR cursorName);
+	ComPtr<IDWriteTextLayout> makeIconLayout(const std::wstring& code, const float& w, const float& h,const float& size,bool hAlign = true, bool VAlign = true);
 public:
 	HWND hwnd{nullptr};
 	int x, y, w, h;

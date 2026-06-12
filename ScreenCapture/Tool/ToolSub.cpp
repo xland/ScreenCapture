@@ -82,15 +82,16 @@ void ToolSub::resetVal()
 void ToolSub::initBtn()
 {
     btnLayout.clear();
-    addIconLayout(L"\ue602");
-    addIconLayout(L"\ue600");
-    addIconLayout(L"\ue604");
-    addIconLayout(L"\ue605");
-    addIconLayout(L"\ue607");
-    addIconLayout(L"\ue634");
-    addIconLayout(L"\ue682");
-    addIconLayout(L"\ue721");
-    addIconLayout(L"\ue61d");
+    auto fSize{ 14.f * dpi };
+    btnLayout.push_back(makeIconLayout(L"\ue602", btnSize, btnSize, fSize));
+    btnLayout.push_back(makeIconLayout(L"\ue600", btnSize, btnSize, fSize));
+    btnLayout.push_back(makeIconLayout(L"\ue604", btnSize, btnSize, fSize));
+    btnLayout.push_back(makeIconLayout(L"\ue605", btnSize, btnSize, fSize));
+    btnLayout.push_back(makeIconLayout(L"\ue607", btnSize, btnSize, fSize));
+    btnLayout.push_back(makeIconLayout(L"\ue634", btnSize, btnSize, fSize));
+    btnLayout.push_back(makeIconLayout(L"\ue682", btnSize, btnSize, fSize));
+    btnLayout.push_back(makeIconLayout(L"\ue721", btnSize, btnSize, fSize));
+    btnLayout.push_back(makeIconLayout(L"\ue61d", btnSize, btnSize, fSize));
 }
 
 bool ToolSub::hoverBtn(const int& x)

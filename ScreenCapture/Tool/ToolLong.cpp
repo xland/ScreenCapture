@@ -21,10 +21,11 @@ void ToolLong::onCreated()
 {
     btnSize = 32.f * dpi;
     initBrush();
-    addIconLayout(L"\ued8a");
-    addIconLayout(L"\ue650");
-    addIconLayout(L"\ue608");
-    addIconLayout(L"\ue62d");
+    auto fSize{ 14.f * dpi };
+    btnLayout.push_back(makeIconLayout(L"\ued8a", btnSize, btnSize, fSize));
+    btnLayout.push_back(makeIconLayout(L"\ue650", btnSize, btnSize, fSize));
+    btnLayout.push_back(makeIconLayout(L"\ue608", btnSize, btnSize, fSize));
+    btnLayout.push_back(makeIconLayout(L"\ue62d", btnSize, btnSize, fSize));
 }
 BOOL ToolLong::onCursor()
 {
@@ -92,8 +93,9 @@ void ToolLong::onDpiChanged()
 {
     btnSize = 32.f * dpi;
     btnLayout.clear();
-    addIconLayout(L"\ued8a");
-    addIconLayout(L"\ue650");
-    addIconLayout(L"\ue608");
-    addIconLayout(L"\ue62d");
+    auto fSize{ 14.f * dpi };
+    btnLayout.push_back(makeIconLayout(L"\ued8a", btnSize, btnSize, fSize));
+    btnLayout.push_back(makeIconLayout(L"\ue650", btnSize, btnSize, fSize));
+    btnLayout.push_back(makeIconLayout(L"\ue608", btnSize, btnSize, fSize));
+    btnLayout.push_back(makeIconLayout(L"\ue62d", btnSize, btnSize, fSize));
 }

@@ -42,6 +42,7 @@ private:
 	ComPtr<ID2D1SolidColorBrush> bgBrush;
 	ComPtr<IDWriteTextLayout> layoutTextStart;
 	ComPtr<IDWriteTextLayout> layoutTextEnd;
+	ComPtr<IDWriteTextFormat> textFormat;
 	float startCircleR{ 30.f };
 	POINT circleCenter;
 	HWND targetHwnd{ nullptr };

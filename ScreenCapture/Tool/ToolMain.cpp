@@ -127,19 +127,20 @@ void ToolMain::onDpiChanged()
 void ToolMain::initBtn()
 {
     btnLayout.clear();
-    addIconLayout(L"\ue8e8");
-    addIconLayout(L"\ue6bc");
-    addIconLayout(L"\ue603");
-    addIconLayout(L"\ue776");
-    addIconLayout(L"\ue601");
-    addIconLayout(L"\ue6ec");
-    addIconLayout(L"\ue82e");
-    addIconLayout(L"\ue6be");
-    addIconLayout(L"\ued85");
-    addIconLayout(L"\ued8a");
-    addIconLayout(L"\ue650");
-    addIconLayout(L"\ue608");
-    addIconLayout(L"\ue62d");
+    auto fSize{ 14.f * dpi };
+    btnLayout.push_back(makeIconLayout(L"\ue8e8", btnSize, btnSize, fSize));
+    btnLayout.push_back(makeIconLayout(L"\ue6bc", btnSize, btnSize, fSize));
+    btnLayout.push_back(makeIconLayout(L"\ue603", btnSize, btnSize, fSize));
+    btnLayout.push_back(makeIconLayout(L"\ue776", btnSize, btnSize, fSize));
+    btnLayout.push_back(makeIconLayout(L"\ue601", btnSize, btnSize, fSize));
+    btnLayout.push_back(makeIconLayout(L"\ue6ec", btnSize, btnSize, fSize));
+    btnLayout.push_back(makeIconLayout(L"\ue82e", btnSize, btnSize, fSize));
+    btnLayout.push_back(makeIconLayout(L"\ue6be", btnSize, btnSize, fSize));
+    btnLayout.push_back(makeIconLayout(L"\ued85", btnSize, btnSize, fSize));
+    btnLayout.push_back(makeIconLayout(L"\ued8a", btnSize, btnSize, fSize));
+    btnLayout.push_back(makeIconLayout(L"\ue650", btnSize, btnSize, fSize));
+    btnLayout.push_back(makeIconLayout(L"\ue608", btnSize, btnSize, fSize));
+    btnLayout.push_back(makeIconLayout(L"\ue62d", btnSize, btnSize, fSize));
 }
 
 void ToolMain::onKeyDown(const UINT& key)

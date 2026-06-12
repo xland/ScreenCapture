@@ -67,42 +67,6 @@ void ToolBase::initTip()
     SendMessage(tipHwnd, TTM_SETDELAYTIME, TTDT_INITIAL, MAKELONG(0, 0));
     //SetWindowPos(tipHwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
 }
-void ToolBase::addIconLayout(const std::wstring& icon)
-{
-    auto writer = App::getWriter();
-    static ComPtr<IDWriteTextFormat> iconFormat;
-	if (!iconFormat.Get()) {
-        //加载内置图标字体
-        HRSRC hRes = FindResource(NULL, L"iconfont.ttf", RT_RCDATA);
-        if (!hRes) return;
-        HGLOBAL hData = LoadResource(NULL, hRes);
-        if (!hData) return;
-        void* pData = LockResource(hData);
-        DWORD size = SizeofResource(NULL, hRes);
-        ComPtr<IDWriteInMemoryFontFileLoader> loader;
-        writer->CreateInMemoryFontFileLoader(loader.GetAddressOf());
-        writer->RegisterFontFileLoader(loader.Get());
-        ComPtr<IDWriteFontFile> fontFile;
-        loader->CreateInMemoryFontFileReference(writer, pData, size, nullptr, fontFile.GetAddressOf());
-        ComPtr<IDWriteFontSetBuilder1> fontSetBuilder;
-        writer->CreateFontSetBuilder(fontSetBuilder.GetAddressOf());
-        fontSetBuilder->AddFontFile(fontFile.Get());
-        ComPtr<IDWriteFontSet> fontSet;
-        fontSetBuilder->CreateFontSet(fontSet.GetAddressOf());
-        ComPtr<IDWriteFontCollection1> fontCollection;
-        writer->CreateFontCollectionFromFontSet(fontSet.Get(), fontCollection.GetAddressOf());
-        writer->CreateTextFormat(L"icon", fontCollection.Get(),
-            DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
-            12.f, L"", iconFormat.GetAddressOf());
-	}
-    ComPtr<IDWriteTextLayout> layout;
-    writer->CreateTextLayout(icon.data(), icon.length(), iconFormat.Get(), btnSize, btnSize, layout.GetAddressOf());
-    layout->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
-    layout->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
-    layout->SetFontSize(14.f * dpi, { 0, static_cast<UINT32>(icon.length()) });
-	btnLayout.push_back(std::move(layout));
-
-}
 void ToolBase::showTipAt(int x, int y)
 {
     TOOLINFOW ti = { 0 };

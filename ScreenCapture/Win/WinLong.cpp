@@ -7,49 +7,50 @@
 #include "WinPin.h"
 
 std::unique_ptr<WinLong> winLong;
-static constexpr UINT scrollMsgId = 18;
-static constexpr UINT scrollEndMsgId = 19;
-static constexpr int comparisonH = 100;  // 匹配比较用的条带高度
+namespace {
+    static constexpr UINT scrollMsgId = 18;
+    static constexpr UINT scrollEndMsgId = 19;
+    static constexpr int comparisonH = 100;  // 匹配比较用的条带高度
 
-// 将 BGRA 像素条带转为灰度图
-static std::vector<BYTE> toGrayscale(const BYTE* bgra, int width, int height, int stride)
-{
-    std::vector<BYTE> gray(width * height);
-    for (int y = 0; y < height; y++) {
-        const BYTE* src = bgra + y * stride;
-        BYTE* dst = gray.data() + y * width;
-        for (int x = 0; x < width; x++) {
-            dst[x] = (BYTE)((src[x * 4] * 114 + src[x * 4 + 1] * 587 + src[x * 4 + 2] * 299) / 1000);
-        }
-    }
-    return gray;
-}
-
-// 在 gray1 中搜索与 gray2 最相似的偏移 y（SSD 匹配）
-static int findMostSimilarY(const BYTE* gray1, int gray1H, const BYTE* gray2, int gray2H, int width)
-{
-    int searchH = gray1H - gray2H + 1;
-    if (searchH <= 0) return 0;
-    double minError = DBL_MAX;
-    int bestY = 0;
-    for (int y = 0; y < searchH; y++) {
-        double error = 0.0;
-        for (int row = 0; row < gray2H && error < minError; row++) {
-            const BYTE* row1 = gray1 + (y + row) * width;
-            const BYTE* row2 = gray2 + row * width;
+    // 将 BGRA 像素条带转为灰度图
+    static std::vector<BYTE> toGrayscale(const BYTE* bgra, int width, int height, int stride)
+    {
+        std::vector<BYTE> gray(width * height);
+        for (int y = 0; y < height; y++) {
+            const BYTE* src = bgra + y * stride;
+            BYTE* dst = gray.data() + y * width;
             for (int x = 0; x < width; x++) {
-                int diff = (int)row1[x] - (int)row2[x];
-                error += diff * diff;
+                dst[x] = (BYTE)((src[x * 4] * 114 + src[x * 4 + 1] * 587 + src[x * 4 + 2] * 299) / 1000);
             }
         }
-        if (error < minError) {
-            minError = error;
-            bestY = y;
-        }
+        return gray;
     }
-    return bestY;
-}
 
+    // 在 gray1 中搜索与 gray2 最相似的偏移 y（SSD 匹配）
+    static int findMostSimilarY(const BYTE* gray1, int gray1H, const BYTE* gray2, int gray2H, int width)
+    {
+        int searchH = gray1H - gray2H + 1;
+        if (searchH <= 0) return 0;
+        double minError = DBL_MAX;
+        int bestY = 0;
+        for (int y = 0; y < searchH; y++) {
+            double error = 0.0;
+            for (int row = 0; row < gray2H && error < minError; row++) {
+                const BYTE* row1 = gray1 + (y + row) * width;
+                const BYTE* row2 = gray2 + row * width;
+                for (int x = 0; x < width; x++) {
+                    int diff = (int)row1[x] - (int)row2[x];
+                    error += diff * diff;
+                }
+            }
+            if (error < minError) {
+                minError = error;
+                bestY = y;
+            }
+        }
+        return bestY;
+    }
+}
 WinLong::WinLong(const int& x, const int& y, const int& w, const int& h) : WinBase(x, y, w, h)
 {
 }
@@ -291,12 +292,13 @@ void WinLong::capStep()
         }
         firstCheck = false;
     }
+    int rowPix{ imgW * 4 };
     // 从 changeStartY 开始，裁剪用于匹配的条带
     int stripH = std::min(comparisonH, imgH - changeStartY);
     if (stripH <= 0) { setTimer(500, scrollMsgId); return; }
     int img1StripH = imgH - changeStartY;
-    auto gray1 = toGrayscale(img1.data() + changeStartY * imgW * 4, imgW, img1StripH, imgW * 4);
-    auto gray2 = toGrayscale(data.data() + changeStartY * imgW * 4, imgW, stripH, imgW * 4);
+    auto gray1 = toGrayscale(img1.data() + changeStartY * rowPix, imgW, img1StripH, rowPix);
+    auto gray2 = toGrayscale(data.data() + changeStartY * rowPix, imgW, stripH, rowPix);
     int y = findMostSimilarY(gray1.data(), img1StripH, gray2.data(), stripH, imgW);
     if (y == 0) { // 未检测到滚动
         dismissTime++;
@@ -311,13 +313,12 @@ void WinLong::capStep()
     int newResultH = paintStart + (imgH - changeStartY);
 
     // 创建新的结果图像
-    std::vector<BYTE> newResult(imgW * 4 * newResultH);
+    std::vector<BYTE> newResult(rowPix * newResultH);
     // 拷贝旧结果
     CopyMemory(newResult.data(), imgData.data(), imgData.size());
     // 拷贝新截图从 changeStartY 到底部的内容
     for (int row = 0; row < imgH - changeStartY; row++) {
-        CopyMemory( newResult.data() + (paintStart + row) * imgW * 4,
-            data.data() + (changeStartY + row) * imgW * 4, imgW * 4);
+        CopyMemory( newResult.data() + (paintStart + row) * rowPix, data.data() + (changeStartY + row) * rowPix, rowPix);
     }
 
     imgData = std::move(newResult);
