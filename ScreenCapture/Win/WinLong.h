@@ -34,7 +34,7 @@ private:
 	void paintImgPreview();
 	void stopCap();
 private:
-	bool isFinishCutMask{ false }, isShowStartBtn{ false }, isScrolling{false};
+	bool isFinishCutMask{ false }, isShowStartBtn{ false }, isScrolling{ false }, isFinish{false};
 	bool firstCheck{true};
 	int dismissTime{0};
 	int changeStartY{-1};
@@ -52,8 +52,6 @@ private:
 	std::vector<BYTE> img1;
 	int imgW{0}, imgH{0};
 	int resultH{0};
-	ComPtr<ID2D1SolidColorBrush> tipBrushBg;
-	ComPtr<ID2D1SolidColorBrush> tipBrushText;
 	POINT capStartPos;
 };
 

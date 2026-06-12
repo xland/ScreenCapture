@@ -115,6 +115,21 @@ ComPtr<IDWriteTextLayout> WinBase::makeIconLayout(const std::wstring& code, cons
     layout->SetFontSize(size, { 0, static_cast<UINT32>(code.length()) });
     return layout;
 }
+ComPtr<IDWriteTextLayout> WinBase::makeTextLayout(const std::wstring& text, const float& w, const float& h, const float& size, bool hAlign, bool VAlign)
+{
+    auto writer = App::getWriter();
+    static ComPtr<IDWriteTextFormat> textFormat;
+    if (!textFormat.Get()) {
+        writer->CreateTextFormat(L"Microsoft YaHei", nullptr, DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
+            12.f, L"", textFormat.GetAddressOf());
+    }
+    ComPtr<IDWriteTextLayout> layout;
+    writer->CreateTextLayout(text.data(), text.length(), textFormat.Get(), w, h, layout.GetAddressOf());
+    if (hAlign) layout->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+    if (VAlign) layout->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+    layout->SetFontSize(size, { 0, static_cast<UINT32>(text.length()) });
+    return layout;
+}
 void WinBase::createWindow(const DWORD& exStyle, const DWORD& style)
 {
     hwnd = CreateWindowEx(exStyle | WS_EX_NOREDIRECTIONBITMAP| WS_EX_TOOLWINDOW, getWinClsName().c_str(), NULL, style| WS_POPUP, x, y, w, h, NULL, NULL, App::get()->hInstance, NULL);

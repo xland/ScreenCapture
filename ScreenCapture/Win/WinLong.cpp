@@ -95,22 +95,24 @@ void WinLong::onPaint()
 {
     render->Clear(0);
     cutMask->paint();
-    if (isShowStartBtn) {
-        render->FillEllipse(D2D1::Ellipse(D2D1::Point2F(circleCenter.x, circleCenter.y), startCircleR, startCircleR), bgBrush.Get());
-        render->DrawTextLayout({ circleCenter.x- startCircleR, circleCenter.y - startCircleR }, layoutTextStart.Get(), textBrush.Get(), D2D1_DRAW_TEXT_OPTIONS_NONE);
-    }
     paintImgPreview();
-    //// 滚动结束时显示提示
-    //if (!isScrolling && !imgData.empty() && tool && (dismissTime > 2 || resultH > 20000)) {
-    //    std::wstring tipText = dismissTime > 2 ? L"已到底部" : L"图片过长";
-    //    POINT tipPos{ tool->x, tool->y + (int)tool->h };
-    //    ScreenToClient(hwnd, &tipPos);
-    //    float tipW = tool->w;
-    //    float tipH = 28.f * dpi;
-    //    D2D1_RECT_F tipRect = D2D1::RectF(tipPos.x, tipPos.y + 2 * dpi, tipPos.x + tipW, tipPos.y + 2 * dpi + tipH);
-    //    render->FillRectangle(tipRect, tipBrushBg.Get());
-    //    render->DrawText(tipText.c_str(), (UINT32)tipText.length(), tipTextFormat.Get(), tipRect, tipBrushText.Get());
-    //}
+    if (isFinish) {
+        DWRITE_TEXT_METRICS tm = {};
+        layoutTextEnd->GetMetrics(&tm);
+        auto& maskRect = cutMask->maskRect;
+        auto halfX = maskRect.left + (maskRect.right - maskRect.left) / 2;
+        auto halfW = tm.width / 2;
+        float padding{ 8 * dpi };
+        D2D1_RECT_F rect = D2D1::RectF(halfX - halfW - padding, maskRect.bottom- 30 * dpi-padding, halfX + halfW + padding, cutMask->maskRect.bottom-padding);
+        layoutTextEnd->SetMaxWidth(rect.right - rect.left);
+        layoutTextEnd->SetMaxHeight(rect.bottom - rect.top);
+        render->FillRoundedRectangle(D2D1::RoundedRect(rect, 4.f*dpi, 4.f * dpi), bgBrush.Get());
+        render->DrawTextLayout({ rect.left, rect.top}, layoutTextEnd.Get(), textBrush.Get(), D2D1_DRAW_TEXT_OPTIONS_NONE);
+    }
+    else if(isShowStartBtn) {
+        render->FillEllipse(D2D1::Ellipse(D2D1::Point2F(circleCenter.x, circleCenter.y), startCircleR, startCircleR), bgBrush.Get());
+        render->DrawTextLayout({ circleCenter.x - startCircleR, circleCenter.y - startCircleR }, layoutTextStart.Get(), textBrush.Get(), D2D1_DRAW_TEXT_OPTIONS_NONE);
+    }
 }
 
 void WinLong::onMouseMove(const int& x, const int& y) {
@@ -178,24 +180,8 @@ void WinLong::initRes()
     startCircleR *= dpi;
     render->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White), textBrush.GetAddressOf());
     render->CreateSolidColorBrush(D2D1::ColorF(0x000000, 0.68f), bgBrush.GetAddressOf());
-    render->CreateSolidColorBrush(D2D1::ColorF(0x000000, 0.75f), tipBrushBg.GetAddressOf());
-    render->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White), tipBrushText.GetAddressOf());
-    ComPtr<IDWriteTextFormat> textFormat;
-    auto writer = App::getWriter();
-    writer->CreateTextFormat(L"Microsoft YaHei", nullptr, DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
-        16 * dpi, L"", textFormat.GetAddressOf());
-    {
-        std::wstring text = L"开始";
-        writer->CreateTextLayout(text.data(), (UINT32)text.length(), textFormat.Get(), startCircleR * 2, startCircleR * 2, layoutTextStart.GetAddressOf());
-        layoutTextStart->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
-        layoutTextStart->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
-    } 
-    {
-        std::wstring text = L"已触底，自动滚动停止";
-        writer->CreateTextLayout(text.data(), (UINT32)text.length(), textFormat.Get(), startCircleR * 2, startCircleR * 2, layoutTextEnd.GetAddressOf());
-        layoutTextEnd->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
-        layoutTextEnd->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
-    }
+    auto size{ startCircleR * 2 };
+    layoutTextStart = makeTextLayout(L"开始", size, size, 16 * dpi);
 }
 
 BOOL WinLong::onCursor()
@@ -205,7 +191,7 @@ BOOL WinLong::onCursor()
 		ScreenToClient(hwnd, &circleCenter);
         auto& r = cutMask->maskRect;
         auto rect = D2D1::RectU((UINT32)r.left, (UINT32)r.top, (UINT32)r.right, (UINT32)r.bottom);
-        if (circleCenter.x > r.left && circleCenter.y > r.top && circleCenter.x < r.right && circleCenter.y < r.bottom) {
+        if (!isFinish && circleCenter.x > r.left && circleCenter.y > r.top && circleCenter.x < r.right && circleCenter.y < r.bottom) {
             SetCursor(NULL);
             isShowStartBtn = true;
         }
@@ -371,6 +357,8 @@ void WinLong::paintImgPreview()
 
 void WinLong::stopCap()
 {
+    isFinish = true;
+    layoutTextEnd = makeTextLayout(L"已触底，自动滚动停止", FLT_MAX, FLT_MAX, 13 * dpi);
     SetWindowRgn(hwnd, NULL, TRUE);
     isScrolling = false;
     killTimer(scrollMsgId);
