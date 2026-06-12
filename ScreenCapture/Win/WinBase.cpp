@@ -130,6 +130,7 @@ ComPtr<IDWriteTextLayout> WinBase::makeTextLayout(const std::wstring& text, cons
     layout->SetFontSize(size, { 0, static_cast<UINT32>(text.length()) });
     return layout;
 }
+
 void WinBase::createWindow(const DWORD& exStyle, const DWORD& style)
 {
     hwnd = CreateWindowEx(exStyle | WS_EX_NOREDIRECTIONBITMAP| WS_EX_TOOLWINDOW, getWinClsName().c_str(), NULL, style| WS_POPUP, x, y, w, h, NULL, NULL, App::get()->hInstance, NULL);

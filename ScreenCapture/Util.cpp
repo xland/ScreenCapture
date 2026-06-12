@@ -202,3 +202,13 @@ bool Util::isInRect(const D2D1_RECT_F& rect, const float& x, const float& y)
 {
     return (x > rect.left && x<rect.right && y>rect.top && y < rect.bottom);
 }
+
+std::tuple<int, int, int, int> Util::getDesktopInfo()
+{
+    return std::make_tuple(
+        GetSystemMetrics(SM_XVIRTUALSCREEN),
+        GetSystemMetrics(SM_YVIRTUALSCREEN),
+        GetSystemMetrics(SM_CXVIRTUALSCREEN),
+        GetSystemMetrics(SM_CYVIRTUALSCREEN)
+    );
+}

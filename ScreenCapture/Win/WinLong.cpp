@@ -63,10 +63,7 @@ WinLong::~WinLong()
 void WinLong::init()
 {
     WinLong::release();
-    auto x = GetSystemMetrics(SM_XVIRTUALSCREEN);
-    auto y = GetSystemMetrics(SM_YVIRTUALSCREEN);
-    auto w = GetSystemMetrics(SM_CXVIRTUALSCREEN);
-    auto h = GetSystemMetrics(SM_CYVIRTUALSCREEN);
+    auto [x, y, w, h] = Util::getDesktopInfo();
     winLong = std::make_unique<WinLong>(x, y, w, h);
     winLong->createWindow();//WS_EX_TOPMOST
     winLong->initRes();
@@ -76,10 +73,6 @@ void WinLong::init()
     winLong->show();
     UpdateWindow(winLong->hwnd);
 
-}
-WinLong* WinLong::get()
-{
-    return winLong.get();
 }
 
 void WinLong::release()

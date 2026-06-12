@@ -12,5 +12,6 @@ public:
 	static std::wstring getTextFromClipboard();
 	static std::vector<BYTE> captureScreen(const int& x, const int& y, const int& w, const int& h);
 	static bool isInRect(const D2D1_RECT_F& rect, const float& x, const float& y);
+	static std::tuple<int, int, int, int> getDesktopInfo();
 };
 

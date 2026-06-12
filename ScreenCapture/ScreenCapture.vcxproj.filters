@@ -102,6 +102,9 @@
     <ClCompile Include="Tool\ToolLong.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Win\WinVideo.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -186,6 +189,12 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Tool\ToolLong.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Win\WinVideo.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Win\WinVideoMp4.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

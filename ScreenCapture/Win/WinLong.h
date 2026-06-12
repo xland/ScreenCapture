@@ -10,7 +10,6 @@ public:
 	WinLong(const int& x, const int& y, const int& w, const int& h);
 	~WinLong();
 	static void init();
-	static WinLong* get();
 	static void release();
 public:
 	std::unique_ptr<WinCutMask> cutMask;
