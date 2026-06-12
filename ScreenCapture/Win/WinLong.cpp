@@ -97,17 +97,9 @@ void WinLong::onPaint()
     cutMask->paint();
     paintImgPreview();
     if (isFinish) {
-        DWRITE_TEXT_METRICS tm = {};
-        layoutTextEnd->GetMetrics(&tm);
-        auto& maskRect = cutMask->maskRect;
-        auto halfX = maskRect.left + (maskRect.right - maskRect.left) / 2;
-        auto halfW = tm.width / 2;
-        float padding{ 8 * dpi };
-        D2D1_RECT_F rect = D2D1::RectF(halfX - halfW - padding, maskRect.bottom- 30 * dpi-padding, halfX + halfW + padding, cutMask->maskRect.bottom-padding);
-        layoutTextEnd->SetMaxWidth(rect.right - rect.left);
-        layoutTextEnd->SetMaxHeight(rect.bottom - rect.top);
-        render->FillRoundedRectangle(D2D1::RoundedRect(rect, 4.f*dpi, 4.f * dpi), bgBrush.Get());
-        render->DrawTextLayout({ rect.left, rect.top}, layoutTextEnd.Get(), textBrush.Get(), D2D1_DRAW_TEXT_OPTIONS_NONE);
+        auto borderRadius{ 4.f * dpi };
+        render->FillRoundedRectangle(D2D1::RoundedRect(stopTextRect, borderRadius, borderRadius), bgBrush.Get());
+        render->DrawTextLayout({ stopTextRect.left, stopTextRect.top}, layoutTextEnd.Get(), textBrush.Get(), D2D1_DRAW_TEXT_OPTIONS_NONE);
     }
     else if(isShowStartBtn) {
         render->FillEllipse(D2D1::Ellipse(D2D1::Point2F(circleCenter.x, circleCenter.y), startCircleR, startCircleR), bgBrush.Get());
@@ -186,12 +178,17 @@ void WinLong::initRes()
 
 BOOL WinLong::onCursor()
 {
+    if (isFinish) {
+        isShowStartBtn = false;
+        setCursor(IDC_ARROW);
+        return TRUE;
+    }
     if (isFinishCutMask) {
         GetCursorPos(&circleCenter);
 		ScreenToClient(hwnd, &circleCenter);
         auto& r = cutMask->maskRect;
         auto rect = D2D1::RectU((UINT32)r.left, (UINT32)r.top, (UINT32)r.right, (UINT32)r.bottom);
-        if (!isFinish && circleCenter.x > r.left && circleCenter.y > r.top && circleCenter.x < r.right && circleCenter.y < r.bottom) {
+        if (circleCenter.x > r.left && circleCenter.y > r.top && circleCenter.x < r.right && circleCenter.y < r.bottom) {
             SetCursor(NULL);
             isShowStartBtn = true;
         }
@@ -293,11 +290,9 @@ void WinLong::capStep()
         return;
     }
     dismissTime = 0;
-
     // 计算拼接位置
     int paintStart = resultH - (imgH - y - changeStartY);
     int newResultH = paintStart + (imgH - changeStartY);
-
     // 创建新的结果图像
     std::vector<BYTE> newResult(rowPix * newResultH);
     // 拷贝旧结果
@@ -306,7 +301,6 @@ void WinLong::capStep()
     for (int row = 0; row < imgH - changeStartY; row++) {
         CopyMemory( newResult.data() + (paintStart + row) * rowPix, data.data() + (changeStartY + row) * rowPix, rowPix);
     }
-
     imgData = std::move(newResult);
     img1 = data;
     resultH = newResultH;
@@ -358,12 +352,34 @@ void WinLong::paintImgPreview()
 void WinLong::stopCap()
 {
     isFinish = true;
-    layoutTextEnd = makeTextLayout(L"已触底，自动滚动停止", FLT_MAX, FLT_MAX, 13 * dpi);
+    makeStopText();
     SetWindowRgn(hwnd, NULL, TRUE);
     isScrolling = false;
     killTimer(scrollMsgId);
     killTimer(scrollEndMsgId);
     refresh();
+}
+
+void WinLong::makeStopText()
+{
+    if (resultH > 20000) {
+        layoutTextEnd = makeTextLayout(L"已触底，截图停止", FLT_MAX, FLT_MAX, 13 * dpi);
+    }
+    else {
+        layoutTextEnd = makeTextLayout(L"图像过长，截图停止", FLT_MAX, FLT_MAX, 13 * dpi);
+    }    
+    DWRITE_TEXT_METRICS tm = {};
+    layoutTextEnd->GetMetrics(&tm);
+    auto& maskRect = cutMask->maskRect;
+    auto halfX = maskRect.left + (maskRect.right - maskRect.left) / 2;
+    auto halfW = tm.width / 2;
+    float padding{ 8 * dpi };
+    stopTextRect.left = halfX - halfW - padding;
+    stopTextRect.top = maskRect.bottom - 30 * dpi - padding;
+    stopTextRect.right = halfX + halfW + padding;
+    stopTextRect.bottom = cutMask->maskRect.bottom - padding;
+    layoutTextEnd->SetMaxWidth(stopTextRect.right - stopTextRect.left);
+    layoutTextEnd->SetMaxHeight(stopTextRect.bottom - stopTextRect.top);
 }
 
 void WinLong::copyToClipboard()

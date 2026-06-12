@@ -140,27 +140,17 @@ void ShapeText::finishEdit()
 void ShapeText::setTextLayout()
 {
 	auto textWin = ShapeTextWin::get();
-	textLayout.Reset();
-	auto dwriteFactory = App::getWriter();
-	dwriteFactory->CreateTextLayout(text.data(), static_cast<UINT32>(text.size()), textWin->textFormat.Get(), FLT_MAX, FLT_MAX, textLayout.GetAddressOf());
-	textLayout->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
-	textLayout->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
-	textLayout->SetFontSize(fontSize, { 0, static_cast<UINT32>(text.length()) });
+	textLayout = win->makeTextLayout(text, FLT_MAX, FLT_MAX, fontSize, false, false);
 	textLayout->SetFontWeight(isBold ? DWRITE_FONT_WEIGHT_BOLD : DWRITE_FONT_WEIGHT_NORMAL, { 0, static_cast<UINT32>(text.length()) });
 	textLayout->SetFontStyle(isItalic ? DWRITE_FONT_STYLE_ITALIC : DWRITE_FONT_STYLE_NORMAL, { 0, static_cast<UINT32>(text.length()) });
-
 	DWRITE_TEXT_METRICS tm = {}; //文本布局后度量信息的结构体
 	textLayout->GetMetrics(&tm);
 	auto winW = (int)tm.widthIncludingTrailingWhitespace; //包含尾随空白字符（trailing whitespace）在内的文本行宽度
 	auto winH = (int)tm.height;
 	textWin->resize(winW, winH);
-
 	POINT pos{ winX, winY };
 	ScreenToClient(win->hwnd, &pos);
-	rect = D2D1::RectF(pos.x - borderPadding, pos.y - borderPadding,
-		pos.x + winW + borderPadding,
-		pos.y + winH + borderPadding);
-
+	rect = D2D1::RectF(pos.x - borderPadding, pos.y - borderPadding, pos.x + winW + borderPadding, pos.y + winH + borderPadding);
 	win->refresh();
 }
 

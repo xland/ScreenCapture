@@ -19,7 +19,6 @@ private:
 	void initWinRect();
 	void makeLayout();
 private:
-	ComPtr<IDWriteTextFormat> textFormat;
 	ComPtr<IDWriteTextLayout> textLayout;
 	ComPtr<ID2D1SolidColorBrush> brushBg;
 	ComPtr<ID2D1SolidColorBrush> brushBorder;

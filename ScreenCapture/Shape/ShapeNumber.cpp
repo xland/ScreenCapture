@@ -58,7 +58,7 @@ void ShapeNumber::mouseDrag(const float& x, const float& y, const UINT_PTR& modi
 		cx += spanX;
 		cy += spanY;
 		makePath();
-		makeTextLayout();
+		layoutText = win->makeTextLayout(std::to_wstring(val), r * 2, r * 2, r);
 		pressX = x;
 		pressY = y;
 	}
@@ -73,7 +73,7 @@ void ShapeNumber::mouseDrag(const float& x, const float& y, const UINT_PTR& modi
 		auto minR{ 8.f * win->dpi };
 		if (r < minR) r = minR;
 		makePath();
-		makeTextLayout();
+		layoutText = win->makeTextLayout(std::to_wstring(val), r * 2, r * 2, r);
 	}
 }
 
@@ -86,7 +86,7 @@ void ShapeNumber::mouseDown(const float& x, const float& y)
 		pressY = cy;
 		hoverDraggerIndex = 0;
 		makePath();
-		makeTextLayout();
+		layoutText = win->makeTextLayout(std::to_wstring(val), r * 2, r * 2, r);
 		win->refresh();
 	}
 	else if (hoverDraggerIndex >= 0) {
@@ -144,13 +144,13 @@ void ShapeNumber::mouseWheel(const float& x, const float& y, const short& delta)
 		if (r <= 6.f * win->dpi) return;
 		r--;
 		makePath();
-		makeTextLayout();
+		layoutText = win->makeTextLayout(std::to_wstring(val), r * 2, r * 2, r);
 		win->refresh();
 	}
 	else {
 		r++;		
 		makePath();
-		makeTextLayout();
+		layoutText = win->makeTextLayout(std::to_wstring(val), r * 2, r * 2, r);
 		win->refresh();
 	}
 }
@@ -196,20 +196,4 @@ void ShapeNumber::makePath()
 	sink->AddLine(start);
 	sink->EndFigure(D2D1_FIGURE_END_CLOSED);
 	sink->Close();
-}
-
-void ShapeNumber::makeTextLayout()
-{
-	layoutText.Reset();
-	auto valStr = std::to_wstring(val);
-	auto d = r * 2;
-
-	ComPtr<IDWriteTextFormat> textFormat;
-	auto writer = App::getWriter();
-	writer->CreateTextFormat(L"Microsoft YaHei", nullptr,
-		DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
-		r, L"", textFormat.GetAddressOf());
-	writer->CreateTextLayout(valStr.data(), (UINT32)valStr.length(), textFormat.Get(), d, d, layoutText.GetAddressOf());
-	layoutText->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
-	layoutText->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
 }

@@ -19,7 +19,6 @@ private:
 	D2D1_POINT_2F localPoint(const float& degrees);
 	D2D1_POINT_2F transformPoint(const D2D1_POINT_2F& point);
 	void makePath();
-	void makeTextLayout();
 private:
 	std::vector<D2D1_RECT_F> draggers;
 	ComPtr<ID2D1PathGeometry> path;

@@ -9,10 +9,6 @@ std::unique_ptr<ShapeTextWin> shapeTextWin;
 
 ShapeTextWin::ShapeTextWin(const int& x, const int& y, const int& w, const int& h) : WinBase(x, y, w, h)
 {
-    auto dwriteFactory = App::getWriter();
-    dwriteFactory->CreateTextFormat(L"Microsoft YaHei", nullptr,
-        DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
-        12.f, L"", textFormat.GetAddressOf());
 }
 
 ShapeTextWin::~ShapeTextWin()

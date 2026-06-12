@@ -11,7 +11,6 @@ public:
 	void setShape(ShapeText* shape);
 	void changeState();
 public:
-	ComPtr<IDWriteTextFormat> textFormat;
 protected:
 private:
 	void onCreated() override;

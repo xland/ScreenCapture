@@ -33,11 +33,13 @@ private:
 	void makeTool();
 	void paintImgPreview();
 	void stopCap();
+	void makeStopText();
 private:
 	bool isFinishCutMask{ false }, isShowStartBtn{ false }, isScrolling{ false }, isFinish{false};
 	bool firstCheck{true};
 	int dismissTime{0};
 	int changeStartY{-1};
+	D2D1_RECT_F stopTextRect;
 	ComPtr<ID2D1SolidColorBrush> textBrush;
 	ComPtr<ID2D1SolidColorBrush> bgBrush;
 	ComPtr<IDWriteTextLayout> layoutTextStart;

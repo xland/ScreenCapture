@@ -13,10 +13,6 @@ WinCutMask::WinCutMask(WinBase* win):win{win}
     render->CreateSolidColorBrush(D2D1::ColorF(0x000000, 0.46f), brushBg.GetAddressOf());
     render->CreateSolidColorBrush(D2D1::ColorF(0x1677ff), brushBorder.GetAddressOf());
 	paddingTop *= win->dpi;
-    auto writer = App::getWriter();
-    writer->CreateTextFormat(L"Microsoft YaHei", nullptr,
-        DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
-        15, L"", textFormat.GetAddressOf());
     initWinRect();
 }
 
@@ -73,11 +69,7 @@ void WinCutMask::makeLayout()
     auto layoutStr = std::format(L"X:{} Y:{} R:{} B:{} W:{} H:{}",
         maskRect.left, maskRect.top, maskRect.right, maskRect.bottom,
         maskRect.right - maskRect.left, maskRect.bottom - maskRect.top);
-    auto writer = App::getWriter();
-    writer->CreateTextLayout(layoutStr.data(), static_cast<UINT32>(layoutStr.size()), textFormat.Get(), FLT_MAX, FLT_MAX, layout.GetAddressOf());
-    layout->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
-    layout->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
-    layout->SetFontSize(10 * win->dpi, { 0, static_cast<UINT32>(layoutStr.length()) });
+    layout = win->makeTextLayout(layoutStr, FLT_MAX, FLT_MAX, 10 * win->dpi);
     DWRITE_TEXT_METRICS tm = {};
     layout->GetMetrics(&tm);
     float paddingLeft{ 5 * win->dpi }, margin{ 5 * win->dpi };
