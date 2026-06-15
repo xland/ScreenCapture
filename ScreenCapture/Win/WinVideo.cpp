@@ -39,6 +39,10 @@ void WinVideo::release()
     }
 }
 
+void WinVideo::start()
+{
+}
+
 void WinVideo::onPaint()
 {
     render->Clear(0);
@@ -58,7 +62,7 @@ void WinVideo::onMouseDrag(const int& x, const int& y, const UINT_PTR& modifiers
 void WinVideo::onMouseDown(const int& x, const int& y, bool isRight)
 {
     if (isRight) {
-        App::exit(2);
+        //todo
         return;
     }
     if (isFinishCutMask)  return;

@@ -36,7 +36,7 @@ void ToolBase::paintIcon(const float& posX, IDWriteTextLayout* icon, bool isHove
     else {
         auto brush = isHover ? brushBlue.Get() : brushIcon.Get();
         render->DrawTextLayout(origin, icon, brush, D2D1_DRAW_TEXT_OPTIONS_NONE);
-    }
+    }    
 }
 
 IDWriteTextLayout* ToolBase::getBtnIconLayout(const std::string& name)

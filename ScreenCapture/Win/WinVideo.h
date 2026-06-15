@@ -11,6 +11,7 @@ public:
 	~WinVideo();
 	static void init();
 	static void release();
+	void start();
 public:
 	std::unique_ptr<WinCutMask> cutMask;
 private:

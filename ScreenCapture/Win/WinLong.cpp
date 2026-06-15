@@ -117,7 +117,7 @@ void WinLong::onMouseDrag(const int& x, const int& y, const UINT_PTR& modifiers)
 void WinLong::onMouseDown(const int& x, const int& y, bool isRight)
 {
     if (isRight) {
-        App::exit(2);
+        WinLong::release();
         return;
     }
     if (isFinishCutMask)  return;
@@ -371,7 +371,7 @@ void WinLong::copyToClipboard()
 {
     if (imgData.empty()) return;
     Util::saveToClipboard(imgW, resultH, imgData.data());
-    App::exit(0);
+    WinLong::release();
 }
 
 void WinLong::saveToFile()
@@ -380,7 +380,7 @@ void WinLong::saveToFile()
     auto path = Util::getSaveFilePath(hwnd);
     if (path.empty()) return;
     if (Util::saveToFile(path, imgW, resultH, imgData.data())) {
-        App::exit(0);
+        WinLong::release();
     }
 }
 
@@ -397,5 +397,5 @@ void WinLong::pin()
     int posX = workArea.left + (screenW - imgW) / 2;
     int posY = workArea.top + (screenH - std::min(resultH, screenH)) / 2;
     WinPin::initFromData(posX, posY, imgW, resultH, imgData);
-    App::exit(0);
+    WinLong::release();
 }

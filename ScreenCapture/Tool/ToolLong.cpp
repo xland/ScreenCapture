@@ -67,7 +67,7 @@ void ToolLong::onMouseDown(const int& x, const int& y, bool isRight)
         return;
     }
     else if (state == "close") {
-        App::exit(2);
+        //todo
         return;
     }
 }

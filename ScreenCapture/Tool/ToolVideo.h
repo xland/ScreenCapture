@@ -19,12 +19,12 @@ private:
 	void onMouseLeave() override;
 	void onDpiChanged() override;
 	void onCreated() override;
-	bool isBlueForeColor(const int& index);
+	void onTimer(const UINT& timerId) override;
 private:
 	WinVideo* parent;
-	ComPtr<IDWriteTextLayout> formatLable,formatMp4,formatGif;
-	float mp4Start,mp4End, gifEnd, borderRadius{ 3.f }, paddingTopBottom{ 3.f },speakerStart,micStart, clapperStart,closeStart;
-	int hoverIndex{ -1 }, selectIndexFormat{ 0 };
-	bool selectSpeaker{ true }, selectMic{ false };
+	ComPtr<IDWriteTextLayout> formatMp4,formatGif,timerLayout;
+	float mp4Start,mp4End, gifEnd, borderRadius{ 3.f }, paddingTopBottom{ 3.f },speakerStart,micStart, clapperStart,closeStart, timerEnd;
+	int hoverIndex{ -1 }, selectIndexFormat{ 0 },totalSeconds{0};
+	bool selectSpeaker{ true }, selectMic{ false }, isRecording{false};
 };
 

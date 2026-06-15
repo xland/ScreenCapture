@@ -93,7 +93,7 @@ void WinCap::onMouseDrag(const int& x, const int& y, const UINT_PTR& modifiers)
 void WinCap::onMouseDown(const int& x, const int& y, bool isRight)
 {
     if (isRight) {
-        App::exit(2);
+        WinCap::release();
         return;
     }
     if (winPix.get()) {
