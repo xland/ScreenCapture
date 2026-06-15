@@ -118,13 +118,6 @@ std::wstring Util::getSaveFilePath(HWND hwnd)
     IFileSaveDialog* saveDialog = nullptr;
     auto hr = CoCreateInstance(CLSID_FileSaveDialog, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&saveDialog));
     if (FAILED(hr)) return result;
-
-    SYSTEMTIME st;
-    GetLocalTime(&st);
-    std::wstring fileName = std::format(L"{:04d}{:02d}{:02d}{:02d}{:02d}{:02d}{:03d}.png",
-        st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond, st.wMilliseconds);
-
-
     DWORD dwFlags;
     saveDialog->GetOptions(&dwFlags);
     saveDialog->SetOptions(dwFlags | FOS_OVERWRITEPROMPT | FOS_STRICTFILETYPES);
@@ -132,6 +125,7 @@ std::wstring Util::getSaveFilePath(HWND hwnd)
     saveDialog->SetFileTypes(_countof(rgFilterSpec), rgFilterSpec);
     saveDialog->SetFileTypeIndex(1);
     saveDialog->SetDefaultExtension(L"png");
+    std::wstring fileName = createFileName(L"png");
     saveDialog->SetFileName(fileName.data());
     hr = saveDialog->Show(hwnd);
     if (FAILED(hr)) {
@@ -211,4 +205,13 @@ std::tuple<int, int, int, int> Util::getDesktopInfo()
         GetSystemMetrics(SM_CXVIRTUALSCREEN),
         GetSystemMetrics(SM_CYVIRTUALSCREEN)
     );
+}
+
+std::wstring Util::createFileName(const std::wstring& ext)
+{
+    SYSTEMTIME st;
+    GetLocalTime(&st);
+    std::wstring fileName = std::format(L"{:04d}{:02d}{:02d}{:02d}{:02d}{:02d}{:03d}.{}",
+        st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond, st.wMilliseconds,ext);
+    return fileName;
 }

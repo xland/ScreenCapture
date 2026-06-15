@@ -1221,6 +1221,42 @@ struct VectorStreamX2 : public IMFByteStream
 
 
 };
+
+inline void setAudio(DESKTOPCAPTUREPARAMS& dp,bool useSpeaker, bool useMic) 
+{
+    if (!useMic && !useSpeaker) return;
+    dp.AudioFrom.clear();
+    ComPtr<IMMDeviceEnumerator> deviceEnumerator = nullptr;
+    HRESULT hrAudio = CoCreateInstance(__uuidof(MMDeviceEnumerator), NULL, CLSCTX_INPROC_SERVER, __uuidof(IMMDeviceEnumerator), (LPVOID*)&deviceEnumerator);
+    if (SUCCEEDED(hrAudio) && deviceEnumerator)
+    {
+        if (useMic) {
+            ComPtr<IMMDevice> defaultCapture = nullptr;
+            if (SUCCEEDED(deviceEnumerator->GetDefaultAudioEndpoint(eCapture, eConsole, &defaultCapture)) && defaultCapture)
+            {
+                LPWSTR capId = nullptr;
+                if (SUCCEEDED(defaultCapture->GetId(&capId)) && capId)
+                {
+                    dp.AudioFrom.push_back({ capId, {0, 1} });
+                    CoTaskMemFree(capId);
+                }
+            }
+        }
+        if (useSpeaker) {
+            ComPtr<IMMDevice> defaultRender = nullptr;
+            if (SUCCEEDED(deviceEnumerator->GetDefaultAudioEndpoint(eRender, eConsole, &defaultRender)) && defaultRender)
+            {
+                LPWSTR renId = nullptr;
+                if (SUCCEEDED(defaultRender->GetId(&renId)) && renId)
+                {
+                    dp.AudioFrom.push_back({ renId, {0, 1} });
+                    CoTaskMemFree(renId);
+                }
+            }
+        }
+    }
+}
+
 inline int DesktopCapture(DESKTOPCAPTUREPARAMS& dp)
 {
     HRESULT hr = S_OK;

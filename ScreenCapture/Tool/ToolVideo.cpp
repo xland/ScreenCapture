@@ -11,40 +11,17 @@
 
 ToolVideo::ToolVideo(const int& x, const int& y, const int& w, const int& h, WinVideo* parent) : ToolBase(x, y, w, h), parent{ parent }
 {
-    btnId = { "speaker", "mic" , "clapper" , "close","stop"};
+    btnId = { "speaker", "mic" , "clapper" , "close","clipboard","save"};
 }
 ToolVideo::~ToolVideo()
 {
 }
 void ToolVideo::onCreated()
 {
+    selectIndex = 0;
     initTip();
-
-    btnSize = 32.f * dpi;
-    auto fSize{ 15.f * dpi };
-    btnLayout.push_back(makeIconLayout(L"\ue654", btnSize, btnSize, fSize));
-    btnLayout.push_back(makeIconLayout(L"\ue73b", btnSize, btnSize, fSize));
-    btnLayout.push_back(makeIconLayout(L"\ue660", btnSize, btnSize, fSize));
-    btnLayout.push_back(makeIconLayout(L"\ue62d", btnSize, btnSize, fSize));
-    btnLayout.push_back(makeIconLayout(L"\ue68d", btnSize, btnSize, fSize));
-
-    borderRadius *= dpi;
-    paddingTopBottom *= dpi;
     initBrush();
-    fSize = 13 * dpi;
-    mp4Start = 6.f * dpi;
-    float formatW{ 42.f * dpi };
-    formatMp4 = makeTextLayout(L"MP4", formatW, h, fSize);
-    mp4End = 6.f*dpi + formatW;
-    formatGif = makeTextLayout(L"GIF", formatW, h, fSize);
-    gifEnd = mp4End + formatW;
-
-    speakerStart = gifEnd + dpi * 5 + 0.6 * dpi;
-    micStart = speakerStart + btnSize;
-    clapperStart = micStart + btnSize + dpi * 4 + 0.6 * dpi;
-    closeStart = clapperStart + btnSize;
-
-    timerEnd = mp4Start + 160.f;
+    onDpiChanged();
 }
 void ToolVideo::onTimer(const UINT& timerId)
 {
@@ -67,20 +44,23 @@ void ToolVideo::onPaint()
     render->Clear(D2D1::ColorF(0xFFFFFF));
     if (isRecording) {
         render->DrawTextLayout({ mp4Start,0.f }, timerLayout.Get(), brushIcon.Get());
-        paintIcon(timerEnd, getBtnIconLayout("stop"), hoverIndex == 6, false);
+        render->DrawLine({ timerEnd - 3*dpi,paddingTopBottom * 2 }, { timerEnd - 3*dpi,h - paddingTopBottom * 2 }, brushSpliter.Get(), 0.6f * dpi);
+        paintIcon(timerEnd, getBtnIconLayout("clipboard"), hoverIndex == 6, false);
+        paintIcon(timerEnd+btnSize, getBtnIconLayout("save"), hoverIndex == 7, false);
+        paintIcon(timerEnd+2*btnSize, getBtnIconLayout("close"), hoverIndex == 8, false);
     }
     else {
         float borderRadius{ 4.f * dpi }, paddingTopBottom{ 4.6f * dpi };
-        if (selectIndexFormat == 0) {
+        if (selectIndex == 0) {
             D2D1_ROUNDED_RECT rr = { { mp4Start, paddingTopBottom + marginTop, mp4End, h - paddingTopBottom }, borderRadius, borderRadius };
             render->FillRoundedRectangle(rr, brushSelect.Get());
         }
-        else if (selectIndexFormat == 1) {
+        else if (selectIndex == 1) {
             D2D1_ROUNDED_RECT rr = { { mp4End, paddingTopBottom + marginTop, gifEnd, h - paddingTopBottom }, borderRadius, borderRadius };
             render->FillRoundedRectangle(rr, brushSelect.Get());
         }
-        render->DrawTextLayout({ mp4Start,0 }, formatMp4.Get(), (0 == selectIndexFormat || hoverIndex == 0) ? brushBlue.Get() : brushIcon.Get());
-        render->DrawTextLayout({ mp4End ,0 }, formatGif.Get(), (1 == selectIndexFormat || hoverIndex == 1) ? brushBlue.Get() : brushIcon.Get());
+        render->DrawTextLayout({ mp4Start,0 }, formatMp4.Get(), (0 == selectIndex || hoverIndex == 0) ? brushBlue.Get() : brushIcon.Get());
+        render->DrawTextLayout({ mp4End ,0 }, formatGif.Get(), (1 == selectIndex || hoverIndex == 1) ? brushBlue.Get() : brushIcon.Get());
         render->DrawLine({ gifEnd + dpi * 3,paddingTopBottom * 2 }, { gifEnd + dpi * 3,h - paddingTopBottom * 2 }, brushSpliter.Get(), 0.6f * dpi);
         paintIcon(speakerStart, getBtnIconLayout("speaker"), hoverIndex == 2, selectSpeaker);
         paintIcon(micStart, getBtnIconLayout("mic"), hoverIndex == 3, selectMic);
@@ -101,22 +81,32 @@ void ToolVideo::onMouseDown(const int& x, const int& y, bool isRight)
     if (hoverIndex < 0) return;
     if (isRecording) {
         if (hoverIndex == 6) {
+            killTimer(100);
             parent->stop();
+        }
+        else if (hoverIndex == 7) {
+            
+        }
+        else if (hoverIndex == 8) {
+            killTimer(100);
+            parent->stop();
+            close();
+            parent->release();
         }
         return;
     }
-    if (hoverIndex == selectIndexFormat) return;    
+    if (hoverIndex == selectIndex) return;
     if(hoverIndex < 2)
     {
-        selectIndexFormat = hoverIndex;
-        if (selectIndexFormat == 1) {
+        selectIndex = hoverIndex;
+        if (selectIndex == 1) {
             selectSpeaker = false;
             selectMic = false;
         }
         refresh();
         return;
     }
-    if (selectIndexFormat == 0) {
+    if (selectIndex == 0) {
         if (hoverIndex == 2) {
             selectSpeaker = !selectSpeaker;
             refresh();
@@ -131,12 +121,19 @@ void ToolVideo::onMouseDown(const int& x, const int& y, bool isRight)
     if (hoverIndex == 4) {
         isRecording = true;
         onTimer(10);
-        resize(w - 80.f * dpi, h);
+        resize(w - 10.f * dpi, h);
         setTimer(1000, 100);
-        parent->start();
+        if (selectIndex == 0) {
+            parent->startMp4(selectSpeaker, selectMic);
+        }
+        else if (selectIndex == 1) {
+            parent->startGif();
+        }
         return;
     }
     else if (hoverIndex == 5) {
+        close();
+        parent->release();
         return;
     }
 }
@@ -144,8 +141,14 @@ void ToolVideo::onMouseMove(const int& x, const int& y)
 {
     auto index{ -1 };
     if (isRecording) {
-        if (x > timerEnd) {
+        if (x > timerEnd && x<timerEnd+btnSize) {
             index = 6;
+        }
+        else if (x > timerEnd + btnSize && x < timerEnd + 2 * btnSize) {
+            index = 7;
+        }
+        else if(x > timerEnd + 2 * btnSize){
+            index = 8;
         }
     }
     else {
@@ -199,6 +202,18 @@ void ToolVideo::onMouseMove(const int& x, const int& y)
             tipText = L"退出";
             showTipAt(this->x + closeStart + btnSize / 2, tipY);
         }
+        else if (index == 6) {
+            tipText = L"停止录制，并保存到剪切板";
+            showTipAt(this->x + timerEnd + btnSize / 2, tipY);
+        }
+        else if (index == 7) {
+            tipText = L"停止录制，并保存到文件";
+            showTipAt(this->x + timerEnd + btnSize / 2*3, tipY);
+        }
+        else if (index == 8) {
+            tipText = L"停止录制，并退出";
+            showTipAt(this->x + timerEnd + btnSize / 2 * 5, tipY);
+        }
         refresh();
     }
 }
@@ -212,10 +227,26 @@ void ToolVideo::onMouseLeave()
 void ToolVideo::onDpiChanged()
 {
     btnSize = 32.f * dpi;
+    auto fSize{ 15.f * dpi };
     btnLayout.clear();
-    auto fSize{ 14.f * dpi };
-    btnLayout.push_back(makeIconLayout(L"\ue72d", btnSize, btnSize, fSize));
-    btnLayout.push_back(makeIconLayout(L"\ue6b6", btnSize, btnSize, fSize));
+    btnLayout.push_back(makeIconLayout(L"\ue654", btnSize, btnSize, fSize));
+    btnLayout.push_back(makeIconLayout(L"\ue73b", btnSize, btnSize, fSize));
     btnLayout.push_back(makeIconLayout(L"\ue660", btnSize, btnSize, fSize));
     btnLayout.push_back(makeIconLayout(L"\ue62d", btnSize, btnSize, fSize));
+    btnLayout.push_back(makeIconLayout(L"\ue650", btnSize, btnSize, fSize));
+    btnLayout.push_back(makeIconLayout(L"\ue608", btnSize, btnSize, fSize));
+    borderRadius *= dpi;
+    paddingTopBottom *= dpi;
+    fSize = 13 * dpi;
+    mp4Start = 6.f * dpi;
+    float formatW{ 42.f * dpi };
+    formatMp4 = makeTextLayout(L"MP4", formatW, h, fSize);
+    mp4End = 6.f * dpi + formatW;
+    formatGif = makeTextLayout(L"GIF", formatW, h, fSize);
+    gifEnd = mp4End + formatW;
+    speakerStart = gifEnd + dpi * 5 + 0.6 * dpi;
+    micStart = speakerStart + btnSize;
+    clapperStart = micStart + btnSize + dpi * 4 + 0.6 * dpi;
+    closeStart = clapperStart + btnSize;
+    timerEnd = mp4Start + 116.f*dpi;
 }

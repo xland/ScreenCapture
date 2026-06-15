@@ -12,7 +12,8 @@ public:
 	~WinVideo();
 	static void init();
 	static void release();
-	void start();
+	void startMp4(bool useSpeaker, bool useMic);
+	void startGif();
 	void stop();
 public:
 	std::unique_ptr<WinCutMask> cutMask;
@@ -23,9 +24,10 @@ private:
 	void onMouseDown(const int& x, const int& y, bool isRight) override;
 	void onMouseUp(const int& x, const int& y) override;
 	void makeTool();
+	void drawCursor(HDC hMemDC);
 private:
 	std::unique_ptr<ToolVideo> tool;	
-	bool isFinishCutMask{ false };
+	bool isFinishCutMask{ false }, isFinishGifRecord{false};
 	WinVideoMp4::DESKTOPCAPTUREPARAMS dp;
 	std::jthread captureThread;
 };

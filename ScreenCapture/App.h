@@ -13,6 +13,7 @@ public:
 	static void makeDC(WinBase* win);
 	static ID2D1Factory1* getD2D();
 	static IDWriteFactory5* getWriter();
+	static std::filesystem::path getDataPath();
 	/// <summary>
 	/// 是否允许撕裂呈现（允许的话效果稍弱，但渲染更快，咱这个应用尽可能的允许）
 	/// </summary>

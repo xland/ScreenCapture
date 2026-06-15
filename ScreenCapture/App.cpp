@@ -109,4 +109,19 @@ IDWriteFactory5* App::getWriter()
     return dwriteFactory.Get();
 }
 
+std::filesystem::path App::getDataPath()
+{
+    PWSTR pathTmp;
+    auto hr = SHGetKnownFolderPath(FOLDERID_RoamingAppData, 0, nullptr, &pathTmp);
+    std::filesystem::path dataPath{ pathTmp };
+    CoTaskMemFree(pathTmp);
+    dataPath.append("ScreenCapture");
+    if (!std::filesystem::exists(dataPath)) {
+        if (!std::filesystem::create_directories(dataPath)) {
+            log(L"data path create error");
+        }
+    }
+    return dataPath;
+}
+
 
