@@ -171,6 +171,7 @@
     <ClCompile Include="Shape\ShapeText.cpp" />
     <ClCompile Include="Tool\ToolLong.cpp" />
     <ClCompile Include="Tool\ToolSubColor.cpp" />
+    <ClCompile Include="Tool\ToolVideo.cpp" />
     <ClCompile Include="Tray.cpp" />
     <ClCompile Include="Tool\ToolSubSlider.cpp" />
     <ClCompile Include="Win\WinLong.cpp" />
@@ -206,6 +207,7 @@
     <ClInclude Include="Shape\ShapeText.h" />
     <ClInclude Include="Tool\ToolLong.h" />
     <ClInclude Include="Tool\ToolSubColor.h" />
+    <ClInclude Include="Tool\ToolVideo.h" />
     <ClInclude Include="Tray.h" />
     <ClInclude Include="Tool\ToolSubSlider.h" />
     <ClInclude Include="Win\WinLong.h" />

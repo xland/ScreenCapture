@@ -23,7 +23,7 @@ private:
 	void onMouseDown(const int& x, const int& y, bool isRight) override;
 	void onMouseUp(const int& x, const int& y) override;
 	void onTimer(const UINT& timerId) override;
-	void initRes();
+	void onCreated() override;
 	BOOL onCursor() override;
 	void firstStep();
 	void makeImgPreview();

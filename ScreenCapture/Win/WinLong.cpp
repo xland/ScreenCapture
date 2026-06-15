@@ -66,14 +66,11 @@ void WinLong::init()
     auto [x, y, w, h] = Util::getDesktopInfo();
     winLong = std::make_unique<WinLong>(x, y, w, h);
     winLong->createWindow();//WS_EX_TOPMOST
-    winLong->initRes();
-    POINT pt;
-    GetCursorPos(&pt);
     winLong->cutMask = std::make_unique<WinCutMask>(winLong.get());
     winLong->show();
     UpdateWindow(winLong->hwnd);
-
 }
+
 
 void WinLong::release()
 {
@@ -83,6 +80,14 @@ void WinLong::release()
     }
 }
 
+void WinLong::onCreated()
+{
+    startCircleR *= dpi;
+    render->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White), textBrush.GetAddressOf());
+    render->CreateSolidColorBrush(D2D1::ColorF(0x000000, 0.68f), bgBrush.GetAddressOf());
+    auto size{ startCircleR * 2 };
+    layoutTextStart = makeTextLayout(L"开始", size, size, 16 * dpi);
+}
 
 void WinLong::onPaint()
 {
@@ -101,12 +106,8 @@ void WinLong::onPaint()
 }
 
 void WinLong::onMouseMove(const int& x, const int& y) {
-    if (isFinishCutMask) {
-        refresh();
-    }
-    else {
-        cutMask->highlight(x, y);
-    }
+    if (isFinishCutMask)  return;
+    cutMask->highlight(x, y);
 }
 void WinLong::onMouseDrag(const int& x, const int& y, const UINT_PTR& modifiers)
 {
@@ -128,7 +129,7 @@ void WinLong::onMouseUp(const int& x, const int& y)
         isFinishCutMask = true;
         return;
     }
-    if (isShowStartBtn) {
+    if (isShowStartBtn) { //按下开始按钮
         isScrolling = true;
         hollowWin();
         makeTool();
@@ -158,15 +159,6 @@ void WinLong::onTimer(const UINT& timerId)
 		killTimer(scrollEndMsgId); //滚动完成
         capStep();
 	}
-}
-
-void WinLong::initRes()
-{
-    startCircleR *= dpi;
-    render->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White), textBrush.GetAddressOf());
-    render->CreateSolidColorBrush(D2D1::ColorF(0x000000, 0.68f), bgBrush.GetAddressOf());
-    auto size{ startCircleR * 2 };
-    layoutTextStart = makeTextLayout(L"开始", size, size, 16 * dpi);
 }
 
 BOOL WinLong::onCursor()
