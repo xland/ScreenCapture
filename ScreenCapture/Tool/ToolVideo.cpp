@@ -67,7 +67,7 @@ void ToolVideo::onPaint()
     render->Clear(D2D1::ColorF(0xFFFFFF));
     if (isRecording) {
         render->DrawTextLayout({ mp4Start,0.f }, timerLayout.Get(), brushIcon.Get());
-        paintIcon(timerEnd, getBtnIconLayout("stop"), hoverIndex == 0, false);
+        paintIcon(timerEnd, getBtnIconLayout("stop"), hoverIndex == 6, false);
     }
     else {
         float borderRadius{ 4.f * dpi }, paddingTopBottom{ 4.6f * dpi };
@@ -100,24 +100,33 @@ void ToolVideo::onMouseDown(const int& x, const int& y, bool isRight)
 	}
     if (hoverIndex < 0) return;
     if (isRecording) {
+        if (hoverIndex == 6) {
+            parent->stop();
+        }
         return;
     }
     if (hoverIndex == selectIndexFormat) return;    
     if(hoverIndex < 2)
     {
         selectIndexFormat = hoverIndex;
+        if (selectIndexFormat == 1) {
+            selectSpeaker = false;
+            selectMic = false;
+        }
         refresh();
         return;
     }
-    if (hoverIndex == 2) {
-        selectSpeaker = !selectSpeaker;
-        refresh();
-        return;
-    }
-    if (hoverIndex == 3) {
-        selectMic = !selectMic;
-        refresh();
-        return;
+    if (selectIndexFormat == 0) {
+        if (hoverIndex == 2) {
+            selectSpeaker = !selectSpeaker;
+            refresh();
+            return;
+        }
+        if (hoverIndex == 3) {
+            selectMic = !selectMic;
+            refresh();
+            return;
+        }
     }
     if (hoverIndex == 4) {
         isRecording = true;
@@ -127,7 +136,7 @@ void ToolVideo::onMouseDown(const int& x, const int& y, bool isRight)
         parent->start();
         return;
     }
-    if (hoverIndex == 5) {
+    else if (hoverIndex == 5) {
         return;
     }
 }
@@ -136,7 +145,7 @@ void ToolVideo::onMouseMove(const int& x, const int& y)
     auto index{ -1 };
     if (isRecording) {
         if (x > timerEnd) {
-            index = 0;
+            index = 6;
         }
     }
     else {

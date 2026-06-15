@@ -26,12 +26,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "LiuXiaoLun"
             VALUE "FileDescription", "ScreenCapture"
-            VALUE "FileVersion", "2.3.4.0"
+            VALUE "FileVersion", "2.4.0.0"
             VALUE "InternalName", "ScreenCapture.exe"
-            VALUE "LegalCopyright", "Copyright (C) LiuXiaoLun 2023-2025"
+            VALUE "LegalCopyright", "Copyright (C) LiuXiaoLun 2023-2026"
             VALUE "OriginalFilename", "ScreenCapture.exe"
             VALUE "ProductName", "ScreenCapture"
-            VALUE "ProductVersion", "2.3.4.0"
+            VALUE "ProductVersion", "2.4.0.0"
         END
     END
     BLOCK "VarFileInfo"

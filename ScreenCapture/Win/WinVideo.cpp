@@ -6,7 +6,6 @@
 #include "WinPin.h"
 #include "History.h"
 #include "gifski.h"
-#include "WinVideoMp4.hpp"
 #include "Tool/ToolVideo.h"
 
 std::unique_ptr<WinVideo> winVideo;
@@ -41,6 +40,37 @@ void WinVideo::release()
 
 void WinVideo::start()
 {
+    dp.VIDEO_ENCODING_FORMAT = MFVideoFormat_HEVC;
+    dp.rx = { (long)(x + cutMask->maskRect.left), (long)(y+ cutMask->maskRect.top),
+        (long)(cutMask->maskRect.right- cutMask->maskRect.left),
+        (long)(cutMask->maskRect.bottom - cutMask->maskRect.top) };
+    dp.f = L"desktopVideo.mp4";
+    //for (auto& id : ids)
+    //{
+    //    dp.AudioFrom.push_back({ id, {0,1} });
+    //}
+    dp.EndMS = 0;
+    dp.fps = 30;
+    dp.vbrm = 2;
+    dp.vbrq = 50;
+    dp.Qu = 50;
+    dp.MustEnd = false;
+
+    captureThread = std::jthread([this](std::stop_token st) {
+        HRESULT hr = MFStartup(MF_VERSION);
+        if (FAILED(hr)) return;
+        hr = CoInitializeEx(0, COINIT_APARTMENTTHREADED);
+        if (FAILED(hr)) return;
+        WinVideoMp4::DesktopCapture(dp);
+        CoUninitialize();
+        MFShutdown();
+    });
+}
+
+void WinVideo::stop()
+{
+    dp.MustEnd = true;
+    captureThread.join();
 }
 
 void WinVideo::onPaint()

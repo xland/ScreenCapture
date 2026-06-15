@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "pch.h"
 #include "WinBase.h"
+#include "WinVideoMp4.hpp"
 
 class WinCutMask;
 class ToolVideo;
@@ -12,6 +13,7 @@ public:
 	static void init();
 	static void release();
 	void start();
+	void stop();
 public:
 	std::unique_ptr<WinCutMask> cutMask;
 private:
@@ -24,5 +26,7 @@ private:
 private:
 	std::unique_ptr<ToolVideo> tool;	
 	bool isFinishCutMask{ false };
+	WinVideoMp4::DESKTOPCAPTUREPARAMS dp;
+	std::jthread captureThread;
 };
 

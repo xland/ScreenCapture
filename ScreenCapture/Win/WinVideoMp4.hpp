@@ -35,14 +35,12 @@
 #include <audiosessiontypes.h>
 
 
-
+namespace WinVideoMp4{
 // {1884E6DC-2AE3-4499-A3D7-1A27E3B2AC39}
-inline static const GUID MyFakeFmt =
-{ 0x1884e6dc, 0x2ae3, 0x4499, { 0xa3, 0xd7, 0x1a, 0x27, 0xe3, 0xb2, 0xac, 0x39 } };
+inline static const GUID MyFakeFmt = { 0x1884e6dc, 0x2ae3, 0x4499, { 0xa3, 0xd7, 0x1a, 0x27, 0xe3, 0xb2, 0xac, 0x39 } };
 
 // {7F478D2D-9EBF-4B9A-B2F3-83800263BB86}
-inline static const GUID MFVideoFormat_RGB10 =
-{ 0x7f478d2d, 0x9ebf, 0x4b9a, { 0xb2, 0xf3, 0x83, 0x80, 0x2, 0x63, 0xbb, 0x86 } };
+inline static const GUID MFVideoFormat_RGB10 = { 0x7f478d2d, 0x9ebf, 0x4b9a, { 0xb2, 0xf3, 0x83, 0x80, 0x2, 0x63, 0xbb, 0x86 } };
 
 
 class AHANDLE
@@ -107,7 +105,6 @@ public:
 
 
 };
-
 struct REBUFFERLOCK
 {
     std::recursive_mutex* mm;
@@ -121,9 +118,6 @@ struct REBUFFERLOCK
         mm->unlock();
     }
 };
-
-
-
 template <typename T = float>
 class MIXBUFFER
 {
@@ -224,7 +218,6 @@ public:
     }
 
 };
-
 template <typename T>
 inline T Peak(T* d, size_t s)
 {
@@ -237,10 +230,6 @@ inline T Peak(T* d, size_t s)
     }
     return mm;
 }
-
-
-
-
 struct REBUFFER
 {
     std::recursive_mutex m;
@@ -317,7 +306,6 @@ struct REBUFFER
         d.clear();
     }
 };
-
 template <typename T = float>
 class READYBUFF
 {
@@ -348,8 +336,6 @@ public:
     }
 
 };
-
-
 inline HRESULT MFTrs(DWORD, DWORD iid, DWORD ood, CComPtr<IMFTransform> trs, CComPtr<IMFSample> s, IMFSample** sx)
 {
     if (!trs)
@@ -410,7 +396,6 @@ inline HRESULT MFTrs(DWORD, DWORD iid, DWORD ood, CComPtr<IMFTransform> trs, CCo
     }
     return hr;
 }
-
 struct VISTAMIXER
 {
     std::wstring id; // id
@@ -517,8 +502,6 @@ struct VISTAMIXER
     }
 
 };
-
-
 DEFINE_PROPERTYKEY(PKEY_Device_FriendlyName, 0xa45c254e, 0xdf1c, 0x4efd, 0x80, 0x20, 0x67, 0xd1, 0x46, 0xa8, 0x50, 0xe0, 14);    // DEVPROP_TYPE_STRING
 inline void EnumVistaMixers(std::vector<VISTAMIXER>& vistamixers)
 {
@@ -636,7 +619,6 @@ inline void EnumVistaMixers(std::vector<VISTAMIXER>& vistamixers)
         }
     }
 }
-
 class CAPTURE
 {
 public:
@@ -972,12 +954,6 @@ public:
     }
 
 };
-
-
-
-
-
-
 struct DESKTOPCAPTUREPARAMS
 {
     bool HasVideo = 1;
@@ -1010,8 +986,6 @@ struct DESKTOPCAPTUREPARAMS
     bool MustEnd = false;
     bool Pause = false;
 };
-
-
 struct VectorStreamX2 : public IMFByteStream
 {
     ULONG r = 1;
@@ -1247,9 +1221,6 @@ struct VectorStreamX2 : public IMFByteStream
 
 
 };
-
-
-
 inline int DesktopCapture(DESKTOPCAPTUREPARAMS& dp)
 {
     HRESULT hr = S_OK;
@@ -1363,9 +1334,6 @@ inline int DesktopCapture(DESKTOPCAPTUREPARAMS& dp)
 #else
     EnumVistaMixers();
 #endif
-
-
-
 /*    if (dp.HasAudio)
     {
         VM::EnumVistaMixers();
@@ -2207,7 +2175,7 @@ inline int DesktopCapture(DESKTOPCAPTUREPARAMS& dp)
             if (VideoTransformMFT)
             {
                 CComPtr<IMFSample> s2;
-                ::MFTrs(0, 0, 0, VideoTransformMFT, pVideoSample, &s2);
+                MFTrs(0, 0, 0, VideoTransformMFT, pVideoSample, &s2);
                 if (s2)
                     pVideoSample = s2;
             }
@@ -2301,59 +2269,4 @@ inline int DesktopCapture(DESKTOPCAPTUREPARAMS& dp)
 	return 0;
 }
 
-
-class Video
-{
-public:
-    Video() {
-        CoInitializeEx(0, COINIT_APARTMENTTHREADED);
-        MFStartup(MF_VERSION);
-    };
-    ~Video() {
-        MFShutdown();
-        CoUninitialize();
-    };
-    std::vector<std::pair<std::wstring,std::wstring>> getAudioDevices() {
-        std::vector<std::pair<std::wstring, std::wstring>> res;
-        std::vector<VISTAMIXER> vistamixers;
-        EnumVistaMixers(vistamixers);
-        for (auto& vm : vistamixers) {
-            res.push_back({ vm.id, vm.name });
-        }
-        return res;
-	}
-    void start(std::vector<std::wstring> ids) {        
-        dp.VIDEO_ENCODING_FORMAT = MFVideoFormat_HEVC;
-        dp.rx = { x,y,width,height };
-        dp.f = outputFile;
-        for (auto& id:ids)
-        {
-            dp.AudioFrom.push_back({ id, {0,1} });
-        }
-        dp.EndMS = 0;
-		dp.fps = fps;
-
-        dp.vbrm = 2;    
-        dp.vbrq = vbrq; 
-        dp.Qu = vbrq;    
-        //std::thread stopThread([this]() {
-        //    std::this_thread::sleep_for(std::chrono::seconds(6));
-        //    this->end();
-        //    });
-        DesktopCapture(dp);
-		//stopThread.join();
-    }
-    void stop() {
-		dp.MustEnd = true;
-    }
-public:
-    int width{ 800 };
-    int height{ 600 };
-    int x{ 80 };
-    int y{ 60 };
-    int fps{ 30 };
-    int vbrq{ 50 };//50 70 90
-    std::wstring outputFile{ L"output.mp4" };
-private:
-    DESKTOPCAPTUREPARAMS dp;
-};
+}
