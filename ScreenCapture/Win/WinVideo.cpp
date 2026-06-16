@@ -40,11 +40,10 @@ void WinVideo::release()
 void WinVideo::startMp4(bool useSpeaker, bool useMic)
 {
     auto videoTempPath = App::getDataPath();
-    auto pathStr = videoTempPath.append(Util::createFileName(L"mp4")).wstring();
     mp4Param = std::make_unique<WinVideoMp4::DESKTOPCAPTUREPARAMS>();
     mp4Param->VIDEO_ENCODING_FORMAT = MFVideoFormat_HEVC;
     mp4Param->rx = { (long)(x + cutMask->maskRect.left), (long)(y+ cutMask->maskRect.top), (long)(cutMask->maskRect.right- cutMask->maskRect.left), (long)(cutMask->maskRect.bottom - cutMask->maskRect.top) };
-    mp4Param->f = pathStr.data();
+    mp4Param->f = videoTempPath.append(Util::createFileName(L"mp4")).wstring();
     mp4Param->EndMS = 0;
     mp4Param->fps = 30;
     mp4Param->vbrm = 2;
@@ -65,16 +64,17 @@ void WinVideo::startMp4(bool useSpeaker, bool useMic)
 
 void WinVideo::startGif()
 {
-    auto videoTempPath = App::getDataPath();
-    gifParam = std::make_unique<WinVideoGif::GifParam>();
-    gifParam->x = (int)(this->x + cutMask->maskRect.left);
-    gifParam->y = (int)(this->y + cutMask->maskRect.top);
-    gifParam->w = (int)(cutMask->maskRect.right - cutMask->maskRect.left);
-    gifParam->h = (int)(cutMask->maskRect.bottom - cutMask->maskRect.top);
-    gifParam->path = videoTempPath.append(Util::createFileName(L"gif")).wstring();
-    captureThread = std::jthread([this](std::stop_token st) {
-        WinVideoGif::createGif(gifParam.get());
-    });
+    //这段代码是好的，但会让exe体积从632增大到1404
+    //auto videoTempPath = App::getDataPath();
+    //gifParam = std::make_unique<WinVideoGif::GifParam>();
+    //gifParam->x = (int)(this->x + cutMask->maskRect.left);
+    //gifParam->y = (int)(this->y + cutMask->maskRect.top);
+    //gifParam->w = (int)(cutMask->maskRect.right - cutMask->maskRect.left);
+    //gifParam->h = (int)(cutMask->maskRect.bottom - cutMask->maskRect.top);
+    //gifParam->path = videoTempPath.append(Util::createFileName(L"gif")).wstring();
+    //captureThread = std::jthread([this](std::stop_token st) {
+    //    WinVideoGif::createGif(gifParam.get());
+    //});
 }
 
 void WinVideo::stop()
