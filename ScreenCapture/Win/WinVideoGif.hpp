@@ -15,19 +15,17 @@ namespace WinVideoGif {
         int h;
         int x;
         int y;
-        int winX;
-        int winY;
         UINT fps{20};
     };
 
-    void drawCursor(HDC hMemDC, GifParam* param) {
+    inline void drawCursor(HDC hMemDC, GifParam* param) {
         CURSORINFO cursorInfo = { sizeof(CURSORINFO) };
         GetCursorInfo(&cursorInfo);
         if (cursorInfo.flags == CURSOR_SHOWING) {
             ICONINFO iconInfo;
             GetIconInfo(cursorInfo.hCursor, &iconInfo);
-            int localX = cursorInfo.ptScreenPos.x - param->winX - iconInfo.xHotspot;
-            int localY = cursorInfo.ptScreenPos.y - param->winY - iconInfo.yHotspot;
+            int localX = cursorInfo.ptScreenPos.x - param->x - iconInfo.xHotspot;
+            int localY = cursorInfo.ptScreenPos.y - param->y - iconInfo.yHotspot;
             if (iconInfo.hbmMask) DeleteObject(iconInfo.hbmMask);
             if (iconInfo.hbmColor) DeleteObject(iconInfo.hbmColor);
             if (localX >= 0 && localX < param->w  && localY >= 0 && localY < param->h) {
@@ -35,7 +33,7 @@ namespace WinVideoGif {
             }
         }
     }
-    void createGif(GifParam* param) {
+    inline void createGif(GifParam* param) {
         GifskiSettings setting{
             .width{(uint32_t)param->w},
             .height{(uint32_t)param->h},

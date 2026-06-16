@@ -72,8 +72,6 @@ void WinVideo::startGif()
     gifParam->w = (int)(cutMask->maskRect.right - cutMask->maskRect.left);
     gifParam->h = (int)(cutMask->maskRect.bottom - cutMask->maskRect.top);
     gifParam->path = videoTempPath.append(Util::createFileName(L"gif")).wstring();
-    gifParam->winX = this->x;
-    gifParam->winY = this->y;
     captureThread = std::jthread([this](std::stop_token st) {
         WinVideoGif::createGif(gifParam.get());
     });
