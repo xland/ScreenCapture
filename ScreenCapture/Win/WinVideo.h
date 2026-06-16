@@ -2,6 +2,7 @@
 #include "pch.h"
 #include "WinBase.h"
 #include "WinVideoMp4.hpp"
+#include "WinVideoGif.hpp"
 
 class WinCutMask;
 class ToolVideo;
@@ -24,11 +25,12 @@ private:
 	void onMouseDown(const int& x, const int& y, bool isRight) override;
 	void onMouseUp(const int& x, const int& y) override;
 	void makeTool();
-	void drawCursor(HDC hMemDC);
+	void drawCursor(HDC hMemDC,const int& width,const int& height);
 private:
 	std::unique_ptr<ToolVideo> tool;	
 	bool isFinishCutMask{ false }, isFinishGifRecord{false};
-	WinVideoMp4::DESKTOPCAPTUREPARAMS dp;
+	std::unique_ptr<WinVideoMp4::DESKTOPCAPTUREPARAMS> mp4Param;
+	std::unique_ptr<WinVideoGif::GifParam> gifParam;
 	std::jthread captureThread;
 };
 

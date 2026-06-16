@@ -1,4 +1,6 @@
-﻿#include "pch.h"
+﻿#pragma once
+
+#include "pch.h"
 #include <wininet.h>
 #include <process.h>
 #include <commctrl.h>
@@ -736,14 +738,17 @@ public:
             {
                 if (lCursorInfo.flags == CURSOR_SHOWING && Curs)
                 {
+                    ICONINFO iconInfo;
+                    GetIconInfo(lCursorInfo.hCursor, &iconInfo);
+                    if (iconInfo.hbmMask) DeleteObject(iconInfo.hbmMask);
+                    if (iconInfo.hbmColor) DeleteObject(iconInfo.hbmColor);
                     auto lCursorPosition = lCursorInfo.ptScreenPos;
-                    //                auto lCursorSize = lCursorInfo.cbSize;
                     HDC  lHDC;
                     lIDXGISurface1->GetDC(FALSE, &lHDC);
                     DrawIconEx(
                         lHDC,
-                        lCursorPosition.x,
-                        lCursorPosition.y,
+                        lCursorPosition.x- iconInfo.xHotspot,
+                        lCursorPosition.y- iconInfo.yHotspot,
                         lCursorInfo.hCursor,
                         0,
                         0,
@@ -1222,10 +1227,10 @@ struct VectorStreamX2 : public IMFByteStream
 
 };
 
-inline void setAudio(DESKTOPCAPTUREPARAMS& dp,bool useSpeaker, bool useMic) 
+inline void setAudio(DESKTOPCAPTUREPARAMS* dp,bool useSpeaker, bool useMic) 
 {
     if (!useMic && !useSpeaker) return;
-    dp.AudioFrom.clear();
+    dp->AudioFrom.clear();
     ComPtr<IMMDeviceEnumerator> deviceEnumerator = nullptr;
     HRESULT hrAudio = CoCreateInstance(__uuidof(MMDeviceEnumerator), NULL, CLSCTX_INPROC_SERVER, __uuidof(IMMDeviceEnumerator), (LPVOID*)&deviceEnumerator);
     if (SUCCEEDED(hrAudio) && deviceEnumerator)
@@ -1237,7 +1242,7 @@ inline void setAudio(DESKTOPCAPTUREPARAMS& dp,bool useSpeaker, bool useMic)
                 LPWSTR capId = nullptr;
                 if (SUCCEEDED(defaultCapture->GetId(&capId)) && capId)
                 {
-                    dp.AudioFrom.push_back({ capId, {0, 1} });
+                    dp->AudioFrom.push_back({ capId, {0, 1} });
                     CoTaskMemFree(capId);
                 }
             }
@@ -1249,7 +1254,7 @@ inline void setAudio(DESKTOPCAPTUREPARAMS& dp,bool useSpeaker, bool useMic)
                 LPWSTR renId = nullptr;
                 if (SUCCEEDED(defaultRender->GetId(&renId)) && renId)
                 {
-                    dp.AudioFrom.push_back({ renId, {0, 1} });
+                    dp->AudioFrom.push_back({ renId, {0, 1} });
                     CoTaskMemFree(renId);
                 }
             }

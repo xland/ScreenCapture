@@ -203,6 +203,9 @@
     <ClInclude Include="Tool\ToolVideo.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="Win\WinVideoGif.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Res\Resource.rc">

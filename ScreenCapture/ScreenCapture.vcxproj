@@ -225,6 +225,7 @@
     <ClInclude Include="Tool\ToolMain.h" />
     <ClInclude Include="Tool\ToolSub.h" />
     <ClInclude Include="Win\WinVideo.h" />
+    <ClInclude Include="Win\WinVideoGif.hpp" />
     <ClInclude Include="Win\WinVideoMp4.hpp" />
   </ItemGroup>
   <ItemGroup>

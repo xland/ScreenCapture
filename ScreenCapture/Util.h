@@ -14,5 +14,7 @@ public:
 	static bool isInRect(const D2D1_RECT_F& rect, const float& x, const float& y);
 	static std::tuple<int, int, int, int> getDesktopInfo();
 	static std::wstring createFileName(const std::wstring& ext);
+	static std::wstring convertToWStr(const char* str);
+	static std::string convertToStr(const std::wstring& wstr);
 };
 
