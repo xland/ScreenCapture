@@ -1,10 +1,10 @@
 ﻿#pragma once
 
 #include "pch.h"
-#include "gifski.h"
+//#include "gifski.h"
 #include "Util.h"
 #include "cgif/cgif.h"
-
+//D:\sdk\gifski\target\release\gifski.lib
 
 namespace WinVideoGif {
 
@@ -38,52 +38,52 @@ namespace WinVideoGif {
     //这段代码是好的，但会让exe体积从632增大到1404
     //生成的gif体积很小
     inline void createGif2(GifParam* param) {
-        GifskiSettings setting{
-            .width{(uint32_t)param->w},
-            .height{(uint32_t)param->h},
-            .quality{80},
-            .fast{true},
-            .repeat{0}//循环
-        };
-        auto path = Util::convertToStr(param->path);
-        gifski* encoder = gifski_new(&setting);
-        gifski_set_file_output(encoder, path.data());
-        // 用32位位图采集，天然4字节对齐，无行填充问题
-        uint32_t srcRowBytes = param->w * 4;
-        std::vector<unsigned char> bgra_buffer(srcRowBytes * param->h);
-        // gifski需要紧密排列的RGB数据
-        uint32_t dstRowBytes = param->w * 3;
-        std::vector<unsigned char> rgb_buffer(dstRowBytes * param->h);
-        HDC hScreenDC = GetDC(nullptr);
-        HDC hMemDC = CreateCompatibleDC(hScreenDC);
-        HBITMAP hBitmap = CreateCompatibleBitmap(hScreenDC, param->w, param->h);
-        HGDIOBJ hOldBitmap = SelectObject(hMemDC, hBitmap);
-        BITMAPINFO bmi = { sizeof(BITMAPINFOHEADER), param->w, 0-param->h, 1, 32, BI_RGB, 0, 0, 0, 0, 0 };
-        auto index{ 0 };
-        while (!param->isFinish) {
-            BitBlt(hMemDC, 0, 0, param->w, param->h, hScreenDC, param->x, param->y, SRCCOPY);
-            drawCursor(hMemDC, param);
-            GetDIBits(hMemDC, hBitmap, 0, param->h, (void*)bgra_buffer.data(), &bmi, DIB_RGB_COLORS);
-            // BGRA → RGB，逐行转换到紧密排列的缓冲区
-            for (int row = 0; row < param->h; row++) {
-                const unsigned char* srcRow = bgra_buffer.data() + row * srcRowBytes;
-                unsigned char* dstRow = rgb_buffer.data() + row * dstRowBytes;
-                for (int col = 0; col < param->w; col++) {
-                    dstRow[col * 3 + 0] = srcRow[col * 4 + 2]; // R
-                    dstRow[col * 3 + 1] = srcRow[col * 4 + 1]; // G
-                    dstRow[col * 3 + 2] = srcRow[col * 4 + 0]; // B
-                }
-            }
-            double timestamp_sec = static_cast<double>(index) / param->fps;
-            gifski_add_frame_rgb(encoder, index, (uint32_t)param->w, dstRowBytes, (uint32_t)param->h, rgb_buffer.data(), timestamp_sec);
-            Sleep(1000 / param->fps);
-            index += 1;
-        }
-        gifski_finish(encoder);
-        SelectObject(hMemDC, hOldBitmap);
-        DeleteObject(hBitmap);
-        DeleteDC(hMemDC);
-        ReleaseDC(nullptr, hScreenDC);
+        //GifskiSettings setting{
+        //    .width{(uint32_t)param->w},
+        //    .height{(uint32_t)param->h},
+        //    .quality{80},
+        //    .fast{true},
+        //    .repeat{0}//循环
+        //};
+        //auto path = Util::convertToStr(param->path);
+        //gifski* encoder = gifski_new(&setting);
+        //gifski_set_file_output(encoder, path.data());
+        //// 用32位位图采集，天然4字节对齐，无行填充问题
+        //uint32_t srcRowBytes = param->w * 4;
+        //std::vector<unsigned char> bgra_buffer(srcRowBytes * param->h);
+        //// gifski需要紧密排列的RGB数据
+        //uint32_t dstRowBytes = param->w * 3;
+        //std::vector<unsigned char> rgb_buffer(dstRowBytes * param->h);
+        //HDC hScreenDC = GetDC(nullptr);
+        //HDC hMemDC = CreateCompatibleDC(hScreenDC);
+        //HBITMAP hBitmap = CreateCompatibleBitmap(hScreenDC, param->w, param->h);
+        //HGDIOBJ hOldBitmap = SelectObject(hMemDC, hBitmap);
+        //BITMAPINFO bmi = { sizeof(BITMAPINFOHEADER), param->w, 0-param->h, 1, 32, BI_RGB, 0, 0, 0, 0, 0 };
+        //auto index{ 0 };
+        //while (!param->isFinish) {
+        //    BitBlt(hMemDC, 0, 0, param->w, param->h, hScreenDC, param->x, param->y, SRCCOPY);
+        //    drawCursor(hMemDC, param);
+        //    GetDIBits(hMemDC, hBitmap, 0, param->h, (void*)bgra_buffer.data(), &bmi, DIB_RGB_COLORS);
+        //    // BGRA → RGB，逐行转换到紧密排列的缓冲区
+        //    for (int row = 0; row < param->h; row++) {
+        //        const unsigned char* srcRow = bgra_buffer.data() + row * srcRowBytes;
+        //        unsigned char* dstRow = rgb_buffer.data() + row * dstRowBytes;
+        //        for (int col = 0; col < param->w; col++) {
+        //            dstRow[col * 3 + 0] = srcRow[col * 4 + 2]; // R
+        //            dstRow[col * 3 + 1] = srcRow[col * 4 + 1]; // G
+        //            dstRow[col * 3 + 2] = srcRow[col * 4 + 0]; // B
+        //        }
+        //    }
+        //    double timestamp_sec = static_cast<double>(index) / param->fps;
+        //    gifski_add_frame_rgb(encoder, index, (uint32_t)param->w, dstRowBytes, (uint32_t)param->h, rgb_buffer.data(), timestamp_sec);
+        //    Sleep(1000 / param->fps);
+        //    index += 1;
+        //}
+        //gifski_finish(encoder);
+        //SelectObject(hMemDC, hOldBitmap);
+        //DeleteObject(hBitmap);
+        //DeleteDC(hMemDC);
+        //ReleaseDC(nullptr, hScreenDC);
     }
 
     inline void createGif(GifParam* param) {
