@@ -57,7 +57,7 @@ void WinPix::onCreated()
     show();
 }
 
-COLORREF WinPix::paintImg()
+void WinPix::paintImg()
 {
     auto win = WinCap::get();
     auto wHalf{ srcW / 2 }, hHalf{ srcH / 2 };
@@ -89,16 +89,15 @@ COLORREF WinPix::paintImg()
     auto props = D2D1::BitmapProperties(D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED));
     D2D1_MAPPED_RECT mapped{};
     auto hr = cpuImg->Map(D2D1_MAP_OPTIONS_READ, &mapped);
-    if (FAILED(hr)) return RGB(0, 0, 0);
+    if (FAILED(hr)) return;
     hr = render->CreateBitmap(cpuImg->GetPixelSize(), mapped.bits, mapped.pitch, &props, imgSrc.GetAddressOf());
     BYTE* pix = mapped.bits + hHalf * mapped.pitch + wHalf * 4;
-    COLORREF cr = RGB(pix[2], pix[1], pix[0]);;
+    cr = RGB(pix[2], pix[1], pix[0]);;
     hr = cpuImg->Unmap();
     render->DrawBitmap(imgSrc.Get(), destRect, 1.0f, D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR);
-    return cr;
 }
 
-void WinPix::paintText(COLORREF& cr, const int& x, const int& y) {
+void WinPix::paintText(const int& x, const int& y) {
     float padding{ 9.0 };
     BYTE r = GetRValue(cr), g = GetGValue(cr), b = GetBValue(cr);
     wchar_t hex[8];
@@ -136,13 +135,13 @@ void WinPix::onPaint()
     render->Clear(D2D1::ColorF(0x000000, 0.3f));
     auto r = D2D1::RectF(0, 0, w, h);
     render->FillRectangle(r, bgBrush.Get());
-    auto cr = paintImg();
+    paintImg();
     render->DrawRectangle(r, borderBrush.Get(), 2.f);
     render->FillRectangle(crossRect0, crossBrush.Get());
     render->FillRectangle(crossRect1, crossBrush.Get());
     render->FillRectangle(crossRect2, crossBrush.Get());
     render->FillRectangle(crossRect3, crossBrush.Get());
-    paintText(cr, x, y);
+    paintText(x, y);
 }
 
 LRESULT WinPix::onHitTest(WPARAM wParam, LPARAM lParam)
@@ -154,5 +153,43 @@ void WinPix::onKeyDown(const UINT& key)
 {
     if (key == VK_ESCAPE) {
         WinCap::release();
+    }
+    if (key == 'h' || key == 'H') {
+        if (GetKeyState(VK_CONTROL) & 0x8000) {
+            BYTE r = GetRValue(cr), g = GetGValue(cr), b = GetBValue(cr);
+            wchar_t hex[8];
+            swprintf_s(hex, L"#%02X%02X%02X", r, g, b);
+            Util::setTextToClipboard(hex);
+            WinCap::release();
+        }
+    }
+    else if (key == 'r' || key == 'R') {
+        if (GetKeyState(VK_CONTROL) & 0x8000) {
+            BYTE r = GetRValue(cr), g = GetGValue(cr), b = GetBValue(cr);
+            Util::setTextToClipboard(std::format(L"rgb({},{},{})", r, g, b));
+            WinCap::release();
+        }
+    }
+    else if (key == 'k' || key == 'K') {
+        if (GetKeyState(VK_CONTROL) & 0x8000) {
+            BYTE r = GetRValue(cr), g = GetGValue(cr), b = GetBValue(cr);
+            double R = r / 255.0, G = g / 255.0, B = b / 255.0;
+            double K = 1.0 - (std::max)(R, (std::max)(G, B));
+            double C = (K == 1.0) ? 0.0 : (1.0 - R - K) / (1.0 - K);
+            double M = (K == 1.0) ? 0.0 : (1.0 - G - K) / (1.0 - K);
+            double Y = (K == 1.0) ? 0.0 : (1.0 - B - K) / (1.0 - K);
+            int c = static_cast<int>(std::round(C * 100));
+            int m = static_cast<int>(std::round(M * 100));
+            int y1 = static_cast<int>(std::round(Y * 100));
+            int k = static_cast<int>(std::round(K * 100));
+            Util::setTextToClipboard(std::format(L"cmyk({},{},{},{})", c, m, y1, k));
+            WinCap::release();
+        }
+    }
+    else if (key == 'p' || key == 'P') {
+        if (GetKeyState(VK_CONTROL) & 0x8000) {
+            Util::setTextToClipboard(std::format(L"{},{}", cursorX, cursorY));
+            WinCap::release();
+        }
     }
 }

@@ -1,7 +1,6 @@
 
-- shape mosaic mouseDrag的时候多次执行 resetMosaic();
-- 按ESC推出截屏
 - 取色快捷键我好像还没做
+- shape mosaic mouseDrag的时候多次执行 resetMosaic();
 - 不能让工具条窗口常驻，应该随用随创建
 - 窗口的dpi是要变化的
 - 打开配置文件

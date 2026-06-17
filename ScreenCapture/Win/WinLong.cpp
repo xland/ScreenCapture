@@ -186,6 +186,14 @@ void WinLong::onTimer(const UINT& timerId)
 	}
 }
 
+void WinLong::onKeyDown(const UINT& key)
+{
+    if (key == VK_ESCAPE) {
+        if (tool.get())tool->close();
+        WinLong::release();
+    }
+}
+
 BOOL WinLong::onCursor()
 {
     if (isFinish) {

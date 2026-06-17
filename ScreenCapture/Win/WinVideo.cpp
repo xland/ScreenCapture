@@ -138,6 +138,14 @@ void WinVideo::onMouseUp(const int& x, const int& y)
     }
 }
 
+void WinVideo::onKeyDown(const UINT& key)
+{
+    if (key == VK_ESCAPE) {
+        if (tool.get())tool->close();
+        WinVideo::release();
+    }
+}
+
 void WinVideo::makeTool()
 {
     auto btnSize{ 32.f * dpi };
