@@ -116,7 +116,7 @@ void Util::setTextToClipboard(const std::wstring& text)
     Clipboard::Flush();
 }
 
-std::wstring Util::getSaveFilePath(HWND hwnd)
+std::wstring Util::getSaveFilePath(HWND hwnd, const std::wstring& ext)
 {
     std::wstring result;
     ComPtr<IFileSaveDialog> saveDialog;
@@ -125,11 +125,12 @@ std::wstring Util::getSaveFilePath(HWND hwnd)
     DWORD dwFlags;
     saveDialog->GetOptions(&dwFlags);
     saveDialog->SetOptions(dwFlags | FOS_OVERWRITEPROMPT | FOS_STRICTFILETYPES);
-    COMDLG_FILTERSPEC rgFilterSpec[] = { { L"PNG 图像", L"*.png" } };
+    auto xx = L"*." + ext;
+    COMDLG_FILTERSPEC rgFilterSpec[] = { { L"文件", xx.data()}};
     saveDialog->SetFileTypes(_countof(rgFilterSpec), rgFilterSpec);
     saveDialog->SetFileTypeIndex(1);
-    saveDialog->SetDefaultExtension(L"png");
-    std::wstring fileName = createFileName(L"png");
+    saveDialog->SetDefaultExtension(ext.data());
+    std::wstring fileName = createFileName(ext);
     saveDialog->SetFileName(fileName.data());
     hr = saveDialog->Show(hwnd);
     if (FAILED(hr)) return result;
@@ -142,6 +143,27 @@ std::wstring Util::getSaveFilePath(HWND hwnd)
     result = pszFilePath;
     CoTaskMemFree(pszFilePath);
     return result;
+}
+
+std::wstring Util::getSaveFilePath2(HWND hwnd, const std::wstring& ext)
+{
+    Pickers::FileSavePicker picker;
+    auto init = picker.as<IInitializeWithWindow>();
+    init->Initialize(hwnd);
+    picker.SuggestedStartLocation(Pickers::PickerLocationId::Desktop); //默认路径
+    picker.SettingsIdentifier(L"ScreenCapture");
+    picker.CommitButtonText(L"保存文件"); //保存按钮的文本
+    auto typeArr = winrt::single_threaded_vector<winrt::hstring>(); //文件扩展名
+    typeArr.Append(L"."+ ext);
+    picker.FileTypeChoices().Insert(L"文件", typeArr);
+    std::wstring fileName = createFileName(ext);
+    picker.SuggestedFileName(fileName); //建议文件名
+    auto fileOp = picker.PickSaveFileAsync(); //异步保存文件
+    StorageFile file = fileOp.get();//同步操作
+    if (file) {
+        return std::wstring{ file.Path() };
+    }
+    return L"";
 }
 
 std::wstring Util::getTextFromClipboard()
@@ -227,11 +249,9 @@ std::string Util::convertToStr(const std::wstring& wstr)
     return str;
 }
 
-void Util::addFile(const std::wstring& filePath)
+void Util::addFileToClipboard(const std::wstring& filePath)
 {
-    if (!OpenClipboard(NULL)) {
-        return;
-    }
+    if (!OpenClipboard(NULL)) return;
     EmptyClipboard();
     size_t totalSize = sizeof(DROPFILES);
     totalSize += (filePath.length() + 1) * sizeof(wchar_t);

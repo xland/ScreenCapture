@@ -161,6 +161,7 @@ LRESULT WinBase::onHitTest(WPARAM wParam, LPARAM lParam)
 {
     return DefWindowProc(hwnd, WM_NCHITTEST, wParam, lParam);
 }
+
 BOOL WinBase::onCursor()
 {
     SetCursor(LoadCursor(NULL, IDC_CROSS));

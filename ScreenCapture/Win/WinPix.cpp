@@ -90,11 +90,12 @@ COLORREF WinPix::paintImg()
     auto props = D2D1::BitmapProperties(D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED));
     D2D1_MAPPED_RECT mapped{};
     auto hr = cpuImg->Map(D2D1_MAP_OPTIONS_READ, &mapped);
+    if (FAILED(hr)) return RGB(0, 0, 0);
     hr = render->CreateBitmap(cpuImg->GetPixelSize(), mapped.bits, mapped.pitch, &props, imgSrc.GetAddressOf());
     BYTE* pix = mapped.bits + hHalf * mapped.pitch + wHalf * 4;
+    COLORREF cr = RGB(pix[2], pix[1], pix[0]);;
     hr = cpuImg->Unmap();
     render->DrawBitmap(imgSrc.Get(), destRect, 1.0f, D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR);
-    COLORREF cr = RGB(pix[2],pix[1], pix[0]);;
     return cr;
 }
 

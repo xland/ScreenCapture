@@ -19,6 +19,7 @@ public:
 public:
 	std::unique_ptr<WinCutMask> cutMask;
 private:
+	LRESULT onHitTest(WPARAM wParam, LPARAM lParam) override;
 	void onPaint() override;
 	void onMouseMove(const int& x, const int& y) override;
 	void onMouseDrag(const int& x, const int& y, const UINT_PTR& modifiers) override;
@@ -26,9 +27,10 @@ private:
 	void onMouseUp(const int& x, const int& y) override;
 	void makeTool();
 	void drawCursor(HDC hMemDC,const int& width,const int& height);
+	void setMouseTransparent(bool transparent);
 private:
 	std::unique_ptr<ToolVideo> tool;	
-	bool isFinishCutMask{ false }, isFinishGifRecord{false};
+	bool isFinishCutMask{ false }, isMouseTransparent{false};
 	std::unique_ptr<WinVideoMp4::DESKTOPCAPTUREPARAMS> mp4Param;
 	std::unique_ptr<WinVideoGif::GifParam> gifParam;
 	std::jthread captureThread;

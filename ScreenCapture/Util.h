@@ -8,7 +8,8 @@ public:
 	static void saveToClipboard(int& w, int& h, BYTE* data);
 	static bool saveToFile(const std::wstring& path,const int& w,const int& h, BYTE* data);
 	static void setTextToClipboard(const std::wstring& text);
-	static std::wstring getSaveFilePath(HWND hwnd);
+	static std::wstring getSaveFilePath(HWND hwnd, const std::wstring& ext = L"png");
+	static std::wstring getSaveFilePath2(HWND hwnd,const std::wstring& ext=L"png");
 	static std::wstring getTextFromClipboard();
 	static std::vector<BYTE> captureScreen(const int& x, const int& y, const int& w, const int& h);
 	static bool isInRect(const D2D1_RECT_F& rect, const float& x, const float& y);
@@ -16,6 +17,6 @@ public:
 	static std::wstring createFileName(const std::wstring& ext);
 	static std::wstring convertToWStr(const char* str);
 	static std::string convertToStr(const std::wstring& wstr);
-	static void addFile(const std::wstring& filePath);
+	static void addFileToClipboard(const std::wstring& filePath);
 };
 

@@ -83,7 +83,7 @@ void ToolVideo::onMouseDown(const int& x, const int& y, bool isRight)
         if (hoverIndex == 6) {
             killTimer(100);
             auto path = parent->stop();
-
+            Util::addFileToClipboard(path);
             close();
             parent->release();
         }
@@ -91,7 +91,8 @@ void ToolVideo::onMouseDown(const int& x, const int& y, bool isRight)
             killTimer(100);
             parent->stop();
             close();
-            parent->release();            
+            auto tarPath = Util::getSaveFilePath(nullptr,L"mp4");
+            parent->release();       
         }
         else if (hoverIndex == 8) {
             killTimer(100);

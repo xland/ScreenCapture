@@ -18,6 +18,7 @@ BOOL App::allowTearing = FALSE;
 
 App::App(HINSTANCE hInstance) : hInstance(hInstance)
 {
+    SetCurrentProcessExplicitAppUserModelID(L"github.xland.ScreenCapture");
 }
 
 App::~App()

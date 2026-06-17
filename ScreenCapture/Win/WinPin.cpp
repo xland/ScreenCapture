@@ -229,7 +229,7 @@ void WinPin::initImg()
     auto rect = D2D1::RectU(x, y, x+w, y+h);
     auto cpuImg = win->getImgByRect(rect);
     D2D1_MAPPED_RECT mapped{};
-    auto hr = cpuImg->Map(D2D1_MAP_OPTIONS_READ, &mapped);
+    auto hr = cpuImg->Map(D2D1_MAP_OPTIONS_READ, &mapped); //todo error check
     // 创建带 TARGET 标志的 Bitmap1，使其可直接作为渲染目标
     D2D1_BITMAP_PROPERTIES1 props{};
     props.pixelFormat = D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED);

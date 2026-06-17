@@ -39,6 +39,7 @@ void WinVideo::release()
 
 void WinVideo::startMp4(bool useSpeaker, bool useMic)
 {
+    setMouseTransparent(true);
     auto videoTempPath = App::getDataPath();
     mp4Param = std::make_unique<WinVideoMp4::DESKTOPCAPTUREPARAMS>();
     mp4Param->VIDEO_ENCODING_FORMAT = MFVideoFormat_HEVC;
@@ -64,6 +65,7 @@ void WinVideo::startMp4(bool useSpeaker, bool useMic)
 
 void WinVideo::startGif()
 {
+    setMouseTransparent(true);
     auto videoTempPath = App::getDataPath();
     gifParam = std::make_unique<WinVideoGif::GifParam>();
     gifParam->x = (int)(this->x + cutMask->maskRect.left);
@@ -91,6 +93,14 @@ std::wstring WinVideo::stop()
         captureThread.join();
     }
     return filePath;
+}
+
+LRESULT WinVideo::onHitTest(WPARAM wParam, LPARAM lParam)
+{
+    if (isMouseTransparent || isFinishCutMask || mp4Param || gifParam) {
+        return HTTRANSPARENT;
+    }
+    return HTCLIENT;
 }
 
 void WinVideo::onPaint()
@@ -122,6 +132,7 @@ void WinVideo::onMouseUp(const int& x, const int& y)
 {
     if (!isFinishCutMask) {
         isFinishCutMask = true;
+        setMouseTransparent(true);
         makeTool();
         return;
     }
@@ -153,4 +164,45 @@ void WinVideo::drawCursor(HDC hMemDC, const int& width, const int& height) {
             DrawIconEx(hMemDC, localX, localY, cursorInfo.hCursor, 0, 0, 0, nullptr, DI_NORMAL | DI_DEFAULTSIZE);
         }
     }
+}
+
+void WinVideo::setMouseTransparent(bool transparent)
+{
+    isMouseTransparent = transparent;
+
+    if (!hwnd) return;
+
+    LONG_PTR exStyle = GetWindowLongPtr(hwnd, GWL_EXSTYLE);
+
+    if (transparent) {
+        exStyle |= WS_EX_LAYERED;
+        exStyle |= WS_EX_TRANSPARENT;
+
+        if (GetCapture() == hwnd) {
+            ReleaseCapture();
+        }
+
+        isMouseDown = false;
+        SetLayeredWindowAttributes(hwnd, 0, 255, LWA_ALPHA);
+    }
+    else {
+        exStyle &= ~WS_EX_TRANSPARENT;
+        exStyle &= ~WS_EX_LAYERED;
+    }
+
+    SetWindowLongPtr(hwnd, GWL_EXSTYLE, exStyle);
+
+    SetWindowPos(
+        hwnd,
+        nullptr,
+        0,
+        0,
+        0,
+        0,
+        SWP_NOMOVE |
+        SWP_NOSIZE |
+        SWP_NOZORDER |
+        SWP_NOACTIVATE |
+        SWP_FRAMECHANGED
+    );
 }
