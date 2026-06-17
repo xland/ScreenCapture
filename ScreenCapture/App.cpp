@@ -32,8 +32,8 @@ void App::init(HINSTANCE hInstance)
     App::initDevice();
 	app = std::make_unique<App>(hInstance);
     Tray::init();
-    WinVideo::init();
-    //WinLong::init();
+    //WinVideo::init();
+    WinLong::init();
     //WinCap::init();
 }
 
@@ -112,14 +112,17 @@ IDWriteFactory5* App::getWriter()
 
 std::filesystem::path App::getDataPath()
 {
-    PWSTR pathTmp;
-    auto hr = SHGetKnownFolderPath(FOLDERID_RoamingAppData, 0, nullptr, &pathTmp);
-    std::filesystem::path dataPath{ pathTmp };
-    CoTaskMemFree(pathTmp);
-    dataPath.append("ScreenCapture");
-    if (!std::filesystem::exists(dataPath)) {
-        if (!std::filesystem::create_directories(dataPath)) {
-            log(L"data path create error");
+    static std::filesystem::path dataPath;
+    if (dataPath.empty()) {
+        PWSTR pathTmp;
+        auto hr = SHGetKnownFolderPath(FOLDERID_RoamingAppData, 0, nullptr, &pathTmp);
+        dataPath = std::filesystem::path{ pathTmp };
+        CoTaskMemFree(pathTmp);
+        dataPath.append("ScreenCapture/Temp");
+        if (!std::filesystem::exists(dataPath)) {
+            if (!std::filesystem::create_directories(dataPath)) {
+                log(L"data path create error");
+            }
         }
     }
     return dataPath;

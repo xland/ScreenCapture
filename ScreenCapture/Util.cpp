@@ -145,27 +145,6 @@ std::wstring Util::getSaveFilePath(HWND hwnd, const std::wstring& ext)
     return result;
 }
 
-std::wstring Util::getSaveFilePath2(HWND hwnd, const std::wstring& ext)
-{
-    Pickers::FileSavePicker picker;
-    auto init = picker.as<IInitializeWithWindow>();
-    init->Initialize(hwnd);
-    picker.SuggestedStartLocation(Pickers::PickerLocationId::Desktop); //默认路径
-    picker.SettingsIdentifier(L"ScreenCapture");
-    picker.CommitButtonText(L"保存文件"); //保存按钮的文本
-    auto typeArr = winrt::single_threaded_vector<winrt::hstring>(); //文件扩展名
-    typeArr.Append(L"."+ ext);
-    picker.FileTypeChoices().Insert(L"文件", typeArr);
-    std::wstring fileName = createFileName(ext);
-    picker.SuggestedFileName(fileName); //建议文件名
-    auto fileOp = picker.PickSaveFileAsync(); //异步保存文件
-    StorageFile file = fileOp.get();//同步操作
-    if (file) {
-        return std::wstring{ file.Path() };
-    }
-    return L"";
-}
-
 std::wstring Util::getTextFromClipboard()
 {
     if (!OpenClipboard(nullptr))

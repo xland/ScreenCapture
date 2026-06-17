@@ -106,8 +106,33 @@ void WinLong::onPaint()
 }
 
 void WinLong::onMouseMove(const int& x, const int& y) {
-    if (isFinishCutMask)  return;
-    cutMask->highlight(x, y);
+    if (isFinish) {
+        if (isShowStartBtn) {
+            isShowStartBtn = false;
+            refresh();
+        }
+    }
+    if (isFinishCutMask) {
+        circleCenter.x = x;
+        circleCenter.y = y;
+        if (Util::isInRect(cutMask->maskRect,x,y)) {
+            isShowStartBtn = true;
+            refresh();
+        }
+        else {
+            if (isShowStartBtn) {
+                isShowStartBtn = false;
+                refresh();
+            }
+        }
+    }
+    else {
+        if (isShowStartBtn) {
+            isShowStartBtn = false;
+            refresh();
+        }
+        cutMask->highlight(x, y);
+    }
 }
 void WinLong::onMouseDrag(const int& x, const int& y, const UINT_PTR& modifiers)
 {
@@ -164,27 +189,19 @@ void WinLong::onTimer(const UINT& timerId)
 BOOL WinLong::onCursor()
 {
     if (isFinish) {
-        isShowStartBtn = false;
         setCursor(IDC_ARROW);
         return TRUE;
     }
     if (isFinishCutMask) {
-        GetCursorPos(&circleCenter);
-		ScreenToClient(hwnd, &circleCenter);
-        auto& r = cutMask->maskRect;
-        auto rect = D2D1::RectU((UINT32)r.left, (UINT32)r.top, (UINT32)r.right, (UINT32)r.bottom);
-        if (circleCenter.x > r.left && circleCenter.y > r.top && circleCenter.x < r.right && circleCenter.y < r.bottom) {
-            SetCursor(NULL);
-            isShowStartBtn = true;
+        if (isShowStartBtn) {
+            SetCursor(NULL);          
         }
         else {
-            setCursor(IDC_ARROW);
-            isShowStartBtn = false;
+            setCursor(IDC_ARROW);          
         }
     }
     else {
         setCursor(IDC_CROSS);
-        isShowStartBtn = false;
     }
     return TRUE;
 }

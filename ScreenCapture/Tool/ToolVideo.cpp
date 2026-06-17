@@ -82,24 +82,23 @@ void ToolVideo::onMouseDown(const int& x, const int& y, bool isRight)
     if (isRecording) {
         if (hoverIndex == 6) {
             killTimer(100);
-            auto path = parent->stop();
-            Util::addFileToClipboard(path);
-            close();
-            parent->release();
+            auto srcPath = parent->stop();
+            Util::addFileToClipboard(srcPath);
         }
         else if (hoverIndex == 7) {
             killTimer(100);
-            parent->stop();
-            close();
-            auto tarPath = Util::getSaveFilePath(nullptr,L"mp4");
-            parent->release();       
+            auto srcPath = parent->stop();
+            auto tarPath = Util::getSaveFilePath(nullptr,L"mp4");      
+            CopyFile(srcPath.data(),tarPath.data(),false);
+            DeleteFile(srcPath.data());
         }
         else if (hoverIndex == 8) {
             killTimer(100);
-            parent->stop();
-            close();
-            parent->release();
+            auto srcPath = parent->stop();
+            DeleteFile(srcPath.data());
         }
+        close();
+        parent->release();
         return;
     }
     if (hoverIndex == selectIndex) return;
@@ -156,6 +155,9 @@ void ToolVideo::onMouseMove(const int& x, const int& y)
         }
         else if(x > timerEnd + 2 * btnSize){
             index = 8;
+        }
+        else {
+            index = 9;
         }
     }
     else {
@@ -221,14 +223,17 @@ void ToolVideo::onMouseMove(const int& x, const int& y)
             tipText = L"停止录制，并退出";
             showTipAt(this->x + timerEnd + btnSize / 2 * 5, tipY);
         }
+        else {
+            hideTip();
+        }
         refresh();
     }
 }
 void ToolVideo::onMouseLeave()
 {
+    hideTip();
     hoverIndex = -1;
     refresh();
-    hideTip();
 }
 
 void ToolVideo::onDpiChanged()

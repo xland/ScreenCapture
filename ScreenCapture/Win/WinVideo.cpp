@@ -44,7 +44,7 @@ void WinVideo::startMp4(bool useSpeaker, bool useMic)
     mp4Param = std::make_unique<WinVideoMp4::DESKTOPCAPTUREPARAMS>();
     mp4Param->VIDEO_ENCODING_FORMAT = MFVideoFormat_HEVC;
     mp4Param->rx = { (long)(x + cutMask->maskRect.left), (long)(y+ cutMask->maskRect.top), (long)(cutMask->maskRect.right- cutMask->maskRect.left), (long)(cutMask->maskRect.bottom - cutMask->maskRect.top) };
-    mp4Param->f = videoTempPath.append(Util::createFileName(L"mp4")).wstring();
+    mp4Param->f = videoTempPath.append(L"temp.mp4").wstring();
     mp4Param->EndMS = 0;
     mp4Param->fps = 30;
     mp4Param->vbrm = 2;
@@ -72,7 +72,7 @@ void WinVideo::startGif()
     gifParam->y = (int)(this->y + cutMask->maskRect.top);
     gifParam->w = (int)(cutMask->maskRect.right - cutMask->maskRect.left);
     gifParam->h = (int)(cutMask->maskRect.bottom - cutMask->maskRect.top);
-    gifParam->path = videoTempPath.append(Util::createFileName(L"gif")).wstring();
+    gifParam->path = videoTempPath.append(L"temp.gif").wstring();
     captureThread = std::jthread([this](std::stop_token st) {
         WinVideoGif::createGif(gifParam.get());
     });
@@ -122,7 +122,7 @@ void WinVideo::onMouseDrag(const int& x, const int& y, const UINT_PTR& modifiers
 void WinVideo::onMouseDown(const int& x, const int& y, bool isRight)
 {
     if (isRight) {
-        //todo
+        WinVideo::release();
         return;
     }
     if (isFinishCutMask)  return;
