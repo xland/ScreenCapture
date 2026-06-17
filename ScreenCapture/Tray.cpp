@@ -2,6 +2,8 @@
 #include "Tray.h"
 #include "App.h"
 #include "Win/WinCap.h"
+#include "Win/WinVideo.h"
+#include "Win/WinLong.h"
 
 namespace {
 	std::unique_ptr<Tray> trayIns;
@@ -25,7 +27,17 @@ Tray::Tray()
 
 Tray::~Tray()
 {
-
+	if (hwnd) {
+		UnregisterHotKey(hwnd, capScreenKeyMsg);
+	}
+	if (tray) {
+		Shell_NotifyIcon(NIM_DELETE, tray.get());
+	}
+	if (hwnd && IsWindow(hwnd)) {
+		SetWindowLongPtr(hwnd, GWLP_USERDATA, 0);
+		DestroyWindow(hwnd);
+		hwnd = nullptr;
+	}
 }
 
 void Tray::init()
@@ -107,11 +119,11 @@ LRESULT CALLBACK Tray::wndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 		}
 		else if (menuId == capLongMsg)
 		{
-			// 截长图
+			WinLong::init();
 		}
 		else if (menuId == capVideoMsg)
 		{
-			// 录屏
+			WinVideo::init();
 		}
 		else if (menuId == settingMsg)
 		{
@@ -131,11 +143,11 @@ void Tray::onTrayClick()
 void Tray::onTrayRightClick()
 {
 	auto menu = CreatePopupMenu();
-	AppendMenu(menu, MF_STRING, capScreenMsg, L"截图");
-	AppendMenu(menu, MF_STRING, capLongMsg, L"截长图");
-	AppendMenu(menu, MF_STRING, capVideoMsg, L"录屏");
+	AppendMenu(menu, MF_STRING, capScreenMsg, L"屏幕截图");
+	AppendMenu(menu, MF_STRING, capLongMsg, L"滚动截图");
+	AppendMenu(menu, MF_STRING, capVideoMsg, L"屏幕录制");
 	AppendMenu(menu, MF_SEPARATOR, 0, NULL);
-	AppendMenu(menu, MF_STRING, settingMsg, L"设置");
+	//AppendMenu(menu, MF_STRING, settingMsg, L"设置");
 	AppendMenu(menu, MF_STRING, exitMsg, L"退出");
 	POINT pt;
 	GetCursorPos(&pt); //获取鼠标位置

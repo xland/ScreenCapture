@@ -64,30 +64,33 @@ void WinVideo::startMp4(bool useSpeaker, bool useMic)
 
 void WinVideo::startGif()
 {
-    //这段代码是好的，但会让exe体积从632增大到1404
-    //auto videoTempPath = App::getDataPath();
-    //gifParam = std::make_unique<WinVideoGif::GifParam>();
-    //gifParam->x = (int)(this->x + cutMask->maskRect.left);
-    //gifParam->y = (int)(this->y + cutMask->maskRect.top);
-    //gifParam->w = (int)(cutMask->maskRect.right - cutMask->maskRect.left);
-    //gifParam->h = (int)(cutMask->maskRect.bottom - cutMask->maskRect.top);
-    //gifParam->path = videoTempPath.append(Util::createFileName(L"gif")).wstring();
-    //captureThread = std::jthread([this](std::stop_token st) {
-    //    WinVideoGif::createGif(gifParam.get());
-    //});
+    auto videoTempPath = App::getDataPath();
+    gifParam = std::make_unique<WinVideoGif::GifParam>();
+    gifParam->x = (int)(this->x + cutMask->maskRect.left);
+    gifParam->y = (int)(this->y + cutMask->maskRect.top);
+    gifParam->w = (int)(cutMask->maskRect.right - cutMask->maskRect.left);
+    gifParam->h = (int)(cutMask->maskRect.bottom - cutMask->maskRect.top);
+    gifParam->path = videoTempPath.append(Util::createFileName(L"gif")).wstring();
+    captureThread = std::jthread([this](std::stop_token st) {
+        WinVideoGif::createGif(gifParam.get());
+    });
 }
 
-void WinVideo::stop()
+std::wstring WinVideo::stop()
 {
+    std::wstring filePath;
     if (mp4Param.get()) {
         mp4Param->MustEnd = true;
+        filePath = mp4Param->f;
     }
     if (gifParam.get()) {
         gifParam->isFinish = true;
+        filePath = gifParam->path;
     }
     if (captureThread.joinable()) {
         captureThread.join();
     }
+    return filePath;
 }
 
 void WinVideo::onPaint()

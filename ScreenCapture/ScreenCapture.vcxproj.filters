@@ -108,6 +108,15 @@
     <ClCompile Include="Tool\ToolVideo.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Win\cgif\cgif.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Win\cgif\cgif_raw.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Win\cgif\cgif_rgb.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -204,6 +213,12 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Win\WinVideoGif.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Win\cgif\cgif.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Win\cgif\cgif_raw.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

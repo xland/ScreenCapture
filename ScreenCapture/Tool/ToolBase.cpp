@@ -12,7 +12,10 @@ ToolBase::ToolBase(const int& x, const int& y, const int& w, const int& h) : Win
 
 ToolBase::~ToolBase()
 {
-
+    if (tipHwnd && IsWindow(tipHwnd)) {
+        DestroyWindow(tipHwnd);
+        tipHwnd = nullptr;
+    }
 }
 
 void ToolBase::initBrush()

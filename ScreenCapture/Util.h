@@ -16,5 +16,6 @@ public:
 	static std::wstring createFileName(const std::wstring& ext);
 	static std::wstring convertToWStr(const char* str);
 	static std::string convertToStr(const std::wstring& wstr);
+	static void addFile(const std::wstring& filePath);
 };
 

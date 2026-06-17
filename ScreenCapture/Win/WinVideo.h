@@ -15,7 +15,7 @@ public:
 	static void release();
 	void startMp4(bool useSpeaker, bool useMic);
 	void startGif();
-	void stop();
+	std::wstring stop();
 public:
 	std::unique_ptr<WinCutMask> cutMask;
 private:

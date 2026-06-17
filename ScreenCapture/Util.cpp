@@ -36,6 +36,8 @@ void Util::trackMouse(HWND hwnd, bool cancel)
 
 void Util::saveToClipboard(int& w, int& h, BYTE* data)
 {
+    if (!OpenClipboard(nullptr)) return;
+    EmptyClipboard();
     // 直接将原始像素写入全局内存，以 CF_DIB 写入剪切板
     // 避免 CreateCompatibleBitmap 引入屏幕 DPI 元数据导致粘贴时缩放模糊
     DWORD rowBytes = (DWORD)w * 4;
@@ -55,9 +57,11 @@ void Util::saveToClipboard(int& w, int& h, BYTE* data)
     bih->biSizeImage   = imgBytes;
     CopyMemory(p + sizeof(BITMAPINFOHEADER), data, imgBytes);
     GlobalUnlock(hGlobal);
-    OpenClipboard(nullptr);
-    EmptyClipboard();
-    SetClipboardData(CF_DIB, hGlobal);
+    if (!SetClipboardData(CF_DIB, hGlobal)) {
+        GlobalFree(hGlobal);
+        CloseClipboard();
+        return;
+    }
     CloseClipboard();
     // SetClipboardData 成功后剪切板接管 hGlobal，不可再 GlobalFree
 }
@@ -115,7 +119,7 @@ void Util::setTextToClipboard(const std::wstring& text)
 std::wstring Util::getSaveFilePath(HWND hwnd)
 {
     std::wstring result;
-    IFileSaveDialog* saveDialog = nullptr;
+    ComPtr<IFileSaveDialog> saveDialog;
     auto hr = CoCreateInstance(CLSID_FileSaveDialog, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&saveDialog));
     if (FAILED(hr)) return result;
     DWORD dwFlags;
@@ -128,23 +132,13 @@ std::wstring Util::getSaveFilePath(HWND hwnd)
     std::wstring fileName = createFileName(L"png");
     saveDialog->SetFileName(fileName.data());
     hr = saveDialog->Show(hwnd);
-    if (FAILED(hr)) {
-        saveDialog->Release();
-        return result;
-    }
-    IShellItem* pItem;
+    if (FAILED(hr)) return result;
+    ComPtr<IShellItem> pItem;
     hr = saveDialog->GetResult(&pItem);
-    if (FAILED(hr)) {
-        saveDialog->Release();
-        return result;
-    }
+    if (FAILED(hr)) return result;
     PWSTR pszFilePath = nullptr;
     hr = pItem->GetDisplayName(SIGDN_FILESYSPATH, &pszFilePath);
-    if (FAILED(hr)) {
-        pItem->Release();
-        saveDialog->Release();
-        return result;
-    }
+    if (FAILED(hr)) return result;
     result = pszFilePath;
     CoTaskMemFree(pszFilePath);
     return result;
@@ -231,4 +225,38 @@ std::string Util::convertToStr(const std::wstring& wstr)
     std::string str(count, 0);
     WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), -1, &str[0], count, NULL, NULL);
     return str;
+}
+
+void Util::addFile(const std::wstring& filePath)
+{
+    if (!OpenClipboard(NULL)) {
+        return;
+    }
+    EmptyClipboard();
+    size_t totalSize = sizeof(DROPFILES);
+    totalSize += (filePath.length() + 1) * sizeof(wchar_t);
+    totalSize += sizeof(wchar_t);
+    HGLOBAL hGlobal = GlobalAlloc(GMEM_MOVEABLE, totalSize);
+    if (!hGlobal) {
+        CloseClipboard();
+        return;
+    }
+    DROPFILES* pDropFiles = static_cast<DROPFILES*>(GlobalLock(hGlobal));
+    if (!pDropFiles) {
+        GlobalFree(hGlobal);
+        CloseClipboard();
+        return;
+    }
+    pDropFiles->pFiles = sizeof(DROPFILES);
+    pDropFiles->fWide = TRUE;
+    wchar_t* dest = reinterpret_cast<wchar_t*>(pDropFiles + 1);
+    wcscpy_s(dest, filePath.length() + 1, filePath.c_str());
+    dest += filePath.length() + 1;
+    *dest = L'\0';
+    GlobalUnlock(hGlobal);
+    if (!SetClipboardData(CF_HDROP, hGlobal)) {
+        GlobalFree(hGlobal);
+        CloseClipboard();
+    }
+    CloseClipboard();
 }

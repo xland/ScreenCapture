@@ -130,8 +130,14 @@ void WinPin::onKeyDown(const UINT& key)
 
 void WinPin::onDestroy()
 {
-    toolMain->hide();
-    toolSub->hide();
+    if (toolSub.get()) {
+        toolSub->close();
+        toolSub.reset();
+    }
+    if (toolMain.get()) {
+        toolMain->close();
+        toolMain.reset();
+    }
     winPins.erase(std::remove_if(winPins.begin(), winPins.end(),
             [this](auto& p) { return p.get() == this; }),
         winPins.end());

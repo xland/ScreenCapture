@@ -82,10 +82,16 @@ void ToolVideo::onMouseDown(const int& x, const int& y, bool isRight)
     if (isRecording) {
         if (hoverIndex == 6) {
             killTimer(100);
-            parent->stop();
+            auto path = parent->stop();
+
+            close();
+            parent->release();
         }
         else if (hoverIndex == 7) {
-            
+            killTimer(100);
+            parent->stop();
+            close();
+            parent->release();            
         }
         else if (hoverIndex == 8) {
             killTimer(100);

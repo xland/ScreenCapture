@@ -301,7 +301,10 @@ void WinLong::hollowWin()
     auto& r = cutMask->maskRect;
     HRGN rgn2 = CreateRectRgn(r.left, r.top, r.right, r.bottom);
     CombineRgn(rgn1, rgn1, rgn2, RGN_DIFF);
-    SetWindowRgn(hwnd, rgn1, true);
+    DeleteObject(rgn2);
+    if (SetWindowRgn(hwnd, rgn1, TRUE) == 0) {
+        DeleteObject(rgn1);
+    }
 }
 
 void WinLong::makeTool()
