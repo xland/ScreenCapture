@@ -12,8 +12,6 @@ namespace {
 WinPix::WinPix(const int& x, const int& y) : WinBase(x, y, srcW* scaleNum, imgH + 112)
 {
     createWindow();
-    initRes();
-    show();
 }
 WinPix::~WinPix() 
 {
@@ -42,7 +40,7 @@ void WinPix::move(const int& x, const int& y)
     refresh();
 }
 
-void WinPix::initRes()
+void WinPix::onCreated()
 {
     float crossWHalf{ 5.f };
     render->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White), textBrush.GetAddressOf());
@@ -56,6 +54,7 @@ void WinPix::initRes()
     App::getWriter()->CreateTextFormat(L"Microsoft YaHei", nullptr,
         DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
         fontSize, L"", textFormat.GetAddressOf());
+    show();
 }
 
 COLORREF WinPix::paintImg()
@@ -149,4 +148,11 @@ void WinPix::onPaint()
 LRESULT WinPix::onHitTest(WPARAM wParam, LPARAM lParam)
 {
     return HTTRANSPARENT;
+}
+
+void WinPix::onKeyDown(const UINT& key)
+{
+    if (key == VK_ESCAPE) {
+        WinCap::release();
+    }
 }

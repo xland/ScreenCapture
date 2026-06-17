@@ -23,21 +23,8 @@ void WinCap::init()
 {
     WinCap::release();
     auto [x, y, w, h] = Util::getDesktopInfo();
-	std::vector<BYTE> data = Util::captureScreen(x, y, w, h);
 	winCap = std::make_unique<WinCap>(x, y, w, h);
     winCap->createWindow();
-    D2D1_BITMAP_PROPERTIES1 props = {
-        .pixelFormat{D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED)},
-        .dpiX{96.0f}, .dpiY{96.0f}, .bitmapOptions{D2D1_BITMAP_OPTIONS_TARGET}
-    };
-    winCap->render->CreateBitmap(D2D1::SizeU(w, h), data.data(), w * 4, props, winCap->screenImg.GetAddressOf());
-    POINT pt;
-    GetCursorPos(&pt);
-    winCap->winPix = std::make_unique<WinPix>((int)pt.x, (int)pt.y);
-    winCap->cutMask = std::make_unique<WinCutMask>(winCap.get());
-    winCap->show();
-    UpdateWindow(winCap->hwnd);
-
 }
 WinCap* WinCap::get()
 {
@@ -75,6 +62,21 @@ ComPtr<ID2D1Bitmap1> WinCap::getImgByRect(D2D1_RECT_U& rect)
     return cpuImg;
 }
 
+void WinCap::onCreated()
+{
+    std::vector<BYTE> data = Util::captureScreen(x, y, w, h);
+    D2D1_BITMAP_PROPERTIES1 props = {
+        .pixelFormat{D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED)},
+        .dpiX{96.0f}, .dpiY{96.0f}, .bitmapOptions{D2D1_BITMAP_OPTIONS_TARGET}
+    };
+    render->CreateBitmap(D2D1::SizeU(w, h), data.data(), w * 4, props, winCap->screenImg.GetAddressOf());
+    POINT pt;
+    GetCursorPos(&pt);
+    winPix = std::make_unique<WinPix>((int)pt.x, (int)pt.y);
+    cutMask = std::make_unique<WinCutMask>(this);
+    show();
+}
+
 void WinCap::onPaint()
 {
     D2D1_RECT_F destRect = D2D1::RectF(0, 0, (float)w, (float)h);
@@ -107,4 +109,11 @@ void WinCap::onMouseUp(const int& x, const int& y)
 {
     WinPin::init();
     WinCap::release();
+}
+
+void WinCap::onKeyDown(const UINT& key)
+{
+    if (key == VK_ESCAPE) {
+        WinCap::release();
+    }
 }

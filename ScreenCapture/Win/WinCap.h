@@ -17,11 +17,13 @@ public:
 public:
 	std::unique_ptr<WinCutMask> cutMask;
 private:
+	void onCreated() override;
 	void onPaint() override;
 	void onMouseMove(const int& x, const int& y) override;
 	void onMouseDrag(const int& x, const int& y, const UINT_PTR& modifiers) override;
 	void onMouseDown(const int& x, const int& y, bool isRight) override;
 	void onMouseUp(const int& x, const int& y) override;
+	void onKeyDown(const UINT& key) override;
 private:
 	std::unique_ptr<WinPix> winPix;
 	ComPtr<ID2D1Bitmap1> screenImg;

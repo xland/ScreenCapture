@@ -20,9 +20,10 @@ ToolLong::~ToolLong()
 void ToolLong::onCreated()
 {
     btnSize = 32.f * dpi;
+    initTip();
     initBrush();
     auto fSize{ 14.f * dpi };
-    btnLayout.push_back(makeIconLayout(L"\ued8a", btnSize, btnSize, fSize));
+    btnLayout.push_back(makeIconLayout(L"\ue6a2", btnSize, btnSize, fSize));
     btnLayout.push_back(makeIconLayout(L"\ue650", btnSize, btnSize, fSize));
     btnLayout.push_back(makeIconLayout(L"\ue608", btnSize, btnSize, fSize));
     btnLayout.push_back(makeIconLayout(L"\ue62d", btnSize, btnSize, fSize));
@@ -56,20 +57,15 @@ void ToolLong::onMouseDown(const int& x, const int& y, bool isRight)
     auto& state = btnId[hoverIndex];
     if (state == "pin") {
         parent->pin();
-        return;
     }
     else if (state == "clipboard") {
         parent->copyToClipboard();
-        return;
     }
     else if (state == "save") {
         parent->saveToFile();
-        return;
     }
-    else if (state == "close") {
-        //todo
-        return;
-    }
+    close();
+    WinLong::release();
 }
 void ToolLong::onMouseMove(const int& x, const int& y)
 {

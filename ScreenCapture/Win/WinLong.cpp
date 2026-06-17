@@ -391,7 +391,6 @@ void WinLong::copyToClipboard()
 {
     if (imgData.empty()) return;
     Util::saveToClipboard(imgW, resultH, imgData.data());
-    WinLong::release();
 }
 
 void WinLong::saveToFile()
@@ -399,9 +398,7 @@ void WinLong::saveToFile()
     if (imgData.empty()) return;
     auto path = Util::getSaveFilePath(hwnd);
     if (path.empty()) return;
-    if (Util::saveToFile(path, imgW, resultH, imgData.data())) {
-        WinLong::release();
-    }
+    Util::saveToFile(path, imgW, resultH, imgData.data());
 }
 
 void WinLong::pin()
@@ -417,5 +414,4 @@ void WinLong::pin()
     int posX = workArea.left + (screenW - imgW) / 2;
     int posY = workArea.top + (screenH - std::min(resultH, screenH)) / 2;
     WinPin::initFromData(posX, posY, imgW, resultH, imgData);
-    WinLong::release();
 }

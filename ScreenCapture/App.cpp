@@ -33,8 +33,8 @@ void App::init(HINSTANCE hInstance)
 	app = std::make_unique<App>(hInstance);
     Tray::init();
     //WinVideo::init();
-    WinLong::init();
-    //WinCap::init();
+    //WinLong::init();
+    WinCap::init();
 }
 
 App* App::get()

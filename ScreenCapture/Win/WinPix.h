@@ -9,11 +9,12 @@ public:
 	void move(const int& x,const int& y);
 public:
 private:
-	void initRes();
 	COLORREF paintImg();
 	void paintText(COLORREF& cr, const int& x, const int& y);
 	void onPaint() override;
+	void onCreated() override;
 	LRESULT onHitTest(WPARAM wParam, LPARAM lParam) override;
+	void onKeyDown(const UINT& key) override;
 private:
 	ComPtr<ID2D1SolidColorBrush> textBrush;
 	ComPtr<ID2D1SolidColorBrush> bgBrush;

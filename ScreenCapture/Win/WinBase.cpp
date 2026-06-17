@@ -16,6 +16,8 @@ WinBase::~WinBase()
 void WinBase::show()
 {
     ShowWindow(hwnd, SW_SHOW);
+    //SetForegroundWindow(hwnd);
+    //SetFocus(hwnd);
     //UpdateWindow(hwnd);
 }
 void WinBase::hide()
