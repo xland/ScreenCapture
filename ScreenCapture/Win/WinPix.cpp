@@ -111,17 +111,9 @@ void WinPix::paintText(const int& x, const int& y) {
     str = std::format(L"RGB (Ctrl+R) : {},{},{}", r, g, b);
     render->DrawText(str.data(), str.length(), textFormat.Get(), rect, textBrush.Get());
 
-    double R = r / 255.0, G = g / 255.0, B = b / 255.0;
-    double K = 1.0 - (std::max)(R, (std::max)(G, B));
-    double C = (K == 1.0) ? 0.0 : (1.0 - R - K) / (1.0 - K);
-    double M = (K == 1.0) ? 0.0 : (1.0 - G - K) / (1.0 - K);
-    double Y = (K == 1.0) ? 0.0 : (1.0 - B - K) / (1.0 - K);
-    int c = static_cast<int>(std::round(C * 100));
-    int m = static_cast<int>(std::round(M * 100));
-    int y1 = static_cast<int>(std::round(Y * 100));
-    int k = static_cast<int>(std::round(K * 100));
     rect.top = rect.bottom + padding;
     rect.bottom = rect.top + fontSize;
+    auto [c, m, y1, k] = getCMYK(r, g, b);
     str = std::format(L"CMYK (Ctrl+K) : {},{},{},{}", c, m, y1, k);
     render->DrawText(str.data(), str.length(), textFormat.Get(), rect, textBrush.Get());
     rect.top = rect.bottom + padding;
@@ -173,15 +165,7 @@ void WinPix::onKeyDown(const UINT& key)
     else if (key == 'k' || key == 'K') {
         if (GetKeyState(VK_CONTROL) & 0x8000) {
             BYTE r = GetRValue(cr), g = GetGValue(cr), b = GetBValue(cr);
-            double R = r / 255.0, G = g / 255.0, B = b / 255.0;
-            double K = 1.0 - (std::max)(R, (std::max)(G, B));
-            double C = (K == 1.0) ? 0.0 : (1.0 - R - K) / (1.0 - K);
-            double M = (K == 1.0) ? 0.0 : (1.0 - G - K) / (1.0 - K);
-            double Y = (K == 1.0) ? 0.0 : (1.0 - B - K) / (1.0 - K);
-            int c = static_cast<int>(std::round(C * 100));
-            int m = static_cast<int>(std::round(M * 100));
-            int y1 = static_cast<int>(std::round(Y * 100));
-            int k = static_cast<int>(std::round(K * 100));
+            auto [c, m, y1, k] = getCMYK(r, g, b);
             Util::setTextToClipboard(std::format(L"cmyk({},{},{},{})", c, m, y1, k));
             WinCap::release();
         }
@@ -192,4 +176,18 @@ void WinPix::onKeyDown(const UINT& key)
             WinCap::release();
         }
     }
+}
+
+std::tuple<int, int, int, int> WinPix::getCMYK(const BYTE& r, const BYTE& g, const BYTE& b)
+{
+    double R = r / 255.0, G = g / 255.0, B = b / 255.0;
+    double K = 1.0 - (std::max)(R, (std::max)(G, B));
+    double C = (K == 1.0) ? 0.0 : (1.0 - R - K) / (1.0 - K);
+    double M = (K == 1.0) ? 0.0 : (1.0 - G - K) / (1.0 - K);
+    double Y = (K == 1.0) ? 0.0 : (1.0 - B - K) / (1.0 - K);
+    return std::make_tuple( static_cast<int>(std::round(C * 100)),
+        static_cast<int>(std::round(M * 100)),
+        static_cast<int>(std::round(Y * 100)),
+        static_cast<int>(std::round(K * 100))
+        );
 }

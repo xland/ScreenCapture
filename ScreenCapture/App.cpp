@@ -19,6 +19,24 @@ BOOL App::allowTearing = FALSE;
 App::App(HINSTANCE hInstance) : hInstance(hInstance)
 {
     SetCurrentProcessExplicitAppUserModelID(L"github.xland.ScreenCapture");
+
+    //// 读取
+    //GetPrivateProfileString(L"Section", L"Key", L"Default", buffer, size, L"config.ini");
+    //// 写入
+    //WritePrivateProfileString(L"Section", L"Key", L"Value", L"config.ini");
+
+    //[SectionName]
+    // KeyName = Value
+    //GetPrivateProfileString 
+    //TCHAR szBuffer[MAX_PATH];
+    //GetPrivateProfileString(
+    //    TEXT("SectionName"), // 节名称
+    //    TEXT("KeyName"), // 键名称
+    //    TEXT("DefaultValue"), // 默认值
+    //    szBuffer, // 返回值缓冲区
+    //    MAX_PATH, // 缓冲区大小
+    //    TEXT("C:\\path\\to\\file.ini") // 文件路径
+    //);
 }
 
 App::~App()

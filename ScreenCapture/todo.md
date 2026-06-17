@@ -1,10 +1,8 @@
-
-- 取色快捷键我好像还没做
-- shape mosaic mouseDrag的时候多次执行 resetMosaic();
-- 不能让工具条窗口常驻，应该随用随创建
 - 窗口的dpi是要变化的
 - 打开配置文件
 - toolMain关闭后还会触发WM_MOUSEMOVE
+- shape mosaic mouseDrag的时候多次执行 resetMosaic();
+
 
 - 支持命令行集成
 - 多语言

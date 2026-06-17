@@ -15,6 +15,7 @@ private:
 	void onCreated() override;
 	LRESULT onHitTest(WPARAM wParam, LPARAM lParam) override;
 	void onKeyDown(const UINT& key) override;
+	std::tuple<int, int, int, int> getCMYK(const BYTE& r, const BYTE& g, const BYTE& b);
 private:
 	COLORREF cr;
 	ComPtr<ID2D1SolidColorBrush> textBrush;

@@ -76,8 +76,6 @@ void ToolMain::onMouseDown(const int& x, const int& y, bool isRight)
         return;
     }
     else if (state == "close") {
-        parent->toolSub->close();
-        parent->toolMain->close();
         parent->close();
         return;
     }
