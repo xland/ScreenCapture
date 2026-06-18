@@ -37,16 +37,24 @@ void WinSetting::onCreated()
 	paddintTop *= dpi;
 	menuLeftSpan *= dpi;
 	borderRadius *= dpi;
+	lineH *= dpi;
+	textSize *= dpi;
+	iconSize *= dpi;
 	render->CreateSolidColorBrush(D2D1::ColorF(0xE3E3E5), bg.GetAddressOf());
 	render->CreateSolidColorBrush(D2D1::ColorF(0xEEEEF0), menuBg.GetAddressOf());
 	render->CreateSolidColorBrush(D2D1::ColorF(0xD6D6D8), border.GetAddressOf());
 	render->CreateSolidColorBrush(D2D1::ColorF(0x888888), textBrush.GetAddressOf());
 	render->CreateSolidColorBrush(D2D1::ColorF(0x333333), textBrush2.GetAddressOf()); //0x1677FF
-	auto menuSize{ 14 * dpi };
-	menuLabels.push_back(makeTextLayout(L"通用设置", menuW, menuH, menuSize));
-	menuLabels.push_back(makeTextLayout(L"快捷键", menuW, menuH, menuSize));
-	menuLabels.push_back(makeTextLayout(L"关于", menuW, menuH, menuSize));
-	startupLabel = makeTextLayout(L"开机自启动：", w- menuW, menuH, menuSize,false);
+	menuLabels.push_back(makeTextLayout(L"通用设置", menuW, menuH, textSize));
+	menuLabels.push_back(makeTextLayout(L"快捷键", menuW, menuH, textSize));
+	menuLabels.push_back(makeTextLayout(L"关于", menuW, menuH, textSize));
+
+	startupLabel = makeTextLayout(L"开机自启动：", w- menuW, lineH, textSize,false);
+	trayLabel = makeTextLayout(L"显示托盘图标：", w - menuW, lineH, textSize, false);
+	langLabel = makeTextLayout(L"语言设置：（此功能尚未完成）", w - menuW, lineH, textSize, false);
+
+	closeIcon = makeIconLayout(L"\ue687", lineH, lineH, iconSize);
+	openIcon = makeIconLayout(L"\ue688", lineH, lineH, iconSize);
 	show();
 }
 
@@ -151,7 +159,19 @@ void WinSetting::onKeyDown(const UINT& key)
 void WinSetting::paintCommon()
 {
 	//render->FillRectangle(menuRect, menuBg.Get());
-	render->DrawTextLayout({ menuW + menuLeftSpan * 5,paddintTop }, startupLabel.Get(), textBrush2.Get());
+	auto x{ menuW + menuLeftSpan * 7 }, y{ paddintTop + menuLeftSpan }, r{ w - menuLeftSpan * 7 };
+	render->DrawTextLayout({ x,y }, startupLabel.Get(), textBrush2.Get());
+	render->DrawTextLayout({ r-lineH,y }, closeIcon.Get(), textBrush.Get());
+
+	y += lineH;
+	render->DrawLine({ x,y }, { r,y }, border.Get(), dpi);
+	render->DrawTextLayout({ x,y }, trayLabel.Get(), textBrush2.Get());
+	render->DrawTextLayout({ r - lineH,y }, closeIcon.Get(), textBrush.Get());
+
+	y += lineH;
+	render->DrawLine({ x,y }, { r,y }, border.Get(), dpi);
+	render->DrawTextLayout({ x,y }, langLabel.Get(), textBrush.Get());
+	render->DrawLine({ x,y+lineH }, { r,y + lineH }, border.Get(), dpi);
 }
 
 void WinSetting::paintShortcut()

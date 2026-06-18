@@ -30,8 +30,9 @@ private:
 	POINT pressPos{ 0,0 };
 	int indexHover{ -1 }, menuIndexSelect{0};
 	std::vector<ComPtr<IDWriteTextLayout>> menuLabels;
-	ComPtr<IDWriteTextLayout> startupLabel;
+	ComPtr<IDWriteTextLayout> startupLabel,trayLabel,langLabel;
+	ComPtr<IDWriteTextLayout> closeIcon,openIcon;
 	ComPtr<ID2D1SolidColorBrush> menuBg, border, textBrush, textBrush2,bg;
-	float menuW{ 120.f }, menuH{ 38.f }, paddintTop{ 32.f }, menuLeftSpan{ 8.f },borderRadius{6.f};
+	float menuW{ 120.f }, menuH{ 38.f }, paddintTop{ 32.f }, menuLeftSpan{ 8.f }, borderRadius{ 6.f }, lineH{ 44.f }, textSize{ 14.f }, iconSize{22.f};
 };
 
