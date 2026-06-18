@@ -110,10 +110,23 @@ bool Util::saveToFile(const std::wstring& path, const int& w, const int& h, BYTE
 
 void Util::setTextToClipboard(const std::wstring& text)
 {
-    //DataPackage dataPackage;
-    //dataPackage.SetText(text);
-    //Clipboard::SetContent(dataPackage);
-    //Clipboard::Flush();
+    if (!OpenClipboard(NULL)) return;
+    EmptyClipboard();
+    size_t length = (text.size() + 1) * sizeof(wchar_t);
+    HGLOBAL hGlobal = GlobalAlloc(GMEM_MOVEABLE, length);
+    if (hGlobal == NULL) {
+        CloseClipboard();
+        return;
+    }
+    auto pGlobal = (wchar_t*)GlobalLock(hGlobal);
+    if (pGlobal == NULL) {
+        CloseClipboard();
+        return;
+    }
+    memcpy(pGlobal, text.data(), length);
+    GlobalUnlock(hGlobal);
+    SetClipboardData(CF_UNICODETEXT, hGlobal);
+    CloseClipboard();
 }
 
 std::wstring Util::getSaveFilePath(HWND hwnd, const std::wstring& ext)

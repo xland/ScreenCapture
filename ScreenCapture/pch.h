@@ -32,11 +32,7 @@
 #include <stdexcept>
 #include <math.h>
 
-
-
 using namespace Microsoft::WRL;
-
-
 
 template<typename... Args>
 void log(std::wstring_view fmt, Args&&... args)

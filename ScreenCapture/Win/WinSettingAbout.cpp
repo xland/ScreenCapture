@@ -1,4 +1,5 @@
 ﻿#include "pch.h"
+#include "Util.h"
 #include "WinSettingAbout.h"
 #include "WinSetting.h"
 
@@ -39,6 +40,38 @@ void WinSettingAbout::paint()
 	win->render->DrawTextLayout({ contentX,y }, authorLabel.Get(), win->textBrush2.Get());
 	win->render->DrawTextLayout({ contentX,y }, authorVal.Get(), win->textBrush2.Get());
 	y = y + lineH;
-	win->render->DrawLine({ contentX,y }, { contentR,y }, win->border.Get(), win->dpi);
-	
+	win->render->DrawLine({ contentX,y }, { contentR,y }, win->border.Get(), win->dpi);	
+}
+void WinSettingAbout::mouseMove(const int& x, const int& y)
+{
+	if (x > contentX && x<contentR && y>contentY) {
+		if (y> contentY + lineH && y < contentY + lineH*2) {
+			hoverIndex = 0;
+		}
+		else if (y > contentY + 2 * lineH && y < contentY + 3 * lineH) {
+			hoverIndex = 1;
+		}
+		else {
+			hoverIndex = -1;
+		}
+	}
+	else {
+		hoverIndex = -1;
+	}
+}
+
+void WinSettingAbout::mouseDown()
+{
+	if (hoverIndex == 0) {
+		std::wstring downloadUrl{ L"https://github.com/xland/ScreenCapture" };
+		ShellExecute(win->hwnd, L"open", downloadUrl.data(), nullptr, nullptr, SW_SHOWNORMAL);
+		hoverIndex = -1;
+		win->isMouseDown = false;
+	}
+	else if (hoverIndex == 1) {
+		Util::setTextToClipboard(L"liulun_007");
+		MessageBox(win->hwnd, L"复制成功", L"系统提示", MB_OK | MB_ICONINFORMATION);
+		hoverIndex = -1;
+		win->isMouseDown = false;
+	}
 }

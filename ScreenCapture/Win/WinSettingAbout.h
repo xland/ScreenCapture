@@ -6,7 +6,11 @@ class WinSettingAbout
 public:
 	WinSettingAbout(WinSetting* win);
 	~WinSettingAbout();
-	void paint();
+	void paint();	
+	void mouseMove(const int& x, const int& y);
+	void mouseDown();
+public:
+	int hoverIndex{ -1 };
 private:
 	WinSetting* win;
 	float lineH{ 44.f };

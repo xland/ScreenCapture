@@ -84,6 +84,7 @@ void WinSetting::onPaint()
 		common->paint();
 	}
 	else if (menuIndexSelect == 1) {
+		shortcut->paint();
 	}
 	else {
 		about->paint();
@@ -92,7 +93,7 @@ void WinSetting::onPaint()
 
 BOOL WinSetting::onCursor()
 {
-	if (indexHover >= 0 || common->hoverIndex>=0) {
+	if (indexHover >= 0 || common->hoverIndex>=0 || about->hoverIndex>=0) {
 		setCursor(IDC_HAND);
 	}
 	else {
@@ -103,7 +104,7 @@ BOOL WinSetting::onCursor()
 
 void WinSetting::onMouseDown(const int& x, const int& y, bool isRight)
 {
-	if (indexHover < 0 && common->hoverIndex<0) {
+	if (indexHover < 0 && common->hoverIndex<0 && about->hoverIndex < 0) {
 		pressPos.x = x;
 		pressPos.y = y;
 		return;
@@ -113,11 +114,12 @@ void WinSetting::onMouseDown(const int& x, const int& y, bool isRight)
 		refresh();
 	}
 	common->mouseDown();
+	about->mouseDown();
 }
 
 void WinSetting::onMouseDrag(const int& x, const int& y, const UINT_PTR& modifiers)
 {
-	if (indexHover < 0) {
+	if (indexHover < 0 && common->hoverIndex < 0 && about->hoverIndex < 0) {
 		this->x += (x - pressPos.x);
 		this->y += (y - pressPos.y);
 		move(this->x, this->y);
@@ -135,6 +137,9 @@ void WinSetting::onMouseMove(const int& x, const int& y)
 	}
 	if (menuIndexSelect == 0) {
 		common->mouseMove(x, y);
+	}
+	else if (menuIndexSelect == 2) {
+		about->mouseMove(x, y);
 	}
 
 	if (index != indexHover) {
