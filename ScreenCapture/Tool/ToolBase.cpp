@@ -31,8 +31,8 @@ void ToolBase::paintIcon(const float& posX, IDWriteTextLayout* icon, bool isHove
 {
     D2D1_POINT_2F origin = { posX, marginTop };
     if (isSelected) {
-        float paddingTopBottom{ 4.f * dpi }, paddingLeftRight{ 2.6f * dpi };
-        D2D1_ROUNDED_RECT rr = { { posX + paddingLeftRight, paddingTopBottom+marginTop, posX + btnSize - paddingLeftRight, h - paddingTopBottom }, 8, 8 };
+        float paddingTopBottom{ 4.f * dpi }, paddingLeftRight{ 2.6f * dpi }, br{ 5 * dpi };
+        D2D1_ROUNDED_RECT rr = { { posX + paddingLeftRight, paddingTopBottom+marginTop, posX + btnSize - paddingLeftRight, h - paddingTopBottom }, br, br };
         render->FillRoundedRectangle(rr, brushSelect.Get());
         render->DrawTextLayout(origin, icon, brushBlue.Get(), D2D1_DRAW_TEXT_OPTIONS_NONE);
     }

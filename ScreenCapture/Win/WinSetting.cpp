@@ -32,21 +32,134 @@ void WinSetting::onCreated()
 {
 	SetWindowText(hwnd, L"ScreenCapture设置");
 	enableShadow();
+	menuW *= dpi;
+	menuH *= dpi;
+	paddintTop *= dpi;
+	menuLeftSpan *= dpi;
+	borderRadius *= dpi;
+	render->CreateSolidColorBrush(D2D1::ColorF(0xE3E3E5), bg.GetAddressOf());
 	render->CreateSolidColorBrush(D2D1::ColorF(0xEEEEF0), menuBg.GetAddressOf());
-	render->CreateSolidColorBrush(D2D1::ColorF(0xDADADC), border.GetAddressOf());
+	render->CreateSolidColorBrush(D2D1::ColorF(0xD6D6D8), border.GetAddressOf());
+	render->CreateSolidColorBrush(D2D1::ColorF(0x888888), textBrush.GetAddressOf());
+	render->CreateSolidColorBrush(D2D1::ColorF(0x333333), textBrush2.GetAddressOf()); //0x1677FF
+	auto menuSize{ 14 * dpi };
+	menuLabels.push_back(makeTextLayout(L"通用设置", menuW, menuH, menuSize));
+	menuLabels.push_back(makeTextLayout(L"快捷键", menuW, menuH, menuSize));
+	menuLabels.push_back(makeTextLayout(L"关于", menuW, menuH, menuSize));
+	startupLabel = makeTextLayout(L"开机自启动：", w- menuW, menuH, menuSize,false);
 	show();
 }
 
 void WinSetting::onPaint()
 {
 	render->Clear(D2D1::ColorF(0xE3E3E5));
-	D2D1_RECT_F menuRect{ 0,0,200,h };
+	D2D1_RECT_F menuRect{ 0,0,menuW,h };
 	render->FillRectangle(menuRect, menuBg.Get());
-	render->DrawLine({ 200,0 }, { 200,(float)h }, border.Get(), dpi);
+	render->DrawLine({ menuW,0 }, { menuW,(float)h }, border.Get(), dpi);
+	for (size_t i = 0; i < menuLabels.size(); i++)
+	{
+		auto y{ paddintTop + menuH * i };
+		if (i == menuIndexSelect) {
+			D2D1_ROUNDED_RECT rr = { { menuLeftSpan, y, menuW + menuLeftSpan, menuH+y }, borderRadius,borderRadius };
+			render->FillRoundedRectangle(rr, bg.Get());
+			render->DrawRoundedRectangle(rr, border.Get(), dpi);
+			render->FillRectangle({ menuW, y-dpi, menuW + menuLeftSpan+dpi, menuH + y+dpi }, bg.Get());
+			render->DrawTextLayout({ 0,y }, menuLabels[i].Get(), textBrush2.Get());
+		}
+		else {
+			render->DrawTextLayout({ 0,y }, menuLabels[i].Get(), i == indexHover ? textBrush2.Get() : textBrush.Get());
+		}		
+	}
+	D2D1_ROUNDED_RECT rr = { { menuW + menuLeftSpan*4,paddintTop, w - menuLeftSpan*4, h- menuLeftSpan*4 }, borderRadius,borderRadius };
+	render->FillRoundedRectangle(rr, menuBg.Get());
+
+	if (menuIndexSelect == 0) {
+		paintCommon();
+	}
+	else if (menuIndexSelect == 1) {
+		paintShortcut();
+	}
+	else {
+		paintAbout();
+	}
 }
 
 BOOL WinSetting::onCursor()
 {
-	setCursor(IDC_ARROW);
+	if (indexHover >= 0 && indexHover <= 2) {
+		setCursor(IDC_HAND);
+	}
+	else {
+		setCursor(IDC_ARROW);
+	}	
 	return TRUE;
+}
+
+void WinSetting::onMouseDown(const int& x, const int& y, bool isRight)
+{
+	if (indexHover < 0) {
+		pressPos.x = x;
+		pressPos.y = y;
+		return;
+	}
+	if (indexHover != menuIndexSelect && indexHover >=0 && indexHover<=2) {
+		menuIndexSelect = indexHover;
+		refresh();
+	}
+}
+
+void WinSetting::onMouseDrag(const int& x, const int& y, const UINT_PTR& modifiers)
+{
+	if (indexHover < 0) {
+		this->x += (x - pressPos.x);
+		this->y += (y - pressPos.y);
+		move(this->x, this->y);
+	}
+}
+
+void WinSetting::onMouseMove(const int& x, const int& y)
+{
+	int index{ -1 };
+	if (x > menuLeftSpan && x < menuW && y>paddintTop) {
+		int i = (y-paddintTop) / menuH;
+		if (i <= 2&& i>=0) {
+			index = i;
+		}
+	}
+	if (index != indexHover) {
+		indexHover = index;
+		refresh();
+	}
+}
+
+void WinSetting::onMouseLeave()
+{
+	if (indexHover != -1) {
+		indexHover = -1;
+		refresh();
+	}
+}
+
+void WinSetting::onDpiChanged()
+{
+}
+
+void WinSetting::onKeyDown(const UINT& key)
+{
+}
+
+void WinSetting::paintCommon()
+{
+	//render->FillRectangle(menuRect, menuBg.Get());
+	render->DrawTextLayout({ menuW + menuLeftSpan * 5,paddintTop }, startupLabel.Get(), textBrush2.Get());
+}
+
+void WinSetting::paintShortcut()
+{
+	//render->FillRectangle(menuRect, menuBg.Get());
+}
+
+void WinSetting::paintAbout()
+{
+	//render->FillRectangle(menuRect, menuBg.Get());
 }
