@@ -119,9 +119,6 @@ void ToolMain::onDpiChanged()
     btnSize = 32.f * dpi;
     initBtn();
 }
-
-
-
 void ToolMain::initBtn()
 {
     btnLayout.clear();

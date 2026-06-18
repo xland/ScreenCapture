@@ -4,6 +4,7 @@
 #include "Win/WinCap.h"
 #include "Win/WinVideo.h"
 #include "Win/WinLong.h"
+#include "Win/WinSetting.h"
 
 namespace {
 	std::unique_ptr<Tray> trayIns;
@@ -127,7 +128,7 @@ LRESULT CALLBACK Tray::wndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 		}
 		else if (menuId == settingMsg)
 		{
-			// 设置
+			WinSetting::init();
 		}
 		else if (menuId == exitMsg)
 		{
@@ -147,7 +148,7 @@ void Tray::onTrayRightClick()
 	AppendMenu(menu, MF_STRING, capLongMsg, L"滚动截图");
 	AppendMenu(menu, MF_STRING, capVideoMsg, L"屏幕录制");
 	AppendMenu(menu, MF_SEPARATOR, 0, NULL);
-	//AppendMenu(menu, MF_STRING, settingMsg, L"设置");
+	AppendMenu(menu, MF_STRING, settingMsg, L"设置");
 	AppendMenu(menu, MF_STRING, exitMsg, L"退出");
 	POINT pt;
 	GetCursorPos(&pt); //获取鼠标位置

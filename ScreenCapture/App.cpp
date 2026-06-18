@@ -3,6 +3,7 @@
 #include "Win/WinCap.h"
 #include "Win/WinLong.h"
 #include "Win/WinVideo.h"
+#include "Win/WinSetting.h"
 #include "Tray.h"
 
 namespace {
@@ -53,7 +54,8 @@ void App::init(HINSTANCE hInstance)
     Tray::init();
     //WinVideo::init();
     //WinLong::init();
-    WinCap::init();
+    //WinCap::init();
+    WinSetting::init();
 }
 
 App* App::get()
@@ -82,7 +84,7 @@ void App::initDevice()
     d2d.As(&d2dDev);
     hr = CreateDXGIFactory2(0, IID_PPV_ARGS(&fac5));
     hr = fac5->CheckFeatureSupport(DXGI_FEATURE_PRESENT_ALLOW_TEARING, &App::allowTearing, sizeof(App::allowTearing));//判断设备是否允许撕裂呈现
-    hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory), reinterpret_cast<::IUnknown**>(dwriteFactory.GetAddressOf()));
+    hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_ISOLATED, __uuidof(IDWriteFactory), reinterpret_cast<::IUnknown**>(dwriteFactory.GetAddressOf()));
     //dwriteFactory->CreateCustomRenderingParams( 1.0f, 0.0f, 1.0f, DWRITE_PIXEL_GEOMETRY_RGB, DWRITE_RENDERING_MODE_GDI_NATURAL, renderingParams.GetAddressOf());
 }
 

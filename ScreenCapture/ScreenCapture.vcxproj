@@ -122,9 +122,9 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>comctl32.lib;d2d1.lib;dcomp.lib;dwmapi.lib;dwrite.lib;imm32.lib;mf.lib;mfreadwrite.lib;mfplat.lib;mfuuid.lib;ole32.lib;shcore.lib;shell32.lib;shlwapi.lib;windowscodecs.lib;ws2_32.lib;winmm.lib;windowsapp.lib;userenv.lib;uuid.lib;ntdll.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>comctl32.lib;d2d1.lib;dcomp.lib;dwmapi.lib;dwrite.lib;imm32.lib;mf.lib;mfreadwrite.lib;mfplat.lib;mfuuid.lib;ole32.lib;shcore.lib;shell32.lib;shlwapi.lib;windowscodecs.lib;winmm.lib;windowsapp.lib;userenv.lib;uuid.lib;ntdll.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ManifestFile />
-      <DelayLoadDLLs>mf.dll;mfplat.dll;winmm.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
+      <DelayLoadDLLs>%(DelayLoadDLLs)</DelayLoadDLLs>
     </Link>
     <Manifest>
       <EnableSegmentHeap>true</EnableSegmentHeap>
@@ -151,9 +151,9 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>comctl32.lib;d2d1.lib;dcomp.lib;dwmapi.lib;dwrite.lib;imm32.lib;mf.lib;mfreadwrite.lib;mfplat.lib;mfuuid.lib;ole32.lib;shcore.lib;shell32.lib;shlwapi.lib;windowscodecs.lib;ws2_32.lib;winmm.lib;windowsapp.lib;userenv.lib;uuid.lib;ntdll.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>comctl32.lib;d2d1.lib;dcomp.lib;dwmapi.lib;dwrite.lib;imm32.lib;mf.lib;mfreadwrite.lib;mfplat.lib;mfuuid.lib;ole32.lib;shcore.lib;shell32.lib;shlwapi.lib;windowscodecs.lib;winmm.lib;windowsapp.lib;userenv.lib;uuid.lib;ntdll.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ManifestFile />
-      <DelayLoadDLLs>mf.dll;mfplat.dll;winmm.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
+      <DelayLoadDLLs>%(DelayLoadDLLs)</DelayLoadDLLs>
     </Link>
     <Manifest>
       <EnableSegmentHeap>true</EnableSegmentHeap>

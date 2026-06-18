@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "pch.h"
 #include "WinBase.h"
 
@@ -12,6 +12,13 @@ class WinSetting :public WinBase
 public:
 	WinSetting(const int& x, const int& y, const int& w, const int& h);
 	~WinSetting();
+	static void init();
 private:
+	void onCreated() override;
+	void onPaint() override;
+	BOOL onCursor() override;
+private:
+	ComPtr<ID2D1SolidColorBrush> menuBg;
+	ComPtr<ID2D1SolidColorBrush> border;
 };
 

@@ -135,7 +135,7 @@ ComPtr<IDWriteTextLayout> WinBase::makeTextLayout(const std::wstring& text, cons
 
 void WinBase::createWindow(const DWORD& exStyle, const DWORD& style)
 {
-    hwnd = CreateWindowEx(exStyle | WS_EX_NOREDIRECTIONBITMAP| WS_EX_TOOLWINDOW, getWinClsName().c_str(), NULL, style| WS_POPUP, x, y, w, h, NULL, NULL, App::get()->hInstance, NULL);
+    hwnd = CreateWindowEx(WS_EX_NOREDIRECTIONBITMAP| WS_EX_TOOLWINDOW| exStyle, getWinClsName().c_str(), NULL, style| WS_POPUP, x, y, w, h, NULL, NULL, App::get()->hInstance, NULL);
     SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
 	dpi = GetDpiForWindow(hwnd) / 96.0f;
     App::makeDC(this);
