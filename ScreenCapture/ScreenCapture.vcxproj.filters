@@ -117,6 +117,15 @@
     <ClCompile Include="Win\cgif\cgif_rgb.c">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Win\WinSettingCommon.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Win\WinSettingAbout.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Win\WinSettingShortcut.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -219,6 +228,15 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Win\cgif\cgif_raw.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Win\WinSettingCommon.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Win\WinSettingAbout.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Win\WinSettingShortcut.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

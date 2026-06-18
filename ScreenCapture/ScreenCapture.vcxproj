@@ -176,6 +176,8 @@
     <ClCompile Include="Tool\ToolVideo.cpp" />
     <ClCompile Include="Tray.cpp" />
     <ClCompile Include="Tool\ToolSubSlider.cpp" />
+    <ClCompile Include="Win\WinSettingAbout.cpp" />
+    <ClCompile Include="Win\WinSettingCommon.cpp" />
     <ClCompile Include="Win\cgif\cgif.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
@@ -206,6 +208,7 @@
     <ClCompile Include="Tool\ToolBase.cpp" />
     <ClCompile Include="Tool\ToolMain.cpp" />
     <ClCompile Include="Tool\ToolSub.cpp" />
+    <ClCompile Include="Win\WinSettingShortcut.cpp" />
     <ClCompile Include="Win\WinVideo.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -224,6 +227,8 @@
     <ClInclude Include="Tool\ToolVideo.h" />
     <ClInclude Include="Tray.h" />
     <ClInclude Include="Tool\ToolSubSlider.h" />
+    <ClInclude Include="Win\WinSettingAbout.h" />
+    <ClInclude Include="Win\WinSettingCommon.h" />
     <ClInclude Include="Win\cgif\cgif.h" />
     <ClInclude Include="Win\cgif\cgif_raw.h" />
     <ClInclude Include="Win\WinLong.h" />
@@ -240,6 +245,7 @@
     <ClInclude Include="Tool\ToolBase.h" />
     <ClInclude Include="Tool\ToolMain.h" />
     <ClInclude Include="Tool\ToolSub.h" />
+    <ClInclude Include="Win\WinSettingShortcut.h" />
     <ClInclude Include="Win\WinVideo.h" />
     <ClInclude Include="Win\WinVideoGif.hpp" />
     <ClInclude Include="Win\WinVideoMp4.hpp" />

@@ -1,5 +1,8 @@
 ﻿#include "pch.h"
 #include "WinSetting.h"
+#include "WinSettingCommon.h"
+#include "WinSettingAbout.h"
+#include "WinSettingShortcut.h"
 #include "Util.h"
 
 std::unique_ptr<WinSetting> winSetting;
@@ -37,9 +40,8 @@ void WinSetting::onCreated()
 	paddintTop *= dpi;
 	menuLeftSpan *= dpi;
 	borderRadius *= dpi;
-	lineH *= dpi;
 	textSize *= dpi;
-	iconSize *= dpi;
+
 	render->CreateSolidColorBrush(D2D1::ColorF(0xE3E3E5), bg.GetAddressOf());
 	render->CreateSolidColorBrush(D2D1::ColorF(0xEEEEF0), menuBg.GetAddressOf());
 	render->CreateSolidColorBrush(D2D1::ColorF(0xD6D6D8), border.GetAddressOf());
@@ -48,13 +50,10 @@ void WinSetting::onCreated()
 	menuLabels.push_back(makeTextLayout(L"通用设置", menuW, menuH, textSize));
 	menuLabels.push_back(makeTextLayout(L"快捷键", menuW, menuH, textSize));
 	menuLabels.push_back(makeTextLayout(L"关于", menuW, menuH, textSize));
+	common = std::make_unique<WinSettingCommon>(this);
+	shortcut = std::make_unique<WinSettingShortcut>(this);
+	about = std::make_unique<WinSettingAbout>(this);
 
-	startupLabel = makeTextLayout(L"开机自启动：", w- menuW, lineH, textSize,false);
-	trayLabel = makeTextLayout(L"显示托盘图标：", w - menuW, lineH, textSize, false);
-	langLabel = makeTextLayout(L"语言设置：（此功能尚未完成）", w - menuW, lineH, textSize, false);
-
-	closeIcon = makeIconLayout(L"\ue687", lineH, lineH, iconSize);
-	openIcon = makeIconLayout(L"\ue688", lineH, lineH, iconSize);
 	show();
 }
 
@@ -82,19 +81,18 @@ void WinSetting::onPaint()
 	render->FillRoundedRectangle(rr, menuBg.Get());
 
 	if (menuIndexSelect == 0) {
-		paintCommon();
+		common->paint();
 	}
 	else if (menuIndexSelect == 1) {
-		paintShortcut();
 	}
 	else {
-		paintAbout();
+		about->paint();
 	}
 }
 
 BOOL WinSetting::onCursor()
 {
-	if (indexHover >= 0 && indexHover <= 2) {
+	if (indexHover >= 0 || common->hoverIndex>=0) {
 		setCursor(IDC_HAND);
 	}
 	else {
@@ -105,7 +103,7 @@ BOOL WinSetting::onCursor()
 
 void WinSetting::onMouseDown(const int& x, const int& y, bool isRight)
 {
-	if (indexHover < 0) {
+	if (indexHover < 0 && common->hoverIndex<0) {
 		pressPos.x = x;
 		pressPos.y = y;
 		return;
@@ -114,6 +112,7 @@ void WinSetting::onMouseDown(const int& x, const int& y, bool isRight)
 		menuIndexSelect = indexHover;
 		refresh();
 	}
+	common->mouseDown();
 }
 
 void WinSetting::onMouseDrag(const int& x, const int& y, const UINT_PTR& modifiers)
@@ -134,6 +133,10 @@ void WinSetting::onMouseMove(const int& x, const int& y)
 			index = i;
 		}
 	}
+	if (menuIndexSelect == 0) {
+		common->mouseMove(x, y);
+	}
+
 	if (index != indexHover) {
 		indexHover = index;
 		refresh();
@@ -154,32 +157,4 @@ void WinSetting::onDpiChanged()
 
 void WinSetting::onKeyDown(const UINT& key)
 {
-}
-
-void WinSetting::paintCommon()
-{
-	//render->FillRectangle(menuRect, menuBg.Get());
-	auto x{ menuW + menuLeftSpan * 7 }, y{ paddintTop + menuLeftSpan }, r{ w - menuLeftSpan * 7 };
-	render->DrawTextLayout({ x,y }, startupLabel.Get(), textBrush2.Get());
-	render->DrawTextLayout({ r-lineH,y }, closeIcon.Get(), textBrush.Get());
-
-	y += lineH;
-	render->DrawLine({ x,y }, { r,y }, border.Get(), dpi);
-	render->DrawTextLayout({ x,y }, trayLabel.Get(), textBrush2.Get());
-	render->DrawTextLayout({ r - lineH,y }, closeIcon.Get(), textBrush.Get());
-
-	y += lineH;
-	render->DrawLine({ x,y }, { r,y }, border.Get(), dpi);
-	render->DrawTextLayout({ x,y }, langLabel.Get(), textBrush.Get());
-	render->DrawLine({ x,y+lineH }, { r,y + lineH }, border.Get(), dpi);
-}
-
-void WinSetting::paintShortcut()
-{
-	//render->FillRectangle(menuRect, menuBg.Get());
-}
-
-void WinSetting::paintAbout()
-{
-	//render->FillRectangle(menuRect, menuBg.Get());
 }
