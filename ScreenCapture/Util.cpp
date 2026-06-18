@@ -110,10 +110,10 @@ bool Util::saveToFile(const std::wstring& path, const int& w, const int& h, BYTE
 
 void Util::setTextToClipboard(const std::wstring& text)
 {
-    DataPackage dataPackage;
-    dataPackage.SetText(text);
-    Clipboard::SetContent(dataPackage);
-    Clipboard::Flush();
+    //DataPackage dataPackage;
+    //dataPackage.SetText(text);
+    //Clipboard::SetContent(dataPackage);
+    //Clipboard::Flush();
 }
 
 std::wstring Util::getSaveFilePath(HWND hwnd, const std::wstring& ext)

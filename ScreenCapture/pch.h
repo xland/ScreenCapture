@@ -32,24 +32,9 @@
 #include <stdexcept>
 #include <math.h>
 
-#include <dispatcherqueue.h>
-#include <winrt/base.h> 
-#include <winrt/Windows.System.h>
-#include <winrt/Windows.Storage.h>
-#include <winrt/Windows.Storage.Pickers.h>
-#include <winrt/Windows.Storage.AccessCache.h>
-#include <winrt/Windows.Data.Json.h>
-#include <winrt/Windows.Foundation.h>
-#include <winrt/Windows.Foundation.Collections.h>
-#include <winrt/Windows.Web.UI.Interop.h>
-#include <winrt/Windows.ApplicationModel.DataTransfer.h>
 
 
-using namespace winrt::Windows::Data::Json;
-using namespace winrt::Windows::Storage;
 using namespace Microsoft::WRL;
-using namespace winrt::Windows::ApplicationModel::DataTransfer;
-namespace wf = winrt::Windows::Foundation;
 
 
 

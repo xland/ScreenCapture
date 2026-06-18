@@ -13,6 +13,7 @@ namespace {
     static ComPtr<IDXGIFactory5> fac5;
     static ComPtr<IDWriteFactory5> dwriteFactory;
     //static ComPtr<IDWriteRenderingParams> renderingParams;     
+    std::unordered_map<std::wstring, std::wstring> dic;
 }
 BOOL App::allowTearing = FALSE;
 
