@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "WinSettingShortcut.h"
 #include "WinSetting.h"
+#include "Setting.h"
 
 WinSettingShortcut::WinSettingShortcut(WinSetting* win):win{win}
 {
@@ -16,9 +17,9 @@ WinSettingShortcut::WinSettingShortcut(WinSetting* win):win{win}
 	videoLabel = win->makeTextLayout(L"屏幕录制：", w, lineH, win->textSize, false);
 
 	auto valSize{ 12 * win->dpi };
-	capVal = win->makeTextLayout(L"Ctrl+Alt+A", inputW, lineH, valSize);
-	longVal = win->makeTextLayout(L"Ctrl+Alt+L", inputW, lineH, valSize);
-	videoVal = win->makeTextLayout(L"Ctrl+Alt+V", inputW, lineH, valSize);
+	capVal = win->makeTextLayout(Setting::getCapKeysStr(), inputW, lineH, valSize);
+	longVal = win->makeTextLayout(Setting::getLongKeysStr(), inputW, lineH, valSize);
+	videoVal = win->makeTextLayout(Setting::getVideoKeysStr(), inputW, lineH, valSize);
 	tipVal = win->makeTextLayout(L"请按键...", inputW, lineH, valSize);
 	win->render->CreateSolidColorBrush(D2D1::ColorF(0xFFFFFF), inputBg.GetAddressOf());
 	win->render->CreateSolidColorBrush(D2D1::ColorF(0x1677FF), focusBrush.GetAddressOf());

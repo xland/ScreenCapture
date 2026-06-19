@@ -22,6 +22,7 @@
 #include <string_view>
 #include <ranges>
 #include <algorithm>
+#include <cwctype>
 #include <format>
 #include <map>
 #include <unordered_map>
@@ -31,8 +32,10 @@
 #include <fstream>
 #include <stdexcept>
 #include <math.h>
+#include <winrt/Windows.Data.Json.h>
 
 using namespace Microsoft::WRL;
+using namespace winrt::Windows::Data::Json;
 
 template<typename... Args>
 void log(std::wstring_view fmt, Args&&... args)
