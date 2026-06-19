@@ -316,7 +316,7 @@ void Util::saveFile(const std::wstring& path, const std::wstring& content)
     DWORD contentLength = static_cast<DWORD>(content.length() * sizeof(wchar_t));
     success = WriteFile(hFile, content.data(), contentLength, &bytesWritten, NULL);
     if (!success) {
-        CloseHandle(hFile); // 出错也要关闭句柄
+        CloseHandle(hFile);
         return;
     }
     CloseHandle(hFile);
@@ -326,12 +326,9 @@ std::vector<std::wstring> Util::splitStr(const std::wstring& str, wchar_t delimi
     std::vector<std::wstring> result;
     std::wistringstream wiss(str); // 将字符串转为宽字符流
     std::wstring token;
-
-    // 每次读取到 delimiter 为止的内容
     while (std::getline(wiss, token, delimiter)) {
         result.push_back(token);
     }
-
     return result;
 }
 
