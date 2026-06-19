@@ -12,11 +12,11 @@ public:
 	static std::wstring getCapKeysStr();
 	static std::wstring getLongKeysStr();
 	static std::wstring getVideoKeysStr();
+	static void setKeys(const int& type, const std::vector<UINT>& keys);
 private:
 	std::filesystem::path initDataPath();
 	void initSettings();
-	std::wstring keyToStr(UINT vkCode);
-	UINT strToKey(const std::wstring& keyName);
+	void initShortcutKeys(const JsonObject& jsonObj);
 private:
 	const std::filesystem::path dataPath;
 	std::vector<UINT> capKeys;

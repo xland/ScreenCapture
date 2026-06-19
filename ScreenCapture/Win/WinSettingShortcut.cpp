@@ -103,6 +103,31 @@ void WinSettingShortcut::mouseDown()
 {
 	if (hoverIndex != focusIndex) {
 		focusIndex = hoverIndex;
+		tempKeys.clear();
 		win->refresh();
 	}
+}
+
+void WinSettingShortcut::keyDown(const UINT& key)
+{
+	bool isContains = std::ranges::find(tempKeys, key) != tempKeys.end();
+	if (isContains) return;
+	tempKeys.push_back(key);
+}
+
+void WinSettingShortcut::keyUp()
+{
+	Setting::setKeys(focusIndex, tempKeys);
+	auto valSize{ 12 * win->dpi };
+	if (focusIndex == 0) {
+		capVal = win->makeTextLayout(Setting::getCapKeysStr(), inputW, lineH, valSize);
+	}
+	else if (focusIndex == 1) {
+		longVal = win->makeTextLayout(Setting::getLongKeysStr(), inputW, lineH, valSize);
+	}
+	else if (focusIndex == 2) {
+		videoVal = win->makeTextLayout(Setting::getVideoKeysStr(), inputW, lineH, valSize);
+	}
+	focusIndex = -1;
+	win->refresh();	
 }

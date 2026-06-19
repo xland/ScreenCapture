@@ -37,6 +37,7 @@ protected:
 	virtual void onMouseDown(const int& x, const int& y, bool isRight) {};
 	virtual void onMouseUp(const int& x, const int& y) {};
 	virtual void onKeyDown(const UINT& key) {};
+	virtual void onKeyUp() {};
 	virtual void onChar(const UINT& ch) {};
 	virtual void onMouseLeave() {};
 	virtual void onMouseWheel(const int& x, const int& y, const short& delta) {};

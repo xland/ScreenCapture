@@ -17,5 +17,9 @@ public:
 	static std::wstring convertToWStr(const char* str);
 	static std::string convertToStr(const std::wstring& wstr);
 	static void addFileToClipboard(const std::wstring& filePath);
+	static UINT strToKey(const std::wstring& keyName);
+	static std::vector<std::wstring> splitStr(const std::wstring& str, wchar_t delimiter);
+	static std::wstring keyToStr(UINT vkCode);
+	static std::wstring strToKey(UINT vkCode);
 };
 

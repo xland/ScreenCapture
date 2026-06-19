@@ -183,4 +183,14 @@ void WinSetting::onDpiChanged()
 
 void WinSetting::onKeyDown(const UINT& key)
 {
+	if (shortcut->focusIndex >=0) {
+		shortcut->keyDown(key);
+	}
+}
+
+void WinSetting::onKeyUp()
+{
+	if (shortcut->focusIndex >= 0) {
+		shortcut->keyUp();
+	}
 }

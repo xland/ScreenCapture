@@ -29,6 +29,7 @@ private:
 	void onMouseLeave() override;
 	void onDpiChanged() override;
 	void onKeyDown(const UINT& key) override;
+	void onKeyUp() override;
 private:
 	POINT pressPos{ 0,0 };
 	int indexHover{ -1 }, menuIndexSelect{0};

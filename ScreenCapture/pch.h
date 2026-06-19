@@ -26,6 +26,7 @@
 #include <format>
 #include <map>
 #include <unordered_map>
+#include <unordered_set>
 #include <chrono>
 #include <functional>
 #include <filesystem>

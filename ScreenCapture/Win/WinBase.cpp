@@ -262,6 +262,9 @@ LRESULT WinBase::winProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     else if (msg == WM_KEYDOWN) {
         self->onKeyDown(wParam);
     }
+    else if (msg == WM_KEYUP) {
+        self->onKeyUp();
+    }
     else if (msg == WM_CHAR) {
         self->onChar(wParam);
     }
