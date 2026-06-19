@@ -184,6 +184,21 @@ void WinSetting::onDpiChanged()
 void WinSetting::onKeyDown(const UINT& key)
 {
 	if (shortcut->focusIndex >=0) {
+		if (GetKeyState(VK_CONTROL) & 0x8000) {
+			shortcut->keyDown(VK_CONTROL);
+		}
+		if (GetKeyState(VK_MENU) & 0x8000) {
+			shortcut->keyDown(VK_MENU);
+		}
+		if (GetKeyState(VK_SHIFT) & 0x8000) {
+			shortcut->keyDown(VK_SHIFT);
+		}
+		if (GetAsyncKeyState(VK_LWIN) & 0x8000) {
+			shortcut->keyDown(VK_LWIN);
+		}
+		if (GetAsyncKeyState(VK_RWIN) & 0x8000) {
+			shortcut->keyDown(VK_RWIN);
+		}
 		shortcut->keyDown(key);
 	}
 }

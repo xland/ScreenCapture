@@ -80,6 +80,7 @@ void Setting::setKeys(const int& type, const std::vector<UINT>& keys)
     else if (type == 2) {
         setting->videoKeys = keys;
     }
+    setting->save();
 }
 
 
@@ -104,12 +105,11 @@ std::filesystem::path Setting::initDataPath()
 void Setting::initSettings()
 {
     auto dataPath = this->dataPath;
-    dataPath.append("config.json");
-    if (std::filesystem::exists(dataPath)) {
-        std::ifstream file(dataPath);
-        std::string content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-        auto dataStr = Util::convertToWStr(content.data());
-        JsonObject jsonObj = JsonObject::Parse(dataStr.data());
+    auto path = dataPath.append("config.json");
+    if (std::filesystem::exists(path)) {
+        auto pathStr = path.wstring();
+        std::wstring content = Util::readFile(pathStr);
+        JsonObject jsonObj = JsonObject::Parse(content.data());
         initShortcutKeys(jsonObj.GetNamedObject(L"shortcutKey"));
     }
     else {
@@ -141,6 +141,20 @@ void Setting::initShortcutKeys(const JsonObject& jsonObj)
     {
         videoKeys.push_back(Util::strToKey(arr[i]));
     }
+}
+
+void Setting::save()
+{
+    JsonObject obj;
+    obj.SetNamedValue(L"cap", JsonValue::CreateStringValue(Setting::getCapKeysStr()));
+    obj.SetNamedValue(L"long", JsonValue::CreateStringValue(Setting::getLongKeysStr()));
+    obj.SetNamedValue(L"video", JsonValue::CreateStringValue(Setting::getVideoKeysStr()));
+    JsonObject config;
+    config.SetNamedValue(L"shortcutKey", obj);
+    std::wstring str{ config.Stringify() };
+    auto dataPath = this->dataPath;
+    auto pathStr = dataPath.append("config.json").wstring();
+    Util::saveFile(pathStr, str);
 }
 
 

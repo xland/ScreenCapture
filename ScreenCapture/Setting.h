@@ -17,6 +17,7 @@ private:
 	std::filesystem::path initDataPath();
 	void initSettings();
 	void initShortcutKeys(const JsonObject& jsonObj);
+	void save();
 private:
 	const std::filesystem::path dataPath;
 	std::vector<UINT> capKeys;
