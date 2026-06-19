@@ -33,8 +33,9 @@ private:
 	POINT pressPos{ 0,0 };
 	int indexHover{ -1 }, menuIndexSelect{0};
 	std::vector<ComPtr<IDWriteTextLayout>> menuLabels;
-	ComPtr<ID2D1SolidColorBrush> menuBg, border, textBrush, textBrush2,bg;
-	float menuW{ 120.f }, menuH{ 38.f }, paddintTop{ 32.f }, menuLeftSpan{ 8.f }, borderRadius{ 6.f },  textSize{ 14.f };
+	ComPtr<IDWriteTextLayout> closeIcon;
+	ComPtr<ID2D1SolidColorBrush> menuBg, border, textBrush, textBrush2,bg,red;
+	float menuW{ 120.f }, menuH{ 38.f }, paddintTop{ 38.f }, menuLeftSpan{ 8.f }, borderRadius{ 6.f },  textSize{ 14.f };
 	std::unique_ptr<WinSettingCommon> common;
 	std::unique_ptr<WinSettingShortcut> shortcut;
 	std::unique_ptr<WinSettingAbout> about;

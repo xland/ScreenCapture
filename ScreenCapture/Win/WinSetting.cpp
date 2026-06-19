@@ -46,10 +46,12 @@ void WinSetting::onCreated()
 	render->CreateSolidColorBrush(D2D1::ColorF(0xEEEEF0), menuBg.GetAddressOf());
 	render->CreateSolidColorBrush(D2D1::ColorF(0xD6D6D8), border.GetAddressOf());
 	render->CreateSolidColorBrush(D2D1::ColorF(0x888888), textBrush.GetAddressOf());
+	render->CreateSolidColorBrush(D2D1::ColorF(0xFA5151), red.GetAddressOf());
 	render->CreateSolidColorBrush(D2D1::ColorF(0x333333), textBrush2.GetAddressOf()); //0x1677FF
 	menuLabels.push_back(makeTextLayout(L"通用设置", menuW, menuH, textSize));
 	menuLabels.push_back(makeTextLayout(L"快捷键", menuW, menuH, textSize));
 	menuLabels.push_back(makeTextLayout(L"关于", menuW, menuH, textSize));
+	closeIcon = makeIconLayout(L"\ue62d", paddintTop, paddintTop, textSize);
 	common = std::make_unique<WinSettingCommon>(this);
 	shortcut = std::make_unique<WinSettingShortcut>(this);
 	about = std::make_unique<WinSettingAbout>(this);
@@ -60,6 +62,8 @@ void WinSetting::onCreated()
 void WinSetting::onPaint()
 {
 	render->Clear(D2D1::ColorF(0xE3E3E5));
+	render->DrawTextLayout({ w-paddintTop,0 }, closeIcon.Get(), indexHover == 3? red.Get() : textBrush.Get());
+
 	D2D1_RECT_F menuRect{ 0,0,menuW,h };
 	render->FillRectangle(menuRect, menuBg.Get());
 	render->DrawLine({ menuW,0 }, { menuW,(float)h }, border.Get(), dpi);
@@ -96,6 +100,9 @@ BOOL WinSetting::onCursor()
 	if (indexHover >= 0 || common->hoverIndex>=0 || about->hoverIndex>=0) {
 		setCursor(IDC_HAND);
 	}
+	else if (shortcut->hoverIndex>=0) {
+		setCursor(IDC_IBEAM);
+	}
 	else {
 		setCursor(IDC_ARROW);
 	}	
@@ -104,16 +111,24 @@ BOOL WinSetting::onCursor()
 
 void WinSetting::onMouseDown(const int& x, const int& y, bool isRight)
 {
-	if (indexHover < 0 && common->hoverIndex<0 && about->hoverIndex < 0) {
+	if (indexHover < 0 && common->hoverIndex<0 && about->hoverIndex < 0 && shortcut->hoverIndex < 0) {
 		pressPos.x = x;
 		pressPos.y = y;
+		shortcut->mouseDown();
 		return;
 	}
 	if (indexHover != menuIndexSelect && indexHover >=0 && indexHover<=2) {
 		menuIndexSelect = indexHover;
 		refresh();
+		return;
+	}
+	if (indexHover == 3) {
+		close();
+		winSetting.reset();
+		return;
 	}
 	common->mouseDown();
+	shortcut->mouseDown();
 	about->mouseDown();
 }
 
@@ -135,8 +150,14 @@ void WinSetting::onMouseMove(const int& x, const int& y)
 			index = i;
 		}
 	}
+	else if (y > 0 && y<paddintTop && x>w - paddintTop) {
+		index = 3;
+	}
 	if (menuIndexSelect == 0) {
 		common->mouseMove(x, y);
+	}
+	else if (menuIndexSelect == 1) {
+		shortcut->mouseMove(x, y);
 	}
 	else if (menuIndexSelect == 2) {
 		about->mouseMove(x, y);

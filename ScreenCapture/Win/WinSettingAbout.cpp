@@ -44,7 +44,7 @@ void WinSettingAbout::paint()
 }
 void WinSettingAbout::mouseMove(const int& x, const int& y)
 {
-	if (x > contentX && x<contentR && y>contentY) {
+	if (x > contentX && x<contentR ) {
 		if (y> contentY + lineH && y < contentY + lineH*2) {
 			hoverIndex = 0;
 		}

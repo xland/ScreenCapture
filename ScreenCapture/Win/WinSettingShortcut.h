@@ -9,11 +9,12 @@ public:
 	void paint();	
 	void mouseMove(const int& x, const int& y);
 	void mouseDown();
+	int focusIndex{ -1 }, hoverIndex{ -1 };
 private:
 	WinSetting* win;
-	float lineH{ 44.f }, iconSize{ 22.f };
+	float lineH{ 44.f }, inputW{ 96.f }, inputYMargin{8.f};
 	float contentX, contentY, contentR;
-	bool isAutoStart{ false }, isShowTray{ true };
-	ComPtr<IDWriteTextLayout> capLabel, longLabel, videoLabel;
+	ComPtr<IDWriteTextLayout> capLabel, longLabel, videoLabel, capVal, longVal, videoVal,tipVal;
+	ComPtr<ID2D1SolidColorBrush> inputBg,focusBrush;
 };
 
