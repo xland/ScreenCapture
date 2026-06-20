@@ -160,13 +160,39 @@ void WinPin::copyToClipboard()
 
 void WinPin::saveToFile()
 {
+    auto foregroundBeforeDialog = GetForegroundWindow();
+    auto restoreWindowState = [this, foregroundBeforeDialog]() {
+        // IFileSaveDialog 关闭后会把 owner(hwnd) 恢复为活动窗口。
+        // 窗口未关闭时恢复打开对话框之前的前台窗口状态，并重新把工具栏放回贴图窗口之上，
+        // 避免 WinPin 被激活后阴影盖住 ToolMain。
+        SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+        if (toolMain.get() && toolMain->hwnd && IsWindow(toolMain->hwnd) && IsWindowVisible(toolMain->hwnd)) {
+            SetWindowPos(toolMain->hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+        }
+        if (toolSub.get() && toolSub->hwnd && IsWindow(toolSub->hwnd) && IsWindowVisible(toolSub->hwnd)) {
+            SetWindowPos(toolSub->hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+        }
+        if (foregroundBeforeDialog && foregroundBeforeDialog != hwnd && IsWindow(foregroundBeforeDialog) && IsWindowVisible(foregroundBeforeDialog)) {
+            SetForegroundWindow(foregroundBeforeDialog);
+        }
+    };
+
     auto path = Util::getSaveFilePath(hwnd);
-    if (path.empty()) return;
+    if (path.empty()) {
+        restoreWindowState();
+        return;
+    }
 
     std::vector<BYTE> pixels;
-    if (!getImagePixels(pixels)) return;
+    if (!getImagePixels(pixels)) {
+        restoreWindowState();
+        return;
+    }
     if (Util::saveToFile(path, w, h, pixels.data())) {
         close();
+    }
+    else {
+        restoreWindowState();
     }
 }
 
