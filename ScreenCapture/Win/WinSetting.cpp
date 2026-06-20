@@ -28,13 +28,12 @@ void WinSetting::init()
 	int x = workAreaRect.left + (workAreaWidth - w) / 2;
 	int y = workAreaRect.top + (workAreaHeight - h) / 2;
 	winSetting = std::make_unique<WinSetting>(x, y, w, h);
-	winSetting->createWindow(0, WS_MAXIMIZEBOX | WS_MINIMIZEBOX);
+	winSetting->createWindow(WS_EX_APPWINDOW, WS_MAXIMIZEBOX | WS_MINIMIZEBOX);
 
 }
 
 void WinSetting::onCreated()
 {
-	auto v = GetAwarenessFromDpiAwarenessContext(GetWindowDpiAwarenessContext(hwnd));
 	SetWindowText(hwnd, L"ScreenCapture设置");
 	enableShadow();
 	menuW *= dpi;

@@ -96,7 +96,7 @@ void ShapeTextWin::onIME()
     if (HIMC himc = ImmGetContext(hwnd))
     {
 		//输入法提示框位置，设置在输入光标附近（不能在窗口边缘，不然提示框位置会出现在屏幕右上角）
-        POINT pt{ std::min(caretPos.x + 1,(float)w-1), std::min((float)h - 1,caretPos.y)};
+        POINT pt{ (std::min)(caretPos.x + 1, (float)w - 1), (std::min)((float)h - 1, caretPos.y) };
         COMPOSITIONFORM comp{};
         comp.dwStyle = CFS_FORCE_POSITION;
         comp.ptCurrentPos = pt;
@@ -177,6 +177,8 @@ void ShapeTextWin::onMouseUp(const int& x, const int& y)
 }
 void ShapeTextWin::onKeyDown(const UINT& key)
 {
+    bool isCtrlDown = (GetKeyState(VK_CONTROL) & 0x8000) != 0;
+
     if (key == VK_RETURN) {
         delSelection();
         shape->text.insert(caretSelectionDown, 1, L'\n');
@@ -277,12 +279,13 @@ void ShapeTextWin::onKeyDown(const UINT& key)
         resetCaretPos(caretSelectionDown);
         refresh();
     }
-    else if (key == 'C') {
+    else if (isCtrlDown && key == 'C') {
         if (caretSelectionStart == caretSelectionEnd) return;
         std::wstring sub = shape->text.substr(caretSelectionStart, caretSelectionEnd - caretSelectionStart);
         Util::setTextToClipboard(sub);
     }
-    else if (key == 'V') {
+    else if (isCtrlDown && key == 'V') {
+        delSelection();
         auto str = Util::getTextFromClipboard();
         shape->text.insert(caretSelectionDown, str);
         shape->setTextLayout();
@@ -299,13 +302,13 @@ void ShapeTextWin::onKeyDown(const UINT& key)
         //    InvalidateRect(hwnd, nullptr, FALSE);
         //    });
     }
-    else if (key == 'X') {
+    else if (isCtrlDown && key == 'X') {
         if (caretSelectionStart == caretSelectionEnd) return;
         std::wstring sub = shape->text.substr(caretSelectionStart, caretSelectionEnd - caretSelectionStart);
         Util::setTextToClipboard(sub);
         delSelection();
     }
-    else if (key == 'A') {
+    else if (isCtrlDown && key == 'A') {
         caretSelectionStart = 0;
         caretSelectionEnd = shape->text.length();
         caretSelectionDown = caretSelectionEnd;

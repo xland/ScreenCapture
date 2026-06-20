@@ -38,8 +38,8 @@ void App::init(HINSTANCE hInstance)
     Tray::init();
     //WinVideo::init();
     //WinLong::init();
-    //WinCap::init();
-    WinSetting::init();
+    WinCap::init();
+    //WinSetting::init();
 }
 
 App* App::get()
