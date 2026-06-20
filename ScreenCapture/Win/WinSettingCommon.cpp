@@ -1,6 +1,9 @@
 ﻿#include "pch.h"
 #include "WinSettingCommon.h"
 #include "WinSetting.h"
+#include "Setting.h"
+#include "Util.h"
+#include "Tray.h"
 
 WinSettingCommon::WinSettingCommon(WinSetting* win):win{win}
 {
@@ -9,6 +12,12 @@ WinSettingCommon::WinSettingCommon(WinSetting* win):win{win}
 	contentX = win->menuW + win->menuLeftSpan * 7;
 	contentY = win->paddintTop + win->menuLeftSpan;
 	contentR = win->w - win->menuLeftSpan * 7;
+
+	auto configObj = Setting::getConfigObj();
+	auto common = configObj.GetNamedObject(L"common");
+	isShowTray = common.GetNamedBoolean(L"showTray");
+	isAutoStart = common.GetNamedBoolean(L"autoStart");
+
 	win->render->CreateSolidColorBrush(D2D1::ColorF(0x1677FF), openBrush.GetAddressOf());
 	auto w = contentR - contentX;
 	startupLabel = win->makeTextLayout(L"开机自启动：", w, lineH, win->textSize, false);
@@ -61,10 +70,14 @@ void WinSettingCommon::mouseDown()
 {
 	if (hoverIndex == 0) {
 		isAutoStart = !isAutoStart;
+		Util::setAutoStart(isAutoStart);
+		Setting::setSwitch(isAutoStart, isShowTray);
 		win->refresh();
 	}
 	else if (hoverIndex == 1) {
 		isShowTray = !isShowTray;
+		Tray::get()->setTray(isShowTray);
+		Setting::setSwitch(isAutoStart, isShowTray);
 		win->refresh();
 	}
 }

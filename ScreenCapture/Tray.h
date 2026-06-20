@@ -8,9 +8,9 @@ public:
 	static void init();
 	static Tray* get();
 	static bool secondIns();
+	void setTray(bool flag);
 public:
 private:
-	void regHotKey();
 	void regOneHotKey(const std::wstring& key);
 	void createWin();
 	void createTray();

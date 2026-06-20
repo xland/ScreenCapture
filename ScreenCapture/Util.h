@@ -22,5 +22,6 @@ public:
 	static std::vector<std::wstring> splitStr(const std::wstring& str, wchar_t delimiter);
 	static std::wstring keyToStr(UINT vkCode);
 	static UINT strToKey(const std::wstring& vkCode);
+	static void setAutoStart(bool flag);
 };
 

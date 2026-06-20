@@ -463,3 +463,26 @@ UINT Util::strToKey(const std::wstring& lowerName)
     // 未识别
     return 0;
 }
+
+void Util::setAutoStart(bool flag)
+{
+    std::wstring runKey = L"Software\\Microsoft\\Windows\\CurrentVersion\\Run";
+    if (flag) {
+        wchar_t buffer[MAX_PATH];
+        GetModuleFileName(nullptr, buffer, MAX_PATH);
+        auto curPath = std::filesystem::path(buffer);
+        std::wstring exePath = curPath.wstring();
+        HKEY hKey;
+        if (RegOpenKeyEx(HKEY_CURRENT_USER, runKey.data(), 0, KEY_WRITE, &hKey) == ERROR_SUCCESS) {
+            RegSetValueEx(hKey, L"ScreenCapture", 0, REG_SZ, (const BYTE*)exePath.data(), (exePath.size() + 1) * sizeof(wchar_t));
+            RegCloseKey(hKey);
+        }
+    }
+    else {
+        HKEY hKey;
+        if (RegOpenKeyEx(HKEY_CURRENT_USER, runKey.data(), 0, KEY_WRITE, &hKey) == ERROR_SUCCESS) {
+            RegDeleteValue(hKey, L"ScreenCapture");
+            RegCloseKey(hKey);
+        }
+    }
+}

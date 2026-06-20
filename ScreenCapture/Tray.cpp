@@ -46,25 +46,24 @@ void Tray::init()
 {
 	trayIns = std::make_unique<Tray>();
 	trayIns->createWin();
-    trayIns->createTray();
-	trayIns->regHotKey();
+	auto configObj = Setting::getConfigObj();
+	auto common = configObj.GetNamedObject(L"common");
+	if (common.GetNamedBoolean(L"showTray"))
+	{
+		trayIns->createTray();
+	}
+	auto configShortcut = configObj.GetNamedObject(L"shortcutKey");
+	std::wstring capStr{ configShortcut.GetNamedString(L"cap") };
+	trayIns->regOneHotKey(capStr);
+	std::wstring longStr{ configShortcut.GetNamedString(L"long") };
+	trayIns->regOneHotKey(longStr);
+	std::wstring videoStr{ configShortcut.GetNamedString(L"video") };
+	trayIns->regOneHotKey(videoStr);
 }
 
 Tray* Tray::get()
 {
 	return trayIns.get();
-}
-
-void Tray::regHotKey()
-{
-	auto configObj = Setting::getConfigObj();
-	auto configShortcut = configObj.GetNamedObject(L"shortcutKey");
-	std::wstring capStr{ configShortcut.GetNamedString(L"cap") };
-	regOneHotKey(capStr);
-	std::wstring longStr{ configShortcut.GetNamedString(L"long") };
-	regOneHotKey(longStr);
-	std::wstring videoStr{ configShortcut.GetNamedString(L"video") };
-	regOneHotKey(videoStr);
 }
 
 void Tray::regOneHotKey(const std::wstring& keyStr)
@@ -207,4 +206,15 @@ bool Tray::secondIns()
 		return true;
 	}
 	return false;
+}
+
+void Tray::setTray(bool flag)
+{
+	if (flag) {
+		createTray();
+	}
+	else {
+		Shell_NotifyIcon(NIM_DELETE, tray.get());
+		tray.reset();
+	}
 }

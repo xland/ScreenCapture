@@ -48,6 +48,14 @@ void Setting::setKeys(const int& type, const std::vector<std::wstring>& keys)
     setting->save();
 }
 
+void Setting::setSwitch(bool autoStart, bool showTray)
+{
+    auto common = setting->configObj.GetNamedObject(L"common");
+    common.SetNamedValue(L"autoStart", JsonValue::CreateBooleanValue(autoStart));
+    common.SetNamedValue(L"showTray", JsonValue::CreateBooleanValue(showTray));
+    setting->save();
+}
+
 
 std::filesystem::path Setting::initDataPath()
 {
@@ -78,7 +86,7 @@ void Setting::initSettings()
         //initShortcutKeys(jsonObj.GetNamedObject(L"shortcutKey"));
     }
     else {
-        configObj = JsonObject::Parse(LR"""({"shortcutKey":{"cap":"Ctrl+Alt+A","long":"Ctrl+Alt+P","video":"Ctrl+Alt+V"}})""");
+        configObj = JsonObject::Parse(LR"""({"common":{"autoStart":true,"showTray":false},"shortcutKey":{"cap":"Ctrl+Alt+A","long":"Ctrl+Alt+P","video":"Ctrl+Alt+V"}})""");
         //capKeys = { L"Ctrl",L"Alt",L"A"}; //17 18 65
         //longKeys = { L"Ctrl",L"Alt",L"L" }; //17 18 76
         //videoKeys = { L"Ctrl",L"Alt",L"V" }; //17 18 86
