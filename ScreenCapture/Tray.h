@@ -11,6 +11,7 @@ public:
 public:
 private:
 	void regHotKey();
+	void regOneHotKey(const std::wstring& key);
 	void createWin();
 	void createTray();
 	void onTrayClick();

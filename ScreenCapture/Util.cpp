@@ -342,7 +342,6 @@ std::wstring Util::keyToStr(UINT vkCode)
     case VK_LWIN:    return L"LWin";
     case VK_RWIN:    return L"RWin";
     case VK_CAPITAL: return L"CapsLock";
-
         // --- 功能键 (F1 - F12) ---
     case VK_F1: return L"F1";
     case VK_F2: return L"F2";
@@ -356,13 +355,11 @@ std::wstring Util::keyToStr(UINT vkCode)
     case VK_F10: return L"F10";
     case VK_F11: return L"F11";
     case VK_F12: return L"F12";
-
         // --- 方向键 ---
     case VK_UP: return L"Up";
     case VK_DOWN: return L"Down";
     case VK_LEFT: return L"Left";
     case VK_RIGHT: return L"Right";
-
         // --- 控制与编辑键 ---
     case VK_RETURN:  return L"Enter";
     case VK_ESCAPE:  return L"Esc";
@@ -378,7 +375,6 @@ std::wstring Util::keyToStr(UINT vkCode)
     case VK_SNAPSHOT:return L"PrintScreen";
     case VK_SCROLL:  return L"ScrollLock";
     case VK_PAUSE:   return L"Pause";
-
         // --- 小键盘 ---
     case VK_NUMLOCK: return L"NumLock";
     case VK_MULTIPLY: return L"*";
@@ -386,7 +382,6 @@ std::wstring Util::keyToStr(UINT vkCode)
     case VK_SUBTRACT: return L"-";
     case VK_DIVIDE:   return L"/";
     case VK_DECIMAL:  return L".";
-
     default:
         // --- 字母键 (A-Z 对应 ASCII 码 65-90) ---
         if (vkCode >= 'A' && vkCode <= 'Z') {
@@ -398,35 +393,34 @@ std::wstring Util::keyToStr(UINT vkCode)
         }
         // --- 小键盘数字键 (0-9) ---
         if (vkCode >= VK_NUMPAD0 && vkCode <= VK_NUMPAD9) {
-            return std::to_wstring(vkCode - VK_NUMPAD0);
+            return L"Num"+std::to_wstring(vkCode - VK_NUMPAD0);
         }
-
         // --- 未识别的键，返回带前缀的数字 ---
-        return std::to_wstring(vkCode);
+        return L"";
     }
 }
 
-UINT Util::strToKey(const std::wstring& keyName)
+UINT Util::strToKey(const std::wstring& lowerName)
 {
-    if (keyName.empty()) return 0;
-
-    std::wstring lowerName = keyName;
-    std::transform(lowerName.begin(), lowerName.end(), lowerName.begin(), ::towlower);
-    if (keyName.length() == 1) {
-        wchar_t c = keyName[0];
+    if (lowerName.empty()) return 0;
+    // 1. 处理单字符 (A-Z, 0-9)
+    if (lowerName.length() == 1) {
+        wchar_t c = lowerName[0];
         if (c >= 'A' && c <= 'Z') return static_cast<UINT>(c);
         if (c >= 'a' && c <= 'z') return static_cast<UINT>(std::towupper(c));
         if (c >= '0' && c <= '9') return static_cast<UINT>(c);
     }
-    // --- 修饰键 ---
-    if (lowerName == L"ctrl") return VK_CONTROL;
-    if (lowerName == L"alt") return VK_MENU;
-    if (lowerName == L"shift") return VK_SHIFT;
-    if (lowerName == L"lwin") return VK_LWIN;
-    if (lowerName == L"rwin") return VK_RWIN;
-    if (lowerName == L"capslock") return VK_CAPITAL;
-
-    // --- 功能键 ---
+    // 2. 处理小键盘数字 "Num0" 等
+    if (lowerName.rfind(L"num", 0) == 0) {
+        std::wstring numPart = lowerName.substr(lowerName.find_first_not_of(L" \t", 3));
+        if (!numPart.empty() && numPart.length() == 1) {
+            wchar_t c = numPart[0];
+            if (c >= '0' && c <= '9') {
+                return VK_NUMPAD0 + (c - '0');
+            }
+        }
+    }
+    // 3. 功能键 (F1 - F12)
     if (lowerName == L"f1") return VK_F1;
     if (lowerName == L"f2") return VK_F2;
     if (lowerName == L"f3") return VK_F3;
@@ -439,14 +433,12 @@ UINT Util::strToKey(const std::wstring& keyName)
     if (lowerName == L"f10") return VK_F10;
     if (lowerName == L"f11") return VK_F11;
     if (lowerName == L"f12") return VK_F12;
-
-    // --- 方向键 ---
+    // 4. 方向键
     if (lowerName == L"up") return VK_UP;
     if (lowerName == L"down") return VK_DOWN;
     if (lowerName == L"left") return VK_LEFT;
     if (lowerName == L"right") return VK_RIGHT;
-
-    // --- 控制与编辑键 ---
+    // 5. 控制与编辑键
     if (lowerName == L"enter") return VK_RETURN;
     if (lowerName == L"esc") return VK_ESCAPE;
     if (lowerName == L"space") return VK_SPACE;
@@ -461,14 +453,13 @@ UINT Util::strToKey(const std::wstring& keyName)
     if (lowerName == L"printscreen") return VK_SNAPSHOT;
     if (lowerName == L"scrolllock") return VK_SCROLL;
     if (lowerName == L"pause") return VK_PAUSE;
-
-    // --- 小键盘符号 ---
+    // 6. 小键盘符号
     if (lowerName == L"numlock") return VK_NUMLOCK;
-    if (lowerName == L"num *") return VK_MULTIPLY;
-    if (lowerName == L"num +") return VK_ADD;
-    if (lowerName == L"num -") return VK_SUBTRACT;
-    if (lowerName == L"num /") return VK_DIVIDE;
-    if (lowerName == L"num .") return VK_DECIMAL;
-
+    if (lowerName == L"*") return VK_MULTIPLY;
+    if (lowerName == L"+") return VK_ADD;
+    if (lowerName == L"-") return VK_SUBTRACT;
+    if (lowerName == L"/") return VK_DIVIDE;
+    if (lowerName == L".") return VK_DECIMAL;
+    // 未识别
     return 0;
 }

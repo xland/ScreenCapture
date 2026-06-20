@@ -5,6 +5,7 @@
 #include "Win/WinVideo.h"
 #include "Win/WinLong.h"
 #include "Win/WinSetting.h"
+#include "Setting.h"
 
 namespace {
 	std::unique_ptr<Tray> trayIns;
@@ -56,11 +57,52 @@ Tray* Tray::get()
 
 void Tray::regHotKey()
 {
-	BOOL result = RegisterHotKey(hwnd, capScreenKeyMsg, MOD_CONTROL | MOD_ALT, 'A');
+	auto configObj = Setting::getConfigObj();
+	auto configShortcut = configObj.GetNamedObject(L"shortcutKey");
+	std::wstring capStr{ configShortcut.GetNamedString(L"cap") };
+	regOneHotKey(capStr);
+	std::wstring longStr{ configShortcut.GetNamedString(L"long") };
+	regOneHotKey(longStr);
+	std::wstring videoStr{ configShortcut.GetNamedString(L"video") };
+	regOneHotKey(videoStr);
+}
+
+void Tray::regOneHotKey(const std::wstring& keyStr)
+{
+	std::wstring lowerName = keyStr;
+	std::transform(lowerName.begin(), lowerName.end(), lowerName.begin(), ::towlower);
+	auto arr = Util::splitStr(lowerName, L'+');
+	UINT modifiers = 0;
+	UINT keyCode{0};
+	for (auto& key:arr)
+	{
+		if (key == L"ctrl") {
+			modifiers |= MOD_CONTROL;
+		}
+		else if (key == L"alt") {
+			modifiers |= MOD_ALT;
+		}
+		else if (key == L"shift") {
+			modifiers |= MOD_SHIFT;
+		}
+		else if (key == L"win" || key == L"lwin" || key == L"rwin") {
+			modifiers |= MOD_WIN;
+		}
+		else {
+			keyCode = Util::strToKey(key);
+		}
+	}
+	if (keyCode == 0) {
+		auto errMsg = std::format(L"快捷键注册失败：{}", keyStr);
+		MessageBox(NULL, errMsg.data(), L"系统提示", MB_OK | MB_ICONINFORMATION);
+		return;
+	}
+	BOOL result = RegisterHotKey(hwnd, capScreenKeyMsg, modifiers, keyCode);
 	if (!result) {
 		DWORD error = GetLastError();
 		if (error == ERROR_HOTKEY_ALREADY_REGISTERED) {
-
+			auto errMsg = std::format(L"快捷键冲突：{}", keyStr);
+			MessageBox(NULL, errMsg.data(), L"系统提示", MB_OK | MB_ICONINFORMATION);
 		}
 	}
 }

@@ -6,6 +6,7 @@
 #include "WinPin.h"
 #include "History.h"
 #include "Tool/ToolVideo.h"
+#include "Setting.h"
 
 std::unique_ptr<WinVideo> winVideo;
 
@@ -40,7 +41,7 @@ void WinVideo::release()
 void WinVideo::startMp4(bool useSpeaker, bool useMic)
 {
     setMouseTransparent(true);
-    auto videoTempPath = App::getDataPath();
+    auto videoTempPath = Setting::getDataPath();
     mp4Param = std::make_unique<WinVideoMp4::DESKTOPCAPTUREPARAMS>();
     mp4Param->VIDEO_ENCODING_FORMAT = MFVideoFormat_HEVC;
     mp4Param->rx = { (long)(x + cutMask->maskRect.left), (long)(y+ cutMask->maskRect.top), (long)(cutMask->maskRect.right- cutMask->maskRect.left), (long)(cutMask->maskRect.bottom - cutMask->maskRect.top) };
@@ -66,7 +67,7 @@ void WinVideo::startMp4(bool useSpeaker, bool useMic)
 void WinVideo::startGif()
 {
     setMouseTransparent(true);
-    auto videoTempPath = App::getDataPath();
+    auto videoTempPath = Setting::getDataPath();
     gifParam = std::make_unique<WinVideoGif::GifParam>();
     gifParam->x = (int)(this->x + cutMask->maskRect.left);
     gifParam->y = (int)(this->y + cutMask->maskRect.top);

@@ -9,12 +9,12 @@ public:
 	void paint();	
 	void mouseMove(const int& x, const int& y);
 	void mouseDown();
-	void keyDown(const UINT& key);
+	void keyDown(const std::wstring& key);
 	void keyUp();
 public:
 	int focusIndex{ -1 }, hoverIndex{ -1 };
 private:
-	std::vector<UINT> tempKeys;
+	std::vector<std::wstring> tempKeys;
 	WinSetting* win;
 	float lineH{ 44.f }, inputW{ 96.f }, inputYMargin{8.f};
 	float contentX, contentY, contentR;

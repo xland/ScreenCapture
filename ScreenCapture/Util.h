@@ -19,10 +19,8 @@ public:
 	static void addFileToClipboard(const std::wstring& filePath);
 	static std::wstring readFile(const std::wstring& path);
 	static void saveFile(const std::wstring& path,const std::wstring& content);
-
-	static UINT strToKey(const std::wstring& keyName);
 	static std::vector<std::wstring> splitStr(const std::wstring& str, wchar_t delimiter);
 	static std::wstring keyToStr(UINT vkCode);
-	static std::wstring strToKey(UINT vkCode);
+	static UINT strToKey(const std::wstring& vkCode);
 };
 

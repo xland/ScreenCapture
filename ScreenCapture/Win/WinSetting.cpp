@@ -185,21 +185,21 @@ void WinSetting::onKeyDown(const UINT& key)
 {
 	if (shortcut->focusIndex >=0) {
 		if (GetKeyState(VK_CONTROL) & 0x8000) {
-			shortcut->keyDown(VK_CONTROL);
+			shortcut->keyDown(L"Ctrl");
 		}
 		if (GetKeyState(VK_MENU) & 0x8000) {
-			shortcut->keyDown(VK_MENU);
+			shortcut->keyDown(L"Alt");
 		}
 		if (GetKeyState(VK_SHIFT) & 0x8000) {
-			shortcut->keyDown(VK_SHIFT);
+			shortcut->keyDown(L"Shift");
 		}
 		if (GetAsyncKeyState(VK_LWIN) & 0x8000) {
-			shortcut->keyDown(VK_LWIN);
+			shortcut->keyDown(L"LWin");
 		}
 		if (GetAsyncKeyState(VK_RWIN) & 0x8000) {
-			shortcut->keyDown(VK_RWIN);
+			shortcut->keyDown(L"RWin");
 		}
-		shortcut->keyDown(key);
+		shortcut->keyDown(Util::keyToStr(key));
 	}
 }
 

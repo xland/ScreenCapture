@@ -17,9 +17,14 @@ WinSettingShortcut::WinSettingShortcut(WinSetting* win):win{win}
 	videoLabel = win->makeTextLayout(L"屏幕录制：", w, lineH, win->textSize, false);
 
 	auto valSize{ 12 * win->dpi };
-	capVal = win->makeTextLayout(Setting::getCapKeysStr(), inputW, lineH, valSize);
-	longVal = win->makeTextLayout(Setting::getLongKeysStr(), inputW, lineH, valSize);
-	videoVal = win->makeTextLayout(Setting::getVideoKeysStr(), inputW, lineH, valSize);
+	auto configObj = Setting::getConfigObj();
+	auto configShortcut = configObj.GetNamedObject(L"shortcutKey");
+	std::wstring capKeyStr{ configShortcut.GetNamedString(L"cap") };
+	capVal = win->makeTextLayout(capKeyStr, inputW, lineH, valSize);
+	std::wstring longKeyStr{ configShortcut.GetNamedString(L"long") };
+	longVal = win->makeTextLayout(longKeyStr, inputW, lineH, valSize);
+	std::wstring videoKeyStr{ configShortcut.GetNamedString(L"video") };
+	videoVal = win->makeTextLayout(videoKeyStr, inputW, lineH, valSize);
 	tipVal = win->makeTextLayout(L"请按键...", inputW, lineH, valSize);
 	win->render->CreateSolidColorBrush(D2D1::ColorF(0xFFFFFF), inputBg.GetAddressOf());
 	win->render->CreateSolidColorBrush(D2D1::ColorF(0x1677FF), focusBrush.GetAddressOf());
@@ -108,8 +113,9 @@ void WinSettingShortcut::mouseDown()
 	}
 }
 
-void WinSettingShortcut::keyDown(const UINT& key)
+void WinSettingShortcut::keyDown(const std::wstring& key)
 {
+	if (key.empty()) return;
 	bool isContains = std::ranges::find(tempKeys, key) != tempKeys.end();
 	if (isContains) return;
 	tempKeys.push_back(key);
@@ -119,14 +125,19 @@ void WinSettingShortcut::keyUp()
 {
 	Setting::setKeys(focusIndex, tempKeys);
 	auto valSize{ 12 * win->dpi };
+	auto configObj = Setting::getConfigObj();
+	auto configShortcut = configObj.GetNamedObject(L"shortcutKey");
 	if (focusIndex == 0) {
-		capVal = win->makeTextLayout(Setting::getCapKeysStr(), inputW, lineH, valSize);
+		std::wstring str{ configShortcut.GetNamedString(L"cap") };
+		capVal = win->makeTextLayout(str, inputW, lineH, valSize);
 	}
 	else if (focusIndex == 1) {
-		longVal = win->makeTextLayout(Setting::getLongKeysStr(), inputW, lineH, valSize);
+		std::wstring str{ configShortcut.GetNamedString(L"long") };
+		longVal = win->makeTextLayout(str, inputW, lineH, valSize);
 	}
 	else if (focusIndex == 2) {
-		videoVal = win->makeTextLayout(Setting::getVideoKeysStr(), inputW, lineH, valSize);
+		std::wstring str{ configShortcut.GetNamedString(L"video") };
+		videoVal = win->makeTextLayout(str, inputW, lineH, valSize);
 	}
 	focusIndex = -1;
 	win->refresh();	

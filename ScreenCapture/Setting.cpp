@@ -23,62 +23,27 @@ std::filesystem::path Setting::getDataPath()
     return setting->dataPath;
 }
 
-const std::vector<UINT>& Setting::getCapKeys()
+const JsonObject& Setting::getConfigObj()
 {
-    return setting->capKeys;
+    return setting->configObj;
 }
 
-const std::vector<UINT>& Setting::getLongKeys()
+void Setting::setKeys(const int& type, const std::vector<std::wstring>& keys)
 {
-    return setting->longKeys;
-}
-
-const std::vector<UINT>& Setting::getVideoKeys()
-{
-    return setting->videoKeys;
-}
-
-
-std::wstring Setting::getCapKeysStr()
-{
-    std::wstring result;
-    for (size_t i = 0; i < setting->capKeys.size(); i++)
+    std::wstring str;
+    for (size_t i = 0; i < keys.size(); i++)
     {
-        result += L"+"+ Util::keyToStr(setting->capKeys[i]);
+        str += L"+" + keys[i];
     }
-    return result.substr(1);
-}
-
-std::wstring Setting::getLongKeysStr()
-{
-    std::wstring result;
-    for (size_t i = 0; i < setting->longKeys.size(); i++)
-    {
-        result += L"+" + Util::keyToStr(setting->longKeys[i]);
-    }
-    return result.substr(1);
-}
-
-std::wstring Setting::getVideoKeysStr()
-{
-    std::wstring result;
-    for (size_t i = 0; i < setting->videoKeys.size(); i++)
-    {
-        result += L"+" + Util::keyToStr(setting->videoKeys[i]);
-    }
-    return result.substr(1);
-}
-
-void Setting::setKeys(const int& type, const std::vector<UINT>& keys)
-{
+    str.erase(0,1);
     if (type == 0) {
-        setting->capKeys = keys;
+        setting->configObj.GetNamedObject(L"shortcutKey").SetNamedValue(L"cap",JsonValue::CreateStringValue(str));
     }
     else if (type == 1) {
-        setting->longKeys = keys;
+        setting->configObj.GetNamedObject(L"shortcutKey").SetNamedValue(L"long", JsonValue::CreateStringValue(str));
     }
     else if (type == 2) {
-        setting->videoKeys = keys;
+        setting->configObj.GetNamedObject(L"shortcutKey").SetNamedValue(L"video", JsonValue::CreateStringValue(str));
     }
     setting->save();
 }
@@ -109,49 +74,20 @@ void Setting::initSettings()
     if (std::filesystem::exists(path)) {
         auto pathStr = path.wstring();
         std::wstring content = Util::readFile(pathStr);
-        JsonObject jsonObj = JsonObject::Parse(content.data());
-        initShortcutKeys(jsonObj.GetNamedObject(L"shortcutKey"));
+        configObj = JsonObject::Parse(content.data());
+        //initShortcutKeys(jsonObj.GetNamedObject(L"shortcutKey"));
     }
     else {
-        capKeys = { VK_CONTROL,VK_MENU,'A' }; //17 18 65
-        longKeys = { VK_CONTROL,VK_MENU,'L' }; //17 18 76
-        videoKeys = { VK_CONTROL,VK_MENU,'V' }; //17 18 86
-    }
-}
-
-void Setting::initShortcutKeys(const JsonObject& jsonObj)
-{
-    std::wstring str{ jsonObj.GetNamedString(L"cap") };
-    auto arr = Util::splitStr(str, L'+');
-    for (size_t i = 0; i < arr.size(); i++)
-    {
-        capKeys.push_back(Util::strToKey(arr[i]));
-    }
-
-    str = jsonObj.GetNamedString(L"long");
-    arr = Util::splitStr(str, L'+');
-    for (size_t i = 0; i < arr.size(); i++)
-    {
-        longKeys.push_back(Util::strToKey(arr[i]));
-    }
-
-    str =  jsonObj.GetNamedString(L"video");
-    arr = Util::splitStr(str, L'+');
-    for (size_t i = 0; i < arr.size(); i++)
-    {
-        videoKeys.push_back(Util::strToKey(arr[i]));
+        configObj = JsonObject::Parse(LR"""({"shortcutKey":{"cap":"Ctrl+Alt+A","long":"Ctrl+Alt+P","video":"Ctrl+Alt+V"}})""");
+        //capKeys = { L"Ctrl",L"Alt",L"A"}; //17 18 65
+        //longKeys = { L"Ctrl",L"Alt",L"L" }; //17 18 76
+        //videoKeys = { L"Ctrl",L"Alt",L"V" }; //17 18 86
     }
 }
 
 void Setting::save()
 {
-    JsonObject obj;
-    obj.SetNamedValue(L"cap", JsonValue::CreateStringValue(Setting::getCapKeysStr()));
-    obj.SetNamedValue(L"long", JsonValue::CreateStringValue(Setting::getLongKeysStr()));
-    obj.SetNamedValue(L"video", JsonValue::CreateStringValue(Setting::getVideoKeysStr()));
-    JsonObject config;
-    config.SetNamedValue(L"shortcutKey", obj);
-    std::wstring str{ config.Stringify() };
+    std::wstring str{ configObj.Stringify() };
     auto dataPath = this->dataPath;
     auto pathStr = dataPath.append("config.json").wstring();
     Util::saveFile(pathStr, str);

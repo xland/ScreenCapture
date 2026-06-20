@@ -24,7 +24,7 @@ void WinCap::init()
     WinCap::release();
     auto [x, y, w, h] = Util::getDesktopInfo();
 	winCap = std::make_unique<WinCap>(x, y, w, h);
-    winCap->createWindow();
+    winCap->createWindow(WS_EX_TOPMOST);
 }
 WinCap* WinCap::get()
 {
