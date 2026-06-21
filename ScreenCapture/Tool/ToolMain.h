@@ -9,6 +9,7 @@ public:
 	ToolMain(const int& x, const int& y, const int& w, const int& h, WinPin* parent);
 	~ToolMain();
 	void initBtn();
+	void syncHoverWithCursor();
 public:
 	std::string state;
 protected:

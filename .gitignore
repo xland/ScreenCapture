@@ -1,6 +1,8 @@
 /.vs/
 *.TMP
+*.log
 /enc_temp_folder/
 Res.aps
 /x64/
 /ScreenCapture/x64/
+/ScreenCapture/ScreenCapture/x64/

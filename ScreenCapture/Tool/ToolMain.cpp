@@ -107,6 +107,35 @@ void ToolMain::onMouseMove(const int& x, const int& y)
         refresh();
     }
 }
+
+void ToolMain::syncHoverWithCursor()
+{
+    if (!hwnd || !IsWindow(hwnd) || !IsWindowVisible(hwnd)) return;
+
+    POINT pt;
+    GetCursorPos(&pt);
+    ScreenToClient(hwnd, &pt);
+
+    if (pt.x >= 0 && pt.x < w && pt.y >= 0 && pt.y < h) {
+        if (!isMouseIn) {
+            isMouseIn = true;
+            TRACKMOUSEEVENT tme{ sizeof(TRACKMOUSEEVENT) };
+            tme.dwFlags = TME_LEAVE;
+            tme.hwndTrack = hwnd;
+            TrackMouseEvent(&tme);
+        }
+        onMouseMove(pt.x, pt.y);
+        refresh();
+    }
+    else if (isMouseIn || hoverIndex >= 0) {
+        isMouseIn = false;
+        TRACKMOUSEEVENT tme{ sizeof(TRACKMOUSEEVENT) };
+        tme.dwFlags = TME_CANCEL | TME_LEAVE;
+        tme.hwndTrack = hwnd;
+        TrackMouseEvent(&tme);
+        onMouseLeave();
+    }
+}
 void ToolMain::onMouseLeave()
 {
     hoverIndex = -1;

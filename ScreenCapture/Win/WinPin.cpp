@@ -168,6 +168,7 @@ void WinPin::saveToFile()
         SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
         if (toolMain.get() && toolMain->hwnd && IsWindow(toolMain->hwnd) && IsWindowVisible(toolMain->hwnd)) {
             SetWindowPos(toolMain->hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+            toolMain->syncHoverWithCursor();
         }
         if (toolSub.get() && toolSub->hwnd && IsWindow(toolSub->hwnd) && IsWindowVisible(toolSub->hwnd)) {
             SetWindowPos(toolSub->hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
