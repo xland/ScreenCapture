@@ -53,12 +53,16 @@ void Tray::init()
 		trayIns->createTray();
 	}
 	auto configShortcut = configObj.GetNamedObject(L"shortcutKey");
+	std::wstring errorMsg;
 	std::wstring capStr{ configShortcut.GetNamedString(L"cap") };
-	trayIns->regOneHotKey(capStr);
+	trayIns->regOneHotKey(capStr, errorMsg);
 	std::wstring longStr{ configShortcut.GetNamedString(L"long") };
-	trayIns->regOneHotKey(longStr);
+	trayIns->regOneHotKey(longStr, errorMsg);
 	std::wstring videoStr{ configShortcut.GetNamedString(L"video") };
-	trayIns->regOneHotKey(videoStr);
+	trayIns->regOneHotKey(videoStr, errorMsg);
+	//if (!errorMsg.empty()) {
+	//	MessageBox(NULL, errorMsg.data(), L"系统提示", MB_OK | MB_ICONINFORMATION);
+	//}	
 }
 
 Tray* Tray::get()
@@ -66,7 +70,7 @@ Tray* Tray::get()
 	return trayIns.get();
 }
 
-void Tray::regOneHotKey(const std::wstring& keyStr)
+void Tray::regOneHotKey(const std::wstring& keyStr,std::wstring& errMsg)
 {
 	std::wstring lowerName = keyStr;
 	std::transform(lowerName.begin(), lowerName.end(), lowerName.begin(), ::towlower);
@@ -92,18 +96,18 @@ void Tray::regOneHotKey(const std::wstring& keyStr)
 		}
 	}
 	if (keyCode == 0) {
-		auto errMsg = std::format(L"快捷键注册失败：{}", keyStr);
-		MessageBox(NULL, errMsg.data(), L"系统提示", MB_OK | MB_ICONINFORMATION);
+		//if (!errMsg.empty()) errMsg += L"\n";
+		//errMsg += std::format(L"快捷键注册失败：{}", keyStr);
 		return;
 	}
 	BOOL result = RegisterHotKey(hwnd, capScreenKeyMsg, modifiers, keyCode);
-	if (!result) {
-		DWORD error = GetLastError();
-		if (error == ERROR_HOTKEY_ALREADY_REGISTERED) {
-			auto errMsg = std::format(L"快捷键冲突：{}", keyStr);
-			MessageBox(NULL, errMsg.data(), L"系统提示", MB_OK | MB_ICONINFORMATION);
-		}
-	}
+	//if (!result) {
+	//	DWORD error = GetLastError();
+	//	if (error == ERROR_HOTKEY_ALREADY_REGISTERED) {
+	//		if (!errMsg.empty()) errMsg += L"\n";
+	//		errMsg += std::format(L"快捷键冲突：{}", keyStr);
+	//	}
+	//}
 }
 
 void Tray::createWin()

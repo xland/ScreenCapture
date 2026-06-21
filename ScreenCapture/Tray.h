@@ -11,7 +11,7 @@ public:
 	void setTray(bool flag);
 public:
 private:
-	void regOneHotKey(const std::wstring& key);
+	void regOneHotKey(const std::wstring& key, std::wstring& errMsg);
 	void createWin();
 	void createTray();
 	void onTrayClick();
