@@ -88,7 +88,7 @@ void ToolVideo::onMouseDown(const int& x, const int& y, bool isRight)
         else if (hoverIndex == 7) {
             killTimer(100);
             auto srcPath = parent->stop();
-            auto tarPath = Util::getSaveFilePath(nullptr,L"mp4");      
+            auto tarPath = Util::getSaveFilePath(nullptr, selectIndex == 1?L"gif":L"mp4");
             CopyFile(srcPath.data(),tarPath.data(),false);
             DeleteFile(srcPath.data());
         }

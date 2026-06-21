@@ -86,7 +86,7 @@ void Setting::initSettings()
         //initShortcutKeys(jsonObj.GetNamedObject(L"shortcutKey"));
     }
     else {
-        configObj = JsonObject::Parse(LR"""({"common":{"autoStart":false,"showTray":true},"shortcutKey":{"cap":"Ctrl+Alt+A","long":"Ctrl+Alt+P","video":"Ctrl+Alt+V"}})""");
+        configObj = JsonObject::Parse(LR"""({"common":{"autoStart":false,"showTray":true},"shortcutKey":{"cap":"Ctrl+Alt+A","long":"Ctrl+Alt+L","video":"Ctrl+Alt+V"}})""");
         //capKeys = { L"Ctrl",L"Alt",L"A"}; //17 18 65
         //longKeys = { L"Ctrl",L"Alt",L"L" }; //17 18 76
         //videoKeys = { L"Ctrl",L"Alt",L"V" }; //17 18 86
