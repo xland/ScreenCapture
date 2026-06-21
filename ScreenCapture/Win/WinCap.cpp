@@ -107,6 +107,13 @@ void WinCap::onMouseDown(const int& x, const int& y, bool isRight)
 }
 void WinCap::onMouseUp(const int& x, const int& y)
 {
+    cutMask->makeRect(x, y);
+    auto w = std::abs(cutMask->maskRect.right - cutMask->maskRect.left);
+    auto h = std::abs(cutMask->maskRect.bottom - cutMask->maskRect.top);
+    if (w * h < 100) {
+        WinCap::release(); // 或者 reset cutMask 后继续等待用户重新框选
+        return;
+    }
     WinPin::init();
     WinCap::release();
 }
