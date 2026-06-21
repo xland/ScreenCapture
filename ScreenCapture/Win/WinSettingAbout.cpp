@@ -12,7 +12,7 @@ WinSettingAbout::WinSettingAbout(WinSetting* win):win{win}
 	auto w = contentR - contentX;
 	win->render->CreateSolidColorBrush(D2D1::ColorF(0x1677FF), linkBrush.GetAddressOf());
 	verLabel = win->makeTextLayout(L"版本：", w, lineH, win->textSize, false);
-	verVal = win->makeTextLayout(L"2.4.0", w, lineH, win->textSize, false);
+	verVal = win->makeTextLayout(Util::getVer(), w, lineH, win->textSize, false);
 	verVal->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_TRAILING);
 	linkLabel = win->makeTextLayout(L"项目：", w, lineH, win->textSize, false);
 	linkVal = win->makeTextLayout(L"github.com/xland/ScreenCapture", w, lineH, win->textSize, false);
