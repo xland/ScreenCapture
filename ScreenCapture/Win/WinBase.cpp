@@ -174,7 +174,7 @@ std::wstring& WinBase::getWinClsName()
     static std::wstring clsName = [] {
         WNDCLASSEXW wcex;
         wcex.cbSize = sizeof(WNDCLASSEX);
-        wcex.style = CS_HREDRAW | CS_VREDRAW;
+        wcex.style = CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
         wcex.lpfnWndProc = &WinBase::winProc;
         wcex.cbClsExtra = 0;
         wcex.cbWndExtra = 0;
@@ -230,6 +230,16 @@ LRESULT WinBase::winProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     else if (msg == WM_RBUTTONDOWN)
     {
         self->onMouseDown(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), true);
+    }
+    else if (msg == WM_RBUTTONDBLCLK)
+    {
+        self->onMouseDoubleClick(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), true);
+        return 0;
+    }
+    else if (msg == WM_LBUTTONDBLCLK)
+    {
+        self->onMouseDoubleClick(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), false);
+        return 0;
     }
     else if (msg == WM_LBUTTONDOWN) {
         SetCapture(hwnd);

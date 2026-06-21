@@ -337,6 +337,12 @@ void WinPin::onMouseDown(const int& x, const int& y, bool isRight)
     shapeHover = history->createShape(toolMain->state, x, y);
 }
 
+void WinPin::onMouseDoubleClick(const int& x, const int& y, bool isRight)
+{
+    if (isRight) return;
+    copyToClipboard();
+}
+
 void WinPin::onMouseUp(const int& x, const int& y)
 {
     if (toolMain->state == "") { //state为空时，是在拖动窗口
