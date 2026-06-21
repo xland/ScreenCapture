@@ -25,7 +25,7 @@ void WinVideo::init()
     WinVideo::release();
     auto [x, y, w, h] = Util::getDesktopInfo();
     winVideo = std::make_unique<WinVideo>(x, y, w, h);
-    winVideo->createWindow();    
+    winVideo->createWindow(WS_EX_TOPMOST);
     winVideo->cutMask = std::make_unique<WinCutMask>(winVideo.get());
     winVideo->show();
 }

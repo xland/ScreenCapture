@@ -65,7 +65,7 @@ void WinLong::init()
     WinLong::release();
     auto [x, y, w, h] = Util::getDesktopInfo();
     winLong = std::make_unique<WinLong>(x, y, w, h);
-    winLong->createWindow();//WS_EX_TOPMOST
+    winLong->createWindow(WS_EX_TOPMOST);//WS_EX_TOPMOST
     winLong->cutMask = std::make_unique<WinCutMask>(winLong.get());
     winLong->show();
     UpdateWindow(winLong->hwnd);
