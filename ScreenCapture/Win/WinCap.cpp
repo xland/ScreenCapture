@@ -90,6 +90,15 @@ void WinCap::onMouseMove(const int& x, const int& y) {
 }
 void WinCap::onMouseDrag(const int& x, const int& y, const UINT_PTR& modifiers)
 {
+    if (!isDraggingRect) {
+        auto dx = std::abs(x - pressX);
+        auto dy = std::abs(y - pressY);
+        if (dx < 3 && dy < 3) {
+            return;
+        }
+        isDraggingRect = true;
+        cutMask->startMakeRect(pressX, pressY);
+    }
     cutMask->makeRect(x, y);
 }
 void WinCap::onMouseDown(const int& x, const int& y, bool isRight)
@@ -98,21 +107,22 @@ void WinCap::onMouseDown(const int& x, const int& y, bool isRight)
         WinCap::release();
         return;
     }
+    pressX = x;
+    pressY = y;
+    isDraggingRect = false;
     if (winPix.get()) {
         winPix->hide(); //必须先hide再释放，不然会闪烁一下
         winPix->close();
         winPix.reset();
     }
-    cutMask->startMakeRect(x, y);
 }
 void WinCap::onMouseUp(const int& x, const int& y)
 {
-    cutMask->makeRect(x, y);
-    auto w = std::abs(cutMask->maskRect.right - cutMask->maskRect.left);
-    auto h = std::abs(cutMask->maskRect.bottom - cutMask->maskRect.top);
-    if (w * h < 100) {
-        WinCap::release(); // 或者 reset cutMask 后继续等待用户重新框选
-        return;
+    if (isDraggingRect) {
+        cutMask->makeRect(x, y);
+    }
+    else {
+        cutMask->highlight(x, y);
     }
     WinPin::init();
     WinCap::release();

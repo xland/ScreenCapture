@@ -27,5 +27,8 @@ private:
 private:
 	std::unique_ptr<WinPix> winPix;
 	ComPtr<ID2D1Bitmap1> screenImg;
+	int pressX{ 0 };
+	int pressY{ 0 };
+	bool isDraggingRect{ false };
 };
 
