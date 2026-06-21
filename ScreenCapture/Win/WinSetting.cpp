@@ -19,17 +19,27 @@ WinSetting::~WinSetting()
 
 void WinSetting::init()
 {
-	RECT workAreaRect;
-	BOOL getWorkAreaSuccess = SystemParametersInfo(SPI_GETWORKAREA, 0, &workAreaRect, 0); //工作区矩形
-	int workAreaWidth = workAreaRect.right - workAreaRect.left;
-	int workAreaHeight = workAreaRect.bottom - workAreaRect.top;
-	int w = 800;
-	int h = 600;
-	int x = workAreaRect.left + (workAreaWidth - w) / 2;
-	int y = workAreaRect.top + (workAreaHeight - h) / 2;
-	winSetting = std::make_unique<WinSetting>(x, y, w, h);
-	winSetting->createWindow(WS_EX_APPWINDOW, WS_MAXIMIZEBOX | WS_MINIMIZEBOX);
-
+	if (winSetting.get()) {
+		if (IsIconic(winSetting->hwnd)) {
+			ShowWindow(winSetting->hwnd, SW_RESTORE);
+		}
+		else {
+			winSetting->show();
+		}
+		SetForegroundWindow(winSetting->hwnd);
+	}
+	else {
+		RECT workAreaRect;
+		BOOL getWorkAreaSuccess = SystemParametersInfo(SPI_GETWORKAREA, 0, &workAreaRect, 0); //工作区矩形
+		int workAreaWidth = workAreaRect.right - workAreaRect.left;
+		int workAreaHeight = workAreaRect.bottom - workAreaRect.top;
+		int w = 800;
+		int h = 600;
+		int x = workAreaRect.left + (workAreaWidth - w) / 2;
+		int y = workAreaRect.top + (workAreaHeight - h) / 2;
+		winSetting = std::make_unique<WinSetting>(x, y, w, h);
+		winSetting->createWindow(WS_EX_APPWINDOW, WS_MAXIMIZEBOX | WS_MINIMIZEBOX);
+	}
 }
 
 void WinSetting::onCreated()

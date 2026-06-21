@@ -1,5 +1,4 @@
 #pragma once
-class Render;
 class WinBase
 {
 	friend class App;
