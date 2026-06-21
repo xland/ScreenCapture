@@ -44,7 +44,11 @@ void WinVideo::startMp4(bool useSpeaker, bool useMic)
     auto videoTempPath = Setting::getDataPath();
     mp4Param = std::make_unique<WinVideoMp4::DESKTOPCAPTUREPARAMS>();
     mp4Param->VIDEO_ENCODING_FORMAT = MFVideoFormat_HEVC;
-    mp4Param->rx = { (long)(x + cutMask->maskRect.left), (long)(y+ cutMask->maskRect.top), (long)(cutMask->maskRect.right- cutMask->maskRect.left), (long)(cutMask->maskRect.bottom - cutMask->maskRect.top) };
+    mp4Param->rx = { (long)(x + cutMask->maskRect.left),
+    (long)(y + cutMask->maskRect.top),
+    (long)(x + cutMask->maskRect.right),
+    (long)(y + cutMask->maskRect.bottom) 
+    };
     mp4Param->f = videoTempPath.append(L"temp.mp4").wstring();
     mp4Param->EndMS = 0;
     mp4Param->fps = 30;
@@ -81,6 +85,7 @@ void WinVideo::startGif()
 
 std::wstring WinVideo::stop()
 {
+    hide();
     std::wstring filePath;
     if (mp4Param.get()) {
         mp4Param->MustEnd = true;
@@ -201,17 +206,5 @@ void WinVideo::setMouseTransparent(bool transparent)
 
     SetWindowLongPtr(hwnd, GWL_EXSTYLE, exStyle);
 
-    SetWindowPos(
-        hwnd,
-        nullptr,
-        0,
-        0,
-        0,
-        0,
-        SWP_NOMOVE |
-        SWP_NOSIZE |
-        SWP_NOZORDER |
-        SWP_NOACTIVATE |
-        SWP_FRAMECHANGED
-    );
+    SetWindowPos(hwnd,nullptr,0,0,0,0,SWP_NOMOVE |SWP_NOSIZE |SWP_NOZORDER |SWP_NOACTIVATE |SWP_FRAMECHANGED);
 }

@@ -152,7 +152,7 @@ std::wstring Util::getSaveFilePath(HWND hwnd, const std::wstring& ext)
     if (FAILED(hr)) return result;
     PWSTR pszFilePath = nullptr;
     hr = pItem->GetDisplayName(SIGDN_FILESYSPATH, &pszFilePath);
-    if (FAILED(hr)) return result;
+    if (FAILED(hr)) return result; //RPC_E_WRONG_THREAD The application called an interface that was marshalled for a different thread.
     result = pszFilePath;
     CoTaskMemFree(pszFilePath);
     return result;
@@ -485,4 +485,33 @@ void Util::setAutoStart(bool flag)
             RegCloseKey(hKey);
         }
     }
+}
+
+std::tuple<int, int, int> Util::getVer()
+{
+    std::vector<wchar_t> exePath(MAX_PATH);
+    //获取exe文件的路径（自身路径）
+    if (GetModuleFileName(nullptr, exePath.data(), static_cast<DWORD>(exePath.size())) == 0) {
+        return std::make_tuple(0,0,0);
+    }
+    DWORD dummy;
+    //获取版本资源大小
+    DWORD versionSize = GetFileVersionInfoSize(exePath.data(), &dummy);
+    if (versionSize == 0) {
+        return std::make_tuple(0, 0, 0);
+    }
+    std::vector<BYTE> versionData(versionSize);
+    //获取版本信息
+    if (!GetFileVersionInfo(exePath.data(), 0, versionSize, versionData.data())) {
+        return std::make_tuple(0, 0, 0);
+    }
+    VS_FIXEDFILEINFO* fileInfo = nullptr;
+    UINT fileInfoSize = 0;
+    if (!VerQueryValue(versionData.data(), L"\\", reinterpret_cast<void**>(&fileInfo), &fileInfoSize)) {
+        return std::make_tuple(0, 0, 0);
+    }
+    int major = (fileInfo->dwFileVersionMS >> 16) & 0xFFFF;
+    int minor = fileInfo->dwFileVersionMS & 0xFFFF;
+    int patch = (fileInfo->dwFileVersionLS >> 16) & 0xFFFF;
+    return std::make_tuple(major, minor, patch);
 }

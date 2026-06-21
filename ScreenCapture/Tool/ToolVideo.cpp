@@ -80,6 +80,7 @@ void ToolVideo::onMouseDown(const int& x, const int& y, bool isRight)
 	}
     if (hoverIndex < 0) return;
     if (isRecording) {
+        hide();
         if (hoverIndex == 6) {
             killTimer(100);
             auto srcPath = parent->stop();

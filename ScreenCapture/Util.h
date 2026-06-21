@@ -23,5 +23,6 @@ public:
 	static std::wstring keyToStr(UINT vkCode);
 	static UINT strToKey(const std::wstring& vkCode);
 	static void setAutoStart(bool flag);
+	static std::tuple<int, int, int> getVer();
 };
 
