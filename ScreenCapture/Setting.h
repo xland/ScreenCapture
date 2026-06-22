@@ -5,6 +5,7 @@ public:
 	Setting();
 	~Setting();
 	static void init();
+	static void dispose();
 	static std::filesystem::path getDataPath();
 	static const JsonObject& getConfigObj();
 	static void setKeys(const int& type, const std::vector<std::wstring>& keys);

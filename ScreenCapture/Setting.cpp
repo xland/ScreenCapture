@@ -18,6 +18,11 @@ void Setting::init()
 	setting = std::make_unique<Setting>();
 }
 
+void Setting::dispose()
+{
+    setting.reset();
+}
+
 std::filesystem::path Setting::getDataPath()
 {
     return setting->dataPath;

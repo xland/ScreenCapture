@@ -48,6 +48,7 @@ App* App::get()
 }
 void App::exit(const int& code)
 {
+    Setting::dispose();
     PostQuitMessage(code);
 }
 
