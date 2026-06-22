@@ -11,7 +11,7 @@ namespace {
 
 WinPix::WinPix(const int& x, const int& y) : WinBase(x, y, srcW* scaleNum, imgH + 112)
 {
-    createWindow();
+    createWindow(WS_EX_TOPMOST);
 }
 WinPix::~WinPix() 
 {
