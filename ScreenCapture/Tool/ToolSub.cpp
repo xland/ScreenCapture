@@ -31,7 +31,8 @@ void ToolSub::resetVal()
     btnEnd = btnStart + btnSize;
     if (toolMain->state == "rect" || toolMain->state == "ellipse") {
         auto isFillMode{ selectIndex == 0 };
-        w = int((isFillMode ? 316 * toolMain->dpi - 120.f - span : 316 * toolMain->dpi) + 0.5f);
+        // w = int((isFillMode ? 316 * toolMain->dpi - 120.f - span : 316 * toolMain->dpi) + 0.5f);
+        w = int((isFillMode ? 228.f * toolMain->dpi : 316.f * toolMain->dpi) + 0.5f);
         slider->setVals(16.f, 1.f, 3.f, btnEnd + span, !isFillMode);
         colorer->setVals(isFillMode ? btnEnd : slider->end + span, true);
     }
