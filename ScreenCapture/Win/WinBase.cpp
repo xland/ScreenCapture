@@ -183,7 +183,7 @@ std::wstring& WinBase::getWinClsName()
         wcex.hCursor = LoadCursor(nullptr, IDC_CROSS);
         wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
         wcex.lpszMenuName = nullptr;
-        wcex.lpszClassName = L"HorseJs";
+        wcex.lpszClassName = L"ScreenCapture";
         wcex.hIconSm = LoadIcon(wcex.hInstance, (LPCTSTR)IDI_WINLOGO);
         auto r = RegisterClassEx(&wcex);
         if (r == 0) {
