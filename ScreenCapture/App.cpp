@@ -5,6 +5,7 @@
 #include "Win/WinVideo.h"
 #include "Win/WinSetting.h"
 #include "Setting.h"
+#include "Lang.h"
 #include "Tray.h"
 
 namespace {
@@ -35,6 +36,7 @@ void App::init(HINSTANCE hInstance)
     App::initDevice();
 	app = std::make_unique<App>(hInstance);
     Setting::init();
+    Lang::init();
     Tray::init();
     //WinVideo::init();
     //WinLong::init();
@@ -49,6 +51,7 @@ App* App::get()
 void App::exit(const int& code)
 {
     Setting::dispose();
+    Lang::dispose();
     PostQuitMessage(code);
 }
 

@@ -1,4 +1,5 @@
 ﻿#include "pch.h"
+#include "Lang.h"
 #include "ToolSubColor.h"
 #include "ToolSub.h"
 #include "Shape/ShapeTextWin.h"
@@ -32,7 +33,10 @@ void ToolSubColor::paint()
 void ToolSubColor::winReady()
 {
     btnSize = 23 * win->dpi;
-    names = { L"红",L"黄",L"绿",L"青",L"蓝",L"紫",L"粉",L"黑"};
+    names = {
+        Lang::get(L"color.red"), Lang::get(L"color.yellow"), Lang::get(L"color.green"), Lang::get(L"color.cyan"),
+        Lang::get(L"color.blue"), Lang::get(L"color.purple"), Lang::get(L"color.pink"), Lang::get(L"color.black")
+    };
     createOneBrush(0XCF1322);
     createOneBrush(0XD48806);
     createOneBrush(0X389E0D);

@@ -2,6 +2,7 @@
 #include "WinSettingShortcut.h"
 #include "WinSetting.h"
 #include "Setting.h"
+#include "Lang.h"
 
 WinSettingShortcut::WinSettingShortcut(WinSetting* win):win{win}
 {
@@ -12,9 +13,9 @@ WinSettingShortcut::WinSettingShortcut(WinSetting* win):win{win}
 	contentY = win->paddintTop + win->menuLeftSpan;
 	contentR = win->w - win->menuLeftSpan * 7;
 	auto w = contentR - contentX;
-	capLabel = win->makeTextLayout(L"屏幕截图：", w, lineH, win->textSize, false);
-	longLabel = win->makeTextLayout(L"滚动截图：", w, lineH, win->textSize, false);
-	videoLabel = win->makeTextLayout(L"屏幕录制：", w, lineH, win->textSize, false);
+	capLabel = win->makeTextLayout(Lang::get(L"shortcut.cap"), w, lineH, win->textSize, false);
+	longLabel = win->makeTextLayout(Lang::get(L"shortcut.long"), w, lineH, win->textSize, false);
+	videoLabel = win->makeTextLayout(Lang::get(L"shortcut.video"), w, lineH, win->textSize, false);
 
 	auto valSize{ 12 * win->dpi };
 	auto configObj = Setting::getConfigObj();
@@ -25,7 +26,7 @@ WinSettingShortcut::WinSettingShortcut(WinSetting* win):win{win}
 	longVal = win->makeTextLayout(longKeyStr, inputW, lineH, valSize);
 	std::wstring videoKeyStr{ configShortcut.GetNamedString(L"video") };
 	videoVal = win->makeTextLayout(videoKeyStr, inputW, lineH, valSize);
-	tipVal = win->makeTextLayout(L"请按键...", inputW, lineH, valSize);
+	tipVal = win->makeTextLayout(Lang::get(L"shortcut.pressKey"), inputW, lineH, valSize);
 	win->render->CreateSolidColorBrush(D2D1::ColorF(0xFFFFFF), inputBg.GetAddressOf());
 	win->render->CreateSolidColorBrush(D2D1::ColorF(0x1677FF), focusBrush.GetAddressOf());
 }
