@@ -24,5 +24,6 @@ public:
 	static UINT strToKey(const std::wstring& vkCode);
 	static void setAutoStart(bool flag);
 	static std::wstring getVer();
+	static bool hasArgument(const wchar_t* arg);
 };
 

@@ -38,6 +38,7 @@ void App::init(HINSTANCE hInstance)
     Tray::init();
     //WinVideo::init();
     //WinLong::init();
+    if (Util::hasArgument(L"--auto-start")) return;
     WinCap::init();
     //WinSetting::init();
 }

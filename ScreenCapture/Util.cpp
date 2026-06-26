@@ -471,10 +471,10 @@ void Util::setAutoStart(bool flag)
         wchar_t buffer[MAX_PATH];
         GetModuleFileName(nullptr, buffer, MAX_PATH);
         auto curPath = std::filesystem::path(buffer);
-        std::wstring exePath = curPath.wstring();
+        std::wstring commandLine = std::format(L"\"{}\" --auto-start", curPath.wstring());
         HKEY hKey;
         if (RegOpenKeyEx(HKEY_CURRENT_USER, runKey.data(), 0, KEY_WRITE, &hKey) == ERROR_SUCCESS) {
-            RegSetValueEx(hKey, L"ScreenCapture", 0, REG_SZ, (const BYTE*)exePath.data(), (exePath.size() + 1) * sizeof(wchar_t));
+            RegSetValueEx(hKey, L"ScreenCapture", 0, REG_SZ, (const BYTE*)commandLine.data(), (commandLine.size() + 1) * sizeof(wchar_t));
             RegCloseKey(hKey);
         }
     }
@@ -514,4 +514,17 @@ std::wstring Util::getVer()
     int minor = fileInfo->dwFileVersionMS & 0xFFFF;
     int patch = (fileInfo->dwFileVersionLS >> 16) & 0xFFFF;
     return std::format(L"{}.{}.{}",major,minor,patch);
+}
+
+bool Util::hasArgument(const wchar_t* arg) {
+    int argc = 0;
+    LPWSTR* argv = CommandLineToArgvW(GetCommandLineW(), &argc);
+    for (int i = 1; i < argc; i++) {
+        if (wcscmp(argv[i], arg) == 0) {
+            LocalFree(argv);
+            return true;
+        }
+    }
+    LocalFree(argv);
+    return false;
 }
