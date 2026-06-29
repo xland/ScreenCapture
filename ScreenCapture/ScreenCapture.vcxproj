@@ -166,6 +166,7 @@
     <ClCompile Include="App.cpp" />
     <ClCompile Include="History.cpp" />
     <ClCompile Include="Setting.cpp" />
+    <ClCompile Include="Lang.cpp" />
     <ClCompile Include="Shape\ShapeTextWin.cpp" />
     <ClCompile Include="Shape\ShapeArrow.cpp" />
     <ClCompile Include="Shape\ShapeEllipse.cpp" />
@@ -218,6 +219,7 @@
     <ClInclude Include="App.h" />
     <ClInclude Include="History.h" />
     <ClInclude Include="Setting.h" />
+    <ClInclude Include="Lang.h" />
     <ClInclude Include="Shape\ShapeTextWin.h" />
     <ClInclude Include="Shape\ShapeArrow.h" />
     <ClInclude Include="Shape\ShapeEllipse.h" />

@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "Util.h"
 #include "App.h"
+#include "Lang.h"
 #include "Win/WinCap.h"
 #include "Win/WinLong.h"
 #include "ToolBase.h"
@@ -12,7 +13,7 @@
 ToolLong::ToolLong(const int& x, const int& y, const int& w, const int& h, WinLong* parent) : ToolBase(x, y, w, h), parent{ parent }
 {
     btnId = { "pin", "clipboard" , "save" , "close" };
-    btnName = { L"钉住",L"剪切板",L"保存",L"关闭" };
+    btnName = { Lang::get(L"tool.pin"),Lang::get(L"tool.clipboard"),Lang::get(L"tool.save"),Lang::get(L"tool.close") };
 }
 ToolLong::~ToolLong()
 {

@@ -1,5 +1,6 @@
 ﻿#include "pch.h"
 #include "Util.h"
+#include "Lang.h"
 
 
 void Util::moveMouse(const int& key)
@@ -139,7 +140,7 @@ std::wstring Util::getSaveFilePath(HWND hwnd, const std::wstring& ext)
     saveDialog->GetOptions(&dwFlags);
     saveDialog->SetOptions(dwFlags | FOS_OVERWRITEPROMPT | FOS_STRICTFILETYPES);
     auto xx = L"*." + ext;
-    COMDLG_FILTERSPEC rgFilterSpec[] = { { L"文件", xx.data()}};
+    COMDLG_FILTERSPEC rgFilterSpec[] = { { Lang::get(L"util.file").c_str(), xx.data()}};
     saveDialog->SetFileTypes(_countof(rgFilterSpec), rgFilterSpec);
     saveDialog->SetFileTypeIndex(1);
     saveDialog->SetDefaultExtension(ext.data());

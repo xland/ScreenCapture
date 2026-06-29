@@ -5,6 +5,7 @@
 #include "Win/WinVideo.h"
 #include "Win/WinSetting.h"
 #include "Setting.h"
+#include "Lang.h"
 #include "Tray.h"
 
 namespace {
@@ -40,6 +41,7 @@ void App::init(HINSTANCE hInstance)
     App::initDevice();
 	app = std::make_unique<App>(hInstance);
     Setting::init();
+    Lang::init();
     Tray::init();
     if (args.contains(L"--auto-start")) return; //开机自启动，不执行任何逻辑
     if (args[L"enter"] == L"long") {
@@ -78,6 +80,7 @@ void App::initArgs()
 void App::exit(const int& code)
 {
     Setting::dispose();
+    Lang::dispose();
     PostQuitMessage(code);
 }
 

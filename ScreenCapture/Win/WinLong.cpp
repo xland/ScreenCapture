@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "App.h"
 #include "Util.h"
+#include "Lang.h"
 #include "WinLong.h"
 #include "Tool/ToolLong.h"
 #include "WinCutMask.h"
@@ -89,7 +90,7 @@ void WinLong::onCreated()
     render->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White), textBrush.GetAddressOf());
     render->CreateSolidColorBrush(D2D1::ColorF(0x000000, 0.68f), bgBrush.GetAddressOf());
     auto size{ startCircleR * 2 };
-    layoutTextStart = makeTextLayout(L"开始", size, size, 16 * dpi);
+    layoutTextStart = makeTextLayout(Lang::get(L"long.start"), size, size, 16 * dpi);
 }
 
 void WinLong::onPaint()
@@ -379,10 +380,10 @@ void WinLong::stopCap()
 void WinLong::makeStopText()
 {
     if (resultH > 20000) {
-        layoutTextEnd = makeTextLayout(L"已触底，截图停止", FLT_MAX, FLT_MAX, 13 * dpi);
+        layoutTextEnd = makeTextLayout(Lang::get(L"long.tooLong"), FLT_MAX, FLT_MAX, 13 * dpi);
     }
     else {
-        layoutTextEnd = makeTextLayout(L"图像过长，截图停止", FLT_MAX, FLT_MAX, 13 * dpi);
+        layoutTextEnd = makeTextLayout(Lang::get(L"long.reachedBottom"), FLT_MAX, FLT_MAX, 13 * dpi);
     }    
     DWRITE_TEXT_METRICS tm = {};
     layoutTextEnd->GetMetrics(&tm);

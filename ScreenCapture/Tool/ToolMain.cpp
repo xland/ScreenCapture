@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "Util.h"
 #include "App.h"
+#include "Lang.h"
 #include "Win/WinCap.h"
 #include "Win/WinPin.h"
 #include "ToolBase.h"
@@ -12,7 +13,12 @@
 ToolMain::ToolMain(const int& x, const int& y, const int& w, const int& h, WinPin* parent) : ToolBase(x, y, w, h), parent{parent}
 {
     btnId = { "rect" , "ellipse", "arrow", "number" , "line" ,"text" , "mosaic", "eraser", "undo", "redo", "clipboard" , "save" , "close" };
-    btnName = { L"矩形",L"圆形",L"箭头",L"标号",L"线条",L"文本",L"马赛克",L"橡皮擦",L"撤销",L"重做",L"剪切板",L"保存",L"关闭" };
+    btnName = {
+        Lang::get(L"tool.rect"), Lang::get(L"tool.ellipse"), Lang::get(L"tool.arrow"), Lang::get(L"tool.number"),
+        Lang::get(L"tool.line"), Lang::get(L"tool.text"), Lang::get(L"tool.mosaic"), Lang::get(L"tool.eraser"),
+        Lang::get(L"tool.undo"), Lang::get(L"tool.redo"), Lang::get(L"tool.clipboard"), Lang::get(L"tool.save"),
+        Lang::get(L"tool.close")
+    };
 }
 ToolMain::~ToolMain()
 {
