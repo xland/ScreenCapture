@@ -56,7 +56,15 @@ void Util::saveToClipboard(int& w, int& h, BYTE* data)
     bih->biBitCount    = 32;
     bih->biCompression = BI_RGB;
     bih->biSizeImage   = imgBytes;
-    CopyMemory(p + sizeof(BITMAPINFOHEADER), data, imgBytes);
+    BYTE* pixels = p + sizeof(BITMAPINFOHEADER);
+    CopyMemory(pixels, data, imgBytes);
+    // GDI (GetDIBits) does not populate the alpha channel, leaving alpha bytes at 0.
+    // Windows 10/11 Clipboard History (Win+V) can treat 32bpp bitmaps with alpha=0
+    // as fully transparent, making copied screenshots appear blank in history.
+    // Force alpha to 255 (opaque) so the copied image remains visible.
+    for (DWORD i = 3; i < imgBytes; i += 4) {
+        pixels[i] = 0xFF;
+    }
     GlobalUnlock(hGlobal);
     if (!SetClipboardData(CF_DIB, hGlobal)) {
         GlobalFree(hGlobal);
