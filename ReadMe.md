@@ -31,7 +31,7 @@
 ## 编译
 
 - 除操作系统自带的库外，本项目不依赖任何第三方库，
-- 下载源码，使用 Visual Studio 2026（With C++ Desktop Dev Kit）即可编译项目。
+- 使用 Visual Studio 2026（With C++ Desktop Dev Kit）即可编译项目。
 
 ## 命令行
 
