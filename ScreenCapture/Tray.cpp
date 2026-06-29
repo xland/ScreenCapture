@@ -202,7 +202,10 @@ void Tray::onTrayRightClick()
 	AppendMenu(menu, MF_STRING, exitMsg, Lang::get(L"tray.exit").c_str());
 	POINT pt;
 	GetCursorPos(&pt); //获取鼠标位置
+	// Give the popup foreground ownership so it closes when focus moves elsewhere.
+	SetForegroundWindow(hwnd);
 	TrackPopupMenuEx(menu, TPM_RIGHTBUTTON,  pt.x, pt.y, hwnd, nullptr);
+	PostMessage(hwnd, WM_NULL, 0, 0);
 	DestroyMenu(menu);
 }
 
