@@ -8,9 +8,11 @@ public:
 	~App();
 	static void init(HINSTANCE hInstance);
 	static App* get();
+	static void initArgs();
 	static void exit(const int& code);
 	static void initDevice();
 	static void makeDC(WinBase* win);
+	static std::wstring& getArg(const std::wstring& key);
 	static ID2D1Factory1* getD2D();
 	static IDWriteFactory5* getWriter();
 	/// <summary>

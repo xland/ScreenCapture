@@ -40,6 +40,7 @@ private:
 	void initImg();
 	void initImgFromData(std::vector<BYTE>& data);
 	void initTool();
+	void restoreWindowState(HWND foregroundBeforeDialog);
 private:
 	POINT pressPos{0,0};
 };

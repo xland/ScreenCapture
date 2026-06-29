@@ -78,6 +78,9 @@ void WinLong::release()
     if (winLong.get()) {
         winLong->close();
         winLong.reset();
+        if (App::getArg(L"auto-quit") == L"true") {
+            App::exit(0);
+        }
     }
 }
 

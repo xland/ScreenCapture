@@ -16,7 +16,11 @@ namespace {
     static ComPtr<IDXGIFactory5> fac5;
     static ComPtr<IDWriteFactory5> dwriteFactory;
     //static ComPtr<IDWriteRenderingParams> renderingParams;     
-    std::unordered_map<std::wstring, std::wstring> dic;
+    std::unordered_map<std::wstring, std::wstring> args{ 
+        {L"enter",L"cap"},
+        {L"tray",L"true"},
+        {L"auto-quit",L"false"},
+    };
 }
 BOOL App::allowTearing = FALSE;
 
@@ -32,21 +36,46 @@ App::~App()
 
 void App::init(HINSTANCE hInstance)
 {
-    if (Tray::secondIns()) return;
+    App::initArgs();
+    if (args[L"auto-quit"] != L"true" && Tray::secondIns()) return;
     App::initDevice();
 	app = std::make_unique<App>(hInstance);
     Setting::init();
     Lang::init();
     Tray::init();
-    //WinVideo::init();
-    //WinLong::init();
-    WinCap::init();
-    //WinSetting::init();
+    if (args.contains(L"--auto-start")) return; //开机自启动，不执行任何逻辑
+    if (args[L"enter"] == L"long") {
+        WinLong::init();
+    }
+    else if (args[L"enter"] == L"video") {
+        WinVideo::init();
+    }
+    else {
+        WinCap::init();
+    }
 }
 
 App* App::get()
 {
     return app.get();
+}
+void App::initArgs()
+{
+    LPWSTR* argv;
+    int argc;
+    LPWSTR cmdLine = GetCommandLine();
+    argv = CommandLineToArgvW(cmdLine, &argc);
+    for (int i = 1; i < argc; ++i) {
+        std::wstring arg{ argv[i] };
+        auto index = arg.find(L"=");
+        if (index != std::wstring::npos) {
+            args[arg.substr(0, index)] = arg.substr(index + 1);
+        }
+        else {
+            args.insert({ arg,L"true"});
+        }
+    }
+    LocalFree(argv);
 }
 void App::exit(const int& code)
 {
@@ -107,6 +136,11 @@ void App::makeDC(WinBase* win)
     if (FAILED(hr)) return;
     hr = win->compDev->Commit();
     if (FAILED(hr)) return;
+}
+
+std::wstring& App::getArg(const std::wstring& key)
+{
+    return args[key];
 }
 
 ID2D1Factory1* App::getD2D()
