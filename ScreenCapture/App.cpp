@@ -20,6 +20,7 @@ namespace {
         {L"enter",L"cap"},
         {L"tray",L"true"},
         {L"auto-quit",L"false"},
+        {L"lang",L"false"},
     };
 }
 BOOL App::allowTearing = FALSE;

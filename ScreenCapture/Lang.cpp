@@ -9,7 +9,7 @@ namespace {
 	const std::wstring emptyStr;
 	// 所有支持的语言（code + 自身语言名称）；新增语言只需在此追加并补全对应字典
 	const std::vector<LangInfo> supportedLangs = {
-		{ L"zh", L"中文" },
+		{ L"zh-cn", L"中文" },
 		{ L"en", L"English" },
 		{ L"id", L"Bahasa Indonesia" },
 	};
@@ -56,12 +56,12 @@ const std::vector<LangInfo>& Lang::getLangs()
 
 void Lang::setLang(const std::wstring& l)
 {
-	// 验证是否为受支持的语言，否则回退到默认主语言 zh
+	// 验证是否为受支持的语言，否则回退到默认主语言 zh-cn
 	bool supported = false;
 	for (const auto& info : supportedLangs) {
 		if (info.code == l) { supported = true; break; }
 	}
-	lang->langCode = supported ? l : L"zh";
+	lang->langCode = supported ? l : L"zh-cn";
 	lang->load(lang->langCode);
 }
 

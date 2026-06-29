@@ -71,7 +71,7 @@ std::wstring Setting::getLanguage()
         return std::wstring(common.GetNamedString(L"language"));
     }
     catch (...) {
-        return L"zh";
+        return L"zh-cn";
     }
 }
 
@@ -112,7 +112,7 @@ void Setting::initSettings()
         //initShortcutKeys(jsonObj.GetNamedObject(L"shortcutKey"));
     }
     else {
-        configObj = JsonObject::Parse(LR"""({"common":{"autoStart":false,"showTray":true,"language":"zh"},"shortcutKey":{"cap":"Ctrl+Alt+A","long":"Ctrl+Alt+L","video":"Ctrl+Alt+V"}})""");
+        configObj = JsonObject::Parse(LR"""({"common":{"autoStart":false,"showTray":true,"language":"zh-cn"},"shortcutKey":{"cap":"Ctrl+Alt+A","long":"Ctrl+Alt+L","video":"Ctrl+Alt+V"}})""");
         //capKeys = { L"Ctrl",L"Alt",L"A"}; //17 18 65
         //longKeys = { L"Ctrl",L"Alt",L"L" }; //17 18 76
         //videoKeys = { L"Ctrl",L"Alt",L"V" }; //17 18 86
