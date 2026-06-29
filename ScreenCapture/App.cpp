@@ -16,6 +16,7 @@ namespace {
     static ComPtr<IDWriteFactory5> dwriteFactory;
     //static ComPtr<IDWriteRenderingParams> renderingParams;     
     std::unordered_map<std::wstring, std::wstring> dic;
+    std::unordered_map<std::wstring, std::wstring> args;
 }
 BOOL App::allowTearing = FALSE;
 
@@ -34,18 +35,42 @@ void App::init(HINSTANCE hInstance)
     if (Tray::secondIns()) return;
     App::initDevice();
 	app = std::make_unique<App>(hInstance);
+    App::initArgs();
     Setting::init();
     Tray::init();
-    //WinVideo::init();
-    //WinLong::init();
-    if (Util::hasArgument(L"--auto-start")) return;
-    WinCap::init();
-    //WinSetting::init();
+    if (args.contains(L"--auto-start")) return; //开机自启动，不执行任何逻辑
+    if (args[L"enter"] == L"long") {
+        WinLong::init();
+    }
+    else if (args[L"enter"] == L"video") {
+        WinVideo::init();
+    }
+    else {
+        WinCap::init();
+    }
 }
 
 App* App::get()
 {
     return app.get();
+}
+void App::initArgs()
+{
+    LPWSTR* argv;
+    int argc;
+    LPWSTR cmdLine = GetCommandLine();
+    argv = CommandLineToArgvW(cmdLine, &argc);
+    for (int i = 1; i < argc; ++i) {
+        std::wstring arg{ argv[i] };
+        auto index = arg.find(L"=");
+        if (index != std::wstring::npos) {
+            args.insert({ arg.substr(0,index),arg.substr(index + 1) });
+        }
+        else {
+            args.insert({ arg,L"true"});
+        }
+    }
+    LocalFree(argv);
 }
 void App::exit(const int& code)
 {

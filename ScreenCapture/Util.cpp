@@ -515,16 +515,3 @@ std::wstring Util::getVer()
     int patch = (fileInfo->dwFileVersionLS >> 16) & 0xFFFF;
     return std::format(L"{}.{}.{}",major,minor,patch);
 }
-
-bool Util::hasArgument(const wchar_t* arg) {
-    int argc = 0;
-    LPWSTR* argv = CommandLineToArgvW(GetCommandLineW(), &argc);
-    for (int i = 1; i < argc; i++) {
-        if (wcscmp(argv[i], arg) == 0) {
-            LocalFree(argv);
-            return true;
-        }
-    }
-    LocalFree(argv);
-    return false;
-}

@@ -8,6 +8,7 @@ public:
 	~App();
 	static void init(HINSTANCE hInstance);
 	static App* get();
+	static void initArgs();
 	static void exit(const int& code);
 	static void initDevice();
 	static void makeDC(WinBase* win);

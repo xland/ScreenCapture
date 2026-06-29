@@ -32,6 +32,38 @@
 - 除操作系统自带的库外，本项目不依赖任何第三方库，
 - 下载源码，使用 Visual Studio 2026（With C++ Desktop Dev Kit）即可编译项目。
 
+## 命令行
+
+- 命令行中，等号两侧不要有空格
+- 以下三种命令可以组合使用，比如：`> enter=long tray=false auto-quit=true`
+
+```
+// 启动后立即进入屏幕截图逻辑（默认）
+> enter=cap
+
+// 启动后进入长截图（滚动截图）逻辑
+> enter=long
+
+// 启动后进入录屏逻辑
+> enter=video
+```
+
+```
+// 显示托盘图标（默认）
+> tray=true
+
+// 不显示托盘图标，但截图进程会常驻系统，等待快捷键唤起
+> tray=false
+```
+
+```
+// 截图完成后，进程不退出，随时待命（默认）
+> auto-quit=false
+
+// 截图完成后即退出进程。
+> auto-quit=true
+```
+
 ## 赞助
 
 <table>
