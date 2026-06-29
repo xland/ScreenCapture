@@ -11,7 +11,7 @@ public:
 	~WinCap();
 	static void init();
 	static WinCap* get();
-	static void release();
+	static void release(bool allowAutoQuit = true);
 	ComPtr<ID2D1Bitmap1> getCutImg();
 	ComPtr<ID2D1Bitmap1> getImgByRect(D2D1_RECT_U& rect);
 public:

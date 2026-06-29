@@ -1,12 +1,15 @@
 ﻿#include "pch.h"
 #include "Setting.h"
 #include "Util.h"
+#include "App.h"
 
 std::unique_ptr<Setting> setting;
 
 Setting::Setting() :dataPath{initDataPath()}
 {
-    initSettings();
+    if (App::getArg(L"auto-quit") == L"false") {
+        initSettings();
+    }    
 }
 
 Setting::~Setting()

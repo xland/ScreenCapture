@@ -31,7 +31,7 @@ WinCap* WinCap::get()
     return winCap.get();
 }
 
-void WinCap::release()
+void WinCap::release(bool allowAutoQuit)
 {
     if (winCap.get()) {
         if (winCap->winPix) {
@@ -39,6 +39,9 @@ void WinCap::release()
         }
         winCap->close();
         winCap.reset();
+        if (allowAutoQuit && App::getArg(L"auto-quit") == L"true") {
+            App::exit(0);
+        }
     }
 }
 ComPtr<ID2D1Bitmap1> WinCap::getCutImg()
@@ -125,7 +128,7 @@ void WinCap::onMouseUp(const int& x, const int& y)
         cutMask->highlight(x, y);
     }
     WinPin::init();
-    WinCap::release();
+    WinCap::release(false);
 }
 
 void WinCap::onKeyDown(const UINT& key)

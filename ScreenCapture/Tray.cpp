@@ -46,20 +46,22 @@ void Tray::init()
 {
 	trayIns = std::make_unique<Tray>();
 	trayIns->createWin();
-	auto configObj = Setting::getConfigObj();
-	auto common = configObj.GetNamedObject(L"common");
-	if (common.GetNamedBoolean(L"showTray"))
-	{
-		trayIns->createTray();
+	if (App::getArg(L"auto-quit") == L"false") {
+		auto configObj = Setting::getConfigObj();
+		auto common = configObj.GetNamedObject(L"common");
+		if (App::getArg(L"tray") == L"true" && common.GetNamedBoolean(L"showTray"))
+		{
+			trayIns->createTray();
+		}
+		auto configShortcut = configObj.GetNamedObject(L"shortcutKey");
+		std::wstring errorMsg;
+		std::wstring capStr{ configShortcut.GetNamedString(L"cap") };
+		trayIns->regOneHotKey(capStr, capScreenKeyMsg, errorMsg);
+		std::wstring longStr{ configShortcut.GetNamedString(L"long") };
+		trayIns->regOneHotKey(longStr, capLongKeyMsg, errorMsg);
+		std::wstring videoStr{ configShortcut.GetNamedString(L"video") };
+		trayIns->regOneHotKey(videoStr, capVideoKeyMsg, errorMsg);
 	}
-	auto configShortcut = configObj.GetNamedObject(L"shortcutKey");
-	std::wstring errorMsg;
-	std::wstring capStr{ configShortcut.GetNamedString(L"cap") };
-	trayIns->regOneHotKey(capStr,capScreenKeyMsg, errorMsg);
-	std::wstring longStr{ configShortcut.GetNamedString(L"long") };
-	trayIns->regOneHotKey(longStr, capLongKeyMsg, errorMsg);
-	std::wstring videoStr{ configShortcut.GetNamedString(L"video") };
-	trayIns->regOneHotKey(videoStr,capVideoKeyMsg, errorMsg);
 	//if (!errorMsg.empty()) {
 	//	MessageBox(NULL, errorMsg.data(), L"系统提示", MB_OK | MB_ICONINFORMATION);
 	//}	

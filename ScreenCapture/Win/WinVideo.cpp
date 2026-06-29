@@ -35,6 +35,9 @@ void WinVideo::release()
     if (winVideo.get()) {
         winVideo->close();
         winVideo.reset();
+        if (App::getArg(L"auto-quit") == L"true") {
+            App::exit(0);
+        }
     }
 }
 
