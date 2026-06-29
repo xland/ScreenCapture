@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "Tray.h"
 #include "App.h"
+#include "Lang.h"
 #include "Win/WinCap.h"
 #include "Win/WinVideo.h"
 #include "Win/WinLong.h"
@@ -195,12 +196,12 @@ void Tray::onTrayClick()
 void Tray::onTrayRightClick()
 {
 	auto menu = CreatePopupMenu();
-	AppendMenu(menu, MF_STRING, capScreenMsg, L"屏幕截图");
-	AppendMenu(menu, MF_STRING, capLongMsg, L"滚动截图");
-	AppendMenu(menu, MF_STRING, capVideoMsg, L"屏幕录制");
+	AppendMenu(menu, MF_STRING, capScreenMsg, Lang::get(L"tray.capScreen").c_str());
+	AppendMenu(menu, MF_STRING, capLongMsg, Lang::get(L"tray.capLong").c_str());
+	AppendMenu(menu, MF_STRING, capVideoMsg, Lang::get(L"tray.capVideo").c_str());
 	AppendMenu(menu, MF_SEPARATOR, 0, NULL);
-	AppendMenu(menu, MF_STRING, settingMsg, L"设置");
-	AppendMenu(menu, MF_STRING, exitMsg, L"退出");
+	AppendMenu(menu, MF_STRING, settingMsg, Lang::get(L"tray.setting").c_str());
+	AppendMenu(menu, MF_STRING, exitMsg, Lang::get(L"tray.exit").c_str());
 	POINT pt;
 	GetCursorPos(&pt); //获取鼠标位置
 	TrackPopupMenuEx(menu, TPM_RIGHTBUTTON,  pt.x, pt.y, hwnd, nullptr);

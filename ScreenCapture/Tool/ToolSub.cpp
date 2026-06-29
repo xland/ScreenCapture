@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "Util.h"
 #include "App.h"
+#include "Lang.h"
 #include "ToolBase.h"
 #include "ToolSub.h"
 #include "ToolMain.h"
@@ -185,7 +186,10 @@ void ToolSub::onCreated()
     btnSize = 32.f * dpi;
     marginTop = 4.f * dpi;
     btnId = { "rectFill" , "ellipseFill", "arrowFill", "numberFill" , "lineTransparent" ,"bold" , "italic", "check", "uncheck" };
-    btnName = { L"矩形填充",L"圆形填充",L"箭头填充",L"标号填充",L"半透明",L"粗体",L"斜体" };
+    btnName = {
+        Lang::get(L"tool.rectFill"), Lang::get(L"tool.ellipseFill"), Lang::get(L"tool.arrowFill"),
+        Lang::get(L"tool.numberFill"), Lang::get(L"tool.semiTransparent"), Lang::get(L"tool.bold"), Lang::get(L"tool.italic")
+    };
     initTip();
     initBrush();
     initBtn();

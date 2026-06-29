@@ -3,6 +3,7 @@
 #include "WinSettingCommon.h"
 #include "WinSettingAbout.h"
 #include "WinSettingShortcut.h"
+#include "Lang.h"
 #include "Util.h"
 
 std::unique_ptr<WinSetting> winSetting;
@@ -44,7 +45,7 @@ void WinSetting::init()
 
 void WinSetting::onCreated()
 {
-	SetWindowText(hwnd, L"ScreenCapture设置");
+	SetWindowText(hwnd, Lang::get(L"setting.title").c_str());
 	enableShadow();
 	menuW *= dpi;
 	menuH *= dpi;
@@ -59,9 +60,9 @@ void WinSetting::onCreated()
 	render->CreateSolidColorBrush(D2D1::ColorF(0x888888), textBrush.GetAddressOf());
 	render->CreateSolidColorBrush(D2D1::ColorF(0xFA5151), red.GetAddressOf());
 	render->CreateSolidColorBrush(D2D1::ColorF(0x333333), textBrush2.GetAddressOf()); //0x1677FF
-	menuLabels.push_back(makeTextLayout(L"通用设置", menuW, menuH, textSize));
-	menuLabels.push_back(makeTextLayout(L"快捷键", menuW, menuH, textSize));
-	menuLabels.push_back(makeTextLayout(L"关于", menuW, menuH, textSize));
+	menuLabels.push_back(makeTextLayout(Lang::get(L"setting.common"), menuW, menuH, textSize));
+	menuLabels.push_back(makeTextLayout(Lang::get(L"setting.shortcut"), menuW, menuH, textSize));
+	menuLabels.push_back(makeTextLayout(Lang::get(L"setting.about"), menuW, menuH, textSize));
 	closeIcon = makeIconLayout(L"\ue62d", paddintTop, paddintTop, textSize);
 	common = std::make_unique<WinSettingCommon>(this);
 	shortcut = std::make_unique<WinSettingShortcut>(this);
@@ -129,6 +130,7 @@ void WinSetting::onMouseDown(const int& x, const int& y, bool isRight)
 		return;
 	}
 	if (indexHover != menuIndexSelect && indexHover >=0 && indexHover<=2) {
+		if (common) common->collapseLang();
 		menuIndexSelect = indexHover;
 		refresh();
 		return;

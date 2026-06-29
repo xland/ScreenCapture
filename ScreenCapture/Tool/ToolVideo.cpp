@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "Util.h"
 #include "App.h"
+#include "Lang.h"
 #include "Win/WinCap.h"
 #include "Win/WinVideo.h"
 #include "ToolBase.h"
@@ -185,43 +186,43 @@ void ToolVideo::onMouseMove(const int& x, const int& y)
         hoverIndex = index;
         auto tipY{ this->y + 4 * dpi };
         if (isRecording && index == 0) {
-            tipText = L"停止录制";
+            tipText = Lang::get(L"video.stopRecord");
             showTipAt(this->x + timerEnd + btnSize / 2, tipY);
         }
         else if (index == 0) {
-            tipText = L"输出MP4格式文件";
+            tipText = Lang::get(L"video.outputMp4");
             showTipAt(this->x + mp4Start + (mp4End - mp4Start) / 2, tipY);
         }
         else if (index == 1) {
-            tipText = L"输出GIF格式文件";
+            tipText = Lang::get(L"video.outputGif");
             showTipAt(this->x + gifEnd - (mp4End - mp4Start) / 2, tipY);
         }
         else if (index == 2) {
-            tipText = L"录制系统声音";
+            tipText = Lang::get(L"video.recordSystem");
             showTipAt(this->x + speakerStart + btnSize / 2, tipY);
         }
         else if (index == 3) {
-            tipText = L"录制麦克风声音";
+            tipText = Lang::get(L"video.recordMic");
             showTipAt(this->x + micStart + btnSize / 2, tipY);
         }
         else if (index == 4) {
-            tipText = L"开始录制";
+            tipText = Lang::get(L"video.startRecord");
             showTipAt(this->x + clapperStart + btnSize / 2, tipY);
         }
         else if (index == 5) {
-            tipText = L"退出";
+            tipText = Lang::get(L"video.exit");
             showTipAt(this->x + closeStart + btnSize / 2, tipY);
         }
         else if (index == 6) {
-            tipText = L"停止录制，并保存到剪切板";
+            tipText = Lang::get(L"video.stopClipboard");
             showTipAt(this->x + timerEnd + btnSize / 2, tipY);
         }
         else if (index == 7) {
-            tipText = L"停止录制，并保存到文件";
+            tipText = Lang::get(L"video.stopFile");
             showTipAt(this->x + timerEnd + btnSize / 2*3, tipY);
         }
         else if (index == 8) {
-            tipText = L"停止录制，并退出";
+            tipText = Lang::get(L"video.stopExit");
             showTipAt(this->x + timerEnd + btnSize / 2 * 5, tipY);
         }
         else {
