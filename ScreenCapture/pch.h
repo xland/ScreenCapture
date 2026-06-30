@@ -34,6 +34,7 @@
 #include <stdexcept>
 #include <math.h>
 #include <winrt/Windows.Data.Json.h>
+#include <winrt/Windows.Foundation.Collections.h>
 
 using namespace Microsoft::WRL;
 using namespace winrt::Windows::Data::Json;

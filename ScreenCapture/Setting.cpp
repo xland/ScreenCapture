@@ -68,7 +68,8 @@ std::wstring Setting::getLanguage()
 {
     if (App::getArg(L"auto-quit") == L"false") {
         auto common = setting->configObj.GetNamedObject(L"common");
-        return std::wstring(common.GetNamedString(L"language"));
+        auto lang = common.GetNamedString(L"language");
+        return std::wstring{ lang };
     }
     else {
         return Util::getSysLang();
@@ -109,6 +110,12 @@ void Setting::initSettings()
         auto pathStr = path.wstring();
         std::wstring content = Util::readFile(pathStr);
         configObj = JsonObject::Parse(content.data());
+        auto common = configObj.GetNamedObject(L"common");
+        bool hasKey = common.HasKey(L"language");
+        if (!hasKey) {
+            common.SetNamedValue(L"language", JsonValue::CreateStringValue(L"zh-CN"));
+            save();
+        }
     }
     else {
         configObj = JsonObject::Parse(LR"""({"common":{"autoStart":false,"showTray":true,"language":"zh-CN"},"shortcutKey":{"cap":"Ctrl+Alt+A","long":"Ctrl+Alt+L","video":"Ctrl+Alt+V"}})""");
