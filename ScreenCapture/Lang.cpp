@@ -1,17 +1,20 @@
 ﻿#include "pch.h"
 #include "Lang.h"
 #include "Setting.h"
+#include "Util.h"
 
 std::unique_ptr<Lang> lang;
+std::map<std::wstring,std::filesystem::path> Lang::externalFiles;
 
 namespace {
 	// 所有支持的语言（code + 自身语言名称）；新增语言只需在此追加并补全对应字典
-	const std::map<std::wstring,std::wstring> supportedLangs = {
+	std::map<std::wstring,std::wstring> supportedLangs = {
 		{ L"zh-CN", L"中文" },
 		{ L"en-US", L"English" },
 		{ L"id-ID", L"Bahasa Indonesia" },
 		{ L"ru-RU", L"Русский" },
 	};
+
 }
 
 Lang::Lang()
@@ -27,6 +30,7 @@ void Lang::init()
 	if (!lang) {
 		lang = std::make_unique<Lang>();
 	}
+	scanLangDir();
 	lang->setLang(Setting::getLanguage());
 }
 
@@ -62,6 +66,62 @@ void Lang::setLang(const std::wstring& l)
 	}
 	lang->langCode = supported ? l : L"zh-CN";
 	lang->load(lang->langCode);
+	lang->loadExternal(lang->langCode);
+}
+
+std::filesystem::path Lang::getLangDir()
+{
+	std::vector<wchar_t> buf(MAX_PATH);
+	GetModuleFileName(nullptr, buf.data(), MAX_PATH);
+	return std::filesystem::path(buf.data()).parent_path() / L"lang";
+}
+
+void Lang::scanLangDir()
+{
+	auto langDir = getLangDir();
+	if (!std::filesystem::exists(langDir)) return;
+
+	for (auto& entry : std::filesystem::directory_iterator(langDir)) {
+		if (entry.path().extension() != L".json") continue;
+
+		auto content = Util::readFile(entry.path().wstring());
+		if (content.empty()) continue;
+
+		try {
+			auto obj = JsonObject::Parse(content.data());
+			if (!obj.HasKey(L"language") || !obj.HasKey(L"name")) continue;
+			auto code = std::wstring(obj.GetNamedString(L"language"));
+			auto name = std::wstring(obj.GetNamedString(L"name"));
+			if (code.empty() || name.empty()) continue;
+
+			supportedLangs[code] = name;
+			externalFiles[code] = entry.path();
+		}
+		catch (winrt::hresult_error const&) {
+			continue;
+		}
+	}
+}
+
+void Lang::loadExternal(const std::wstring& l)
+{
+	auto it = externalFiles.find(l);
+	if (it == externalFiles.end()) return;
+
+	auto content = Util::readFile(it->second.wstring());
+	if (content.empty()) return;
+
+	try {
+		auto obj = JsonObject::Parse(content.data());
+		if (!obj.HasKey(L"translations")) return;
+		auto translations = obj.GetNamedObject(L"translations");
+		for (const auto& [key, value] : translations) {
+			dic[std::wstring(key)] = std::wstring(value.GetString());
+		}
+	}
+	catch (winrt::hresult_error const&) {
+		return;
+	}
 }
 
 void Lang::load(const std::wstring& l)
