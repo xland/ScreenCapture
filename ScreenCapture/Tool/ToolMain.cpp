@@ -12,13 +12,7 @@
 
 ToolMain::ToolMain(const int& x, const int& y, const int& w, const int& h, WinPin* parent) : ToolBase(x, y, w, h), parent{parent}
 {
-    btnId = { "rect" , "ellipse", "arrow", "number" , "line" ,"text" , "mosaic", "eraser", "undo", "redo", "clipboard" , "save" , "close" };
-    btnName = {
-        Lang::get(L"tool.rect"), Lang::get(L"tool.ellipse"), Lang::get(L"tool.arrow"), Lang::get(L"tool.number"),
-        Lang::get(L"tool.line"), Lang::get(L"tool.text"), Lang::get(L"tool.mosaic"), Lang::get(L"tool.eraser"),
-        Lang::get(L"tool.undo"), Lang::get(L"tool.redo"), Lang::get(L"tool.clipboard"), Lang::get(L"tool.save"),
-        Lang::get(L"tool.close")
-    };
+    btnId = { L"rect",L"ellipse",L"arrow",L"number",L"line",L"text",L"mosaic", L"eraser",L"undo",L"redo",L"clipboard",L"save",L"close" };
 }
 ToolMain::~ToolMain()
 {
@@ -58,36 +52,36 @@ void ToolMain::onPaint()
 void ToolMain::onMouseDown(const int& x, const int& y, bool isRight)
 {
 	if (isRight) {
-        state = "";
+        state = L"";
         selectIndex = -1;
         hide();
 		return;
 	}
     if (hoverIndex < 0) return;
     auto& state = btnId[hoverIndex];
-    if (state == "undo") {
+    if (state == L"undo") {
         parent->history->undo();
         return;
     }
-    else if (state == "redo") {
+    else if (state == L"redo") {
         parent->history->redo();
         return;
     }
-    else if (state == "clipboard") {
+    else if (state == L"clipboard") {
         parent->copyToClipboard();
         return;
     }
-    else if (state == "save") {
+    else if (state == L"save") {
         parent->saveToFile();
         return;
     }
-    else if (state == "close") {
+    else if (state == L"close") {
         parent->close();
         return;
     }
     else {
         if (state == this->state) {
-            this->state = "";
+            this->state = L"";
             selectIndex = -1;
             parent->toolSub->hide();
         }
@@ -108,7 +102,7 @@ void ToolMain::onMouseMove(const int& x, const int& y)
     if (index >= btnId.size()) index = btnId.size() - 1;
     if (index != hoverIndex) {
         hoverIndex = (int)index;
-        tipText = btnName[index];
+        tipText = Lang::get(std::format(L"tool.{}", btnId[index]));
         showTipAt((int)(this->x + index * btnSize + btnSize / 2), (int)(this->y + 4 * dpi));
         refresh();
     }

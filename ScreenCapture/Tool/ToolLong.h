@@ -9,7 +9,7 @@ public:
 	ToolLong(const int& x, const int& y, const int& w, const int& h, WinLong* parent);
 	~ToolLong();
 public:
-	std::string state;
+	std::wstring state;
 protected:
 private:
 	void onPaint() override;

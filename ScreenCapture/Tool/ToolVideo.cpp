@@ -12,7 +12,7 @@
 
 ToolVideo::ToolVideo(const int& x, const int& y, const int& w, const int& h, WinVideo* parent) : ToolBase(x, y, w, h), parent{ parent }
 {
-    btnId = { "speaker", "mic" , "clapper" , "close","clipboard","save"};
+    btnId = { L"speaker", L"mic" , L"clapper" , L"close",L"clipboard",L"save" };
 }
 ToolVideo::~ToolVideo()
 {
@@ -46,9 +46,9 @@ void ToolVideo::onPaint()
     if (isRecording) {
         render->DrawTextLayout({ mp4Start,0.f }, timerLayout.Get(), brushIcon.Get());
         render->DrawLine({ timerEnd - 3*dpi,paddingTopBottom * 2 }, { timerEnd - 3*dpi,h - paddingTopBottom * 2 }, brushSpliter.Get(), 0.6f * dpi);
-        paintIcon(timerEnd, getBtnIconLayout("clipboard"), hoverIndex == 6, false);
-        paintIcon(timerEnd+btnSize, getBtnIconLayout("save"), hoverIndex == 7, false);
-        paintIcon(timerEnd+2*btnSize, getBtnIconLayout("close"), hoverIndex == 8, false);
+        paintIcon(timerEnd, getBtnIconLayout(L"clipboard"), hoverIndex == 6, false);
+        paintIcon(timerEnd+btnSize, getBtnIconLayout(L"save"), hoverIndex == 7, false);
+        paintIcon(timerEnd+2*btnSize, getBtnIconLayout(L"close"), hoverIndex == 8, false);
     }
     else {
         float borderRadius{ 4.f * dpi }, paddingTopBottom{ 4.6f * dpi };
@@ -63,11 +63,11 @@ void ToolVideo::onPaint()
         render->DrawTextLayout({ mp4Start,0 }, formatMp4.Get(), (0 == selectIndex || hoverIndex == 0) ? brushBlue.Get() : brushIcon.Get());
         render->DrawTextLayout({ mp4End ,0 }, formatGif.Get(), (1 == selectIndex || hoverIndex == 1) ? brushBlue.Get() : brushIcon.Get());
         render->DrawLine({ gifEnd + dpi * 3,paddingTopBottom * 2 }, { gifEnd + dpi * 3,h - paddingTopBottom * 2 }, brushSpliter.Get(), 0.6f * dpi);
-        paintIcon(speakerStart, getBtnIconLayout("speaker"), hoverIndex == 2, selectSpeaker);
-        paintIcon(micStart, getBtnIconLayout("mic"), hoverIndex == 3, selectMic);
+        paintIcon(speakerStart, getBtnIconLayout(L"speaker"), hoverIndex == 2, selectSpeaker);
+        paintIcon(micStart, getBtnIconLayout(L"mic"), hoverIndex == 3, selectMic);
         render->DrawLine({ micStart + btnSize + dpi * 2,paddingTopBottom * 2 }, { micStart + btnSize + dpi * 2,h - paddingTopBottom * 2 }, brushSpliter.Get(), 0.6f * dpi);
-        paintIcon(clapperStart, getBtnIconLayout("clapper"), hoverIndex == 4, false);
-        paintIcon(closeStart, getBtnIconLayout("close"), hoverIndex == 5, false);
+        paintIcon(clapperStart, getBtnIconLayout(L"clapper"), hoverIndex == 4, false);
+        paintIcon(closeStart, getBtnIconLayout(L"close"), hoverIndex == 5, false);
     }
 }
 

@@ -42,7 +42,7 @@ void ToolBase::paintIcon(const float& posX, IDWriteTextLayout* icon, bool isHove
     }    
 }
 
-IDWriteTextLayout* ToolBase::getBtnIconLayout(const std::string& name)
+IDWriteTextLayout* ToolBase::getBtnIconLayout(const std::wstring& name)
 {
     auto it = std::ranges::find(btnId, name);
     if (it != btnId.end()) {

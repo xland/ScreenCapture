@@ -11,7 +11,7 @@ public:
 	void initBtn();
 	void syncHoverWithCursor();
 public:
-	std::string state;
+	std::wstring state;
 protected:
 private:
 	void onPaint() override;

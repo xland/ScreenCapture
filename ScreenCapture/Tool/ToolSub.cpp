@@ -30,37 +30,37 @@ void ToolSub::resetVal()
     h = int(toolMain->h + marginTop + 0.5);
     btnStart = 0.f;
     btnEnd = btnStart + btnSize;
-    if (toolMain->state == "rect" || toolMain->state == "ellipse") {
+    if (toolMain->state == L"rect" || toolMain->state == L"ellipse") {
         auto isFillMode{ selectIndex == 0 };
         // w = int((isFillMode ? 316 * toolMain->dpi - 120.f - span : 316 * toolMain->dpi) + 0.5f);
         w = int((isFillMode ? 228.f * toolMain->dpi : 316.f * toolMain->dpi) + 0.5f);
         slider->setVals(16.f, 1.f, 3.f, btnEnd + span, !isFillMode);
         colorer->setVals(isFillMode ? btnEnd : slider->end + span, true);
     }
-    else if (toolMain->state == "arrow") {
+    else if (toolMain->state == L"arrow") {
         w = int(316 * toolMain->dpi);
         slider->setVals(60.f, 8.f, 18.f, btnEnd + span, true);
         colorer->setVals(slider->end + span, true);
         selectIndex = 0;
     }
-    else if (toolMain->state == "line") {
+    else if (toolMain->state == L"line") {
         w = (int)(316 * toolMain->dpi);
         slider->setVals(60.f, 1.f, 3.f, btnEnd + span, true);
         colorer->setVals(slider->end + span, true);
     }
-    else if (toolMain->state == "number") {
+    else if (toolMain->state == L"number") {
         w = (int)(228 * toolMain->dpi);
         selectIndex = 0;
         slider->setVals(0.f, 0.f, 0.f, 0.f, false);
         colorer->setVals(btnEnd, true);
     }
-    else if (toolMain->state == "text") {
+    else if (toolMain->state == L"text") {
         w = (int)(348 * toolMain->dpi);
         btnEnd = btnStart + btnSize *2;
         slider->setVals(66.f, 16.f, 26.f, btnEnd + span, true);
         colorer->setVals(slider->end + span, true);
     }
-    else if (toolMain->state == "mosaic" || toolMain->state == "eraser") {
+    else if (toolMain->state == L"mosaic" || toolMain->state == L"eraser") {
         auto isRectMode{ selectIndex == 0 };
         w = int((isRectMode ? btnEnd : 126 * toolMain->dpi) + 0.5f);
         slider->setVals(86.f, 26.f, 32.f, btnEnd + span, !isRectMode);
@@ -110,12 +110,12 @@ bool ToolSub::hoverBtn(const int& x)
         if (indexBtn >= 0) {
             int startIndex = 0; //rect/mosaic/eraser
             auto toolMain = parent->toolMain.get();
-            if (toolMain->state == "ellipse") startIndex = 1;
-            if (toolMain->state == "arrow")startIndex = 2;
-            if (toolMain->state == "number")startIndex = 3;
-            if (toolMain->state == "line")startIndex = 4;
-            if (toolMain->state == "text")startIndex = 5;
-            tipText = btnName[startIndex + indexBtn];
+            if (toolMain->state == L"ellipse") startIndex = 1;
+            if (toolMain->state == L"arrow")startIndex = 2;
+            if (toolMain->state == L"number")startIndex = 3;
+            if (toolMain->state == L"line")startIndex = 4;
+            if (toolMain->state == L"text")startIndex = 5;
+            tipText = Lang::get(std::format(L"tool.{}", btnId[startIndex + indexBtn]));
             showTipAt((int)(this->x + btnStart + indexBtn * btnSize + btnSize / 2), (int)(this->y + marginTop + 4 * dpi));
         }
         return true;
@@ -157,27 +157,27 @@ void ToolSub::onPaint()
 void ToolSub::paintToolButtons()
 {
     auto win = parent->toolMain.get();
-    if (win->state == "rect") {
-        paintIcon(btnStart, getBtnIconLayout("rectFill"), hoverIndex == 0, selectIndex == 0);
+    if (win->state == L"rect") {
+        paintIcon(btnStart, getBtnIconLayout(L"rectFill"), hoverIndex == 0, selectIndex == 0);
     }
-    else if (win->state == "ellipse") {
-        paintIcon(btnStart, getBtnIconLayout("ellipseFill"), hoverIndex == 0, selectIndex == 0);
+    else if (win->state == L"ellipse") {
+        paintIcon(btnStart, getBtnIconLayout(L"ellipseFill"), hoverIndex == 0, selectIndex == 0);
     }
-    else if (win->state == "arrow") {
-        paintIcon(btnStart, getBtnIconLayout("arrowFill"), hoverIndex == 0, selectIndex == 0);
+    else if (win->state == L"arrow") {
+        paintIcon(btnStart, getBtnIconLayout(L"arrowFill"), hoverIndex == 0, selectIndex == 0);
     }
-    else if (win->state == "number") {
-        paintIcon(btnStart, getBtnIconLayout("numberFill"), hoverIndex == 0, selectIndex == 0);
+    else if (win->state == L"number") {
+        paintIcon(btnStart, getBtnIconLayout(L"numberFill"), hoverIndex == 0, selectIndex == 0);
     }
-    else if (win->state == "line") {
-        paintIcon(btnStart, getBtnIconLayout("lineTransparent"), hoverIndex == 0, selectIndex == 0);
+    else if (win->state == L"line") {
+        paintIcon(btnStart, getBtnIconLayout(L"semiTransparent"), hoverIndex == 0, selectIndex == 0);
     }
-    else if (win->state == "text") {
-        paintIcon(btnStart, getBtnIconLayout("bold"), hoverIndex == 0, selectIndex == 0);
-        paintIcon(btnStart + btnSize, getBtnIconLayout("italic"), hoverIndex == 1, selectIndex2 == 1);
+    else if (win->state == L"text") {
+        paintIcon(btnStart, getBtnIconLayout(L"bold"), hoverIndex == 0, selectIndex == 0);
+        paintIcon(btnStart + btnSize, getBtnIconLayout(L"italic"), hoverIndex == 1, selectIndex2 == 1);
     }
-    else if (win->state == "mosaic" || win->state == "eraser") {
-        paintIcon(btnStart, getBtnIconLayout("rectFill"), hoverIndex == 0, selectIndex == 0);
+    else if (win->state == L"mosaic" || win->state == L"eraser") {
+        paintIcon(btnStart, getBtnIconLayout(L"rectFill"), hoverIndex == 0, selectIndex == 0);
     }
 }
 
@@ -185,11 +185,7 @@ void ToolSub::onCreated()
 {
     btnSize = 32.f * dpi;
     marginTop = 4.f * dpi;
-    btnId = { "rectFill" , "ellipseFill", "arrowFill", "numberFill" , "lineTransparent" ,"bold" , "italic", "check", "uncheck" };
-    btnName = {
-        Lang::get(L"tool.rectFill"), Lang::get(L"tool.ellipseFill"), Lang::get(L"tool.arrowFill"),
-        Lang::get(L"tool.numberFill"), Lang::get(L"tool.semiTransparent"), Lang::get(L"tool.bold"), Lang::get(L"tool.italic")
-    };
+    btnId = { L"rectFill" , L"ellipseFill", L"arrowFill", L"numberFill" , L"semiTransparent" ,L"bold" , L"italic", L"check", L"uncheck" };
     initTip();
     initBrush();
     initBtn();
@@ -254,7 +250,7 @@ void ToolSub::onMouseDown(const int& x, const int& y, bool isRight)
     }
     auto sliderRefresh = slider->mouseDown(x, y);
     auto colorRefresh = colorer->mouseDown(x, y);
-    if ((toolMain->state == "rect" || toolMain->state == "ellipse" || toolMain->state == "mosaic" || toolMain->state == "eraser") && oldSelectIndex != selectIndex) {
+    if ((toolMain->state == L"rect" || toolMain->state == L"ellipse" || toolMain->state == L"mosaic" || toolMain->state == L"eraser") && oldSelectIndex != selectIndex) {
         resetVal();
     }
     else if (flag || colorRefresh || sliderRefresh) {

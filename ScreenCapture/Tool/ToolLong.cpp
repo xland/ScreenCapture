@@ -12,8 +12,7 @@
 
 ToolLong::ToolLong(const int& x, const int& y, const int& w, const int& h, WinLong* parent) : ToolBase(x, y, w, h), parent{ parent }
 {
-    btnId = { "pin", "clipboard" , "save" , "close" };
-    btnName = { Lang::get(L"tool.pin"),Lang::get(L"tool.clipboard"),Lang::get(L"tool.save"),Lang::get(L"tool.close") };
+    btnId = { L"pin", L"clipboard" , L"save" , L"close" };
 }
 ToolLong::~ToolLong()
 {
@@ -49,20 +48,20 @@ void ToolLong::onPaint()
 void ToolLong::onMouseDown(const int& x, const int& y, bool isRight)
 {
 	if (isRight) {
-        state = "";
+        state = L"";
         selectIndex = -1;
         hide();
 		return;
 	}
     if (hoverIndex < 0) return;
     auto& state = btnId[hoverIndex];
-    if (state == "pin") {
+    if (state == L"pin") {
         parent->pin();
     }
-    else if (state == "clipboard") {
+    else if (state == L"clipboard") {
         parent->copyToClipboard();
     }
-    else if (state == "save") {
+    else if (state == L"save") {
         parent->saveToFile();
     }
     close();
@@ -74,7 +73,7 @@ void ToolLong::onMouseMove(const int& x, const int& y)
     if (index >= btnId.size()) index = btnId.size() - 1;
     if (index != hoverIndex) {
         hoverIndex = (int)index;
-        tipText = btnName[index];
+        tipText = Lang::get(std::format(L"tool.{}", btnId[index]));
         showTipAt((int)(this->x + index * btnSize + btnSize / 2), (int)(this->y + 4 * dpi));
         refresh();
     }

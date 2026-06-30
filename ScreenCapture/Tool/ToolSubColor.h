@@ -21,6 +21,5 @@ private:
 private:
 	ToolSub* win;
 	std::vector<ComPtr<ID2D1SolidColorBrush>> brushes;
-	std::vector<std::wstring> names;
 };
 

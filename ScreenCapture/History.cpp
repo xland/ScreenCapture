@@ -23,47 +23,47 @@ History::~History()
 {
 
 }
-ShapeBase* History::createShape(const std::string& state, const int& x, const int& y)
+ShapeBase* History::createShape(const std::wstring& state, const int& x, const int& y)
 {
     removeUndoShape();
     ShapeBase* result{nullptr};
     auto toolMain = win->toolMain.get();
-    if (toolMain->state == "rect") {
+    if (toolMain->state == L"rect") {
         auto shape = std::make_unique<ShapeRect>(win);
         result = shape.get();
         shapes.push_back(std::move(shape));
     }
-    else if (toolMain->state == "ellipse") {
+    else if (toolMain->state == L"ellipse") {
         auto shape = std::make_unique<ShapeEllipse>(win);
         result = shape.get();
         shapes.push_back(std::move(shape));
     }
-    else if (toolMain->state == "arrow") {
+    else if (toolMain->state == L"arrow") {
         auto shape = std::make_unique<ShapeArrow>(win);
         result = shape.get();
         shapes.push_back(std::move(shape));
     }
-    else if (toolMain->state == "number") {
+    else if (toolMain->state == L"number") {
         auto shape = std::make_unique<ShapeNumber>(win);
         result = shape.get();
         shapes.push_back(std::move(shape));
     }
-    else if (toolMain->state == "line") {
+    else if (toolMain->state == L"line") {
         auto shape = std::make_unique<ShapeLine>(win);
         result = shape.get();
         shapes.push_back(std::move(shape));
     }
-    else if (toolMain->state == "text") {
+    else if (toolMain->state == L"text") {
         auto shape = std::make_unique<ShapeText>(win);
         result = shape.get();
         shapes.push_back(std::move(shape));
     }
-    else if (toolMain->state == "mosaic") {
+    else if (toolMain->state == L"mosaic") {
         auto shape = std::make_unique<ShapeMosaic>(win);
         result = shape.get();
         shapes.push_back(std::move(shape));
     }
-    else if (toolMain->state == "eraser") {
+    else if (toolMain->state == L"eraser") {
         auto shape = std::make_unique<ShapeEraser>(win);
         result = shape.get();
         shapes.push_back(std::move(shape));

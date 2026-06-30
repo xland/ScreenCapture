@@ -82,7 +82,7 @@ void WinPin::onPaint()
 
 BOOL WinPin::onCursor()
 {
-    if (toolMain->state == "") {
+    if (toolMain->state == L"") {
         setCursor(IDC_SIZEALL);
         return TRUE;
     }
@@ -90,7 +90,7 @@ BOOL WinPin::onCursor()
         shapeHover->setCursor();
         return TRUE;
     }
-    if (toolMain->state == "text") {
+    if (toolMain->state == L"text") {
         setCursor(IDC_IBEAM);
     }
     else {
@@ -153,7 +153,7 @@ void WinPin::onDestroy()
 void WinPin::onDpiChanged()
 {
     toolMain->move(x, y + h + 5.f * dpi);
-    if (toolMain->state != "") {
+    if (toolMain->state != L"") {
         //toolSub->move(toolMain->x, toolMain->y + toolMain->h + 3.f * toolSub->dpi + 0.5);
         toolSub->resetVal();
     }
@@ -298,7 +298,7 @@ void WinPin::restoreWindowState(HWND foregroundBeforeDialog)
 
 void WinPin::onMouseMove(const int& x, const int& y)
 {
-    if (toolMain->state == "") return;
+    if (toolMain->state == L"") return;
     int i{ (int)(history->shapes.size() - 1) };
     for (; i >= 0; i--)
     {
@@ -321,7 +321,7 @@ void WinPin::onMouseMove(const int& x, const int& y)
 
 void WinPin::onMouseDrag(const int& x, const int& y, const UINT_PTR& modifiers)
 {
-    if (toolMain->state == "") {
+    if (toolMain->state == L"") {
         this->x += (x - pressPos.x);
         this->y += (y - pressPos.y);
         move(this->x, this->y);
@@ -334,7 +334,7 @@ void WinPin::onMouseDrag(const int& x, const int& y, const UINT_PTR& modifiers)
 
 void WinPin::onMouseDown(const int& x, const int& y, bool isRight)
 {
-    if (toolMain->state == "") {
+    if (toolMain->state == L"") {
         pressPos.x = x;
         pressPos.y = y;
         toolMain->hide();
@@ -355,7 +355,7 @@ void WinPin::onMouseDoubleClick(const int& x, const int& y, bool isRight)
 
 void WinPin::onMouseUp(const int& x, const int& y)
 {
-    if (toolMain->state == "") { //state为空时，是在拖动窗口
+    if (toolMain->state == L"") { //state为空时，是在拖动窗口
         toolMain->move(this->x, this->y + h + 5.f * dpi);
         toolMain->show();
     }

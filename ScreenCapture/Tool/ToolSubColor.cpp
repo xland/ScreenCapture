@@ -19,7 +19,7 @@ void ToolSubColor::paint()
     D2D1_POINT_2F origin = { start,win->marginTop };
     for (auto& brush : brushes)
     {
-        auto icon = index == indexSelected ? win->getBtnIconLayout("check") : win->getBtnIconLayout("uncheck");
+        auto icon = index == indexSelected ? win->getBtnIconLayout(L"check") : win->getBtnIconLayout(L"uncheck");
         if (index == indexHovered || index == indexSelected) {
             float paddingTopBottom{ 6.f * win->dpi }, paddingLeftRight{ 5.f * win->dpi }, borderRadius{5.6f*win->dpi};
             D2D1_ROUNDED_RECT rr = { { origin.x + paddingLeftRight, paddingTopBottom + win->marginTop, origin.x + win->btnSize - paddingLeftRight, win->h - paddingTopBottom }, borderRadius, borderRadius };
@@ -33,10 +33,6 @@ void ToolSubColor::paint()
 void ToolSubColor::winReady()
 {
     btnSize = 23 * win->dpi;
-    names = {
-        Lang::get(L"color.red"), Lang::get(L"color.yellow"), Lang::get(L"color.green"), Lang::get(L"color.cyan"),
-        Lang::get(L"color.blue"), Lang::get(L"color.purple"), Lang::get(L"color.pink"), Lang::get(L"color.black")
-    };
     createOneBrush(0XCF1322);
     createOneBrush(0XD48806);
     createOneBrush(0X389E0D);
@@ -53,7 +49,7 @@ bool ToolSubColor::hover(const int& x)
     int indexColor;
     if (x > start && x < end) {
         indexColor = static_cast<int>((x - start) / btnSize);
-        if (indexColor >= names.size()) indexColor = (int)names.size() - 1;
+        if (indexColor >= 8) indexColor = 7; //8种颜色
     }
     else {
         indexColor = -1;
@@ -61,7 +57,8 @@ bool ToolSubColor::hover(const int& x)
     if (indexColor != indexHovered) {
         indexHovered = indexColor;
         if (indexColor >= 0) {
-            win->tipText = names[indexColor];
+            std::vector<std::wstring> names{ L"red",L"yellow", L"green", L"cyan", L"blue", L"purple", L"pink", L"black" };
+            win->tipText = Lang::get(std::format(L"color.{}", names[indexColor]));
             win->showTipAt(win->x + start + indexColor * btnSize + win->btnSize/2, int(win->y + win->marginTop + 4 * win->dpi + 0.5));
         }
         return true;

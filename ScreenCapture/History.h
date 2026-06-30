@@ -7,7 +7,7 @@ class History
 public:
 	History(WinPin* win);
 	~History();
-	ShapeBase* createShape(const std::string& state, const int& x, const int& y);
+	ShapeBase* createShape(const std::wstring& state, const int& x, const int& y);
 	void undo();
 	void redo();
 	void removeHoverShape();
