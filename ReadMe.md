@@ -22,7 +22,7 @@ A powerful and lightweight Windows screenshot tool.
 
 ## Download
 
-[Release](https://github.com/xland/ScreenCapture/releases/) (731KB)
+[Release](https://github.com/xland/ScreenCapture/releases/) (778KB)
 
 ## Supported Operating Systems
 
@@ -36,32 +36,35 @@ A powerful and lightweight Windows screenshot tool.
 ## Command Line
 
 - Do not add spaces on either side of the equal sign in command-line arguments.
-- The three types of arguments below can be used in combination. Example: `> ScreenCapture.exe enter=long tray=false auto-quit=true` 
-
+- The three types of arguments below can be used in combination. Example: 
 ```
-// Launch and directly enter screenshot mode (default)
-> enter=cap
-
-// Launch and enter long scrolling screenshot mode
-> enter=long
-
-// Launch and enter screen recording mode
-> enter=video
+> ScreenCapture.exe enter=long tray=false auto-quit=true
 ```
 
 ```
-// Show system tray icon (default)
-> tray=true
+// Launch and directly enter screenshot mode (default).
+> ScreenCapture.exe enter=cap
+
+// Launch and enter long scrolling screenshot mode.
+> ScreenCapture.exe enter=long
+
+// Launch and enter screen recording mode.
+> ScreenCapture.exe enter=video
+```
+
+```
+// Show system tray icon (default).
+> ScreenCapture.exe tray=true
 
 // Hide system tray icon; 
-> tray=false
+> ScreenCapture.exe tray=false
 ```
 
 ```
-// Keep the process running after screenshot capture, ready for further use (default)
+// Keep the process running after screenshot capture.
 > auto-quit=false
 
-// Terminate the process immediately after screenshot capture
+// Terminate the process immediately after screenshot capture.
 > auto-quit=true
 ```
 

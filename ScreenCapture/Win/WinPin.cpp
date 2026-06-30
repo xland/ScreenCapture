@@ -126,6 +126,14 @@ void WinPin::onKeyDown(const UINT& key)
     {
         saveToFile();
     }
+    else if (key == VK_DELETE)
+    {
+        history->removeHoverShape();
+    }
+    else if (key == VK_ESCAPE)
+    {
+        close();
+    }
 }
 
 void WinPin::onDestroy()

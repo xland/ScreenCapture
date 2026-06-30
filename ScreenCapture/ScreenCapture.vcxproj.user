@@ -6,14 +6,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LocalDebuggerDebuggerType>Auto</LocalDebuggerDebuggerType>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-    <LocalDebuggerCommandArguments>
-    </LocalDebuggerCommandArguments>
-    <LocalDebuggerCommandArgumentsHistory>--auto-start|enter=cap|enter=cap tray=false|enter=long tray=false auto-quit=true|enter=cap tray=false auto-quit=true|</LocalDebuggerCommandArgumentsHistory>
+    <LocalDebuggerCommandArguments>enter=cap</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArgumentsHistory>--auto-start|enter=cap tray=false|enter=long tray=false auto-quit=true|enter=cap tray=false auto-quit=true|enter=cap|</LocalDebuggerCommandArgumentsHistory>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <LocalDebuggerCommandArguments>
-    </LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>auto-quit=true</LocalDebuggerCommandArguments>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-    <LocalDebuggerCommandArgumentsHistory>--auto-start|</LocalDebuggerCommandArgumentsHistory>
+    <LocalDebuggerCommandArgumentsHistory>--auto-start|auto-quit=true|</LocalDebuggerCommandArgumentsHistory>
   </PropertyGroup>
 </Project>

@@ -35,33 +35,37 @@
 ## 命令行
 
 - 命令行中，等号两侧不要有空格
-- 以下三种命令可以组合使用，比如：`> enter=long tray=false auto-quit=true`
+- 以下三种命令可以组合使用，比如：
+
+```
+ScreenCapture.exe enter=long tray=false auto-quit=true
+```
 
 ```
 // 启动后立即进入屏幕截图逻辑（默认）
-> enter=cap
+> ScreenCapture.exe enter=cap
 
 // 启动后进入长截图（滚动截图）逻辑
-> enter=long
+> ScreenCapture.exe enter=long
 
 // 启动后进入录屏逻辑
-> enter=video
+> ScreenCapture.exe enter=video
 ```
 
 ```
 // 显示托盘图标（默认）
-> tray=true
+> ScreenCapture.exe tray=true
 
 // 不显示托盘图标
-> tray=false
+> ScreenCapture.exe tray=false
 ```
 
 ```
 // 截图完成后，进程不退出，随时待命（默认）
-> auto-quit=false
+> ScreenCapture.exe auto-quit=false
 
 // 截图完成后即退出进程。
-> auto-quit=true
+> ScreenCapture.exe auto-quit=true
 ```
 
 ## 赞助

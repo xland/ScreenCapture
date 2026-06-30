@@ -303,4 +303,8 @@ void ToolSub::onKeyDown(const UINT& key)
     {
         parent->history->removeHoverShape();
     }
+    else if (key == VK_ESCAPE)
+    {
+        parent->close();
+    }
 }
