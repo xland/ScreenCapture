@@ -73,20 +73,23 @@ void WinSettingCommon::paint()
 	win->render->DrawLine({ contentX,y }, { contentR,y }, win->border.Get(), win->dpi);
 	win->render->DrawTextLayout({ contentX,y }, langLabel.Get(), win->textBrush2.Get());
 	float boxX = contentR - langBoxW;
-	float padY = 5.f * win->dpi;
+	float padY = 8.f * win->dpi;
 	float boxTop = y + padY;
 	float boxBottom = y + lineH - padY;
 	float radius = 4.f * win->dpi;
-	D2D1_ROUNDED_RECT box = { { boxX, boxTop, contentR, boxBottom }, radius, radius };
-	win->render->FillRoundedRectangle(box, langBoxBg.Get());
+	D2D1_RECT_F box = { boxX, boxTop, contentR, boxBottom };
+	win->render->FillRectangle(box, langBoxBg.Get());
 	bool boxHot = (hoverIndex == 2) || langExpanded;
-	win->render->DrawRoundedRectangle(box, boxHot ? openBrush.Get() : win->border.Get(), win->dpi);
+	win->render->DrawRectangle(box, boxHot ? openBrush.Get() : win->border.Get(), win->dpi);
 	win->render->DrawTextLayout({ boxX + 10.f * win->dpi, y }, langVal.Get(), win->textBrush2.Get());
 	win->render->DrawTextLayout({ contentR - 22.f * win->dpi, y }, langArrow.Get(), win->textBrush.Get());
 	// 行2 底部分隔线
 	win->render->DrawLine({ contentX,y + lineH }, { contentR,y + lineH }, win->border.Get(), win->dpi);
 	// 展开的下拉列表（绘制在最上层，盖住下方分隔线）
 	if (langExpanded) {
+		float listH = (float)langItemLayouts.size() * langItemH;
+		D2D1_RECT_F listRect = { boxX, boxBottom, contentR, boxBottom + listH };
+		win->render->FillRectangle(listRect, langBoxBg.Get());
 		int cur = currentLangIndex();
 		float padX = 10.f * win->dpi;
 		for (int i = 0; i < (int)langItemLayouts.size(); i++) {
@@ -98,9 +101,7 @@ void WinSettingCommon::paint()
 			auto brush = (i == cur) ? openBrush.Get() : win->textBrush2.Get();
 			win->render->DrawTextLayout({ boxX + padX, iy }, langItemLayouts[i].Get(), brush);
 		}
-		float listH = (float)langItemLayouts.size() * langItemH;
-		D2D1_ROUNDED_RECT listRect = { { boxX, boxBottom, contentR, boxBottom + listH }, radius, radius };
-		win->render->DrawRoundedRectangle(listRect, win->border.Get(), win->dpi);
+		win->render->DrawRectangle(listRect, openBrush.Get(), win->dpi);
 	}
 }
 
