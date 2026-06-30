@@ -1,11 +1,5 @@
 ﻿#pragma once
 
-/// 单条语言信息：代码 + 用自身语言书写的名称
-struct LangInfo {
-	std::wstring code;
-	std::wstring name;
-};
-
 /// <summary>
 /// 多语言管理（单例），与 Setting 同一套模式。
 /// 字典直接硬编码在代码中（保持“单文件、零外部依赖”的定位）。
@@ -26,7 +20,7 @@ public:
 	/// 切换语言并重新加载字典（不写盘，调用方负责持久化）
 	static void setLang(const std::wstring& lang);
 	/// 所有支持的语言（驱动语言下拉框）
-	static const std::vector<LangInfo>& getLangs();
+	static const std::unordered_map<std::wstring, std::wstring>& getLangs();
 private:
 	void load(const std::wstring& lang);
 	std::unordered_map<std::wstring, std::wstring> dic;

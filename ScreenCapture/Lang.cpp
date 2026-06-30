@@ -5,10 +5,8 @@
 std::unique_ptr<Lang> lang;
 
 namespace {
-	// 未命中 key 时返回的空串引用（避免悬空引用）
-	const std::wstring emptyStr;
 	// 所有支持的语言（code + 自身语言名称）；新增语言只需在此追加并补全对应字典
-	const std::vector<LangInfo> supportedLangs = {
+	const std::unordered_map<std::wstring,std::wstring> supportedLangs = {
 		{ L"zh-cn", L"中文" },
 		{ L"en", L"English" },
 		{ L"id", L"Bahasa Indonesia" },
@@ -38,9 +36,9 @@ void Lang::dispose()
 
 const std::wstring& Lang::get(const std::wstring& key)
 {
-	if (!lang) return emptyStr;
+	if (!lang) return L"";
 	auto it = lang->dic.find(key);
-	if (it == lang->dic.end()) return emptyStr;
+	if (it == lang->dic.end()) return L"";
 	return it->second;
 }
 
@@ -49,7 +47,7 @@ const std::wstring& Lang::getLang()
 	return lang->langCode;
 }
 
-const std::vector<LangInfo>& Lang::getLangs()
+const std::unordered_map<std::wstring,std::wstring>& Lang::getLangs()
 {
 	return supportedLangs;
 }
@@ -59,7 +57,7 @@ void Lang::setLang(const std::wstring& l)
 	// 验证是否为受支持的语言，否则回退到默认主语言 zh-cn
 	bool supported = false;
 	for (const auto& info : supportedLangs) {
-		if (info.code == l) { supported = true; break; }
+		if (info.first == l) { supported = true; break; }
 	}
 	lang->langCode = supported ? l : L"zh-cn";
 	lang->load(lang->langCode);
