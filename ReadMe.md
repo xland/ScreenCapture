@@ -53,7 +53,7 @@ A powerful and lightweight Windows screenshot tool.
 // Show system tray icon (default)
 > tray=true
 
-// Hide system tray icon; the screenshot process will run in the background and be triggered via hotkeys (higher priority than in-app settings)
+// Hide system tray icon; 
 > tray=false
 ```
 
