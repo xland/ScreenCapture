@@ -66,12 +66,12 @@ void Setting::setSwitch(bool autoStart, bool showTray)
 
 std::wstring Setting::getLanguage()
 {
-    try {
+    if (App::getArg(L"auto-quit") == L"false") {
         auto common = setting->configObj.GetNamedObject(L"common");
         return std::wstring(common.GetNamedString(L"language"));
     }
-    catch (...) {
-        return L"zh-cn";
+    else {
+        return Util::getSysLang();
     }
 }
 
@@ -109,13 +109,9 @@ void Setting::initSettings()
         auto pathStr = path.wstring();
         std::wstring content = Util::readFile(pathStr);
         configObj = JsonObject::Parse(content.data());
-        //initShortcutKeys(jsonObj.GetNamedObject(L"shortcutKey"));
     }
     else {
-        configObj = JsonObject::Parse(LR"""({"common":{"autoStart":false,"showTray":true,"language":"zh-cn"},"shortcutKey":{"cap":"Ctrl+Alt+A","long":"Ctrl+Alt+L","video":"Ctrl+Alt+V"}})""");
-        //capKeys = { L"Ctrl",L"Alt",L"A"}; //17 18 65
-        //longKeys = { L"Ctrl",L"Alt",L"L" }; //17 18 76
-        //videoKeys = { L"Ctrl",L"Alt",L"V" }; //17 18 86
+        configObj = JsonObject::Parse(LR"""({"common":{"autoStart":false,"showTray":true,"language":"zh-CN"},"shortcutKey":{"cap":"Ctrl+Alt+A","long":"Ctrl+Alt+L","video":"Ctrl+Alt+V"}})""");
     }
 }
 

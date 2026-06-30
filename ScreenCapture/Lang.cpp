@@ -6,10 +6,10 @@ std::unique_ptr<Lang> lang;
 
 namespace {
 	// 所有支持的语言（code + 自身语言名称）；新增语言只需在此追加并补全对应字典
-	const std::unordered_map<std::wstring,std::wstring> supportedLangs = {
-		{ L"zh-cn", L"中文" },
-		{ L"en", L"English" },
-		{ L"id", L"Bahasa Indonesia" },
+	const std::map<std::wstring,std::wstring> supportedLangs = {
+		{ L"zh-CN", L"中文" },
+		{ L"en-US", L"English" },
+		{ L"id-ID", L"Bahasa Indonesia" },
 	};
 }
 
@@ -34,7 +34,7 @@ void Lang::dispose()
 	lang.reset();
 }
 
-const std::wstring& Lang::get(const std::wstring& key)
+const std::wstring Lang::get(const std::wstring& key)
 {
 	if (!lang) return L"";
 	auto it = lang->dic.find(key);
@@ -47,26 +47,26 @@ const std::wstring& Lang::getLang()
 	return lang->langCode;
 }
 
-const std::unordered_map<std::wstring,std::wstring>& Lang::getLangs()
+const std::map<std::wstring,std::wstring>& Lang::getLangs()
 {
 	return supportedLangs;
 }
 
 void Lang::setLang(const std::wstring& l)
 {
-	// 验证是否为受支持的语言，否则回退到默认主语言 zh-cn
+	// 验证是否为受支持的语言，否则回退到默认主语言 zh-CN
 	bool supported = false;
 	for (const auto& info : supportedLangs) {
 		if (info.first == l) { supported = true; break; }
 	}
-	lang->langCode = supported ? l : L"zh-cn";
+	lang->langCode = supported ? l : L"zh-CN";
 	lang->load(lang->langCode);
 }
 
 void Lang::load(const std::wstring& l)
 {
 	dic.clear();
-	if (l == L"en") {
+	if (l == L"en-US") {
 		dic = {
 			{ L"tray.capScreen", L"Capture Screen" },
 			{ L"tray.capLong", L"Scrolling Screenshot" },
@@ -135,7 +135,7 @@ void Lang::load(const std::wstring& l)
 			{ L"util.file", L"File" },
 		};
 	}
-	else if (l == L"id") {
+	else if (l == L"id-ID") {
 		dic = {
 			// 托盘菜单
 			{ L"tray.capScreen", L"Tangkap Layar" },

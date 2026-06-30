@@ -516,3 +516,14 @@ std::wstring Util::getVer()
     int patch = (fileInfo->dwFileVersionLS >> 16) & 0xFFFF;
     return std::format(L"{}.{}.{}",major,minor,patch);
 }
+
+std::wstring Util::getSysLang()
+{
+    LANGID langID = GetUserDefaultLangID(); //默认语言标识符
+    WCHAR langName[LOCALE_NAME_MAX_LENGTH];
+    auto areaId = MAKELCID(langID, SORT_DEFAULT); //区域设置ID
+    if (LCIDToLocaleName(areaId, langName, LOCALE_NAME_MAX_LENGTH, 0)) {
+        return std::wstring{ langName };
+    }
+    return L"zh-CN";
+}

@@ -25,5 +25,6 @@ public:
 	static void setAutoStart(bool flag);
 	static std::wstring getVer();
 	static bool hasArgument(const wchar_t* arg);
+	static std::wstring getSysLang();
 };
 

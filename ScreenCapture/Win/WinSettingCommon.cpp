@@ -30,7 +30,13 @@ WinSettingCommon::WinSettingCommon(WinSetting* win):win{win}
 	startupLabel = win->makeTextLayout(Lang::get(L"setting.autoStart"), w, lineH, win->textSize, false);
 	trayLabel = win->makeTextLayout(Lang::get(L"setting.showTray"), w, lineH, win->textSize, false);
 	langLabel = win->makeTextLayout(Lang::get(L"setting.language"), w, lineH, win->textSize, false);
-	buildLangItems();
+
+
+	w = langBoxW - 24.f * win->dpi;
+	for (const auto& info : Lang::getLangs()) {
+		langItemLayouts.push_back(win->makeTextLayout(info.second, w, langItemH, win->textSize, false));
+	}
+
 	updateLangVal();
 	langArrow = win->makeTextLayout(L"▾", 22.f * win->dpi, lineH, iconSize);
 	closeIcon = win->makeIconLayout(L"\ue687", lineH, lineH, iconSize);
@@ -184,19 +190,10 @@ void WinSettingCommon::applyLanguage()
 	win->about = std::make_unique<WinSettingAbout>(win);
 }
 
-void WinSettingCommon::buildLangItems()
-{
-	langItemLayouts.clear();
-	float w = langBoxW - 24.f * win->dpi;
-	for (const auto& info : Lang::getLangs()) {
-		langItemLayouts.push_back(win->makeTextLayout(info.name, w, langItemH, win->textSize, false));
-	}
-}
-
 void WinSettingCommon::updateLangVal()
 {
 	float w = langBoxW - 34.f * win->dpi; // 右侧留出箭头空间
-	auto name = Lang::getLangs()[currentLangIndex()].name;
+	auto name = Lang::getLangs().at(Lang::getLang());
 	langVal = win->makeTextLayout(name, w, lineH, win->textSize, false);
 }
 
@@ -205,9 +202,20 @@ void WinSettingCommon::selectLang(const int& index)
 	const auto& langs = Lang::getLangs();
 	langExpanded = false;
 	if (index < 0 || index >= (int)langs.size()) return;
-	if (langs[index].code == Lang::getLang()) return; // 无变化
-	Setting::setLanguage(langs[index].code);
-	Lang::setLang(langs[index].code);
+
+	std::wstring code;
+	int i = 0;
+	for (const auto& info : Lang::getLangs()) {
+		if (i == index) {
+			code = info.first;
+			break;
+		}
+		i += 1;
+	}
+
+	if (code == Lang::getLang()) return; // 无变化
+	Setting::setLanguage(code);
+	Lang::setLang(code);
 	applyLanguage();
 }
 
@@ -216,7 +224,7 @@ int WinSettingCommon::currentLangIndex() const
 	auto cur = Lang::getLang();
 	int i = 0;
 	for (const auto& info : Lang::getLangs()) {
-		if (info.code == cur) return i;
+		if (info.first == cur) return i;
 		i++;
 	}
 	return 0;

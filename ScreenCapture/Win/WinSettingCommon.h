@@ -14,6 +14,11 @@ public:
 public:
 	int hoverIndex{ -1 };
 private:
+	void applyLanguage();
+	void updateLangVal();
+	void selectLang(const int& index);
+	int currentLangIndex() const;
+private:
 	WinSetting* win;
 	float lineH{ 44.f }, iconSize{ 22.f };
 	float contentX, contentY, contentR;
@@ -27,10 +32,4 @@ private:
 	std::vector<ComPtr<IDWriteTextLayout>> langItemLayouts;
 	ComPtr<IDWriteTextLayout> closeIcon, openIcon;
 	ComPtr<ID2D1SolidColorBrush> openBrush, langBoxBg, langHoverBg;
-private:
-	void applyLanguage();
-	void buildLangItems();
-	void updateLangVal();
-	void selectLang(const int& index);
-	int currentLangIndex() const;
 };
