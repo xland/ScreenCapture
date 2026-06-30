@@ -86,7 +86,7 @@ A powerful and lightweight Windows screenshot tool.
     </td>
     <td align="center">
       <img alt="Official Account QR Code" src="./Doc/gongzhonghao.jpg" width="160" height="160">
-      <p>Official Account: Desktop Software</p>
+      <p>WeChat Blog: Desktop Software</p>
     </td>
   </tr>
 </table>
