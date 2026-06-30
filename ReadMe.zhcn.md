@@ -21,7 +21,7 @@
 
 ## 下载
 
-[Release](https://github.com/xland/ScreenCapture/releases/) （731KB）
+[Release](https://github.com/xland/ScreenCapture/releases/) （778KB）
 
 ## 支持的操作系统
 
