@@ -5,21 +5,32 @@
 #include "Tool/ToolSub.h"
 #include "Tool/ToolSubColor.h"
 #include "Util.h"
+#include "History.h"
 #include "ShapeNumber.h"
-
-static int numVal{ 0 };
 
 ShapeNumber::ShapeNumber(WinPin* win) :ShapeBase(win), draggers{
 	D2D1::RectF(0,0,0,0),
 	D2D1::RectF(0,0,0,0),
 	D2D1::RectF(0,0,0,0) }, 
 	r{ 16.f * win->dpi },
-	val{++numVal}
+	val{getNextVal(win)}
 {
 	auto toolSub = win->toolSub.get();
 	win->render->CreateSolidColorBrush(toolSub->colorer->getSelectedColor(), brush.GetAddressOf());
 	win->render->CreateSolidColorBrush(D2D1::ColorF(0XFFFFFF), brushText.GetAddressOf());
 	isFill = toolSub->selectIndex == 0;
+}
+
+int ShapeNumber::getNextVal(WinPin* win)
+{
+	int maxVal{ 0 };
+	for (auto& shape : win->history->shapes) {
+		auto number = dynamic_cast<ShapeNumber*>(shape.get());
+		if (number && !number->isUndo && number->val > maxVal) {
+			maxVal = number->val;
+		}
+	}
+	return maxVal + 1;
 }
 
 ShapeNumber::~ShapeNumber()

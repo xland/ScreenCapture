@@ -30,9 +30,7 @@ Tray::Tray()
 
 Tray::~Tray()
 {
-	if (hwnd) {
-		UnregisterHotKey(hwnd, capScreenKeyMsg);
-	}
+	unregisterHotKeys();
 	if (tray) {
 		Shell_NotifyIcon(NIM_DELETE, tray.get());
 	}
@@ -54,14 +52,7 @@ void Tray::init()
 		{
 			trayIns->createTray();
 		}
-		auto configShortcut = configObj.GetNamedObject(L"shortcutKey");
-		std::wstring errorMsg;
-		std::wstring capStr{ configShortcut.GetNamedString(L"cap") };
-		trayIns->regOneHotKey(capStr, capScreenKeyMsg, errorMsg);
-		std::wstring longStr{ configShortcut.GetNamedString(L"long") };
-		trayIns->regOneHotKey(longStr, capLongKeyMsg, errorMsg);
-		std::wstring videoStr{ configShortcut.GetNamedString(L"video") };
-		trayIns->regOneHotKey(videoStr, capVideoKeyMsg, errorMsg);
+		trayIns->reloadHotKeys();
 	}
 	//if (!errorMsg.empty()) {
 	//	MessageBox(NULL, errorMsg.data(), L"系统提示", MB_OK | MB_ICONINFORMATION);
@@ -71,6 +62,30 @@ void Tray::init()
 Tray* Tray::get()
 {
 	return trayIns.get();
+}
+
+void Tray::unregisterHotKeys()
+{
+	if (!hwnd) return;
+	UnregisterHotKey(hwnd, capScreenKeyMsg);
+	UnregisterHotKey(hwnd, capLongKeyMsg);
+	UnregisterHotKey(hwnd, capVideoKeyMsg);
+}
+
+void Tray::reloadHotKeys()
+{
+	if (!hwnd) return;
+	unregisterHotKeys();
+
+	auto configObj = Setting::getConfigObj();
+	auto configShortcut = configObj.GetNamedObject(L"shortcutKey");
+	std::wstring errorMsg;
+	std::wstring capStr{ configShortcut.GetNamedString(L"cap") };
+	regOneHotKey(capStr, capScreenKeyMsg, errorMsg);
+	std::wstring longStr{ configShortcut.GetNamedString(L"long") };
+	regOneHotKey(longStr, capLongKeyMsg, errorMsg);
+	std::wstring videoStr{ configShortcut.GetNamedString(L"video") };
+	regOneHotKey(videoStr, capVideoKeyMsg, errorMsg);
 }
 
 void Tray::regOneHotKey(const std::wstring& keyStr, const int& msgKey,std::wstring& errMsg)

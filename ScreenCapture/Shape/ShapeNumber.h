@@ -16,6 +16,7 @@ public:
 	void setCursor() override;
 public:
 private:
+	static int getNextVal(WinPin* win);
 	D2D1_POINT_2F localPoint(const float& degrees);
 	D2D1_POINT_2F transformPoint(const D2D1_POINT_2F& point);
 	void makePath();

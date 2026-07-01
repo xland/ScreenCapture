@@ -10,7 +10,8 @@
     <LocalDebuggerCommandArgumentsHistory>--auto-start|enter=cap tray=false|enter=long tray=false auto-quit=true|enter=cap tray=false auto-quit=true|enter=cap|</LocalDebuggerCommandArgumentsHistory>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <LocalDebuggerCommandArguments>auto-quit=true</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>
+    </LocalDebuggerCommandArguments>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
     <LocalDebuggerCommandArgumentsHistory>--auto-start|auto-quit=true|</LocalDebuggerCommandArgumentsHistory>
   </PropertyGroup>

@@ -3,6 +3,7 @@
 #include "WinSetting.h"
 #include "Setting.h"
 #include "Lang.h"
+#include "Tray.h"
 
 WinSettingShortcut::WinSettingShortcut(WinSetting* win):win{win}
 {
@@ -117,7 +118,7 @@ void WinSettingShortcut::mouseDown()
 void WinSettingShortcut::keyDown(const std::wstring& key)
 {
 	if (key.empty()) return;
-	bool isContains = std::ranges::find(tempKeys, key) != tempKeys.end();
+	bool isContains = std::find(tempKeys.begin(), tempKeys.end(), key) != tempKeys.end();
 	if (isContains) return;
 	tempKeys.push_back(key);
 }
@@ -125,6 +126,9 @@ void WinSettingShortcut::keyDown(const std::wstring& key)
 void WinSettingShortcut::keyUp()
 {
 	Setting::setKeys(focusIndex, tempKeys);
+	if (auto tray = Tray::get()) {
+		tray->reloadHotKeys();
+	}
 	auto valSize{ 12 * win->dpi };
 	auto configObj = Setting::getConfigObj();
 	auto configShortcut = configObj.GetNamedObject(L"shortcutKey");
