@@ -8,11 +8,25 @@
 #include "History.h"
 #include "ShapeNumber.h"
 
+namespace {
+	float defaultRadius{ 16.f };
+
+	float getDefaultRadius(WinPin* win)
+	{
+		return defaultRadius * win->dpi;
+	}
+
+	void setDefaultRadius(WinPin* win, const float& radius)
+	{
+		defaultRadius = radius / win->dpi;
+	}
+}
+
 ShapeNumber::ShapeNumber(WinPin* win) :ShapeBase(win), draggers{
 	D2D1::RectF(0,0,0,0),
 	D2D1::RectF(0,0,0,0),
 	D2D1::RectF(0,0,0,0) }, 
-	r{ 16.f * win->dpi },
+	r{getDefaultRadius(win)},
 	val{getNextVal(win)}
 {
 	auto toolSub = win->toolSub.get();
@@ -83,6 +97,7 @@ void ShapeNumber::mouseDrag(const float& x, const float& y, const UINT_PTR& modi
 		r = sqrtf(dx * dx + dy * dy);
 		auto minR{ 8.f * win->dpi };
 		if (r < minR) r = minR;
+		setDefaultRadius(win, r);
 		makePath();
 		layoutText = win->makeTextLayout(std::to_wstring(val), r * 2, r * 2, r);
 	}
@@ -154,12 +169,14 @@ void ShapeNumber::mouseWheel(const float& x, const float& y, const short& delta)
 	if (delta < 0) {
 		if (r <= 6.f * win->dpi) return;
 		r--;
+		setDefaultRadius(win, r);
 		makePath();
 		layoutText = win->makeTextLayout(std::to_wstring(val), r * 2, r * 2, r);
 		win->refresh();
 	}
 	else {
-		r++;		
+		r++;
+		setDefaultRadius(win, r);
 		makePath();
 		layoutText = win->makeTextLayout(std::to_wstring(val), r * 2, r * 2, r);
 		win->refresh();
