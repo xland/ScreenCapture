@@ -23,6 +23,7 @@ public:
 	std::unique_ptr<ToolSub> toolSub;
 	ComPtr<ID2D1Bitmap1> screenImg;
 private:
+	void onCreated() override;
 	void onMouseMove(const int& x, const int& y) override;
 	void onMouseDrag(const int& x, const int& y, const UINT_PTR& modifiers) override;
 	void onMouseDown(const int& x, const int& y, bool isRight) override;
@@ -43,5 +44,6 @@ private:
 	void restoreWindowState(HWND foregroundBeforeDialog);
 private:
 	POINT pressPos{0,0};
+	ComPtr<ID2D1SolidColorBrush> borderBrush;
 };
 

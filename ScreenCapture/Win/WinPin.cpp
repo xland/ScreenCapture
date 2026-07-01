@@ -78,6 +78,7 @@ void WinPin::onPaint()
     if (!isMouseDown && shapeHover) {
         shapeHover->paintDragger();
     }
+    render->DrawRectangle(destRect, borderBrush.Get(), dpi*2);
 }
 
 BOOL WinPin::onCursor()
@@ -295,6 +296,11 @@ void WinPin::restoreWindowState(HWND foregroundBeforeDialog)
     }
 }
 
+
+void WinPin::onCreated()
+{
+    render->CreateSolidColorBrush(D2D1::ColorF(0x1677ff), borderBrush.GetAddressOf());
+}
 
 void WinPin::onMouseMove(const int& x, const int& y)
 {
