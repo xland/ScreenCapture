@@ -11,6 +11,7 @@ public:
 	bool mouseDown(const int& x, const int& y);
 	void setVals(const float& start,bool visible);
 	D2D1_COLOR_F getSelectedColor();
+	float getRequiredWidth();
 public:
 	bool visible{ false };
 	float start, end;

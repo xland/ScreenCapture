@@ -20,6 +20,11 @@ void ToolSubSlider::paint()
 	auto x{ start + (end - start) * ((val - min) / (max - min)) };
 	win->render->FillEllipse({ {x,y}, r, r }, win->brushSpliter.Get());
 }
+float ToolSubSlider::getRequiredWidth()
+{
+	return visible ? end + 4.f * win->dpi : 0;
+}
+
 void ToolSubSlider::mouseWheel(const int& x, const int& y, const short& delta)
 {
     if (!visible || x > end || x < start) return;

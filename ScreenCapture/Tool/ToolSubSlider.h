@@ -14,6 +14,7 @@ public:
 public:
 	bool visible{ false };
 	float start, end, val, min, max;
+	float getRequiredWidth();
 private:
 	ToolSub* win;
 };
