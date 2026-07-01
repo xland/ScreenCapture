@@ -20,6 +20,7 @@ private:
 	void onMouseDown(const int& x, const int& y, bool isRight);
 	void onMouseUp(const int& x, const int& y);
 	void onTimer(const UINT& timerId) override;
+	LRESULT onMouseActivate() override;
 	void onKeyDown(const UINT& key) override;
 	void onChar(const UINT& code) override;
 	void onIME() override;

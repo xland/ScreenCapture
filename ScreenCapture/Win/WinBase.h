@@ -43,6 +43,7 @@ protected:
 	virtual void onMouseWheel(const int& x, const int& y, const short& delta) {};
 	virtual void onTimer(const UINT& timerId) {};
 	virtual BOOL onCursor();
+	virtual LRESULT onMouseActivate() { return MA_NOACTIVATE; };
 	virtual void onIME() {};
 	virtual void onBlur() {};
 	virtual void onDestroy() {};

@@ -118,7 +118,13 @@ void ShapeTextWin::onBlur()
 }
 void ShapeTextWin::onShown()
 {
+    SetForegroundWindow(hwnd);
     SetFocus(hwnd);
+}
+
+LRESULT ShapeTextWin::onMouseActivate()
+{
+    return MA_ACTIVATE;
 }
 void ShapeTextWin::onHidden()
 {}

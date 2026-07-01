@@ -201,7 +201,7 @@ LRESULT WinBase::winProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         return DefWindowProc(hwnd, msg, wParam, lParam);
     }
     else if (msg == WM_MOUSEACTIVATE) {
-        return MA_NOACTIVATE;
+        return self->onMouseActivate();
     }
     else if (msg == WM_NCHITTEST)
     {
