@@ -89,8 +89,7 @@ void ToolSub::initBtn()
     btnLayout.push_back(makeIconLayout(L"\ue607", btnSize, btnSize, fSize));
     btnLayout.push_back(makeIconLayout(L"\ue634", btnSize, btnSize, fSize));
     btnLayout.push_back(makeIconLayout(L"\ue682", btnSize, btnSize, fSize));
-    btnLayout.push_back(makeIconLayout(L"\ue721", btnSize, btnSize, fSize));
-    btnLayout.push_back(makeIconLayout(L"\ue61d", btnSize, btnSize, fSize));
+    btnLayout.push_back(makeIconLayout(L"\ue6ad", btnSize, btnSize, 10*dpi)); //check
 }
 
 bool ToolSub::hoverBtn(const int& x)
@@ -182,7 +181,7 @@ void ToolSub::onCreated()
 {
     btnSize = 32.f * dpi;
     marginTop = 4.f * dpi;
-    btnId = { L"rectFill" , L"ellipseFill", L"arrowFill", L"numberFill" , L"semiTransparent" ,L"bold" , L"italic", L"check", L"uncheck" };
+    btnId = { L"rectFill" , L"ellipseFill", L"arrowFill", L"numberFill" , L"semiTransparent" ,L"bold" , L"italic", L"check" };
     initTip();
     initBrush();
     initBtn();

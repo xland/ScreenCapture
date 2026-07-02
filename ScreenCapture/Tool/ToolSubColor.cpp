@@ -17,15 +17,29 @@ void ToolSubColor::paint()
 	if (!visible) return;
     int index{ 0 };
     D2D1_POINT_2F origin = { start,win->marginTop };
+    float paddingTopBottom{ 6.f * win->dpi }, paddingLeftRight{ 5.f * win->dpi }, checkMargin{ 4 * win->dpi };
     for (auto& brush : brushes)
     {
-        auto icon = index == indexSelected ? win->getBtnIconLayout(L"check") : win->getBtnIconLayout(L"uncheck");
+        D2D1_RECT_F r = { origin.x + paddingLeftRight, paddingTopBottom + win->marginTop, origin.x + win->btnSize - paddingLeftRight, win->h - paddingTopBottom };
         if (index == indexHovered || index == indexSelected) {
-            float paddingTopBottom{ 6.f * win->dpi }, paddingLeftRight{ 5.f * win->dpi }, borderRadius{5.6f*win->dpi};
-            D2D1_ROUNDED_RECT rr = { { origin.x + paddingLeftRight, paddingTopBottom + win->marginTop, origin.x + win->btnSize - paddingLeftRight, win->h - paddingTopBottom }, borderRadius, borderRadius };
+            float borderRadius{ 5.6f * win->dpi };
+            D2D1_ROUNDED_RECT rr = { r, borderRadius, borderRadius };
             win->render->FillRoundedRectangle(rr, win->brushSelect.Get());
         }
-        win->render->DrawTextLayout(origin, icon, brush.Get(), D2D1_DRAW_TEXT_OPTIONS_NONE);
+        r.left += paddingLeftRight;r.right -= paddingLeftRight;
+        r.top += checkMargin;r.bottom -= checkMargin;
+        win->render->FillRectangle(r, brush.Get());
+        win->render->DrawRectangle(r, win->brushSpliter.Get(),0.5*win->dpi);
+        if (index == indexSelected) {
+            auto icon = win->getBtnIconLayout(L"check");
+            if (index < 8) {
+                win->render->DrawTextLayout(origin, icon, brushes[8].Get(), D2D1_DRAW_TEXT_OPTIONS_NONE);
+            }
+            else {
+                win->render->DrawTextLayout(origin, icon, brushes[7].Get(), D2D1_DRAW_TEXT_OPTIONS_NONE);
+            }
+            
+        }
         origin.x += btnSize;
         index += 1;
     }
