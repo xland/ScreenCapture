@@ -33,29 +33,24 @@ void ToolSub::resetVal()
     if (toolMain->state == L"rect" || toolMain->state == L"ellipse") {
         auto isFillMode{ selectIndex == 0 };
         // w = int((isFillMode ? 316 * toolMain->dpi - 120.f - span : 316 * toolMain->dpi) + 0.5f);
-        w = int((isFillMode ? 228.f * toolMain->dpi : 316.f * toolMain->dpi) + 0.5f);
         slider->setVals(16.f, 1.f, 3.f, btnEnd + span, !isFillMode);
         colorer->setVals(isFillMode ? btnEnd : slider->end + span, true);
     }
     else if (toolMain->state == L"arrow") {
-        w = int(316 * toolMain->dpi);
         slider->setVals(60.f, 8.f, 18.f, btnEnd + span, true);
         colorer->setVals(slider->end + span, true);
         selectIndex = 0;
     }
     else if (toolMain->state == L"line") {
-        w = (int)(316 * toolMain->dpi);
         slider->setVals(60.f, 1.f, 3.f, btnEnd + span, true);
         colorer->setVals(slider->end + span, true);
     }
     else if (toolMain->state == L"number") {
-        w = (int)(228 * toolMain->dpi);
         selectIndex = 0;
         slider->setVals(0.f, 0.f, 0.f, 0.f, false);
         colorer->setVals(btnEnd, true);
     }
     else if (toolMain->state == L"text") {
-        w = (int)(348 * toolMain->dpi);
         btnEnd = btnStart + btnSize *2;
         slider->setVals(66.f, 16.f, 26.f, btnEnd + span, true);
         colorer->setVals(slider->end + span, true);
@@ -66,6 +61,8 @@ void ToolSub::resetVal()
         slider->setVals(86.f, 26.f, 32.f, btnEnd + span, !isRectMode);
         colorer->setVals(0, false);
     }
+    w = int(std::max({ btnEnd, colorer->getRequiredWidth(), slider->getRequiredWidth() }) + 0.5f);
+    colorer->end = (float)w;
     arrowX = btnSize * toolMain->selectIndex + btnSize / 2;
     if (arrowX + 6.f * toolMain->dpi > w)
     {

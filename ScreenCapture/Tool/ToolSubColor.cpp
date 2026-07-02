@@ -41,6 +41,7 @@ void ToolSubColor::winReady()
     createOneBrush(0X722ED1);
     createOneBrush(0XEB2F96);
     createOneBrush(0X000000);
+    createOneBrush(0XFFFFFF);
 }
 
 bool ToolSubColor::hover(const int& x)
@@ -49,7 +50,7 @@ bool ToolSubColor::hover(const int& x)
     int indexColor;
     if (x > start && x < end) {
         indexColor = static_cast<int>((x - start) / btnSize);
-        if (indexColor >= 8) indexColor = 7; //8种颜色
+        if (indexColor >= 9) indexColor = 8; //9种颜色
     }
     else {
         indexColor = -1;
@@ -57,7 +58,7 @@ bool ToolSubColor::hover(const int& x)
     if (indexColor != indexHovered) {
         indexHovered = indexColor;
         if (indexColor >= 0) {
-            std::vector<std::wstring> names{ L"red",L"yellow", L"green", L"cyan", L"blue", L"purple", L"pink", L"black" };
+            std::vector<std::wstring> names{ L"red",L"yellow", L"green", L"cyan", L"blue", L"purple", L"pink", L"black", L"white" };
             win->tipText = Lang::get(std::format(L"color.{}", names[indexColor]));
             win->showTipAt(win->x + start + indexColor * btnSize + win->btnSize/2, int(win->y + win->marginTop + 4 * win->dpi + 0.5));
         }
@@ -83,6 +84,12 @@ void ToolSubColor::createOneBrush(const int& color)
     win->render->CreateSolidColorBrush(D2D1::ColorF(color), brush.GetAddressOf());
     brushes.push_back(std::move(brush));
 }
+float ToolSubColor::getRequiredWidth()
+{
+	if (!visible) return 0;
+	return start + (int)brushes.size() * btnSize + (win->btnSize - btnSize) + 4.f * win->dpi;
+}
+
 D2D1_COLOR_F ToolSubColor::getSelectedColor()
 {
     return brushes[indexSelected]->GetColor();
