@@ -1,4 +1,4 @@
-**English** | [简体中文](./ReadMe.zhcn.md) | [Русский](./ReadMe.ru.md)
+**English** | [简体中文](./ReadMe.zhcn.md) | [Русский](./ReadMe.ru.md) | [Bahasa Indonesia](./ReadMe.id.md)
 
 ![banner](./Doc/banner.png)
 
