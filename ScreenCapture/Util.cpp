@@ -37,34 +37,109 @@ void Util::trackMouse(HWND hwnd, bool cancel)
 
 void Util::saveToClipboard(int& w, int& h, BYTE* data)
 {
-    if (!OpenClipboard(nullptr)) return;
-    EmptyClipboard();
-    // 直接将原始像素写入全局内存，以 CF_DIB 写入剪切板
-    // 避免 CreateCompatibleBitmap 引入屏幕 DPI 元数据导致粘贴时缩放模糊
+    if (w <= 0 || h <= 0 || !data) return;
+
+    // 目标：同时提供 CF_DIBV5（Office/微信/WPS 等原生应用）和 "PNG" 注册格式（浏览器/Electron 应用）
+    // 输入像素为 BGRA、top-down 32bpp
+
     DWORD rowBytes = (DWORD)w * 4;
     DWORD imgBytes = rowBytes * (DWORD)h;
-    HGLOBAL hGlobal = GlobalAlloc(GMEM_MOVEABLE, sizeof(BITMAPINFOHEADER) + imgBytes);
-    if (!hGlobal) return;
-    auto* p = static_cast<BYTE*>(GlobalLock(hGlobal));
-    if (!p) { GlobalFree(hGlobal); return; }
-    auto* bih = reinterpret_cast<BITMAPINFOHEADER*>(p);
-    *bih = {};
-    bih->biSize        = sizeof(BITMAPINFOHEADER);
-    bih->biWidth       = w;
-    bih->biHeight      = -h;      // 负数 = top-down DIB
-    bih->biPlanes      = 1;
-    bih->biBitCount    = 32;
-    bih->biCompression = BI_RGB;
-    bih->biSizeImage   = imgBytes;
-    CopyMemory(p + sizeof(BITMAPINFOHEADER), data, imgBytes);
-    GlobalUnlock(hGlobal);
-    if (!SetClipboardData(CF_DIB, hGlobal)) {
-        GlobalFree(hGlobal);
-        CloseClipboard();
+
+    // ---------- 1) 用 WIC 把像素编码为 PNG 到内存流 ----------
+    ComPtr<IStream> pngStream;
+    HRESULT hr = CreateStreamOnHGlobal(nullptr, TRUE, pngStream.GetAddressOf());
+    if (FAILED(hr)) return;
+
+    ComPtr<IWICImagingFactory> factory;
+    hr = CoCreateInstance(CLSID_WICImagingFactory, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(factory.GetAddressOf()));
+    if (FAILED(hr)) return;
+
+    ComPtr<IWICBitmapEncoder> encoder;
+    hr = factory->CreateEncoder(GUID_ContainerFormatPng, nullptr, encoder.GetAddressOf());
+    if (FAILED(hr)) return;
+    hr = encoder->Initialize(pngStream.Get(), WICBitmapEncoderNoCache);
+    if (FAILED(hr)) return;
+
+    ComPtr<IWICBitmapFrameEncode> frame;
+    hr = encoder->CreateNewFrame(frame.GetAddressOf(), nullptr);
+    if (FAILED(hr)) return;
+    hr = frame->Initialize(nullptr);
+    if (FAILED(hr)) return;
+    hr = frame->SetSize((UINT)w, (UINT)h);
+    if (FAILED(hr)) return;
+    WICPixelFormatGUID fmt = GUID_WICPixelFormat32bppBGRA;
+    hr = frame->SetPixelFormat(&fmt);
+    if (FAILED(hr) || !IsEqualGUID(fmt, GUID_WICPixelFormat32bppBGRA)) return;
+    hr = frame->WritePixels((UINT)h, rowBytes, imgBytes, data);
+    if (FAILED(hr)) return;
+    hr = frame->Commit();
+    if (FAILED(hr)) return;
+    hr = encoder->Commit();
+    if (FAILED(hr)) return;
+
+    // 取出编码后的实际字节，拷到一块精确大小的 HGLOBAL
+    STATSTG stat{};
+    if (FAILED(pngStream->Stat(&stat, STATFLAG_NONAME))) return;
+    SIZE_T pngSize = (SIZE_T)stat.cbSize.QuadPart;
+    if (pngSize == 0) return;
+
+    HGLOBAL hPngSrc = nullptr;
+    if (FAILED(GetHGlobalFromStream(pngStream.Get(), &hPngSrc)) || !hPngSrc) return;
+    void* srcPtr = GlobalLock(hPngSrc);
+    if (!srcPtr) return;
+
+    HGLOBAL hPng = GlobalAlloc(GMEM_MOVEABLE, pngSize);
+    if (!hPng) { GlobalUnlock(hPngSrc); return; }
+    void* dstPtr = GlobalLock(hPng);
+    if (!dstPtr) { GlobalUnlock(hPngSrc); GlobalFree(hPng); return; }
+    memcpy(dstPtr, srcPtr, pngSize);
+    GlobalUnlock(hPng);
+    GlobalUnlock(hPngSrc);
+
+    // ---------- 2) 构造 CF_DIBV5（带 alpha） ----------
+    HGLOBAL hDibV5 = GlobalAlloc(GMEM_MOVEABLE, sizeof(BITMAPV5HEADER) + imgBytes);
+    if (!hDibV5) { GlobalFree(hPng); return; }
+    auto* pv5 = static_cast<BYTE*>(GlobalLock(hDibV5));
+    if (!pv5) { GlobalFree(hDibV5); GlobalFree(hPng); return; }
+    auto* bv5 = reinterpret_cast<BITMAPV5HEADER*>(pv5);
+    *bv5 = {};
+    bv5->bV5Size        = sizeof(BITMAPV5HEADER);
+    bv5->bV5Width       = w;
+    bv5->bV5Height      = -h;                 // 负 = top-down
+    bv5->bV5Planes      = 1;
+    bv5->bV5BitCount    = 32;
+    bv5->bV5Compression = BI_BITFIELDS;       // 让接收端识别 alpha
+    bv5->bV5SizeImage   = imgBytes;
+    bv5->bV5RedMask     = 0x00FF0000;
+    bv5->bV5GreenMask   = 0x0000FF00;
+    bv5->bV5BlueMask    = 0x000000FF;
+    bv5->bV5AlphaMask   = 0xFF000000;
+    bv5->bV5CSType      = LCS_sRGB;
+    bv5->bV5Intent      = LCS_GM_GRAPHICS;
+    CopyMemory(pv5 + sizeof(BITMAPV5HEADER), data, imgBytes);
+    GlobalUnlock(hDibV5);
+
+    // ---------- 3) 写入剪切板 ----------
+    if (!OpenClipboard(nullptr)) {
+        GlobalFree(hDibV5);
+        GlobalFree(hPng);
         return;
     }
+    EmptyClipboard();
+
+    // CF_DIBV5：设置成功后所有权移交剪切板
+    if (!SetClipboardData(CF_DIBV5, hDibV5)) {
+        GlobalFree(hDibV5);
+    }
+
+    // "PNG" 注册格式：浏览器/Electron 应用会认这个
+    UINT cfPng = RegisterClipboardFormatW(L"PNG");
+    if (cfPng == 0 || !SetClipboardData(cfPng, hPng)) {
+        GlobalFree(hPng);
+    }
+
     CloseClipboard();
-    // SetClipboardData 成功后剪切板接管 hGlobal，不可再 GlobalFree
+    // 成功写入的 HGLOBAL 归剪切板所有，不再 GlobalFree
 }
 
 bool Util::saveToFile(const std::wstring& path, const int& w, const int& h, BYTE* data)
