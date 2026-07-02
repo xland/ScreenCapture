@@ -40,6 +40,7 @@ void WinPin::init()
     win->enableShadow();
     win->show();
     win->initTool();
+    win->bringTopmostToFront();
 	winPins.push_back(std::move(win));
 }
 
@@ -62,6 +63,7 @@ void WinPin::initFromData(int x, int y, int w, int h, std::vector<BYTE>& data)
     win->enableShadow();
     win->show();
     win->initTool();
+    win->bringTopmostToFront();
     winPins.push_back(std::move(win));
 }
 
@@ -153,7 +155,7 @@ void WinPin::onDestroy()
 
 void WinPin::onDpiChanged()
 {
-    toolMain->move(x, y + h + 5.f * dpi);
+    updateToolLayout(toolMain.get() && toolMain->state != L"");
     if (toolMain->state != L"") {
         //toolSub->move(toolMain->x, toolMain->y + toolMain->h + 3.f * toolSub->dpi + 0.5);
         toolSub->resetVal();
@@ -271,11 +273,105 @@ void WinPin::initTool()
 {
     auto btnSize{ 32.f * dpi };
     auto toolStyle{ WS_EX_TOPMOST | WS_EX_NOACTIVATE };
+    // 先按默认(BottomRight)位置构造 ToolMain，稍后 updateToolLayout 会重新摆放
     toolMain = std::make_unique<ToolMain>(x, y + h + 5.f * dpi, btnSize * 13, btnSize,this);
     toolMain->createWindow(toolStyle);
-    toolMain->show();
     toolSub = std::make_unique<ToolSub>(this);
     toolSub->createWindow(toolStyle);
+    updateToolLayout(false);
+    toolMain->show();
+}
+
+void WinPin::updateToolLayout(bool subVisible)
+{
+    if (!toolMain.get()) return;
+    // 定位 WinPin 所在显示器，用其工作区判断上/下方是否有足够空间
+    RECT winRect{ x, y, x + w, y + h };
+    HMONITOR hMon = MonitorFromRect(&winRect, MONITOR_DEFAULTTONEAREST);
+    MONITORINFO mi{ sizeof(MONITORINFO) };
+    GetMonitorInfo(hMon, &mi);
+    const int workLeft = mi.rcWork.left;
+    const int workTop = mi.rcWork.top;
+    const int workRight = mi.rcWork.right;
+    const int workBottom = mi.rcWork.bottom;
+
+    const float dpiF = toolMain->dpi;
+    const int gapMain = (int)(5.f * dpiF + 0.5f);      // WinPin 与 ToolMain 之间的间距
+    const int gapSub = (int)(3.f * dpiF + 0.5f);       // ToolMain 与 ToolSub 之间的间距
+    const int subH = (int)(toolMain->h + 4.f * dpiF + 0.5f); // 与 ToolSub::resetVal 中 h 保持一致(marginTop = 4*dpi)
+    const int mainH = toolMain->h;
+    // 上/下方需要的总高度：ToolMain + gap + ToolSub + gap(与 WinPin)
+    const int neededBelow = gapMain + mainH + gapSub + subH;
+    const int neededAbove = neededBelow; // 同样需要在 WinPin 之上放下 ToolMain 与其下方的 ToolSub
+
+    const bool fitBelow = (y + h + neededBelow) <= workBottom;
+    const bool fitAbove = (y - neededAbove) >= workTop;
+
+    if (fitBelow) {
+        toolPlacement = ToolPlacement::BottomRight;
+    }
+    else if (fitAbove) {
+        toolPlacement = ToolPlacement::TopRight;
+    }
+    else {
+        toolPlacement = ToolPlacement::OverlapBottomRight;
+    }
+
+    // ToolMain 右侧与 WinPin 右侧对齐
+    int mainX = x + w - toolMain->w;
+    // 尽量保证 ToolMain 不超出工作区左右边界
+    if (mainX < workLeft) mainX = workLeft;
+    if (mainX + toolMain->w > workRight) mainX = workRight - toolMain->w;
+
+    int mainY = 0;
+    switch (toolPlacement) {
+    case ToolPlacement::BottomRight:
+        mainY = y + h + gapMain;
+        break;
+    case ToolPlacement::TopRight:
+        // 若 ToolSub 可见，则 ToolMain 要上移给 ToolSub 腾位置
+        if (subVisible) {
+            mainY = y - gapMain - subH - gapSub - mainH;
+        }
+        else {
+            mainY = y - gapMain - mainH;
+        }
+        break;
+    case ToolPlacement::OverlapBottomRight:
+        // 叠加在 WinPin 内部的右下方，与 WinPin 右/底各留出 3*dpi 的间距，视觉上更舒适
+        {
+            const int overlapPad = (int)(3.f * dpiF + 0.5f);
+            mainX = x + w - toolMain->w - overlapPad;
+            if (mainX < workLeft) mainX = workLeft;
+            if (mainX + toolMain->w > workRight) mainX = workRight - toolMain->w;
+            if (subVisible) {
+                mainY = y + h - overlapPad - mainH - gapSub - subH;
+            }
+            else {
+                mainY = y + h - overlapPad - mainH;
+            }
+        }
+        break;
+    }
+    toolMain->move(mainX, mainY);
+}
+
+void WinPin::bringTopmostToFront()
+{
+    // WinCap 全屏 topmost 窗口关闭后，任务栏 (Shell_TrayWnd) 会重新升到 topmost 组顶部；
+    // 新创建、以 SW_SHOW+NOACTIVATE 显示的 WinPin/ToolMain 会落在任务栏下方，
+    // 需要手动重新插入 topmost 组顶端。顺序：WinPin -> ToolMain -> ToolSub，
+    // 让 ToolMain/ToolSub 位于 WinPin 之上。
+    const UINT flags = SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE;
+    if (hwnd) {
+        SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, flags);
+    }
+    if (toolMain.get() && toolMain->hwnd) {
+        SetWindowPos(toolMain->hwnd, HWND_TOPMOST, 0, 0, 0, 0, flags);
+    }
+    if (toolSub.get() && toolSub->hwnd) {
+        SetWindowPos(toolSub->hwnd, HWND_TOPMOST, 0, 0, 0, 0, flags);
+    }
 }
 
 void WinPin::restoreWindowState(HWND foregroundBeforeDialog)
@@ -362,7 +458,7 @@ void WinPin::onMouseDoubleClick(const int& x, const int& y, bool isRight)
 void WinPin::onMouseUp(const int& x, const int& y)
 {
     if (toolMain->state == L"") { //state为空时，是在拖动窗口
-        toolMain->move(this->x, this->y + h + 5.f * dpi);
+        updateToolLayout(false);
         toolMain->show();
     }
     else if(shapeHover) {

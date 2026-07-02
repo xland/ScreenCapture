@@ -84,10 +84,16 @@ void ToolMain::onMouseDown(const int& x, const int& y, bool isRight)
             this->state = L"";
             selectIndex = -1;
             parent->toolSub->hide();
+            // 关闭 ToolSub 后，如果处于 TopRight/OverlapBottomRight 布局，
+            // ToolMain 需要回到不预留 ToolSub 的位置
+            parent->updateToolLayout(false);
         }
         else {
             this->state = state;
             selectIndex = hoverIndex;
+            // 先让 ToolMain 挪到给 ToolSub 预留空间的位置，
+            // 再由 ToolSub::resetVal 根据 ToolMain 新位置摆放自身
+            parent->updateToolLayout(true);
             parent->toolSub->resetVal();
             parent->toolSub->setBorderPath();
             parent->toolSub->show();
