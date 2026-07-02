@@ -34,8 +34,10 @@ void WinSetting::init()
 		BOOL getWorkAreaSuccess = SystemParametersInfo(SPI_GETWORKAREA, 0, &workAreaRect, 0); //工作区矩形
 		int workAreaWidth = workAreaRect.right - workAreaRect.left;
 		int workAreaHeight = workAreaRect.bottom - workAreaRect.top;
-		int w = 800;
-		int h = 600;
+		UINT dpiRaw = GetDpiForSystem();
+		float dpi = dpiRaw / 96.0f;
+		int w = 1200;
+		int h = 860;
 		int x = workAreaRect.left + (workAreaWidth - w) / 2;
 		int y = workAreaRect.top + (workAreaHeight - h) / 2;
 		winSetting = std::make_unique<WinSetting>(x, y, w, h);
@@ -192,6 +194,29 @@ void WinSetting::onMouseLeave()
 
 void WinSetting::onDpiChanged()
 {
+	// 用头文件里的基准值按新 dpi 重新缩放（原字段已被 onCreated 就地乘过 dpi，这里直接重置）
+	menuW = 120.f * dpi;
+	menuH = 38.f * dpi;
+	paddintTop = 38.f * dpi;
+	menuLeftSpan = 8.f * dpi;
+	borderRadius = 6.f * dpi;
+	textSize = 14.f * dpi;
+
+	// 依赖上述尺寸/字号的文本与图标图层需要按新度量重建
+	menuLabels.clear();
+	menuLabels.push_back(makeTextLayout(Lang::get(L"setting.common"), menuW, menuH, textSize));
+	menuLabels.push_back(makeTextLayout(Lang::get(L"setting.shortcut"), menuW, menuH, textSize));
+	menuLabels.push_back(makeTextLayout(Lang::get(L"setting.about"), menuW, menuH, textSize));
+	closeIcon = makeIconLayout(L"\ue62d", paddintTop, paddintTop, textSize);
+
+	// 子面板在构造函数里根据 win->dpi、menuW、paddintTop、menuLeftSpan、w 计算自身的
+	// contentX/contentY/contentR 与所有内部尺寸，整体重建最简单且状态不丢（配置项来自持久化设置）
+	common = std::make_unique<WinSettingCommon>(this);
+	shortcut = std::make_unique<WinSettingShortcut>(this);
+	about = std::make_unique<WinSettingAbout>(this);
+
+	// 悬停状态在新的坐标系里已失效
+	indexHover = -1;
 }
 
 void WinSetting::onKeyDown(const UINT& key)
