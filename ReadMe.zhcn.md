@@ -1,3 +1,5 @@
+[English](./ReadMe.md) | **简体中文** | [Русский](./ReadMe.ru.md) | [Bahasa Indonesia](./ReadMe.id.md)
+
 ![banner](./Doc/banner.png)
 
 # ScreenCapture
