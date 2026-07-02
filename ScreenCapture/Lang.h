@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include <filesystem>
+
 /// <summary>
 /// 多语言管理（单例），与 Setting 同一套模式。
 /// 字典直接硬编码在代码中（保持“单文件、零外部依赖”的定位）。
@@ -23,6 +25,10 @@ public:
 	static const std::map<std::wstring, std::wstring>& getLangs();
 private:
 	void load(const std::wstring& lang);
+	void loadExternal(const std::wstring& l);
+	static void scanLangDir();
+	static std::filesystem::path getLangDir();
 	std::map<std::wstring, std::wstring> dic;
 	std::wstring langCode{ L"zh-CN" };
+	static std::map<std::wstring, std::filesystem::path> externalFiles;
 };
