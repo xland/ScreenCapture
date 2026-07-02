@@ -5,6 +5,55 @@
 #include "Lang.h"
 #include "Tray.h"
 
+namespace {
+	bool isShortcutModifierKey(const std::wstring& key)
+	{
+		return key == L"Ctrl" || key == L"Alt" || key == L"Shift" || key == L"Win" || key == L"LWin" || key == L"RWin";
+	}
+
+	bool isForbiddenShortcutCommonKey(const std::wstring& key)
+	{
+		return key == L"Enter" || key == L"Backspace" || key == L"Delete";
+	}
+
+	bool isForbiddenCtrlCommonShortcutKey(const std::wstring& key)
+	{
+		return key == L"Z" || key == L"Y" || key == L"S" || key == L"C" || key == L"X" || key == L"A";
+	}
+
+	bool isValidShortcutKeys(const std::vector<std::wstring>& keys)
+	{
+		bool hasModifier = false;
+		bool hasNormalKey = false;
+		bool hasCtrl = false;
+		bool hasOtherModifier = false;
+		bool hasForbiddenCtrlCommonKey = false;
+
+		for (const auto& key : keys) {
+			if (isShortcutModifierKey(key)) {
+				hasModifier = true;
+				if (key == L"Ctrl") {
+					hasCtrl = true;
+				}
+				else {
+					hasOtherModifier = true;
+				}
+				continue;
+			}
+
+			hasNormalKey = true;
+			if (isForbiddenShortcutCommonKey(key)) {
+				return false;
+			}
+			if (isForbiddenCtrlCommonShortcutKey(key)) {
+				hasForbiddenCtrlCommonKey = true;
+			}
+		}
+
+		return hasModifier && hasNormalKey && !(hasCtrl && !hasOtherModifier && hasForbiddenCtrlCommonKey);
+	}
+}
+
 WinSettingShortcut::WinSettingShortcut(WinSetting* win):win{win}
 {
 	lineH *= win->dpi;
@@ -125,6 +174,13 @@ void WinSettingShortcut::keyDown(const std::wstring& key)
 
 void WinSettingShortcut::keyUp()
 {
+	if (!isValidShortcutKeys(tempKeys)) {
+		tempKeys.clear();
+		focusIndex = -1;
+		win->refresh();
+		return;
+	}
+
 	Setting::setKeys(focusIndex, tempKeys);
 	if (auto tray = Tray::get()) {
 		tray->reloadHotKeys();
