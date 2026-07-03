@@ -179,29 +179,6 @@ LRESULT CALLBACK Tray::wndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 			self->onTrayRightClick();
 		}
     }
-	else if (msg == WM_COMMAND) {
-		int menuId = LOWORD(wParam);
-		if (menuId == capScreenMsg)
-		{
-			WinCap::init();
-		}
-		else if (menuId == capLongMsg)
-		{
-			WinLong::init();
-		}
-		else if (menuId == capVideoMsg)
-		{
-			WinVideo::init();
-		}
-		else if (menuId == settingMsg)
-		{
-			WinSetting::init();
-		}
-		else if (menuId == exitMsg)
-		{
-			App::exit(0);
-		}
-	}
     return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 void Tray::onTrayClick()
@@ -218,9 +195,29 @@ void Tray::onTrayRightClick()
 	AppendMenu(menu, MF_STRING, settingMsg, Lang::get(L"tray.setting").data());
 	AppendMenu(menu, MF_STRING, exitMsg, Lang::get(L"tray.exit").data());
 	POINT pt;
-	GetCursorPos(&pt); //获取鼠标位置
-	TrackPopupMenuEx(menu, TPM_RIGHTBUTTON,  pt.x, pt.y, hwnd, nullptr);
+	GetCursorPos(&pt);
+	UINT menuId = TrackPopupMenuEx(menu, TPM_LEFTALIGN | TPM_TOPALIGN | TPM_RETURNCMD | TPM_RIGHTBUTTON,  pt.x, pt.y, hwnd, nullptr);
 	DestroyMenu(menu);
+	if (menuId == capScreenMsg)
+	{
+		WinCap::init();
+	}
+	else if (menuId == capLongMsg)
+	{
+		WinLong::init();
+	}
+	else if (menuId == capVideoMsg)
+	{
+		WinVideo::init();
+	}
+	else if (menuId == settingMsg)
+	{
+		WinSetting::init();
+	}
+	else if (menuId == exitMsg)
+	{
+		App::exit(0);
+	}
 }
 
 bool Tray::secondIns()
