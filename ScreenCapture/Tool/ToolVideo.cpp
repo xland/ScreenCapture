@@ -36,7 +36,12 @@ void ToolVideo::onTimer(const UINT& timerId)
 }
 BOOL ToolVideo::onCursor()
 {
-    setCursor(IDC_HAND);
+    if (hoverIndex == 9) {
+        setCursor(IDC_ARROW);
+    }
+    else {
+        setCursor(IDC_HAND);
+    }    
     return TRUE;
 }
 
@@ -81,6 +86,7 @@ void ToolVideo::onMouseDown(const int& x, const int& y, bool isRight)
 	}
     if (hoverIndex < 0) return;
     if (isRecording) {
+        if (hoverIndex == 9) return;
         hide();
         if (hoverIndex == 6) {
             killTimer(100);
