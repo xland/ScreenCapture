@@ -13,6 +13,7 @@ public:
 	~WinVideo();
 	static void init();
 	static void release();
+	static void stopIfRecording();
 	void startMp4(bool useSpeaker, bool useMic);
 	void startGif();
 	std::wstring stop();

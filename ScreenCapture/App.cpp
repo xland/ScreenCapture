@@ -80,6 +80,8 @@ void App::initArgs()
 }
 void App::exit(const int& code)
 {
+    //正在录制GIF/MP4时，先停止录制并join编码线程，避免线程与MF/GDI资源卡死导致进程退不出去
+    WinVideo::stopIfRecording();
     Setting::dispose();
     Lang::dispose();
     PostQuitMessage(code);

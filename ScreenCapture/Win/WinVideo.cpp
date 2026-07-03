@@ -41,6 +41,14 @@ void WinVideo::release()
     }
 }
 
+void WinVideo::stopIfRecording()
+{
+    if (!winVideo.get()) return;
+    if (!winVideo->mp4Param && !winVideo->gifParam) return;
+    //正在录制：先停止编码线程，避免退出时线程与设备卡死
+    winVideo->stop();
+}
+
 void WinVideo::startMp4(bool useSpeaker, bool useMic)
 {
     setMouseTransparent(true);
