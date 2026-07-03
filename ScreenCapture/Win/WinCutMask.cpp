@@ -74,7 +74,9 @@ void WinCutMask::makeLayout()
     layout->GetMetrics(&tm);
     float paddingLeft{ 5 * win->dpi }, margin{ 5 * win->dpi };
     layoutRect = D2D1::RectF(maskRect.left, maskRect.top - margin - tm.height - paddingTop * 2, maskRect.left + tm.width + paddingLeft * 2, maskRect.top - margin);
-    if (layoutRect.top < win->y) {
+    // 仅截图模式(WinCap)下，当尺寸标签被顶出 WinCap 顶部时，把标签折回 maskRect 内部；
+    // WinLong / WinVideo 的场景不需要该行为。
+    if (dynamic_cast<WinCap*>(win) && layoutRect.top < win->y) {
         auto h = layoutRect.bottom - layoutRect.top;
         auto w = layoutRect.right - layoutRect.left;
         layoutRect.top = maskRect.top + margin / 2;
