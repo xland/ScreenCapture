@@ -428,6 +428,7 @@ void WinPin::onMouseDrag(const int& x, const int& y, const UINT_PTR& modifiers)
 
 void WinPin::onMouseDown(const int& x, const int& y, bool isRight)
 {
+	if (isRight) return;
     if (toolMain->state == L"") {
         pressPos.x = x;
         pressPos.y = y;
