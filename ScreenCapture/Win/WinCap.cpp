@@ -126,7 +126,7 @@ void WinCap::onMouseUp(const int& x, const int& y)
     }
     else {
         cutMask->highlight(x, y);
-    }
+    }    
     WinPin::init();
     WinCap::release(false);
 }

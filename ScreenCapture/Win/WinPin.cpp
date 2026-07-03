@@ -35,7 +35,7 @@ void WinPin::init()
     auto cap = WinCap::get();
     auto& r = cap->cutMask->maskRect;
 	auto win = std::make_unique<WinPin>((int)r.left, (int)r.top, (int)(r.right - r.left), (int)(r.bottom - r.top));
-    win->createWindow(WS_EX_TOPMOST| WS_EX_NOACTIVATE);
+    win->createWindow(WS_EX_TOPMOST | WS_EX_NOACTIVATE);
     win->initImg();
     win->enableShadow();
     win->show();
@@ -358,20 +358,12 @@ void WinPin::updateToolLayout(bool subVisible)
 
 void WinPin::bringTopmostToFront()
 {
-    // WinCap 全屏 topmost 窗口关闭后，任务栏 (Shell_TrayWnd) 会重新升到 topmost 组顶部；
-    // 新创建、以 SW_SHOW+NOACTIVATE 显示的 WinPin/ToolMain 会落在任务栏下方，
-    // 需要手动重新插入 topmost 组顶端。顺序：WinPin -> ToolMain -> ToolSub，
-    // 让 ToolMain/ToolSub 位于 WinPin 之上。
-    const UINT flags = SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE;
-    if (hwnd) {
-        SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, flags);
-    }
-    if (toolMain.get() && toolMain->hwnd) {
-        SetWindowPos(toolMain->hwnd, HWND_TOPMOST, 0, 0, 0, 0, flags);
-    }
-    if (toolSub.get() && toolSub->hwnd) {
-        SetWindowPos(toolSub->hwnd, HWND_TOPMOST, 0, 0, 0, 0, flags);
-    }
+    POINT pt;
+    GetCursorPos(&pt);
+    LPARAM lParam = MAKELPARAM(pt.x - 6, pt.y - 6);
+    PostMessage(hwnd, WM_LBUTTONDOWN, MK_LBUTTON, lParam);
+    Sleep(60);
+    PostMessage(hwnd, WM_LBUTTONUP, 0, lParam);
 }
 
 void WinPin::restoreWindowState(HWND foregroundBeforeDialog)

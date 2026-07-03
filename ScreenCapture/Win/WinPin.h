@@ -25,9 +25,6 @@ public:
 	void saveToFile();
 	// 根据 WinPin 位置和所在显示器的可用空间，确定 ToolMain/ToolSub 的布局位置
 	void updateToolLayout(bool subVisible);
-	// 显式把 WinPin/ToolMain/ToolSub 重新插到 topmost 组顶端，避免被任务栏(Shell_TrayWnd,
-	// 同样是 WS_EX_TOPMOST) 遮住 —— WinCap 关闭时任务栏会回到 topmost 顶部，而
-	// 新窗口用 SW_SHOW+NOACTIVATE 不会自动重排 Z 序。
 	void bringTopmostToFront();
 public:
 	ShapeBase* shapeHover{ nullptr };
