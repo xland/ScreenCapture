@@ -211,12 +211,12 @@ void Tray::onTrayClick()
 void Tray::onTrayRightClick()
 {
 	auto menu = CreatePopupMenu();
-	AppendMenu(menu, MF_STRING, capScreenMsg, Lang::get(L"tray.capScreen").c_str());
-	AppendMenu(menu, MF_STRING, capLongMsg, Lang::get(L"tray.capLong").c_str());
-	AppendMenu(menu, MF_STRING, capVideoMsg, Lang::get(L"tray.capVideo").c_str());
+	AppendMenu(menu, MF_STRING, capScreenMsg, Lang::get(L"tray.capScreen").data());
+	AppendMenu(menu, MF_STRING, capLongMsg, Lang::get(L"tray.capLong").data());
+	AppendMenu(menu, MF_STRING, capVideoMsg, Lang::get(L"tray.capVideo").data());
 	AppendMenu(menu, MF_SEPARATOR, 0, NULL);
-	AppendMenu(menu, MF_STRING, settingMsg, Lang::get(L"tray.setting").c_str());
-	AppendMenu(menu, MF_STRING, exitMsg, Lang::get(L"tray.exit").c_str());
+	AppendMenu(menu, MF_STRING, settingMsg, Lang::get(L"tray.setting").data());
+	AppendMenu(menu, MF_STRING, exitMsg, Lang::get(L"tray.exit").data());
 	POINT pt;
 	GetCursorPos(&pt); //获取鼠标位置
 	TrackPopupMenuEx(menu, TPM_RIGHTBUTTON,  pt.x, pt.y, hwnd, nullptr);

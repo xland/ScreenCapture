@@ -20,6 +20,7 @@ private:
 	void onDpiChanged() override;
 	void onCreated() override;
 	void onTimer(const UINT& timerId) override;
+	void saveFile();
 private:
 	WinVideo* parent;
 	ComPtr<IDWriteTextLayout> formatMp4,formatGif,timerLayout;

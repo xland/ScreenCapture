@@ -165,12 +165,57 @@ void WinVideo::onKeyDown(const UINT& key)
 
 void WinVideo::makeTool()
 {
-    auto btnSize{ 32.f * dpi };
-    POINT pos{ 0,0 };
-    pos.x = cutMask->maskRect.left;
-    pos.y = cutMask->maskRect.bottom + cutMask->strokeWidth + 2*dpi; //todo 
-    ClientToScreen(hwnd, &pos);
-    tool = std::make_unique<ToolVideo>(pos.x, pos.y, 232.f*dpi, btnSize, this);
+    const float btnSize = 32.f * dpi;
+    const int toolW = (int)(232.f * dpi + 0.5f);
+    const int toolH = (int)(btnSize + 0.5f);
+
+    // maskRect 是 WinVideo 客户区坐标，换算到屏幕坐标
+    const int maskLeftScr = x + (int)cutMask->maskRect.left;
+    const int maskTopScr = y + (int)cutMask->maskRect.top;
+    const int maskRightScr = x + (int)cutMask->maskRect.right;
+    const int maskBottomScr = y + (int)cutMask->maskRect.bottom;
+
+    // 用框选区域所在显示器的工作区判断上/下方是否有足够空间
+    RECT maskScrRect{ maskLeftScr, maskTopScr, maskRightScr, maskBottomScr };
+    HMONITOR hMon = MonitorFromRect(&maskScrRect, MONITOR_DEFAULTTONEAREST);
+    MONITORINFO mi{ sizeof(MONITORINFO) };
+    GetMonitorInfo(hMon, &mi);
+    const int workLeft = mi.rcWork.left;
+    const int workTop = mi.rcWork.top;
+    const int workRight = mi.rcWork.right;
+    const int workBottom = mi.rcWork.bottom;
+
+    const int gap = (int)(cutMask->strokeWidth + 2.f * dpi + 0.5f); // 与框选边框的间距
+    const int neededBelow = gap + toolH;
+    const int neededAbove = gap + toolH;
+
+    const bool fitBelow = (maskBottomScr + neededBelow) <= workBottom;
+    const bool fitAbove = (maskTopScr - neededAbove) >= workTop;
+
+    // ToolVideo 右侧与框选区域右侧对齐
+    int toolX = maskRightScr - toolW;
+    int toolY = 0;
+
+    if (fitBelow) {
+        // 右下方
+        toolY = maskBottomScr + gap;
+    }
+    else if (fitAbove) {
+        // 右上方
+        toolY = maskTopScr - gap - toolH;
+    }
+    else {
+        // 叠加在框选区域右下方内部，与右/底各留 3*dpi
+        const int overlapPad = (int)(3.f * dpi + 0.5f);
+        toolX = maskRightScr - toolW - overlapPad;
+        toolY = maskBottomScr - toolH - overlapPad;
+    }
+
+    // 兜底：不越出所在显示器工作区
+    if (toolX < workLeft) toolX = workLeft;
+    if (toolX + toolW > workRight) toolX = workRight - toolW;
+
+    tool = std::make_unique<ToolVideo>(toolX, toolY, toolW, toolH, this);
     tool->createWindow(WS_EX_TOPMOST | WS_EX_NOACTIVATE);
     tool->show();
 }

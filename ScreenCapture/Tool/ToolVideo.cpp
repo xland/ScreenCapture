@@ -26,13 +26,33 @@ void ToolVideo::onCreated()
 }
 void ToolVideo::onTimer(const UINT& timerId)
 {
+    // GIF 上限 6 分钟，MP4 上限 60 分钟
+    const int maxMinutes = (selectIndex == 1) ? 6 : 60;
+    const int maxSeconds = maxMinutes * 60;
     int minutes = totalSeconds / 60;
     int seconds = totalSeconds % 60;
-    auto text = std::format(L"{:02d}:{:02d} / 60:00", minutes, seconds);
+    auto text = std::format(L"{:02d}:{:02d} / {:02d}:00", minutes, seconds, maxMinutes);
     timerLayout.Reset();
     timerLayout = makeTextLayout(text, 160.f, h, 15.f * dpi);
-    totalSeconds += 1;
     refresh();
+    if (totalSeconds >= maxSeconds) {
+		saveFile();
+        return;
+    }
+    totalSeconds += 1;
+}
+void ToolVideo::saveFile()
+{
+    hide();
+    killTimer(100);
+    auto srcPath = parent->stop();
+    auto tarPath = Util::getSaveFilePath(nullptr, selectIndex == 1 ? L"gif" : L"mp4");
+    if (!tarPath.empty()) {
+        CopyFile(srcPath.data(), tarPath.data(), false);
+    }
+    DeleteFile(srcPath.data());
+    close();
+    parent->release();
 }
 BOOL ToolVideo::onCursor()
 {
@@ -87,22 +107,17 @@ void ToolVideo::onMouseDown(const int& x, const int& y, bool isRight)
     if (hoverIndex < 0) return;
     if (isRecording) {
         if (hoverIndex == 9) return;
+        if (hoverIndex == 7) {
+            saveFile();
+            return;
+        }
         hide();
+        killTimer(100);
+        auto srcPath = parent->stop();
         if (hoverIndex == 6) {
-            killTimer(100);
-            auto srcPath = parent->stop();
             Util::addFileToClipboard(srcPath);
-        }
-        else if (hoverIndex == 7) {
-            killTimer(100);
-            auto srcPath = parent->stop();
-            auto tarPath = Util::getSaveFilePath(nullptr, selectIndex == 1?L"gif":L"mp4");
-            CopyFile(srcPath.data(),tarPath.data(),false);
-            DeleteFile(srcPath.data());
-        }
+        }        
         else if (hoverIndex == 8) {
-            killTimer(100);
-            auto srcPath = parent->stop();
             DeleteFile(srcPath.data());
         }
         close();
