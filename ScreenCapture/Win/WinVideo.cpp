@@ -23,6 +23,7 @@ WinVideo::~WinVideo()
 void WinVideo::init()
 {
     WinVideo::release();
+    App::initDevice();
     auto [x, y, w, h] = Util::getDesktopInfo();
     winVideo = std::make_unique<WinVideo>(x, y, w, h);
     winVideo->createWindow(WS_EX_TOPMOST);
@@ -37,6 +38,9 @@ void WinVideo::release()
         winVideo.reset();
         if (App::getArg(L"auto-quit") == L"true") {
             App::exit(0);
+        }
+        else {
+            App::disposeDeviceIfIdle();
         }
     }
 }

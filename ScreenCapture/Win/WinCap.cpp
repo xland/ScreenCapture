@@ -22,6 +22,8 @@ WinCap::~WinCap()
 void WinCap::init()
 {
     WinCap::release();
+    // 惰性建立 D2D/D3D/DXGI 设备(驻留态时已被 disposeDeviceIfIdle 释放, 首次调用需重建)
+    App::initDevice();
     auto [x, y, w, h] = Util::getDesktopInfo();
 	winCap = std::make_unique<WinCap>(x, y, w, h);
     winCap->createWindow(WS_EX_TOPMOST);
@@ -41,6 +43,9 @@ void WinCap::release(bool allowAutoQuit)
         winCap.reset();
         if (allowAutoQuit && App::getArg(L"auto-quit") == L"true") {
             App::exit(0);
+        }
+        else {
+            App::disposeDeviceIfIdle();
         }
     }
 }

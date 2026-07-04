@@ -11,6 +11,11 @@ public:
 	static void initArgs();
 	static void exit(const int& code);
 	static void initDevice();
+	// 释放 D2D/D3D/DXGI/DWrite 设备对象（含各自绑定的驱动/字体缓存），
+	// 用于所有可视窗口关闭后回收驻留内存。下一次 initDevice() 会重新建立。
+	static void disposeDevice();
+	// 若当前没有任何 Win* 窗口在活动，则调用 disposeDevice()；否则 no-op。
+	static void disposeDeviceIfIdle();
 	static void makeDC(WinBase* win);
 	static std::wstring& getArg(const std::wstring& key);
 	static ID2D1Factory1* getD2D();

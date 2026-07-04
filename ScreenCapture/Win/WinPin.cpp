@@ -157,6 +157,10 @@ void WinPin::onDestroy()
     if (App::getArg(L"auto-quit") == L"true") {
         App::exit(0);
     }
+    else {
+        // 最后一个贴图窗口关掉后, 若也没有其它 Win* 在活动, 回收 D2D/D3D 设备缓存
+        App::disposeDeviceIfIdle();
+    }
 }
 
 void WinPin::onDpiChanged()

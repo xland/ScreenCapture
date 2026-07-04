@@ -64,6 +64,7 @@ WinLong::~WinLong()
 void WinLong::init()
 {
     WinLong::release();
+    App::initDevice();
     auto [x, y, w, h] = Util::getDesktopInfo();
     winLong = std::make_unique<WinLong>(x, y, w, h);
     winLong->createWindow(WS_EX_TOPMOST);//WS_EX_TOPMOST
@@ -80,6 +81,9 @@ void WinLong::release()
         winLong.reset();
         if (App::getArg(L"auto-quit") == L"true") {
             App::exit(0);
+        }
+        else {
+            App::disposeDeviceIfIdle();
         }
     }
 }

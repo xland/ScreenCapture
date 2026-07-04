@@ -179,6 +179,29 @@ LRESULT CALLBACK Tray::wndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 			self->onTrayRightClick();
 		}
     }
+	else if (msg == WM_COMMAND) {
+		int menuId = LOWORD(wParam);
+		if (menuId == capScreenMsg)
+		{
+			WinCap::init();
+		}
+		else if (menuId == capLongMsg)
+		{
+			WinLong::init();
+		}
+		else if (menuId == capVideoMsg)
+		{
+			WinVideo::init();
+		}
+		else if (menuId == settingMsg)
+		{
+			WinSetting::init();
+		}
+		else if (menuId == exitMsg)
+		{
+			App::exit(0);
+		}
+	}
     return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 void Tray::onTrayClick()
@@ -196,28 +219,13 @@ void Tray::onTrayRightClick()
 	AppendMenu(menu, MF_STRING, exitMsg, Lang::get(L"tray.exit").data());
 	POINT pt;
 	GetCursorPos(&pt);
-	UINT menuId = TrackPopupMenuEx(menu, TPM_LEFTALIGN | TPM_TOPALIGN | TPM_RETURNCMD | TPM_RIGHTBUTTON,  pt.x, pt.y, hwnd, nullptr);
+	// 参考 MS KB 135788：托盘弹菜单前必须把 owner 拉到前台, 菜单才能收到"外部点击"
+	// 和"失焦"事件从而自动关闭；否则会一直挂着。菜单结束后再补一个 WM_NULL, 兜住
+	// 部分 shell 版本的兼容问题。
+	SetForegroundWindow(hwnd);
+	TrackPopupMenuEx(menu, TPM_RIGHTBUTTON, pt.x, pt.y, hwnd, nullptr);
+	PostMessage(hwnd, WM_NULL, 0, 0);
 	DestroyMenu(menu);
-	if (menuId == capScreenMsg)
-	{
-		WinCap::init();
-	}
-	else if (menuId == capLongMsg)
-	{
-		WinLong::init();
-	}
-	else if (menuId == capVideoMsg)
-	{
-		WinVideo::init();
-	}
-	else if (menuId == settingMsg)
-	{
-		WinSetting::init();
-	}
-	else if (menuId == exitMsg)
-	{
-		App::exit(0);
-	}
 }
 
 bool Tray::secondIns()

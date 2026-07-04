@@ -4,9 +4,18 @@
 #include "Win/WinLong.h"
 #include "Win/WinVideo.h"
 #include "Win/WinSetting.h"
+#include "Win/WinPin.h"
 #include "Setting.h"
 #include "Lang.h"
 #include "Tray.h"
+
+// 各 Win* 类中的模块级单例/容器；App::disposeDeviceIfIdle 需要用来判断"当前有没有窗口"，
+// 因此在这里 extern 引用。
+extern std::unique_ptr<WinCap> winCap;
+extern std::unique_ptr<WinLong> winLong;
+extern std::unique_ptr<WinVideo> winVideo;
+extern std::unique_ptr<WinSetting> winSetting;
+extern std::vector<std::unique_ptr<WinPin>> winPins;
 
 namespace {
     std::unique_ptr<App> app;
@@ -15,8 +24,8 @@ namespace {
     static ComPtr<ID2D1Device1> d2dDev;
     static ComPtr<IDXGIFactory5> fac5;
     static ComPtr<IDWriteFactory5> dwriteFactory;
-    //static ComPtr<IDWriteRenderingParams> renderingParams;     
-    std::unordered_map<std::wstring, std::wstring> args{ 
+    //static ComPtr<IDWriteRenderingParams> renderingParams;
+    std::unordered_map<std::wstring, std::wstring> args{
         {L"enter",L"cap"},
         {L"tray",L"true"},
         {L"auto-quit",L"false"},
@@ -39,7 +48,9 @@ void App::init(HINSTANCE hInstance)
 {
     App::initArgs();
     if (args[L"auto-quit"] != L"true" && Tray::secondIns()) return;
-    App::initDevice();
+    // 注意: 不在启动阶段建立 D2D/D3D/DXGI 设备了 —— 驻留态没有窗口时它们只占内存不干活。
+    // 每个可见窗口在 init 时会调用 App::initDevice() 惰性建立；窗口全关后由
+    // App::disposeDeviceIfIdle() 释放，回到驻留态时不再持有显卡驱动的工作集。
 	app = std::make_unique<App>(hInstance);
     Setting::init();
     Lang::init();
@@ -84,11 +95,16 @@ void App::exit(const int& code)
     WinVideo::stopIfRecording();
     Setting::dispose();
     Lang::dispose();
+    // 显式释放显卡/字体设备。进程退出时全局 ComPtr 也会析构，但那时 CRT 全局析构顺序不稳,
+    // 提前 Reset 更保险。
+    disposeDevice();
     PostQuitMessage(code);
 }
 
 void App::initDevice()
 {
+    // 幂等：设备已建立就直接返回，避免每次开截图/录屏都重新初始化。
+    if (d2dFactory) return;
     D2D1_FACTORY_OPTIONS opt{};
 #ifdef DEBUG
     opt.debugLevel = D2D1_DEBUG_LEVEL_INFORMATION;
@@ -106,6 +122,29 @@ void App::initDevice()
     hr = fac5->CheckFeatureSupport(DXGI_FEATURE_PRESENT_ALLOW_TEARING, &App::allowTearing, sizeof(App::allowTearing));//判断设备是否允许撕裂呈现
     hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_ISOLATED, __uuidof(IDWriteFactory), reinterpret_cast<::IUnknown**>(dwriteFactory.GetAddressOf()));
     //dwriteFactory->CreateCustomRenderingParams( 1.0f, 0.0f, 1.0f, DWRITE_PIXEL_GEOMETRY_RGB, DWRITE_RENDERING_MODE_GDI_NATURAL, renderingParams.GetAddressOf());
+}
+
+void App::disposeDevice()
+{
+    // 释放顺序：先高层的 device/factory, 后 D3D 设备。ComPtr::Reset 只是引用计数减一,
+    // 若外部还持有对应对象则实际释放会延后到最后一个引用释放。
+    dwriteFactory.Reset();
+    d2dDev.Reset();
+    fac5.Reset();
+    d3d.Reset();
+    d2dFactory.Reset();
+}
+
+void App::disposeDeviceIfIdle()
+{
+    // 只有当所有 Win* 全部关闭时才真正回收设备; WinPin 是持久贴图窗口, 只要还留在屏幕
+    // 就不能释放, 否则 WinPin 的 render 会随之失效。
+    if (winCap) return;
+    if (winLong) return;
+    if (winVideo) return;
+    if (winSetting) return;
+    if (!winPins.empty()) return;
+    disposeDevice();
 }
 
 void App::makeDC(WinBase* win)

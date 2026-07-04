@@ -1,4 +1,5 @@
 ﻿#include "pch.h"
+#include "App.h"
 #include "WinSetting.h"
 #include "WinSettingCommon.h"
 #include "WinSettingAbout.h"
@@ -30,6 +31,7 @@ void WinSetting::init()
 		SetForegroundWindow(winSetting->hwnd);
 	}
 	else {
+		App::initDevice();
 		RECT workAreaRect;
 		BOOL getWorkAreaSuccess = SystemParametersInfo(SPI_GETWORKAREA, 0, &workAreaRect, 0); //工作区矩形
 		int workAreaWidth = workAreaRect.right - workAreaRect.left;
@@ -140,6 +142,7 @@ void WinSetting::onMouseDown(const int& x, const int& y, bool isRight)
 	if (indexHover == 3) {
 		close();
 		winSetting.reset();
+		App::disposeDeviceIfIdle();
 		return;
 	}
 	common->mouseDown();
