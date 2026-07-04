@@ -36,7 +36,8 @@ void WinPix::move(const int& x, const int& y)
     if (this->y + h > win->h) {
         this->y = int(y - span - h+0.5f);
     }
-    WinBase::move(this->x, this->y);
+    // 将 WinCap 客户区坐标转换为屏幕坐标
+    SetWindowPos(hwnd, nullptr, this->x + win->x, this->y + win->y, 0, 0, SWP_NOSIZE | SWP_NOZORDER| SWP_NOREDRAW);
     refresh();
 }
 

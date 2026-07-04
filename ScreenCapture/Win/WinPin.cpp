@@ -34,7 +34,9 @@ void WinPin::init()
 {
     auto cap = WinCap::get();
     auto& r = cap->cutMask->maskRect;
-	auto win = std::make_unique<WinPin>((int)r.left, (int)r.top, (int)(r.right - r.left), (int)(r.bottom - r.top));
+    // maskRect 是 WinCap 客户区坐标，转换为屏幕坐标用于创建窗口
+    // x,y 存为屏幕坐标以支持后续的工具栏布局、MonitorFromRect 等操作
+	auto win = std::make_unique<WinPin>((int)(r.left + cap->x), (int)(r.top + cap->y), (int)(r.right - r.left), (int)(r.bottom - r.top));
     win->createWindow(WS_EX_TOPMOST | WS_EX_NOACTIVATE);
     win->initImg();
     win->enableShadow();
@@ -128,6 +130,10 @@ void WinPin::onKeyDown(const UINT& key)
     else if (key == 'S' && (GetKeyState(VK_CONTROL) & 0x8000) != 0)
     {
         saveToFile();
+    }
+    else if (key == VK_RETURN)
+    {
+        copyToClipboard();
     }
     else if (key == VK_DELETE)
     {
@@ -244,9 +250,10 @@ bool WinPin::getImagePixels(std::vector<BYTE>& pixels)
 
 void WinPin::initImg()
 {
-    auto win = WinCap::get();
-    auto rect = D2D1::RectU(x, y, x+w, y+h);
-    auto cpuImg = win->getImgByRect(rect);
+    auto cap = WinCap::get();
+    // WinPin 的 x,y 现为屏幕坐标，getImgByRect 需要 WinCap 客户区坐标，故减去 cap 偏移
+    auto rect = D2D1::RectU(x - cap->x, y - cap->y, x - cap->x + w, y - cap->y + h);
+    auto cpuImg = cap->getImgByRect(rect);
     D2D1_MAPPED_RECT mapped{};
     auto hr = cpuImg->Map(D2D1_MAP_OPTIONS_READ, &mapped); //todo error check
     // 创建带 TARGET 标志的 Bitmap1，使其可直接作为渲染目标

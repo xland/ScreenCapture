@@ -191,6 +191,10 @@ void ToolMain::onKeyDown(const UINT& key)
     {
         parent->saveToFile();
     }
+    else if (key == VK_RETURN)
+    {
+        parent->copyToClipboard();
+    }
     else if (key == VK_DELETE)
     {
         parent->history->removeHoverShape();
