@@ -38,8 +38,8 @@ void WinSetting::init()
 		int workAreaHeight = workAreaRect.bottom - workAreaRect.top;
 		UINT dpiRaw = GetDpiForSystem();
 		float dpi = dpiRaw / 96.0f;
-		int w = 1200;
-		int h = 860;
+		int w = 1100;
+		int h = 780;
 		int x = workAreaRect.left + (workAreaWidth - w) / 2;
 		int y = workAreaRect.top + (workAreaHeight - h) / 2;
 		winSetting = std::make_unique<WinSetting>(x, y, w, h);
