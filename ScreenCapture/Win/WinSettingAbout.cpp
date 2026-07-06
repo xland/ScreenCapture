@@ -1,5 +1,6 @@
 ﻿#include "pch.h"
 #include "Util.h"
+#include "App.h"
 #include "Lang.h"
 #include "WinSettingAbout.h"
 #include "WinSetting.h"
@@ -12,19 +13,19 @@ WinSettingAbout::WinSettingAbout(WinSetting* win):win{win}
 	contentR = win->w - win->menuLeftSpan * 7;
 	auto w = contentR - contentX;
 	win->render->CreateSolidColorBrush(D2D1::ColorF(0x1677FF), linkBrush.GetAddressOf());
-	verLabel = win->makeTextLayout(Lang::get(L"about.version"), w, lineH, win->textSize, false);
+	verLabel = App::makeTextLayout(Lang::get(L"about.version"), w, lineH, win->textSize, false);
 	verLabel->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);
-	verVal = win->makeTextLayout(Util::getVer(), w, lineH, win->textSize, false);
+	verVal = App::makeTextLayout(Util::getVer(), w, lineH, win->textSize, false);
 	verVal->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);
 	verVal->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_TRAILING);
-	linkLabel = win->makeTextLayout(Lang::get(L"about.project"), w, lineH, win->textSize, false);
+	linkLabel = App::makeTextLayout(Lang::get(L"about.project"), w, lineH, win->textSize, false);
 	linkLabel->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);
-	linkVal = win->makeTextLayout(L"github.com/xland/ScreenCapture", w, lineH, win->textSize, false);
+	linkVal = App::makeTextLayout(L"github.com/xland/ScreenCapture", w, lineH, win->textSize, false);
 	linkVal->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);
 	linkVal->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_TRAILING);
-	authorLabel = win->makeTextLayout(Lang::get(L"about.author"), w, lineH, win->textSize, false);
+	authorLabel = App::makeTextLayout(Lang::get(L"about.author"), w, lineH, win->textSize, false);
 	authorLabel->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);
-	authorVal = win->makeTextLayout(Lang::get(L"about.wechat"), w, lineH, win->textSize, false);
+	authorVal = App::makeTextLayout(Lang::get(L"about.wechat"), w, lineH, win->textSize, false);
 	authorVal->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);
 	authorVal->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_TRAILING);
 }

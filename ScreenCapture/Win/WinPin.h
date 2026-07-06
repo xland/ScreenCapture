@@ -55,6 +55,7 @@ private:
 	void restoreWindowState(HWND foregroundBeforeDialog);
 private:
 	POINT pressPos{0,0};
+	bool isTopmost{ true };  //右键取消置顶后为 false，左键按下再恢复
 	ComPtr<ID2D1SolidColorBrush> borderBrush;
 };
 

@@ -20,8 +20,6 @@ public:
 	/// 重建本窗口的渲染目标（D3D 设备丢失/重置时调用）。
 	/// 释放 swap chain / render / bitmap，再基于（可能已重建的）全局设备重新 makeDC。
 	void handleDeviceLost();
-	ComPtr<IDWriteTextLayout> makeIconLayout(const std::wstring& code, const float& w, const float& h,const float& size,bool hAlign = true, bool VAlign = true);
-	ComPtr<IDWriteTextLayout> makeTextLayout(const std::wstring& text, const float& w, const float& h, const float& size, bool hAlign = true, bool VAlign = true);	
 public:
 	HWND hwnd{nullptr};
 	int x, y, w, h;

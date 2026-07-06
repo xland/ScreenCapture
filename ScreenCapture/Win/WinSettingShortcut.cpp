@@ -3,6 +3,7 @@
 #include "WinSetting.h"
 #include "Setting.h"
 #include "Lang.h"
+#include "App.h"
 #include "Tray.h"
 
 namespace {
@@ -63,20 +64,20 @@ WinSettingShortcut::WinSettingShortcut(WinSetting* win):win{win}
 	contentY = win->paddintTop + win->menuLeftSpan;
 	contentR = win->w - win->menuLeftSpan * 7;
 	auto w = contentR - contentX;
-	capLabel = win->makeTextLayout(Lang::get(L"shortcut.cap"), w, lineH, win->textSize, false);
-	longLabel = win->makeTextLayout(Lang::get(L"shortcut.long"), w, lineH, win->textSize, false);
-	videoLabel = win->makeTextLayout(Lang::get(L"shortcut.video"), w, lineH, win->textSize, false);
+	capLabel = App::makeTextLayout(Lang::get(L"shortcut.cap"), w, lineH, win->textSize, false);
+	longLabel = App::makeTextLayout(Lang::get(L"shortcut.long"), w, lineH, win->textSize, false);
+	videoLabel = App::makeTextLayout(Lang::get(L"shortcut.video"), w, lineH, win->textSize, false);
 
 	auto valSize{ 12 * win->dpi };
 	auto configObj = Setting::getConfigObj();
 	auto configShortcut = configObj.GetNamedObject(L"shortcutKey");
 	std::wstring capKeyStr{ configShortcut.GetNamedString(L"cap") };
-	capVal = win->makeTextLayout(capKeyStr, inputW, lineH, valSize);
+	capVal = App::makeTextLayout(capKeyStr, inputW, lineH, valSize);
 	std::wstring longKeyStr{ configShortcut.GetNamedString(L"long") };
-	longVal = win->makeTextLayout(longKeyStr, inputW, lineH, valSize);
+	longVal = App::makeTextLayout(longKeyStr, inputW, lineH, valSize);
 	std::wstring videoKeyStr{ configShortcut.GetNamedString(L"video") };
-	videoVal = win->makeTextLayout(videoKeyStr, inputW, lineH, valSize);
-	tipVal = win->makeTextLayout(Lang::get(L"shortcut.pressKey"), inputW, lineH, valSize);
+	videoVal = App::makeTextLayout(videoKeyStr, inputW, lineH, valSize);
+	tipVal = App::makeTextLayout(Lang::get(L"shortcut.pressKey"), inputW, lineH, valSize);
 	win->render->CreateSolidColorBrush(D2D1::ColorF(0xFFFFFF), inputBg.GetAddressOf());
 	win->render->CreateSolidColorBrush(D2D1::ColorF(0x1677FF), focusBrush.GetAddressOf());
 }
@@ -190,15 +191,15 @@ void WinSettingShortcut::keyUp()
 	auto configShortcut = configObj.GetNamedObject(L"shortcutKey");
 	if (focusIndex == 0) {
 		std::wstring str{ configShortcut.GetNamedString(L"cap") };
-		capVal = win->makeTextLayout(str, inputW, lineH, valSize);
+		capVal = App::makeTextLayout(str, inputW, lineH, valSize);
 	}
 	else if (focusIndex == 1) {
 		std::wstring str{ configShortcut.GetNamedString(L"long") };
-		longVal = win->makeTextLayout(str, inputW, lineH, valSize);
+		longVal = App::makeTextLayout(str, inputW, lineH, valSize);
 	}
 	else if (focusIndex == 2) {
 		std::wstring str{ configShortcut.GetNamedString(L"video") };
-		videoVal = win->makeTextLayout(str, inputW, lineH, valSize);
+		videoVal = App::makeTextLayout(str, inputW, lineH, valSize);
 	}
 	focusIndex = -1;
 	win->refresh();	

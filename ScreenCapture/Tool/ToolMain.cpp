@@ -158,19 +158,19 @@ void ToolMain::initBtn()
 {
     btnLayout.clear();
     auto fSize{ 14.f * dpi };
-    btnLayout.push_back(makeIconLayout(L"\ue8e8", btnSize, btnSize, fSize));
-    btnLayout.push_back(makeIconLayout(L"\ue6bc", btnSize, btnSize, fSize));
-    btnLayout.push_back(makeIconLayout(L"\ue603", btnSize, btnSize, fSize));
-    btnLayout.push_back(makeIconLayout(L"\ue776", btnSize, btnSize, fSize));
-    btnLayout.push_back(makeIconLayout(L"\ue601", btnSize, btnSize, fSize));
-    btnLayout.push_back(makeIconLayout(L"\ue6ec", btnSize, btnSize, fSize));
-    btnLayout.push_back(makeIconLayout(L"\ue82e", btnSize, btnSize, fSize));
-    btnLayout.push_back(makeIconLayout(L"\ue6be", btnSize, btnSize, fSize));
-    btnLayout.push_back(makeIconLayout(L"\ued85", btnSize, btnSize, fSize));
-    btnLayout.push_back(makeIconLayout(L"\ued8a", btnSize, btnSize, fSize));
-    btnLayout.push_back(makeIconLayout(L"\ue62d", btnSize, btnSize, fSize));
-    btnLayout.push_back(makeIconLayout(L"\ue608", btnSize, btnSize, fSize));
-    btnLayout.push_back(makeIconLayout(L"\ue6ad", btnSize, btnSize, fSize));
+    btnLayout.push_back(App::makeIconLayout(L"\ue8e8", btnSize, btnSize, fSize));
+    btnLayout.push_back(App::makeIconLayout(L"\ue6bc", btnSize, btnSize, fSize));
+    btnLayout.push_back(App::makeIconLayout(L"\ue603", btnSize, btnSize, fSize));
+    btnLayout.push_back(App::makeIconLayout(L"\ue776", btnSize, btnSize, fSize));
+    btnLayout.push_back(App::makeIconLayout(L"\ue601", btnSize, btnSize, fSize));
+    btnLayout.push_back(App::makeIconLayout(L"\ue6ec", btnSize, btnSize, fSize));
+    btnLayout.push_back(App::makeIconLayout(L"\ue82e", btnSize, btnSize, fSize));
+    btnLayout.push_back(App::makeIconLayout(L"\ue6be", btnSize, btnSize, fSize));
+    btnLayout.push_back(App::makeIconLayout(L"\ued85", btnSize, btnSize, fSize));
+    btnLayout.push_back(App::makeIconLayout(L"\ued8a", btnSize, btnSize, fSize));
+    btnLayout.push_back(App::makeIconLayout(L"\ue62d", btnSize, btnSize, fSize));
+    btnLayout.push_back(App::makeIconLayout(L"\ue608", btnSize, btnSize, fSize));
+    btnLayout.push_back(App::makeIconLayout(L"\ue6ad", btnSize, btnSize, fSize));
 }
 
 void ToolMain::onKeyDown(const UINT& key)

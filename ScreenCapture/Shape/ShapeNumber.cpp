@@ -83,7 +83,7 @@ void ShapeNumber::mouseDrag(const float& x, const float& y, const UINT_PTR& modi
 		cx += spanX;
 		cy += spanY;
 		makePath();
-		layoutText = win->makeTextLayout(std::to_wstring(val), r * 2, r * 2, r);
+		layoutText = App::makeTextLayout(std::to_wstring(val), r * 2, r * 2, r);
 		pressX = x;
 		pressY = y;
 	}
@@ -99,7 +99,7 @@ void ShapeNumber::mouseDrag(const float& x, const float& y, const UINT_PTR& modi
 		if (r < minR) r = minR;
 		setDefaultRadius(win, r);
 		makePath();
-		layoutText = win->makeTextLayout(std::to_wstring(val), r * 2, r * 2, r);
+		layoutText = App::makeTextLayout(std::to_wstring(val), r * 2, r * 2, r);
 	}
 }
 
@@ -112,7 +112,7 @@ void ShapeNumber::mouseDown(const float& x, const float& y)
 		pressY = cy;
 		hoverDraggerIndex = 0;
 		makePath();
-		layoutText = win->makeTextLayout(std::to_wstring(val), r * 2, r * 2, r);
+		layoutText = App::makeTextLayout(std::to_wstring(val), r * 2, r * 2, r);
 		win->refresh();
 	}
 	else if (hoverDraggerIndex >= 0) {
@@ -171,14 +171,14 @@ void ShapeNumber::mouseWheel(const float& x, const float& y, const short& delta)
 		r--;
 		setDefaultRadius(win, r);
 		makePath();
-		layoutText = win->makeTextLayout(std::to_wstring(val), r * 2, r * 2, r);
+		layoutText = App::makeTextLayout(std::to_wstring(val), r * 2, r * 2, r);
 		win->refresh();
 	}
 	else {
 		r++;
 		setDefaultRadius(win, r);
 		makePath();
-		layoutText = win->makeTextLayout(std::to_wstring(val), r * 2, r * 2, r);
+		layoutText = App::makeTextLayout(std::to_wstring(val), r * 2, r * 2, r);
 		win->refresh();
 	}
 }

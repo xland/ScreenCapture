@@ -94,7 +94,7 @@ void WinLong::onCreated()
     render->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White), textBrush.GetAddressOf());
     render->CreateSolidColorBrush(D2D1::ColorF(0x000000, 0.68f), bgBrush.GetAddressOf());
     auto size{ startCircleR * 2 };
-    layoutTextStart = makeTextLayout(Lang::get(L"long.start"), size, size, 16 * dpi);
+    layoutTextStart = App::makeTextLayout(Lang::get(L"long.start"), size, size, 16 * dpi);
 }
 
 void WinLong::onPaint()
@@ -384,10 +384,10 @@ void WinLong::stopCap()
 void WinLong::makeStopText()
 {
     if (resultH > 20000) {
-        layoutTextEnd = makeTextLayout(Lang::get(L"long.tooLong"), FLT_MAX, FLT_MAX, 13 * dpi);
+        layoutTextEnd = App::makeTextLayout(Lang::get(L"long.tooLong"), FLT_MAX, FLT_MAX, 13 * dpi);
     }
     else {
-        layoutTextEnd = makeTextLayout(Lang::get(L"long.reachedBottom"), FLT_MAX, FLT_MAX, 13 * dpi);
+        layoutTextEnd = App::makeTextLayout(Lang::get(L"long.reachedBottom"), FLT_MAX, FLT_MAX, 13 * dpi);
     }    
     DWRITE_TEXT_METRICS tm = {};
     layoutTextEnd->GetMetrics(&tm);

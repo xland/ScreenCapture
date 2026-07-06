@@ -9,8 +9,8 @@
 #include "Lang.h"
 #include "Tray.h"
 
-// 各 Win* 类中的模块级单例/容器；App::disposeDeviceIfIdle 需要用来判断"当前有没有窗口"，
-// 因此在这里 extern 引用。
+// 各窗口类中的单例/容器；App::disposeDeviceIfIdle 需要用来判断"当前有没有窗口"，
+// 这些变量是在其他编译单元中定义的，当前文件只是引用它。
 extern std::unique_ptr<WinCap> winCap;
 extern std::unique_ptr<WinLong> winLong;
 extern std::unique_ptr<WinVideo> winVideo;
@@ -24,6 +24,8 @@ namespace {
     static ComPtr<ID2D1Device1> d2dDev;
     static ComPtr<IDXGIFactory5> fac5;
     static ComPtr<IDWriteFactory5> dwriteFactory;
+    static ComPtr<IDWriteTextFormat> textFormat;
+    static ComPtr<IDWriteTextFormat> iconFormat;
     //static ComPtr<IDWriteRenderingParams> renderingParams;
     std::unordered_map<std::wstring, std::wstring> args{
         {L"enter",L"cap"},
@@ -48,9 +50,6 @@ void App::init(HINSTANCE hInstance)
 {
     App::initArgs();
     if (args[L"auto-quit"] != L"true" && Tray::secondIns()) return;
-    // 注意: 不在启动阶段建立 D2D/D3D/DXGI 设备了 —— 驻留态没有窗口时它们只占内存不干活。
-    // 每个可见窗口在 init 时会调用 App::initDevice() 惰性建立；窗口全关后由
-    // App::disposeDeviceIfIdle() 释放，回到驻留态时不再持有显卡驱动的工作集。
 	app = std::make_unique<App>(hInstance);
     Setting::init();
     Lang::init();
@@ -122,12 +121,39 @@ void App::initDevice()
     hr = fac5->CheckFeatureSupport(DXGI_FEATURE_PRESENT_ALLOW_TEARING, &App::allowTearing, sizeof(App::allowTearing));//判断设备是否允许撕裂呈现
     hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_ISOLATED, __uuidof(IDWriteFactory), reinterpret_cast<::IUnknown**>(dwriteFactory.GetAddressOf()));
     //dwriteFactory->CreateCustomRenderingParams( 1.0f, 0.0f, 1.0f, DWRITE_PIXEL_GEOMETRY_RGB, DWRITE_RENDERING_MODE_GDI_NATURAL, renderingParams.GetAddressOf());
+
+    dwriteFactory->CreateTextFormat(L"Microsoft YaHei", nullptr, DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
+        12.f, L"", textFormat.GetAddressOf());
+
+    //加载内置图标字体
+    HRSRC hRes = FindResource(NULL, L"iconfont.ttf", RT_RCDATA);
+    if (!hRes) return;
+    HGLOBAL hData = LoadResource(NULL, hRes);
+    if (!hData) return;
+    void* pData = LockResource(hData);
+    DWORD size = SizeofResource(NULL, hRes);
+    ComPtr<IDWriteInMemoryFontFileLoader> loader;
+    dwriteFactory->CreateInMemoryFontFileLoader(loader.GetAddressOf());
+    dwriteFactory->RegisterFontFileLoader(loader.Get());
+    ComPtr<IDWriteFontFile> fontFile;
+    loader->CreateInMemoryFontFileReference(dwriteFactory.Get(), pData, size, nullptr, fontFile.GetAddressOf());
+    ComPtr<IDWriteFontSetBuilder1> fontSetBuilder;
+    dwriteFactory->CreateFontSetBuilder(fontSetBuilder.GetAddressOf());
+    fontSetBuilder->AddFontFile(fontFile.Get());
+    ComPtr<IDWriteFontSet> fontSet;
+    fontSetBuilder->CreateFontSet(fontSet.GetAddressOf());
+    ComPtr<IDWriteFontCollection1> fontCollection;
+    dwriteFactory->CreateFontCollectionFromFontSet(fontSet.Get(), fontCollection.GetAddressOf());
+    dwriteFactory->CreateTextFormat(L"icon", fontCollection.Get(), DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
+        12.f, L"", iconFormat.GetAddressOf());
 }
 
 void App::disposeDevice()
 {
     // 释放顺序：先高层的 device/factory, 后 D3D 设备。ComPtr::Reset 只是引用计数减一,
     // 若外部还持有对应对象则实际释放会延后到最后一个引用释放。
+	textFormat.Reset();
+	iconFormat.Reset();
     dwriteFactory.Reset();
     d2dDev.Reset();
     fac5.Reset();
@@ -201,4 +227,23 @@ IDWriteFactory5* App::getWriter()
     return dwriteFactory.Get();
 }
 
-
+ComPtr<IDWriteTextLayout> App::makeIconLayout(const std::wstring& code, const float& w, const float& h, const float& size, bool hAlign, bool VAlign)
+{
+    auto writer = App::getWriter();
+    ComPtr<IDWriteTextLayout> layout;
+    writer->CreateTextLayout(code.data(), code.length(), iconFormat.Get(), w, h, layout.GetAddressOf());
+    if (hAlign) layout->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+    if (VAlign) layout->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+    layout->SetFontSize(size, { 0, static_cast<UINT32>(code.length()) });
+    return layout;
+}
+ComPtr<IDWriteTextLayout> App::makeTextLayout(const std::wstring& text, const float& w, const float& h, const float& size, bool hAlign, bool VAlign)
+{
+    auto writer = App::getWriter();
+    ComPtr<IDWriteTextLayout> layout;
+    writer->CreateTextLayout(text.data(), text.length(), textFormat.Get(), w, h, layout.GetAddressOf());
+    if (hAlign) layout->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+    if (VAlign) layout->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+    layout->SetFontSize(size, { 0, static_cast<UINT32>(text.length()) });
+    return layout;
+}

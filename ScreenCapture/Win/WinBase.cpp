@@ -103,55 +103,7 @@ void WinBase::handleDeviceLost()
     onDpiChanged();
     refresh();
 }
-ComPtr<IDWriteTextLayout> WinBase::makeIconLayout(const std::wstring& code, const float& w, const float& h, const float& size, bool hAlign, bool VAlign)
-{
-    auto writer = App::getWriter();
-    static ComPtr<IDWriteTextFormat> iconFormat;
-    if (!iconFormat.Get()) {
-        //加载内置图标字体
-        HRSRC hRes = FindResource(NULL, L"iconfont.ttf", RT_RCDATA);
-        if (!hRes) return NULL;
-        HGLOBAL hData = LoadResource(NULL, hRes);
-        if (!hData) return NULL;
-        void* pData = LockResource(hData);
-        DWORD size = SizeofResource(NULL, hRes);
-        ComPtr<IDWriteInMemoryFontFileLoader> loader;
-        writer->CreateInMemoryFontFileLoader(loader.GetAddressOf());
-        writer->RegisterFontFileLoader(loader.Get());
-        ComPtr<IDWriteFontFile> fontFile;
-        loader->CreateInMemoryFontFileReference(writer, pData, size, nullptr, fontFile.GetAddressOf());
-        ComPtr<IDWriteFontSetBuilder1> fontSetBuilder;
-        writer->CreateFontSetBuilder(fontSetBuilder.GetAddressOf());
-        fontSetBuilder->AddFontFile(fontFile.Get());
-        ComPtr<IDWriteFontSet> fontSet;
-        fontSetBuilder->CreateFontSet(fontSet.GetAddressOf());
-        ComPtr<IDWriteFontCollection1> fontCollection;
-        writer->CreateFontCollectionFromFontSet(fontSet.Get(), fontCollection.GetAddressOf());
-        writer->CreateTextFormat(L"icon", fontCollection.Get(),DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
-            12.f, L"", iconFormat.GetAddressOf());
-    }
-    ComPtr<IDWriteTextLayout> layout;
-    writer->CreateTextLayout(code.data(), code.length(), iconFormat.Get(), w, h, layout.GetAddressOf());
-    if(hAlign) layout->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
-    if(VAlign) layout->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
-    layout->SetFontSize(size, { 0, static_cast<UINT32>(code.length()) });
-    return layout;
-}
-ComPtr<IDWriteTextLayout> WinBase::makeTextLayout(const std::wstring& text, const float& w, const float& h, const float& size, bool hAlign, bool VAlign)
-{
-    auto writer = App::getWriter();
-    static ComPtr<IDWriteTextFormat> textFormat;
-    if (!textFormat.Get()) {
-        writer->CreateTextFormat(L"Microsoft YaHei", nullptr, DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
-            12.f, L"", textFormat.GetAddressOf());
-    }
-    ComPtr<IDWriteTextLayout> layout;
-    writer->CreateTextLayout(text.data(), text.length(), textFormat.Get(), w, h, layout.GetAddressOf());
-    if (hAlign) layout->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
-    if (VAlign) layout->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
-    layout->SetFontSize(size, { 0, static_cast<UINT32>(text.length()) });
-    return layout;
-}
+
 
 void WinBase::createWindow(const DWORD& exStyle, const DWORD& style)
 {

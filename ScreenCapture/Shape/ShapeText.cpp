@@ -140,7 +140,7 @@ void ShapeText::finishEdit()
 void ShapeText::setTextLayout()
 {
 	auto textWin = ShapeTextWin::get();
-	textLayout = win->makeTextLayout(text, FLT_MAX, FLT_MAX, fontSize, false, false);
+	textLayout = App::makeTextLayout(text, FLT_MAX, FLT_MAX, fontSize, false, false);
 	textLayout->SetFontWeight(isBold ? DWRITE_FONT_WEIGHT_BOLD : DWRITE_FONT_WEIGHT_NORMAL, { 0, static_cast<UINT32>(text.length()) });
 	textLayout->SetFontStyle(isItalic ? DWRITE_FONT_STYLE_ITALIC : DWRITE_FONT_STYLE_NORMAL, { 0, static_cast<UINT32>(text.length()) });
 	DWRITE_TEXT_METRICS tm = {}; //文本布局后度量信息的结构体

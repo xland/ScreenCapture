@@ -68,10 +68,10 @@ void WinSetting::onCreated()
 	render->CreateSolidColorBrush(D2D1::ColorF(0x888888), textBrush.GetAddressOf());
 	render->CreateSolidColorBrush(D2D1::ColorF(0xFA5151), red.GetAddressOf());
 	render->CreateSolidColorBrush(D2D1::ColorF(0x333333), textBrush2.GetAddressOf()); //0x1677FF
-	menuLabels.push_back(makeTextLayout(Lang::get(L"setting.common"), menuW, menuH, textSize));
-	menuLabels.push_back(makeTextLayout(Lang::get(L"setting.shortcut"), menuW, menuH, textSize));
-	menuLabels.push_back(makeTextLayout(Lang::get(L"setting.about"), menuW, menuH, textSize));
-	closeIcon = makeIconLayout(L"\ue62d", paddintTop, paddintTop, textSize);
+	menuLabels.push_back(App::makeTextLayout(Lang::get(L"setting.common"), menuW, menuH, textSize));
+	menuLabels.push_back(App::makeTextLayout(Lang::get(L"setting.shortcut"), menuW, menuH, textSize));
+	menuLabels.push_back(App::makeTextLayout(Lang::get(L"setting.about"), menuW, menuH, textSize));
+	closeIcon = App::makeIconLayout(L"\ue62d", paddintTop, paddintTop, textSize);
 	common = std::make_unique<WinSettingCommon>(this);
 	shortcut = std::make_unique<WinSettingShortcut>(this);
 	about = std::make_unique<WinSettingAbout>(this);
@@ -219,10 +219,10 @@ void WinSetting::onDpiChanged()
 
 	// 依赖上述尺寸/字号的文本与图标图层需要按新度量重建
 	menuLabels.clear();
-	menuLabels.push_back(makeTextLayout(Lang::get(L"setting.common"), menuW, menuH, textSize));
-	menuLabels.push_back(makeTextLayout(Lang::get(L"setting.shortcut"), menuW, menuH, textSize));
-	menuLabels.push_back(makeTextLayout(Lang::get(L"setting.about"), menuW, menuH, textSize));
-	closeIcon = makeIconLayout(L"\ue62d", paddintTop, paddintTop, textSize);
+	menuLabels.push_back(App::makeTextLayout(Lang::get(L"setting.common"), menuW, menuH, textSize));
+	menuLabels.push_back(App::makeTextLayout(Lang::get(L"setting.shortcut"), menuW, menuH, textSize));
+	menuLabels.push_back(App::makeTextLayout(Lang::get(L"setting.about"), menuW, menuH, textSize));
+	closeIcon = App::makeIconLayout(L"\ue62d", paddintTop, paddintTop, textSize);
 
 	// 子面板在构造函数里根据 win->dpi、menuW、paddintTop、menuLeftSpan、w 计算自身的
 	// contentX/contentY/contentR 与所有内部尺寸，整体重建最简单且状态不丢（配置项来自持久化设置）

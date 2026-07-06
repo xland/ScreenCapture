@@ -69,7 +69,7 @@ void WinCutMask::makeLayout()
     auto layoutStr = std::format(L"X:{} Y:{} R:{} B:{} W:{} H:{}",
         maskRect.left, maskRect.top, maskRect.right, maskRect.bottom,
         maskRect.right - maskRect.left, maskRect.bottom - maskRect.top);
-    layout = win->makeTextLayout(layoutStr, FLT_MAX, FLT_MAX, 10 * win->dpi);
+    layout = App::makeTextLayout(layoutStr, FLT_MAX, FLT_MAX, 10 * win->dpi);
     DWRITE_TEXT_METRICS tm = {};
     layout->GetMetrics(&tm);
     float paddingLeft{ 5 * win->dpi }, margin{ 5 * win->dpi };

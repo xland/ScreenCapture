@@ -441,7 +441,27 @@ void WinPin::onMouseDrag(const int& x, const int& y, const UINT_PTR& modifiers)
 
 void WinPin::onMouseDown(const int& x, const int& y, bool isRight)
 {
-	if (isRight) return;
+	if (isRight) {
+	    //右键：取消置顶并隐藏工具条；再次左键按下时恢复
+	    if (isTopmost) {
+	        SetWindowPos(hwnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+	        if (toolMain.get()) toolMain->hide();
+	        if (toolSub.get()) toolSub->hide();
+	        isTopmost = false;
+	    }
+	    return;
+	}
+    if (!isTopmost) {
+        //左键：从"未置顶"状态恢复。先重新置顶，并复位工具条状态；
+        //ToolMain 的显示交给 onMouseUp 走"拖窗结束"的通用路径，避免拖拽时工具条不跟随
+        SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+        toolMain->state = L"";
+        toolMain->selectIndex = -1;
+        isTopmost = true;
+        pressPos.x = x;
+        pressPos.y = y;
+        return;
+    }
     if (toolMain->state == L"") {
         pressPos.x = x;
         pressPos.y = y;

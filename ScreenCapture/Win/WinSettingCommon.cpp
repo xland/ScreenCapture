@@ -4,6 +4,7 @@
 #include "WinSettingShortcut.h"
 #include "WinSettingAbout.h"
 #include "Setting.h"
+#include "App.h"
 #include "Lang.h"
 #include "Util.h"
 #include "Tray.h"
@@ -27,20 +28,20 @@ WinSettingCommon::WinSettingCommon(WinSetting* win):win{win}
 	win->render->CreateSolidColorBrush(D2D1::ColorF(0xFFFFFF), langBoxBg.GetAddressOf());
 	win->render->CreateSolidColorBrush(D2D1::ColorF(0xE6F4FF), langHoverBg.GetAddressOf());
 	auto w = contentR - contentX;
-	startupLabel = win->makeTextLayout(Lang::get(L"setting.autoStart"), w, lineH, win->textSize, false);
-	trayLabel = win->makeTextLayout(Lang::get(L"setting.showTray"), w, lineH, win->textSize, false);
-	langLabel = win->makeTextLayout(Lang::get(L"setting.language"), w, lineH, win->textSize, false);
+	startupLabel = App::makeTextLayout(Lang::get(L"setting.autoStart"), w, lineH, win->textSize, false);
+	trayLabel = App::makeTextLayout(Lang::get(L"setting.showTray"), w, lineH, win->textSize, false);
+	langLabel = App::makeTextLayout(Lang::get(L"setting.language"), w, lineH, win->textSize, false);
 
 
 	w = langBoxW - 24.f * win->dpi;
 	for (const auto& info : Lang::getLangs()) {
-		langItemLayouts.push_back(win->makeTextLayout(info.second, w, langItemH, win->textSize, false));
+		langItemLayouts.push_back(App::makeTextLayout(info.second, w, langItemH, win->textSize, false));
 	}
 
 	updateLangVal();
-	langArrow = win->makeTextLayout(L"▾", 22.f * win->dpi, lineH, iconSize);
-	closeIcon = win->makeIconLayout(L"\ue687", lineH, lineH, iconSize);
-	openIcon = win->makeIconLayout(L"\ue688", lineH, lineH, iconSize);
+	langArrow = App::makeTextLayout(L"▾", 22.f * win->dpi, lineH, iconSize);
+	closeIcon = App::makeIconLayout(L"\ue687", lineH, lineH, iconSize);
+	openIcon = App::makeIconLayout(L"\ue688", lineH, lineH, iconSize);
 }
 
 WinSettingCommon::~WinSettingCommon()
@@ -177,16 +178,16 @@ void WinSettingCommon::collapseLang()
 void WinSettingCommon::applyLanguage()
 {
 	auto w = contentR - contentX;
-	startupLabel = win->makeTextLayout(Lang::get(L"setting.autoStart"), w, lineH, win->textSize, false);
-	trayLabel = win->makeTextLayout(Lang::get(L"setting.showTray"), w, lineH, win->textSize, false);
-	langLabel = win->makeTextLayout(Lang::get(L"setting.language"), w, lineH, win->textSize, false);
+	startupLabel = App::makeTextLayout(Lang::get(L"setting.autoStart"), w, lineH, win->textSize, false);
+	trayLabel = App::makeTextLayout(Lang::get(L"setting.showTray"), w, lineH, win->textSize, false);
+	langLabel = App::makeTextLayout(Lang::get(L"setting.language"), w, lineH, win->textSize, false);
 	updateLangVal();
 	// 重建兄弟面板与菜单（WinSettingCommon 是 WinSetting 的友元，安全：不重建自身 this）
 	SetWindowText(win->hwnd, Lang::get(L"setting.title").c_str());
 	win->menuLabels.clear();
-	win->menuLabels.push_back(win->makeTextLayout(Lang::get(L"setting.common"), win->menuW, win->menuH, win->textSize));
-	win->menuLabels.push_back(win->makeTextLayout(Lang::get(L"setting.shortcut"), win->menuW, win->menuH, win->textSize));
-	win->menuLabels.push_back(win->makeTextLayout(Lang::get(L"setting.about"), win->menuW, win->menuH, win->textSize));
+	win->menuLabels.push_back(App::makeTextLayout(Lang::get(L"setting.common"), win->menuW, win->menuH, win->textSize));
+	win->menuLabels.push_back(App::makeTextLayout(Lang::get(L"setting.shortcut"), win->menuW, win->menuH, win->textSize));
+	win->menuLabels.push_back(App::makeTextLayout(Lang::get(L"setting.about"), win->menuW, win->menuH, win->textSize));
 	win->shortcut = std::make_unique<WinSettingShortcut>(win);
 	win->about = std::make_unique<WinSettingAbout>(win);
 }
@@ -195,7 +196,7 @@ void WinSettingCommon::updateLangVal()
 {
 	float w = langBoxW - 34.f * win->dpi; // 右侧留出箭头空间
 	auto name = Lang::getLangs().at(Lang::getLang());
-	langVal = win->makeTextLayout(name, w, lineH, win->textSize, false);
+	langVal = App::makeTextLayout(name, w, lineH, win->textSize, false);
 }
 
 void WinSettingCommon::selectLang(const int& index)

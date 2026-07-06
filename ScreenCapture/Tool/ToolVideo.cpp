@@ -33,7 +33,7 @@ void ToolVideo::onTimer(const UINT& timerId)
     int seconds = totalSeconds % 60;
     auto text = std::format(L"{:02d}:{:02d} / {:02d}:00", minutes, seconds, maxMinutes);
     timerLayout.Reset();
-    timerLayout = makeTextLayout(text, 160.f, h, 15.f * dpi);
+    timerLayout = App::makeTextLayout(text, 160.f, h, 15.f * dpi);
     refresh();
     if (totalSeconds >= maxSeconds) {
 		saveFile();
@@ -264,20 +264,20 @@ void ToolVideo::onDpiChanged()
     btnSize = 32.f * dpi;
     auto fSize{ 15.f * dpi };
     btnLayout.clear();
-    btnLayout.push_back(makeIconLayout(L"\ue654", btnSize, btnSize, fSize));
-    btnLayout.push_back(makeIconLayout(L"\ue73b", btnSize, btnSize, fSize));
-    btnLayout.push_back(makeIconLayout(L"\ue660", btnSize, btnSize, fSize));
-    btnLayout.push_back(makeIconLayout(L"\ue62d", btnSize, btnSize, fSize));
-    btnLayout.push_back(makeIconLayout(L"\ue650", btnSize, btnSize, fSize));
-    btnLayout.push_back(makeIconLayout(L"\ue608", btnSize, btnSize, fSize));
+    btnLayout.push_back(App::makeIconLayout(L"\ue654", btnSize, btnSize, fSize));
+    btnLayout.push_back(App::makeIconLayout(L"\ue73b", btnSize, btnSize, fSize));
+    btnLayout.push_back(App::makeIconLayout(L"\ue660", btnSize, btnSize, fSize));
+    btnLayout.push_back(App::makeIconLayout(L"\ue62d", btnSize, btnSize, fSize));
+    btnLayout.push_back(App::makeIconLayout(L"\ue650", btnSize, btnSize, fSize));
+    btnLayout.push_back(App::makeIconLayout(L"\ue608", btnSize, btnSize, fSize));
     borderRadius *= dpi;
     paddingTopBottom *= dpi;
     fSize = 13 * dpi;
     mp4Start = 6.f * dpi;
     float formatW{ 42.f * dpi };
-    formatMp4 = makeTextLayout(L"MP4", formatW, h, fSize);
+    formatMp4 = App::makeTextLayout(L"MP4", formatW, h, fSize);
     mp4End = 6.f * dpi + formatW;
-    formatGif = makeTextLayout(L"GIF", formatW, h, fSize);
+    formatGif = App::makeTextLayout(L"GIF", formatW, h, fSize);
     gifEnd = mp4End + formatW;
     speakerStart = gifEnd + dpi * 5 + 0.6 * dpi;
     micStart = speakerStart + btnSize;
