@@ -72,7 +72,7 @@ void WinLong::init()
     winLong->createWindow(WS_EX_TOPMOST);//WS_EX_TOPMOST
     winLong->cutMask = std::make_unique<WinCutMask>(winLong.get());
     winLong->show();
-    //UpdateWindow(winLong->hwnd);
+    UpdateWindow(winLong->hwnd);
 }
 
 
