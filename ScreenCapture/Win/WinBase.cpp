@@ -30,6 +30,7 @@ void WinBase::refresh()
 }
 void WinBase::close()
 {
+    if (!hwnd || !IsWindow(hwnd)) return;
     SetWindowLongPtr(hwnd, GWLP_USERDATA, NULL);
     DestroyWindow(hwnd);
     onDestroy();

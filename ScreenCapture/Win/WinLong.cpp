@@ -99,6 +99,13 @@ void WinLong::onCreated()
     layoutTextStart = App::makeTextLayout(Lang::get(L"long.start"), size, size, 16 * dpi);
 }
 
+void WinLong::onDestroy()
+{
+	if (tool.get()) {
+		tool->close();
+	}
+}
+
 void WinLong::onPaint()
 {
     render->Clear(0);
@@ -199,7 +206,6 @@ void WinLong::onTimer(const UINT& timerId)
 void WinLong::onKeyDown(const UINT& key)
 {
     if (key == VK_ESCAPE) {
-        if (tool.get())tool->close();
         WinLong::release();
     }
 }

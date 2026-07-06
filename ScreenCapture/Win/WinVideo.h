@@ -27,6 +27,7 @@ private:
 	void onMouseDown(const int& x, const int& y, bool isRight) override;
 	void onMouseUp(const int& x, const int& y) override;
 	void onKeyDown(const UINT& key) override;
+	void onDestroy() override;
 	void makeTool();
 	void drawCursor(HDC hMemDC,const int& width,const int& height);
 	void setMouseTransparent(bool transparent);

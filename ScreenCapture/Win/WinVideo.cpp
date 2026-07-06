@@ -168,6 +168,11 @@ void WinVideo::onKeyDown(const UINT& key)
     }
 }
 
+void WinVideo::onDestroy()
+{
+	if (tool.get()) tool->close();
+}
+
 void WinVideo::makeTool()
 {
     const float btnSize = 32.f * dpi;

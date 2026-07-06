@@ -25,6 +25,7 @@ private:
 	void onTimer(const UINT& timerId) override;
 	void onKeyDown(const UINT& key) override;
 	void onCreated() override;
+	void onDestroy() override;
 	BOOL onCursor() override;
 	void firstStep();
 	void makeImgPreview();
