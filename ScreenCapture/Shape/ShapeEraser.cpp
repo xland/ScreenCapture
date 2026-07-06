@@ -48,11 +48,11 @@ void ShapeEraser::paint()
 	if (isErasing) {
 		initBackgroundBrush();
 		if (bgBrush.Get()) {
-			win->render->DrawGeometry(path.Get(), bgBrush.Get(), strokeWidth, getRoundStrokeStyle());
+			win->render->DrawGeometry(path.Get(), bgBrush.Get(), strokeWidth, App::getRoundStrokeStyle());
 		}
 	}
 	else {
-		win->render->DrawGeometry(path.Get(), brush.Get(), strokeWidth, getRoundStrokeStyle());
+		win->render->DrawGeometry(path.Get(), brush.Get(), strokeWidth, App::getRoundStrokeStyle());
 	}
 }
 

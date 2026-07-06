@@ -28,7 +28,7 @@ ShapeLine::~ShapeLine()
 
 void ShapeLine::paint()
 {
-	win->render->DrawGeometry(path.Get(), brush.Get(), strokeWidth,getRoundStrokeStyle());
+	win->render->DrawGeometry(path.Get(), brush.Get(), strokeWidth, App::getRoundStrokeStyle());
 }
 
 void ShapeLine::paintDragger()

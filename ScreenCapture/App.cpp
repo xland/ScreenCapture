@@ -26,6 +26,7 @@ namespace {
     static ComPtr<IDWriteFactory5> dwriteFactory;
     static ComPtr<IDWriteTextFormat> textFormat;
     static ComPtr<IDWriteTextFormat> iconFormat;
+    static ComPtr<ID2D1StrokeStyle> roundStrokeStyle;
     //static ComPtr<IDWriteRenderingParams> renderingParams;
     std::unordered_map<std::wstring, std::wstring> args{
         {L"enter",L"cap"},
@@ -150,10 +151,9 @@ void App::initDevice()
 
 void App::disposeDevice()
 {
-    // 释放顺序：先高层的 device/factory, 后 D3D 设备。ComPtr::Reset 只是引用计数减一,
-    // 若外部还持有对应对象则实际释放会延后到最后一个引用释放。
 	textFormat.Reset();
 	iconFormat.Reset();
+    roundStrokeStyle.Reset();
     dwriteFactory.Reset();
     d2dDev.Reset();
     fac5.Reset();
@@ -246,4 +246,25 @@ ComPtr<IDWriteTextLayout> App::makeTextLayout(const std::wstring& text, const fl
     if (VAlign) layout->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
     layout->SetFontSize(size, { 0, static_cast<UINT32>(text.length()) });
     return layout;
+}
+
+ID2D1StrokeStyle* App::getRoundStrokeStyle()
+{
+    if (!roundStrokeStyle.Get()) {
+        d2dFactory->CreateStrokeStyle(
+            D2D1::StrokeStyleProperties(
+                D2D1_CAP_STYLE_ROUND,    // 起点线帽：圆角
+                D2D1_CAP_STYLE_ROUND,    // 终点线帽：圆角
+                D2D1_CAP_STYLE_ROUND,    // 虚线端点（如有）
+                D2D1_LINE_JOIN_ROUND,    // 线段连接处：圆角
+                8.f,                     // miterLimit
+                D2D1_DASH_STYLE_SOLID,
+                0.0f
+            ),
+            nullptr,
+            0,
+            roundStrokeStyle.GetAddressOf()
+        );
+    }
+    return roundStrokeStyle.Get();
 }

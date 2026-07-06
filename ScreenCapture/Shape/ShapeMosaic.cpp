@@ -43,10 +43,10 @@ void ShapeMosaic::paint()
 	}
 	if (!path.Get()) return;
 	if (mosaicBrush.Get()) {
-		win->render->DrawGeometry(path.Get(), mosaicBrush.Get(), strokeWidth, getRoundStrokeStyle());
+		win->render->DrawGeometry(path.Get(), mosaicBrush.Get(), strokeWidth, App::getRoundStrokeStyle());
 	}
 	else {
-		win->render->DrawGeometry(path.Get(), brush.Get(), strokeWidth, getRoundStrokeStyle());
+		win->render->DrawGeometry(path.Get(), brush.Get(), strokeWidth, App::getRoundStrokeStyle());
 	}
 }
 
@@ -339,7 +339,7 @@ ComPtr<ID2D1Bitmap> ShapeMosaic::createMosaicBitmap(int blockSize)
 		bounds = rect;
 	}
 	else {
-		hr = path->GetWidenedBounds(strokeWidth, getRoundStrokeStyle(), nullptr, &bounds);
+		hr = path->GetWidenedBounds(strokeWidth, App::getRoundStrokeStyle(), nullptr, &bounds);
 		if (FAILED(hr)) return result;
 	}
 

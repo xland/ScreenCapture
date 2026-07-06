@@ -19,7 +19,6 @@ public:
 	bool isUndo;
 	int hoverDraggerIndex{ -1 };
 protected:
-	ID2D1StrokeStyle* getRoundStrokeStyle();
 protected:
 	float draggerSize;
 	ComPtr<ID2D1SolidColorBrush> brushDragger;

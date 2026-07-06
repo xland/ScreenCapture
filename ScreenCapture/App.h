@@ -23,6 +23,7 @@ public:
 	static IDWriteFactory5* getWriter();
 	static ComPtr<IDWriteTextLayout> makeIconLayout(const std::wstring& code, const float& w, const float& h, const float& size, bool hAlign = true, bool VAlign = true);
 	static ComPtr<IDWriteTextLayout> makeTextLayout(const std::wstring& text, const float& w, const float& h, const float& size, bool hAlign = true, bool VAlign = true);
+	static ID2D1StrokeStyle* getRoundStrokeStyle();
 	/// <summary>
 	/// 是否允许撕裂呈现（允许的话效果稍弱，但渲染更快，咱这个应用尽可能的允许）
 	/// </summary>
