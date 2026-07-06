@@ -9,7 +9,7 @@ class ToolSub :public ToolBase
 	friend class ToolSubSlider;
 	friend class ToolSubColor;
 public:
-	ToolSub(WinPin* parent);
+	ToolSub(WinPin* parent,const int& x,const int& y,const int& w,const int& h);
 	~ToolSub();
 	D2D1_COLOR_F getSelectedColor();
 	void initBtn();

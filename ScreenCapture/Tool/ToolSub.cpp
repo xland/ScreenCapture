@@ -11,7 +11,7 @@
 #include "ToolSubSlider.h"
 #include "ToolSubColor.h"
 
-ToolSub::ToolSub(WinPin* parent) :ToolBase(-999999, -999999, 1, 1), parent{ parent }
+ToolSub::ToolSub(WinPin* parent, const int& x, const int& y, const int& w, const int& h) :ToolBase(x, y, w, h), parent{ parent }
 {
     slider = std::make_unique<ToolSubSlider>(this);
     colorer = std::make_unique<ToolSubColor>(this);
@@ -89,7 +89,7 @@ void ToolSub::initBtn()
     btnLayout.push_back(makeIconLayout(L"\ue607", btnSize, btnSize, fSize));
     btnLayout.push_back(makeIconLayout(L"\ue634", btnSize, btnSize, fSize));
     btnLayout.push_back(makeIconLayout(L"\ue682", btnSize, btnSize, fSize));
-    btnLayout.push_back(makeIconLayout(L"\ue6ad", btnSize, btnSize, 10*dpi)); //check
+    btnLayout.push_back(makeIconLayout(L"\ue6ad", btnSize, btnSize, 9.f*dpi)); //check
 }
 
 bool ToolSub::hoverBtn(const int& x)

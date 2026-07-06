@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 class WinBase
 {
 	friend class App;

@@ -12,7 +12,7 @@
 
 ToolMain::ToolMain(const int& x, const int& y, const int& w, const int& h, WinPin* parent) : ToolBase(x, y, w, h), parent{parent}
 {
-    btnId = { L"rect",L"ellipse",L"arrow",L"number",L"line",L"text",L"mosaic", L"eraser",L"undo",L"redo",L"clipboard",L"save",L"close" };
+    btnId = { L"rect",L"ellipse",L"arrow",L"number",L"line",L"text",L"mosaic", L"eraser",L"undo",L"redo",L"close",L"save",L"clipboard" };
 }
 ToolMain::~ToolMain()
 {
@@ -168,9 +168,9 @@ void ToolMain::initBtn()
     btnLayout.push_back(makeIconLayout(L"\ue6be", btnSize, btnSize, fSize));
     btnLayout.push_back(makeIconLayout(L"\ued85", btnSize, btnSize, fSize));
     btnLayout.push_back(makeIconLayout(L"\ued8a", btnSize, btnSize, fSize));
-    btnLayout.push_back(makeIconLayout(L"\ue650", btnSize, btnSize, fSize));
-    btnLayout.push_back(makeIconLayout(L"\ue608", btnSize, btnSize, fSize));
     btnLayout.push_back(makeIconLayout(L"\ue62d", btnSize, btnSize, fSize));
+    btnLayout.push_back(makeIconLayout(L"\ue608", btnSize, btnSize, fSize));
+    btnLayout.push_back(makeIconLayout(L"\ue6ad", btnSize, btnSize, fSize));
 }
 
 void ToolMain::onKeyDown(const UINT& key)

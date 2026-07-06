@@ -289,7 +289,7 @@ void WinPin::initTool()
     // 先按默认(BottomRight)位置构造 ToolMain，稍后 updateToolLayout 会重新摆放
     toolMain = std::make_unique<ToolMain>(x, y + h + 5.f * dpi, btnSize * 13, btnSize,this);
     toolMain->createWindow(toolStyle);
-    toolSub = std::make_unique<ToolSub>(this);
+    toolSub = std::make_unique<ToolSub>(this,toolMain->x,toolMain->y,toolMain->w,toolMain->h);
     toolSub->createWindow(toolStyle);
     updateToolLayout(false);
     toolMain->show();
