@@ -17,6 +17,9 @@ public:
 	void setTimer(const UINT& elapse, const UINT& id);
 	void killTimer(const UINT& id);
 	void setCursor(LPCWSTR cursorName);
+	/// 重建本窗口的渲染目标（D3D 设备丢失/重置时调用）。
+	/// 释放 swap chain / render / bitmap，再基于（可能已重建的）全局设备重新 makeDC。
+	void handleDeviceLost();
 	ComPtr<IDWriteTextLayout> makeIconLayout(const std::wstring& code, const float& w, const float& h,const float& size,bool hAlign = true, bool VAlign = true);
 	ComPtr<IDWriteTextLayout> makeTextLayout(const std::wstring& text, const float& w, const float& h, const float& size, bool hAlign = true, bool VAlign = true);	
 public:
@@ -24,6 +27,7 @@ public:
 	int x, y, w, h;
 	float dpi{1.0};
 	bool isMouseDown{ false },isMouseIn{ false };
+	int deviceLostRetries{ 0 };
 	ComPtr<ID2D1DeviceContext> render;
 protected:
 	virtual LRESULT onHitTest(WPARAM wParam, LPARAM lParam);

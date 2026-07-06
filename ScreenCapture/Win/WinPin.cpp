@@ -165,6 +165,8 @@ void WinPin::onDestroy()
 
 void WinPin::onDpiChanged()
 {
+    // render 可能已重建（DPI 变化或设备丢失），brush 绑定在旧 render 上已失效，需重建
+    render->CreateSolidColorBrush(D2D1::ColorF(0x1677ff), borderBrush.GetAddressOf());
     updateToolLayout(toolMain.get() && toolMain->state != L"");
     if (toolMain->state != L"") {
         //toolSub->move(toolMain->x, toolMain->y + toolMain->h + 3.f * toolSub->dpi + 0.5);

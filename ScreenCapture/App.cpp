@@ -135,6 +135,12 @@ void App::disposeDevice()
     d2dFactory.Reset();
 }
 
+void App::recreateDevice()
+{
+    disposeDevice();
+    initDevice();
+}
+
 void App::disposeDeviceIfIdle()
 {
     // 只有当所有 Win* 全部关闭时才真正回收设备; WinPin 是持久贴图窗口, 只要还留在屏幕
@@ -152,7 +158,7 @@ void App::makeDC(WinBase* win)
     ComPtr<IDXGIDevice1> dxgiDev;
     d3d.As(&dxgiDev);
     auto hr = d2dDev->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE, win->render.GetAddressOf());
-    if (FAILED(hr)) return;
+    if (FAILED(hr)) { log(L"err:: makeDC CreateDeviceContext failed hr={:#x}", (unsigned)hr); return; }
     //render->SetTextRenderingParams(renderingParams.Get());
     DXGI_SWAP_CHAIN_DESC1 scd{};
     scd.Width = win->w;
@@ -165,19 +171,19 @@ void App::makeDC(WinBase* win)
     scd.AlphaMode = DXGI_ALPHA_MODE_PREMULTIPLIED;
     if (App::allowTearing) scd.Flags |= DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING;
     hr = fac5->CreateSwapChainForComposition(d3d.Get(), &scd, nullptr, win->swap.GetAddressOf());
-    if (FAILED(hr)) return;
+    if (FAILED(hr)) { log(L"err:: makeDC CreateSwapChainForComposition failed hr={:#x}", (unsigned)hr); return; }
     hr = DCompositionCreateDevice(dxgiDev.Get(), IID_PPV_ARGS(win->compDev.GetAddressOf()));
-    if (FAILED(hr)) return;
+    if (FAILED(hr)) { log(L"err:: makeDC DCompositionCreateDevice failed hr={:#x}", (unsigned)hr); return; }
     hr = win->compDev->CreateTargetForHwnd(win->hwnd, TRUE, win->compTgt.GetAddressOf());
-    if (FAILED(hr)) return;
+    if (FAILED(hr)) { log(L"err:: makeDC CreateTargetForHwnd failed hr={:#x}", (unsigned)hr); return; }
     hr = win->compDev->CreateVisual(win->compVis.GetAddressOf());
-    if (FAILED(hr)) return;
+    if (FAILED(hr)) { log(L"err:: makeDC CreateVisual failed hr={:#x}", (unsigned)hr); return; }
     hr = win->compVis->SetContent(win->swap.Get());
-    if (FAILED(hr)) return;
+    if (FAILED(hr)) { log(L"err:: makeDC SetContent failed hr={:#x}", (unsigned)hr); return; }
     hr = win->compTgt->SetRoot(win->compVis.Get());
-    if (FAILED(hr)) return;
+    if (FAILED(hr)) { log(L"err:: makeDC SetRoot failed hr={:#x}", (unsigned)hr); return; }
     hr = win->compDev->Commit();
-    if (FAILED(hr)) return;
+    if (FAILED(hr)) { log(L"err:: makeDC Commit failed hr={:#x}", (unsigned)hr); return; }
 }
 
 std::wstring& App::getArg(const std::wstring& key)

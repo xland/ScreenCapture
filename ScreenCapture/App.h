@@ -11,9 +11,10 @@ public:
 	static void initArgs();
 	static void exit(const int& code);
 	static void initDevice();
-	// 释放 D2D/D3D/DXGI/DWrite 设备对象（含各自绑定的驱动/字体缓存），
-	// 用于所有可视窗口关闭后回收驻留内存。下一次 initDevice() 会重新建立。
+	// 释放 D2D/D3D/DXGI/DWrite 设备对象
 	static void disposeDevice();
+	// 强制释放并重建全局设备（D3D 设备丢失时调用）
+	static void recreateDevice();
 	// 若当前没有任何 Win* 窗口在活动，则调用 disposeDevice()；否则 no-op。
 	static void disposeDeviceIfIdle();
 	static void makeDC(WinBase* win);

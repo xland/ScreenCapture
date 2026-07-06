@@ -83,6 +83,26 @@ void WinBase::setCursor(LPCWSTR cursorName)
 {
     SetCursor(LoadCursor(NULL, cursorName));
 }
+
+void WinBase::handleDeviceLost()
+{
+    // D3D 设备丢失：释放本窗口绑定到旧设备的所有资源
+    render->SetTarget(nullptr);
+    targetBmp.Reset();
+    swap.Reset();
+    render.Reset();
+    compVis.Reset();
+    compTgt.Reset();
+    compDev.Reset();
+    // 重建全局设备（旧设备已丢失，必须强制重建）
+    App::recreateDevice();
+    // 基于新设备重新建立本窗口的 swap chain / render / composition
+    App::makeDC(this);
+    createBitmap();
+    // 让子类重建内部资源（WinSetting / WinPin 已实现 onDpiChanged 重建 brush / layout）
+    onDpiChanged();
+    refresh();
+}
 ComPtr<IDWriteTextLayout> WinBase::makeIconLayout(const std::wstring& code, const float& w, const float& h, const float& size, bool hAlign, bool VAlign)
 {
     auto writer = App::getWriter();
@@ -325,10 +345,26 @@ void WinBase::paint()
     BeginPaint(hwnd, &ps);
     render->BeginDraw();
     onPaint();
-    render->EndDraw();
+    auto hr = render->EndDraw();
+    if (hr == D2DERR_RECREATE_TARGET || hr == DXGI_ERROR_DEVICE_REMOVED || hr == DXGI_ERROR_DEVICE_RESET) {
+        // D3D 设备丢失，需要重建渲染目标；限制重试次数避免无限循环
+        if (deviceLostRetries < 3) {
+            deviceLostRetries++;
+            handleDeviceLost();
+        }
+        EndPaint(hwnd, &ps);
+        return;
+    }
+    deviceLostRetries = 0; // 渲染成功，重置计数
     UINT presentFlags = 0;
     if (App::allowTearing) presentFlags |= DXGI_PRESENT_ALLOW_TEARING;
-    swap->Present(0, presentFlags);
+    hr = swap->Present(0, presentFlags);
+    if (hr == DXGI_ERROR_DEVICE_REMOVED || hr == DXGI_ERROR_DEVICE_RESET) {
+        if (deviceLostRetries < 3) {
+            deviceLostRetries++;
+            handleDeviceLost();
+        }
+    }
     EndPaint(hwnd, &ps);
 }
 

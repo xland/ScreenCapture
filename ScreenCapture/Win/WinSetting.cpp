@@ -38,8 +38,12 @@ void WinSetting::init()
 		int workAreaHeight = workAreaRect.bottom - workAreaRect.top;
 		UINT dpiRaw = GetDpiForSystem();
 		float dpi = dpiRaw / 96.0f;
-		int w = 1100;
-		int h = 780;
+		// 1100x780 为逻辑尺寸，乘以 DPI 得到物理尺寸
+		int w = (int)(1100 * dpi);
+		int h = (int)(780 * dpi);
+		// 确保窗口不超出工作区
+		if (w > workAreaWidth) w = workAreaWidth;
+		if (h > workAreaHeight) h = workAreaHeight;
 		int x = workAreaRect.left + (workAreaWidth - w) / 2;
 		int y = workAreaRect.top + (workAreaHeight - h) / 2;
 		winSetting = std::make_unique<WinSetting>(x, y, w, h);
@@ -204,6 +208,14 @@ void WinSetting::onDpiChanged()
 	menuLeftSpan = 8.f * dpi;
 	borderRadius = 6.f * dpi;
 	textSize = 14.f * dpi;
+
+	// render 可能已重建（DPI 变化或设备丢失），brush 绑定在旧 render 上已失效，需重建
+	render->CreateSolidColorBrush(D2D1::ColorF(0xE3E3E5), bg.GetAddressOf());
+	render->CreateSolidColorBrush(D2D1::ColorF(0xEEEEF0), menuBg.GetAddressOf());
+	render->CreateSolidColorBrush(D2D1::ColorF(0xD6D6D8), border.GetAddressOf());
+	render->CreateSolidColorBrush(D2D1::ColorF(0x888888), textBrush.GetAddressOf());
+	render->CreateSolidColorBrush(D2D1::ColorF(0xFA5151), red.GetAddressOf());
+	render->CreateSolidColorBrush(D2D1::ColorF(0x333333), textBrush2.GetAddressOf());
 
 	// 依赖上述尺寸/字号的文本与图标图层需要按新度量重建
 	menuLabels.clear();
