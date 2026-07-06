@@ -19,6 +19,7 @@
 
 static constexpr int timerID{ 18 };
 std::vector<std::unique_ptr<WinPin>> winPins;
+static int pinIndex{ 0 };
 
 WinPin::WinPin(const int& x, const int& y, const int& w, const int& h) :
     WinBase(x, y, w, h), history{std::make_unique<History>(this)}
@@ -34,10 +35,12 @@ void WinPin::init()
 {
     auto cap = WinCap::get();
     auto& r = cap->cutMask->maskRect;
+    pinIndex += 1;
+    auto title = std::format(L"ScreenCapture{}", pinIndex);
     // maskRect 是 WinCap 客户区坐标，转换为屏幕坐标用于创建窗口
     // x,y 存为屏幕坐标以支持后续的工具栏布局、MonitorFromRect 等操作
 	auto win = std::make_unique<WinPin>((int)(r.left + cap->x), (int)(r.top + cap->y), (int)(r.right - r.left), (int)(r.bottom - r.top));
-    win->createWindow(WS_EX_TOPMOST | WS_EX_NOACTIVATE);
+    win->createWindow(WS_EX_TOPMOST | WS_EX_NOACTIVATE, WS_MAXIMIZEBOX | WS_MINIMIZEBOX, title);
     win->initImg();
     win->enableShadow();
     win->show();
@@ -60,7 +63,9 @@ WinPin* WinPin::getCur()
 void WinPin::initFromData(int x, int y, int w, int h, std::vector<BYTE>& data)
 {
     auto win = std::make_unique<WinPin>(x, y, w, h);
-    win->createWindow(WS_EX_TOPMOST | WS_EX_NOACTIVATE);
+    pinIndex += 1;
+    auto title = std::format(L"ScreenCapture{}", pinIndex);
+    win->createWindow(WS_EX_TOPMOST | WS_EX_NOACTIVATE, WS_MAXIMIZEBOX | WS_MINIMIZEBOX, title);
     win->initImgFromData(data);
     win->enableShadow();
     win->show();
@@ -445,6 +450,10 @@ void WinPin::onMouseDown(const int& x, const int& y, bool isRight)
 	    //右键：取消置顶并隐藏工具条；再次左键按下时恢复
 	    if (isTopmost) {
 	        SetWindowPos(hwnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+            LONG_PTR exStyle = GetWindowLongPtr(hwnd, GWL_EXSTYLE);
+            exStyle &= ~WS_EX_TOOLWINDOW;
+            exStyle |= WS_EX_APPWINDOW;
+            SetWindowLongPtr(hwnd, GWL_EXSTYLE, exStyle);
 	        if (toolMain.get()) toolMain->hide();
 	        if (toolSub.get()) toolSub->hide();
 	        isTopmost = false;
@@ -455,6 +464,10 @@ void WinPin::onMouseDown(const int& x, const int& y, bool isRight)
         //左键：从"未置顶"状态恢复。先重新置顶，并复位工具条状态；
         //ToolMain 的显示交给 onMouseUp 走"拖窗结束"的通用路径，避免拖拽时工具条不跟随
         SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+        LONG_PTR exStyle = GetWindowLongPtr(hwnd, GWL_EXSTYLE);
+        exStyle &= ~WS_EX_APPWINDOW;
+        exStyle |= WS_EX_TOOLWINDOW;
+        SetWindowLongPtr(hwnd, GWL_EXSTYLE, exStyle);
         toolMain->state = L"";
         toolMain->selectIndex = -1;
         isTopmost = true;

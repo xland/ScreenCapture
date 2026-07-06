@@ -105,9 +105,9 @@ void WinBase::handleDeviceLost()
 }
 
 
-void WinBase::createWindow(const DWORD& exStyle, const DWORD& style)
+void WinBase::createWindow(const DWORD& exStyle, const DWORD& style, const std::wstring& title)
 {
-    hwnd = CreateWindowEx(WS_EX_NOREDIRECTIONBITMAP| WS_EX_TOOLWINDOW| exStyle, getWinClsName().c_str(), NULL, WS_POPUP|style, x, y, w, h, NULL, NULL, App::get()->hInstance, NULL);
+    hwnd = CreateWindowEx(WS_EX_NOREDIRECTIONBITMAP| WS_EX_TOOLWINDOW| exStyle, getWinClsName().c_str(), title.data(), WS_POPUP | style, x, y, w, h, NULL, NULL, App::get()->hInstance, NULL);
     SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
     BOOL attrib = TRUE;
     DwmSetWindowAttribute(hwnd, DWMWA_TRANSITIONS_FORCEDISABLED, &attrib, sizeof(attrib));

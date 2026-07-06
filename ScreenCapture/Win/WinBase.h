@@ -11,7 +11,7 @@ public:
 	void close();
 	void move(const int& x, const int& y);
 	void resize(const int& w, const int& h);
-	void createWindow(const DWORD& exStyle=NULL, const DWORD& style=NULL);
+	void createWindow(const DWORD& exStyle=NULL, const DWORD& style=NULL,const std::wstring& title = L"");
 	HRESULT createBitmap();
 	void enableShadow();
 	void setTimer(const UINT& elapse, const UINT& id);

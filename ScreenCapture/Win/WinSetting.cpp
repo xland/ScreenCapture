@@ -47,13 +47,12 @@ void WinSetting::init()
 		int x = workAreaRect.left + (workAreaWidth - w) / 2;
 		int y = workAreaRect.top + (workAreaHeight - h) / 2;
 		winSetting = std::make_unique<WinSetting>(x, y, w, h);
-		winSetting->createWindow(WS_EX_APPWINDOW, WS_MAXIMIZEBOX | WS_MINIMIZEBOX);
+		winSetting->createWindow(WS_EX_APPWINDOW, WS_MAXIMIZEBOX | WS_MINIMIZEBOX, Lang::get(L"setting.title"));
 	}
 }
 
 void WinSetting::onCreated()
 {
-	SetWindowText(hwnd, Lang::get(L"setting.title").c_str());
 	enableShadow();
 	menuW *= dpi;
 	menuH *= dpi;
