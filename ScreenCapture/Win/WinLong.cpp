@@ -6,6 +6,7 @@
 #include "Tool/ToolLong.h"
 #include "WinCutMask.h"
 #include "WinPin.h"
+#include "WinVideo.h"
 
 std::unique_ptr<WinLong> winLong;
 namespace {
@@ -63,6 +64,7 @@ WinLong::~WinLong()
 
 void WinLong::init()
 {
+    WinVideo::release();
     WinLong::release();
     App::initDevice();
     auto [x, y, w, h] = Util::getDesktopInfo();
@@ -70,7 +72,7 @@ void WinLong::init()
     winLong->createWindow(WS_EX_TOPMOST);//WS_EX_TOPMOST
     winLong->cutMask = std::make_unique<WinCutMask>(winLong.get());
     winLong->show();
-    UpdateWindow(winLong->hwnd);
+    //UpdateWindow(winLong->hwnd);
 }
 
 

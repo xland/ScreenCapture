@@ -35,7 +35,7 @@ void Lang::dispose()
 	lang.reset();
 }
 
-const std::wstring Lang::get(const std::wstring& key)
+const std::wstring& Lang::get(const std::wstring& key)
 {
 	if (!lang) return L"";
 	auto it = lang->dic.find(key);

@@ -12,7 +12,7 @@
 
 ToolLong::ToolLong(const int& x, const int& y, const int& w, const int& h, WinLong* parent) : ToolBase(x, y, w, h), parent{ parent }
 {
-    btnId = { L"pin", L"clipboard" , L"save" , L"close" };
+    btnId = { L"pin" , L"close" , L"save" , L"clipboard" };
 }
 ToolLong::~ToolLong()
 {
@@ -24,9 +24,9 @@ void ToolLong::onCreated()
     initBrush();
     auto fSize{ 14.f * dpi };
     btnLayout.push_back(App::makeIconLayout(L"\ue6a2", btnSize, btnSize, fSize));
-    btnLayout.push_back(App::makeIconLayout(L"\ue650", btnSize, btnSize, fSize));
-    btnLayout.push_back(App::makeIconLayout(L"\ue608", btnSize, btnSize, fSize));
     btnLayout.push_back(App::makeIconLayout(L"\ue62d", btnSize, btnSize, fSize));
+    btnLayout.push_back(App::makeIconLayout(L"\ue608", btnSize, btnSize, fSize));
+    btnLayout.push_back(App::makeIconLayout(L"\ue6ad", btnSize, btnSize, fSize));
 }
 BOOL ToolLong::onCursor()
 {

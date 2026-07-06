@@ -71,9 +71,9 @@ void ToolVideo::onPaint()
     if (isRecording) {
         render->DrawTextLayout({ mp4Start,0.f }, timerLayout.Get(), brushIcon.Get());
         render->DrawLine({ timerEnd - 3*dpi,paddingTopBottom * 2 }, { timerEnd - 3*dpi,h - paddingTopBottom * 2 }, brushSpliter.Get(), 0.6f * dpi);
-        paintIcon(timerEnd, getBtnIconLayout(L"clipboard"), hoverIndex == 6, false);
-        paintIcon(timerEnd+btnSize, getBtnIconLayout(L"save"), hoverIndex == 7, false);
-        paintIcon(timerEnd+2*btnSize, getBtnIconLayout(L"close"), hoverIndex == 8, false);
+        paintIcon(timerEnd, getBtnIconLayout(L"close"), hoverIndex == 6, false);
+        paintIcon(timerEnd + btnSize, getBtnIconLayout(L"save"), hoverIndex == 7, false);
+        paintIcon(timerEnd + 2 * btnSize, getBtnIconLayout(L"clipboard"), hoverIndex == 8, false);
     }
     else {
         float borderRadius{ 4.f * dpi }, paddingTopBottom{ 4.6f * dpi };
@@ -115,10 +115,10 @@ void ToolVideo::onMouseDown(const int& x, const int& y, bool isRight)
         killTimer(100);
         auto srcPath = parent->stop();
         if (hoverIndex == 6) {
-            Util::addFileToClipboard(srcPath);
+            DeleteFile(srcPath.data());
         }        
         else if (hoverIndex == 8) {
-            DeleteFile(srcPath.data());
+            Util::addFileToClipboard(srcPath);
         }
         close();
         parent->release();
@@ -235,7 +235,7 @@ void ToolVideo::onMouseMove(const int& x, const int& y)
             showTipAt(this->x + closeStart + btnSize / 2, tipY);
         }
         else if (index == 6) {
-            tipText = Lang::get(L"video.stopClipboard");
+            tipText = Lang::get(L"video.stopExit");
             showTipAt(this->x + timerEnd + btnSize / 2, tipY);
         }
         else if (index == 7) {
@@ -243,7 +243,7 @@ void ToolVideo::onMouseMove(const int& x, const int& y)
             showTipAt(this->x + timerEnd + btnSize / 2*3, tipY);
         }
         else if (index == 8) {
-            tipText = Lang::get(L"video.stopExit");
+            tipText = Lang::get(L"video.stopClipboard");
             showTipAt(this->x + timerEnd + btnSize / 2 * 5, tipY);
         }
         else {
@@ -268,7 +268,7 @@ void ToolVideo::onDpiChanged()
     btnLayout.push_back(App::makeIconLayout(L"\ue73b", btnSize, btnSize, fSize));
     btnLayout.push_back(App::makeIconLayout(L"\ue660", btnSize, btnSize, fSize));
     btnLayout.push_back(App::makeIconLayout(L"\ue62d", btnSize, btnSize, fSize));
-    btnLayout.push_back(App::makeIconLayout(L"\ue650", btnSize, btnSize, fSize));
+    btnLayout.push_back(App::makeIconLayout(L"\ue6ad", btnSize, btnSize, fSize));
     btnLayout.push_back(App::makeIconLayout(L"\ue608", btnSize, btnSize, fSize));
     borderRadius *= dpi;
     paddingTopBottom *= dpi;

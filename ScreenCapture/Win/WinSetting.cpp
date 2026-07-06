@@ -38,9 +38,8 @@ void WinSetting::init()
 		int workAreaHeight = workAreaRect.bottom - workAreaRect.top;
 		UINT dpiRaw = GetDpiForSystem();
 		float dpi = dpiRaw / 96.0f;
-		// 1100x780 为逻辑尺寸，乘以 DPI 得到物理尺寸
-		int w = (int)(1100 * dpi);
-		int h = (int)(780 * dpi);
+		int w = (int)(800 * dpi);
+		int h = (int)(600 * dpi);
 		// 确保窗口不超出工作区
 		if (w > workAreaWidth) w = workAreaWidth;
 		if (h > workAreaHeight) h = workAreaHeight;
