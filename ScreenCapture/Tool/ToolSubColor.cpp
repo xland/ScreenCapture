@@ -73,8 +73,9 @@ bool ToolSubColor::hover(const int& x)
         indexHovered = indexColor;
         if (indexColor >= 0) {
             std::vector<std::wstring> names{ L"red",L"yellow", L"green", L"cyan", L"blue", L"purple", L"pink", L"black", L"white" };
-            win->tipText = Lang::get(std::format(L"color.{}", names[indexColor]));
-            win->showTipAt(win->x + start + indexColor * btnSize + win->btnSize/2, int(win->y + win->marginTop + 4 * win->dpi + 0.5));
+            win->showTipAt(win->x + start + indexColor * btnSize + win->btnSize/2, 
+                int(win->y + win->marginTop + 4 * win->dpi + 0.5), 
+                Lang::get(std::format(L"color.{}", names[indexColor])));
         }
         return true;
     }

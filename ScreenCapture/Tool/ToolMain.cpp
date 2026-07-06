@@ -108,8 +108,7 @@ void ToolMain::onMouseMove(const int& x, const int& y)
     if (index >= btnId.size()) index = btnId.size() - 1;
     if (index != hoverIndex) {
         hoverIndex = (int)index;
-        tipText = Lang::get(std::format(L"tool.{}", btnId[index]));
-        showTipAt((int)(this->x + index * btnSize + btnSize / 2), (int)(this->y + 4 * dpi));
+        showTipAt((int)(this->x + index * btnSize + btnSize / 2), (int)(this->y + 4 * dpi), Lang::get(std::format(L"tool.{}", btnId[index])));
         refresh();
     }
 }

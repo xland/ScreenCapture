@@ -207,44 +207,34 @@ void ToolVideo::onMouseMove(const int& x, const int& y)
         hoverIndex = index;
         auto tipY{ this->y + 4 * dpi };
         if (isRecording && index == 0) {
-            tipText = Lang::get(L"video.stopRecord");
-            showTipAt(this->x + timerEnd + btnSize / 2, tipY);
+            showTipAt(this->x + timerEnd + btnSize / 2, tipY, Lang::get(L"video.stopRecord"));
         }
         else if (index == 0) {
-            tipText = Lang::get(L"video.outputMp4");
-            showTipAt(this->x + mp4Start + (mp4End - mp4Start) / 2, tipY);
+            showTipAt(this->x + mp4Start + (mp4End - mp4Start) / 2, tipY, Lang::get(L"video.outputMp4"));
         }
         else if (index == 1) {
-            tipText = Lang::get(L"video.outputGif");
-            showTipAt(this->x + gifEnd - (mp4End - mp4Start) / 2, tipY);
+            showTipAt(this->x + gifEnd - (mp4End - mp4Start) / 2, tipY, Lang::get(L"video.outputGif"));
         }
         else if (index == 2) {
-            tipText = Lang::get(L"video.recordSystem");
-            showTipAt(this->x + speakerStart + btnSize / 2, tipY);
+            showTipAt(this->x + speakerStart + btnSize / 2, tipY, Lang::get(L"video.recordSystem"));
         }
         else if (index == 3) {
-            tipText = Lang::get(L"video.recordMic");
-            showTipAt(this->x + micStart + btnSize / 2, tipY);
+            showTipAt(this->x + micStart + btnSize / 2, tipY, Lang::get(L"video.recordMic"));
         }
         else if (index == 4) {
-            tipText = Lang::get(L"video.startRecord");
-            showTipAt(this->x + clapperStart + btnSize / 2, tipY);
+            showTipAt(this->x + clapperStart + btnSize / 2, tipY, Lang::get(L"video.startRecord"));
         }
         else if (index == 5) {
-            tipText = Lang::get(L"video.exit");
-            showTipAt(this->x + closeStart + btnSize / 2, tipY);
+            showTipAt(this->x + closeStart + btnSize / 2, tipY, Lang::get(L"video.exit"));
         }
         else if (index == 6) {
-            tipText = Lang::get(L"video.stopExit");
-            showTipAt(this->x + timerEnd + btnSize / 2, tipY);
+            showTipAt(this->x + timerEnd + btnSize / 2, tipY, Lang::get(L"video.stopExit"));
         }
         else if (index == 7) {
-            tipText = Lang::get(L"video.stopFile");
-            showTipAt(this->x + timerEnd + btnSize / 2*3, tipY);
+            showTipAt(this->x + timerEnd + btnSize / 2*3, tipY, Lang::get(L"video.stopFile"));
         }
         else if (index == 8) {
-            tipText = Lang::get(L"video.stopClipboard");
-            showTipAt(this->x + timerEnd + btnSize / 2 * 5, tipY);
+            showTipAt(this->x + timerEnd + btnSize / 2 * 5, tipY, Lang::get(L"video.stopClipboard"));
         }
         else {
             hideTip();

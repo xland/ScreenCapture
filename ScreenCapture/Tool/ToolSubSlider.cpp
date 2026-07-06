@@ -57,16 +57,14 @@ void ToolSubSlider::mouseDrag(const int& x, const int& y)
 {
     if (!visible || x < start || x > end) return;
     val = ((float)x - start) / (end - start) * (max - min) + min;
-    win->tipText = std::format(L"{}", std::round(val));
-    win->showTipAt(win->x + x, int(win->y + win->marginTop + 4 * win->dpi + 0.5));
+    win->showTipAt(win->x + x, int(win->y + win->marginTop + 4 * win->dpi + 0.5), std::format(L"{}", std::round(val)));
     win->refresh();
 }
 void ToolSubSlider::mouseMove(const int& x, const int& y)
 {
     if (!visible || x < start || x > end) return;
     float val = ((float)x - start) / (end - start) * (max - min) + min;
-    win->tipText = std::format(L"{}", std::round(val));;
-    win->showTipAt(win->x + x, int(win->y + win->marginTop + 4 * win->dpi + 0.5));
+    win->showTipAt(win->x + x, int(win->y + win->marginTop + 4 * win->dpi + 0.5), std::format(L"{}", std::round(val)));
 }
 
 bool ToolSubSlider::mouseDown(const int& x, const int& y)

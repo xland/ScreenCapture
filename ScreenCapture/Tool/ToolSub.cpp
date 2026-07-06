@@ -111,8 +111,9 @@ bool ToolSub::hoverBtn(const int& x)
             if (toolMain->state == L"number")startIndex = 3;
             if (toolMain->state == L"line")startIndex = 4;
             if (toolMain->state == L"text")startIndex = 5;
-            tipText = Lang::get(std::format(L"tool.{}", btnId[startIndex + indexBtn]));
-            showTipAt((int)(this->x + btnStart + indexBtn * btnSize + btnSize / 2), (int)(this->y + marginTop + 4 * dpi));
+            showTipAt((int)(this->x + btnStart + indexBtn * btnSize + btnSize / 2), 
+                (int)(this->y + marginTop + 4 * dpi), 
+                Lang::get(std::format(L"tool.{}", btnId[startIndex + indexBtn])));
         }
         return true;
     }

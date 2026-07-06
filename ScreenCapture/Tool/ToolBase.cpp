@@ -70,8 +70,10 @@ void ToolBase::initTip()
     SendMessage(tipHwnd, TTM_SETDELAYTIME, TTDT_INITIAL, MAKELONG(0, 0));
     //SetWindowPos(tipHwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
 }
-void ToolBase::showTipAt(int x, int y)
+void ToolBase::showTipAt(int x, int y, const std::wstring& tipText)
 {
+    if (tipText == this->tipText) return;
+	this->tipText = tipText;
     TOOLINFOW ti = { 0 };
     ti.cbSize = TTTOOLINFOW_V2_SIZE;
     ti.uFlags = TTF_TRACK | TTF_ABSOLUTE;
@@ -102,5 +104,5 @@ void ToolBase::hideTip()
     ti.uId = 0;
     SendMessage(tipHwnd, TTM_TRACKACTIVATE, FALSE, (LPARAM)&ti);
     SendMessage(tipHwnd, TTM_ACTIVATE, FALSE, 0);
-    tipText = L"";
+	tipText = L"";
 }

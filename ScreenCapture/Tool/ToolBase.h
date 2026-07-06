@@ -14,7 +14,7 @@ public:
 protected:
 	void paintIcon(const float& posX,IDWriteTextLayout* icon,bool isHover,bool isSelected);
 	IDWriteTextLayout* getBtnIconLayout(const std::wstring& name);
-	void showTipAt(int x, int y);
+	void showTipAt(int x, int y,const std::wstring& tipText);
 	void hideTip();
 protected:
 	ComPtr<ID2D1SolidColorBrush> brushBg;
@@ -27,9 +27,9 @@ protected:
 	int hoverIndex{ -1 };
 	float marginTop,btnSize;
 	HWND tipHwnd;
+private:
+private:
 	std::wstring tipText;
-private:
-private:
 	TOOLINFO ti{ 0 };
 };
 
