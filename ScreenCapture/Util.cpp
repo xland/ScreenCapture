@@ -471,7 +471,22 @@ std::wstring Util::keyToStr(UINT vkCode)
         if (vkCode >= VK_NUMPAD0 && vkCode <= VK_NUMPAD9) {
             return L"Num"+std::to_wstring(vkCode - VK_NUMPAD0);
         }
-        // --- 未识别的键，返回带前缀的数字 ---
+        if (vkCode == VK_OEM_3 || vkCode == VK_OEM_1 || vkCode == VK_OEM_4 ||
+            vkCode == VK_OEM_6 || vkCode == VK_OEM_7 || vkCode == VK_OEM_5 ||
+            vkCode == VK_OEM_2 || vkCode == VK_OEM_COMMA || vkCode == VK_OEM_PERIOD ||
+            vkCode == VK_OEM_MINUS || vkCode == VK_OEM_PLUS)
+        {
+            wchar_t ch = 0;
+            // MAPVK_VK_TO_CHAR (2) 会将虚拟键码转换为不带 Shift 状态的基础字符
+            UINT scanCode = MapVirtualKeyW(vkCode, MAPVK_VK_TO_VSC);
+            int result = MapVirtualKeyW(vkCode, MAPVK_VK_TO_CHAR);
+
+            // 结果的低 16 位是字符，如果最高位(0x80000000)被置位，说明是死键(Dead Key)
+            if (result != 0 && !(result & 0x80000000)) {
+                ch = static_cast<wchar_t>(result & 0xFFFF);
+                return std::wstring(1, ch);
+            }
+        }
         return L"";
     }
 }
@@ -536,6 +551,31 @@ UINT Util::strToKey(const std::wstring& lowerName)
     if (lowerName == L"-") return VK_SUBTRACT;
     if (lowerName == L"/") return VK_DIVIDE;
     if (lowerName == L".") return VK_DECIMAL;
+    // 7. 主键盘符号键 (OEM Keys)
+    // 注意：这些 VK_OEM 键在不同键盘布局下对应的物理按键可能不同
+    // 这里以标准美式键盘 (US QWERTY) 为基准进行映射
+    if (lowerName == L"`" || lowerName == L"~") return VK_OEM_3;      // ` ~
+    if (lowerName == L"-") return VK_OEM_MINUS;                       // - _ (注意：这里会覆盖小键盘的 VK_SUBTRACT，如果需要区分，建议小键盘用 "num-" 或 "numpad-")
+    if (lowerName == L"=" || lowerName == L"+") return VK_OEM_PLUS;   // = +
+    if (lowerName == L"[") return VK_OEM_4;                           // [ {
+    if (lowerName == L"]") return VK_OEM_6;                           // ] }
+    if (lowerName == L"\\") return VK_OEM_5;                          // \ |
+    if (lowerName == L";") return VK_OEM_1;                           // ; :
+    if (lowerName == L"'") return VK_OEM_7;                           // ' "
+    if (lowerName == L",") return VK_OEM_COMMA;                       // , <
+    if (lowerName == L".") return VK_OEM_PERIOD;                      // . >
+    if (lowerName == L"/") return VK_OEM_2;                           // / ?
+
+    // 8. 动态单字符回退 (处理未知的单字符符号)
+    // 如果上面都没匹配到，且长度仅为 1，尝试让 Windows 根据当前键盘布局反向解析
+    if (lowerName.length() == 1) {
+        SHORT vkResult = VkKeyScanW(lowerName[0]);
+        if (vkResult != -1) {
+            // VkKeyScanW 返回值的低 8 位是虚拟键码，高 8 位是 Shift/Ctrl/Alt 状态
+            // 因为我们只需要基础键码，所以取低 8 位即可
+            return static_cast<UINT>(vkResult & 0xFF);
+        }
+    }
     // 未识别
     return 0;
 }
