@@ -31,10 +31,10 @@ void ToolSub::resetVal()
     btnStart = 0.f;
     btnEnd = btnStart + btnSize;
     if (toolMain->state == L"rect" || toolMain->state == L"ellipse") {
-        selectIndex = -1;
         // w = int((isFillMode ? 316 * toolMain->dpi - 120.f - span : 316 * toolMain->dpi) + 0.5f);
-        slider->setVals(16.f, 1.f, 3.f, btnEnd + span, true);
-        colorer->setVals(slider->end + span, true);
+        auto isFillMode{ selectIndex == 0 };
+        slider->setVals(16.f, 1.f, 3.f, btnEnd + span, !isFillMode);
+        colorer->setVals(isFillMode ? btnEnd : slider->end + span, true);
     }
     else if (toolMain->state == L"arrow") {
         slider->setVals(60.f, 8.f, 18.f, btnEnd + span, true);
@@ -249,8 +249,7 @@ void ToolSub::onMouseDown(const int& x, const int& y, bool isRight)
     auto colorRefresh = colorer->mouseDown(x, y);
     if ((toolMain->state == L"rect" || toolMain->state == L"ellipse" || toolMain->state == L"mosaic" || toolMain->state == L"eraser") && oldSelectIndex != selectIndex) {
         resetVal();
-    }
-    else if (flag || colorRefresh || sliderRefresh) {
+    } else  if (flag || colorRefresh || sliderRefresh) {
         refresh();
     }
 

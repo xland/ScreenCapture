@@ -94,6 +94,7 @@ void ToolMain::onMouseDown(const int& x, const int& y, bool isRight)
             // 先让 ToolMain 挪到给 ToolSub 预留空间的位置，
             // 再由 ToolSub::resetVal 根据 ToolMain 新位置摆放自身
             parent->updateToolLayout(true);
+			parent->toolSub->selectIndex = -1;
             parent->toolSub->resetVal();
             parent->toolSub->setBorderPath();
             parent->toolSub->show();
