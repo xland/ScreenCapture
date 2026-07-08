@@ -81,6 +81,9 @@ void ShapeArrow::mouseDown(const float& x, const float& y)
 	if (hoverDraggerIndex == -1) { //首次创建
 		startX = x;
 		startY = y;
+		endX = x;
+		endY = y;
+		makeArrow();
 		hoverDraggerIndex = 1;
 	}
 	else if (hoverDraggerIndex == 8) {
@@ -116,6 +119,7 @@ void ShapeArrow::mouseMove(const float& x, const float& y)
 	}
 	if (hoverDraggerIndex == -1)
 	{
+		if (!path) return;
 		BOOL contains = FALSE;
 		path->FillContainsPoint({ x, y }, nullptr, &contains);
 		if (contains) hoverDraggerIndex = 8;

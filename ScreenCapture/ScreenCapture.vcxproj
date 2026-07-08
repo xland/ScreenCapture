@@ -152,7 +152,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>comctl32.lib;d2d1.lib;dcomp.lib;dwmapi.lib;dwrite.lib;imm32.lib;mf.lib;mfreadwrite.lib;mfplat.lib;mfuuid.lib;ole32.lib;shcore.lib;shell32.lib;shlwapi.lib;version.lib;windowsapp.lib;windowscodecs.lib;winmm.lib;userenv.lib;uuid.lib;ntdll.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>D:\sdk\gifski\target\release\gifski.lib;comctl32.lib;d2d1.lib;dcomp.lib;dwmapi.lib;dwrite.lib;imm32.lib;mf.lib;mfreadwrite.lib;mfplat.lib;mfuuid.lib;ole32.lib;shcore.lib;shell32.lib;shlwapi.lib;version.lib;windowsapp.lib;windowscodecs.lib;winmm.lib;userenv.lib;uuid.lib;ntdll.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ManifestFile />
       <DelayLoadDLLs>%(DelayLoadDLLs)</DelayLoadDLLs>
     </Link>
