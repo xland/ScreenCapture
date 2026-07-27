@@ -2,9 +2,7 @@
 
 ![banner](./banner.png)
 
-# ScreenCapture
-
-A powerful and lightweight Windows screenshot tool.
+**ScreenCapture** A powerful and lightweight Windows screenshot tool.
 
 ## Features
 

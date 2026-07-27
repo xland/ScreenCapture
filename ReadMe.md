@@ -2,9 +2,7 @@
 
 ![banner](./Doc/banner.png)
 
-# ScreenCapture
-
-一个功能强大且轻量级的Windows截图工具。
+**ScreenCapture** 一个小巧但功能强大的Windows截图工具。
 
 ## 特性
 

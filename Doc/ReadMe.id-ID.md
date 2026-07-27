@@ -2,9 +2,7 @@
 
 ![banner](./banner.png)
 
-# ScreenCapture
-
-Alat penangkap layar Windows yang powerful dan ringan.
+**ScreenCapture** Alat penangkap layar Windows yang powerful dan ringan.
 
 ## Fitur
 
