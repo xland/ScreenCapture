@@ -5,7 +5,7 @@
 //#include "Win/WinCap.h"
 //#include "Win/WinVideo.h"
 //#include "Win/WinLong.h"
-//#include "Win/WinSetting.h"
+#include "Win/WinSetting.h"
 #include "Setting.h"
 
 namespace {
@@ -123,7 +123,7 @@ void Tray::onTrayRightClick()
 	}
 	else if (menuId == settingMsg)
 	{
-		//WinSetting::init();
+		WinSetting::init();
 	}
 	else if (menuId == exitMsg)
 	{
