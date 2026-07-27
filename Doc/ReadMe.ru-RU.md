@@ -1,6 +1,6 @@
-[English](./ReadMe.md) | [简体中文](./ReadMe.zhcn.md) | **Русский** | [Bahasa Indonesia](./ReadMe.id.md)
+[English](./ReadMe.en-US.md) | [简体中文](https://github.com/xland/ScreenCapture/) | **Русский** | [Bahasa Indonesia](./ReadMe.id-ID.md)
 
-![banner](./Doc/banner.png)
+![banner](./banner.png)
 
 # ScreenCapture
 
@@ -22,7 +22,7 @@
 
 ## Загрузка
 
-[Release](https://github.com/xland/ScreenCapture/releases/) (778KB)
+[Release](https://github.com/xland/ScreenCapture/releases/) (~800KB)
 
 ## Поддерживаемые операционные системы
 
@@ -74,22 +74,20 @@
 <table>
   <tr>
     <td align="center">
-      <img alt="Alipay" src="./Doc/alipay.jpg" width="160" height="160">
+      <img alt="Alipay" src="./alipay.jpg" width="160" height="160">
       <p>Alipay</p>
     </td>
     <td align="center">
-      <img alt="WeChat" src="./Doc/wechat.png" width="160" height="160">
+      <img alt="WeChat" src="./wechat.png" width="160" height="160">
       <p>WeChat</p>
     </td>
     <td align="center">
-      <img alt="WeChat автора" src="./Doc/author.jpg" width="160" height="160">
+      <img alt="WeChat автора" src="./author.jpg" width="160" height="160">
       <p>WeChat автора</p>
     </td>
     <td align="center">
-      <img alt="QR-код официального аккаунта" src="./Doc/gongzhonghao.jpg" width="160" height="160">
+      <img alt="QR-код официального аккаунта" src="./gongzhonghao.jpg" width="160" height="160">
       <p>Блог WeChat: Desktop Software</p>
     </td>
   </tr>
 </table>
-
-Благодарим [EV Sign](https://evsign.cn/) за предоставление услуг цифровой подписи

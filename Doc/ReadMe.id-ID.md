@@ -1,6 +1,6 @@
-[English](./ReadMe.md) | [简体中文](./ReadMe.zhcn.md) | [Русский](./ReadMe.ru.md) | **Bahasa Indonesia**
+[English](./ReadMe.en-US.md) | [简体中文](https://github.com/xland/ScreenCapture/) | [Русский](./ReadMe.ru-RU.md) | **Bahasa Indonesia**
 
-![banner](./Doc/banner.png)
+![banner](./banner.png)
 
 # ScreenCapture
 
@@ -22,7 +22,7 @@ Alat penangkap layar Windows yang powerful dan ringan.
 
 ## Unduh
 
-[Release](https://github.com/xland/ScreenCapture/releases/) (778KB)
+[Release](https://github.com/xland/ScreenCapture/releases/) (~800KB)
 
 ## Sistem Operasi yang Didukung
 
@@ -73,22 +73,20 @@ Alat penangkap layar Windows yang powerful dan ringan.
 <table>
   <tr>
     <td align="center">
-      <img alt="Sponsor Alipay" src="./Doc/alipay.jpg" width="160" height="160">
+      <img alt="Sponsor Alipay" src="./alipay.jpg" width="160" height="160">
       <p>Sponsor Alipay</p>
     </td>
     <td align="center">
-      <img alt="Sponsor WeChat" src="./Doc/wechat.png" width="160" height="160">
+      <img alt="Sponsor WeChat" src="./wechat.png" width="160" height="160">
       <p>Sponsor WeChat</p>
     </td>
     <td align="center">
-      <img alt="WeChat Penulis" src="./Doc/author.jpg" width="160" height="160">
+      <img alt="WeChat Penulis" src="./author.jpg" width="160" height="160">
       <p>WeChat Penulis</p>
     </td>
     <td align="center">
-      <img alt="QR Code Akun Resmi" src="./Doc/gongzhonghao.jpg" width="160" height="160">
+      <img alt="QR Code Akun Resmi" src="./gongzhonghao.jpg" width="160" height="160">
       <p>Blog WeChat: Desktop Software</p>
     </td>
   </tr>
 </table>
-
-Terima kasih kepada [EV Sign](https://evsign.cn/) atas layanan tanda tangan digital yang disediakan

@@ -1,94 +1,94 @@
-**English** | [简体中文](./ReadMe.zhcn.md) | [Русский](./ReadMe.ru.md) | [Bahasa Indonesia](./ReadMe.id.md)
+| **简体中文** | [English](./Doc/ReadMe.en-US.md) | [Русский](./Doc/ReadMe.ru-RU.md) | [Bahasa Indonesia](./Doc/ReadMe.id-ID.md)
 
 ![banner](./Doc/banner.png)
 
 # ScreenCapture
 
-A powerful and lightweight Windows screenshot tool.
+一个功能强大且轻量级的Windows截图工具。
 
-## Features
+## 特性
 
-- Screenshot, drawing annotations, scrolling screenshot (long screenshot), screen recording.
-- Color picker, supports shortcut keys to copy RGB color (`Ctrl+R`), HEX color (`Ctrl+H`) and CMYK color (`Ctrl+K`).
-- Draw filled and unfilled ellipses, perfect circles (hold `Shift`), rectangles, squares (hold `Shift`), arrows, numbered labels, etc.
-- Draw curves, straight lines (hold `Shift`), mosaic, eraser, text.
-- Modify or delete drawn elements at any time (hover the mouse over an element).
-- Undo (`Ctrl+Z`), redo (`Ctrl+Y`), save to file (`Ctrl+S`), save to clipboard (`Ctrl+C` or double-click).
-- Scrolling screenshot (long screenshot), screen recording (output Gif\Mp4 format).
-- Fast performance with low memory usage.
-- Small size, a single executable file, no installation required, does not depend on any dynamic link libraries.
-- Supports directly launching specified functions via command-line arguments.
-- Supports one-time execution mode (the process will not remain resident in the system).
+- 截图、绘图标注、滚动截图（截长图）、录屏。
+- 取景框，支持快捷键复制 RGB 颜色（`Ctrl+R`）、 HEX 颜色（`Ctrl+H`）与 CMYK 颜色（`Ctrl+K`）。
+- 绘制填充、非填充的椭圆、正圆（按住`Shift`）、矩形、正方形（按住`Shift`）、箭头、标号等。
+- 绘制曲线、直线（按住`Shift`）、马赛克、橡皮擦、文本。
+- 可以随时修改、删除已绘制的元素（鼠标移到元素上）。
+- 撤销（`Ctrl+Z`）、重做（`Ctrl+Y`）、保存为文件（`Ctrl+S`）、保存到剪贴板（`Ctrl+C`或双击）。
+- 滚动截图（截长图）、屏幕录制（输出Gif\Mp4格式）。
+- 运行速度快、内存占用低。
+- 体积小、仅一个可执行文件，无需安装，不依赖任何动态链接库。
+- 支持通过命令行参数直接启动指定的功能。
+- 支持用完即走（进程不驻留在系统中）。
+- 多语言支持。
 
-## Download
+## 下载
 
-[Release](https://github.com/xland/ScreenCapture/releases/) (778KB)
+[Release](https://github.com/xland/ScreenCapture/releases/) （~800KB）
 
-## Supported Operating Systems
+## 支持的操作系统
 
 - Windows 10 1607 or Later
 
-## Compilation
+## 编译
 
-- This project has no third-party library dependencies other than libraries built into the operating system.
-- The project can be compiled with Visual Studio 2026 (installed with the C++ Desktop Development Kit).
+- 除操作系统自带的库外，本项目不依赖任何第三方库，
+- 使用 Visual Studio 2026（With C++ Desktop Dev Kit）即可编译项目。
 
-## Command Line
+## 命令行
 
-- Do not add spaces on either side of the equal sign in command-line arguments.
-- The three types of arguments below can be used in combination. Example: 
-```
-> ScreenCapture.exe enter=long tray=false auto-quit=true
-```
+- 命令行中，等号两侧不要有空格
+- 以下三种命令可以组合使用，比如：
 
 ```
-// Launch and directly enter screenshot mode (default).
+ScreenCapture.exe enter=long tray=false auto-quit=true
+```
+
+```
+// 启动后立即进入屏幕截图逻辑（默认）
 > ScreenCapture.exe enter=cap
 
-// Launch and enter long scrolling screenshot mode.
+// 启动后进入长截图（滚动截图）逻辑
 > ScreenCapture.exe enter=long
 
-// Launch and enter screen recording mode.
+// 启动后进入录屏逻辑
 > ScreenCapture.exe enter=video
 ```
 
 ```
-// Show system tray icon (default).
+// 显示托盘图标（默认）
 > ScreenCapture.exe tray=true
 
-// Hide system tray icon; 
+// 不显示托盘图标
 > ScreenCapture.exe tray=false
 ```
 
 ```
-// Keep the process running after screenshot capture.
-> auto-quit=false
+// 截图完成后，进程不退出，随时待命（默认）
+> ScreenCapture.exe auto-quit=false
 
-// Terminate the process immediately after screenshot capture.
-> auto-quit=true
+// 截图完成后即退出进程。
+> ScreenCapture.exe auto-quit=true
 ```
 
-## Sponsor
+## 赞助
 
 <table>
   <tr>
     <td align="center">
-      <img alt="Alipay Sponsor" src="./Doc/alipay.jpg" width="160" height="160">
-      <p>Alipay Sponsor</p>
+      <img alt="支付宝赞助" src="./Doc/alipay.jpg" width="160" height="160">
+      <p>支付宝赞助</p>
     </td>
     <td align="center">
-      <img alt="WeChat Sponsor" src="./Doc/wechat.png" width="160" height="160">
-      <p>WeChat Sponsor</p>
+      <img alt="微信赞助" src="./Doc/wechat.png" width="160" height="160">
+      <p>微信赞助</p>
     </td>
     <td align="center">
-      <img alt="Author WeChat" src="./Doc/author.jpg" width="160" height="160">
-      <p>Author WeChat</p>
+      <img alt="作者微信" src="./Doc/author.jpg" width="160" height="160">
+      <p>作者微信</p>
     </td>
     <td align="center">
-      <img alt="Official Account QR Code" src="./Doc/gongzhonghao.jpg" width="160" height="160">
-      <p>WeChat Blog: Desktop Software</p>
+      <img alt="公众号二维码" src="./Doc/gongzhonghao.jpg" width="160" height="160">
+      <p>公众号：桌面软件</p>
     </td>
   </tr>
 </table>
-
-Thanks to [EV Sign](https://evsign.cn/) for providing digital signature services
