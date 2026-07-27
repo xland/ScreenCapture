@@ -8,6 +8,7 @@ public:
 	static void init();
 private:
 	WinSetting();
+	void initMenuItems(Ling::Node* menuBox);
 	void onCreated() override;
 	void onMenuItemClick(Ling::Button* menu);
 	LRESULT onHitTest(const POINT pos) override;

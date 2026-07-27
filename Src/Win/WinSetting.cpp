@@ -13,6 +13,8 @@ WinSetting::WinSetting() :Ling::WinBase()
 	createNativeWindow();
 }
 
+
+
 WinSetting::~WinSetting()
 {
 
@@ -20,13 +22,8 @@ WinSetting::~WinSetting()
 
 void WinSetting::init()
 {
-	if (winSetting.get()) {
-		winSetting->show();
-	}
-	else {
-		auto ptr = new WinSetting();
-		winSetting.reset(ptr);
-	}
+	auto ptr = new WinSetting();
+	winSetting.reset(ptr);
 }
 
 void WinSetting::onCreated()
@@ -38,6 +35,19 @@ void WinSetting::onCreated()
 	menuBox->setWidth(120.f);
 	menuBox->setHeightPercent(100.f);
 	menuBox->setPaddingTop(40.f);
+	initMenuItems(menuBox);
+
+	auto closeBtn = body->makeChild<Ling::Button>();
+	closeBtn->setSize(42.f, 40.f);
+	closeBtn->setPositionType(Ling::Position::Absolute);
+	closeBtn->setPosition(Ling::Edge::Right, 0);
+	closeBtn->setPosition(Ling::Edge::Top, 0);
+	closeBtn->setText(L"\ue62d");
+	closeBtn->setFontFamily(L"icon");
+	show();
+}
+void WinSetting::initMenuItems(Ling::Node* menuBox)
+{
 	for (size_t i = 0; i < 3; i++)
 	{
 		auto menuItem = menuBox->makeChild<Ling::Button>();
@@ -63,9 +73,7 @@ void WinSetting::onCreated()
 		menuItem->onClick.add([this](auto menuItem) {this->onMenuItemClick(menuItem);});
 		menus.push_back(menuItem);
 	}
-	show();
 }
-
 void WinSetting::onMenuItemClick(Ling::Button* menuItem)
 {
 	auto index = Ling::Util::getIndex(menus, menuItem);
