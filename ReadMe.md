@@ -29,6 +29,7 @@
 
 ## 编译
 
+- main分支上的代码是 2.5.x（基于Composition UI）的代码，尚不稳定。[2.4.25（基于D2D）](https://github.com/xland/ScreenCapture/tree/2.4.25)或 [2.3.3（基于Qt）](https://github.com/xland/ScreenCapture/tree/2.3.3_qt)是稳定分支。
 - 除操作系统自带的库外，本项目不依赖任何第三方库，
 - 使用 Visual Studio 2026（With C++ Desktop Dev Kit）即可编译项目。
 
