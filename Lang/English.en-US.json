@@ -1,0 +1,86 @@
+{
+    "tray": {
+        "capScreen": "Capture Screen",
+        "capLong": "Scrolling Screenshot",
+        "capVideo": "Record Screen",
+        "setting": "Settings",
+        "exit": "Exit"
+    },
+    "tool": {
+        "rect": "Rectangle",
+        "ellipse": "Ellipse",
+        "arrow": "Arrow",
+        "number": "Number",
+        "line": "Line",
+        "text": "Text",
+        "mosaic": "Mosaic",
+        "eraser": "Eraser",
+        "undo": "Undo",
+        "redo": "Redo",
+        "clipboard": "Clipboard",
+        "save": "Save",
+        "close": "Close",
+        "pin": "Pin",
+        "rectFill": "Filled Rectangle",
+        "ellipseFill": "Filled Ellipse",
+        "arrowFill": "Filled Arrow",
+        "numberFill": "Filled Number",
+        "semiTransparent": "Semi-transparent",
+        "bold": "Bold",
+        "italic": "Italic"
+    },
+    "color": {
+        "red": "Red",
+        "yellow": "Yellow",
+        "green": "Green",
+        "cyan": "Cyan",
+        "blue": "Blue",
+        "purple": "Purple",
+        "pink": "Pink",
+        "black": "Black",
+        "white": "White"
+    },
+    "video": {
+        "stopRecord": "Stop Recording",
+        "outputMp4": "Export as MP4 file",
+        "outputGif": "Export as GIF file",
+        "recordSystem": "Record system audio",
+        "recordMic": "Record microphone",
+        "startRecord": "Start Recording",
+        "exit": "Exit",
+        "stopClipboard": "Stop recording and copy to clipboard",
+        "stopFile": "Stop recording and save to file",
+        "stopExit": "Stop recording and exit"
+    },
+    "setting": {
+        "title": "ScreenCapture Settings",
+        "common": "General",
+        "shortcut": "Shortcuts",
+        "about": "About",
+        "autoStart": "Launch at startup:",
+        "showTray": "Show tray icon:",
+        "language": "Language:"
+    },
+    "about": {
+        "version": "Version:",
+        "project": "Project:",
+        "author": "Author:",
+        "wechat": "WeChat: liulun_007 (click to copy)",
+        "copySuccess": "Copied successfully",
+        "sysTip": "Information"
+    },
+    "shortcut": {
+        "cap": "Capture Screen:",
+        "long": "Scrolling Screenshot:",
+        "video": "Record Screen:",
+        "pressKey": "Press keys..."
+    },
+    "long": {
+        "start": "Start",
+        "reachedBottom": "Reached the bottom, capture stopped",
+        "tooLong": "Image too long, capture stopped"
+    },
+    "util": {
+        "file": "File"
+    }
+}

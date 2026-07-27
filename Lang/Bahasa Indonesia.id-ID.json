@@ -1,0 +1,86 @@
+{
+    "tray": {
+        "capScreen": "Tangkap Layar",
+        "capLong": "Tangkap Layar Panjang",
+        "capVideo": "Rekam Layar",
+        "setting": "Pengaturan",
+        "exit": "Keluar"
+    },
+    "tool": {
+        "rect": "Persegi",
+        "ellipse": "Elips",
+        "arrow": "Panah",
+        "number": "Nomor",
+        "line": "Garis",
+        "text": "Teks",
+        "mosaic": "Mosaik",
+        "eraser": "Penghapus",
+        "undo": "Urungkan",
+        "redo": "Ulangi",
+        "clipboard": "Papan Klip",
+        "save": "Simpan",
+        "close": "Tutup",
+        "pin": "Sematkan",
+        "rectFill": "Persegi Terisi",
+        "ellipseFill": "Elips Terisi",
+        "arrowFill": "Panah Terisi",
+        "numberFill": "Nomor Terisi",
+        "semiTransparent": "Semi Transparan",
+        "bold": "Tebal",
+        "italic": "Miring"
+    },
+    "color": {
+        "red": "Merah",
+        "yellow": "Kuning",
+        "green": "Hijau",
+        "cyan": "Cyan",
+        "blue": "Biru",
+        "purple": "Ungu",
+        "pink": "Merah Muda",
+        "black": "Hitam",
+        "white": "Putih"
+    },
+    "video": {
+        "stopRecord": "Hentikan Rekam",
+        "outputMp4": "Simpan sebagai file MP4",
+        "outputGif": "Simpan sebagai file GIF",
+        "recordSystem": "Rekam Suara Sistem",
+        "recordMic": "Rekam Suara Mikrofon",
+        "startRecord": "Mulai Rekam",
+        "exit": "Keluar",
+        "stopClipboard": "Hentikan & simpan ke papan klip",
+        "stopFile": "Hentikan & simpan ke file",
+        "stopExit": "Hentikan & keluar"
+    },
+    "setting": {
+        "title": "Pengaturan ScreenCapture",
+        "common": "Umum",
+        "shortcut": "Pintasan",
+        "about": "Tentang",
+        "autoStart": "Mulai Otomatis:",
+        "showTray": "Tampilkan Ikon Baki Sistem:",
+        "language": "Bahasa:"
+    },
+    "about": {
+        "version": "Versi:",
+        "project": "Proyek:",
+        "author": "Penulis:",
+        "wechat": "WeChat: liulun_007 (klik untuk salin)",
+        "copySuccess": "Berhasil disalin",
+        "sysTip": "Informasi"
+    },
+    "shortcut": {
+        "cap": "Tangkap Layar:",
+        "long": "Tangkap Layar Panjang:",
+        "video": "Rekam Layar:",
+        "pressKey": "Tekan tombol..."
+    },
+    "long": {
+        "start": "Mulai",
+        "reachedBottom": "Sudah mencapai dasar, tangkapan dihentikan",
+        "tooLong": "Gambar terlalu panjang, tangkapan dihentikan"
+    },
+    "util": {
+        "file": "File"
+    }
+}
