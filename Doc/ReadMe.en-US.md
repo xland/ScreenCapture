@@ -1,4 +1,4 @@
-**English** | [简体中文](https://github.com/xland/ScreenCapture/) | [Русский](./ReadMe.ru-RU.md) | [Bahasa Indonesia](./ReadMe.id-ID.md)
+[简体中文](https://github.com/xland/ScreenCapture/) | English | [Русский](./ReadMe.ru-RU.md) | [Bahasa Indonesia](./ReadMe.id-ID.md)
 
 ![banner](./banner.png)
 
