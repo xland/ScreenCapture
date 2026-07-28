@@ -105,10 +105,10 @@ std::wstring Setting::getLanguage()
     return std::wstring{ lang };
 }
 
-void Setting::setLanguage(const std::wstring& lang)
+void Setting::setLanguage(const std::wstring& langCode)
 {
     auto common = setting->configObj.GetNamedObject(L"common");
-    common.SetNamedValue(L"language", JsonValue::CreateStringValue(lang));
+    common.SetNamedValue(L"language", JsonValue::CreateStringValue(langCode));
     setting->save();
 }
 

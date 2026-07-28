@@ -22,7 +22,7 @@ void Lang::init()
 
 Lang* Lang::get()
 {
-	return nullptr;
+	return lang.get();
 }
 
 std::wstring Lang::get(const std::wstring& keyPath)
@@ -64,6 +64,7 @@ void Lang::setLang(const std::wstring& langCode)
 			}
 		}
 	}
+	Setting::get()->setLanguage(langCode);
 }
 
 std::vector<std::pair<std::wstring, std::wstring>> Lang::getSupportedLang()

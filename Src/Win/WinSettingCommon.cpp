@@ -5,18 +5,15 @@
 #include "WinSettingCommon.h"
 
 WinSettingCommon::WinSettingCommon(Ling::WinBase* parent):Ling::Node(parent)
-{
-    
+{    
     initAutoStartCtrls();
     initLangCtrls();
-    win->onMouseDown.add([this](POINT, bool) {
-        if (suspendMouseDownFlag) {
-            suspendMouseDownFlag = false;
-            return;
-        }
-        if (selectBox) {
-            win->body->removeChild(selectBox);
-        }
+    win->onMouseDown.add([this](POINT pos, bool isRight) {
+        if (!selectBox) return;
+        if (selectBtn->isPosIn(pos)) return;
+        if (selectBox->isPosIn(pos)) return;
+        win->body->removeChild(selectBox);
+        selectBox = nullptr;                   // 关键：别留悬空指针
     });
 }
 
@@ -71,15 +68,26 @@ void WinSettingCommon::initLangCtrls()
     label->setJustifyContent(Ling::Justify::Center);
     label->setFlexGrow(1.f);
 
-    auto btn = box->makeChild<Ling::Button>();
-    btn->setText(L"简体中文");
-    btn->setHeight(28.f);
-    btn->setWidth(132.f);
-    btn->setBorder(1.f, 0xE0E0E0FF);
-    btn->setHoverBg(0XFFFFFFFF);
-    btn->onClick.add([this](Ling::Button* btn) {this->showSelectBox(btn);});
-    //btn->setHoverBorderColor(0x597ef7ff);
-
+    auto langCode = Setting::get()->getLanguage();
+    auto langs = Lang::get()->getSupportedLang();
+    std::wstring langName{ L"简体中文" };
+    for (auto& pair:langs)
+    {
+        if (pair.second == langCode) {
+            langName = pair.first;
+            break;
+        }
+    }
+    selectBtn = box->makeChild<Ling::Button>();
+    selectBtn->setText(langName);
+    selectBtn->setHeight(28.f);
+    selectBtn->setWidth(132.f);
+    selectBtn->setBorder(1.f, 0xE0E0E0FF);
+    selectBtn->setHoverBg(0XFFFFFFFF);
+    selectBtn->onClick.add([this](Ling::Button* btn) {
+        if (selectBox) return;
+        this->showSelectBox(btn);
+        });
     auto border = makeChild<Ling::Node>();
     border->setHeight(1.f);
     border->setBg(0xE0E0E0FF);
@@ -103,7 +111,6 @@ void WinSettingCommon::setAutoStartBtn(Ling::Button* btn)
 
 void WinSettingCommon::showSelectBox(Ling::Button* btn)
 {
-    suspendMouseDownFlag = true;
     if (selectBox) {
         win->body->removeChild(selectBox);
     }
@@ -126,7 +133,21 @@ void WinSettingCommon::showSelectBox(Ling::Button* btn)
         btn->setWidthPercent(100.f);
         btn->setHoverBg(0Xf2f2f2FF);
         btn->setHoverColor(0X000000FF);
-        btn->onClick.add([this](Ling::Button* btn) {;});
+        btn->onClick.add([this](Ling::Button* btn) {
+            auto lang = Lang::get();
+            auto langName = btn->getText();
+            auto langs = lang->getSupportedLang();
+            for (auto& pair : langs)
+            {
+                if (pair.first == langName) {
+                    lang->setLang(pair.second);
+                    selectBtn->setText(langName);
+                    win->body->removeChild(selectBox);
+                    selectBox = nullptr;
+                    break;
+                }
+            }
+        });
     }
     auto lastItem = selectBox->makeChild<Ling::Button>();
     lastItem->setText(Lang::get(L"setting.getMoreLang"));
@@ -135,7 +156,9 @@ void WinSettingCommon::showSelectBox(Ling::Button* btn)
     lastItem->setHoverBg(0Xf2f2f2FF);
     lastItem->setHoverColor(0X000000FF);
     lastItem->onClick.add([this](Ling::Button* btn) {
-        std::wstring downloadUrl{ L"https://github.com/xland/ScreenCapture/Lang" };
+        std::wstring downloadUrl{ L"https://github.com/xland/ScreenCapture/tree/main/Lang" };
         ShellExecute(win->hwnd, L"open", downloadUrl.data(), nullptr, nullptr, SW_SHOWNORMAL);
-        });
+        win->body->removeChild(selectBox);
+        selectBox = nullptr;
+    });
 }

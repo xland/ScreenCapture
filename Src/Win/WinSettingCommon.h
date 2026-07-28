@@ -11,7 +11,7 @@ private:
 	void setAutoStartBtn(Ling::Button* btn);
 	void showSelectBox(Ling::Button* btn);
 private:
+	Ling::Button* selectBtn{ nullptr };
 	Ling::ScrollerBox* selectBox{nullptr};
-	bool suspendMouseDownFlag{ false };
 };
 
