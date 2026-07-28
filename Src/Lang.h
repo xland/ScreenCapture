@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include <include/Ling.h>
-#include <unordered_map>
+#include <vector>
 #include <winrt/Windows.Data.Json.h>
 using namespace winrt::Windows::Data::Json;
 
@@ -13,7 +13,7 @@ public:
 	static std::wstring get(const std::wstring& keyPath);
 	const std::wstring& getLang();
 	void setLang(const std::wstring& langCode);
-	std::unordered_map<std::wstring,std::wstring> getSupportedLang();
+	std::vector<std::pair<std::wstring, std::wstring>> getSupportedLang();
 public:
 	JsonObject langObj;
 private:

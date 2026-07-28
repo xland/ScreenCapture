@@ -68,9 +68,34 @@ void Setting::setKeys(const int& type, const std::vector<std::wstring>& keys)
 
 void Setting::setAutoStart(bool autoStart)
 {
+    std::wstring runKey = L"Software\\Microsoft\\Windows\\CurrentVersion\\Run";
+    if (autoStart) {
+        wchar_t buffer[MAX_PATH];
+        GetModuleFileName(nullptr, buffer, MAX_PATH);
+        auto curPath = std::filesystem::path(buffer);
+        std::wstring commandLine = std::format(L"\"{}\" --auto-start", curPath.wstring());
+        HKEY hKey;
+        if (RegOpenKeyEx(HKEY_CURRENT_USER, runKey.data(), 0, KEY_WRITE, &hKey) == ERROR_SUCCESS) {
+            RegSetValueEx(hKey, L"ScreenCapture", 0, REG_SZ, (const BYTE*)commandLine.data(), (commandLine.size() + 1) * sizeof(wchar_t));
+            RegCloseKey(hKey);
+        }
+    }
+    else {
+        HKEY hKey;
+        if (RegOpenKeyEx(HKEY_CURRENT_USER, runKey.data(), 0, KEY_WRITE, &hKey) == ERROR_SUCCESS) {
+            RegDeleteValue(hKey, L"ScreenCapture");
+            RegCloseKey(hKey);
+        }
+    }
     auto common = configObj.GetNamedObject(L"common");
     common.SetNamedValue(L"autoStart", JsonValue::CreateBooleanValue(autoStart));
     save();
+}
+
+bool Setting::getAutoStart()
+{
+    auto common = configObj.GetNamedObject(L"common");
+    return common.GetNamedBoolean(L"autoStart");
 }
 
 std::wstring Setting::getLanguage()
@@ -106,8 +131,6 @@ std::filesystem::path Setting::initDataPath()
     }
     return dataPath;
 }
-
-
 
 void Setting::save()
 {

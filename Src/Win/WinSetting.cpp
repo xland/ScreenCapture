@@ -1,19 +1,21 @@
 ﻿#include "pch.h"
+#include <filesystem>
 #include "../App.h"
-#include "WinSetting.h"
 #include "../Lang.h"
+#include "WinSetting.h"
+#include "WinSettingCommon.h"
+#include "WinSettingShortcut.h"
+#include "WinSettingAbout.h"
 
 std::unique_ptr<WinSetting> winSetting;
 
 WinSetting::WinSetting() :Ling::WinBase()
 {
 	setTitle(Lang::get(L"setting.title"));
-	setSize(800, 600);
+	setSize(680, 560);
 	setCenter();
 	createNativeWindow();
 }
-
-
 
 WinSetting::~WinSetting()
 {
@@ -30,6 +32,7 @@ void WinSetting::onCreated()
 {
 	enableShadow();
 	body->setBg(0xFAFAFAFF);
+	body->setFlexDirection(Ling::FlexDirection::Row);
 	auto menuBox = body->makeChild<Ling::Node>();
 	menuBox->setBg(0xEEEEF0FF);
 	menuBox->setWidth(120.f);
@@ -37,11 +40,20 @@ void WinSetting::onCreated()
 	menuBox->setPaddingTop(40.f);
 	initMenuItems(menuBox);
 
+	content = body->makeChild<WinSettingCommon>();
+	content->setFlexGrow(1.0);
+	content->setHeightPercent(100.f);
+	content->setPaddingTop(40.f);
+	content->setPadding(20.f, 40.f, 20.f, 40.f);
+	content->setFlexDirection(Ling::FlexDirection::Column);
+
 	auto closeBtn = body->makeChild<Ling::Button>();
-	closeBtn->setSize(42.f, 40.f);
+	closeBtn->setSize(42.f, 32.f);
 	closeBtn->setPositionType(Ling::Position::Absolute);
 	closeBtn->setPosition(Ling::Edge::Right, 0);
 	closeBtn->setPosition(Ling::Edge::Top, 0);
+	closeBtn->setHoverColor(0xFFFFFFFF);
+	closeBtn->setHoverBg(0xE81123FF);
 	closeBtn->setText(L"\ue62d");
 	closeBtn->setFontFamily(L"icon");
 	show();
@@ -55,9 +67,9 @@ void WinSetting::initMenuItems(Ling::Node* menuBox)
 		menuItem->setHeight(40.f);
 		if (i == 0) {
 			menuItem->setColor(0xFFFFFFFF);
-			menuItem->setBg(0x2f54ebff);
+			menuItem->setBg(0x597ef7ff);
 			menuItem->setHoverColor(0xFFFFFFFF);
-			menuItem->setHoverBg(0x2f54ebff);
+			menuItem->setHoverBg(0x597ef7ff);
 			menuItem->setText(Lang::get(L"setting.common"));
 		}
 		else {
@@ -85,9 +97,24 @@ void WinSetting::onMenuItemClick(Ling::Button* menuItem)
 	oldItem->setHoverBg(0xE1E1E3ff);
 	menuIndex = index;
 	menuItem->setColor(0xFFFFFFFF);
-	menuItem->setBg(0x2f54ebff);
+	menuItem->setBg(0x597ef7ff);
 	menuItem->setHoverColor(0xFFFFFFFF);
-	menuItem->setHoverBg(0x2f54ebff);
+	menuItem->setHoverBg(0x597ef7ff);
+
+	body->removeChild(content);
+	if (menuIndex == 0) {
+		content = body->makeChild<WinSettingCommon>();
+	}
+	else if (menuIndex == 1) {
+		content = body->makeChild<WinSettingShortcut>();
+	}
+	else if (menuIndex == 2) {
+		content = body->makeChild<WinSettingAbout>();
+	}
+	content->setFlexGrow(1.0);
+	content->setHeightPercent(100.f);
+	content->setPadding(20.f,40.f,20.f,40.f);
+	content->setFlexDirection(Ling::FlexDirection::Column);
 }
 
 LRESULT WinSetting::onHitTest(const POINT pos)

@@ -15,5 +15,6 @@ private:
 private:
 	std::vector<Ling::Button*> menus;
 	int menuIndex{ 0 };
+	Ling::Node* content{nullptr};
 };
 

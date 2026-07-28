@@ -14,6 +14,7 @@ public:
 	const JsonObject getConfigObj();
 	void setKeys(const int& type, const std::vector<std::wstring>& keys);
 	void setAutoStart(bool autoStart);
+	bool getAutoStart();
 	std::wstring getLanguage();
 	void setLanguage(const std::wstring& lang);
 private:
