@@ -8,9 +8,14 @@ public:
 private:
 	void onBtnClick(Ling::Button* btn);
 	void resetCurKey();
+	void onKeyDown(UINT key);
+	void onKeyUp(UINT key);
+	std::wstring keyToStr(UINT vkCode);
+private:
 	std::vector<Ling::Button*> btns;
 	std::wstring curKey;
-	winrt::event_token onMouseDownToken;
+	winrt::event_token onMouseDownToken, onKeyDownToken;
+	std::vector<std::wstring> tempKeys;
 	std::shared_ptr<bool> alive{ std::make_shared<bool>(true) };
 };
 

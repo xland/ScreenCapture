@@ -3,7 +3,13 @@
 #include "Setting.h"
 #include "App.h"
 
-std::unique_ptr<Setting> setting;
+namespace {
+    std::unique_ptr<Setting> setting;
+    constexpr int capShortcutMsgId{ 100 };
+    constexpr int longShortcutMsgId{ 101 };
+    constexpr int videoShortcutMsgId{ 102 };
+}
+
 
 Setting::Setting() :dataPath{initDataPath()}
 {
@@ -53,7 +59,13 @@ void Setting::setShortcutKey(const std::wstring& type, const std::vector<std::ws
     }
     str.erase(0,1);
     auto shortcutKey = configObj.GetNamedObject(L"shortcutKey");
-    shortcutKey.SetNamedValue(L"cap", JsonValue::CreateStringValue(str));
+    shortcutKey.SetNamedValue(type, JsonValue::CreateStringValue(str));
+    auto app = Ling::App::get();
+    UINT msgId = 120;
+    if (type == L"long") msgId = 121;
+    else if (type == L"video") msgId = 122;
+    app->unRegHotKey(msgId);
+    app->regHotKey(str, msgId);
     save();
 }
 
