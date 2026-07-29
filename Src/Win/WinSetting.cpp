@@ -56,6 +56,9 @@ void WinSetting::onCreated()
 	closeBtn->setHoverBg(0xE81123FF);
 	closeBtn->setText(L"\ue62d");
 	closeBtn->setFontFamily(L"icon");
+	closeBtn->onClick.add([](Ling::Button* btn) {
+		btn->win->close();
+		});
 	show();
 }
 void WinSetting::initMenuItems(Ling::Node* menuBox)

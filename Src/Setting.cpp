@@ -44,7 +44,7 @@ const JsonObject Setting::getConfigObj()
     return configObj;
 }
 
-void Setting::setKeys(const int& type, const std::vector<std::wstring>& keys)
+void Setting::setShortcutKey(const std::wstring& type, const std::vector<std::wstring>& keys)
 {
     std::wstring str;
     for (size_t i = 0; i < keys.size(); i++)
@@ -52,18 +52,15 @@ void Setting::setKeys(const int& type, const std::vector<std::wstring>& keys)
         str += L"+" + keys[i];
     }
     str.erase(0,1);
-
     auto shortcutKey = configObj.GetNamedObject(L"shortcutKey");
-    if (type == 0) {
-        shortcutKey.SetNamedValue(L"cap",JsonValue::CreateStringValue(str));
-    }
-    else if (type == 1) {
-        shortcutKey.SetNamedValue(L"long", JsonValue::CreateStringValue(str));
-    }
-    else if (type == 2) {
-        shortcutKey.SetNamedValue(L"video", JsonValue::CreateStringValue(str));
-    }
+    shortcutKey.SetNamedValue(L"cap", JsonValue::CreateStringValue(str));
     save();
+}
+
+std::wstring Setting::getShortcutKey(const std::wstring& type)
+{
+    auto obj = configObj.GetNamedObject(L"shortcutKey");
+    return std::wstring{ obj.GetNamedString(type) };
 }
 
 void Setting::setAutoStart(bool autoStart)
@@ -98,21 +95,6 @@ bool Setting::getAutoStart()
     return common.GetNamedBoolean(L"autoStart");
 }
 
-std::wstring Setting::getLanguage()
-{
-    auto common = configObj.GetNamedObject(L"common");
-    auto lang = common.GetNamedString(L"language");
-    return std::wstring{ lang };
-}
-
-void Setting::setLanguage(const std::wstring& langCode)
-{
-    auto common = setting->configObj.GetNamedObject(L"common");
-    common.SetNamedValue(L"language", JsonValue::CreateStringValue(langCode));
-    setting->save();
-}
-
-
 std::filesystem::path Setting::initDataPath()
 {
     PWSTR pathTmp;
@@ -140,4 +122,16 @@ void Setting::save()
     Ling::Util::saveFile(pathStr, str);
 }
 
+std::wstring Setting::getLang()
+{
+    auto common = configObj.GetNamedObject(L"common");
+    auto lang = common.GetNamedString(L"language");
+    return std::wstring{ lang };
+}
 
+void Setting::setLang(const std::wstring& langCode)
+{
+    auto common = setting->configObj.GetNamedObject(L"common");
+    common.SetNamedValue(L"language", JsonValue::CreateStringValue(langCode));
+    setting->save();
+}

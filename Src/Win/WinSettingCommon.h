@@ -14,5 +14,6 @@ private:
 	Ling::Button* selectBtn{ nullptr };
 	Ling::ScrollerBox* selectBox{ nullptr };
 	winrt::event_token onMouseDownToken;
+	std::shared_ptr<bool> alive{ std::make_shared<bool>(true) };
 };
 

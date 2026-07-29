@@ -8,11 +8,12 @@ WinSettingCommon::WinSettingCommon(Ling::WinBase* parent):Ling::Node(parent)
 {    
     initAutoStartCtrls();
     initLangCtrls();
-
 }
 
 WinSettingCommon::~WinSettingCommon()
 {
+    win->body->removeChild(selectBox);
+    *alive = false;
     win->onMouseDown.remove(onMouseDownToken);
 }
 
@@ -62,7 +63,7 @@ void WinSettingCommon::initLangCtrls()
     label->setJustifyContent(Ling::Justify::Center);
     label->setFlexGrow(1.f);
 
-    auto langCode = Setting::get()->getLanguage();
+    auto langCode = Setting::get()->getLang();
     auto langs = Lang::get()->getSupportedLang();
     std::wstring langName{ L"简体中文" };
     for (auto& pair:langs)
@@ -105,11 +106,12 @@ void WinSettingCommon::setAutoStartBtn(Ling::Button* btn)
 
 void WinSettingCommon::showSelectBox(Ling::Button* btn)
 {
-    onMouseDownToken = win->onMouseDown.add([this](POINT pos, bool isRight) {
+    auto guard = alive;
+    onMouseDownToken = win->onMouseDown.add([this, guard](POINT pos, bool isRight) {
+        if (!*guard) return;
         if (!selectBox) return;
         if (selectBtn->isPosIn(pos)) return;
         if (selectBox->isPosIn(pos)) return;
-        win->body->removeChild(selectBox);
         selectBox = nullptr;
         win->onMouseDown.remove(onMouseDownToken);
     });
@@ -144,7 +146,7 @@ void WinSettingCommon::showSelectBox(Ling::Button* btn)
             for (auto& pair : langs)
             {
                 if (pair.first == langName) {
-                    lang->setLang(pair.second);
+                    Setting::get()->setLang(pair.second);
                     win->close();
                     WinSetting::init();
                     break;

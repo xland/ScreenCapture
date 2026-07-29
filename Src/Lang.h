@@ -11,13 +11,12 @@ public:
 	static void init();
 	static Lang* get();
 	static std::wstring get(const std::wstring& keyPath);
-	const std::wstring& getLang();
-	void setLang(const std::wstring& langCode);
 	std::vector<std::pair<std::wstring, std::wstring>> getSupportedLang();
 public:
-	JsonObject langObj;
 private:
 	Lang();
+	void initLang(const std::wstring& langCode);
 	void load(const std::wstring& lang);
-	std::wstring langCode{ L"zh-CN" };
+private:
+	JsonObject langObj;
 };
