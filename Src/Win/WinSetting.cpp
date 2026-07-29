@@ -35,7 +35,7 @@ void WinSetting::onCreated()
 	body->setFlexDirection(Ling::FlexDirection::Row);
 	auto menuBox = body->makeChild<Ling::Node>();
 	menuBox->setBg(0xEEEEF0FF);
-	menuBox->setWidth(120.f);
+	menuBox->setWidth(160.f);
 	menuBox->setHeightPercent(100.f);
 	menuBox->setPaddingTop(40.f);
 	initMenuItems(menuBox);

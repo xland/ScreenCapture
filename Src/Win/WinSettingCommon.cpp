@@ -8,18 +8,12 @@ WinSettingCommon::WinSettingCommon(Ling::WinBase* parent):Ling::Node(parent)
 {    
     initAutoStartCtrls();
     initLangCtrls();
-    win->onMouseDown.add([this](POINT pos, bool isRight) {
-        if (!selectBox) return;
-        if (selectBtn->isPosIn(pos)) return;
-        if (selectBox->isPosIn(pos)) return;
-        win->body->removeChild(selectBox);
-        selectBox = nullptr;                   // 关键：别留悬空指针
-    });
+
 }
 
 WinSettingCommon::~WinSettingCommon()
 {
-
+    win->onMouseDown.remove(onMouseDownToken);
 }
 
 void WinSettingCommon::initAutoStartCtrls()
@@ -81,7 +75,7 @@ void WinSettingCommon::initLangCtrls()
     selectBtn = box->makeChild<Ling::Button>();
     selectBtn->setText(langName);
     selectBtn->setHeight(28.f);
-    selectBtn->setWidth(132.f);
+    selectBtn->setWidth(160.f);
     selectBtn->setBorder(1.f, 0xE0E0E0FF);
     selectBtn->setHoverBg(0XFFFFFFFF);
     selectBtn->onClick.add([this](Ling::Button* btn) {
@@ -111,6 +105,16 @@ void WinSettingCommon::setAutoStartBtn(Ling::Button* btn)
 
 void WinSettingCommon::showSelectBox(Ling::Button* btn)
 {
+    onMouseDownToken = win->onMouseDown.add([this](POINT pos, bool isRight) {
+        if (!selectBox) return;
+        if (selectBtn->isPosIn(pos)) return;
+        if (selectBox->isPosIn(pos)) return;
+        win->body->removeChild(selectBox);
+        selectBox = nullptr;
+        win->onMouseDown.remove(onMouseDownToken);
+    });
+
+
     if (selectBox) {
         win->body->removeChild(selectBox);
     }
@@ -141,9 +145,8 @@ void WinSettingCommon::showSelectBox(Ling::Button* btn)
             {
                 if (pair.first == langName) {
                     lang->setLang(pair.second);
-                    selectBtn->setText(langName);
-                    win->body->removeChild(selectBox);
-                    selectBox = nullptr;
+                    win->close();
+                    WinSetting::init();
                     break;
                 }
             }
@@ -156,6 +159,7 @@ void WinSettingCommon::showSelectBox(Ling::Button* btn)
     lastItem->setHoverBg(0Xf2f2f2FF);
     lastItem->setHoverColor(0X000000FF);
     lastItem->onClick.add([this](Ling::Button* btn) {
+        win->onMouseDown.remove(onMouseDownToken);
         std::wstring downloadUrl{ L"https://github.com/xland/ScreenCapture/tree/main/Lang" };
         ShellExecute(win->hwnd, L"open", downloadUrl.data(), nullptr, nullptr, SW_SHOWNORMAL);
         win->body->removeChild(selectBox);

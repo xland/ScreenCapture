@@ -12,6 +12,7 @@ private:
 	void showSelectBox(Ling::Button* btn);
 private:
 	Ling::Button* selectBtn{ nullptr };
-	Ling::ScrollerBox* selectBox{nullptr};
+	Ling::ScrollerBox* selectBox{ nullptr };
+	winrt::event_token onMouseDownToken;
 };
 
