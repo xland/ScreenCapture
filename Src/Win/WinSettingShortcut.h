@@ -7,7 +7,8 @@ public:
 	~WinSettingShortcut();
 private:
 	void onBtnClick(Ling::Button* btn);
-	void resetCurKey();
+	void beginCapture(Ling::Button* btn);
+	void endCapture();
 	void onKeyDown(UINT key);
 	void onKeyUp(UINT key);
 	std::wstring keyToStr(UINT vkCode);

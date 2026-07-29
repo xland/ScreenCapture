@@ -4,11 +4,25 @@
 #include "Tray.h"
 #include "Lang.h"
 
+std::unique_ptr<App> app;
+
+
 App::~App()
 {
 }
 
 void App::init()
+{
+    auto ptr = new App();
+    app.reset(ptr);
+}
+
+App* App::get()
+{
+    return app.get();
+}
+
+App::App()
 {
     Ling::init();
     auto app = Ling::App::get();
@@ -24,8 +38,4 @@ void App::init()
         if (flag) return;
         Tray::init();
     }
-}
-
-App::App()
-{
 }

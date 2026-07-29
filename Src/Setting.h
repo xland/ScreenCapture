@@ -18,6 +18,7 @@ public:
 	bool getAutoStart();
 	std::wstring getLang();
 	void setLang(const std::wstring& lang);
+	void initShortcutKeys();
 private:
 	Setting();
 	std::filesystem::path initDataPath();

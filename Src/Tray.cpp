@@ -10,16 +10,11 @@
 
 namespace {
 	std::unique_ptr<Tray> trayIns;
-	static constexpr UINT secondInsMsg = 560;
-	static constexpr UINT trayClickMsg = 561;
-	static constexpr UINT capScreenMsg = 562;
-	static constexpr UINT capLongMsg = 563;
-	static constexpr UINT capVideoMsg = 564;
-	static constexpr UINT settingMsg = 565;
-	static constexpr UINT exitMsg = 566;
-	static constexpr UINT capScreenKeyMsg = 567;
-	static constexpr UINT capLongKeyMsg = 568;
-	static constexpr UINT capVideoKeyMsg = 569;
+	static constexpr UINT capScreenMsg = 160;
+	static constexpr UINT capLongMsg = 161;
+	static constexpr UINT capVideoMsg = 162;
+	static constexpr UINT settingMsg = 163;
+	static constexpr UINT exitMsg = 164;
 }
 
 
@@ -27,21 +22,8 @@ Tray::Tray()
 {
 	auto lingApp = Ling::App::get();
 	lingApp->initTray(100, L"Screen Capture");
-	regHotKeys();
-	lingApp->onHotKey.add([this](UINT msgId) {
-		if (msgId == capScreenKeyMsg) {
-			//WinCap::init();
-		}
-		else if (msgId == capLongKeyMsg) {
-			//WinLong::init();
-		}
-		else if (msgId == capVideoKeyMsg) {
-			//WinVideo::init();
-		}
-	});
-	lingApp->onSecondInstance.add([this]() {
-		//WinCap::init();
-	});
+	Setting::get()->initShortcutKeys();
+
 	lingApp->onTrayMouseEvent.add([this](bool isDown, bool isRight) {
 		if (isDown && !isRight) {
 			//WinCap::init();
@@ -55,7 +37,6 @@ Tray::Tray()
 
 Tray::~Tray()
 {
-	unregHotKeys();
 }
 void Tray::init()
 {
@@ -68,14 +49,6 @@ Tray* Tray::get()
 	return trayIns.get();
 }
 
-
-void Tray::unregHotKeys()
-{
-	auto lingApp = Ling::App::get();
-	lingApp->unRegHotKey(capScreenMsg);
-	lingApp->unRegHotKey(capLongKeyMsg);
-	lingApp->unRegHotKey(capVideoKeyMsg);
-}
 LRESULT CALLBACK Tray::wndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	auto self = reinterpret_cast<Tray*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
@@ -87,17 +60,6 @@ LRESULT CALLBACK Tray::wndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 		
 	}
     return DefWindowProc(hWnd, msg, wParam, lParam);
-}
-void Tray::regHotKeys()
-{
-	auto lingApp = Ling::App::get();
-	auto configShortcut = Setting::get()->getConfigObj().GetNamedObject(L"shortcutKey");
-	std::wstring capStr{ configShortcut.GetNamedString(L"cap") };
-	lingApp->regHotKey(capStr, capScreenMsg);
-	std::wstring longStr{ configShortcut.GetNamedString(L"long") };
-	lingApp->regHotKey(longStr, capLongKeyMsg);
-	std::wstring videoStr{ configShortcut.GetNamedString(L"video") };
-	lingApp->regHotKey(videoStr, capVideoKeyMsg);
 }
 void Tray::onTrayRightClick()
 {

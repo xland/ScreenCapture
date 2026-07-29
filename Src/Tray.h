@@ -13,8 +13,6 @@ public:
 public:
 private:
 	Tray();
-	void unregHotKeys();
-	void regHotKeys();
 	void onTrayRightClick();
 	static LRESULT CALLBACK wndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 private:

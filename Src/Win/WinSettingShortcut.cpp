@@ -47,6 +47,26 @@ namespace {
         }
         return hasModifier && hasNormalKey && !(hasCtrl && !hasOtherModifier && hasForbiddenCtrlCommonKey);
     }
+
+    // 修饰键固定排序：Ctrl > Alt > Shift > Win > LWin > RWin > 普通键
+    int modifierRank(const std::wstring& key)
+    {
+        if (key == L"Ctrl")  return 0;
+        if (key == L"Alt")   return 1;
+        if (key == L"Shift") return 2;
+        if (key == L"Win")   return 3;
+        if (key == L"LWin")  return 4;
+        if (key == L"RWin")  return 5;
+        return 100; // 普通键都排到修饰键之后
+    }
+
+    void normalizeShortcutKeys(std::vector<std::wstring>& keys)
+    {
+        std::stable_sort(keys.begin(), keys.end(),
+            [](const std::wstring& a, const std::wstring& b) {
+                return modifierRank(a) < modifierRank(b);
+            });
+    }
 }
 
 
@@ -98,8 +118,7 @@ WinSettingShortcut::WinSettingShortcut(Ling::WinBase* parent):Ling::Node(parent)
         {
             if(btn->isPosIn(pos)) return;
         }
-        curKey = L"";
-        resetCurKey();
+        endCapture();
     });
 }
 
@@ -111,44 +130,60 @@ WinSettingShortcut::~WinSettingShortcut()
 
 void WinSettingShortcut::onBtnClick(Ling::Button* btn)
 {
-    btn->setText(Lang::get(L"shortcut.pressKey"));
-    resetCurKey();
-    curKey = btn->id;
+    // 再次点击当前正在捕获的按钮 → 取消
+    if (curKey == btn->id) {
+        endCapture();
+        return;
+    }
+    // 已经在捕获别的按钮 → 先复位旧的
+    if (!curKey.empty()) {
+        endCapture();
+    }
+    beginCapture(btn);
 }
 
-void WinSettingShortcut::resetCurKey()
+void WinSettingShortcut::beginCapture(Ling::Button* btn)
 {
-    if (!curKey.empty()) {
-        for (auto& btn : btns)
-        {
-            if (btn->id == curKey) {
-                btn->setText(Setting::get()->getShortcutKey(curKey));
-                break;
-            }
+    curKey = btn->id;
+    tempKeys.clear();
+    btn->setText(Lang::get(L"shortcut.pressKey"));
+}
+
+void WinSettingShortcut::endCapture()
+{
+    if (curKey.empty()) return;
+    for (auto& btn : btns)
+    {
+        if (btn->id == curKey) {
+            btn->setText(Setting::get()->getShortcutKey(curKey));
+            break;
         }
     }
+    curKey.clear();
+    tempKeys.clear();
 }
 
 void WinSettingShortcut::onKeyDown(UINT key)
 {
-    std::wstring keyStr;
-    if (GetKeyState(VK_CONTROL) & 0x8000) {
-        keyStr = L"Ctrl";
-    }
-    if (GetKeyState(VK_MENU) & 0x8000) {
-        keyStr = L"Alt";
-    }
-    if (GetKeyState(VK_SHIFT) & 0x8000) {
-        keyStr = L"Shift";
-    }
-    if (GetAsyncKeyState(VK_LWIN) & 0x8000) {
-        keyStr = L"LWin";
-    }
-    if (GetAsyncKeyState(VK_RWIN) & 0x8000) {
-        keyStr = L"RWin";
-    }
-    keyStr = keyToStr(key);
+    auto keyStr = keyToStr(key);
     if (keyStr.empty()) return;
+
+    // 当按下的是普通键（非修饰键）时，主动补齐当前按住的修饰键
+    // 因为 Alt 等键走 WM_SYSKEYDOWN，Ling 框架可能不会转发到 onKeyDown
+    if (!isShortcutModifierKey(keyStr)) {
+        auto ensure = [&](int vk, const std::wstring& name) {
+            if ((GetAsyncKeyState(vk) & 0x8000) &&
+                std::find(tempKeys.begin(), tempKeys.end(), name) == tempKeys.end()) {
+                tempKeys.push_back(name);
+            }
+        };
+        ensure(VK_CONTROL, L"Ctrl");
+        ensure(VK_MENU,    L"Alt");
+        ensure(VK_SHIFT,   L"Shift");
+        ensure(VK_LWIN,    L"LWin");
+        ensure(VK_RWIN,    L"RWin");
+    }
+
     bool isContains = std::find(tempKeys.begin(), tempKeys.end(), keyStr) != tempKeys.end();
     if (isContains) return;
     tempKeys.push_back(keyStr);
@@ -156,14 +191,12 @@ void WinSettingShortcut::onKeyDown(UINT key)
 
 void WinSettingShortcut::onKeyUp(UINT key)
 {
-    if (!isValidShortcutKeys(tempKeys)) {
-        tempKeys.clear();
-        resetCurKey();
-        curKey = L"";
-        return;
+    if (curKey.empty()) return;
+    normalizeShortcutKeys(tempKeys);
+    if (isValidShortcutKeys(tempKeys)) {
+        Setting::get()->setShortcutKey(curKey, tempKeys);
     }
-    Setting::get()->setShortcutKey(curKey, tempKeys);
-    resetCurKey();
+    endCapture();
 }
 
 std::wstring WinSettingShortcut::keyToStr(UINT vkCode)

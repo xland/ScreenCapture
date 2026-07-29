@@ -27,6 +27,10 @@ Setting::Setting() :dataPath{initDataPath()}
 
 Setting::~Setting()
 {
+    //auto lingApp = Ling::App::get();
+    //lingApp->unRegHotKey(capShortcutMsgId);
+    //lingApp->unRegHotKey(longShortcutMsgId);
+    //lingApp->unRegHotKey(videoShortcutMsgId);
 }
 
 void Setting::init()
@@ -61,9 +65,9 @@ void Setting::setShortcutKey(const std::wstring& type, const std::vector<std::ws
     auto shortcutKey = configObj.GetNamedObject(L"shortcutKey");
     shortcutKey.SetNamedValue(type, JsonValue::CreateStringValue(str));
     auto app = Ling::App::get();
-    UINT msgId = 120;
-    if (type == L"long") msgId = 121;
-    else if (type == L"video") msgId = 122;
+    UINT msgId = capShortcutMsgId;
+    if (type == L"long") msgId = longShortcutMsgId;
+    else if (type == L"video") msgId = videoShortcutMsgId;
     app->unRegHotKey(msgId);
     app->regHotKey(str, msgId);
     save();
@@ -146,4 +150,32 @@ void Setting::setLang(const std::wstring& langCode)
     auto common = setting->configObj.GetNamedObject(L"common");
     common.SetNamedValue(L"language", JsonValue::CreateStringValue(langCode));
     setting->save();
+}
+
+void Setting::initShortcutKeys()
+{
+    auto lingApp = Ling::App::get();
+    auto configShortcut = Setting::get()->getConfigObj().GetNamedObject(L"shortcutKey");
+    std::wstring capStr{ configShortcut.GetNamedString(L"cap") };
+    lingApp->regHotKey(capStr, capShortcutMsgId);
+    std::wstring longStr{ configShortcut.GetNamedString(L"long") };
+    lingApp->regHotKey(longStr, longShortcutMsgId);
+    std::wstring videoStr{ configShortcut.GetNamedString(L"video") };
+    lingApp->regHotKey(videoStr, videoShortcutMsgId);
+
+    lingApp->onHotKey.add([this](UINT msg) {
+        auto a = 1;
+        if (msg == capShortcutMsgId) {
+            //WinCap::init();
+        }
+        else if (msg == longShortcutMsgId) {
+            //WinLong::init();
+        }
+        else if (msg == videoShortcutMsgId) {
+            //WinVideo::init();
+        }
+    });
+    lingApp->onSecondInstance.add([this]() {
+        //WinCap::init();
+    });
 }
