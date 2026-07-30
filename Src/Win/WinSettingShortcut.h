@@ -17,6 +17,5 @@ private:
 	std::wstring curKey;
 	winrt::event_token onMouseDownToken, onKeyDownToken;
 	std::vector<std::wstring> tempKeys;
-	std::shared_ptr<bool> alive{ std::make_shared<bool>(true) };
 };
 

@@ -2,7 +2,7 @@
 #include "Tray.h"
 #include "App.h"
 #include "Lang.h"
-//#include "Win/WinCap.h"
+#include "Win/WinCap.h"
 //#include "Win/WinVideo.h"
 //#include "Win/WinLong.h"
 #include "Win/WinSetting.h"
@@ -26,7 +26,7 @@ Tray::Tray()
 
 	lingApp->onTrayMouseEvent.add([this](bool isDown, bool isRight) {
 		if (isDown && !isRight) {
-			//WinCap::init();
+			WinCap::init();
 		}
 		else if (isDown && isRight) {
 			this->onTrayRightClick();
@@ -73,7 +73,7 @@ void Tray::onTrayRightClick()
 	auto menuId = Ling::App::get()->popupMenu(menu);
 	if (menuId == capScreenMsg)
 	{
-		//WinCap::init();
+		WinCap::init();
 	}
 	else if (menuId == capLongMsg)
 	{

@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include <include/Ling.h>
 #include "Setting.h"
+#include "Win/WinCap.h"
 #include "App.h"
 
 namespace {
@@ -166,7 +167,7 @@ void Setting::initShortcutKeys()
     lingApp->onHotKey.add([this](UINT msg) {
         auto a = 1;
         if (msg == capShortcutMsgId) {
-            //WinCap::init();
+            WinCap::init();
         }
         else if (msg == longShortcutMsgId) {
             //WinLong::init();
@@ -176,6 +177,6 @@ void Setting::initShortcutKeys()
         }
     });
     lingApp->onSecondInstance.add([this]() {
-        //WinCap::init();
+        WinCap::init();
     });
 }
