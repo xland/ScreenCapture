@@ -24,6 +24,7 @@ WinSetting::~WinSetting()
 
 void WinSetting::init()
 {
+	if (winSetting) winSetting->close();
 	auto ptr = new WinSetting();
 	winSetting.reset(ptr);
 }

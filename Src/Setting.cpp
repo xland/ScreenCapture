@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include <include/Ling.h>
 #include "Setting.h"
+#include "Lang.h"
 #include "Win/WinCap.h"
 #include "App.h"
 
@@ -151,6 +152,7 @@ void Setting::setLang(const std::wstring& langCode)
     auto common = setting->configObj.GetNamedObject(L"common");
     common.SetNamedValue(L"language", JsonValue::CreateStringValue(langCode));
     setting->save();
+	Lang::get()->initLang(langCode);
 }
 
 void Setting::initShortcutKeys()

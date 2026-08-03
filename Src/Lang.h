@@ -12,10 +12,10 @@ public:
 	static Lang* get();
 	static std::wstring get(const std::wstring& keyPath);
 	std::vector<std::pair<std::wstring, std::wstring>> getSupportedLang();
+	void initLang(const std::wstring& langCode);
 public:
 private:
 	Lang();
-	void initLang(const std::wstring& langCode);
 	void load(const std::wstring& lang);
 private:
 	JsonObject langObj;

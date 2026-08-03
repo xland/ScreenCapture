@@ -8,11 +8,13 @@ WinSettingCommon::WinSettingCommon(Ling::WinBase* parent):Ling::Node(parent)
 {    
     initAutoStartCtrls();
     initLangCtrls();
+    win->onDestroy.add([this]() {
+        this->win->body->removeChild(selectBox);
+    });
 }
 
 WinSettingCommon::~WinSettingCommon()
 {
-    win->body->removeChild(selectBox);
     win->onMouseDown.remove(onMouseDownToken);
 }
 
@@ -128,7 +130,7 @@ void WinSettingCommon::showSelectBox(Ling::Button* btn)
     selectBox->setPosition(Ling::Edge::Left, btn->x/win->dpi);
     selectBox->setPosition(Ling::Edge::Top, btn->y/win->dpi);
     selectBox->setBg(0xFFFFFFFF);
-    selectBox->setBorder(1.f, 0xE0E0E0FF);
+    selectBox->setBorder(1.f, 0x597ef766);
     for (auto& pair:langs)
     {
         auto btn = selectBox->makeChild<Ling::Button>();
@@ -146,7 +148,9 @@ void WinSettingCommon::showSelectBox(Ling::Button* btn)
                 if (pair.first == langName) {
                     Setting::get()->setLang(pair.second);
                     win->close();
-                    WinSetting::init();
+                    Ling::App::get()->dq.TryEnqueue([this]() {
+                        WinSetting::init();
+                    });
                     break;
                 }
             }
