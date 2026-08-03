@@ -111,6 +111,7 @@ void WinSettingCommon::showSelectBox(Ling::Button* btn)
         if (!this->selectBox) return;
         if (this->selectBtn->isPosIn(pos)) return;
         if (this->selectBox->isPosIn(pos)) return;
+        win->body->removeChild(selectBox);
         this->selectBox = nullptr;
         this->win->onMouseDown.remove(this->onMouseDownToken);
     });
