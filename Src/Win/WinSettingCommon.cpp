@@ -105,18 +105,15 @@ void WinSettingCommon::setAutoStartBtn(Ling::Button* btn)
 
 void WinSettingCommon::showSelectBox(Ling::Button* btn)
 {
-    auto weakThis = getWeakThis<WinSettingCommon>();
-    onMouseDownToken = win->onMouseDown.add([weakThis](POINT pos, bool isRight) {
-        auto self = weakThis.lock();
-        if (!self.get()) return;
-        if (!self->selectBox) return;
-        if (self->selectBtn->isPosIn(pos)) return;
-        if (self->selectBox->isPosIn(pos)) return;
-        self->selectBox = nullptr;
-        self->win->onMouseDown.remove(self->onMouseDownToken);
+    auto weakThis = getWeakThis();
+    onMouseDownToken = win->onMouseDown.add([this,weakThis](POINT pos, bool isRight) {
+        if (!weakThis.lock()) return;
+        if (!this->selectBox) return;
+        if (this->selectBtn->isPosIn(pos)) return;
+        if (this->selectBox->isPosIn(pos)) return;
+        this->selectBox = nullptr;
+        this->win->onMouseDown.remove(this->onMouseDownToken);
     });
-
-
     if (selectBox) {
         win->body->removeChild(selectBox);
     }

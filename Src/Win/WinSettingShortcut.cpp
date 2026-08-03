@@ -103,28 +103,25 @@ WinSettingShortcut::WinSettingShortcut(Ling::WinBase* parent):Ling::Node(parent)
         border->setBg(0xE0E0E0FF);
     }
 
-    auto weakThis = getWeakThis<WinSettingShortcut>();
-    win->onKeyDown.add([weakThis](UINT key) {
-        auto self = weakThis.lock();
-        if (!self.get()) return;
-        if (self->curKey.empty()) return;
-        self->onKeyDown(key);
+    auto weakThis = getWeakThis();
+    win->onKeyDown.add([this,weakThis](UINT key) {
+        if (!weakThis.lock()) return;
+        if (this->curKey.empty()) return;
+        this->onKeyDown(key);
     });
-    win->onKeyUp.add([weakThis](UINT key) {
-        auto self = weakThis.lock();
-        if (!self.get()) return;
-        if (self->curKey.empty()) return;
-        self->onKeyUp(key);
+    win->onKeyUp.add([this,weakThis](UINT key) {
+        if (!weakThis.lock()) return;
+        if (this->curKey.empty()) return;
+        this->onKeyUp(key);
     });
-    onMouseDownToken = win->onMouseDown.add([weakThis](POINT pos, bool isRight) {
-        auto self = weakThis.lock();
-        if (!self.get()) return;
-        if (self->curKey.empty()) return;
-        for (auto btn: self->btns)
+    onMouseDownToken = win->onMouseDown.add([this,weakThis](POINT pos, bool isRight) {
+        if (!weakThis.lock()) return;
+        if (this->curKey.empty()) return;
+        for (auto btn: this->btns)
         {
             if(btn->isPosIn(pos)) return;
         }
-        self->endCapture();
+        this->endCapture();
     });
 }
 
