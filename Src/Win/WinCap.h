@@ -17,7 +17,6 @@ private:
 	void getPixImg(POINT pos);
 	void dragMaskRect(POINT pos);
 	void switchWinRect(POINT pos);
-	void takeScreenShot();
 	void paintMaskRect(ID2D1DeviceContext* ctx);
 	void paintPix(ID2D1DeviceContext* ctx);
 	void onKey(UINT key);

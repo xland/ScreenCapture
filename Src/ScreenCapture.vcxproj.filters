@@ -48,6 +48,9 @@
     <ClCompile Include="Win\WinCap.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Win\WinPin.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Res\Resource.rc">
@@ -91,6 +94,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Win\WinCap.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Win\WinPin.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

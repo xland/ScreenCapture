@@ -3,6 +3,7 @@
 #include <include/Ling.h>
 #include <Windows.UI.Composition.Interop.h> 
 #include "WinCap.h"
+#include "../App.h"
 using namespace Microsoft::WRL;
 
 namespace
@@ -65,7 +66,7 @@ void WinCap::initPosSize()
 
 void WinCap::onCreated()
 {
-	takeScreenShot();
+    App::get()->takeScreenShot(x, y, w, h, &screenImg);
 	auto d2d = Ling::D2D::get();
     surface = d2d->createDrawingSurface(compositor, (float)w, (float)h);
     auto brush = compositor.CreateSurfaceBrush(surface);
@@ -180,36 +181,6 @@ void WinCap::switchWinRect(POINT pos)
     }
 }
 
-void WinCap::takeScreenShot()
-{
-    HDC hScreen = GetDC(NULL);
-    HDC hDC = CreateCompatibleDC(hScreen);
-    HBITMAP hBitmap = CreateCompatibleBitmap(hScreen, w, h);
-    auto oldObj = SelectObject(hDC, hBitmap);
-    BitBlt(hDC, 0, 0, w, h, hScreen, x, y, SRCCOPY);
-    ReleaseDC(NULL, hScreen);
-    std::vector<BYTE> data(size_t(w) * 4 * size_t(h));
-    BITMAPINFO bmi{};
-    bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-    bmi.bmiHeader.biWidth = w;
-    bmi.bmiHeader.biHeight = -h;
-    bmi.bmiHeader.biPlanes = 1;
-    bmi.bmiHeader.biBitCount = 32;
-    bmi.bmiHeader.biCompression = BI_RGB;
-    GetDIBits(hDC, hBitmap, 0, h, data.data(), &bmi, DIB_RGB_COLORS);
-    SelectObject(hDC, oldObj);
-    DeleteDC(hDC);
-    DeleteObject(hBitmap);
-    // BitBlt 写出的是 BGRX —— 第 4 个字节是 0，不是 255。若按 PREMULTIPLIED 解读， 每个像素都是 alpha=0 的预乘色，整张图全透明。源位图用 IGNORE 让 D2D 把 alpha 当 1。
-    // bitmapOptions 保持 NONE：这张图只作为 DrawBitmap 的源。
-    D2D1_BITMAP_PROPERTIES1 props = {
-       .pixelFormat{D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_IGNORE)},
-       .dpiX{96.0f}, .dpiY{96.0f}, .bitmapOptions{D2D1_BITMAP_OPTIONS_NONE}
-    };
-    auto d2d = Ling::D2D::get();
-    auto hr = d2d->deviceContext->CreateBitmap(D2D1::SizeU(w, h), data.data(), w * 4, props, &screenImg);
-}
-
 void WinCap::paintMaskRect(ID2D1DeviceContext* ctx)
 {
     ctx->FillRectangle(D2D1::RectF(0.f, 0.f, w, maskRect.top), brushBg.Get());
@@ -271,6 +242,7 @@ void WinCap::paintPix(ID2D1DeviceContext* ctx)
     ReleaseDC(NULL, hScreen);
     auto d2d = Ling::D2D::get();
     float padding{ 7.f * dpi },fontSize{ 10.f*dpi };
+    Microsoft::WRL::ComPtr<IDWriteTextLayout> textLayout;
     for (size_t i = 0; i < 4; i++)
     {
         std::wstring str;
@@ -287,8 +259,6 @@ void WinCap::paintPix(ID2D1DeviceContext* ctx)
         else if (i == 3) {
             str = std::format(L"POS (Ctrl+P) : X:{} Y:{}", pos.x, pos.y);
         }
-        auto d2d = Ling::D2D::get();
-        Microsoft::WRL::ComPtr<IDWriteTextLayout> textLayout;
         d2d->dwriteFactory->CreateTextLayout(str.data(), (UINT32)str.length(), d2d->baseTextFormat.Get(), FLT_MAX, FLT_MAX, &textLayout);
         textLayout->SetFontSize(fontSize, { 0,INT_MAX });
         ctx->DrawTextLayout({ pixPos.x + padding, pixPos.y + pixImgH + padding*(i+1) + fontSize*i }, textLayout.Get(), brushText.Get(), D2D1_DRAW_TEXT_OPTIONS_NONE);

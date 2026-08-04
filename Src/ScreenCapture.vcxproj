@@ -169,6 +169,7 @@
     </ClCompile>
     <ClCompile Include="Setting.cpp" />
     <ClCompile Include="Tray.cpp" />
+    <ClCompile Include="Win\WinPin.cpp" />
     <ClCompile Include="Win\WinCap.cpp" />
     <ClCompile Include="Win\WinSettingAbout.cpp" />
     <ClCompile Include="Win\WinSettingCommon.cpp" />
@@ -190,6 +191,7 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="Setting.h" />
     <ClInclude Include="Tray.h" />
+    <ClInclude Include="Win\WinPin.h" />
     <ClInclude Include="Win\WinCap.h" />
     <ClInclude Include="Win\WinSettingAbout.h" />
     <ClInclude Include="Win\WinSettingCommon.h" />
