@@ -20,9 +20,9 @@ private:
 	void takeScreenShot();
 	void paintMaskRect(ID2D1DeviceContext* ctx);
 	void paintPix(ID2D1DeviceContext* ctx);
+	void onKey(UINT key);
 	std::tuple<int, int, int, int> getCMYK(const BYTE& r, const BYTE& g, const BYTE& b);
 private:
-	COLORREF cr;
 	D2D1_RECT_F maskRect,pixImgRect;
 	std::vector<D2D1_RECT_F> winRect;
 	Microsoft::WRL::ComPtr<ID2D1Bitmap1> screenImg,pixImg;

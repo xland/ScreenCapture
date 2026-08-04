@@ -16,7 +16,7 @@ std::unique_ptr<WinCap> winCap;
 
 WinCap::WinCap() : Ling::WinBase()
 {
-	setTitle(L"WinCap");
+	setTitle(L"Screen Capture");
 	onMouseDown.add([this](POINT pos, bool isRight) {
 		if (isRight) {
 			close();
@@ -38,15 +38,8 @@ WinCap::WinCap() : Ling::WinBase()
             refresh();
         }
 	});
-	onKeyDown.add([this](UINT key) {
-		if (key == VK_ESCAPE) {
-			close();
-			winCap.reset();
-		}
-	});
-	onMouseUp.add([this](POINT pos, bool isRight) {
-		isPress = false;
-	});
+	onKeyDown.add([this](UINT key) { this->onKey(key); });
+	onMouseUp.add([this](POINT pos, bool isRight) { isPress = false; });
 }
 
 WinCap::~WinCap()
@@ -299,6 +292,53 @@ void WinCap::paintPix(ID2D1DeviceContext* ctx)
         d2d->dwriteFactory->CreateTextLayout(str.data(), (UINT32)str.length(), d2d->baseTextFormat.Get(), FLT_MAX, FLT_MAX, &textLayout);
         textLayout->SetFontSize(fontSize, { 0,INT_MAX });
         ctx->DrawTextLayout({ pixPos.x + padding, pixPos.y + pixImgH + padding*(i+1) + fontSize*i }, textLayout.Get(), brushText.Get(), D2D1_DRAW_TEXT_OPTIONS_NONE);
+    }
+}
+
+void WinCap::onKey(UINT key)
+{
+    auto func = []() {
+        POINT pos;
+        GetCursorPos(&pos);
+        HDC hScreen = GetDC(NULL);
+        COLORREF cr = GetPixel(hScreen, pos.x, pos.y);
+        ReleaseDC(NULL, hScreen);
+        return cr;
+    };
+    bool flag{ false };
+    if (key == VK_ESCAPE) {
+        flag = true;
+    }
+    else if (key == 'H' && (GetKeyState(VK_CONTROL) & 0x8000)) {
+		auto cr = func();
+        BYTE r = GetRValue(cr), g = GetGValue(cr), b = GetBValue(cr);
+        wchar_t hex[8];
+        swprintf_s(hex, L"#%02X%02X%02X", r, g, b);
+        Ling::Util::setTextToClipboard(hex);
+        flag = true;
+    }
+    else if (key == 'R' && (GetKeyState(VK_CONTROL) & 0x8000)) {
+        auto cr = func();
+        BYTE r = GetRValue(cr), g = GetGValue(cr), b = GetBValue(cr);
+        Ling::Util::setTextToClipboard(std::format(L"rgb({},{},{})", r, g, b));
+        flag = true;
+    }
+    else if (key == 'K' && (GetKeyState(VK_CONTROL) & 0x8000)) {
+        auto cr = func();
+        BYTE r = GetRValue(cr), g = GetGValue(cr), b = GetBValue(cr);
+        auto [c, m, y1, k] = getCMYK(r, g, b);
+        Ling::Util::setTextToClipboard(std::format(L"cmyk({},{},{},{})", c, m, y1, k));
+        flag = true;
+    }
+    else if (key == 'P' && (GetKeyState(VK_CONTROL) & 0x8000)) {
+        POINT pos;
+        GetCursorPos(&pos);
+        Ling::Util::setTextToClipboard(std::format(L"{},{}", pos.x, pos.y));
+        flag = true;
+    }
+    if (flag) {
+        close();
+        winCap.reset();
     }
 }
 
