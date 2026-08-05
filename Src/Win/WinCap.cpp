@@ -3,6 +3,7 @@
 #include <include/Ling.h>
 #include <Windows.UI.Composition.Interop.h> 
 #include "WinCap.h"
+#include "WinPin.h"
 #include "../App.h"
 using namespace Microsoft::WRL;
 
@@ -19,10 +20,7 @@ WinCap::WinCap() : Ling::WinBase()
 {
 	setTitle(L"Screen Capture");
 	onMouseDown.add([this](POINT pos, bool isRight) {
-		if (isRight) {
-			close();
-            winCap.reset();
-        }
+		if (isRight) { close(); }
         else {
 			isPress = true;
 			pressPos = pos;
@@ -40,7 +38,14 @@ WinCap::WinCap() : Ling::WinBase()
         }
 	});
 	onKeyDown.add([this](UINT key) { this->onKey(key); });
-	onMouseUp.add([this](POINT pos, bool isRight) { isPress = false; });
+	onMouseUp.add([this](POINT pos, bool isRight) { 
+        isPress = false; 
+        WinPin::init(maskRect.left+x,maskRect.top+y,maskRect.right - maskRect.left,maskRect.bottom-maskRect.top);
+        close();
+    });
+	onDestroy.add([this]() { 
+        winCap.reset(); 
+    });
 }
 
 WinCap::~WinCap()
@@ -275,9 +280,8 @@ void WinCap::onKey(UINT key)
         ReleaseDC(NULL, hScreen);
         return cr;
     };
-    bool flag{ false };
     if (key == VK_ESCAPE) {
-        flag = true;
+        close();
     }
     else if (key == 'H' && (GetKeyState(VK_CONTROL) & 0x8000)) {
 		auto cr = func();
@@ -285,30 +289,26 @@ void WinCap::onKey(UINT key)
         wchar_t hex[8];
         swprintf_s(hex, L"#%02X%02X%02X", r, g, b);
         Ling::Util::setTextToClipboard(hex);
-        flag = true;
+        close();
     }
     else if (key == 'R' && (GetKeyState(VK_CONTROL) & 0x8000)) {
         auto cr = func();
         BYTE r = GetRValue(cr), g = GetGValue(cr), b = GetBValue(cr);
         Ling::Util::setTextToClipboard(std::format(L"rgb({},{},{})", r, g, b));
-        flag = true;
+        close();
     }
     else if (key == 'K' && (GetKeyState(VK_CONTROL) & 0x8000)) {
         auto cr = func();
         BYTE r = GetRValue(cr), g = GetGValue(cr), b = GetBValue(cr);
         auto [c, m, y1, k] = getCMYK(r, g, b);
         Ling::Util::setTextToClipboard(std::format(L"cmyk({},{},{},{})", c, m, y1, k));
-        flag = true;
+        close();
     }
     else if (key == 'P' && (GetKeyState(VK_CONTROL) & 0x8000)) {
         POINT pos;
         GetCursorPos(&pos);
         Ling::Util::setTextToClipboard(std::format(L"{},{}", pos.x, pos.y));
-        flag = true;
-    }
-    if (flag) {
         close();
-        winCap.reset();
     }
 }
 

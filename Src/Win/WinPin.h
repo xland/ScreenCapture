@@ -3,9 +3,14 @@
 class WinPin : public Ling::WinBase
 {
 public:
-	WinPin();
+	~WinPin();
 	static void init(int x, int y, int w, int h);
 private:
-	~WinPin();
+	WinPin(int x, int y, int w, int h);
+	void onCreated() override;
+	void layout() override;
+private:
+	Microsoft::WRL::ComPtr<ID2D1Bitmap1> screenImg;
+	winrt::Windows::UI::Composition::CompositionDrawingSurface surface{ nullptr };
 };
 
