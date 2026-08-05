@@ -6,9 +6,10 @@ class WinCap:public Ling::WinBase
 public:
 	~WinCap();
 	static void init();
+	static WinCap* get();
+	Microsoft::WRL::ComPtr<ID2D1Bitmap1> getCutImg();
 private:
 	WinCap();
-	void initPosSize();
 	void onCreated() override;
 	void layout() override;
 	void initWinRects();
@@ -28,7 +29,7 @@ private:
 	D2D1_RECT_F pixSrcRect{};
 	winrt::Windows::UI::Composition::CompositionDrawingSurface surface{ nullptr };
 	POINT pressPos,pixPos;
-	bool isPress{ false };
+	bool isPress{ false }, showMaskInfo{ true };
 	Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> brushBg;
 	Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> brushBorder;
 	Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> brushText;

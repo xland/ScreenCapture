@@ -51,6 +51,14 @@ void App::takeScreenShot(int x, int y, int w, int h, ID2D1Bitmap1** img)
     auto hr = d2d->deviceContext->CreateBitmap(D2D1::SizeU(w, h), data.data(), w * 4, props, img);
 }
 
+std::tuple<int, int, int, int> App::getScreenArea()
+{
+	return std::make_tuple(GetSystemMetrics(SM_XVIRTUALSCREEN), 
+        GetSystemMetrics(SM_YVIRTUALSCREEN), 
+        GetSystemMetrics(SM_CXVIRTUALSCREEN), 
+        GetSystemMetrics(SM_CYVIRTUALSCREEN));
+}
+
 App::App()
 {
     Ling::init();

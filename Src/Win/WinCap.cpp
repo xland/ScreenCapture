@@ -19,6 +19,8 @@ std::unique_ptr<WinCap> winCap;
 WinCap::WinCap() : Ling::WinBase()
 {
 	setTitle(L"Screen Capture");
+    auto [x1, y1, w1, h1] = App::get()->getScreenArea();
+	this->x = x1;this->y = y1;this->w = w1;this->h = h1;
 	onMouseDown.add([this](POINT pos, bool isRight) {
 		if (isRight) { close(); }
         else {
@@ -56,17 +58,13 @@ void WinCap::init()
 {
     auto ptr = new WinCap();
     winCap.reset(ptr);
-    ptr->initPosSize();
 	ptr->initWinRects();
     ptr->createNativeWindow(WS_EX_TOOLWINDOW, WS_POPUP);//WS_EX_TOPMOST
 }
 
-void WinCap::initPosSize()
+WinCap* WinCap::get()
 {
-	x = GetSystemMetrics(SM_XVIRTUALSCREEN);
-	y = GetSystemMetrics(SM_YVIRTUALSCREEN);
-	w = GetSystemMetrics(SM_CXVIRTUALSCREEN);
-	h = GetSystemMetrics(SM_CYVIRTUALSCREEN);
+    return winCap.get();
 }
 
 void WinCap::onCreated()
@@ -98,8 +96,9 @@ void WinCap::layout()
     s->BeginDraw(nullptr, __uuidof(ID2D1DeviceContext), reinterpret_cast<void**>(ctx.GetAddressOf()), &offset);
     auto trans = D2D1::Matrix3x2F::Translation((float)offset.x, (float)offset.y);
     ctx->SetTransform(trans);
+    ctx->Clear(0);
     D2D1_RECT_F destRect = D2D1::RectF(0, 0, (float)w, (float)h);
-    if (screenImg) ctx->DrawBitmap(screenImg.Get(), destRect);
+    ctx->DrawBitmap(screenImg.Get(), destRect);
 	paintMaskRect(ctx.Get()); 
 	paintPix(ctx.Get());
     s->EndDraw();
@@ -131,8 +130,6 @@ void WinCap::getPixImg(POINT pos)
     const long sw = static_cast<long>(srcW), sh = static_cast<long>(srcH);
     const long iw = static_cast<long>(w), ih = static_cast<long>(h);
     // 期望的源矩形：以光标为正中心，可以越出屏幕。
-    // 不夹紧 —— 夹紧虽然能保住尺寸，但中心就不再是光标像素，准星和取色都会跟光标错位。
-    // 改成求交：越界的部分不画，交集部分按原位置摆进取景框，于是 (0,0) 处只有右下角有图。
     const long wantL = pos.x - sw / 2, wantT = pos.y - sh / 2;
     long vl = std::max(wantL, 0L), vt = std::max(wantT, 0L);
     long vr = std::min(wantL + sw, iw), vb = std::min(wantT + sh, ih);
@@ -195,6 +192,7 @@ void WinCap::paintMaskRect(ID2D1DeviceContext* ctx)
 	auto strokeWidth{ ::strokeWidth * dpi };
     auto halfStrokeWidth { strokeWidth / 2.f};
     ctx->DrawRectangle(D2D1::RectF(maskRect.left - halfStrokeWidth, maskRect.top - halfStrokeWidth, maskRect.right + halfStrokeWidth, maskRect.bottom + halfStrokeWidth), brushBorder.Get(), strokeWidth);
+	if (!showMaskInfo) return;
     auto str = std::format(L"X:{} Y:{} R:{} B:{} W:{} H:{}", maskRect.left, maskRect.top, maskRect.right, maskRect.bottom, maskRect.right - maskRect.left, maskRect.bottom - maskRect.top);
     auto d2d = Ling::D2D::get();
     Microsoft::WRL::ComPtr<IDWriteTextLayout> textLayout;
@@ -205,9 +203,9 @@ void WinCap::paintMaskRect(ID2D1DeviceContext* ctx)
     float paddingLeft{ 5 * dpi }, padding{ 2 * 2 * dpi };
     auto layoutRect = D2D1::RectF(maskRect.left - strokeWidth, maskRect.top - tm.height - padding - strokeWidth, maskRect.left + tm.width + paddingLeft + strokeWidth * 2, maskRect.top - strokeWidth);
     if (layoutRect.top < 0) {
-        layoutRect.top += tm.height + padding;
-        layoutRect.bottom += tm.height + padding;
-        layoutRect.left += strokeWidth;
+        layoutRect.top = maskRect.top;
+        layoutRect.bottom = maskRect.top + tm.height + padding;
+        layoutRect.left = maskRect.left;
     }
     ctx->FillRectangle(layoutRect, brushBg.Get());
     ctx->DrawTextLayout({ layoutRect.left + paddingLeft, layoutRect.top + padding / 2 }, textLayout.Get(), brushText.Get(), D2D1_DRAW_TEXT_OPTIONS_NONE);
@@ -350,4 +348,20 @@ std::tuple<int, int, int, int> WinCap::getCMYK(const BYTE& r, const BYTE& g, con
         static_cast<int>(std::round(Y * 100)),
         static_cast<int>(std::round(K * 100))
     );
+}
+ComPtr<ID2D1Bitmap1> WinCap::getCutImg()
+{
+    ComPtr<ID2D1Bitmap1> cutImg;
+    const UINT32 cw = (UINT32)(maskRect.right - maskRect.left);
+    const UINT32 ch = (UINT32)(maskRect.bottom - maskRect.top);
+    if (cw == 0 || ch == 0) return cutImg;
+    D2D1_BITMAP_PROPERTIES1 prop{};
+    prop.pixelFormat = screenImg->GetPixelFormat();
+    prop.bitmapOptions = D2D1_BITMAP_OPTIONS_NONE;
+    screenImg->GetDpi(&prop.dpiX, &prop.dpiY);
+    Ling::D2D::get()->deviceContext->CreateBitmap(D2D1::SizeU(cw, ch), nullptr, 0, &prop, cutImg.GetAddressOf());
+    auto start = D2D1::Point2U(0, 0);
+    auto rect = D2D1::RectU((UINT32)maskRect.left, (UINT32)maskRect.top, (UINT32)maskRect.right, (UINT32)maskRect.bottom);
+    cutImg->CopyFromBitmap(&start, screenImg.Get(), &rect);
+    return cutImg;
 }
