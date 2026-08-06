@@ -8,7 +8,15 @@ ToolMain::ToolMain(WinPin* win) : Ling::WinBase(), win(win)
 	auto btnSize{ 32.f * win->dpi };
 	x = win->x;
 	y = win->y + win->h + 5.f * win->dpi;
-	w = btnSize * btnIds.size()+ 2.f * win->dpi; //有两个分隔符
+	for (size_t i = 0; i < btnIds.size(); i++)
+	{
+		if (btnIds[i] == L"|") {
+			w += win->dpi;
+		}
+		else {
+			w += btnSize;
+		}
+	}
 	h = btnSize;
 	createNativeWindow(WS_EX_TOPMOST | WS_EX_NOACTIVATE, WS_POPUP);
 	win->onMoved.add([this,win]() {
@@ -90,7 +98,13 @@ void ToolMain::onClick(Ling::Button* btn)
 		}
 	}
 	curId = btn->id;
-	win->toolSub->setPosAndShow();
+	if (curId == L"rect") {
+		win->toolSub->showRectTools();
+	}
+	else if (curId == L"ellipse") {
+
+	}
+	
 }
 
 void ToolMain::onMinMaxInfo(MINMAXINFO* mmi)
