@@ -24,25 +24,26 @@ ToolSub::~ToolSub()
 void ToolSub::showRectTools()
 {
 	contentNode->removeAllChildren();
-	auto btnCenterX = win->toolMain->getBtnCenterX();
-	float pxW, pxH;
-	int px, py;
-	pxW = btnSize * 10 + sliderSize + 6 * dpi;
-	pxH = btnSize + marginTop;
-	px = win->toolMain->x;
-	py = win->toolMain->y + win->toolMain->h;
-	arrowX = btnCenterX;
-	setPosition(px, py + 2);
-	setSize(pxW / dpi, pxH / dpi);
-	if (!isVisible) {
-		show();
-		isVisible = true;
-	}
-	else {
-		refresh();
-	}
+	initPosSize();
+
 	auto btn = contentNode->makeChild<Ling::Button>();
 	btn->setText(L"\ue602");
+	btn->setHeightPercent(100.f);
+	btn->setFlexGrow(1.f);
+	btn->setHoverBg(0xF2F2F2ff);
+	btn->setFontFamily(L"icon");
+	btn->setFontSize(13.f);
+	initSlider();
+	initColorBtns();
+}
+
+void ToolSub::showEllipseTools()
+{
+	contentNode->removeAllChildren();
+	initPosSize();
+
+	auto btn = contentNode->makeChild<Ling::Button>();
+	btn->setText(L"\ue600");
 	btn->setHeightPercent(100.f);
 	btn->setFlexGrow(1.f);
 	btn->setHoverBg(0xF2F2F2ff);
@@ -51,36 +52,6 @@ void ToolSub::showRectTools()
 
 	initSlider();
 	initColorBtns();
-}
-
-void ToolSub::setPosAndShow()
-{
-	auto btnCenterX = win->toolMain->getBtnCenterX();
-	float pxW, pxH;
-	int px, py;
-	if (win->toolMain->curId == L"mosaic" || win->toolMain->curId == L"eraser") {
-		pxW = btnSize + sliderSize + 6 * dpi;
-		pxH = btnSize + marginTop;
-		px = int(win->toolMain->x + btnCenterX - pxW / 2.f);
-		py = win->toolMain->y + win->toolMain->h;
-		arrowX = pxW / 2.f;
-	}
-	else {
-		pxW = btnSize * 10 + sliderSize + 6*dpi;
-		pxH = btnSize + marginTop;
-		px = win->toolMain->x;
-		py = win->toolMain->y + win->toolMain->h;
-		arrowX = btnCenterX;
-	}
-	setPosition(px, py + 2);
-	setSize(pxW / dpi, pxH / dpi);
-	if (!isVisible) {
-		show();
-		isVisible = true;
-	}
-	else {
-		refresh();
-	}
 }
 
 void ToolSub::onCreated()
@@ -219,5 +190,26 @@ void ToolSub::initSlider()
 	slider->setHoverThumbColor(0x888888FF);
 	slider->setTrackColor(0x888888FF);
 	slider->setFillColor(0x888888FF);
+}
+
+void ToolSub::initPosSize()
+{
+	auto btnCenterX = win->toolMain->getBtnCenterX();
+	float pxW, pxH;
+	int px, py;
+	pxW = btnSize * 10 + sliderSize + 6 * dpi;
+	pxH = btnSize + marginTop;
+	px = win->toolMain->x;
+	py = win->toolMain->y + win->toolMain->h;
+	arrowX = btnCenterX;
+	setPosition(px, py + 2);
+	setSize(pxW / dpi, pxH / dpi);
+	if (!isVisible) {
+		show();
+		isVisible = true;
+	}
+	else {
+		refresh();
+	}
 }
 

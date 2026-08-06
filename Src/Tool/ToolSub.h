@@ -8,6 +8,7 @@ public:
 	ToolSub(WinPin* win);
 	~ToolSub();
 	void showRectTools();
+	void showEllipseTools();
 	void setPosAndShow();
 private:
 	void onCreated() override;
@@ -17,6 +18,7 @@ private:
 	void onColorSelect(Ling::Button* btn);
 	void initColorBtns();
 	void initSlider();
+	void initPosSize();
 private:
 	Ling::Node* contentNode;
 	std::vector<Ling::Button*> colorBtns;

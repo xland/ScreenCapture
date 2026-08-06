@@ -102,7 +102,7 @@ void ToolMain::onClick(Ling::Button* btn)
 		win->toolSub->showRectTools();
 	}
 	else if (curId == L"ellipse") {
-
+		win->toolSub->showEllipseTools();
 	}
 	
 }
