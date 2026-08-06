@@ -15,6 +15,8 @@ private:
 	void onMinMaxInfo(MINMAXINFO* mmi);
 	void paintBorder(ID2D1DeviceContext* ctx);
 	void onColorSelect(Ling::Button* btn);
+	void initColorBtns();
+	void initSlider();
 private:
 	Ling::Node* contentNode;
 	std::vector<Ling::Button*> colorBtns;

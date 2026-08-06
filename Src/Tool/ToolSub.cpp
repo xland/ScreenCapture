@@ -23,6 +23,7 @@ ToolSub::~ToolSub()
 
 void ToolSub::showRectTools()
 {
+	contentNode->removeAllChildren();
 	auto btnCenterX = win->toolMain->getBtnCenterX();
 	float pxW, pxH;
 	int px, py;
@@ -40,7 +41,6 @@ void ToolSub::showRectTools()
 	else {
 		refresh();
 	}
-
 	auto btn = contentNode->makeChild<Ling::Button>();
 	btn->setText(L"\ue602");
 	btn->setHeightPercent(100.f);
@@ -49,48 +49,8 @@ void ToolSub::showRectTools()
 	btn->setFontFamily(L"icon");
 	btn->setFontSize(13.f);
 
-	auto spliter = contentNode->makeChild<Ling::Slider>();
-	spliter->setWidth(100.f);
-	spliter->setMarginLeft(3.f);
-	spliter->setMarginRight(3.f);
-	spliter->setHeightPercent(100.f);
-	spliter->setThumbColor(0x888888FF);
-	spliter->setHoverThumbColor(0x888888FF);
-	spliter->setTrackColor(0x888888FF);
-	spliter->setFillColor(0x888888FF);
-
-
-
-	for (size_t i = 0; i < colors.size(); i++)
-	{
-		auto btn = contentNode->makeChild<Ling::Button>();
-		btn->setHeightPercent(100.f);
-		btn->setFlexGrow(1.f);
-		btn->setAlignItems(Ling::Align::Center);
-		btn->setJustifyContent(Ling::Justify::Center);
-		btn->setHoverBg(0XF2F2F2ff);
-		btn->onClick.add([this](Ling::Button* btn) {this->onColorSelect(btn);});
-		colorBtns.push_back(btn);
-
-		auto label = btn->makeChild<Ling::Label>();
-		label->setAlignItems(Ling::Align::Center);
-		label->setJustifyContent(Ling::Justify::Center);
-		label->setSize(13.f, 13.f);
-		if (i == 0) {
-			label->setText(L"\ue6ad");
-		}
-		label->setFontFamily(L"icon");
-		label->setFontSize(8.f);
-		label->setBg(colors[i]);
-		label->setBorderRadius(2.f);
-		if (i == colors.size() - 1) {
-			label->setColor(0x000000FF);
-			label->setBorder(1.f, 0xA8A8A8FF);
-		}
-		else {
-			label->setColor(0xFFFFFFFF);
-		}
-	}
+	initSlider();
+	initColorBtns();
 }
 
 void ToolSub::setPosAndShow()
@@ -213,3 +173,51 @@ void ToolSub::onColorSelect(Ling::Button* btn)
 		}
 	}
 }
+
+void ToolSub::initColorBtns()
+{
+	for (size_t i = 0; i < colors.size(); i++)
+	{
+		auto btn = contentNode->makeChild<Ling::Button>();
+		btn->setHeightPercent(100.f);
+		btn->setFlexGrow(1.f);
+		btn->setAlignItems(Ling::Align::Center);
+		btn->setJustifyContent(Ling::Justify::Center);
+		btn->setHoverBg(0XF2F2F2ff);
+		btn->onClick.add([this](Ling::Button* btn) {this->onColorSelect(btn);});
+		colorBtns.push_back(btn);
+
+		auto label = btn->makeChild<Ling::Label>();
+		label->setAlignItems(Ling::Align::Center);
+		label->setJustifyContent(Ling::Justify::Center);
+		label->setSize(13.f, 13.f);
+		if (i == 0) {
+			label->setText(L"\ue6ad");
+		}
+		label->setFontFamily(L"icon");
+		label->setFontSize(8.f);
+		label->setBg(colors[i]);
+		label->setBorderRadius(2.f);
+		if (i == colors.size() - 1) {
+			label->setColor(0x000000FF);
+			label->setBorder(1.f, 0xA8A8A8FF);
+		}
+		else {
+			label->setColor(0xFFFFFFFF);
+		}
+	}
+}
+
+void ToolSub::initSlider()
+{
+	auto slider = contentNode->makeChild<Ling::Slider>();
+	slider->setWidth(100.f);
+	slider->setMarginLeft(3.f);
+	slider->setMarginRight(3.f);
+	slider->setHeightPercent(100.f);
+	slider->setThumbColor(0x888888FF);
+	slider->setHoverThumbColor(0x888888FF);
+	slider->setTrackColor(0x888888FF);
+	slider->setFillColor(0x888888FF);
+}
+
