@@ -15,7 +15,7 @@ private:
 private:
 	float btnSize{ 32.f };
 	float sliderSize{ 80.f };
-	float marginTop{ 6.f };
+	float marginTop{ 3.f };
 	float arrowX{0.f};
 	WinPin* win;
 	Microsoft::WRL::ComPtr<ID2D1PathGeometry> borderPath;

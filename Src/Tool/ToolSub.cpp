@@ -10,7 +10,7 @@ ToolSub::ToolSub(WinPin* win) :Ling::WinBase(), win(win)
 {
 	//btnSize *= dpi;
 	//sliderSize *= dpi;
-	//marginTop *= dpi;
+	marginTop *= dpi;
 	createNativeWindow(WS_EX_TOPMOST | WS_EX_NOACTIVATE, WS_POPUP);
 	//win->onMoved.add([this, win]() {
 	//	this->setPosition(win->x, win->y + win->h + 5.f * win->dpi);
@@ -23,18 +23,23 @@ ToolSub::~ToolSub()
 
 void ToolSub::setPosAndShow()
 {
-	auto btnCenterX = win->toolMain->getBtnCenterX();
+	arrowX = win->toolMain->getBtnCenterX();
 	int x, y, w, h;
 	if (win->toolMain->curId == L"mosaic" || win->toolMain->curId == L"eraser") {
-		//setPosition(btnCenterX - w / 2.f, win->y + win->h + 5.f * win->dpi);
+		y = win->toolMain->y + win->toolMain->h;
+		h = btnSize + marginTop/dpi;
+		w = btnSize + sliderSize;
+		x = win->toolMain->x + arrowX - w*dpi / 2.f;
+		setPosition(x, y + 2);
+		setSize(w, h);
+		arrowX = this->w / 2.f ;
 	}
 	else {
 		x = win->toolMain->x;
 		y = win->toolMain->y + win->toolMain->h;
 		h = btnSize + marginTop;
 		w = btnSize*10 + sliderSize;
-		arrowX = btnCenterX;
-		setPosition(x, y+2);
+		setPosition(x, y + 2);
 		setSize(w, h);
 	}
 	if (!isVisible) {
