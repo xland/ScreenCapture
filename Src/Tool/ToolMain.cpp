@@ -1,13 +1,14 @@
 #include "pch.h"
-#include "ToolMain.h"
 #include "../Win/WinPin.h"
+#include "ToolMain.h"
+#include "ToolSub.h"
 
 ToolMain::ToolMain(WinPin* win) : Ling::WinBase(), win(win)
 {
 	auto btnSize{ 32.f * win->dpi };
 	x = win->x;
 	y = win->y + win->h + 5.f * win->dpi;
-	w = btnSize * btnIds.size()+ 2.f * win->dpi;
+	w = btnSize * btnIds.size()+ 2.f * win->dpi; //有两个分隔符
 	h = btnSize;
 	createNativeWindow(WS_EX_TOPMOST | WS_EX_NOACTIVATE, WS_POPUP);
 	win->onMoved.add([this,win]() {
@@ -23,11 +24,30 @@ void ToolMain::init()
 {
 }
 
+float ToolMain::getBtnCenterX()
+{
+	float result{ 0.f };
+	for (size_t i = 0; i < btnIds.size(); i++)
+	{
+		if (curId == L"|") {
+			result += dpi;
+		}
+		if (curId == btnIds[i]) {
+			result += btns[i]->w / 2.f;
+			break;
+		}
+		else {
+			result += btns[i]->w;
+		}
+	}
+	return result;
+}
+
 void ToolMain::onCreated()
 {
-	enableShadow();
+	//enableShadow();
 	body->setBg(0xFFFFFFFF);
-	body->setBorder(1.f, 0x1677ffff);
+	body->setBorder(1.f, 0xA8A8A8ff);
 	body->setAlignItems(Ling::Align::Center);
 	body->setFlexDirection(Ling::FlexDirection::Row);
 	for (size_t i = 0; i < btnIds.size(); i++)
@@ -44,13 +64,7 @@ void ToolMain::onCreated()
 			btn->setText(btnCodes[i]);
 			btn->setHeightPercent(100.f);
 			btn->setFlexGrow(1.f);
-			if (id == curId) {
-				btn->setBg(0xe6f4ffff);
-				btn->setHoverBg(0xe6f4ffff);
-			}
-			else {
-				btn->setHoverBg(0xF2F2F2ff);
-			}
+			btn->setHoverBg(0xF2F2F2ff);
 			btn->setFontFamily(L"icon");
 			btn->setFontSize(13.f);
 			btn->onClick.add([this](Ling::Button* btn) {onClick(btn);});
@@ -76,4 +90,11 @@ void ToolMain::onClick(Ling::Button* btn)
 		}
 	}
 	curId = btn->id;
+	win->toolSub->setPosAndShow();
+}
+
+void ToolMain::onMinMaxInfo(MINMAXINFO* mmi)
+{
+	mmi->ptMinTrackSize.x = 1;
+	mmi->ptMinTrackSize.y = 1;
 }

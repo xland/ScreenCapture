@@ -170,6 +170,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Setting.cpp" />
+    <ClCompile Include="Tool\ToolSub.cpp" />
     <ClCompile Include="Tool\ToolMain.cpp" />
     <ClCompile Include="Tray.cpp" />
     <ClCompile Include="Win\WinPin.cpp" />
@@ -193,6 +194,7 @@
     <ClInclude Include="Lang.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Setting.h" />
+    <ClInclude Include="Tool\ToolSub.h" />
     <ClInclude Include="Tool\ToolMain.h" />
     <ClInclude Include="Tray.h" />
     <ClInclude Include="Win\WinPin.h" />

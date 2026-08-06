@@ -1,6 +1,7 @@
 #include "pch.h"
 #include <Windows.UI.Composition.Interop.h> 
 #include "../Tool/ToolMain.h"
+#include "../Tool/ToolSub.h"
 #include "WinPin.h"
 #include "WinCap.h"
 #include "../App.h"
@@ -18,6 +19,7 @@ WinPin::WinPin(int x, int y, int w, int h) : Ling::WinBase()
 	this->h = h;
     screenImg = WinCap::get()->getCutImg();
 	toolMain = std::make_unique<ToolMain>(this);
+    toolSub = std::make_unique<ToolSub>(this);
 }
 
 WinPin::~WinPin()
