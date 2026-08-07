@@ -81,8 +81,6 @@ void ToolMain::onCreated()
 
 void ToolMain::onClick(Ling::Button* btn)
 {
-	// 动作类按钮（undo/redo/close/save/clipboard）不参与选中，不改变 curId，也不影响 ToolSub
-	if (std::find(drawIds.begin(), drawIds.end(), btn->id) == drawIds.end()) return;
 	for (auto b:btns)
 	{
 		if (b->id == curId)
@@ -102,6 +100,24 @@ void ToolMain::onClick(Ling::Button* btn)
 	}
 	else if (curId == L"ellipse") {
 		win->toolSub->showEllipseTools();
+	}
+	else if (curId == L"arrow") {
+		win->toolSub->showArrowTools();
+	}
+	else if (curId == L"number") {
+		win->toolSub->showNumberTools();
+	}
+	else if (curId == L"line") {
+		win->toolSub->showLineTools();
+	}
+	else if (curId == L"text") {
+		win->toolSub->showTextTools();
+	}
+	else if (curId == L"mosaic") {
+		win->toolSub->showMosaicTools();
+	}
+	else if (curId == L"eraser") {
+		win->toolSub->showEraserTools();
 	}
 	else {
 		win->toolSub->hideTools();

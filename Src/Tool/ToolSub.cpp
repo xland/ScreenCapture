@@ -10,6 +10,8 @@ ToolSub::ToolSub(WinPin* win) :Ling::WinBase(), win(win)
 {
 	btnSize *= dpi;
 	sliderSize *= dpi;
+	sliderMargin *= dpi;
+	contentInsetX *= dpi;
 	marginTop *= dpi;
 	createNativeWindow(WS_EX_TOPMOST | WS_EX_TOOLWINDOW, WS_POPUP);
 }
@@ -21,7 +23,7 @@ ToolSub::~ToolSub()
 void ToolSub::showRectTools()
 {
 	contentNode->removeAllChildren();
-	initPosSize();
+	initSize(1, true);
 
 	auto btn = contentNode->makeChild<Ling::Button>();
 	btn->setText(L"\ue602");
@@ -37,7 +39,7 @@ void ToolSub::showRectTools()
 void ToolSub::showEllipseTools()
 {
 	contentNode->removeAllChildren();
-	initPosSize();
+	initSize(1, true);
 
 	auto btn = contentNode->makeChild<Ling::Button>();
 	btn->setText(L"\ue600");
@@ -49,6 +51,104 @@ void ToolSub::showEllipseTools()
 
 	initSlider();
 	initColorBtns();
+}
+
+void ToolSub::showArrowTools()
+{
+	contentNode->removeAllChildren();
+	initSize(1, true);
+	auto btn = contentNode->makeChild<Ling::Button>();
+	btn->setText(L"\ue604");
+	btn->setHeightPercent(100.f);
+	btn->setFlexGrow(1.f);
+	btn->setBg(0xe6f4ffff);
+	btn->setHoverBg(0xe6f4ffff);
+	btn->setFontFamily(L"icon");
+	btn->setFontSize(13.f);
+	initSlider();
+	initColorBtns();
+}
+
+void ToolSub::showNumberTools()
+{
+	contentNode->removeAllChildren();
+	initSize(1, true);
+	auto btn = contentNode->makeChild<Ling::Button>();
+	btn->setText(L"\ue605");
+	btn->setHeightPercent(100.f);
+	btn->setFlexGrow(1.f);
+	btn->setBg(0xe6f4ffff);
+	btn->setHoverBg(0xe6f4ffff);
+	btn->setFontFamily(L"icon");
+	btn->setFontSize(13.f);
+	initSlider();
+	initColorBtns();
+}
+
+void ToolSub::showLineTools()
+{
+	contentNode->removeAllChildren();
+	initSize(1, true);
+	auto btn = contentNode->makeChild<Ling::Button>();
+	btn->setText(L"\ue607");
+	btn->setHeightPercent(100.f);
+	btn->setFlexGrow(1.f);
+	btn->setHoverBg(0xF2F2F2ff);
+	btn->setFontFamily(L"icon");
+	btn->setFontSize(13.f);
+	initSlider();
+	initColorBtns();
+}
+
+void ToolSub::showTextTools()
+{
+	contentNode->removeAllChildren();
+	initSize(2, true);
+	auto btn = contentNode->makeChild<Ling::Button>();
+	btn->setText(L"\ue634");
+	btn->setHeightPercent(100.f);
+	btn->setFlexGrow(1.f);
+	btn->setHoverBg(0xF2F2F2ff);
+	btn->setFontFamily(L"icon");
+	btn->setFontSize(13.f);
+
+	auto btn2 = contentNode->makeChild<Ling::Button>();
+	btn2->setText(L"\ue682");
+	btn2->setHeightPercent(100.f);
+	btn2->setFlexGrow(1.f);
+	btn2->setHoverBg(0xF2F2F2ff);
+	btn2->setFontFamily(L"icon");
+	btn2->setFontSize(13.f);
+	initSlider();
+	initColorBtns();
+}
+
+void ToolSub::showMosaicTools()
+{
+	contentNode->removeAllChildren();
+	initSize(1, false, true);
+	auto btn = contentNode->makeChild<Ling::Button>();
+	btn->setText(L"\ue602");
+	btn->setHeightPercent(100.f);
+	btn->setFlexGrow(1.f);
+	btn->setHoverBg(0xF2F2F2ff);
+	btn->setFontFamily(L"icon");
+	btn->setFontSize(13.f);
+	initSlider();
+}
+
+void ToolSub::showEraserTools()
+{
+	contentNode->removeAllChildren();
+	initSize(1, false, true);
+	auto btn = contentNode->makeChild<Ling::Button>();
+	btn->setText(L"\ue602");
+	btn->setHeightPercent(100.f);
+	btn->setFlexGrow(1.f);
+	btn->setHoverBg(0xF2F2F2ff);
+	btn->setFontFamily(L"icon");
+	btn->setFontSize(13.f);
+	initSlider();
 }
 
 void ToolSub::onCreated()
@@ -189,19 +289,21 @@ void ToolSub::initSlider()
 	slider->setFillColor(0x888888FF);
 }
 
-void ToolSub::initPosSize()
-{
-	hasTools = true;
-	auto pxW = btnSize * 10 + sliderSize + 6 * dpi;
-	auto pxH = getDesiredHeight();
-	setSize(pxW / dpi, pxH / dpi);
-	// 不在这里 show()，位置由随后的 WinPin::layoutTools() -> updatePosition() 决定，
-	// 否则会先在旧位置闪一下
-}
-
 float ToolSub::getDesiredHeight()
 {
 	return btnSize + marginTop;
+}
+
+// 宽度 = 工具按钮 + 颜色按钮 + 滑块（含左右 margin）+ contentNode 左右内边距。
+// 之前这里漏算了滑块的真实宽度和内边距，宽工具栏靠 10 个 flexGrow 按钮把误差摊薄了看不出来，
+// 而 mosaic/eraser 只有 1 个按钮，误差全压在这个按钮和滑块上，看起来就像被压缩了。
+void ToolSub::initSize(int btnCount, bool withColors, bool centerOnBtn)
+{
+	hasTools = true;
+	this->centerOnBtn = centerOnBtn;
+	auto count = btnCount + (withColors ? static_cast<int>(colors.size()) : 0);
+	auto pxW = btnSize * count + sliderSize + sliderMargin * 2 + contentInsetX;
+	setSize(pxW / dpi, getDesiredHeight() / dpi);
 }
 
 bool ToolSub::hasContent()
@@ -218,19 +320,23 @@ void ToolSub::hideTools()
 }
 
 // ToolSub 永远紧贴 ToolMain 下方（三种模式都是），所以只跟着 ToolMain 走。
-// x 默认与 ToolMain 左对齐；被屏幕边界裁剪后，同步修正箭头位置让它继续指向选中的按钮。
+// x 默认与 ToolMain 左对齐；窄工具栏（mosaic/eraser）改为居中对齐到 ToolMain 上选中的那个按钮。
+// 被屏幕边界裁剪后，同步修正箭头位置让它继续指向选中的按钮。
 void ToolSub::updatePosition(const RECT& workArea)
 {
 	if (!hasTools) return;
+	// btnCenterX 是选中按钮中心相对 ToolMain 左边的偏移
 	auto btnCenterX = win->toolMain->getBtnCenterX();
-	auto px = static_cast<float>(win->toolMain->x);
+	auto mainX = static_cast<float>(win->toolMain->x);
+	auto px = centerOnBtn ? mainX + btnCenterX - w / 2.f : mainX;
 	auto py = static_cast<float>(win->toolMain->y) + win->toolMain->h + mainGap;
 	auto upperX = workArea.right - static_cast<int>(w);
 	if (upperX < workArea.left) upperX = workArea.left;
 	auto finalX = static_cast<int>(px);
 	if (finalX < workArea.left) finalX = workArea.left;
 	if (finalX > upperX) finalX = upperX;
-	arrowX = btnCenterX + (px - finalX);
+	// 箭头始终指向按钮中心的屏幕位置，换算成窗口内坐标
+	arrowX = mainX + btnCenterX - finalX;
 	setPosition(finalX, static_cast<int>(py));
 	if (isVisible) {
 		refresh();
