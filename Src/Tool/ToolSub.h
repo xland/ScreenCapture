@@ -30,6 +30,10 @@ private:
 	void onColorSelect(Ling::Button* btn);
 	void initColorBtns();
 	void initSlider();
+	// 选中/未选中两套配色，与 ToolMain 的选中效果保持一致
+	void applyToggleStyle(Ling::Button* btn, bool selected);
+	// 建一个可切换的工具按钮：初始配色跟着 flag，点击时翻转 flag 并刷新配色
+	Ling::Button* makeToggleBtn(const std::wstring& text, bool* flag);
 	// 按内容算出窗口尺寸并应用。btnCount 只数工具按钮，不含颜色按钮。
 	// centerOnBtn 为 true 时窗口居中对齐到 ToolMain 上选中的那个按钮，否则与 ToolMain 左对齐。
 	void initSize(int btnCount, bool withColors, bool centerOnBtn = false);
@@ -37,10 +41,12 @@ private:
 	Ling::Node* contentNode;
 	std::vector<Ling::Button*> colorBtns;
 	float btnSize{ 32.f };
-	float sliderSize{ 80.f };     // 与 initSlider 里 setWidth 的值保持一致
+	float sliderSize{ 80.f };      // 滑块宽度，initSlider 和 initSize 都用它，改这里就够
 	float sliderMargin{ 3.f };     // 滑块左右各留的间距
-	float contentInsetX{ 3.f };    // contentNode 的左右内边距之和（onCreated 里 Left 1 + Right 2）
-	float marginTop{ 3.f };
+	float marginTop{ 3.f };        // 顶部箭头区域高度
+	// 边框描边宽度（物理像素，构造时按 dpi 吸附到整数）。
+	// contentNode 四边正好让开这么多，与描边内沿严格贴合。
+	float borderW{ 1.f };
 	float arrowX{0.f};
 	WinPin* win;
 	Microsoft::WRL::ComPtr<ID2D1PathGeometry> borderPath;
