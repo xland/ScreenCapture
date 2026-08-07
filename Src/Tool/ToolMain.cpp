@@ -6,6 +6,7 @@
 ToolMain::ToolMain(WinPin* win) : Ling::WinBase(), win(win)
 {
 	auto btnSize{ 32.f * win->dpi };
+	// 初始位置由 WinPin::layoutTools() 统一决定，这里只算尺寸
 	x = win->x;
 	y = win->y + win->h + 5.f * win->dpi;
 	for (size_t i = 0; i < btnIds.size(); i++)
@@ -18,10 +19,7 @@ ToolMain::ToolMain(WinPin* win) : Ling::WinBase(), win(win)
 		}
 	}
 	h = btnSize;
-	createNativeWindow(WS_EX_TOPMOST | WS_EX_NOACTIVATE, WS_POPUP);
-	win->onMoved.add([this,win]() {
-		this->setPosition(win->x, win->y + win->h + 5.f * win->dpi);
-	});
+	createNativeWindow(WS_EX_TOPMOST | WS_EX_TOOLWINDOW, WS_POPUP);
 }
 
 ToolMain::~ToolMain()
@@ -53,7 +51,6 @@ float ToolMain::getBtnCenterX()
 
 void ToolMain::onCreated()
 {
-	//enableShadow();
 	body->setBg(0xFFFFFFFF);
 	body->setBorder(1.f, 0xA8A8A8ff);
 	body->setAlignItems(Ling::Align::Center);
@@ -84,6 +81,8 @@ void ToolMain::onCreated()
 
 void ToolMain::onClick(Ling::Button* btn)
 {
+	// 动作类按钮（undo/redo/close/save/clipboard）不参与选中，不改变 curId，也不影响 ToolSub
+	if (std::find(drawIds.begin(), drawIds.end(), btn->id) == drawIds.end()) return;
 	for (auto b:btns)
 	{
 		if (b->id == curId)
@@ -104,7 +103,11 @@ void ToolMain::onClick(Ling::Button* btn)
 	else if (curId == L"ellipse") {
 		win->toolSub->showEllipseTools();
 	}
-	
+	else {
+		win->toolSub->hideTools();
+	}
+	// curId 变化后 ToolMain 可能要上移给 ToolSub 腾位置，交给 WinPin 重新排布整组
+	win->layoutTools();
 }
 
 void ToolMain::onMinMaxInfo(MINMAXINFO* mmi)

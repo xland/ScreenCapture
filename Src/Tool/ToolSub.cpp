@@ -11,10 +11,7 @@ ToolSub::ToolSub(WinPin* win) :Ling::WinBase(), win(win)
 	btnSize *= dpi;
 	sliderSize *= dpi;
 	marginTop *= dpi;
-	createNativeWindow(WS_EX_TOPMOST | WS_EX_NOACTIVATE, WS_POPUP);
-	//win->onMoved.add([this, win]() {
-	//	this->setPosition(win->x, win->y + win->h + 5.f * win->dpi);
-	//});
+	createNativeWindow(WS_EX_TOPMOST | WS_EX_TOOLWINDOW, WS_POPUP);
 }
 
 ToolSub::~ToolSub()
@@ -194,22 +191,53 @@ void ToolSub::initSlider()
 
 void ToolSub::initPosSize()
 {
-	auto btnCenterX = win->toolMain->getBtnCenterX();
-	float pxW, pxH;
-	int px, py;
-	pxW = btnSize * 10 + sliderSize + 6 * dpi;
-	pxH = btnSize + marginTop;
-	px = win->toolMain->x;
-	py = win->toolMain->y + win->toolMain->h;
-	arrowX = btnCenterX;
-	setPosition(px, py + 2);
+	hasTools = true;
+	auto pxW = btnSize * 10 + sliderSize + 6 * dpi;
+	auto pxH = getDesiredHeight();
 	setSize(pxW / dpi, pxH / dpi);
-	if (!isVisible) {
-		show();
-		isVisible = true;
+	// 不在这里 show()，位置由随后的 WinPin::layoutTools() -> updatePosition() 决定，
+	// 否则会先在旧位置闪一下
+}
+
+float ToolSub::getDesiredHeight()
+{
+	return btnSize + marginTop;
+}
+
+bool ToolSub::hasContent()
+{
+	return hasTools;
+}
+
+void ToolSub::hideTools()
+{
+	hasTools = false;
+	if (!isVisible) return;
+	hide();
+	isVisible = false;
+}
+
+// ToolSub 永远紧贴 ToolMain 下方（三种模式都是），所以只跟着 ToolMain 走。
+// x 默认与 ToolMain 左对齐；被屏幕边界裁剪后，同步修正箭头位置让它继续指向选中的按钮。
+void ToolSub::updatePosition(const RECT& workArea)
+{
+	if (!hasTools) return;
+	auto btnCenterX = win->toolMain->getBtnCenterX();
+	auto px = static_cast<float>(win->toolMain->x);
+	auto py = static_cast<float>(win->toolMain->y) + win->toolMain->h + mainGap;
+	auto upperX = workArea.right - static_cast<int>(w);
+	if (upperX < workArea.left) upperX = workArea.left;
+	auto finalX = static_cast<int>(px);
+	if (finalX < workArea.left) finalX = workArea.left;
+	if (finalX > upperX) finalX = upperX;
+	arrowX = btnCenterX + (px - finalX);
+	setPosition(finalX, static_cast<int>(py));
+	if (isVisible) {
+		refresh();
 	}
 	else {
-		refresh();
+		show();
+		isVisible = true;
 	}
 }
 

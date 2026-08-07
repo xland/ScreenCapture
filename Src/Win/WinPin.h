@@ -8,6 +8,7 @@ class WinPin : public Ling::WinBase
 public:
 	~WinPin();
 	static void init(int x, int y, int w, int h);
+	void layoutTools();
 public:
 	std::unique_ptr<ToolMain> toolMain;
 	std::unique_ptr<ToolSub> toolSub;
