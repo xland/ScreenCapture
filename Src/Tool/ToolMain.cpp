@@ -30,21 +30,25 @@ void ToolMain::init()
 {
 }
 
+// 返回 curId 对应按钮的中心相对 ToolMain 左边的偏移（物理像素）。
+// btnIds 含分隔符而 btns 不含，所以要单独维护 btns 的下标，不能拿 i 去索引 btns。
 float ToolMain::getBtnCenterX()
 {
 	float result{ 0.f };
+	size_t btnIndex{ 0 };
 	for (size_t i = 0; i < btnIds.size(); i++)
 	{
-		if (curId == L"|") {
+		if (btnIds[i] == L"|") {
+			// 分隔符不在 btns 里，宽度与 onCreated 里 spliter 的 setSize(dpi, ...) 一致
 			result += dpi;
+			continue;
 		}
 		if (curId == btnIds[i]) {
-			result += btns[i]->w / 2.f;
-			break;
+			result += btns[btnIndex]->w / 2.f;
+			return result;
 		}
-		else {
-			result += btns[i]->w;
-		}
+		result += btns[btnIndex]->w;
+		btnIndex++;
 	}
 	return result;
 }

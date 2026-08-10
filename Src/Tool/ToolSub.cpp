@@ -8,19 +8,27 @@ using namespace Microsoft::WRL;
 
 ToolSub::ToolSub(WinPin* win) :Ling::WinBase(), win(win)
 {
-	btnSize = std::floor(btnSize * dpi);
-	sliderSize *= dpi;
-	sliderMargin *= dpi;
-	// 描边宽度与 ToolMain 的 setBorder(1.f) 保持一致：那边最终是 borderWidth*dpi，不取整。
-	// 取整会让高 DPI 下 ToolSub 的边框比 ToolMain 细（1.5 被压成 1）。
-	borderW *= dpi;
-	// 箭头区域取整到整数物理像素，避免窗口高度出现小数被 SetWindowPos(int) 截断
-	marginTop = std::floor(marginTop * dpi);
 	createNativeWindow(WS_EX_TOPMOST | WS_EX_TOOLWINDOW, WS_POPUP);
 }
 
 ToolSub::~ToolSub()
 {
+}
+
+void ToolSub::onCreated()
+{
+	auto d2d = Ling::D2D::get();
+	// 画刷与设备（而非某次 BeginDraw 拿到的 context）绑定，建一次就够，paintBorder 每帧复用
+	d2d->deviceContext->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White), brushBg.GetAddressOf());
+	d2d->deviceContext->CreateSolidColorBrush(D2D1::ColorF(0xA8A8A8), brushBorder.GetAddressOf());
+	contentNode = body->makeChild<Ling::Node>();
+	contentNode->setPositionType(Ling::Position::Absolute);
+	// 四边让开描边宽度，上边再额外让开箭头区域（都是逻辑像素，setPosition 内部乘 dpi）
+	contentNode->setPosition(Ling::Edge::Left, borderW);
+	contentNode->setPosition(Ling::Edge::Top, marginTop + borderW);
+	contentNode->setPosition(Ling::Edge::Right, borderW);
+	contentNode->setPosition(Ling::Edge::Bottom, borderW);
+	contentNode->setFlexDirection(Ling::FlexDirection::Row);
 }
 
 void ToolSub::showRectTools()
@@ -94,20 +102,6 @@ void ToolSub::showEraserTools()
 	initSlider();
 }
 
-void ToolSub::onCreated()
-{
-	auto d2d = Ling::D2D::get();
-	contentNode = body->makeChild<Ling::Node>();
-	contentNode->setPositionType(Ling::Position::Absolute);
-	// 四边让开描边宽度，上边再额外让开箭头区域。
-	// borderW/marginTop 是物理像素，setPosition 内部会乘 dpi，所以这里要先除回去。
-	contentNode->setPosition(Ling::Edge::Left, borderW / dpi);
-	contentNode->setPosition(Ling::Edge::Top, (marginTop + borderW) / dpi);
-	contentNode->setPosition(Ling::Edge::Right, borderW / dpi);
-	contentNode->setPosition(Ling::Edge::Bottom, borderW / dpi);
-	contentNode->setFlexDirection(Ling::FlexDirection::Row);
-}
-
 void ToolSub::layout()
 {
 	Ling::WinBase::layout();
@@ -147,14 +141,19 @@ void ToolSub::onMinMaxInfo(MINMAXINFO* mmi)
 void ToolSub::paintBorder(ID2D1DeviceContext* ctx)
 {
 	auto d2d = Ling::D2D::get();
+	// 几何体每帧都要按当前 w/h/arrowX 重建，用局部 ComPtr，别存成员：
+	// 存成员时 GetAddressOf() 不会 Release 旧对象，等于每帧漏一个 ID2D1PathGeometry。
+	ComPtr<ID2D1PathGeometry> borderPath;
 	d2d->d2dFactory->CreatePathGeometry(borderPath.GetAddressOf());
 	ComPtr<ID2D1GeometrySink> sink;
 	borderPath->Open(sink.GetAddressOf());
-	// D2D 的描边以路径为中心线，所以路径放在距边 borderW/2 处，描边正好填满最外侧 borderW 像素。
+	// 以下都是物理像素：D2D 直接画在 surface 上，不像 Ling 的 setter 会自己乘 dpi。
+	// D2D 的描边以路径为中心线，所以路径放在距边 borderWPx/2 处，描边正好填满最外侧 borderWPx 像素。
 	// 右/下边界要用 surface 的整数尺寸（窗口和 surface 都是 (int)w/(int)h），
 	// 直接用带小数的 w/h 会让描边画到 surface 之外，看起来就是底边缺一条。
-	auto half{ borderW / 2.f };
-	auto top{ marginTop + half };
+	auto borderWPx{ borderW * dpi };
+	auto half{ borderWPx / 2.f };
+	auto top{ toPx(marginTop) + half };
 	auto right{ std::floor(w) - half };
 	auto bottom{ std::floor(h) - half };
 	sink->BeginFigure({ half,top }, D2D1_FIGURE_BEGIN_FILLED);
@@ -169,12 +168,8 @@ void ToolSub::paintBorder(ID2D1DeviceContext* ctx)
 	sink->AddLines(points, 6);
 	sink->EndFigure(D2D1_FIGURE_END_CLOSED);
 	sink->Close();
-	ComPtr<ID2D1SolidColorBrush> brushBg;
-	ComPtr<ID2D1SolidColorBrush> brushBorder;
-	ctx->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White), brushBg.GetAddressOf());
-	ctx->CreateSolidColorBrush(D2D1::ColorF(0xA8A8A8), brushBorder.GetAddressOf());
 	ctx->FillGeometry(borderPath.Get(), brushBg.Get());
-	ctx->DrawGeometry(borderPath.Get(), brushBorder.Get(), borderW);
+	ctx->DrawGeometry(borderPath.Get(), brushBorder.Get(), borderWPx);
 }
 
 void ToolSub::onColorSelect(Ling::Button* btn)
@@ -198,7 +193,7 @@ void ToolSub::initColorBtns()
 	for (size_t i = 0; i < colors.size(); i++)
 	{
 		auto btn = contentNode->makeChild<Ling::Button>();
-		btn->setHeightPercent(100.f);
+		btn->setHeight(btnSize-2.5);
 		btn->setFlexGrow(1.f);
 		btn->setAlignItems(Ling::Align::Center);
 		btn->setJustifyContent(Ling::Justify::Center);
@@ -244,7 +239,7 @@ Ling::Button* ToolSub::makeToggleBtn(const std::wstring& text, bool* flag)
 {
 	auto btn = contentNode->makeChild<Ling::Button>();
 	btn->setText(text);
-	btn->setHeightPercent(100.f);
+	btn->setHeight(btnSize - 2.5);
 	btn->setFlexGrow(1.f);
 	btn->setFontFamily(L"icon");
 	btn->setFontSize(13.f);
@@ -262,10 +257,9 @@ void ToolSub::initSlider()
 	auto slider = contentNode->makeChild<Ling::Slider>();
 	// 尺寸从字段来，别写字面量：initSize 按同样的字段算窗口宽度，
 	// 两边各写一份的话改了一处就会宽度不匹配（flex 会把误差压在按钮和滑块上）。
-	// 字段在构造函数里已经乘过 dpi，而 setWidth/setMargin 内部还会再乘一次，所以这里要除回去。
-	slider->setWidth(sliderSize / dpi);
-	slider->setMarginLeft(sliderMargin / dpi);
-	slider->setMarginRight(sliderMargin / dpi);
+	slider->setWidth(sliderSize);
+	slider->setMarginLeft(sliderMargin);
+	slider->setMarginRight(sliderMargin);
 	slider->setHeightPercent(100.f);
 	slider->setThumbColor(0x888888FF);
 	slider->setHoverThumbColor(0x888888FF);
@@ -273,17 +267,22 @@ void ToolSub::initSlider()
 	slider->setFillColor(0x888888FF);
 }
 
-float ToolSub::getDesiredHeight()
+float ToolSub::toPx(float logical) const
 {
-	// 视觉高度（btnSize）与 ToolMain 的 h 保持一致 —— ToolMain 也是 h = btnSize，
-	// 边框画在这个高度之内、不额外占空间；上面再加箭头区域。
-	// 整体向上取整：窗口尺寸最终过 SetWindowPos(int)，留小数会被截断，
-	// 而 Yoga/paintBorder 仍按小数布局，底边就会错开半像素、压住边框。
-	return std::ceil(btnSize + marginTop);
+	return std::floor(logical * dpi);
 }
 
-// 宽度 = 工具按钮 + 颜色按钮 + 滑块（含左右 margin）+ contentNode 左右内边距。
-// 之前这里漏算了滑块的真实宽度和内边距，宽工具栏靠 10 个 flexGrow 按钮把误差摊薄了看不出来，
+float ToolSub::getDesiredHeight()
+{
+	// 返回物理像素：调用方（WinPin::layoutTools）拿它和屏幕坐标、ToolMain->h 一起算，那些都是物理值。
+	// 视觉高度（btnSize）与 ToolMain 的 h 保持一致 —— ToolMain 也是 h = btnSize，
+	// 边框画在这个高度之内、不额外占空间；上面再加箭头区域。
+	// 两段各自吸附到整数像素后再相加，避免和界内取整的差异。
+	return toPx(btnSize) + toPx(marginTop);
+}
+
+// 宽度 = 工具按钮 + 颜色按钮 + 滑块（含左右 margin）。
+// 之前这里漏算了滑块的真实宽度，宽工具栏靠 10 个 flexGrow 按钮把误差摊薄了看不出来，
 // 而 mosaic/eraser 只有 1 个按钮，误差全压在这个按钮和滑块上，看起来就像被压缩了。
 void ToolSub::initSize(int btnCount, bool withColors, bool centerOnBtn)
 {
@@ -291,8 +290,8 @@ void ToolSub::initSize(int btnCount, bool withColors, bool centerOnBtn)
 	this->centerOnBtn = centerOnBtn;
 	auto count = btnCount + (withColors ? static_cast<int>(colors.size()) : 0);
 	// 宽度只按内容算，边框画在内容之内（与 ToolMain 一致，那边宽度也只累加按钮）。
-	// 向上取整避免 SetWindowPos(int) 截断后布局与实际窗口差半像素。
-	auto pxW = std::ceil(btnSize * count + sliderSize + sliderMargin * 2);
+	auto pxW = toPx(btnSize) * count + toPx(sliderSize) + toPx(sliderMargin) * 2;
+	// setSize 收逻辑像素、内部再乘 dpi，所以这里把算好的物理宽高除回去
 	setSize(pxW / dpi, getDesiredHeight() / dpi);
 }
 

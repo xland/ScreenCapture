@@ -37,19 +37,22 @@ private:
 	// 按内容算出窗口尺寸并应用。btnCount 只数工具按钮，不含颜色按钮。
 	// centerOnBtn 为 true 时窗口居中对齐到 ToolMain 上选中的那个按钮，否则与 ToolMain 左对齐。
 	void initSize(int btnCount, bool withColors, bool centerOnBtn = false);
+	// 逻辑像素 → 物理像素
+	float toPx(float logical) const;
 private:
 	Ling::Node* contentNode;
 	std::vector<Ling::Button*> colorBtns;
-	float btnSize{ 32.f };
-	float sliderSize{ 80.f };      // 滑块宽度，initSlider 和 initSize 都用它，改这里就够
-	float sliderMargin{ 3.f };     // 滑块左右各留的间距
-	float marginTop{ 3.f };        // 顶部箭头区域高度
-	// 边框描边宽度（物理像素，构造时按 dpi 吸附到整数）。
-	// contentNode 四边正好让开这么多，与描边内沿严格贴合。
-	float borderW{ 1.f };
+	static constexpr float btnSize{ 32.f };
+	static constexpr float sliderSize{ 80.f };     // 滑块宽度，initSlider 和 initSize 都用它，改这里就够
+	static constexpr float sliderMargin{ 3.f };    // 滑块左右各留的间距
+	static constexpr float marginTop{ 3.f };       // 顶部箭头区域高度
+	// 边框描边宽度。与 ToolMain 的 setBorder(1.f) 保持一致
+	static constexpr float borderW{ 1.f };
+	// 箭头尖端相对窗口左边的偏移，由 updatePosition 按屏幕坐标算出，是物理像素
 	float arrowX{0.f};
 	WinPin* win;
-	Microsoft::WRL::ComPtr<ID2D1PathGeometry> borderPath;
+	// 背景/边框画刷缓存：layout() 每次刷新都会调 paintBorder，别在里面重复建
+	Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> brushBg, brushBorder;
 	winrt::Windows::UI::Composition::CompositionDrawingSurface surface{ nullptr };
 	bool isVisible{ false };
 	bool hasTools{ false };
