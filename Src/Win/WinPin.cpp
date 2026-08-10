@@ -37,6 +37,12 @@ WinPin::WinPin(int x, int y, int w, int h) : Ling::WinBase(), history{ std::make
 	onMouseDown.add([this](POINT pos, BOOL isRight) {this->onDown(pos, isRight);});
 	onMouseMove.add([this](POINT pos) {this->onMove(pos);});
 	onMouseUp.add([this](POINT pos, BOOL isRight) {this->onUp(pos, isRight);});
+	// Ling 传进来的是已经换算成滚动距离的 space（一格 = 60 逻辑像素 × dpi），
+	// shape 只关心方向，这里按符号还原成 ±WHEEL_DELTA
+	onMouseWheel.add([this](POINT pos, float space) {
+		if (!shapeHover) return;
+		shapeHover->mouseWheel((float)pos.x, (float)pos.y, space > 0 ? (short)WHEEL_DELTA : (short)-WHEEL_DELTA);
+	});
 	onTimer.add([this](UINT id) {this->onTimerCB(id);});
 	onDestroy.add([this]() { this->onClosed(); });
 }

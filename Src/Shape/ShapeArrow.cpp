@@ -1,0 +1,191 @@
+﻿#include "pch.h"
+#include "Win/WinPin.h"
+#include "Tool/ToolMain.h"
+#include "Tool/ToolSub.h"
+#include "ShapeArrow.h"
+
+using Microsoft::WRL::ComPtr;
+
+ShapeArrow::ShapeArrow(WinPin* win) :ShapeBase(win), draggers{
+	D2D1::RectF(0,0,0,0),
+	D2D1::RectF(0,0,0,0) }
+{
+	auto toolSub = win->toolSub.get();
+	auto d2d = Ling::D2D::get();
+	d2d->deviceContext->CreateSolidColorBrush(toolSub->getSelectedColor(), brush.GetAddressOf());
+	// 滑块值当箭头尺寸用。太小的话箭头画出来只有几个像素，看不出形状
+	arrowSize = toolSub->getSliderVal() * 4.f;
+	isFill = toolSub->isArrowFill;
+}
+
+ShapeArrow::~ShapeArrow()
+{
+
+}
+
+void ShapeArrow::paint(ID2D1DeviceContext* ctx)
+{
+	// makeArrow 要等第一次 mouseDown 才建 path，这之前可能先来一次 paint
+	if (!path) return;
+	if (isFill) {
+		ctx->FillGeometry(path.Get(), brush.Get());
+	}
+	else {
+		ctx->DrawGeometry(path.Get(), brush.Get(), win->dpi);
+	}
+}
+
+void ShapeArrow::paintDragger(ID2D1DeviceContext* ctx)
+{
+	for (auto& dragger : draggers)
+	{
+		ctx->DrawRectangle(dragger, brushDragger.Get(), win->dpi);
+	}
+}
+
+void ShapeArrow::mouseDrag(const float x, const float y)
+{
+	// Shift 约束成八方向。与 ShapeRect 一致，用 GetKeyState 而不是消息里的 modifiers
+	bool shiftDown = (GetKeyState(VK_SHIFT) & 0x8000) != 0;
+	if (hoverDraggerIndex == 0) {
+		if (shiftDown) {
+			constrainToEightDirections(endX, endY, x, y, startX, startY);
+		}
+		else {
+			startX = x;
+			startY = y;
+		}
+		makeArrow();
+	}
+	else if (hoverDraggerIndex == 1) {
+		if (shiftDown) {
+			constrainToEightDirections(startX, startY, x, y, endX, endY);
+		}
+		else {
+			endX = x;
+			endY = y;
+		}
+		makeArrow();
+	}
+	else if (hoverDraggerIndex == 8) {
+		auto spanX{ x - pressX };
+		auto spanY{ y - pressY };
+		startX += spanX;
+		startY += spanY;
+		endX += spanX;
+		endY += spanY;
+		makeArrow();
+		pressX = x;
+		pressY = y;
+	}
+}
+
+void ShapeArrow::mouseDown(const float x, const float y)
+{
+	if (hoverDraggerIndex == -1) { //首次创建
+		startX = x;
+		startY = y;
+		endX = x;
+		endY = y;
+		makeArrow();
+		hoverDraggerIndex = 1;
+	}
+	else if (hoverDraggerIndex == 8) {
+		pressX = x;
+		pressY = y;
+	}
+}
+
+void ShapeArrow::mouseUp(const float x, const float y)
+{
+	auto half{ draggerSize / 2 };
+	draggers[0].left = startX - half;
+	draggers[0].top = startY - half;
+	draggers[0].right = startX + half;
+	draggers[0].bottom = startY + half;
+
+	draggers[1].left = endX - half;
+	draggers[1].top = endY - half;
+	draggers[1].right = endX + half;
+	draggers[1].bottom = endY + half;
+}
+
+void ShapeArrow::mouseMove(const float x, const float y)
+{
+	hoverDraggerIndex = -1;
+	if (isInRect(draggers[0], x, y))
+	{
+		hoverDraggerIndex = 0;
+	}
+	else if (isInRect(draggers[1], x, y))
+	{
+		hoverDraggerIndex = 1;
+	}
+	if (hoverDraggerIndex == -1)
+	{
+		if (!path) return;
+		BOOL contains = FALSE;
+		path->FillContainsPoint({ x, y }, nullptr, &contains);
+		if (contains) hoverDraggerIndex = 8;
+	}
+}
+
+void ShapeArrow::setCursor()
+{
+	SetCursor(LoadCursor(nullptr, IDC_SIZEALL));
+}
+
+void ShapeArrow::makeArrow()
+{
+	auto d2d = Ling::D2D::get();
+	// 每次都要按新的起终点重建，用 ReleaseAndGetAddressOf 放掉上一个，
+	// 否则 GetAddressOf 只是覆盖指针，等于每拖一下漏一个 ID2D1PathGeometry
+	d2d->d2dFactory->CreatePathGeometry(path.ReleaseAndGetAddressOf());
+	ComPtr<ID2D1GeometrySink> sink;
+	path->Open(sink.GetAddressOf());
+	float dx = endX - startX;
+	float dy = endY - startY;
+	float length = sqrtf(dx * dx + dy * dy);
+	if (length < 1.f)
+	{
+		sink->BeginFigure( { startX, startY }, D2D1_FIGURE_BEGIN_FILLED );
+		sink->EndFigure(D2D1_FIGURE_END_CLOSED);
+		sink->Close();
+		return;
+	}
+	float ux = dx / length;
+	float uy = dy / length;
+	float vx = -uy;
+	float vy = ux;
+	float v1 = arrowSize / 4.0f;        // 箭杆半宽
+	float v2 = arrowSize * 2.0f / 3.0f; // 箭头半宽
+	sink->BeginFigure( { startX, startY }, D2D1_FIGURE_BEGIN_FILLED);
+	sink->AddLine({ endX - arrowSize * ux - v1 * vx, endY - arrowSize * uy - v1 * vy });
+	sink->AddLine({ endX - (arrowSize + v1) * ux - v2 * vx, endY - (arrowSize + v1) * uy - v2 * vy });
+	sink->AddLine({ endX, endY });
+	sink->AddLine({ endX - (arrowSize + v1) * ux + v2 * vx, endY - (arrowSize + v1) * uy + v2 * vy });
+	sink->AddLine({ endX - arrowSize * ux + v1 * vx, endY - arrowSize * uy + v1 * vy });
+	sink->EndFigure(D2D1_FIGURE_END_CLOSED);
+	sink->Close();
+}
+
+void ShapeArrow::constrainToEightDirections(const float anchorX, const float anchorY, const float mouseX, const float mouseY, float& targetX, float& targetY)
+{
+	float dx = mouseX - anchorX;
+	float dy = mouseY - anchorY;
+	float absX = fabsf(dx);
+	float absY = fabsf(dy);
+	if (absY <= absX * 0.41421356237f) {
+		targetX = anchorX + dx;
+		targetY = anchorY;
+	}
+	else if (absX <= absY * 0.41421356237f) {
+		targetX = anchorX;
+		targetY = anchorY + dy;
+	}
+	else {
+		float span = absX > absY ? absX : absY;
+		targetX = anchorX + (dx >= 0.f ? span : -span);
+		targetY = anchorY + (dy >= 0.f ? span : -span);
+	}
+}

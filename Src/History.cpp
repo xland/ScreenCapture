@@ -5,10 +5,10 @@
 #include "Tool/ToolSub.h"
 #include "Shape/ShapeBase.h"
 #include "Shape/ShapeRect.h"
-//#include "Shape/ShapeEllipse.h"
-//#include "Shape/ShapeArrow.h"
-//#include "Shape/ShapeNumber.h"
-//#include "Shape/ShapeLine.h"
+#include "Shape/ShapeEllipse.h"
+#include "Shape/ShapeArrow.h"
+#include "Shape/ShapeNumber.h"
+#include "Shape/ShapeLine.h"
 //#include "Shape/ShapeText.h"
 //#include "Shape/ShapeMosaic.h"
 //#include "Shape/ShapeEraser.h"
@@ -33,41 +33,43 @@ ShapeBase* History::createShape(const std::wstring& state, const int& x, const i
         result = shape.get();
         shapes.push_back(std::move(shape));
     }
-    //else if (toolMain->state == L"ellipse") {
-    //    auto shape = std::make_unique<ShapeEllipse>(win);
-    //    result = shape.get();
-    //    shapes.push_back(std::move(shape));
-    //}
-    //else if (toolMain->state == L"arrow") {
-    //    auto shape = std::make_unique<ShapeArrow>(win);
-    //    result = shape.get();
-    //    shapes.push_back(std::move(shape));
-    //}
-    //else if (toolMain->state == L"number") {
-    //    auto shape = std::make_unique<ShapeNumber>(win);
-    //    result = shape.get();
-    //    shapes.push_back(std::move(shape));
-    //}
-    //else if (toolMain->state == L"line") {
-    //    auto shape = std::make_unique<ShapeLine>(win);
-    //    result = shape.get();
-    //    shapes.push_back(std::move(shape));
-    //}
-    //else if (toolMain->state == L"text") {
+    else if (toolMain->curId == L"ellipse") {
+        auto shape = std::make_unique<ShapeEllipse>(win);
+        result = shape.get();
+        shapes.push_back(std::move(shape));
+    }
+    else if (toolMain->curId == L"arrow") {
+        auto shape = std::make_unique<ShapeArrow>(win);
+        result = shape.get();
+        shapes.push_back(std::move(shape));
+    }
+    else if (toolMain->curId == L"number") {
+        auto shape = std::make_unique<ShapeNumber>(win);
+        result = shape.get();
+        shapes.push_back(std::move(shape));
+    }
+    else if (toolMain->curId == L"line") {
+        auto shape = std::make_unique<ShapeLine>(win);
+        result = shape.get();
+        shapes.push_back(std::move(shape));
+    }
+    //else if (toolMain->curId == L"text") {
     //    auto shape = std::make_unique<ShapeText>(win);
     //    result = shape.get();
     //    shapes.push_back(std::move(shape));
     //}
-    //else if (toolMain->state == L"mosaic") {
+    //else if (toolMain->curId == L"mosaic") {
     //    auto shape = std::make_unique<ShapeMosaic>(win);
     //    result = shape.get();
     //    shapes.push_back(std::move(shape));
     //}
-    //else if (toolMain->state == L"eraser") {
+    //else if (toolMain->curId == L"eraser") {
     //    auto shape = std::make_unique<ShapeEraser>(win);
     //    result = shape.get();
     //    shapes.push_back(std::move(shape));
     //}
+    // text/mosaic/eraser 还没实现，curId 落在这几个上时 result 是空的，直接返回
+    if (!result) return nullptr;
     result->mouseDown((float)x, (float)y);
     return result;
 }

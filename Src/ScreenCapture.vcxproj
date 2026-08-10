@@ -171,7 +171,11 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Setting.cpp" />
+    <ClCompile Include="Shape\ShapeArrow.cpp" />
     <ClCompile Include="Shape\ShapeBase.cpp" />
+    <ClCompile Include="Shape\ShapeEllipse.cpp" />
+    <ClCompile Include="Shape\ShapeLine.cpp" />
+    <ClCompile Include="Shape\ShapeNumber.cpp" />
     <ClCompile Include="Shape\ShapeRect.cpp" />
     <ClCompile Include="Tool\ToolSub.cpp" />
     <ClCompile Include="Tool\ToolMain.cpp" />
@@ -198,7 +202,11 @@
     <ClInclude Include="Lang.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Setting.h" />
+    <ClInclude Include="Shape\ShapeArrow.h" />
     <ClInclude Include="Shape\ShapeBase.h" />
+    <ClInclude Include="Shape\ShapeEllipse.h" />
+    <ClInclude Include="Shape\ShapeLine.h" />
+    <ClInclude Include="Shape\ShapeNumber.h" />
     <ClInclude Include="Shape\ShapeRect.h" />
     <ClInclude Include="Tool\ToolSub.h" />
     <ClInclude Include="Tool\ToolMain.h" />
