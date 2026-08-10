@@ -68,6 +68,6 @@ private:
 	UINT selectColorIndex{ 0 };
 	// 滑块值。跨工具切换保留，初值取值域中点附近的 2（1px 线太细看不清）。
 	float sliderVal{ 2.f };
-	static constexpr float sliderMin{ 1.f }, sliderMax{ 20.f };
+	float sliderMin{ 1.f }, sliderMax{ 20.f };
 	std::vector<UINT32> colors = { 0XCF1322FF, 0XD48806FF, 0X389E0DFF, 0X13C2C2FF, 0X0958D9FF, 0X722ED1FF, 0XEB2F96FF, 0X000000FF, 0XFFFFFFFF };
 };

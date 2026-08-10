@@ -12,7 +12,7 @@ ShapeBase::ShapeBase(WinPin* win):win{win}, draggerSize{6*win->dpi}
 ShapeBase::~ShapeBase()
 {}
 
-bool ShapeBase::isInRect(const D2D1_RECT_F& rect, const float& x, const float& y)
+bool ShapeBase::isInRect(const D2D1_RECT_F rect, const float x, const float y)
 {
 	return (x > rect.left && x<rect.right && y>rect.top && y < rect.bottom);
 }

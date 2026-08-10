@@ -24,12 +24,14 @@ private:
 	void onDown(POINT pos, BOOL isRight);
 	void onMove(POINT pos);
 	void onUp(POINT pos, BOOL isRight);
+	void onTimerCB(UINT id);
+	void onClosed();
 	BOOL setCursor() override;
 private:
 	Microsoft::WRL::ComPtr<ID2D1Bitmap1> screenImg;
 	winrt::Windows::UI::Composition::CompositionDrawingSurface surface{ nullptr };
 	Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> borderBrush;
-	bool isTopmost{ true }, isMouseDown{false};
+	bool isTopmost{ true }, isMouseDown{false}, isClosed{ false };
 	POINT pressPos{ 0,0 };
 };
 

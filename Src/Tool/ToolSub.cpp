@@ -36,6 +36,8 @@ void ToolSub::showRectTools()
 	contentNode->removeAllChildren();
 	initSize(1, true);
 	makeToggleBtn(L"\ue602", &isRectFill);
+	sliderMin = 1.f;
+	sliderMax = 16.f;
 	initSlider();
 	initColorBtns();
 }
@@ -311,7 +313,7 @@ D2D1_COLOR_F ToolSub::getSelectedColor() const
 
 float ToolSub::getSliderVal() const
 {
-	return sliderVal;
+	return sliderVal*dpi;
 }
 
 bool ToolSub::hasContent()

@@ -44,7 +44,7 @@ void ShapeRect::paintDragger(ID2D1DeviceContext* ctx)
 	}
 }
 
-void ShapeRect::mouseDrag(const float& x, const float& y, const UINT_PTR& modifiers)
+void ShapeRect::mouseDrag(const float x, const float y)
 {
 	if (hoverDraggerIndex == 0 || hoverDraggerIndex == 4 || hoverDraggerIndex == 2 || hoverDraggerIndex == 6) {
 		auto [left, right] = std::minmax(pressX, x);
@@ -72,7 +72,8 @@ void ShapeRect::mouseDrag(const float& x, const float& y, const UINT_PTR& modifi
 		rect.right = rect.left + w;
 		rect.bottom = rect.top + h;
 	}
-	if (hoverDraggerIndex != 8&&(modifiers & MK_SHIFT) != 0) {
+	bool shiftDown = (GetKeyState(VK_SHIFT) & 0x8000) != 0;
+	if (hoverDraggerIndex != 8&& shiftDown) {
 		auto w = rect.right - rect.left;
 		auto h = rect.bottom - rect.top;
 		if (w > h) {
@@ -85,7 +86,7 @@ void ShapeRect::mouseDrag(const float& x, const float& y, const UINT_PTR& modifi
 	}
 }
 
-void ShapeRect::mouseDown(const float& x, const float& y)
+void ShapeRect::mouseDown(const float x, const float y)
 {
 	if (hoverDraggerIndex == -1) { //首次创建
 		pressX = x;
@@ -126,7 +127,7 @@ void ShapeRect::mouseDown(const float& x, const float& y)
 	}
 }
 
-void ShapeRect::mouseUp(const float& x, const float& y)
+void ShapeRect::mouseUp(const float x, const float y)
 {
 	auto half{ draggerSize / 2 }, w{ rect.right - rect.left }, h{ rect.bottom - rect.top };
 	draggers[0].left = rect.left - half;
@@ -174,7 +175,7 @@ void ShapeRect::mouseUp(const float& x, const float& y)
 	draggers[7].bottom = rect.top + h / 2 + half;
 }
 
-void ShapeRect::mouseMove(const float& x, const float& y)
+void ShapeRect::mouseMove(const float x, const float y)
 {
     hoverDraggerIndex = -1;
     if (isInRect(draggers[0], x, y))
@@ -223,19 +224,19 @@ void ShapeRect::mouseMove(const float& x, const float& y)
 
 void ShapeRect::setCursor()
 {
-	//if (hoverDraggerIndex == 0 || hoverDraggerIndex == 4) {
-	//	win->setCursor(IDC_SIZENWSE);
-	//}
-	//else if (hoverDraggerIndex == 1 || hoverDraggerIndex == 5) {
-	//	win->setCursor(IDC_SIZENS);
-	//}
-	//else if (hoverDraggerIndex == 2 || hoverDraggerIndex == 6) {
-	//	win->setCursor(IDC_SIZENESW);
-	//}
-	//else if (hoverDraggerIndex == 3 || hoverDraggerIndex == 7) {
-	//	win->setCursor(IDC_SIZEWE);
-	//}
-	//else if (hoverDraggerIndex == 8) {
-	//	win->setCursor(IDC_SIZEALL);
-	//}
+	if (hoverDraggerIndex == 0 || hoverDraggerIndex == 4) {
+		SetCursor(LoadCursor(nullptr, IDC_SIZENWSE));
+	}
+	else if (hoverDraggerIndex == 1 || hoverDraggerIndex == 5) {
+		SetCursor(LoadCursor(nullptr, IDC_SIZENS));
+	}
+	else if (hoverDraggerIndex == 2 || hoverDraggerIndex == 6) {
+		SetCursor(LoadCursor(nullptr, IDC_SIZENESW));
+	}
+	else if (hoverDraggerIndex == 3 || hoverDraggerIndex == 7) {
+		SetCursor(LoadCursor(nullptr, IDC_SIZEWE));
+	}
+	else if (hoverDraggerIndex == 8) {
+		SetCursor(LoadCursor(nullptr, IDC_SIZEALL));
+	}
 }

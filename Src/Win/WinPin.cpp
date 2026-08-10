@@ -37,6 +37,28 @@ WinPin::WinPin(int x, int y, int w, int h) : Ling::WinBase(), history{ std::make
 	onMouseDown.add([this](POINT pos, BOOL isRight) {this->onDown(pos, isRight);});
 	onMouseMove.add([this](POINT pos) {this->onMove(pos);});
 	onMouseUp.add([this](POINT pos, BOOL isRight) {this->onUp(pos, isRight);});
+	onTimer.add([this](UINT id) {this->onTimerCB(id);});
+	onDestroy.add([this]() { this->onClosed(); });
+}
+
+// WinBase::close() 里 DestroyWindow 之后同步触发 onDestroy，所以这个函数很可能是从
+// ToolMain 的按钮回调里一路调进来的（点了 close 按钮）。此时 ToolMain::onClick 还在栈上，
+// 而 toolMain 是 WinPin 的成员 —— 在这里直接把自己从 winPins 里擦掉就是 use-after-free。
+// 因此：窗口句柄立即销毁（用户马上看到界面消失），C++ 对象的释放推迟到下一轮消息循环。
+void WinPin::onClosed()
+{
+	// 防止 close() 被走两遍（比如按钮和快捷键先后触发）时排两次销毁
+	if (isClosed) return;
+	isClosed = true;
+	// 先收起附属窗口，再让出 hover 指针 —— shapeHover 指向 history 里的元素，
+	// history 随 WinPin 一起析构，留着悬空指针没意义
+	if (toolSub) toolSub->close();
+	if (toolMain) toolMain->close();
+	shapeHover = nullptr;
+	// screenImg / surface / history 都是成员，随下面这次 erase 一并释放
+	Ling::App::get()->dq.TryEnqueue([this]() {
+		std::erase_if(winPins, [this](const std::unique_ptr<WinPin>& p) { return p.get() == this; });
+	});
 }
 
 // 把 ToolMain / ToolSub 摆到 WinPin 周围，始终靠 WinPin 右对齐，并尽量留在屏幕可视区内。
@@ -126,6 +148,15 @@ void WinPin::layout()
     auto sz = screenImg->GetSize();
     D2D1_RECT_F destRect = D2D1::RectF(0, 0, sz.width, sz.height);
     ctx->DrawBitmap(screenImg.Get(), destRect);
+	for (auto& shape : history->shapes)
+	{
+		if (!shape->isUndo) {
+			shape->paint(ctx.Get());
+		}
+	}
+	if (!isMouseDown && shapeHover) {
+		shapeHover->paintDragger(ctx.Get());
+	}
 	ctx->DrawRectangle(destRect, borderBrush.Get(), 2*dpi);
     s->EndDraw();
 }
@@ -157,8 +188,9 @@ void WinPin::onDown(POINT pos, BOOL isRight)
 		}
 		return;
 	}
-	pressPos.x = x;
-	pressPos.y = y;
+	// 记的是按下点在窗口内的偏移（客户区坐标），拖动时用它把抓住的那一点保持在光标下
+	pressPos.x = pos.x;
+	pressPos.y = pos.y;
 	isMouseDown = true;
 	SetCapture(hwnd);
 	if (!isTopmost) {
@@ -178,22 +210,45 @@ void WinPin::onDown(POINT pos, BOOL isRight)
 		return;
 	}
 	if (shapeHover) {
-		shapeHover->mouseDown((float)x, (float)y);
+		shapeHover->mouseDown((float)pos.x, (float)pos.y);
 		return;
 	}
-	shapeHover = history->createShape(toolMain->curId, x, y);
+	shapeHover = history->createShape(toolMain->curId, pos.x, pos.y);
 }
 
 void WinPin::onMove(POINT pos)
 {
-	if (toolMain->curId == L"") {
-		this->x += (x - pressPos.x);
-		this->y += (y - pressPos.y);
-		setPosition(this->x, this->y);
+	if (isMouseDown) {
+		if (toolMain->curId == L"") {
+			setPosition(x + pos.x - pressPos.x, y + pos.y - pressPos.y);
+			return;
+		}
+		else if(shapeHover) {
+			shapeHover->mouseDrag((float)pos.x, (float)pos.y);
+			refresh();
+		}
 	}
-	else if(isMouseDown) {
-		//shapeHover->mouseDrag((float)x, (float)y);
-		refresh();
+	else
+	{
+		if (toolMain->curId == L"") return;
+		int i{ (int)(history->shapes.size() - 1) };
+		for (; i >= 0; i--)
+		{
+			auto cur = history->shapes[i].get();
+			if (cur->isUndo) continue;
+			cur->mouseMove((float)pos.x, (float)pos.y);
+			if (cur->hoverDraggerIndex >= 0) {
+				if (shapeHover != cur) {
+					shapeHover = cur;
+					setTimer(800, 100);
+					refresh();
+				}
+				return;
+			}
+		}
+		if (shapeHover) {
+			shapeHover = nullptr;
+		}
 	}
 }
 
@@ -206,15 +261,37 @@ void WinPin::onUp(POINT pos, BOOL isRight)
 		toolMain->show();
 	}
 	else if (shapeHover) {
-		shapeHover->mouseUp((float)x, (float)y);
+		shapeHover->mouseUp((float)pos.x, (float)pos.y);
 		refresh();
-		//setTimer(800, timerID);
+		setTimer(800, 100);
 	}
 
 }
 
+void WinPin::onTimerCB(UINT id)
+{
+	if (id != 100) return;
+	if (!shapeHover) {
+		refresh();
+		killTimer(100);
+	}
+}
+
 BOOL WinPin::setCursor()
 {
-	SetCursor(LoadCursor(nullptr, IDC_CROSS));
+	if (toolMain->curId == L"") {
+		SetCursor(LoadCursor(nullptr, IDC_SIZEALL));
+		return TRUE;
+	}
+	if (shapeHover) {
+		shapeHover->setCursor();
+		return TRUE;
+	}
+	if (toolMain->curId == L"text") {
+		SetCursor(LoadCursor(nullptr, IDC_IBEAM));
+	}
+	else {
+		SetCursor(LoadCursor(nullptr, IDC_CROSS));
+	}
 	return TRUE;
 }

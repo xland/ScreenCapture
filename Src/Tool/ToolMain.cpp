@@ -108,6 +108,18 @@ void ToolMain::cancelSelect()
 
 void ToolMain::onClick(Ling::Button* btn)
 {
+	// 关闭整个贴图窗口。WinPin 的 onDestroy 里会连带关掉 ToolMain / ToolSub，
+	// 但 C++ 对象的释放被推迟到下一轮消息循环，所以这里 return 之后栈上访问 this 仍是安全的。
+	if (btn->id == L"close") {
+		win->close();
+		return;
+	}
+	// 再次点击已选中的按钮 = 取消选中（开关式）。cancelSelect 里已经做了配色复位、
+	// 隐藏 ToolSub 和重排，这里直接返回，不要再往下走选中流程。
+	if (btn->id == curId) {
+		cancelSelect();
+		return;
+	}
 	for (auto b:btns)
 	{
 		if (b->id == curId)
