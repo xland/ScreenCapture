@@ -83,14 +83,36 @@ void ToolMain::onCreated()
 	show();
 }
 
+void ToolMain::applyNormalStyle(Ling::Button* btn)
+{
+	btn->setBg(0);
+	btn->setHoverBg(0xF2F2F2ff);
+}
+
+// 取消选中：与 onClick 选中某个按钮是对称操作，只是没有新的选中项。
+// ToolSub 由 curId 是否为空驱动，所以清空 curId 后 layoutTools() 会自动把它收起来。
+void ToolMain::cancelSelect()
+{
+	if (curId.empty()) return;
+	for (auto b : btns)
+	{
+		if (b->id == curId) {
+			applyNormalStyle(b);
+		}
+	}
+	curId.clear();
+	win->toolSub->hideTools();
+	// curId 空了 ToolMain 要下移收回 ToolSub 让出的空间，交给 WinPin 重排整组
+	win->layoutTools();
+}
+
 void ToolMain::onClick(Ling::Button* btn)
 {
 	for (auto b:btns)
 	{
 		if (b->id == curId)
 		{
-			b->setBg(0);
-			b->setHoverBg(0xF2F2F2ff);
+			applyNormalStyle(b);
 		}
 		if (b->id == btn->id)
 		{

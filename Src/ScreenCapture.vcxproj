@@ -163,6 +163,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp" />
+    <ClCompile Include="History.cpp" />
     <ClCompile Include="Lang.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="pch.cpp">
@@ -170,6 +171,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Setting.cpp" />
+    <ClCompile Include="Shape\ShapeBase.cpp" />
+    <ClCompile Include="Shape\ShapeRect.cpp" />
     <ClCompile Include="Tool\ToolSub.cpp" />
     <ClCompile Include="Tool\ToolMain.cpp" />
     <ClCompile Include="Tray.cpp" />
@@ -191,9 +194,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h" />
+    <ClInclude Include="History.h" />
     <ClInclude Include="Lang.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Setting.h" />
+    <ClInclude Include="Shape\ShapeBase.h" />
+    <ClInclude Include="Shape\ShapeRect.h" />
     <ClInclude Include="Tool\ToolSub.h" />
     <ClInclude Include="Tool\ToolMain.h" />
     <ClInclude Include="Tray.h" />

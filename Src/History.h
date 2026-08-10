@@ -1,0 +1,21 @@
+﻿#pragma once
+#include <include/Ling.h>
+class ShapeBase;
+class WinPin;
+class History
+{
+public:
+	History(WinPin* win);
+	~History();
+	ShapeBase* createShape(const std::wstring& state, const int& x, const int& y);
+	void undo();
+	void redo();
+	void removeHoverShape();
+public:
+	std::vector<std::unique_ptr<ShapeBase>> shapes;
+private:
+	void removeUndoShape();
+private:
+	WinPin* win;
+};
+

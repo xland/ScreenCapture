@@ -8,12 +8,16 @@ public:
 	~ToolMain();
 	static void init();
 	float getBtnCenterX();
+	// 取消当前选中：清空 curId、把所有按钮恢复常态配色，并重排工具组（curId 空了 ToolSub 会隐藏）。
+	void cancelSelect();
 public:
 	std::wstring curId;
 private:
 	void onCreated() override;
 	void onClick(Ling::Button* btn);
 	void onMinMaxInfo(MINMAXINFO* mmi);
+	// 未选中态配色，选中态在 onClick 里就地设置
+	void applyNormalStyle(Ling::Button* btn);
 private:
 	WinPin* win;
 	std::vector<std::wstring> btnIds = { L"rect",L"ellipse",L"arrow",L"number",L"line",L"text",L"mosaic", L"eraser",L"|",L"undo",L"redo",L"|",L"close",L"save",L"clipboard" };

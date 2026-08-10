@@ -2,8 +2,10 @@
 #include <Windows.UI.Composition.Interop.h> 
 #include "../Tool/ToolMain.h"
 #include "../Tool/ToolSub.h"
+#include "../Shape/ShapeBase.h"
 #include "WinPin.h"
 #include "WinCap.h"
+#include "History.h"
 #include "../App.h"
 
 using namespace Microsoft::WRL;
@@ -21,7 +23,7 @@ namespace {
 	}
 }
 
-WinPin::WinPin(int x, int y, int w, int h) : Ling::WinBase()
+WinPin::WinPin(int x, int y, int w, int h) : Ling::WinBase(), history{ std::make_unique<History>(this) }
 {
 	this->x = x;
 	this->y = y;
@@ -32,6 +34,9 @@ WinPin::WinPin(int x, int y, int w, int h) : Ling::WinBase()
     toolSub = std::make_unique<ToolSub>(this);
 	layoutTools();
 	onMoved.add([this]() { layoutTools(); });
+	onMouseDown.add([this](POINT pos, BOOL isRight) {this->onDown(pos, isRight);});
+	onMouseMove.add([this](POINT pos) {this->onMove(pos);});
+	onMouseUp.add([this](POINT pos, BOOL isRight) {this->onUp(pos, isRight);});
 }
 
 // 把 ToolMain / ToolSub 摆到 WinPin 周围，始终靠 WinPin 右对齐，并尽量留在屏幕可视区内。
@@ -125,11 +130,6 @@ void WinPin::layout()
     s->EndDraw();
 }
 
-LRESULT WinPin::onHitTest(const POINT pos)
-{
-    return HTCAPTION;
-}
-
 void WinPin::onMinMaxInfo(MINMAXINFO* mmi)
 {
 	auto [x, y, w, h] = App::get()->getScreenArea();
@@ -139,4 +139,82 @@ void WinPin::onMinMaxInfo(MINMAXINFO* mmi)
 	mmi->ptMaxSize.y = h;
 	mmi->ptMinTrackSize.x = 1;
 	mmi->ptMinTrackSize.y = 1;
+}
+
+void WinPin::onDown(POINT pos, BOOL isRight)
+{
+	if (isRight) {
+		//右键：取消置顶并隐藏工具条；再次左键按下时恢复
+		if (isTopmost) {
+			SetWindowPos(hwnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+			LONG_PTR exStyle = GetWindowLongPtr(hwnd, GWL_EXSTYLE);
+			exStyle &= ~WS_EX_TOOLWINDOW;
+			exStyle |= WS_EX_APPWINDOW;
+			SetWindowLongPtr(hwnd, GWL_EXSTYLE, exStyle);
+			toolMain->cancelSelect();
+			toolMain->hide();
+			isTopmost = false;
+		}
+		return;
+	}
+	pressPos.x = x;
+	pressPos.y = y;
+	isMouseDown = true;
+	SetCapture(hwnd);
+	if (!isTopmost) {
+		//左键：从"未置顶"状态恢复。先重新置顶，并复位工具条状态；
+		//ToolMain 的显示交给 onMouseUp 走"拖窗结束"的通用路径，避免拖拽时工具条不跟随
+		SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+		LONG_PTR exStyle = GetWindowLongPtr(hwnd, GWL_EXSTYLE);
+		exStyle &= ~WS_EX_APPWINDOW;
+		exStyle |= WS_EX_TOOLWINDOW;
+		SetWindowLongPtr(hwnd, GWL_EXSTYLE, exStyle);
+		toolMain->cancelSelect();
+		isTopmost = true;
+		return;
+	}
+	if (toolMain->curId == L"") {
+		toolMain->hide();
+		return;
+	}
+	if (shapeHover) {
+		shapeHover->mouseDown((float)x, (float)y);
+		return;
+	}
+	shapeHover = history->createShape(toolMain->curId, x, y);
+}
+
+void WinPin::onMove(POINT pos)
+{
+	if (toolMain->curId == L"") {
+		this->x += (x - pressPos.x);
+		this->y += (y - pressPos.y);
+		setPosition(this->x, this->y);
+	}
+	else if(isMouseDown) {
+		//shapeHover->mouseDrag((float)x, (float)y);
+		refresh();
+	}
+}
+
+void WinPin::onUp(POINT pos, BOOL isRight)
+{
+	isMouseDown = false;
+	ReleaseCapture();
+	if (toolMain->curId == L"") { //state为空时，是在拖动窗口
+		layoutTools();
+		toolMain->show();
+	}
+	else if (shapeHover) {
+		shapeHover->mouseUp((float)x, (float)y);
+		refresh();
+		//setTimer(800, timerID);
+	}
+
+}
+
+BOOL WinPin::setCursor()
+{
+	SetCursor(LoadCursor(nullptr, IDC_CROSS));
+	return TRUE;
 }

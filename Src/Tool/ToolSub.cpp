@@ -190,6 +190,9 @@ void ToolSub::onColorSelect(Ling::Button* btn)
 
 void ToolSub::initColorBtns()
 {
+	// contentNode->removeAllChildren() \u5df2\u7ecf\u628a\u4e0a\u4e00\u6279\u6309\u94ae\u9500\u6bc1\u4e86\uff0c\u8fd9\u91cc\u5fc5\u987b\u540c\u6b65\u6e05\u7a7a\uff0c
+	// \u5426\u5219 colorBtns \u4f1a\u8d8a\u79ef\u8d8a\u957f\u4e14\u524d\u9762\u5168\u662f\u91ce\u6307\u9488\uff0cselectColorIndex \u4e5f\u4f1a\u8d8a\u754c\u3002
+	colorBtns.clear();
 	for (size_t i = 0; i < colors.size(); i++)
 	{
 		auto btn = contentNode->makeChild<Ling::Button>();
@@ -205,7 +208,8 @@ void ToolSub::initColorBtns()
 		label->setAlignItems(Ling::Align::Center);
 		label->setJustifyContent(Ling::Justify::Center);
 		label->setSize(13.f, 13.f);
-		if (i == 0) {
+		// \u91cd\u5efa\u540e\u8981\u628a\u5bf9\u52fe\u753b\u5728\u5f53\u524d\u9009\u4e2d\u7684\u90a3\u4e00\u9879\u4e0a\uff0c\u800c\u4e0d\u662f\u56fa\u5b9a\u7b2c\u4e00\u9879
+		if (i == selectColorIndex) {
 			label->setText(L"\ue6ad");
 		}
 		label->setFontFamily(L"icon");
@@ -261,6 +265,11 @@ void ToolSub::initSlider()
 	slider->setMarginLeft(sliderMargin);
 	slider->setMarginRight(sliderMargin);
 	slider->setHeightPercent(100.f);
+	// 值域与当前值都从字段来：切换工具时滑块会被销毁重建，靠 sliderVal 把用户调过的值带过来
+	slider->setRange(sliderMin, sliderMax);
+	slider->setValue(sliderVal);
+	slider->setStep(1.f);
+	slider->onValueChanged.add([this](Ling::Slider*, float val) { sliderVal = val; });
 	slider->setThumbColor(0x888888FF);
 	slider->setHoverThumbColor(0x888888FF);
 	slider->setTrackColor(0x888888FF);
@@ -293,6 +302,16 @@ void ToolSub::initSize(int btnCount, bool withColors, bool centerOnBtn)
 	auto pxW = toPx(btnSize) * count + toPx(sliderSize) + toPx(sliderMargin) * 2;
 	// setSize 收逻辑像素、内部再乘 dpi，所以这里把算好的物理宽高除回去
 	setSize(pxW / dpi, getDesiredHeight() / dpi);
+}
+
+D2D1_COLOR_F ToolSub::getSelectedColor() const
+{
+	return Ling::Color(colors[selectColorIndex]).getD2DColor();
+}
+
+float ToolSub::getSliderVal() const
+{
+	return sliderVal;
 }
 
 bool ToolSub::hasContent()

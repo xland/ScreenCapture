@@ -57,6 +57,15 @@
     <ClCompile Include="Tool\ToolSub.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Shape\ShapeBase.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Shape\ShapeRect.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="History.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Res\Resource.rc">
@@ -109,6 +118,15 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Tool\ToolSub.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Shape\ShapeBase.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Shape\ShapeRect.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="History.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
