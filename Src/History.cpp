@@ -10,8 +10,8 @@
 #include "Shape/ShapeNumber.h"
 #include "Shape/ShapeLine.h"
 //#include "Shape/ShapeText.h"
-//#include "Shape/ShapeMosaic.h"
-//#include "Shape/ShapeEraser.h"
+#include "Shape/ShapeMosaic.h"
+#include "Shape/ShapeEraser.h"
 //#include "Shape/ShapeTextWin.h"
 
 History::History(WinPin* win):win{win}
@@ -58,17 +58,17 @@ ShapeBase* History::createShape(const std::wstring& state, const int& x, const i
     //    result = shape.get();
     //    shapes.push_back(std::move(shape));
     //}
-    //else if (toolMain->curId == L"mosaic") {
-    //    auto shape = std::make_unique<ShapeMosaic>(win);
-    //    result = shape.get();
-    //    shapes.push_back(std::move(shape));
-    //}
-    //else if (toolMain->curId == L"eraser") {
-    //    auto shape = std::make_unique<ShapeEraser>(win);
-    //    result = shape.get();
-    //    shapes.push_back(std::move(shape));
-    //}
-    // text/mosaic/eraser 还没实现，curId 落在这几个上时 result 是空的，直接返回
+    else if (toolMain->curId == L"mosaic") {
+        auto shape = std::make_unique<ShapeMosaic>(win);
+        result = shape.get();
+        shapes.push_back(std::move(shape));
+    }
+    else if (toolMain->curId == L"eraser") {
+        auto shape = std::make_unique<ShapeEraser>(win);
+        result = shape.get();
+        shapes.push_back(std::move(shape));
+    }
+    // text 还没实现，curId 落在它上面时 result 是空的，直接返回
     if (!result) return nullptr;
     result->mouseDown((float)x, (float)y);
     return result;

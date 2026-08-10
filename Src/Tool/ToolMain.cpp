@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "../Win/WinPin.h"
+#include "../History.h"
 #include "ToolMain.h"
 #include "ToolSub.h"
 
@@ -19,6 +20,9 @@ ToolMain::ToolMain(WinPin* win) : Ling::WinBase(), win(win)
 		}
 	}
 	h = btnSize;
+	// 点按钮会把 ToolMain 激活，此后键盘消息进的是它而不是 WinPin。
+	// 直接把按键转触给 WinPin 的同名事件，快捷键在两个窗口上表现一致。
+	onKeyDown.add([this](UINT key) { this->win->onKeyDown(key); });
 	createNativeWindow(WS_EX_TOPMOST | WS_EX_TOOLWINDOW, WS_POPUP);
 }
 
@@ -112,6 +116,24 @@ void ToolMain::onClick(Ling::Button* btn)
 	// 但 C++ 对象的释放被推迟到下一轮消息循环，所以这里 return 之后栈上访问 this 仍是安全的。
 	if (btn->id == L"close") {
 		win->close();
+		return;
+	}
+	// 下面这几个都是"执行一次动作"而不是"切换绘图工具"，做完就返回，不动 curId 和选中态。
+	// undo/redo 由 History 内部负责 refresh；save/clipboard 成功后会关窗，同样不能往下走。
+	else if (btn->id == L"undo") {
+		win->history->undo();
+		return;
+	}
+	else if (btn->id == L"redo") {
+		win->history->redo();
+		return;
+	}
+	else if (btn->id == L"save") {
+		win->saveToFile();
+		return;
+	}
+	else if (btn->id == L"clipboard") {
+		win->copyToClipboard();
 		return;
 	}
 	// 再次点击已选中的按钮 = 取消选中（开关式）。cancelSelect 里已经做了配色复位、

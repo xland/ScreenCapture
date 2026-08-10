@@ -38,6 +38,7 @@ void ToolSub::showRectTools()
 	makeToggleBtn(L"\ue602", &isRectFill);
 	sliderMin = 1.f;
 	sliderMax = 16.f;
+	sliderVal = 1.f;
 	initSlider();
 	initColorBtns();
 }
@@ -91,6 +92,9 @@ void ToolSub::showTextTools()
 void ToolSub::showMosaicTools()
 {
 	contentNode->removeAllChildren();
+	sliderMin = 18.f;
+	sliderMax = 50.f;
+	sliderVal = 20.f;
 	initSize(1, false, true);
 	makeToggleBtn(L"\ue602", &isMosaicRect);
 	initSlider();
@@ -99,6 +103,9 @@ void ToolSub::showMosaicTools()
 void ToolSub::showEraserTools()
 {
 	contentNode->removeAllChildren();
+	sliderMin = 18.f;
+	sliderMax = 50.f;
+	sliderVal = 20.f;
 	initSize(1, false, true);
 	makeToggleBtn(L"\ue602", &isEraserRect);
 	initSlider();

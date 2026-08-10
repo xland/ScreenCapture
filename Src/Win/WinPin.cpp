@@ -1,5 +1,5 @@
 #include "pch.h"
-#include <Windows.UI.Composition.Interop.h> 
+#include <Windows.UI.Composition.Interop.h>
 #include "../Tool/ToolMain.h"
 #include "../Tool/ToolSub.h"
 #include "../Shape/ShapeBase.h"
@@ -7,6 +7,7 @@
 #include "WinCap.h"
 #include "History.h"
 #include "../App.h"
+#include "../Util.h"
 
 using namespace Microsoft::WRL;
 namespace {
@@ -44,6 +45,7 @@ WinPin::WinPin(int x, int y, int w, int h) : Ling::WinBase(), history{ std::make
 		shapeHover->mouseWheel((float)pos.x, (float)pos.y, space > 0 ? (short)WHEEL_DELTA : (short)-WHEEL_DELTA);
 	});
 	onTimer.add([this](UINT id) {this->onTimerCB(id);});
+	onKeyDown.add([this](UINT key) {this->onKey(key);});
 	onDestroy.add([this]() { this->onClosed(); });
 }
 
@@ -278,6 +280,140 @@ void WinPin::onTimerCB(UINT id)
 		refresh();
 		killTimer(100);
 	}
+}
+
+void WinPin::onKey(UINT key)
+{
+	bool ctrl = (GetKeyState(VK_CONTROL) & 0x8000) != 0;
+	if (ctrl && key == 'Z') {
+		history->undo();
+	}
+	else if (ctrl && key == 'Y') {
+		history->redo();
+	}
+	else if (ctrl && key == 'C') {
+		copyToClipboard();
+	}
+	else if (ctrl && key == 'S') {
+		saveToFile();
+	}
+	else if (key == VK_RETURN) {
+		copyToClipboard();
+	}
+	else if (key == VK_DELETE) {
+		history->removeHoverShape();
+	}
+	else if (key == VK_ESCAPE) {
+		close();
+	}
+}
+
+void WinPin::copyToClipboard()
+{
+	std::vector<BYTE> pixels;
+	if (!getImagePixels(pixels)) return;
+	Util::saveToClipboard((int)w, (int)h, pixels.data());
+	close();
+}
+
+void WinPin::saveToFile()
+{
+	auto foregroundBeforeDialog = GetForegroundWindow();
+	auto path = Util::getSaveFilePath(hwnd);
+	if (path.empty()) {   // 用户取消
+		restoreWindowState(foregroundBeforeDialog);
+		return;
+	}
+	std::vector<BYTE> pixels;
+	if (!getImagePixels(pixels)) {
+		restoreWindowState(foregroundBeforeDialog);
+		return;
+	}
+	if (Util::saveToFile(path, (int)w, (int)h, pixels.data())) {
+		close();
+	}
+	else {
+		restoreWindowState(foregroundBeforeDialog);
+	}
+}
+
+// 另存为对话框关掉后会把 owner(hwnd) 变成活动窗口，WinPin 一被激活就会盖住 ToolMain。
+// 这里把三个窗口重新压到 topmost，并把前台还给开对话框之前的那个窗口。
+void WinPin::restoreWindowState(HWND foregroundBeforeDialog)
+{
+	SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+	if (toolMain && toolMain->hwnd && IsWindowVisible(toolMain->hwnd)) {
+		SetWindowPos(toolMain->hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+	}
+	if (toolSub && toolSub->hwnd && IsWindowVisible(toolSub->hwnd)) {
+		SetWindowPos(toolSub->hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+	}
+	if (foregroundBeforeDialog && foregroundBeforeDialog != hwnd && IsWindowVisible(foregroundBeforeDialog)) {
+		SetForegroundWindow(foregroundBeforeDialog);
+	}
+}
+
+// 离屏把底图和 shape 合成到一张新位图上再读回像素。
+// 不直接画到 screenImg 上：它是 ShapeEraser 的"原样"来源，也是 ShapeMosaic 的取样来源，
+// 一旦被 shape 覆写，之后再擦除/打码就会拿到已经画过的画面。
+// 用 d2d->deviceContext 做离屏是安全的，SetTarget → BeginDraw → EndDraw → SetTarget(nullptr) 在本函数内闭环。
+bool WinPin::getImagePixels(std::vector<BYTE>& pixels)
+{
+	if (!screenImg || w <= 0 || h <= 0) return false;
+	auto size = D2D1::SizeU((UINT32)w, (UINT32)h);
+	auto d2d = Ling::D2D::get();
+	auto ctx = d2d->deviceContext.Get();
+
+	D2D1_BITMAP_PROPERTIES1 targetProps{
+		.pixelFormat{ D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED) },
+		.dpiX{ 96.0f }, .dpiY{ 96.0f },
+		.bitmapOptions{ D2D1_BITMAP_OPTIONS_TARGET }
+	};
+	ComPtr<ID2D1Bitmap1> targetBmp;
+	auto hr = ctx->CreateBitmap(size, nullptr, 0, &targetProps, targetBmp.GetAddressOf());
+	if (FAILED(hr)) return false;
+
+	ctx->SetTarget(targetBmp.Get());
+	ctx->SetTransform(D2D1::Matrix3x2F::Identity());
+	ctx->BeginDraw();
+	ctx->Clear(D2D1::ColorF(0, 0.0f));
+	ctx->DrawBitmap(screenImg.Get(), D2D1::RectF(0, 0, w, h));
+	for (auto& shape : history->shapes)
+	{
+		if (!shape->isUndo) {
+			shape->paint(ctx);
+		}
+	}
+	hr = ctx->EndDraw();
+	// 解绑，下面 CopyFromBitmap 才能把它当 source 读
+	ctx->SetTarget(nullptr);
+	if (FAILED(hr)) return false;
+
+	// GPU 上的 target 位图不能直接 Map，得先拷到一块带 CPU_READ 的位图上
+	D2D1_BITMAP_PROPERTIES1 cpuProps{
+		.pixelFormat{ targetBmp->GetPixelFormat() },
+		.dpiX{ 96.0f }, .dpiY{ 96.0f },
+		.bitmapOptions{ D2D1_BITMAP_OPTIONS_CPU_READ | D2D1_BITMAP_OPTIONS_CANNOT_DRAW }
+	};
+	ComPtr<ID2D1Bitmap1> cpuBmp;
+	hr = ctx->CreateBitmap(size, nullptr, 0, &cpuProps, cpuBmp.GetAddressOf());
+	if (FAILED(hr)) return false;
+	hr = cpuBmp->CopyFromBitmap(nullptr, targetBmp.Get(), nullptr);
+	if (FAILED(hr)) return false;
+	D2D1_MAPPED_RECT mapped{};
+	hr = cpuBmp->Map(D2D1_MAP_OPTIONS_READ, &mapped);
+	if (FAILED(hr)) return false;
+	// mapped.pitch 按 GPU 行对齐，可能大于 w*4；剪切板和 WIC 都要求紧凑步长，逐行紧缩
+	const UINT32 rowBytes = size.width * 4;
+	pixels.resize((size_t)rowBytes * size.height);
+	for (UINT32 row = 0; row < size.height; ++row)
+	{
+		CopyMemory(pixels.data() + (size_t)row * rowBytes,
+			mapped.bits + (size_t)row * mapped.pitch,
+			rowBytes);
+	}
+	cpuBmp->Unmap();
+	return true;
 }
 
 BOOL WinPin::setCursor()
