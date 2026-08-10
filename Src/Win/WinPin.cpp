@@ -61,7 +61,7 @@ void WinPin::onClosed()
 	if (toolSub) toolSub->close();
 	if (toolMain) toolMain->close();
 	shapeHover = nullptr;
-	// screenImg / surface / history 都是成员，随下面这次 erase 一并释放
+	// screenImg / canvas / history 都是成员（canvas 挂在 body 的子节点上），随下面这次 erase 一并释放
 	Ling::App::get()->dq.TryEnqueue([this]() {
 		std::erase_if(winPins, [this](const std::unique_ptr<WinPin>& p) { return p.get() == this; });
 	});
@@ -133,10 +133,10 @@ void WinPin::onCreated()
 {
     disableBorderRadius();
     auto d2d = Ling::D2D::get();
-    surface = d2d->createDrawingSurface(compositor, (float)w, (float)h);
-    auto brush = compositor.CreateSurfaceBrush(surface);
-    brush.Stretch(winrt::Windows::UI::Composition::CompositionStretch::None);
-    body->visual.Brush(brush);
+    // 画布铺满窗口，走 swap chain（双缓冲）后端，避免拖动 shape 时整帧闪烁
+    canvas = body->makeChild<Ling::Canvas>();
+    canvas->enableSwapChain();
+    canvas->setSizePercent(100.f, 100.f);
     d2d->deviceContext->CreateSolidColorBrush(D2D1::ColorF(0x1677ff), borderBrush.GetAddressOf());
     show();
 }
@@ -144,27 +144,24 @@ void WinPin::onCreated()
 void WinPin::layout()
 {
     Ling::WinBase::layout();
-    if (!screenImg) return;
-    auto s = surface.as<ABI::Windows::UI::Composition::ICompositionDrawingSurfaceInterop>();
-    ComPtr<ID2D1DeviceContext> ctx;
-    POINT offset{};
-    s->BeginDraw(nullptr, __uuidof(ID2D1DeviceContext), reinterpret_cast<void**>(ctx.GetAddressOf()), &offset);
-    auto trans = D2D1::Matrix3x2F::Translation((float)offset.x, (float)offset.y);
-    ctx->SetTransform(trans);
+    if (!screenImg || !canvas) return;
+    auto ctx = canvas->startPaint();
+    if (!ctx) return;
+    ctx->Clear(0);
     auto sz = screenImg->GetSize();
     D2D1_RECT_F destRect = D2D1::RectF(0, 0, sz.width, sz.height);
     ctx->DrawBitmap(screenImg.Get(), destRect);
 	for (auto& shape : history->shapes)
 	{
 		if (!shape->isUndo) {
-			shape->paint(ctx.Get());
+			shape->paint(ctx);
 		}
 	}
 	if (!isMouseDown && shapeHover) {
-		shapeHover->paintDragger(ctx.Get());
+		shapeHover->paintDragger(ctx);
 	}
 	ctx->DrawRectangle(destRect, borderBrush.Get(), 2*dpi);
-    s->EndDraw();
+    canvas->finishPaint();
 }
 
 void WinPin::onMinMaxInfo(MINMAXINFO* mmi)
