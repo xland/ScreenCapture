@@ -57,6 +57,9 @@ void ToolSub::showArrowTools()
 	contentNode->removeAllChildren();
 	initSize(1, true);
 	makeToggleBtn(L"\ue604", &isArrowFill);
+	sliderMin = 1.f;
+	sliderMax = 16.f;
+	sliderVal = 3.f;
 	initSlider();
 	initColorBtns();
 }
@@ -66,6 +69,9 @@ void ToolSub::showNumberTools()
 	contentNode->removeAllChildren();
 	initSize(1, true);
 	makeToggleBtn(L"\ue605", &isNumberFill);
+	sliderMin = 1.f;
+	sliderMax = 36.f;
+	sliderVal = 3.f;
 	initSlider();
 	initColorBtns();
 }
