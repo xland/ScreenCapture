@@ -1,0 +1,249 @@
+﻿#include "pch.h"
+#include "../Win/WinVideo.h"
+#include "../Util.h"
+#include "ToolVideo.h"
+
+ToolVideo::ToolVideo(WinVideo* win) : Ling::WinBase(), win(win)
+{
+	// 位置由 WinVideo::makeTool() 在 createNativeWindow 之前设好，这里只算尺寸。
+	// 不走 setSize：它会把参数当逻辑像素再乘一遍 dpi。
+	w = settingWidth() * win->dpi;
+	h = btnSize * win->dpi;
+	// 点按钮会把 ToolVideo 激活，键盘消息进的是它，转发给 WinVideo 让 ESC 一致生效
+	onKeyDown.add([this](UINT key) { this->win->onKeyDown(key); });
+	onTimer.add([this](UINT id) { this->onTimerCB(id); });
+}
+
+ToolVideo::~ToolVideo()
+{
+}
+
+void ToolVideo::onCreated()
+{
+	body->setBg(0xFFFFFFFF);
+	body->setBorder(1.f, 0xA8A8A8ff);
+	body->setAlignItems(Ling::Align::Center);
+	body->setFlexDirection(Ling::FlexDirection::Row);
+	showSetting();
+	show();
+}
+
+void ToolVideo::onMinMaxInfo(MINMAXINFO* mmi)
+{
+	mmi->ptMinTrackSize.x = 1;
+	mmi->ptMinTrackSize.y = 1;
+}
+
+float ToolVideo::settingWidth() const
+{
+	// 左右内边距 + MP4/GIF + 分隔符 + 系统声/麦克风 + 分隔符 + 开始/退出
+	return formatW * 2 + spliterW * 2 + btnSize * 4;
+}
+
+float ToolVideo::recordingWidth() const
+{
+	// 左右内边距 + 计时 + 分隔符 + 丢弃/存文件/存剪切板
+	return timerW + spliterW + btnSize * 3;
+}
+
+Ling::Node* ToolVideo::makeSpliter()
+{
+	auto spliter = body->makeChild<Ling::Node>();
+	spliter->setSize(spliterW, 18.f);
+	spliter->setBg(0xDDDDDDff);
+	return spliter;
+}
+
+Ling::Button* ToolVideo::makeIconBtn(const std::wstring& code)
+{
+	auto btn = body->makeChild<Ling::Button>();
+	btn->setText(code);
+	btn->setWidth(btnSize);
+	btn->setHeightPercent(100.f);
+	btn->setHoverBg(0xF2F2F2ff);
+	btn->setFontFamily(L"icon");
+	btn->setFontSize(13.f);
+	return btn;
+}
+
+void ToolVideo::applyToggleStyle(Ling::Button* btn, bool selected)
+{
+	if (selected) {
+		btn->setBg(0xe6f4ffff);
+		btn->setHoverBg(0xe6f4ffff);
+		btn->setColor(0x1677ffff);
+		btn->setHoverColor(0x1677ffff);
+	}
+	else {
+		btn->setBg(0);
+		btn->setHoverBg(0xF2F2F2ff);
+		btn->setColor(0x333333ff);
+		btn->setHoverColor(0x333333ff);
+	}
+}
+
+void ToolVideo::showSetting()
+{
+	// 重建前先把旧指针作废：removeAllChildren 会连带销毁所有子节点
+	btnMp4 = nullptr;
+	btnGif = nullptr;
+	btnSpeaker = nullptr;
+	btnMic = nullptr;
+	timerLabel = nullptr;
+	body->removeAllChildren();
+	setSize(settingWidth(), btnSize);
+
+	// MP4 / GIF 二选一。高度比按钮条矮一截 + 圆角，选中时是一颗胶囊
+	btnMp4 = body->makeChild<Ling::Button>();
+	btnMp4->setText(L"MP4");
+	btnMp4->setSize(formatW, btnSize);
+	btnMp4->setFontSize(13.f);
+	btnMp4->onClick.add([this](Ling::Button*) { onFormatClick(0); });
+
+	btnGif = body->makeChild<Ling::Button>();
+	btnGif->setText(L"GIF");
+	btnGif->setSize(formatW, btnSize);
+	btnGif->setFontSize(13.f);
+	btnGif->onClick.add([this](Ling::Button*) { onFormatClick(1); });
+
+	makeSpliter();
+
+	btnSpeaker = makeIconBtn(L"\ue654");
+	btnSpeaker->onClick.add([this](Ling::Button* btn) {
+		// GIF 不带声音，此时两个音源按钮不可切换
+		if (selectIndex != 0) return;
+		selectSpeaker = !selectSpeaker;
+		applyToggleStyle(btn, selectSpeaker);
+	});
+	btnMic = makeIconBtn(L"\ue73b");
+	btnMic->onClick.add([this](Ling::Button* btn) {
+		if (selectIndex != 0) return;
+		selectMic = !selectMic;
+		applyToggleStyle(btn, selectMic);
+	});
+
+	makeSpliter();
+
+	auto btnStart = makeIconBtn(L"\ue660");
+	btnStart->onClick.add([this](Ling::Button*) { startRecord(); });
+	auto btnClose = makeIconBtn(L"\ue62d");
+	btnClose->onClick.add([this](Ling::Button*) { this->win->close(); });
+
+	applyFormatStyle();
+}
+
+void ToolVideo::showRecording()
+{
+	btnMp4 = nullptr;
+	btnGif = nullptr;
+	btnSpeaker = nullptr;
+	btnMic = nullptr;
+	timerLabel = nullptr;
+	body->removeAllChildren();
+	setSize(recordingWidth(), btnSize);
+
+	timerLabel = body->makeChild<Ling::Label>();
+	timerLabel->setWidth(timerW);
+	timerLabel->setHeightPercent(100.f);
+	timerLabel->setAlignItems(Ling::Align::Center);
+	timerLabel->setJustifyContent(Ling::Justify::Center);
+	timerLabel->setFontSize(15.f);
+	updateTimerText();
+
+	makeSpliter();
+
+	// 丢弃 / 存文件 / 存剪切板，三条路都会停掉录制并结束整个流程
+	auto btnDiscard = makeIconBtn(L"\ue62d");
+	btnDiscard->onClick.add([this](Ling::Button*) { finishRecord(false); });
+	auto btnSave = makeIconBtn(L"\ue608");
+	btnSave->onClick.add([this](Ling::Button*) { saveFile(); });
+	auto btnClipboard = makeIconBtn(L"\ue6ad");
+	btnClipboard->onClick.add([this](Ling::Button*) { finishRecord(true); });
+}
+
+void ToolVideo::onFormatClick(int index)
+{
+	if (selectIndex == index) return;
+	selectIndex = index;
+	// GIF 不录声音，切过去时把两个音源都关掉
+	if (selectIndex == 1) {
+		selectSpeaker = false;
+		selectMic = false;
+	}
+	applyFormatStyle();
+}
+
+void ToolVideo::applyFormatStyle()
+{
+	if (!btnMp4 || !btnGif) return;
+	applyToggleStyle(btnMp4, selectIndex == 0);
+	applyToggleStyle(btnGif, selectIndex == 1);
+	btnMp4->setColor(selectIndex == 0 ? 0x1677ffff : 0x333333ff);
+	btnMp4->setHoverColor(0x1677ffff);
+	btnGif->setColor(selectIndex == 1 ? 0x1677ffff : 0x333333ff);
+	btnGif->setHoverColor(0x1677ffff);
+	applyToggleStyle(btnSpeaker, selectSpeaker);
+	applyToggleStyle(btnMic, selectMic);
+}
+
+void ToolVideo::startRecord()
+{
+	isRecording = true;
+	totalSeconds = 0;
+	showRecording();
+	setTimer(1000, tickTimerId);
+	if (selectIndex == 0) {
+		win->startMp4(selectSpeaker, selectMic);
+	}
+	else {
+		win->startGif();
+	}
+}
+
+void ToolVideo::updateTimerText()
+{
+	if (!timerLabel) return;
+	// GIF 上限 6 分钟，MP4 上限 60 分钟
+	const int maxMinutes = (selectIndex == 1) ? 6 : 60;
+	timerLabel->setText(std::format(L"{:02d}:{:02d} / {:02d}:00", totalSeconds / 60, totalSeconds % 60, maxMinutes));
+}
+
+void ToolVideo::onTimerCB(UINT id)
+{
+	if (id != tickTimerId) return;
+	totalSeconds += 1;
+	updateTimerText();
+	const int maxSeconds = ((selectIndex == 1) ? 6 : 60) * 60;
+	if (totalSeconds >= maxSeconds) {
+		// 到上限就自动存盘收工
+		saveFile();
+	}
+}
+
+void ToolVideo::saveFile()
+{
+	hide();
+	killTimer(tickTimerId);
+	auto srcPath = win->stop();
+	auto tarPath = Util::getSaveFilePath(nullptr, selectIndex == 1 ? L"gif" : L"mp4");
+	if (!tarPath.empty()) {
+		CopyFile(srcPath.data(), tarPath.data(), false);
+	}
+	DeleteFile(srcPath.data());
+	win->close();
+}
+
+void ToolVideo::finishRecord(bool toClipboard)
+{
+	hide();
+	killTimer(tickTimerId);
+	auto srcPath = win->stop();
+	if (toClipboard) {
+		// 文件留在临时目录里，剪切板持有的是它的路径，不能删
+		Util::addFileToClipboard(srcPath);
+	}
+	else {
+		DeleteFile(srcPath.data());
+	}
+	win->close();
+}

@@ -9,6 +9,7 @@ CutMask::CutMask(Ling::WinBase* win) :win{ win }
 {
 	strokeWidth = 2 * win->dpi;
 	paddingTop *= win->dpi;
+	paddingMargin *= win->dpi;
 	auto d2d = Ling::D2D::get();
 	d2d->deviceContext->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White), brushText.GetAddressOf());
 	d2d->deviceContext->CreateSolidColorBrush(D2D1::ColorF(0x000000, 0.46f), brushBg.GetAddressOf());
@@ -71,15 +72,14 @@ void CutMask::makeLayout()
 	if (!layout) return;
 	DWRITE_TEXT_METRICS tm = {};
 	layout->GetMetrics(&tm);
-	float paddingLeft{ 5 * win->dpi }, margin{ 5 * win->dpi };
-	layoutRect = D2D1::RectF(maskRect.left, maskRect.top - margin - tm.height - paddingTop * 2, maskRect.left + tm.width + paddingLeft * 2, maskRect.top - margin);
+	layoutRect = D2D1::RectF(maskRect.left, maskRect.top - paddingMargin - tm.height - paddingMargin * 2, maskRect.left + tm.width + paddingMargin * 2, maskRect.top - paddingMargin);
 	// 标签被顶出窗口上边时折回 maskRect 内部
 	if (layoutRect.top < 0) {
 		auto h = layoutRect.bottom - layoutRect.top;
 		auto w = layoutRect.right - layoutRect.left;
-		layoutRect.top = maskRect.top + margin / 2;
+		layoutRect.top = maskRect.top + paddingMargin / 2;
 		layoutRect.bottom = layoutRect.top + h;
-		layoutRect.left = maskRect.left + margin;
+		layoutRect.left = maskRect.left + paddingMargin;
 		layoutRect.right = layoutRect.left + w;
 	}
 	layout->SetMaxWidth(layoutRect.right - layoutRect.left);
@@ -113,5 +113,5 @@ void CutMask::paint(ID2D1DeviceContext* ctx)
 	auto halfStrokeWidth{ strokeWidth / 2.f };
 	ctx->DrawRectangle(D2D1::RectF(maskRect.left - halfStrokeWidth, maskRect.top - halfStrokeWidth, maskRect.right + halfStrokeWidth, maskRect.bottom + halfStrokeWidth), brushBorder.Get(), strokeWidth);
 	ctx->FillRectangle(layoutRect, brushBg.Get());
-	ctx->DrawTextLayout({ layoutRect.left, layoutRect.top }, layout.Get(), brushText.Get(), D2D1_DRAW_TEXT_OPTIONS_NONE);
+	ctx->DrawTextLayout({ layoutRect.left+ paddingMargin, layoutRect.top+ paddingMargin }, layout.Get(), brushText.Get(), D2D1_DRAW_TEXT_OPTIONS_NONE);
 }

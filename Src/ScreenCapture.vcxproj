@@ -128,7 +128,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>D:\project\Ling\x64\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>dwmapi.lib;windowsapp.lib;version.lib;Yoga.lib;Ling.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dwmapi.lib;windowsapp.lib;version.lib;mf.lib;mfreadwrite.lib;mfplat.lib;mfuuid.lib;Yoga.lib;Ling.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Manifest>
       <EnableSegmentHeap>true</EnableSegmentHeap>
@@ -154,7 +154,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>D:\project\Ling\x64\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>dwmapi.lib;windowsapp.lib;version.lib;Yoga.lib;Ling.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dwmapi.lib;windowsapp.lib;version.lib;mf.lib;mfreadwrite.lib;mfplat.lib;mfuuid.lib;Yoga.lib;Ling.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Manifest>
       <EnableSegmentHeap>true</EnableSegmentHeap>
@@ -182,8 +182,18 @@
     <ClCompile Include="Tool\ToolLong.cpp" />
     <ClCompile Include="Tool\ToolSub.cpp" />
     <ClCompile Include="Tool\ToolMain.cpp" />
+    <ClCompile Include="Tool\ToolVideo.cpp" />
     <ClCompile Include="Tray.cpp" />
     <ClCompile Include="Util.cpp" />
+    <ClCompile Include="Win\cgif\cgif.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Win\cgif\cgif_raw.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Win\cgif\cgif_rgb.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="Win\CutMask.cpp" />
     <ClCompile Include="Win\WinLong.cpp" />
     <ClCompile Include="Win\WinPin.cpp" />
@@ -192,6 +202,7 @@
     <ClCompile Include="Win\WinSettingCommon.cpp" />
     <ClCompile Include="Win\WinSetting.cpp" />
     <ClCompile Include="Win\WinSettingShortcut.cpp" />
+    <ClCompile Include="Win\WinVideo.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Res\Resource.rc" />
@@ -219,8 +230,11 @@
     <ClInclude Include="Tool\ToolLong.h" />
     <ClInclude Include="Tool\ToolSub.h" />
     <ClInclude Include="Tool\ToolMain.h" />
+    <ClInclude Include="Tool\ToolVideo.h" />
     <ClInclude Include="Tray.h" />
     <ClInclude Include="Util.h" />
+    <ClInclude Include="Win\cgif\cgif.h" />
+    <ClInclude Include="Win\cgif\cgif_raw.h" />
     <ClInclude Include="Win\CutMask.h" />
     <ClInclude Include="Win\WinLong.h" />
     <ClInclude Include="Win\WinPin.h" />
@@ -229,6 +243,9 @@
     <ClInclude Include="Win\WinSettingCommon.h" />
     <ClInclude Include="Win\WinSetting.h" />
     <ClInclude Include="Win\WinSettingShortcut.h" />
+    <ClInclude Include="Win\WinVideo.h" />
+    <ClInclude Include="Win\WinVideoGif.hpp" />
+    <ClInclude Include="Win\WinVideoMp4.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

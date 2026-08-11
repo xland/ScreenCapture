@@ -4,6 +4,7 @@
 #include "Tray.h"
 #include "Lang.h"
 #include "./Win/WinCap.h"
+#include "./Win/WinVideo.h"
 
 std::unique_ptr<App> app;
 
@@ -65,6 +66,8 @@ App::App()
     auto app = Ling::App::get();
     app->initArgs();
     Ling::D2D::get()->addFonts({ L"icon.ttf" });
+    // 录制中直接退出会让编码线程和 D3D 设备一起卡住，退出前先把录制停掉
+    app->onBeforeQuit.add([]() { WinVideo::stopIfRecording(); });
     Setting::init();
     Lang::init();
     if (app->args[L"auto-quit"] == L"true") {

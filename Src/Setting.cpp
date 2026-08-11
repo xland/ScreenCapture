@@ -3,6 +3,8 @@
 #include "Setting.h"
 #include "Lang.h"
 #include "Win/WinCap.h"
+#include "Win/WinLong.h"
+#include "Win/WinVideo.h"
 #include "App.h"
 
 namespace {
@@ -172,10 +174,10 @@ void Setting::initShortcutKeys()
             WinCap::init();
         }
         else if (msg == longShortcutMsgId) {
-            //WinLong::init();
+            WinLong::init();
         }
         else if (msg == videoShortcutMsgId) {
-            //WinVideo::init();
+            WinVideo::init();
         }
     });
     lingApp->onSecondInstance.add([this]() {

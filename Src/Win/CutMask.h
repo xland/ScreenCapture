@@ -29,5 +29,5 @@ private:
 	std::vector<D2D1_RECT_F> winRect;
 	POINT pressPos{};
 	Ling::WinBase* win{ nullptr };
-	float paddingTop{ 3.f };
+	float paddingTop{ 2.f }, paddingMargin{3.f};
 };
