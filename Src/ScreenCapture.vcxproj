@@ -179,10 +179,13 @@
     <ClCompile Include="Shape\ShapeMosaic.cpp" />
     <ClCompile Include="Shape\ShapeNumber.cpp" />
     <ClCompile Include="Shape\ShapeRect.cpp" />
+    <ClCompile Include="Tool\ToolLong.cpp" />
     <ClCompile Include="Tool\ToolSub.cpp" />
     <ClCompile Include="Tool\ToolMain.cpp" />
     <ClCompile Include="Tray.cpp" />
     <ClCompile Include="Util.cpp" />
+    <ClCompile Include="Win\CutMask.cpp" />
+    <ClCompile Include="Win\WinLong.cpp" />
     <ClCompile Include="Win\WinPin.cpp" />
     <ClCompile Include="Win\WinCap.cpp" />
     <ClCompile Include="Win\WinSettingAbout.cpp" />
@@ -213,10 +216,13 @@
     <ClInclude Include="Shape\ShapeMosaic.h" />
     <ClInclude Include="Shape\ShapeNumber.h" />
     <ClInclude Include="Shape\ShapeRect.h" />
+    <ClInclude Include="Tool\ToolLong.h" />
     <ClInclude Include="Tool\ToolSub.h" />
     <ClInclude Include="Tool\ToolMain.h" />
     <ClInclude Include="Tray.h" />
     <ClInclude Include="Util.h" />
+    <ClInclude Include="Win\CutMask.h" />
+    <ClInclude Include="Win\WinLong.h" />
     <ClInclude Include="Win\WinPin.h" />
     <ClInclude Include="Win\WinCap.h" />
     <ClInclude Include="Win\WinSettingAbout.h" />

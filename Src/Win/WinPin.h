@@ -10,6 +10,9 @@ class WinPin : public Ling::WinBase
 public:
 	~WinPin();
 	static void init(int x, int y, int w, int h);
+	// 底图不来自 WinCap 的截屏，而是外部给的一块 BGRA、top-down、行紧凑（步长 = w*4）像素。
+	// 滚动截图（WinLong）拼出来的长图走这条路进贴图窗口。
+	static void initFromData(int x, int y, int w, int h, std::vector<BYTE>& data);
 	void layoutTools();
 	// 把底图与所有未撤销的 shape 合成后写入剪切板，成功即关窗
 	void copyToClipboard();
@@ -23,7 +26,7 @@ public:
 	// 贴图窗口的底图。ShapeMosaic 要读它算马赛克块，ShapeEraser 拿它当"擦回原样"的画刷
 	Microsoft::WRL::ComPtr<ID2D1Bitmap1> screenImg;
 private:
-	WinPin(int x, int y, int w, int h);
+	WinPin(int x, int y, int w, int h, const std::vector<BYTE>* data = nullptr);
 	void onCreated() override;
 	void layout() override;
 	void onMinMaxInfo(MINMAXINFO* mmi) override;

@@ -4,7 +4,7 @@
 #include "Lang.h"
 #include "Win/WinCap.h"
 //#include "Win/WinVideo.h"
-//#include "Win/WinLong.h"
+#include "Win/WinLong.h"
 #include "Win/WinSetting.h"
 #include "Setting.h"
 
@@ -77,7 +77,7 @@ void Tray::onTrayRightClick()
 	}
 	else if (menuId == capLongMsg)
 	{
-		//WinLong::init();
+		WinLong::init();
 	}
 	else if (menuId == capVideoMsg)
 	{

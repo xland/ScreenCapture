@@ -159,3 +159,79 @@ std::wstring Util::createFileName(const std::wstring& ext)
 	return std::format(L"{:04d}{:02d}{:02d}{:02d}{:02d}{:02d}{:03d}.{}",
 		st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond, st.wMilliseconds, ext);
 }
+
+std::vector<BYTE> Util::captureScreen(const int x, const int y, const int w, const int h)
+{
+	std::vector<BYTE> data;
+	if (w <= 0 || h <= 0) return data;
+	HDC hScreen = GetDC(nullptr);
+	HDC hDC = CreateCompatibleDC(hScreen);
+	HBITMAP hBitmap = CreateCompatibleBitmap(hScreen, w, h);
+	auto oldObj = SelectObject(hDC, hBitmap);
+	BitBlt(hDC, 0, 0, w, h, hScreen, x, y, SRCCOPY);
+	ReleaseDC(nullptr, hScreen);
+	data.resize((size_t)w * 4 * h);
+	BITMAPINFO bmi{};
+	bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+	bmi.bmiHeader.biWidth = w;
+	// 负高度 = top-down，第一行就是屏幕最上面那行，省掉后续所有翻转
+	bmi.bmiHeader.biHeight = -h;
+	bmi.bmiHeader.biPlanes = 1;
+	bmi.bmiHeader.biBitCount = 32;
+	bmi.bmiHeader.biCompression = BI_RGB;
+	GetDIBits(hDC, hBitmap, 0, h, data.data(), &bmi, DIB_RGB_COLORS);
+	SelectObject(hDC, oldObj);
+	DeleteDC(hDC);
+	DeleteObject(hBitmap);
+	return data;
+}
+
+void Util::addFileToClipboard(const std::wstring& filePath)
+{
+	if (!OpenClipboard(nullptr)) return;
+	EmptyClipboard();
+	// DROPFILES 之后紧跟双 \0 结尾的路径列表，这里只放一条
+	auto totalSize = sizeof(DROPFILES) + (filePath.length() + 2) * sizeof(wchar_t);
+	auto hGlobal = GlobalAlloc(GMEM_MOVEABLE, totalSize);
+	if (!hGlobal) {
+		CloseClipboard();
+		return;
+	}
+	auto pDropFiles = static_cast<DROPFILES*>(GlobalLock(hGlobal));
+	if (!pDropFiles) {
+		GlobalFree(hGlobal);
+		CloseClipboard();
+		return;
+	}
+	pDropFiles->pFiles = sizeof(DROPFILES);
+	pDropFiles->fWide = TRUE;
+	auto dest = reinterpret_cast<wchar_t*>(pDropFiles + 1);
+	wcscpy_s(dest, filePath.length() + 1, filePath.c_str());
+	dest[filePath.length() + 1] = L'\0';
+	GlobalUnlock(hGlobal);
+	// 成功后 HGLOBAL 归剪切板所有，只在失败时自己释放
+	if (!SetClipboardData(CF_HDROP, hGlobal)) {
+		GlobalFree(hGlobal);
+	}
+	CloseClipboard();
+}
+
+std::string Util::convertToStr(const std::wstring& wstr)
+{
+	if (wstr.empty()) return std::string();
+	auto count = WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), (int)wstr.length(), nullptr, 0, nullptr, nullptr);
+	if (count <= 0) return std::string();
+	std::string str(count, 0);
+	WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), (int)wstr.length(), str.data(), count, nullptr, nullptr);
+	return str;
+}
+
+ComPtr<IDWriteTextLayout> Util::makeTextLayout(const std::wstring& text, float w, float h, float fontSize)
+{
+	ComPtr<IDWriteTextLayout> layout;
+	auto d2d = Ling::D2D::get();
+	d2d->dwriteFactory->CreateTextLayout(text.data(), (UINT32)text.length(), d2d->baseTextFormat.Get(), w, h, layout.GetAddressOf());
+	if (!layout) return layout;
+	layout->SetFontSize(fontSize, { 0,INT_MAX });
+	return layout;
+}

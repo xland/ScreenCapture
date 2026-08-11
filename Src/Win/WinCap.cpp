@@ -1,15 +1,15 @@
 #include "pch.h"
-#include <dwmapi.h>
 #include <include/Ling.h>
-#include <Windows.UI.Composition.Interop.h> 
+#include <Windows.UI.Composition.Interop.h>
 #include "WinCap.h"
 #include "WinPin.h"
+#include "CutMask.h"
 #include "../App.h"
 using namespace Microsoft::WRL;
 
 namespace
 {
-    constexpr float scaleNum{ 5.f }, strokeWidth{ 2.f }, srcW{ 50.f }, srcH{ 30.f };
+    constexpr float scaleNum{ 5.f }, srcW{ 50.f }, srcH{ 30.f };
     constexpr float pixImgH{ scaleNum * srcH };
     constexpr float pixW{ srcW * scaleNum };
 }
@@ -25,28 +25,29 @@ WinCap::WinCap() : Ling::WinBase()
 		if (isRight) { close(); }
         else {
 			isPress = true;
-			pressPos = pos;
+			cutMask->startMakeRect(pos);
         }
 	});
 	onMouseMove.add([this](POINT pos) {
         if (isPress) {
-			dragMaskRect(pos);
+			cutMask->makeRect(pos);
         }
         else {
-			switchWinRect(pos);
+			cutMask->highlight(pos);
 			getPixImg(pos);
 			setPixPos(pos);
             refresh();
         }
 	});
 	onKeyDown.add([this](UINT key) { this->onKey(key); });
-	onMouseUp.add([this](POINT pos, bool isRight) { 
-        isPress = false; 
-        WinPin::init(maskRect.left+x,maskRect.top+y,maskRect.right - maskRect.left,maskRect.bottom-maskRect.top);
+	onMouseUp.add([this](POINT pos, bool isRight) {
+        isPress = false;
+        auto& maskRect = cutMask->maskRect;
+        WinPin::init(int(maskRect.left) + x, int(maskRect.top) + y, int(maskRect.right - maskRect.left), int(maskRect.bottom - maskRect.top));
         close();
     });
-	onDestroy.add([this]() { 
-        winCap.reset(); 
+	onDestroy.add([this]() {
+        winCap.reset();
     });
 }
 
@@ -58,7 +59,7 @@ void WinCap::init()
 {
     auto ptr = new WinCap();
     winCap.reset(ptr);
-	ptr->initWinRects();
+	ptr->cutMask = std::make_unique<CutMask>(ptr);
     ptr->createNativeWindow(WS_EX_TOOLWINDOW, WS_POPUP);//WS_EX_TOPMOST
 }
 
@@ -77,7 +78,6 @@ void WinCap::onCreated()
     body->visual.Brush(brush);
     d2d->deviceContext->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White), brushText.GetAddressOf());
     d2d->deviceContext->CreateSolidColorBrush(D2D1::ColorF(0x000000, 0.56f), brushBg.GetAddressOf());
-    d2d->deviceContext->CreateSolidColorBrush(D2D1::ColorF(0x1677ff), brushBorder.GetAddressOf());
     d2d->deviceContext->CreateSolidColorBrush(D2D1::ColorF(0.1f, 0.5f, 1.f, 0.5f), crossBrush.GetAddressOf());
     POINT pos;
     GetCursorPos(&pos);
@@ -99,7 +99,7 @@ void WinCap::layout()
     ctx->Clear(0);
     D2D1_RECT_F destRect = D2D1::RectF(0, 0, (float)w, (float)h);
     ctx->DrawBitmap(screenImg.Get(), destRect);
-	paintMaskRect(ctx.Get()); 
+	cutMask->paint(ctx.Get());
 	paintPix(ctx.Get());
     s->EndDraw();
 }
@@ -149,66 +149,6 @@ void WinCap::getPixImg(POINT pos)
     // pixImg 里这一帧真正有内容的区域。越界部分留着上一帧的残留，
     // 绘制时靠 DrawBitmap 的 srcRect 把它排除掉，露出取景框自己的底色。
     pixSrcRect = D2D1::RectF((float)dl, (float)dt, float(dl + (vr - vl)), float(dt + (vb - vt)));
-}
-
-void WinCap::dragMaskRect(POINT pos)
-{
-    if (pressPos.x < pos.x) {
-        maskRect.left = pressPos.x;
-        maskRect.right = pos.x;
-    }
-    else {
-        maskRect.left = pos.x;
-        maskRect.right = pressPos.x;
-    }
-    if (pressPos.y < pos.y) {
-        maskRect.top = pressPos.y;
-        maskRect.bottom = pos.y;
-    }
-    else {
-        maskRect.top = pos.y;
-        maskRect.bottom = pressPos.y;
-    }
-    refresh();
-}
-
-void WinCap::switchWinRect(POINT pos)
-{
-    for (auto& rect : winRect) {
-        if (pos.x < rect.left || pos.x > rect.right || pos.y < rect.top || pos.y > rect.bottom) continue;
-        if (maskRect.left == rect.left && maskRect.top == rect.top && maskRect.right == rect.right && maskRect.bottom == rect.bottom) break;
-        maskRect = rect;
-        refresh();
-        break;
-    }
-}
-
-void WinCap::paintMaskRect(ID2D1DeviceContext* ctx)
-{
-    ctx->FillRectangle(D2D1::RectF(0.f, 0.f, w, maskRect.top), brushBg.Get());
-    ctx->FillRectangle(D2D1::RectF(0.f, maskRect.bottom, w, h), brushBg.Get());
-    ctx->FillRectangle(D2D1::RectF(0.f, maskRect.top, maskRect.left, maskRect.bottom), brushBg.Get());
-    ctx->FillRectangle(D2D1::RectF(maskRect.right, maskRect.top, w, maskRect.bottom), brushBg.Get());
-	auto strokeWidth{ ::strokeWidth * dpi };
-    auto halfStrokeWidth { strokeWidth / 2.f};
-    ctx->DrawRectangle(D2D1::RectF(maskRect.left - halfStrokeWidth, maskRect.top - halfStrokeWidth, maskRect.right + halfStrokeWidth, maskRect.bottom + halfStrokeWidth), brushBorder.Get(), strokeWidth);
-	if (!showMaskInfo) return;
-    auto str = std::format(L"X:{} Y:{} R:{} B:{} W:{} H:{}", maskRect.left, maskRect.top, maskRect.right, maskRect.bottom, maskRect.right - maskRect.left, maskRect.bottom - maskRect.top);
-    auto d2d = Ling::D2D::get();
-    Microsoft::WRL::ComPtr<IDWriteTextLayout> textLayout;
-    d2d->dwriteFactory->CreateTextLayout(str.data(), (UINT32)str.length(), d2d->baseTextFormat.Get(), FLT_MAX, FLT_MAX, &textLayout);
-    textLayout->SetFontSize(10.f*dpi, { 0,INT_MAX });
-    DWRITE_TEXT_METRICS tm = {};
-    textLayout->GetMetrics(&tm);
-    float paddingLeft{ 5 * dpi }, padding{ 2 * 2 * dpi };
-    auto layoutRect = D2D1::RectF(maskRect.left - strokeWidth, maskRect.top - tm.height - padding - strokeWidth, maskRect.left + tm.width + paddingLeft + strokeWidth * 2, maskRect.top - strokeWidth);
-    if (layoutRect.top < 0) {
-        layoutRect.top = maskRect.top;
-        layoutRect.bottom = maskRect.top + tm.height + padding;
-        layoutRect.left = maskRect.left;
-    }
-    ctx->FillRectangle(layoutRect, brushBg.Get());
-    ctx->DrawTextLayout({ layoutRect.left + paddingLeft, layoutRect.top + padding / 2 }, textLayout.Get(), brushText.Get(), D2D1_DRAW_TEXT_OPTIONS_NONE);
 }
 
 void WinCap::paintPix(ID2D1DeviceContext* ctx)
@@ -310,32 +250,6 @@ void WinCap::onKey(UINT key)
     }
 }
 
-void WinCap::initWinRects()
-{
-    winRect.clear();
-    EnumWindows([](HWND hwnd, LPARAM lparam)
-        {
-            if (!hwnd) return TRUE;
-            if (!IsWindowVisible(hwnd)) return TRUE;
-            if (IsIconic(hwnd)) return TRUE;
-            if (GetWindowTextLength(hwnd) < 1) return TRUE;
-            RECT rect;
-            DwmGetWindowAttribute(hwnd, DWMWA_EXTENDED_FRAME_BOUNDS, &rect, sizeof(RECT));
-            if (rect.right - rect.left <= 6 || rect.bottom - rect.top <= 6) return TRUE;
-            auto self = (WinCap*)lparam;
-            if (rect.left < self->x) rect.left = self->x;
-            if (rect.top < self->y) rect.top = self->y;
-            if (rect.right > self->x + self->w) rect.right = self->x + self->w;
-            if (rect.bottom > self->y + self->h) rect.bottom = self->y + self->h;
-            auto x = (rect.left - self->x);
-            auto y = (rect.top - self->y);
-            auto r = (rect.right - self->x);
-            auto b = (rect.bottom - self->y);
-            self->winRect.push_back(D2D1::RectF(x, y, r, b));
-            return TRUE;
-        }, (LPARAM)this);
-}
-
 std::tuple<int, int, int, int> WinCap::getCMYK(const BYTE& r, const BYTE& g, const BYTE& b)
 {
     double R = r / 255.0, G = g / 255.0, B = b / 255.0;
@@ -352,6 +266,7 @@ std::tuple<int, int, int, int> WinCap::getCMYK(const BYTE& r, const BYTE& g, con
 ComPtr<ID2D1Bitmap1> WinCap::getCutImg()
 {
     ComPtr<ID2D1Bitmap1> cutImg;
+    auto& maskRect = cutMask->maskRect;
     const UINT32 cw = (UINT32)(maskRect.right - maskRect.left);
     const UINT32 ch = (UINT32)(maskRect.bottom - maskRect.top);
     if (cw == 0 || ch == 0) return cutImg;

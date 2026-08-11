@@ -24,13 +24,24 @@ namespace {
 	}
 }
 
-WinPin::WinPin(int x, int y, int w, int h) : Ling::WinBase(), history{ std::make_unique<History>(this) }
+WinPin::WinPin(int x, int y, int w, int h, const std::vector<BYTE>* data) : Ling::WinBase(), history{ std::make_unique<History>(this) }
 {
 	this->x = x;
 	this->y = y;
 	this->w = w;
 	this->h = h;
-    screenImg = WinCap::get()->getCutImg();
+	if (data) {
+		// 外部像素建底图。ShapeMosaic / ShapeEraser 会把它当画刷源，属性与 getCutImg() 出来的保持一致
+		D2D1_BITMAP_PROPERTIES1 props{};
+		props.pixelFormat = D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED);
+		props.bitmapOptions = D2D1_BITMAP_OPTIONS_NONE;
+		props.dpiX = 96.0f;
+		props.dpiY = 96.0f;
+		Ling::D2D::get()->deviceContext->CreateBitmap(D2D1::SizeU(w, h), data->data(), w * 4, &props, screenImg.GetAddressOf());
+	}
+	else {
+		screenImg = WinCap::get()->getCutImg();
+	}
 	toolMain = std::make_unique<ToolMain>(this);
     toolSub = std::make_unique<ToolSub>(this);
 	layoutTools();
@@ -128,6 +139,14 @@ void WinPin::init(int x, int y, int w, int h)
 	auto ptr = new WinPin(x,y,w,h);
 	std::unique_ptr<WinPin> winPin{ ptr };
 	ptr->createNativeWindow(WS_EX_TOPMOST| WS_EX_TOOLWINDOW, WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_POPUP);
+	winPins.push_back(std::move(winPin));
+}
+
+void WinPin::initFromData(int x, int y, int w, int h, std::vector<BYTE>& data)
+{
+	auto ptr = new WinPin(x, y, w, h, &data);
+	std::unique_ptr<WinPin> winPin{ ptr };
+	ptr->createNativeWindow(WS_EX_TOPMOST | WS_EX_TOOLWINDOW, WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_POPUP);
 	winPins.push_back(std::move(winPin));
 }
 

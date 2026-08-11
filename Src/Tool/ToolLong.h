@@ -1,0 +1,18 @@
+﻿#pragma once
+#include <include/Ling.h>
+
+class WinLong;
+class ToolLong : public Ling::WinBase
+{
+public:
+	ToolLong(WinLong* win);
+	~ToolLong();
+private:
+	void onCreated() override;
+	void onClick(Ling::Button* btn);
+	void onMinMaxInfo(MINMAXINFO* mmi) override;
+private:
+	WinLong* win;
+	std::vector<std::wstring> btnIds = { L"pin",L"close",L"save",L"clipboard" };
+	std::vector<std::wstring> btnCodes = { L"\ue6a2",L"\ue62d",L"\ue608",L"\ue6ad" };
+};
