@@ -128,7 +128,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>D:\project\Ling\x64\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>dwmapi.lib;windowsapp.lib;version.lib;mf.lib;mfreadwrite.lib;mfplat.lib;mfuuid.lib;Yoga.lib;Ling.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dwmapi.lib;windowsapp.lib;imm32.lib;version.lib;mf.lib;mfreadwrite.lib;mfplat.lib;mfuuid.lib;Yoga.lib;Ling.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Manifest>
       <EnableSegmentHeap>true</EnableSegmentHeap>
@@ -154,7 +154,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>D:\project\Ling\x64\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>dwmapi.lib;windowsapp.lib;version.lib;mf.lib;mfreadwrite.lib;mfplat.lib;mfuuid.lib;Yoga.lib;Ling.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dwmapi.lib;windowsapp.lib;imm32.lib;version.lib;mf.lib;mfreadwrite.lib;mfplat.lib;mfuuid.lib;Yoga.lib;Ling.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Manifest>
       <EnableSegmentHeap>true</EnableSegmentHeap>
@@ -179,6 +179,7 @@
     <ClCompile Include="Shape\ShapeMosaic.cpp" />
     <ClCompile Include="Shape\ShapeNumber.cpp" />
     <ClCompile Include="Shape\ShapeRect.cpp" />
+    <ClCompile Include="Shape\ShapeText.cpp" />
     <ClCompile Include="Tool\ToolLong.cpp" />
     <ClCompile Include="Tool\ToolSub.cpp" />
     <ClCompile Include="Tool\ToolMain.cpp" />
@@ -227,6 +228,7 @@
     <ClInclude Include="Shape\ShapeMosaic.h" />
     <ClInclude Include="Shape\ShapeNumber.h" />
     <ClInclude Include="Shape\ShapeRect.h" />
+    <ClInclude Include="Shape\ShapeText.h" />
     <ClInclude Include="Tool\ToolLong.h" />
     <ClInclude Include="Tool\ToolSub.h" />
     <ClInclude Include="Tool\ToolMain.h" />

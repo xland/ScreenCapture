@@ -8,7 +8,9 @@ using namespace Microsoft::WRL;
 
 ToolSub::ToolSub(WinPin* win) :Ling::WinBase(), win(win)
 {
-	createNativeWindow(WS_EX_TOPMOST | WS_EX_TOOLWINDOW, WS_POPUP);
+	// 工具栏不参与激活：编辑文本时点一下颜色/字号，WinPin 不该因此丢掉键盘焦点
+	// （丢焦点 = WM_KILLFOCUS = TextBox 失焦 = 编辑被打断）。
+	createNativeWindow(WS_EX_TOPMOST | WS_EX_NOACTIVATE | WS_EX_TOOLWINDOW, WS_POPUP);
 }
 
 ToolSub::~ToolSub()
@@ -91,6 +93,9 @@ void ToolSub::showTextTools()
 	initSize(2, true);
 	makeToggleBtn(L"\ue634", &isTextBold);
 	makeToggleBtn(L"\ue682", &isTextItalic);
+	sliderMin = 10.f;
+	sliderMax = 60.f;
+	sliderVal = 20.f;
 	initSlider();
 	initColorBtns();
 }
@@ -201,6 +206,7 @@ void ToolSub::onColorSelect(Ling::Button* btn)
 			break;
 		}
 	}
+	win->onToolStyleChanged();
 }
 
 void ToolSub::initColorBtns()
@@ -267,6 +273,7 @@ Ling::Button* ToolSub::makeToggleBtn(const std::wstring& text, bool* flag)
 	btn->onClick.add([this, flag](Ling::Button* b) {
 		*flag = !*flag;
 		applyToggleStyle(b, *flag);
+		win->onToolStyleChanged();
 	});
 	return btn;
 }
@@ -284,7 +291,11 @@ void ToolSub::initSlider()
 	slider->setRange(sliderMin, sliderMax);
 	slider->setValue(sliderVal);
 	slider->setStep(1.f);
-	slider->onValueChanged.add([this](Ling::Slider*, float val) { sliderVal = val; });
+	slider->onValueChanged.add([this](Ling::Slider*, float val) {
+		sliderVal = val;
+		// 正在编辑的文本要立刻跟着变字号，不然得点完再看效果
+		win->onToolStyleChanged();
+	});
 	slider->setThumbColor(0x888888FF);
 	slider->setHoverThumbColor(0x888888FF);
 	slider->setTrackColor(0x888888FF);
@@ -322,6 +333,11 @@ void ToolSub::initSize(int btnCount, bool withColors, bool centerOnBtn)
 D2D1_COLOR_F ToolSub::getSelectedColor() const
 {
 	return Ling::Color(colors[selectColorIndex]).getD2DColor();
+}
+
+UINT32 ToolSub::getSelectedColorValue() const
+{
+	return colors[selectColorIndex];
 }
 
 float ToolSub::getSliderVal() const

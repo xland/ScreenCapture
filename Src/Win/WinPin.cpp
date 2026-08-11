@@ -3,6 +3,7 @@
 #include "../Tool/ToolMain.h"
 #include "../Tool/ToolSub.h"
 #include "../Shape/ShapeBase.h"
+#include "../Shape/ShapeText.h"
 #include "WinPin.h"
 #include "WinCap.h"
 #include "History.h"
@@ -74,6 +75,7 @@ void WinPin::onClosed()
 	if (toolSub) toolSub->close();
 	if (toolMain) toolMain->close();
 	shapeHover = nullptr;
+	editingText = nullptr;
 	// screenImg / canvas / history 都是成员（canvas 挂在 body 的子节点上），随下面这次 erase 一并释放
 	Ling::App::get()->dq.TryEnqueue([this]() {
 		std::erase_if(winPins, [this](const std::unique_ptr<WinPin>& p) { return p.get() == this; });
@@ -198,6 +200,9 @@ void WinPin::onMinMaxInfo(MINMAXINFO* mmi)
 
 void WinPin::onDown(POINT pos, BOOL isRight)
 {
+	// 编辑文本时，落在文本框里的点击整个交给 TextBox（它自己订阅了窗口的鼠标事件）。
+	// 这里不能抢先 SetCapture / 置 isMouseDown，否则拖选文本会被当成拖 shape。
+	if (editingText && textBox && textBox->isPosIn(pos)) return;
 	if (isRight) {
 		//右键：取消置顶并隐藏工具条；再次左键按下时恢复
 		if (isTopmost) {
@@ -242,6 +247,8 @@ void WinPin::onDown(POINT pos, BOOL isRight)
 
 void WinPin::onMove(POINT pos)
 {
+	// 同 onDown：文本框里的移动归 TextBox（拖选、滚动条 hover），不参与 shape 的 hover 判定
+	if (editingText && textBox && textBox->isPosIn(pos)) return;
 	if (isMouseDown) {
 		if (toolMain->curId == L"") {
 			setPosition(x + pos.x - pressPos.x, y + pos.y - pressPos.y);
@@ -301,8 +308,35 @@ void WinPin::onTimerCB(UINT id)
 	}
 }
 
+Ling::TextBox* WinPin::getTextBox()
+{
+	if (textBox) return textBox;
+	// 建在 canvas 之后：Composition 的子 visual 按插入顺序叠放，文本框要盖在截图上面。
+	// 绝对定位，位置由 ShapeText 按自己的矩形指定，不参与 body 的 flex 排布。
+	textBox = body->makeChild<Ling::TextBox>();
+	textBox->setPositionType(Ling::Position::Absolute);
+	// 不折行、尺寸跟着文字长，与 2.4.25 的文本窗口一致
+	textBox->setAutoSize(true);
+	// 背景、边框都不画：编辑中看到的就是最终效果，那圈虚线框由 ShapeText 自己画
+	textBox->hide();
+	return textBox;
+}
+
+void WinPin::setEditingText(ShapeText* shape)
+{
+	editingText = shape;
+}
+
+void WinPin::onToolStyleChanged()
+{
+	if (editingText) editingText->applyStyle();
+}
+
 void WinPin::onKey(UINT key)
 {
+	// 编辑文本时所有按键都归 TextBox：否则 Ctrl+C 复制的是截图、回车会保存并关窗、
+	// Delete 删掉的是整个 shape、ESC 直接把窗口关了。ESC 结束编辑由 TextBox 自己处理。
+	if (editingText) return;
 	bool ctrl = (GetKeyState(VK_CONTROL) & 0x8000) != 0;
 	if (ctrl && key == 'Z') {
 		history->undo();
@@ -379,6 +413,9 @@ void WinPin::restoreWindowState(HWND foregroundBeforeDialog)
 bool WinPin::getImagePixels(std::vector<BYTE>& pixels)
 {
 	if (!screenImg || w <= 0 || h <= 0) return false;
+	// 编辑中的文字是 TextBox 自己那层画的，进不了下面这个离屏 target。
+	// 先收尾，把文字交回 ShapeText 自己画，保存/复制出去的图才有它。
+	if (editingText) editingText->finishEdit();
 	auto size = D2D1::SizeU((UINT32)w, (UINT32)h);
 	auto d2d = Ling::D2D::get();
 	auto ctx = d2d->deviceContext.Get();
@@ -437,6 +474,13 @@ bool WinPin::getImagePixels(std::vector<BYTE>& pixels)
 
 BOOL WinPin::setCursor()
 {
+	// 编辑文本时光标形状交给 TextBox 决定（文本区 I 形、滚动条箭头）。
+	// 本函数覆写了基类且不调用它，TextBox 挂在 onCursor 上的那个订阅不会自己被触发，得手动发一次。
+	if (editingText) {
+		bool handled{ false };
+		onCursor(&handled);
+		if (handled) return TRUE;
+	}
 	if (toolMain->curId == L"") {
 		SetCursor(LoadCursor(nullptr, IDC_SIZEALL));
 		return TRUE;

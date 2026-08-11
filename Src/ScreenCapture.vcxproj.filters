@@ -72,6 +72,9 @@
     <ClCompile Include="Shape\ShapeLine.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Shape\ShapeText.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
     <ClCompile Include="Shape\ShapeNumber.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -154,6 +157,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Shape\ShapeLine.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Shape\ShapeText.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Shape\ShapeArrow.h">

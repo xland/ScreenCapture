@@ -23,6 +23,9 @@ public:
 	// 当前选中的颜色，直接可喂给 CreateSolidColorBrush。切换工具时颜色按钮会重建，
 	// 但选中项由 selectColorIndex 记着，不会丢；mosaic/eraser 没有颜色按钮，返回的是上次选中的颜色。
 	D2D1_COLOR_F getSelectedColor() const;
+	// 同一个颜色的 RGBA 原值。Ling::Color 没有从 D2D1_COLOR_F 构造的口子，
+	// TextBox::setColor 这类要 Ling::Color 的地方得用它。
+	UINT32 getSelectedColorValue() const;
 	// 滑块当前值（逻辑像素语义，用作线宽/字号等；D2D 里当物理像素用的话记得乘 dpi）。
 	// 值存在 sliderVal 里而不是问 Slider 节点要 —— 节点每次切换工具都被销毁重建。
 	float getSliderVal() const;
