@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "../Win/WinPin.h"
 #include "../History.h"
+#include "../Lang.h"
+#include "../Tip.h"
 #include "ToolMain.h"
 #include "ToolSub.h"
 
@@ -59,6 +61,7 @@ float ToolMain::getBtnCenterX()
 
 void ToolMain::onCreated()
 {
+	tip = std::make_unique<Tip>(this);
 	body->setBg(0xFFFFFFFF);
 	body->setBorder(1.f, 0xA8A8A8ff);
 	body->setAlignItems(Ling::Align::Center);
@@ -81,6 +84,7 @@ void ToolMain::onCreated()
 			btn->setFontFamily(L"icon");
 			btn->setFontSize(13.f);
 			btn->onClick.add([this](Ling::Button* btn) {onClick(btn);});
+			tip->bind(btn, Lang::get(std::format(L"tool.{}", id)));
 			btns.push_back(btn);
 		}
 	}

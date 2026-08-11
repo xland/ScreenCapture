@@ -1,6 +1,8 @@
 #include "pch.h"
 #include <Windows.UI.Composition.Interop.h> 
 #include "../Win/WinPin.h"
+#include "../Lang.h"
+#include "../Tip.h"
 #include "ToolSub.h"
 #include "ToolMain.h"
 
@@ -19,6 +21,7 @@ ToolSub::~ToolSub()
 
 void ToolSub::onCreated()
 {
+	tip = std::make_unique<Tip>(this);
 	auto d2d = Ling::D2D::get();
 	// 画刷与设备（而非某次 BeginDraw 拿到的 context）绑定，建一次就够，paintBorder 每帧复用
 	d2d->deviceContext->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White), brushBg.GetAddressOf());
@@ -31,13 +34,28 @@ void ToolSub::onCreated()
 	contentNode->setPosition(Ling::Edge::Right, borderW);
 	contentNode->setPosition(Ling::Edge::Bottom, borderW);
 	contentNode->setFlexDirection(Ling::FlexDirection::Row);
+	// 滑块的数值提示：Slider 没有 hover 事件，就在窗口级 mousemove 里自己判位置。
+	// 显示出来后横向跟着鼠标走（同 2.4.25）；离开滑块只收自己这一个提示，
+	// 不能无条件 hide()：颜色按钮的 onLeave 排在这个回调后面，会把它刚显示出来的提示误关掉。
+	onMouseMove.add([this](POINT pos) {
+		if (!slider) return;
+		if (slider->isPosIn(pos)) {
+			tip->showAt(slider, static_cast<float>(x + pos.x), y + slider->y + Tip::anchorInset * dpi,
+				std::format(L"{}", static_cast<int>(std::round(slider->getValue()))));
+		}
+		else {
+			tip->hide(slider);
+		}
+	});
 }
 
 void ToolSub::showRectTools()
 {
+	// 按钮和滑块马上要被销毁，onLeave 不会触发，提示得手动收掉
+	tip->hide();
 	contentNode->removeAllChildren();
 	initSize(1, true);
-	makeToggleBtn(L"\ue602", &isRectFill);
+	makeToggleBtn(L"\ue602", &isRectFill, L"tool.rectFill");
 	sliderMin = 1.f;
 	sliderMax = 16.f;
 	sliderVal = 1.f;
@@ -47,18 +65,20 @@ void ToolSub::showRectTools()
 
 void ToolSub::showEllipseTools()
 {
+	tip->hide();
 	contentNode->removeAllChildren();
 	initSize(1, true);
-	makeToggleBtn(L"\ue600", &isEllipseFill);
+	makeToggleBtn(L"\ue600", &isEllipseFill, L"tool.ellipseFill");
 	initSlider();
 	initColorBtns();
 }
 
 void ToolSub::showArrowTools()
 {
+	tip->hide();
 	contentNode->removeAllChildren();
 	initSize(1, true);
-	makeToggleBtn(L"\ue604", &isArrowFill);
+	makeToggleBtn(L"\ue604", &isArrowFill, L"tool.arrowFill");
 	sliderMin = 1.f;
 	sliderMax = 16.f;
 	sliderVal = 3.f;
@@ -68,9 +88,10 @@ void ToolSub::showArrowTools()
 
 void ToolSub::showNumberTools()
 {
+	tip->hide();
 	contentNode->removeAllChildren();
 	initSize(1, true);
-	makeToggleBtn(L"\ue605", &isNumberFill);
+	makeToggleBtn(L"\ue605", &isNumberFill, L"tool.numberFill");
 	sliderMin = 1.f;
 	sliderMax = 36.f;
 	sliderVal = 3.f;
@@ -80,19 +101,21 @@ void ToolSub::showNumberTools()
 
 void ToolSub::showLineTools()
 {
+	tip->hide();
 	contentNode->removeAllChildren();
 	initSize(1, true);
-	makeToggleBtn(L"\ue607", &isLineTransparent);
+	makeToggleBtn(L"\ue607", &isLineTransparent, L"tool.semiTransparent");
 	initSlider();
 	initColorBtns();
 }
 
 void ToolSub::showTextTools()
 {
+	tip->hide();
 	contentNode->removeAllChildren();
 	initSize(2, true);
-	makeToggleBtn(L"\ue634", &isTextBold);
-	makeToggleBtn(L"\ue682", &isTextItalic);
+	makeToggleBtn(L"\ue634", &isTextBold, L"tool.bold");
+	makeToggleBtn(L"\ue682", &isTextItalic, L"tool.italic");
 	sliderMin = 10.f;
 	sliderMax = 60.f;
 	sliderVal = 20.f;
@@ -102,23 +125,25 @@ void ToolSub::showTextTools()
 
 void ToolSub::showMosaicTools()
 {
+	tip->hide();
 	contentNode->removeAllChildren();
 	sliderMin = 18.f;
 	sliderMax = 50.f;
 	sliderVal = 20.f;
 	initSize(1, false, true);
-	makeToggleBtn(L"\ue602", &isMosaicRect);
+	makeToggleBtn(L"\ue602", &isMosaicRect, L"tool.rectFill");
 	initSlider();
 }
 
 void ToolSub::showEraserTools()
 {
+	tip->hide();
 	contentNode->removeAllChildren();
 	sliderMin = 18.f;
 	sliderMax = 50.f;
 	sliderVal = 20.f;
 	initSize(1, false, true);
-	makeToggleBtn(L"\ue602", &isEraserRect);
+	makeToggleBtn(L"\ue602", &isEraserRect, L"tool.rectFill");
 	initSlider();
 }
 
@@ -211,9 +236,11 @@ void ToolSub::onColorSelect(Ling::Button* btn)
 
 void ToolSub::initColorBtns()
 {
-	// contentNode->removeAllChildren() \u5df2\u7ecf\u628a\u4e0a\u4e00\u6279\u6309\u94ae\u9500\u6bc1\u4e86\uff0c\u8fd9\u91cc\u5fc5\u987b\u540c\u6b65\u6e05\u7a7a\uff0c
-	// \u5426\u5219 colorBtns \u4f1a\u8d8a\u79ef\u8d8a\u957f\u4e14\u524d\u9762\u5168\u662f\u91ce\u6307\u9488\uff0cselectColorIndex \u4e5f\u4f1a\u8d8a\u754c\u3002
+	// contentNode->removeAllChildren() 已经把上一批按钮销毁了，这里必须同步清空，
+	// 否则 colorBtns 会越积越长且前面全是野指针，selectColorIndex 也会越界。
 	colorBtns.clear();
+	// 与 colors 一一对应的语言键后缀
+	static const std::vector<std::wstring> colorNames{ L"red",L"yellow",L"green",L"cyan",L"blue",L"purple",L"pink",L"black",L"white" };
 	for (size_t i = 0; i < colors.size(); i++)
 	{
 		auto btn = contentNode->makeChild<Ling::Button>();
@@ -223,13 +250,14 @@ void ToolSub::initColorBtns()
 		btn->setJustifyContent(Ling::Justify::Center);
 		btn->setHoverBg(0XF2F2F2ff);
 		btn->onClick.add([this](Ling::Button* btn) {this->onColorSelect(btn);});
+		tip->bind(btn, Lang::get(std::format(L"color.{}", colorNames[i])));
 		colorBtns.push_back(btn);
 
 		auto label = btn->makeChild<Ling::Label>();
 		label->setAlignItems(Ling::Align::Center);
 		label->setJustifyContent(Ling::Justify::Center);
 		label->setSize(13.f, 13.f);
-		// \u91cd\u5efa\u540e\u8981\u628a\u5bf9\u52fe\u753b\u5728\u5f53\u524d\u9009\u4e2d\u7684\u90a3\u4e00\u9879\u4e0a\uff0c\u800c\u4e0d\u662f\u56fa\u5b9a\u7b2c\u4e00\u9879
+		// 重建后要把对勾画在当前选中的那一项上，而不是固定第一项
 		if (i == selectColorIndex) {
 			label->setText(L"\ue6ad");
 		}
@@ -260,7 +288,7 @@ void ToolSub::applyToggleStyle(Ling::Button* btn, bool selected)
 	}
 }
 
-Ling::Button* ToolSub::makeToggleBtn(const std::wstring& text, bool* flag)
+Ling::Button* ToolSub::makeToggleBtn(const std::wstring& text, bool* flag, const std::wstring& tipKey)
 {
 	auto btn = contentNode->makeChild<Ling::Button>();
 	btn->setText(text);
@@ -269,6 +297,7 @@ Ling::Button* ToolSub::makeToggleBtn(const std::wstring& text, bool* flag)
 	btn->setFontFamily(L"icon");
 	btn->setFontSize(13.f);
 	applyToggleStyle(btn, *flag);
+	tip->bind(btn, Lang::get(tipKey));
 	// flag 指向 ToolSub 的成员，生命周期与 this 相同，btn 也挂在 this 的节点树上，捕获裸指针安全
 	btn->onClick.add([this, flag](Ling::Button* b) {
 		*flag = !*flag;
@@ -280,7 +309,7 @@ Ling::Button* ToolSub::makeToggleBtn(const std::wstring& text, bool* flag)
 
 void ToolSub::initSlider()
 {
-	auto slider = contentNode->makeChild<Ling::Slider>();
+	slider = contentNode->makeChild<Ling::Slider>();
 	// 尺寸从字段来，别写字面量：initSize 按同样的字段算窗口宽度，
 	// 两边各写一份的话改了一处就会宽度不匹配（flex 会把误差压在按钮和滑块上）。
 	slider->setWidth(sliderSize);
@@ -353,6 +382,7 @@ bool ToolSub::hasContent()
 void ToolSub::hideTools()
 {
 	hasTools = false;
+	tip->hide();
 	if (!isVisible) return;
 	hide();
 	isVisible = false;

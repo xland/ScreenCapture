@@ -1,5 +1,7 @@
 ﻿#include "pch.h"
 #include "../Win/WinLong.h"
+#include "../Lang.h"
+#include "../Tip.h"
 #include "ToolLong.h"
 
 ToolLong::ToolLong(WinLong* win) : Ling::WinBase(), win(win)
@@ -18,6 +20,7 @@ ToolLong::~ToolLong()
 
 void ToolLong::onCreated()
 {
+	tip = std::make_unique<Tip>(this);
 	body->setBg(0xFFFFFFFF);
 	body->setBorder(1.f, 0xA8A8A8ff);
 	body->setAlignItems(Ling::Align::Center);
@@ -33,6 +36,7 @@ void ToolLong::onCreated()
 		btn->setFontFamily(L"icon");
 		btn->setFontSize(13.f);
 		btn->onClick.add([this](Ling::Button* btn) {onClick(btn);});
+		tip->bind(btn, Lang::get(std::format(L"tool.{}", btnIds[i])));
 	}
 	show();
 }

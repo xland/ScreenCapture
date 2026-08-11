@@ -2,6 +2,7 @@
 #include <include/Ling.h>
 
 class WinPin;
+class Tip;
 class ToolSub:public Ling::WinBase
 {
 public:
@@ -43,8 +44,9 @@ private:
 	void initSlider();
 	// 选中/未选中两套配色，与 ToolMain 的选中效果保持一致
 	void applyToggleStyle(Ling::Button* btn, bool selected);
-	// 建一个可切换的工具按钮：初始配色跟着 flag，点击时翻转 flag 并刷新配色
-	Ling::Button* makeToggleBtn(const std::wstring& text, bool* flag);
+	// 建一个可切换的工具按钮：初始配色跟着 flag，点击时翻转 flag 并刷新配色。
+	// tipKey 是提示文字的语言键（如 tool.rectFill）。
+	Ling::Button* makeToggleBtn(const std::wstring& text, bool* flag, const std::wstring& tipKey);
 	// 按内容算出窗口尺寸并应用。btnCount 只数工具按钮，不含颜色按钮。
 	// centerOnBtn 为 true 时窗口居中对齐到 ToolMain 上选中的那个按钮，否则与 ToolMain 左对齐。
 	void initSize(int btnCount, bool withColors, bool centerOnBtn = false);
@@ -53,6 +55,11 @@ private:
 private:
 	Ling::Node* contentNode;
 	std::vector<Ling::Button*> colorBtns;
+	// 当前的滑块。切换工具时会被销毁重建，重建后由 initSlider 重新赋值。
+	// 存下来是为了在窗口的 onMouseMove 里判断鼠标是否在它上面，好显示数值提示。
+	Ling::Slider* slider{ nullptr };
+	// 悬停提示。要 hwnd，所以在 onCreated 里才建得起来
+	std::unique_ptr<Tip> tip;
 	static constexpr float btnSize{ 32.f };
 	static constexpr float sliderSize{ 80.f };     // 滑块宽度，initSlider 和 initSize 都用它，改这里就够
 	static constexpr float sliderMargin{ 3.f };    // 滑块左右各留的间距

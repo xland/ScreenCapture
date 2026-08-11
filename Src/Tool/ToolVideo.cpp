@@ -1,6 +1,8 @@
 ﻿#include "pch.h"
 #include "../Win/WinVideo.h"
 #include "../Util.h"
+#include "../Lang.h"
+#include "../Tip.h"
 #include "ToolVideo.h"
 
 ToolVideo::ToolVideo(WinVideo* win) : Ling::WinBase(), win(win)
@@ -20,6 +22,7 @@ ToolVideo::~ToolVideo()
 
 void ToolVideo::onCreated()
 {
+	tip = std::make_unique<Tip>(this);
 	body->setBg(0xFFFFFFFF);
 	body->setBorder(1.f, 0xA8A8A8ff);
 	body->setAlignItems(Ling::Align::Center);
@@ -90,6 +93,8 @@ void ToolVideo::showSetting()
 	btnSpeaker = nullptr;
 	btnMic = nullptr;
 	timerLabel = nullptr;
+	// 按钮被销毁时 onLeave 不会触发，提示得手动收掉，否则它会一直挂在屏幕上
+	tip->hide();
 	body->removeAllChildren();
 	setSize(settingWidth(), btnSize);
 
@@ -99,12 +104,14 @@ void ToolVideo::showSetting()
 	btnMp4->setSize(formatW, btnSize);
 	btnMp4->setFontSize(13.f);
 	btnMp4->onClick.add([this](Ling::Button*) { onFormatClick(0); });
+	tip->bind(btnMp4, Lang::get(L"video.outputMp4"));
 
 	btnGif = body->makeChild<Ling::Button>();
 	btnGif->setText(L"GIF");
 	btnGif->setSize(formatW, btnSize);
 	btnGif->setFontSize(13.f);
 	btnGif->onClick.add([this](Ling::Button*) { onFormatClick(1); });
+	tip->bind(btnGif, Lang::get(L"video.outputGif"));
 
 	makeSpliter();
 
@@ -115,19 +122,23 @@ void ToolVideo::showSetting()
 		selectSpeaker = !selectSpeaker;
 		applyToggleStyle(btn, selectSpeaker);
 	});
+	tip->bind(btnSpeaker, Lang::get(L"video.recordSystem"));
 	btnMic = makeIconBtn(L"\ue73b");
 	btnMic->onClick.add([this](Ling::Button* btn) {
 		if (selectIndex != 0) return;
 		selectMic = !selectMic;
 		applyToggleStyle(btn, selectMic);
 	});
+	tip->bind(btnMic, Lang::get(L"video.recordMic"));
 
 	makeSpliter();
 
 	auto btnStart = makeIconBtn(L"\ue660");
 	btnStart->onClick.add([this](Ling::Button*) { startRecord(); });
+	tip->bind(btnStart, Lang::get(L"video.startRecord"));
 	auto btnClose = makeIconBtn(L"\ue62d");
 	btnClose->onClick.add([this](Ling::Button*) { this->win->close(); });
+	tip->bind(btnClose, Lang::get(L"video.exit"));
 
 	applyFormatStyle();
 }
@@ -139,6 +150,7 @@ void ToolVideo::showRecording()
 	btnSpeaker = nullptr;
 	btnMic = nullptr;
 	timerLabel = nullptr;
+	tip->hide();
 	body->removeAllChildren();
 	setSize(recordingWidth(), btnSize);
 
@@ -155,10 +167,13 @@ void ToolVideo::showRecording()
 	// 丢弃 / 存文件 / 存剪切板，三条路都会停掉录制并结束整个流程
 	auto btnDiscard = makeIconBtn(L"\ue62d");
 	btnDiscard->onClick.add([this](Ling::Button*) { finishRecord(false); });
+	tip->bind(btnDiscard, Lang::get(L"video.stopExit"));
 	auto btnSave = makeIconBtn(L"\ue608");
 	btnSave->onClick.add([this](Ling::Button*) { saveFile(); });
+	tip->bind(btnSave, Lang::get(L"video.stopFile"));
 	auto btnClipboard = makeIconBtn(L"\ue6ad");
 	btnClipboard->onClick.add([this](Ling::Button*) { finishRecord(true); });
+	tip->bind(btnClipboard, Lang::get(L"video.stopClipboard"));
 }
 
 void ToolVideo::onFormatClick(int index)

@@ -30,6 +30,9 @@
     <ClCompile Include="Lang.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Tip.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
     <ClCompile Include="Tray.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -112,6 +115,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Lang.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Tip.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Tray.h">
