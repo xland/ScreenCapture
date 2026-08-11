@@ -738,24 +738,29 @@ public:
             {
                 if (lCursorInfo.flags == CURSOR_SHOWING && Curs)
                 {
-                    ICONINFO iconInfo;
-                    GetIconInfo(lCursorInfo.hCursor, &iconInfo);
+                    // GetIconInfo 和 GetDC 都可能失败（自绘光标、远程桌面、GDI 被挂钩），
+                    // 失败时 iconInfo 和 lHDC 还是栈上的垃圾，照着往下用就是拿野句柄喂 GDI。
+                    ICONINFO iconInfo{};
+                    auto lGotIcon = GetIconInfo(lCursorInfo.hCursor, &iconInfo);
                     if (iconInfo.hbmMask) DeleteObject(iconInfo.hbmMask);
                     if (iconInfo.hbmColor) DeleteObject(iconInfo.hbmColor);
-                    auto lCursorPosition = lCursorInfo.ptScreenPos;
-                    HDC  lHDC;
-                    lIDXGISurface1->GetDC(FALSE, &lHDC);
-                    DrawIconEx(
-                        lHDC,
-                        lCursorPosition.x- iconInfo.xHotspot,
-                        lCursorPosition.y- iconInfo.yHotspot,
-                        lCursorInfo.hCursor,
-                        0,
-                        0,
-                        0,
-                        0,
-                        DI_NORMAL | DI_DEFAULTSIZE);
-                    lIDXGISurface1->ReleaseDC(nullptr);
+                    HDC  lHDC = nullptr;
+                    if (lGotIcon && SUCCEEDED(lIDXGISurface1->GetDC(FALSE, &lHDC)) && lHDC)
+                    {
+                        auto lCursorPosition = lCursorInfo.ptScreenPos;
+                        DrawIconEx(
+                            lHDC,
+                            lCursorPosition.x- iconInfo.xHotspot,
+                            lCursorPosition.y- iconInfo.yHotspot,
+                            lCursorInfo.hCursor,
+                            0,
+                            0,
+                            0,
+                            0,
+                            DI_NORMAL | DI_DEFAULTSIZE);
+                        // ReleaseDC 只在 GetDC 拿到了 DC 时调
+                        lIDXGISurface1->ReleaseDC(nullptr);
+                    }
                 }
             }
 
@@ -925,6 +930,9 @@ public:
         if (!wbfact)
             CoCreateInstance(CLSID_WICImagingFactory2, 0, CLSCTX_INPROC_SERVER,
                 __uuidof(IWICImagingFactory2), (void**)&wbfact);
+        // 工厂建不起来就得就此收手，下面一路都是拿它当非空用的
+        if (!wbfact)
+            return E_FAIL;
 
         int multi = 4;
         if (from == GUID_WICPixelFormat128bppPRGBAFloat)
@@ -1227,6 +1235,25 @@ struct VectorStreamX2 : public IMFByteStream
 
 };
 
+// 通道映射得按设备实际声道数来：单声道设备只有 0 号声道，
+// 硬写 {0,1} 会让混音时的 s[ch] 按第 1 声道越界读到缓冲区外面。
+// 拿的是混音格式(GetMixFormat)，与录制端 Initialize 用的格式同源，声道数一致。
+inline std::vector<int> getChannelMap(IMMDevice* dev)
+{
+    std::vector<int> chm{ 0 };
+    if (!dev) return chm;
+    ComPtr<IAudioClient> ac = nullptr;
+    if (FAILED(dev->Activate(__uuidof(IAudioClient), CLSCTX_INPROC_SERVER, NULL, (LPVOID*)ac.GetAddressOf())) || !ac)
+        return chm;
+    WAVEFORMATEX* mix = nullptr;
+    if (SUCCEEDED(ac->GetMixFormat(&mix)) && mix)
+    {
+        if (mix->nChannels >= 2)
+            chm.push_back(1);
+        CoTaskMemFree(mix);
+    }
+    return chm;
+}
 inline void setAudio(DESKTOPCAPTUREPARAMS* dp,bool useSpeaker, bool useMic) 
 {
     if (!useMic && !useSpeaker) return;
@@ -1242,7 +1269,7 @@ inline void setAudio(DESKTOPCAPTUREPARAMS* dp,bool useSpeaker, bool useMic)
                 LPWSTR capId = nullptr;
                 if (SUCCEEDED(defaultCapture->GetId(&capId)) && capId)
                 {
-                    dp->AudioFrom.push_back({ capId, {0, 1} });
+                    dp->AudioFrom.push_back({ capId, getChannelMap(defaultCapture.Get()) });
                     CoTaskMemFree(capId);
                 }
             }
@@ -1254,7 +1281,7 @@ inline void setAudio(DESKTOPCAPTUREPARAMS* dp,bool useSpeaker, bool useMic)
                 LPWSTR renId = nullptr;
                 if (SUCCEEDED(defaultRender->GetId(&renId)) && renId)
                 {
-                    dp->AudioFrom.push_back({ renId, {0, 1} });
+                    dp->AudioFrom.push_back({ renId, getChannelMap(defaultRender.Get()) });
                     CoTaskMemFree(renId);
                 }
             }

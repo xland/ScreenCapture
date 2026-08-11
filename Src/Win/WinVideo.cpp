@@ -95,11 +95,22 @@ void WinVideo::startMp4(bool useSpeaker, bool useMic)
     auto videoTempPath = Setting::get()->getDataPath();
     mp4Param = std::make_unique<WinVideoMp4::DESKTOPCAPTUREPARAMS>();
     mp4Param->VIDEO_ENCODING_FORMAT = MFVideoFormat_HEVC;
-    mp4Param->rx = { (long)(x + cutMask->maskRect.left),
-    (long)(y + cutMask->maskRect.top),
-    (long)(x + cutMask->maskRect.right),
-    (long)(y + cutMask->maskRect.bottom)
-    };
+    // 录制区域先夹回桌面范围，再做对齐 —— 只会往里缩，不会越出桌面。
+    // HEVC 编码器要求宽高是偶数，链路中间的 RGB32->NV12 转换还会按对齐后的 stride
+    // 去读我们交出去的缓冲区，宽度不是 4 的倍数（stride 凑不满 16 字节）时，
+    // 有的驱动编码器会读到缓冲区外面，首帧就崩在驱动里。
+    // 所以宽度对齐到 4、高度对齐到 2，代价是最多少录右侧 3 像素、底部 1 像素。
+    long rcLeft = std::max((long)x, (long)(x + cutMask->maskRect.left));
+    long rcTop = std::max((long)y, (long)(y + cutMask->maskRect.top));
+    long rcRight = std::min((long)(x + w), (long)(x + cutMask->maskRect.right));
+    long rcBottom = std::min((long)(y + h), (long)(y + cutMask->maskRect.bottom));
+    // 左上角往里取整，宽高往下取整，两头都不会超出上面夹好的范围
+    rcLeft = (rcLeft + 3) & ~3l;
+    rcTop = (rcTop + 1) & ~1l;
+    // 框选不可能真的小到 4x2，这里只是别让宽高变成 0：rx 全 0 会被当成"录整屏"
+    const long rcW = std::max(4l, (rcRight - rcLeft) & ~3l);
+    const long rcH = std::max(2l, (rcBottom - rcTop) & ~1l);
+    mp4Param->rx = { rcLeft, rcTop, rcLeft + rcW, rcTop + rcH };
     mp4Param->f = videoTempPath.append(L"temp.mp4").wstring();
     mp4Param->EndMS = 0;
     mp4Param->fps = 30;

@@ -40,8 +40,9 @@ void ToolSub::onCreated()
 	onMouseMove.add([this](POINT pos) {
 		if (!slider) return;
 		if (slider->isPosIn(pos)) {
+			// 显示的是鼠标底下那个位置的值，不是当前值 —— 光标只是在滑轨上路过时 value 并没变
 			tip->showAt(slider, static_cast<float>(x + pos.x), y + slider->y + Tip::anchorInset * dpi,
-				std::format(L"{}", static_cast<int>(std::round(slider->getValue()))));
+				std::format(L"{}", static_cast<int>(std::round(slider->getValueAt(static_cast<float>(pos.x))))));
 		}
 		else {
 			tip->hide(slider);
