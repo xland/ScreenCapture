@@ -5,6 +5,24 @@
 
 std::unique_ptr<Lang> lang;
 
+namespace {
+	// 列出 %appdata%\ScreenCapture\Lang 下的语言文件。这个目录是用户自己往里放语言文件
+	// 才会有的，全新安装的机器上并不存在，而 directory_iterator 碰到不存在的目录会抛
+	// filesystem_error —— 一路抛出消息循环就是整个进程直接没了（表现出来就是"点设置没反应"）。
+	// 所以这里用带 error_code 的重载，目录不在就当没有额外语言
+	std::vector<std::filesystem::path> getLangFiles()
+	{
+		std::vector<std::filesystem::path> result;
+		auto langPath = Setting::get()->getDataPath().append(L"Lang");
+		std::error_code ec;
+		std::filesystem::directory_iterator it{ langPath, ec }, end{};
+		for (; !ec && it != end; it.increment(ec)) {
+			result.push_back(it->path());
+		}
+		return result;
+	}
+}
+
 Lang::Lang()
 {
 }
@@ -46,12 +64,10 @@ void Lang::initLang(const std::wstring& langCode)
 	}
 	else
 	{
-		auto dataPath = Setting::get()->getDataPath();
-		dataPath.append(L"Lang");
-		for (const auto& entry : std::filesystem::directory_iterator(dataPath)) {
-			std::wstring filename = entry.path().filename().wstring();
+		for (const auto& entry : getLangFiles()) {
+			std::wstring filename = entry.filename().wstring();
 			if (filename.find(langCode) != std::wstring::npos) {
-				auto pathStr = entry.path().wstring();
+				auto pathStr = entry.wstring();
 				std::wstring content = Ling::Util::readFile(pathStr);
 				langObj = JsonObject::Parse(content.data());
 				break;
@@ -63,10 +79,8 @@ void Lang::initLang(const std::wstring& langCode)
 std::vector<std::pair<std::wstring, std::wstring>> Lang::getSupportedLang()
 {
 	std::vector<std::pair<std::wstring, std::wstring>> result = { {L"简体中文",L"zh-CN"},{L"English",L"en-US"} };
-	auto dataPath = Setting::get()->getDataPath();
-	dataPath.append(L"Lang");
-	for (const auto& entry : std::filesystem::directory_iterator(dataPath)) {
-		std::wstring filename = entry.path().filename().wstring();
+	for (const auto& entry : getLangFiles()) {
+		std::wstring filename = entry.filename().wstring();
 		auto arr = Ling::Util::splitStr(filename, L'.');
 		if (arr.size() == 3 && arr[2] == L"json") {
 			result.push_back({ arr[0] ,arr[1] });
