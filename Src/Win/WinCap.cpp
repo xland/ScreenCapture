@@ -1,6 +1,5 @@
 #include "pch.h"
 #include <include/Ling.h>
-#include <Windows.UI.Composition.Interop.h>
 #include "WinCap.h"
 #include "WinPin.h"
 #include "CutMask.h"
@@ -57,10 +56,10 @@ void WinCap::onCreated()
 {
     App::get()->takeScreenShot(x, y, w, h, &screenImg);
 	auto d2d = Ling::D2D::get();
-    surface = d2d->createDrawingSurface(compositor, (float)w, (float)h);
-    auto brush = compositor.CreateSurfaceBrush(surface);
-    brush.Stretch(winrt::Windows::UI::Composition::CompositionStretch::None);
-    body->visual.Brush(brush);
+    // 画布铺满窗口，走 swap chain（双缓冲）后端，避免调整选区时整帧闪烁
+    canvas = body->makeChild<Ling::Canvas>();
+    canvas->enableSwapChain();
+    canvas->setSizePercent(100.f, 100.f);
     d2d->deviceContext->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White), brushText.GetAddressOf());
     d2d->deviceContext->CreateSolidColorBrush(D2D1::ColorF(0x000000, 0.56f), brushBg.GetAddressOf());
     d2d->deviceContext->CreateSolidColorBrush(D2D1::ColorF(0.1f, 0.5f, 1.f, 0.5f), crossBrush.GetAddressOf());
@@ -75,21 +74,18 @@ void WinCap::onCreated()
 void WinCap::layout()
 {
     Ling::WinBase::layout();
-    auto s = surface.as<ABI::Windows::UI::Composition::ICompositionDrawingSurfaceInterop>();
-    ComPtr<ID2D1DeviceContext> ctx;
-    POINT offset{};
-    s->BeginDraw(nullptr, __uuidof(ID2D1DeviceContext), reinterpret_cast<void**>(ctx.GetAddressOf()), &offset);
-    auto trans = D2D1::Matrix3x2F::Translation((float)offset.x, (float)offset.y);
-    ctx->SetTransform(trans);
+    if (!canvas) return;
+    auto ctx = canvas->startPaint();
+    if (!ctx) return;
     ctx->Clear(0);
     D2D1_RECT_F destRect = D2D1::RectF(0, 0, (float)w, (float)h);
     if (!hideScreenImg) {
         ctx->DrawBitmap(screenImg.Get(), destRect);
     }
-    cutMask->paint(ctx.Get());
-    if (capLong) capLong->paint(ctx.Get());
-    paintPix(ctx.Get());
-    s->EndDraw();
+    cutMask->paint(ctx);
+    if (capLong) capLong->paint(ctx);
+    paintPix(ctx);
+    canvas->finishPaint();
 }
 
 BOOL WinCap::setCursor()
@@ -324,8 +320,7 @@ void WinCap::onDown(POINT pos, bool isRight)
         cutMask->startMakeRect(pos);
     }
     else if (stage == CapStage::Adjust) {
-        // 选区外面按下不做事：这个阶段不允许重新框选
-        if (cutMask->hitTest(pos) == MaskHit::None) return;
+        // 选区外面按下不是重新框选，而是按落点所在的那一块调对应的边或角
         isPress = true;
         cutMask->startAdjust(pos);
         layoutTool(toolCap.get());

@@ -8,8 +8,6 @@
 namespace {
     std::unique_ptr<Setting> setting;
     constexpr int capShortcutMsgId{ 100 };
-    constexpr int longShortcutMsgId{ 101 };
-    constexpr int videoShortcutMsgId{ 102 };
 }
 
 
@@ -23,7 +21,7 @@ Setting::Setting() :dataPath{initDataPath()}
         configObj = JsonObject::Parse(content.data());
     }
     else {
-        configObj = JsonObject::Parse(LR"""({"common":{"autoStart":false,"language":"zh-CN"},"shortcutKey":{"cap":"Ctrl+Alt+A","long":"Ctrl+Alt+L","video":"Ctrl+Alt+V"}})""");
+        configObj = JsonObject::Parse(LR"""({"common":{"autoStart":false,"language":"zh-CN"},"shortcutKey":{"cap":"Ctrl+Alt+A"}})""");
     }
 }
 
@@ -31,8 +29,6 @@ Setting::~Setting()
 {
     //auto lingApp = Ling::App::get();
     //lingApp->unRegHotKey(capShortcutMsgId);
-    //lingApp->unRegHotKey(longShortcutMsgId);
-    //lingApp->unRegHotKey(videoShortcutMsgId);
 }
 
 void Setting::init()
@@ -67,11 +63,8 @@ void Setting::setShortcutKey(const std::wstring& type, const std::vector<std::ws
     auto shortcutKey = configObj.GetNamedObject(L"shortcutKey");
     shortcutKey.SetNamedValue(type, JsonValue::CreateStringValue(str));
     auto app = Ling::App::get();
-    UINT msgId = capShortcutMsgId;
-    if (type == L"long") msgId = longShortcutMsgId;
-    else if (type == L"video") msgId = videoShortcutMsgId;
-    app->unRegHotKey(msgId);
-    app->regHotKey(str, msgId);
+    app->unRegHotKey(capShortcutMsgId);
+    app->regHotKey(str, capShortcutMsgId);
     save();
 }
 
@@ -161,20 +154,9 @@ void Setting::initShortcutKeys()
     auto configShortcut = Setting::get()->getConfigObj().GetNamedObject(L"shortcutKey");
     std::wstring capStr{ configShortcut.GetNamedString(L"cap") };
     lingApp->regHotKey(capStr, capShortcutMsgId);
-    std::wstring longStr{ configShortcut.GetNamedString(L"long") };
-    lingApp->regHotKey(longStr, longShortcutMsgId);
-    std::wstring videoStr{ configShortcut.GetNamedString(L"video") };
-    lingApp->regHotKey(videoStr, videoShortcutMsgId);
 
     lingApp->onHotKey.add([this](UINT msg) {
-        auto a = 1;
         if (msg == capShortcutMsgId) {
-            WinCap::init();
-        }
-        else if (msg == longShortcutMsgId) {
-            WinCap::init();
-        }
-        else if (msg == videoShortcutMsgId) {
             WinCap::init();
         }
     });

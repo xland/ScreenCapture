@@ -71,7 +71,9 @@ private:
 	std::unique_ptr<CapVideo> capVideo;
 	Microsoft::WRL::ComPtr<ID2D1Bitmap1> screenImg,pixImg;
 	D2D1_RECT_F pixSrcRect{};
-	winrt::Windows::UI::Composition::CompositionDrawingSurface surface{ nullptr };
+	// 铺满窗口的画布，走 swap chain 双缓冲：底图、蒙版、放大镜每帧都重画，
+	// 单缓冲会让合成器采到"擦干净还没画完"的中间态
+	Ling::Canvas* canvas{ nullptr };
 	POINT pixPos;
 	bool isPress{ false }, isClosed{ false }, isMouseTransparent{ false };
 	// 进长图 / 录屏后不再画底图：底图是拖框那一刻的静态截图，

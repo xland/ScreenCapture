@@ -113,12 +113,10 @@ MaskHit CutMask::hitTest(POINT pos) const
 	if (!hasRect()) return MaskHit::None;
 	const auto& r = maskRect;
 	const float px = (float)pos.x, py = (float)pos.y;
-	if (px < r.left || px > r.right || py < r.top || py > r.bottom) return MaskHit::None;
-	// 整个选区横竖各三等分，落在哪一格就调哪个方位：
-	// 左上那一格就是"左上方"，不是左上角那根边框，正中间那一格才是整体拖动
-	const float stepX = (r.right - r.left) / 3.f, stepY = (r.bottom - r.top) / 3.f;
-	const int col = px < r.left + stepX ? 0 : (px < r.right - stepX ? 1 : 2);
-	const int row = py < r.top + stepY ? 0 : (py < r.bottom - stepY ? 1 : 2);
+	// 选区的四条边各自延长，把整个窗口切成九块：中间那块就是选区自己，
+	// 落在里面一律整体拖动；外面八块各对应一个方位，落在哪块就调哪条边/哪个角
+	const int col = px < r.left ? 0 : (px > r.right ? 2 : 1);
+	const int row = py < r.top ? 0 : (py > r.bottom ? 2 : 1);
 	static constexpr MaskHit grid[3][3]{
 		{ MaskHit::TopLeft,    MaskHit::Top,    MaskHit::TopRight },
 		{ MaskHit::Left,       MaskHit::Inside, MaskHit::Right },

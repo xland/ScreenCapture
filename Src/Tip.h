@@ -32,6 +32,12 @@ public:
 private:
 	// 真正把提示摆出来/更新掉，1 秒计时到点后才会走到这里
 	void showNow();
+	// 提示按当前文字要占多大（不需要提示已经显示出来）
+	SIZE measure();
+	// 用提示控件自己的字体量一段文字有多大（不含气泡的边框和内边距）
+	SIZE measureText(const std::wstring& str);
+	// 量出气泡的固定内边距，整个进程只需要量一次
+	void learnPadding();
 private:
 	Ling::WinBase* win;
 	HWND tipHwnd{ nullptr };

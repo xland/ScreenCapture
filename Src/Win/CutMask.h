@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include <include/Ling.h>
 
-// 光标落在选区的哪个部位。8 个调整柄 + 内部 + 都不沾
+// 光标落在哪一块。选区内部是 Inside，外面被选区四边的延长线切成 8 块，各对应一个方位
 enum class MaskHit { None, Inside, Left, Top, Right, Bottom, TopLeft, TopRight, BottomRight, BottomLeft };
 
 // 框选遮罩。四块半透明遮罩 + 蓝色选区边框 + 左上角尺寸标签。
@@ -15,7 +15,7 @@ public:
 	bool highlight(POINT pos);
 	void startMakeRect(POINT pos);
 	void makeRect(POINT pos);
-	// 选区横竖各三等分，光标落在哪一格就是哪个方位；选区外面一律 None
+	// 选区四边的延长线把窗口切成九块：中间是 Inside，外面八块各是一个方位。没框出选区时才是 None
 	MaskHit hitTest(POINT pos) const;
 	// 开始调整：记下方向和起始矩形。按的是边或角时，这一下就把那条边吸到光标处
 	void startAdjust(POINT pos);
