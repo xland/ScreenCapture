@@ -66,6 +66,9 @@ void ToolCap::onClick(Ling::Button* btn)
 	else if (btn->id == L"video") {
 		win->startVideo();
 	}
+	else if (btn->id == L"ocr") {
+		win->startOcr();
+	}
 	else if (btn->id == L"save") {
 		win->saveToFile();
 	}
@@ -75,7 +78,7 @@ void ToolCap::onClick(Ling::Button* btn)
 	else if (btn->id == L"close") {
 		win->close();
 	}
-	// ocr / qrcode 先占位，功能还没实现
+	// qrcode 先占位，功能还没实现
 }
 
 void ToolCap::onMinMaxInfo(MINMAXINFO* mmi)

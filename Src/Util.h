@@ -20,6 +20,10 @@ public:
 	static void addFileToClipboard(const std::wstring& filePath);
 	// cgif 的 config.path 要 char*，这里做 UTF-8 转换（Ling::Util 只有反向的 convertToWStr）
 	static std::string convertToStr(const std::wstring& wstr);
+	// 把图存成缓存文件，再交给外部插件 ImageReader.exe 做文字识别。插件先在本 exe
+	// 同目录找，再找 %appdata%\ScreenCapture\plugin，都找不到就用默认浏览器打开它的
+	// release 页面让用户自己下。缓存图由插件读完后自己删。
+	static bool openWithImageReader(const int w, const int h, BYTE* data);
 	// 直接建一个 IDWriteTextLayout。Ling 的 Label/Text 走的是 Composition 节点树，
 	// 而 CutMask / WinLong 是在自己的 D2D context 上手绘文字，需要裸的 layout。
 	static Microsoft::WRL::ComPtr<IDWriteTextLayout> makeTextLayout(const std::wstring& text, float w, float h, float fontSize);

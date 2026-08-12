@@ -562,6 +562,17 @@ void WinCap::setMouseTransparent(bool transparent)
     SetWindowPos(hwnd, nullptr, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED);
 }
 
+// 文字识别由外部插件进程来做，这边只负责把选区里的像素递过去
+void WinCap::startOcr()
+{
+    std::vector<BYTE> pixels;
+    int cw{ 0 }, ch{ 0 };
+    if (!getCutPixels(pixels, cw, ch)) return;
+    // 插件缺失时 openWithImageReader 会打开下载页，同样得让位，所以不看返回值
+    Util::openWithImageReader(cw, ch, pixels.data());
+    close();
+}
+
 void WinCap::saveToFile()
 {
     std::vector<BYTE> pixels;

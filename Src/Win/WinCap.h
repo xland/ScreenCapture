@@ -29,6 +29,7 @@ public:
 	void startPin();
 	void startLong();
 	void startVideo();
+	void startOcr();
 	void saveToFile();
 	void copyToClipboard();
 	// ToolVideo，转给 capVideo

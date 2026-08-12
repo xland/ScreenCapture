@@ -3,6 +3,5 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="ImageReader/ImageReader.vcxproj" Id="5fcba504-9c4f-4832-874a-9031a09790f3" />
   <Project Path="Src/ScreenCapture.vcxproj" Id="967bc419-6e05-4d12-a5bd-6cf5e5af37c0" />
 </Solution>
