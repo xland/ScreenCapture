@@ -316,6 +316,19 @@ void WinCap::onDown(POINT pos, bool isRight)
         close();
         return;
     }
+    // 选区框好之后，窗口里任意位置双击都等于点了工具条上的"复制到剪切板"。
+    // 双击判定得自己做：Ling 的窗口类没带 CS_DBLCLKS，WM_LBUTTONDBLCLK 根本不会来，
+    // 所以拿系统的双击间隔（用户在控制面板里调的那个）和双击判定框来认
+    auto now = GetTickCount64();
+    bool isDblClick = (now - lastDownTime <= GetDoubleClickTime())
+        && std::abs(pos.x - lastDownPos.x) <= GetSystemMetrics(SM_CXDOUBLECLK)
+        && std::abs(pos.y - lastDownPos.y) <= GetSystemMetrics(SM_CYDOUBLECLK);
+    lastDownTime = now;
+    lastDownPos = pos;
+    if (isDblClick && stage == CapStage::Adjust) {
+        copyToClipboard();
+        return;
+    }
     if (stage == CapStage::Select) {
         isPress = true;
         cutMask->startMakeRect(pos);

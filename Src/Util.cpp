@@ -123,8 +123,41 @@ void Util::saveToClipboard(const int w, const int h, BYTE* data)
 	CopyMemory(pv5 + sizeof(BITMAPV5HEADER), data, imgBytes);
 	GlobalUnlock(hDibV5);
 
-	// ---------- 3) 写入剪切板 ----------
+	// ---------- 3) 构造 CF_DIB（24bpp、BI_RGB、自下而上） ----------
+	// 老软件（比如 Illustrator 2020）只认最传统的这一种 DIB：注册格式 PNG 它不查，
+	// CF_DIBV5 它不认，32bpp + BI_BITFIELDS 和 top-down 也读不了。系统虽然能从 CF_DIBV5
+	// 合成出 CF_DIB，合成出来的仍是那份带 alpha 的 32 位数据，一样不合它的口味。
+	// 所以显式再放一份最保守的：丢掉 alpha 写成 24 位，行按 4 字节对齐，自下而上排列
+	DWORD dibRowBytes = ((DWORD)w * 3 + 3) & ~3u;
+	DWORD dibImgBytes = dibRowBytes * (DWORD)h;
+	HGLOBAL hDib = GlobalAlloc(GMEM_MOVEABLE, sizeof(BITMAPINFOHEADER) + dibImgBytes);
+	if (!hDib) { GlobalFree(hDibV5); GlobalFree(hPng); return; }
+	auto pDib = static_cast<BYTE*>(GlobalLock(hDib));
+	if (!pDib) { GlobalFree(hDib); GlobalFree(hDibV5); GlobalFree(hPng); return; }
+	auto bi = reinterpret_cast<BITMAPINFOHEADER*>(pDib);
+	*bi = {};
+	bi->biSize = sizeof(BITMAPINFOHEADER);
+	bi->biWidth = w;
+	bi->biHeight = h;                     // 正 = 自下而上
+	bi->biPlanes = 1;
+	bi->biBitCount = 24;
+	bi->biCompression = BI_RGB;
+	bi->biSizeImage = dibImgBytes;
+	auto dibPixels = pDib + sizeof(BITMAPINFOHEADER);
+	for (int row = 0; row < h; row++) {
+		auto src = data + (size_t)row * rowBytes;                 //入参是 top-down
+		auto dst = dibPixels + (size_t)(h - 1 - row) * dibRowBytes;
+		for (int col = 0; col < w; col++) {
+			dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];     //BGRA -> BGR
+			src += 4;
+			dst += 3;
+		}
+	}
+	GlobalUnlock(hDib);
+
+	// ---------- 4) 写入剪切板 ----------
 	if (!OpenClipboard(nullptr)) {
+		GlobalFree(hDib);
 		GlobalFree(hDibV5);
 		GlobalFree(hPng);
 		return;
@@ -133,6 +166,9 @@ void Util::saveToClipboard(const int w, const int h, BYTE* data)
 	// SetClipboardData 成功后 HGLOBAL 归剪切板所有，不能再 GlobalFree；失败了才要自己释放
 	if (!SetClipboardData(CF_DIBV5, hDibV5)) {
 		GlobalFree(hDibV5);
+	}
+	if (!SetClipboardData(CF_DIB, hDib)) {
+		GlobalFree(hDib);
 	}
 	UINT cfPng = RegisterClipboardFormatW(L"PNG");
 	if (cfPng == 0 || !SetClipboardData(cfPng, hPng)) {

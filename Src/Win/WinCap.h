@@ -78,6 +78,10 @@ private:
 	Ling::Canvas* canvas{ nullptr };
 	POINT pixPos;
 	bool isPress{ false }, isClosed{ false }, isMouseTransparent{ false };
+	// 自己认双击用的上一次按下时间与位置。Ling 的窗口类没带 CS_DBLCLKS，
+	// 收不到 WM_LBUTTONDBLCLK，只能按系统的双击间隔和双击判定框自己算
+	ULONGLONG lastDownTime{ 0 };
+	POINT lastDownPos{ 0, 0 };
 	// 进长图 / 录屏后不再画底图：底图是拖框那一刻的静态截图，
 	// 留着的话录屏和滚动截图拿到的都是这张死图
 	bool hideScreenImg{ false };
