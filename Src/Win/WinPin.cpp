@@ -1,5 +1,4 @@
 #include "pch.h"
-#include <Windows.UI.Composition.Interop.h>
 #include "../Tool/ToolMain.h"
 #include "../Tool/ToolSub.h"
 #include "../Shape/ShapeBase.h"

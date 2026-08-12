@@ -1,5 +1,4 @@
 #include "pch.h"
-#include <Windows.UI.Composition.Interop.h> 
 #include "../Win/WinPin.h"
 #include "../Lang.h"
 #include "../Tip.h"
@@ -26,6 +25,10 @@ void ToolSub::onCreated()
 	// 画刷与设备（而非某次 BeginDraw 拿到的 context）绑定，建一次就够，paintBorder 每帧复用
 	d2d->deviceContext->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White), brushBg.GetAddressOf());
 	d2d->deviceContext->CreateSolidColorBrush(D2D1::ColorF(0xA8A8A8), brushBorder.GetAddressOf());
+	// 画布先建，才排在 contentNode 之前，按钮才不会被背景盖住
+	canvas = body->makeChild<Ling::Canvas>();
+	canvas->setPositionType(Ling::Position::Absolute);
+	canvas->setSizePercent(100.f, 100.f);
 	contentNode = body->makeChild<Ling::Node>();
 	contentNode->setPositionType(Ling::Position::Absolute);
 	// 四边让开描边宽度，上边再额外让开箭头区域（都是逻辑像素，setPosition 内部乘 dpi）
@@ -151,31 +154,12 @@ void ToolSub::showEraserTools()
 void ToolSub::layout()
 {
 	Ling::WinBase::layout();
-	const int pxW = static_cast<int>(w);
-	const int pxH = static_cast<int>(h);
-	if (pxW <= 0 || pxH <= 0) return;
-	if (!surface) {
-		auto d2d = Ling::D2D::get();
-		surface = d2d->createDrawingSurface(compositor, (float)pxW, (float)pxH);
-		auto brush = compositor.CreateSurfaceBrush(surface);
-		brush.Stretch(winrt::Windows::UI::Composition::CompositionStretch::None);
-		body->visual.Brush(brush);
-	}
-	else {
-		auto sz = surface.SizeInt32();
-		if (sz.Width != pxW || sz.Height != pxH) {
-			surface.Resize({ pxW, pxH });
-		}
-	}
-	auto s = surface.as<ABI::Windows::UI::Composition::ICompositionDrawingSurfaceInterop>();
-	ComPtr<ID2D1DeviceContext> ctx;
-	POINT offset{};
-	s->BeginDraw(nullptr, __uuidof(ID2D1DeviceContext), reinterpret_cast<void**>(ctx.GetAddressOf()), &offset);
-	auto trans = D2D1::Matrix3x2F::Translation((float)offset.x, (float)offset.y);
-	ctx->SetTransform(trans);
-	ctx->Clear(0);	
-	paintBorder(ctx.Get());
-	s->EndDraw();
+	if (!canvas) return;
+	auto ctx = canvas->startPaint();
+	if (!ctx) return;
+	ctx->Clear(0);
+	paintBorder(ctx);
+	canvas->finishPaint();
 }
 
 void ToolSub::onMinMaxInfo(MINMAXINFO* mmi)

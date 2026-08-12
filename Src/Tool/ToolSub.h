@@ -71,7 +71,8 @@ private:
 	WinPin* win;
 	// 背景/边框画刷缓存：layout() 每次刷新都会调 paintBorder，别在里面重复建
 	Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> brushBg, brushBorder;
-	winrt::Windows::UI::Composition::CompositionDrawingSurface surface{ nullptr };
+	// 铺满窗口的画布，画的是背景与带箭头的边框，按钮都在 contentNode 上，盖在它上面
+	Ling::Canvas* canvas{ nullptr };
 	bool isVisible{ false };
 	bool hasTools{ false };
 	bool centerOnBtn{ false };

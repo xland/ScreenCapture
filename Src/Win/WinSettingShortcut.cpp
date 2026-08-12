@@ -104,12 +104,12 @@ WinSettingShortcut::WinSettingShortcut(Ling::WinBase* parent):Ling::Node(parent)
     }
 
     auto weakThis = getWeakThis();
-    win->onKeyDown.add([this,weakThis](UINT key) {
+    onKeyDownToken = win->onKeyDown.add([this,weakThis](UINT key) {
         if (!weakThis.lock()) return;
         if (this->curKey.empty()) return;
         this->onKeyDown(key);
     });
-    win->onKeyUp.add([this,weakThis](UINT key) {
+    onKeyUpToken = win->onKeyUp.add([this,weakThis](UINT key) {
         if (!weakThis.lock()) return;
         if (this->curKey.empty()) return;
         this->onKeyUp(key);
@@ -128,6 +128,8 @@ WinSettingShortcut::WinSettingShortcut(Ling::WinBase* parent):Ling::Node(parent)
 WinSettingShortcut::~WinSettingShortcut()
 {
     win->onMouseDown.remove(onMouseDownToken);
+    win->onKeyDown.remove(onKeyDownToken);
+    win->onKeyUp.remove(onKeyUpToken);
 }
 
 void WinSettingShortcut::onBtnClick(Ling::Button* btn)

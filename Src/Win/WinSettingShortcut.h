@@ -15,7 +15,7 @@ private:
 private:
 	std::vector<Ling::Button*> btns;
 	std::wstring curKey;
-	winrt::event_token onMouseDownToken, onKeyDownToken;
+	winrt::event_token onMouseDownToken, onKeyDownToken, onKeyUpToken;
 	std::vector<std::wstring> tempKeys;
 };
 

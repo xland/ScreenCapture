@@ -382,7 +382,7 @@ void WinCap::onClosed()
     Ling::App::get()->dq.TryEnqueue([]() {
         winCap.reset();
         // 用完即走模式下截图结束就退出进程，与 App 构造里的判断对称
-        if (Ling::App::get()->args[L"auto-quit"] == L"true") {
+        if (App::isAutoQuit()) {
             Ling::App::get()->quit(0);
         }
     });
