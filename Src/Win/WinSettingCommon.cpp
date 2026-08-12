@@ -8,8 +8,12 @@ WinSettingCommon::WinSettingCommon(Ling::WinBase* parent):Ling::Node(parent)
 {    
     initAutoStartCtrls();
     initLangCtrls();
-    win->onDestroy.add([this]() {
-        this->win->body->removeChild(selectBox);
+    auto weakThis = getWeakThis();
+    // 这个回调一直挂在窗口上，而本节点可能在窗口关闭之前就被菜单切换换掉了，
+    // 所以先确认自己还活着再去碰成员
+    win->onDestroy.add([this, weakThis]() {
+        if (!weakThis.lock()) return;
+        this->hideSelectBox();
     });
 }
 
@@ -103,6 +107,14 @@ void WinSettingCommon::setAutoStartBtn(Ling::Button* btn)
         btn->setColor(0x666666FF);
         btn->setHoverColor(0x666666FF);
     }
+}
+
+void WinSettingCommon::hideSelectBox()
+{
+    if (!selectBox) return;
+    win->onMouseDown.remove(onMouseDownToken);
+    win->body->removeChild(selectBox);
+    selectBox = nullptr;
 }
 
 void WinSettingCommon::showSelectBox(Ling::Button* btn)

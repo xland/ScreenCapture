@@ -94,6 +94,11 @@ void WinSetting::onMenuItemClick(Ling::Button* menuItem)
 {
 	auto index = Ling::Util::getIndex(menus, menuItem);
 	if (index < 0 || index == menuIndex) return;
+	// 通用设置里的语言下拉框是挂在 body 上的（要能盖住下面的控件），content 被换掉
+	// 它不会跟着消失，所以切菜单之前先收掉
+	if (menuIndex == 0) {
+		static_cast<WinSettingCommon*>(content)->hideSelectBox();
+	}
 	auto oldItem = menus[menuIndex];
 	oldItem->setColor(0x333333FF);
 	oldItem->setBg(0x00000000);
