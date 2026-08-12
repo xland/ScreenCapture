@@ -1,16 +1,16 @@
 ﻿#include "pch.h"
-#include "../Win/WinLong.h"
+#include "../Win/WinCap.h"
 #include "../Lang.h"
 #include "../Tip.h"
 #include "ToolLong.h"
 
-ToolLong::ToolLong(WinLong* win) : Ling::WinBase(), win(win)
+ToolLong::ToolLong(WinCap* win) : Ling::WinBase(), win(win)
 {
 	auto btnSize{ 32.f * win->dpi };
 	w = btnSize * btnIds.size();
 	h = btnSize;
-	// 位置由 WinLong::makeTool() 在 createNativeWindow 之前设好
-	// 点按钮会把 ToolLong 激活，键盘消息进的是它，转发给 WinLong 让 ESC 一致生效
+	// 位置由 CapLong::makeTool() 在 createNativeWindow 之前设好
+	// 点按钮会把 ToolLong 激活，键盘消息进的是它，转发给 WinCap 让 ESC 一致生效
 	onKeyDown.add([this](UINT key) { this->win->onKeyDown(key); });
 }
 
@@ -45,13 +45,13 @@ void ToolLong::onClick(Ling::Button* btn)
 {
 	// 四个按钮都是"做完就收工"，做完动作后统一关掉整个滚动截图流程
 	if (btn->id == L"pin") {
-		win->pin();
+		win->longPin();
 	}
 	else if (btn->id == L"clipboard") {
-		win->copyToClipboard();
+		win->longCopyToClipboard();
 	}
 	else if (btn->id == L"save") {
-		win->saveToFile();
+		win->longSaveToFile();
 	}
 	win->close();
 }

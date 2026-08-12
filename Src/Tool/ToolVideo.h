@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include <include/Ling.h>
 
-class WinVideo;
+class WinCap;
 class Tip;
 // 录屏工具条。两种形态，切换时把 body 的子节点整批重建（同 ToolSub 的做法）：
 //   未录制：MP4 / GIF 二选一 + 系统声 / 麦克风开关 + 开始录制 + 退出
@@ -9,7 +9,7 @@ class Tip;
 class ToolVideo : public Ling::WinBase
 {
 public:
-	ToolVideo(WinVideo* win);
+	ToolVideo(WinCap* win);
 	~ToolVideo();
 private:
 	void onCreated() override;
@@ -32,7 +32,7 @@ private:
 	float settingWidth() const;
 	float recordingWidth() const;
 private:
-	WinVideo* win;
+	WinCap* win;
 	std::unique_ptr<Tip> tip;
 	Ling::Button* btnMp4{ nullptr };
 	Ling::Button* btnGif{ nullptr };

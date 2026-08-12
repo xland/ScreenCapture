@@ -2,7 +2,7 @@
 #include "winres.h"
 #undef APSTUDIO_READONLY_SYMBOLS
 1 ICON "logo.ico"
-icon.ttf RCDATA "icon.ttf"
+icon.ttf RCDATA "iconfont.ttf"
 
 
 // 配置可执行文件产品信息

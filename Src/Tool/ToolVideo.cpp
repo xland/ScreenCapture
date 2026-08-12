@@ -1,17 +1,17 @@
 ﻿#include "pch.h"
-#include "../Win/WinVideo.h"
+#include "../Win/WinCap.h"
 #include "../Util.h"
 #include "../Lang.h"
 #include "../Tip.h"
 #include "ToolVideo.h"
 
-ToolVideo::ToolVideo(WinVideo* win) : Ling::WinBase(), win(win)
+ToolVideo::ToolVideo(WinCap* win) : Ling::WinBase(), win(win)
 {
-	// 位置由 WinVideo::makeTool() 在 createNativeWindow 之前设好，这里只算尺寸。
+	// 位置由 CapVideo::makeTool() 在 createNativeWindow 之前设好，这里只算尺寸。
 	// 不走 setSize：它会把参数当逻辑像素再乘一遍 dpi。
 	w = settingWidth() * win->dpi;
 	h = btnSize * win->dpi;
-	// 点按钮会把 ToolVideo 激活，键盘消息进的是它，转发给 WinVideo 让 ESC 一致生效
+	// 点按钮会把 ToolVideo 激活，键盘消息进的是它，转发给 WinCap 让 ESC 一致生效
 	onKeyDown.add([this](UINT key) { this->win->onKeyDown(key); });
 	onTimer.add([this](UINT id) { this->onTimerCB(id); });
 }
@@ -239,7 +239,7 @@ void ToolVideo::saveFile()
 {
 	hide();
 	killTimer(tickTimerId);
-	auto srcPath = win->stop();
+	auto srcPath = win->stopRecord();
 	auto tarPath = Util::getSaveFilePath(nullptr, selectIndex == 1 ? L"gif" : L"mp4");
 	if (!tarPath.empty()) {
 		CopyFile(srcPath.data(), tarPath.data(), false);
@@ -252,7 +252,7 @@ void ToolVideo::finishRecord(bool toClipboard)
 {
 	hide();
 	killTimer(tickTimerId);
-	auto srcPath = win->stop();
+	auto srcPath = win->stopRecord();
 	if (toClipboard) {
 		// 文件留在临时目录里，剪切板持有的是它的路径，不能删
 		Util::addFileToClipboard(srcPath);

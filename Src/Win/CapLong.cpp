@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include <include/Ling.h>
-#include "WinLong.h"
+#include "CapLong.h"
+#include "WinCap.h"
 #include "CutMask.h"
 #include "WinPin.h"
 #include "../Tool/ToolLong.h"
@@ -10,7 +11,6 @@
 using namespace Microsoft::WRL;
 
 namespace {
-    std::unique_ptr<WinLong> winLong;
     constexpr UINT scrollMsgId = 18;
     constexpr UINT scrollEndMsgId = 19;
     constexpr int comparisonH = 100;  // 匹配比较用的条带高度
@@ -55,76 +55,32 @@ namespace {
     }
 }
 
-WinLong::WinLong() : Ling::WinBase()
+CapLong::CapLong(WinCap* win) : win(win)
 {
-    setTitle(L"Screen Capture Long");
-    auto [x1, y1, w1, h1] = App::get()->getScreenArea();
-    this->x = x1; this->y = y1; this->w = (float)w1; this->h = (float)h1;
-    onMouseDown.add([this](POINT pos, bool isRight) { this->onDown(pos, isRight); });
-    onMouseMove.add([this](POINT pos) { this->onMove(pos); });
-    onMouseUp.add([this](POINT pos, bool isRight) { this->onUp(pos, isRight); });
-    onTimer.add([this](UINT id) { this->onTimerCB(id); });
-    onKeyDown.add([this](UINT key) { this->onKey(key); });
-    onDestroy.add([this]() { this->onClosed(); });
-}
-
-WinLong::~WinLong()
-{
-}
-
-void WinLong::init()
-{
-    auto ptr = new WinLong();
-    winLong.reset(ptr);
-    ptr->cutMask = std::make_unique<CutMask>(ptr);
-    ptr->createNativeWindow(WS_EX_TOPMOST | WS_EX_TOOLWINDOW, WS_POPUP);
-}
-
-// close() 里 DestroyWindow 之后同步触发 onDestroy，而这条路径很可能是从 ToolLong 的按钮
-// 回调进来的（tool 是 WinLong 的成员）。在这里直接 winLong.reset() 就是 use-after-free，
-// 所以窗口句柄立即销毁，C++ 对象的释放推迟到下一轮消息循环。
-void WinLong::onClosed()
-{
-    if (isClosed) return;
-    isClosed = true;
-    killTimer(scrollMsgId);
-    killTimer(scrollEndMsgId);
-    if (tool) tool->close();
-    Ling::App::get()->dq.TryEnqueue([]() {
-        winLong.reset();
-        // 用完即走模式下滚动截图结束就退出进程，与 App 构造里的判断对称
-        if (Ling::App::get()->args[L"auto-quit"] == L"true") {
-            Ling::App::get()->quit(0);
-        }
-    });
-}
-
-void WinLong::onCreated()
-{
-    startCircleR *= dpi;
-    canvas = body->makeChild<Ling::Canvas>();
-    canvas->enableSwapChain();
-    canvas->setSizePercent(100.f, 100.f);
+    startCircleR *= win->dpi;
     auto d2d = Ling::D2D::get();
     d2d->deviceContext->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White), textBrush.GetAddressOf());
     d2d->deviceContext->CreateSolidColorBrush(D2D1::ColorF(0x000000, 0.68f), bgBrush.GetAddressOf());
     auto size{ startCircleR * 2 };
-    layoutTextStart = Util::makeTextLayout(Lang::get(L"long.start"), size, size, 16 * dpi);
-    show();
-    UpdateWindow(hwnd);
+    layoutTextStart = Util::makeTextLayout(Lang::get(L"long.start"), size, size, 16 * win->dpi);
 }
 
-void WinLong::layout()
+CapLong::~CapLong()
 {
-    Ling::WinBase::layout();
-    if (!canvas || !cutMask) return;
-    auto ctx = canvas->startPaint();
-    if (!ctx) return;
-    ctx->Clear(0);
-    cutMask->paint(ctx);
+}
+
+void CapLong::dispose()
+{
+    win->killTimer(scrollMsgId);
+    win->killTimer(scrollEndMsgId);
+    if (tool) tool->close();
+}
+
+void CapLong::paint(ID2D1DeviceContext* ctx)
+{
     paintImgPreview(ctx);
     if (isFinish) {
-        auto borderRadius{ 4.f * dpi };
+        auto borderRadius{ 4.f * win->dpi };
         ctx->FillRoundedRectangle(D2D1::RoundedRect(stopTextRect, borderRadius, borderRadius), bgBrush.Get());
         ctx->DrawTextLayout({ stopTextRect.left, stopTextRect.top }, layoutTextEnd.Get(), textBrush.Get(), D2D1_DRAW_TEXT_OPTIONS_NONE);
     }
@@ -132,95 +88,54 @@ void WinLong::layout()
         ctx->FillEllipse(D2D1::Ellipse(D2D1::Point2F((float)circleCenter.x, (float)circleCenter.y), startCircleR, startCircleR), bgBrush.Get());
         ctx->DrawTextLayout({ circleCenter.x - startCircleR, circleCenter.y - startCircleR }, layoutTextStart.Get(), textBrush.Get(), D2D1_DRAW_TEXT_OPTIONS_NONE);
     }
-    canvas->finishPaint();
 }
 
-BOOL WinLong::setCursor()
+void CapLong::setCursor()
 {
-    if (isFinish) {
+    if (!isFinish && isShowStartBtn) {
+        // 开始按钮跟着光标走，藏掉系统光标免得两个东西叠在一起
+        SetCursor(NULL);
+    }
+    else {
         SetCursor(LoadCursor(nullptr, IDC_ARROW));
-        return TRUE;
     }
-    if (isFinishCutMask) {
-        if (isShowStartBtn) {
-            // 开始按钮跟着光标走，藏掉系统光标免得两个东西叠在一起
-            SetCursor(NULL);
-        }
-        else {
-            SetCursor(LoadCursor(nullptr, IDC_ARROW));
-        }
-    }
-    else {
-        SetCursor(LoadCursor(nullptr, IDC_CROSS));
-    }
-    return TRUE;
 }
 
-void WinLong::onDown(POINT pos, bool isRight)
-{
-    if (isRight) {
-        close();
-        return;
-    }
-    if (isFinishCutMask) return;
-    isMouseDown = true;
-    cutMask->startMakeRect(pos);
-}
-
-void WinLong::onMove(POINT pos)
+void CapLong::onMove(POINT pos)
 {
     if (isFinish) {
         if (isShowStartBtn) {
             isShowStartBtn = false;
-            refresh();
+            win->refresh();
         }
         return;
     }
-    if (isFinishCutMask) {
-        circleCenter = pos;
-        auto& r = cutMask->maskRect;
-        if (pos.x > r.left && pos.x < r.right && pos.y > r.top && pos.y < r.bottom) {
-            isShowStartBtn = true;
-            refresh();
-        }
-        else {
-            if (isShowStartBtn) {
-                isShowStartBtn = false;
-                refresh();
-            }
-        }
+    circleCenter = pos;
+    auto& r = win->cutMask->maskRect;
+    if (pos.x > r.left && pos.x < r.right && pos.y > r.top && pos.y < r.bottom) {
+        isShowStartBtn = true;
+        win->refresh();
     }
     else {
         if (isShowStartBtn) {
             isShowStartBtn = false;
-            refresh();
-        }
-        // 按下状态是在拖框，松开状态是在窗口间吸附高亮
-        if (isMouseDown) {
-            cutMask->makeRect(pos);
-        }
-        else {
-            cutMask->highlight(pos);
+            win->refresh();
         }
     }
 }
 
-void WinLong::onUp(POINT pos, bool isRight)
+void CapLong::onUp(POINT pos)
 {
-    isMouseDown = false;
-    if (!isFinishCutMask) {
-        isFinishCutMask = true;
-        return;
-    }
+    if (isScrolling || isFinish) return;
     if (isShowStartBtn) { //按下开始按钮
         isScrolling = true;
-        hollowWin();
+        win->hollowWin();
         makeTool();
         firstStep(); //首次截图
     }
 }
 
-void WinLong::onTimerCB(UINT timerId)
+void CapLong::onTimerCB(UINT timerId)
 {
     if (timerId == scrollMsgId) {
         POINT pt;
@@ -230,44 +145,37 @@ void WinLong::onTimerCB(UINT timerId)
             targetHwnd = tarHwnd;
         }
         if (tarHwnd != targetHwnd) return; //鼠标没在截屏区域直接退出，定时器仍在检查
-        killTimer(scrollMsgId);
+        win->killTimer(scrollMsgId);
         INPUT input = { 0 };
         input.type = INPUT_MOUSE;
         input.mi.dwFlags = MOUSEEVENTF_WHEEL;
         input.mi.mouseData = -WHEEL_DELTA;
         SendInput(1, &input, sizeof(INPUT));
-        setTimer(88, scrollEndMsgId); //滚动开始
+        win->setTimer(88, scrollEndMsgId); //滚动开始
     }
     else if (scrollEndMsgId == timerId) {
-        killTimer(scrollEndMsgId); //滚动完成
+        win->killTimer(scrollEndMsgId); //滚动完成
         capStep();
     }
 }
 
-void WinLong::onKey(UINT key)
+void CapLong::firstStep()
 {
-    if (key == VK_ESCAPE) {
-        close();
-    }
-}
-
-void WinLong::firstStep()
-{
-    auto& maskRect = cutMask->maskRect;
+    auto& maskRect = win->cutMask->maskRect;
     imgW = int(maskRect.right - maskRect.left);
     imgH = int(maskRect.bottom - maskRect.top);
     resultH = imgH;
     capStartPos.x = (int)maskRect.left;
     capStartPos.y = (int)maskRect.top;
-    ClientToScreen(hwnd, &capStartPos);
+    ClientToScreen(win->hwnd, &capStartPos);
     imgData = Util::captureScreen(capStartPos.x, capStartPos.y, imgW, imgH);
     img1 = imgData;
     makeImgPreview();
-    refresh();
-    setTimer(88, scrollMsgId); //准备滚动
+    win->refresh();
+    win->setTimer(88, scrollMsgId); //准备滚动
 }
 
-void WinLong::makeImgPreview()
+void CapLong::makeImgPreview()
 {
     imgPreview.Reset();
     float previewScaleW = tool ? (float)tool->w / (float)imgW : 1.0f;
@@ -297,7 +205,7 @@ void WinLong::makeImgPreview()
     }
 }
 
-void WinLong::capStep()
+void CapLong::capStep()
 {
     auto data = Util::captureScreen(capStartPos.x, capStartPos.y, imgW, imgH);
     // 检测滚动区域：首次时找出前后两帧的像素差异边界
@@ -317,7 +225,7 @@ void WinLong::capStep()
             // 没有检测到变化，可能滚动未生效
             dismissTime++;
             if (dismissTime > 5) { stopCap(); return; }
-            setTimer(500, scrollMsgId);
+            win->setTimer(500, scrollMsgId);
             return;
         }
         firstCheck = false;
@@ -325,7 +233,7 @@ void WinLong::capStep()
     int rowPix{ imgW * 4 };
     // 从 changeStartY 开始，裁剪用于匹配的条带
     int stripH = std::min(comparisonH, imgH - changeStartY);
-    if (stripH <= 0) { setTimer(500, scrollMsgId); return; }
+    if (stripH <= 0) { win->setTimer(500, scrollMsgId); return; }
     int img1StripH = imgH - changeStartY;
     auto gray1 = toGrayscale(img1.data() + changeStartY * rowPix, imgW, img1StripH, rowPix);
     auto gray2 = toGrayscale(data.data() + changeStartY * rowPix, imgW, stripH, rowPix);
@@ -333,7 +241,7 @@ void WinLong::capStep()
     if (y == 0) { // 未检测到滚动
         dismissTime++;
         if (dismissTime > 2) { stopCap(); return; }
-        setTimer(500, scrollMsgId);
+        win->setTimer(500, scrollMsgId);
         return;
     }
     dismissTime = 0;
@@ -353,102 +261,91 @@ void WinLong::capStep()
     resultH = newResultH;
     if (resultH > 20000) { stopCap(); return; }
     makeImgPreview();
-    refresh();
-    setTimer(500, scrollMsgId); //准备下次滚动
+    win->refresh();
+    win->setTimer(500, scrollMsgId); //准备下次滚动
 }
 
-void WinLong::hollowWin()
+void CapLong::makeTool()
 {
-    HRGN rgn1 = CreateRectRgn(0, 0, (int)w, (int)h);
-    auto& r = cutMask->maskRect;
-    HRGN rgn2 = CreateRectRgn((int)r.left, (int)r.top, (int)r.right, (int)r.bottom);
-    CombineRgn(rgn1, rgn1, rgn2, RGN_DIFF);
-    DeleteObject(rgn2);
-    if (SetWindowRgn(hwnd, rgn1, TRUE) == 0) {
-        DeleteObject(rgn1);
-    }
-}
-
-void WinLong::makeTool()
-{
-    auto btnSize{ 32.f * dpi };
+    auto btnSize{ 32.f * win->dpi };
     auto toolW{ btnSize * 4 };
     POINT pos{ 0,0 };
-    if (w - cutMask->maskRect.right - 2 * dpi < toolW) {
-        pos.x = (LONG)(cutMask->maskRect.left - toolW - cutMask->strokeWidth - 2 * dpi);
+    auto& cutMask = win->cutMask;
+    if (win->w - cutMask->maskRect.right - 2 * win->dpi < toolW) {
+        pos.x = (LONG)(cutMask->maskRect.left - toolW - cutMask->strokeWidth - 2 * win->dpi);
     }
     else {
-        pos.x = (LONG)(cutMask->maskRect.right + cutMask->strokeWidth + 2 * dpi);
+        pos.x = (LONG)(cutMask->maskRect.right + cutMask->strokeWidth + 2 * win->dpi);
     }
     pos.y = (LONG)(cutMask->maskRect.bottom - btnSize);
-    ClientToScreen(hwnd, &pos);
-    tool = std::make_unique<ToolLong>(this);
+    ClientToScreen(win->hwnd, &pos);
+    tool = std::make_unique<ToolLong>(win);
     // 尺寸在 ToolLong 构造里算好了，这里只定位；两者都要在建窗口之前设好
     tool->setPosition(pos.x, pos.y);
     tool->createNativeWindow(WS_EX_TOPMOST | WS_EX_NOACTIVATE | WS_EX_TOOLWINDOW, WS_POPUP);
 }
 
-void WinLong::paintImgPreview(ID2D1DeviceContext* ctx)
+void CapLong::paintImgPreview(ID2D1DeviceContext* ctx)
 {
     if (!imgPreview || !tool) return;
     auto bitmapSize = imgPreview->GetPixelSize();
     float drawW = (float)bitmapSize.width;
     float drawH = (float)bitmapSize.height;
-    POINT pos{ tool->x, tool->y - (int)drawH - (int)(2 * dpi) };
-    ScreenToClient(hwnd, &pos);
+    POINT pos{ tool->x, tool->y - (int)drawH - (int)(2 * win->dpi) };
+    ScreenToClient(win->hwnd, &pos);
     D2D1_RECT_F destRect = D2D1::RectF((float)pos.x, (float)pos.y, pos.x + drawW, pos.y + drawH);
     ctx->DrawBitmap(imgPreview.Get(), destRect);
 }
 
-void WinLong::stopCap()
+void CapLong::stopCap()
 {
     isFinish = true;
     makeStopText();
-    SetWindowRgn(hwnd, NULL, TRUE);
+    win->restoreWin();
     isScrolling = false;
-    killTimer(scrollMsgId);
-    killTimer(scrollEndMsgId);
-    refresh();
+    win->killTimer(scrollMsgId);
+    win->killTimer(scrollEndMsgId);
+    win->refresh();
 }
 
-void WinLong::makeStopText()
+void CapLong::makeStopText()
 {
     if (resultH > 20000) {
-        layoutTextEnd = Util::makeTextLayout(Lang::get(L"long.tooLong"), FLT_MAX, FLT_MAX, 13 * dpi);
+        layoutTextEnd = Util::makeTextLayout(Lang::get(L"long.tooLong"), FLT_MAX, FLT_MAX, 13 * win->dpi);
     }
     else {
-        layoutTextEnd = Util::makeTextLayout(Lang::get(L"long.reachedBottom"), FLT_MAX, FLT_MAX, 13 * dpi);
+        layoutTextEnd = Util::makeTextLayout(Lang::get(L"long.reachedBottom"), FLT_MAX, FLT_MAX, 13 * win->dpi);
     }
     if (!layoutTextEnd) return;
     DWRITE_TEXT_METRICS tm = {};
     layoutTextEnd->GetMetrics(&tm);
-    auto& maskRect = cutMask->maskRect;
+    auto& maskRect = win->cutMask->maskRect;
     auto halfX = maskRect.left + (maskRect.right - maskRect.left) / 2;
     auto halfW = tm.width / 2;
-    float padding{ 8 * dpi };
+    float padding{ 8 * win->dpi };
     stopTextRect.left = halfX - halfW - padding;
-    stopTextRect.top = maskRect.bottom - 30 * dpi - padding;
+    stopTextRect.top = maskRect.bottom - 30 * win->dpi - padding;
     stopTextRect.right = halfX + halfW + padding;
     stopTextRect.bottom = maskRect.bottom - padding;
     layoutTextEnd->SetMaxWidth(stopTextRect.right - stopTextRect.left);
     layoutTextEnd->SetMaxHeight(stopTextRect.bottom - stopTextRect.top);
 }
 
-void WinLong::copyToClipboard()
+void CapLong::copyToClipboard()
 {
     if (imgData.empty()) return;
     Util::saveToClipboard(imgW, resultH, imgData.data());
 }
 
-void WinLong::saveToFile()
+void CapLong::saveToFile()
 {
     if (imgData.empty()) return;
-    auto path = Util::getSaveFilePath(hwnd);
+    auto path = Util::getSaveFilePath(win->hwnd);
     if (path.empty()) return;
     Util::saveToFile(path, imgW, resultH, imgData.data());
 }
 
-void WinLong::pin()
+void CapLong::pin()
 {
     if (imgData.empty()) return;
     // 居中放置在主显示器

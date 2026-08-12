@@ -103,6 +103,92 @@ void CutMask::makeRect(POINT pos)
 	win->refresh();
 }
 
+bool CutMask::hasRect() const
+{
+	return maskRect.right > maskRect.left && maskRect.bottom > maskRect.top;
+}
+
+MaskHit CutMask::hitTest(POINT pos) const
+{
+	if (!hasRect()) return MaskHit::None;
+	const auto& r = maskRect;
+	const float px = (float)pos.x, py = (float)pos.y;
+	if (px < r.left || px > r.right || py < r.top || py > r.bottom) return MaskHit::None;
+	// 整个选区横竖各三等分，落在哪一格就调哪个方位：
+	// 左上那一格就是"左上方"，不是左上角那根边框，正中间那一格才是整体拖动
+	const float stepX = (r.right - r.left) / 3.f, stepY = (r.bottom - r.top) / 3.f;
+	const int col = px < r.left + stepX ? 0 : (px < r.right - stepX ? 1 : 2);
+	const int row = py < r.top + stepY ? 0 : (py < r.bottom - stepY ? 1 : 2);
+	static constexpr MaskHit grid[3][3]{
+		{ MaskHit::TopLeft,    MaskHit::Top,    MaskHit::TopRight },
+		{ MaskHit::Left,       MaskHit::Inside, MaskHit::Right },
+		{ MaskHit::BottomLeft, MaskHit::Bottom, MaskHit::BottomRight },
+	};
+	return grid[row][col];
+}
+
+void CutMask::startAdjust(POINT pos)
+{
+	adjustHit = hitTest(pos);
+	adjustStartRect = maskRect;
+	adjustPressPos = pos;
+	// 抓边或抓角：按下这一下就把对应的边挪到光标位置。
+	// 内部整体拖动不能这么干 —— 那会让选区瞬间跳到光标为中心的位置。
+	if (adjustHit != MaskHit::None && adjustHit != MaskHit::Inside) {
+		adjust(pos);
+	}
+}
+
+void CutMask::adjust(POINT pos)
+{
+	if (adjustHit == MaskHit::None) return;
+	auto r = adjustStartRect;
+	const float px = (float)pos.x, py = (float)pos.y;
+	if (adjustHit == MaskHit::Inside) {
+		// 整体平移，尺寸不变，夹在宿主客户区内
+		const float rw = r.right - r.left, rh = r.bottom - r.top;
+		const float left = std::clamp(r.left + px - adjustPressPos.x, 0.f, win->w - rw);
+		const float top = std::clamp(r.top + py - adjustPressPos.y, 0.f, win->h - rh);
+		r = D2D1::RectF(left, top, left + rw, top + rh);
+	}
+	else {
+		const float cx = std::clamp(px, 0.f, win->w);
+		const float cy = std::clamp(py, 0.f, win->h);
+		switch (adjustHit)
+		{
+		case MaskHit::Left: r.left = cx; break;
+		case MaskHit::Right: r.right = cx; break;
+		case MaskHit::Top: r.top = cy; break;
+		case MaskHit::Bottom: r.bottom = cy; break;
+		case MaskHit::TopLeft: r.left = cx; r.top = cy; break;
+		case MaskHit::TopRight: r.right = cx; r.top = cy; break;
+		case MaskHit::BottomRight: r.right = cx; r.bottom = cy; break;
+		case MaskHit::BottomLeft: r.left = cx; r.bottom = cy; break;
+		default: break;
+		}
+		// 拖过头（比如左边越过右边）时归一化，接下来就自然变成"在拖另一条边"
+		const float l = std::min(r.left, r.right), rr = std::max(r.left, r.right);
+		const float t = std::min(r.top, r.bottom), b = std::max(r.top, r.bottom);
+		r = D2D1::RectF(l, t, rr, b);
+		// 塌到最小尺寸以下时，把动着的那条边推回来，不动锚定的那条
+		const bool moveLeft = adjustHit == MaskHit::Left || adjustHit == MaskHit::TopLeft || adjustHit == MaskHit::BottomLeft;
+		const bool moveTop = adjustHit == MaskHit::Top || adjustHit == MaskHit::TopLeft || adjustHit == MaskHit::TopRight;
+		if (r.right - r.left < minSize) {
+			if (moveLeft) r.left = r.right - minSize;
+			else r.right = r.left + minSize;
+		}
+		if (r.bottom - r.top < minSize) {
+			if (moveTop) r.top = r.bottom - minSize;
+			else r.bottom = r.top + minSize;
+		}
+	}
+	if (r.left == maskRect.left && r.top == maskRect.top &&
+		r.right == maskRect.right && r.bottom == maskRect.bottom) return;
+	maskRect = r;
+	makeLayout();
+	win->refresh();
+}
+
 void CutMask::paint(ID2D1DeviceContext* ctx)
 {
 	if (!layout) return;

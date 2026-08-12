@@ -110,22 +110,20 @@ void Tip::showNow()
 	ti.uId = 0;
 	ti.lpszText = const_cast<LPWSTR>(text.c_str());
 	SendMessage(tipHwnd, TTM_UPDATETIPTEXTW, 0, (LPARAM)&ti);
+	// 气泡没显示出来也能先问尺寸，于是一次就能摆到准确位置，
+	// 不用再“先显示再挠”（那一下看着就像提示抖了一下）
+	auto bubble = SendMessage(tipHwnd, TTM_GETBUBBLESIZE, 0, (LPARAM)&ti);
+	// 底边中点对齐到锚点：横向居中，纵向整个提示都在锚点上方
+	auto px = static_cast<int>(anchorX) - LOWORD(bubble) / 2;
+	auto py = static_cast<int>(anchorY) - HIWORD(bubble);
+	SendMessage(tipHwnd, TTM_TRACKPOSITION, 0, MAKELPARAM(px, py));
 	if (!visible) {
-		// 先随便摆个大致位置激活一次，让系统按新文字把窗口尺寸算出来，
-		// 拿到尺寸后下面再摆到准确位置。这里给的是估算值，尽量少露出跳动。
-		auto guessX = static_cast<int>(anchorX - 30.f);
-		auto guessY = static_cast<int>(anchorY - 19.f * win->dpi);
-		SendMessage(tipHwnd, TTM_TRACKPOSITION, 0, MAKELPARAM(guessX, guessY));
 		SendMessage(tipHwnd, TTM_ACTIVATE, TRUE, 0);
 		SendMessage(tipHwnd, TTM_TRACKACTIVATE, TRUE, (LPARAM)&ti);
 		visible = true;
+		// 激活那一下系统可能按自己那套摆过，再定一遍位保险
+		SendMessage(tipHwnd, TTM_TRACKPOSITION, 0, MAKELPARAM(px, py));
 	}
-	RECT rc{};
-	GetWindowRect(tipHwnd, &rc);
-	// 底边中点对齐到锚点：横向居中，纵向整个提示都在锚点上方
-	auto px = static_cast<int>(anchorX) - (rc.right - rc.left) / 2;
-	auto py = static_cast<int>(anchorY) - (rc.bottom - rc.top);
-	SendMessage(tipHwnd, TTM_TRACKPOSITION, 0, MAKELPARAM(px, py));
 	// 提上最顶层：建窗时的 WS_EX_TOPMOST 只保证它在置顶那一群里，
 	// 而工具窗口个个都是置顶（ToolSub 的提示正好落在 ToolMain 上），
 	// 不每次重新抢到同组最前面就会被它们盖住。SWP_NOACTIVATE：别抢焦点。

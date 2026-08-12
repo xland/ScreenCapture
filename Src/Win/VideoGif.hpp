@@ -6,7 +6,7 @@
 #include "cgif/cgif.h"
 //D:\sdk\gifski\target\release\gifski.lib
 
-namespace WinVideoGif {
+namespace VideoGif {
 
     struct GifParam
     {

@@ -5,6 +5,10 @@
 #include "WinPin.h"
 #include "CutMask.h"
 #include "../App.h"
+#include "../Util.h"
+#include "CapLong.h"
+#include "CapVideo.h"
+#include "../Tool/ToolCap.h"
 using namespace Microsoft::WRL;
 
 namespace
@@ -21,34 +25,13 @@ WinCap::WinCap() : Ling::WinBase()
 	setTitle(L"Screen Capture");
     auto [x1, y1, w1, h1] = App::get()->getScreenArea();
 	this->x = x1;this->y = y1;this->w = w1;this->h = h1;
-	onMouseDown.add([this](POINT pos, bool isRight) {
-		if (isRight) { close(); }
-        else {
-			isPress = true;
-			cutMask->startMakeRect(pos);
-        }
-	});
-	onMouseMove.add([this](POINT pos) {
-        if (isPress) {
-			cutMask->makeRect(pos);
-        }
-        else {
-			cutMask->highlight(pos);
-			getPixImg(pos);
-			setPixPos(pos);
-            refresh();
-        }
-	});
-	onKeyDown.add([this](UINT key) { this->onKey(key); });
-	onMouseUp.add([this](POINT pos, bool isRight) {
-        isPress = false;
-        auto& maskRect = cutMask->maskRect;
-        WinPin::init(int(maskRect.left) + x, int(maskRect.top) + y, int(maskRect.right - maskRect.left), int(maskRect.bottom - maskRect.top));
-        close();
-    });
-	onDestroy.add([this]() {
-        winCap.reset();
-    });
+    onMouseDown.add([this](POINT pos, bool isRight) { this->onDown(pos, isRight); });
+    onMouseMove.add([this](POINT pos) { this->onMove(pos); });
+    onMouseUp.add([this](POINT pos, bool isRight) { this->onUp(pos, isRight); });
+    onKeyDown.add([this](UINT key) { this->onKey(key); });
+    // 滚动截图的定时器借的是本窗口的，转给 CapLong
+    onTimer.add([this](UINT id) { if (capLong) capLong->onTimerCB(id); });
+    onDestroy.add([this]() { this->onClosed(); });
 }
 
 WinCap::~WinCap()
@@ -57,6 +40,8 @@ WinCap::~WinCap()
 
 void WinCap::init()
 {
+    // 双击托盘图标会连着来两下，已经开着就不再建第二个
+    if (winCap) return;
     auto ptr = new WinCap();
     winCap.reset(ptr);
 	ptr->cutMask = std::make_unique<CutMask>(ptr);
@@ -98,15 +83,55 @@ void WinCap::layout()
     ctx->SetTransform(trans);
     ctx->Clear(0);
     D2D1_RECT_F destRect = D2D1::RectF(0, 0, (float)w, (float)h);
-    ctx->DrawBitmap(screenImg.Get(), destRect);
-	cutMask->paint(ctx.Get());
-	paintPix(ctx.Get());
+    if (!hideScreenImg) {
+        ctx->DrawBitmap(screenImg.Get(), destRect);
+    }
+    cutMask->paint(ctx.Get());
+    if (capLong) capLong->paint(ctx.Get());
+    paintPix(ctx.Get());
     s->EndDraw();
 }
 
 BOOL WinCap::setCursor()
 {
-    SetCursor(LoadCursor(nullptr, IDC_CROSS));
+    if (stage == CapStage::Select) {
+        SetCursor(LoadCursor(nullptr, IDC_CROSS));
+        return TRUE;
+    }
+    if (stage == CapStage::Long && capLong) {
+        capLong->setCursor();
+        return TRUE;
+    }
+    if (stage == CapStage::Adjust) {
+        POINT pos{};
+        GetCursorPos(&pos);
+        ScreenToClient(hwnd, &pos);
+        switch (cutMask->hitTest(pos))
+        {
+        case MaskHit::TopLeft:
+        case MaskHit::BottomRight:
+            SetCursor(LoadCursor(nullptr, IDC_SIZENWSE));
+            return TRUE;
+        case MaskHit::TopRight:
+        case MaskHit::BottomLeft:
+            SetCursor(LoadCursor(nullptr, IDC_SIZENESW));
+            return TRUE;
+        case MaskHit::Top:
+        case MaskHit::Bottom:
+            SetCursor(LoadCursor(nullptr, IDC_SIZENS));
+            return TRUE;
+        case MaskHit::Left:
+        case MaskHit::Right:
+            SetCursor(LoadCursor(nullptr, IDC_SIZEWE));
+            return TRUE;
+        case MaskHit::Inside:
+            SetCursor(LoadCursor(nullptr, IDC_SIZEALL));
+            return TRUE;
+        default:
+            break;
+        }
+    }
+    SetCursor(LoadCursor(nullptr, IDC_ARROW));
     return TRUE;
 }
 
@@ -126,7 +151,7 @@ void WinCap::setPixPos(POINT pos)
 
 void WinCap::getPixImg(POINT pos)
 {
-    if (isPress) return;
+    if (isPress || stage != CapStage::Select) return;
     const long sw = static_cast<long>(srcW), sh = static_cast<long>(srcH);
     const long iw = static_cast<long>(w), ih = static_cast<long>(h);
     // 期望的源矩形：以光标为正中心，可以越出屏幕。
@@ -153,7 +178,7 @@ void WinCap::getPixImg(POINT pos)
 
 void WinCap::paintPix(ID2D1DeviceContext* ctx)
 {
-	if (isPress) return;
+	if (isPress || stage != CapStage::Select) return;
     D2D1_RECT_F pixRect{ (float)pixPos.x, (float)pixPos.y, pixPos.x + pixW, pixPos.y + pixImgH + 76.f * dpi };
     ctx->FillRectangle(pixRect, brushBg.Get());
     if (pixSrcRect.right > pixSrcRect.left && pixSrcRect.bottom > pixSrcRect.top) {
@@ -279,4 +304,331 @@ ComPtr<ID2D1Bitmap1> WinCap::getCutImg()
     auto rect = D2D1::RectU((UINT32)maskRect.left, (UINT32)maskRect.top, (UINT32)maskRect.right, (UINT32)maskRect.bottom);
     cutImg->CopyFromBitmap(&start, screenImg.Get(), &rect);
     return cutImg;
+}
+
+LRESULT WinCap::onHitTest(const POINT pos)
+{
+    // 录屏阶段整窗让出鼠标：用户要能直接操作被录的那个应用
+    if (isMouseTransparent || stage == CapStage::Video) return HTTRANSPARENT;
+    return HTCLIENT;
+}
+
+void WinCap::onDown(POINT pos, bool isRight)
+{
+    if (isRight) {
+        close();
+        return;
+    }
+    if (stage == CapStage::Select) {
+        isPress = true;
+        cutMask->startMakeRect(pos);
+    }
+    else if (stage == CapStage::Adjust) {
+        // 选区外面按下不做事：这个阶段不允许重新框选
+        if (cutMask->hitTest(pos) == MaskHit::None) return;
+        isPress = true;
+        cutMask->startAdjust(pos);
+        layoutTool(toolCap.get());
+    }
+}
+
+void WinCap::onMove(POINT pos)
+{
+    if (stage == CapStage::Select) {
+        if (isPress) {
+            cutMask->makeRect(pos);
+        }
+        else {
+            cutMask->highlight(pos);
+            getPixImg(pos);
+            setPixPos(pos);
+            refresh();
+        }
+    }
+    else if (stage == CapStage::Adjust) {
+        if (!isPress) return;
+        cutMask->adjust(pos);
+        // 选区变了，工具条跟着走位
+        layoutTool(toolCap.get());
+    }
+    else if (stage == CapStage::Long && capLong) {
+        capLong->onMove(pos);
+    }
+}
+
+void WinCap::onUp(POINT pos, bool isRight)
+{
+    if (stage == CapStage::Select) {
+        isPress = false;
+        // 只是点了一下，又没吸附到任何窗口，那就接着让用户框
+        if (!cutMask->hasRect()) return;
+        stage = CapStage::Adjust;
+        refresh();  // 收掉放大镜
+        makeToolCap();
+    }
+    else if (stage == CapStage::Adjust) {
+        isPress = false;
+    }
+    else if (stage == CapStage::Long && capLong) {
+        capLong->onUp(pos);
+    }
+}
+
+// close() 里 DestroyWindow 之后同步触发 onDestroy，而这条路径通常是从某个工具条的按钮
+// 回调里一路进来的（工具条是 WinCap / CapLong / CapVideo 的成员）。在这里直接
+// winCap.reset() 就是 use-after-free，所以窗口句柄立即销毁，C++ 对象的释放推迟到下一轮消息循环。
+void WinCap::onClosed()
+{
+    if (isClosed) return;
+    isClosed = true;
+    if (capVideo) capVideo->dispose();
+    if (capLong) capLong->dispose();
+    if (toolCap) toolCap->close();
+    Ling::App::get()->dq.TryEnqueue([]() {
+        winCap.reset();
+        // 用完即走模式下截图结束就退出进程，与 App 构造里的判断对称
+        if (Ling::App::get()->args[L"auto-quit"] == L"true") {
+            Ling::App::get()->quit(0);
+        }
+    });
+}
+
+void WinCap::stopIfRecording()
+{
+    if (!winCap || !winCap->capVideo) return;
+    // 正在录制：先停止编码线程，避免退出时线程与设备卡死
+    winCap->capVideo->stop();
+}
+
+void WinCap::makeToolCap()
+{
+    if (toolCap) {
+        layoutTool(toolCap.get());
+        toolCap->show();
+        return;
+    }
+    toolCap = std::make_unique<ToolCap>(this);
+    // 尺寸在 ToolCap 构造里算好了，这里只定位；两者都要在建窗口之前设好
+    layoutTool(toolCap.get());
+    toolCap->createNativeWindow(WS_EX_TOPMOST | WS_EX_NOACTIVATE | WS_EX_TOOLWINDOW, WS_POPUP);
+}
+
+void WinCap::layoutTool(Ling::WinBase* tool)
+{
+    if (!tool) return;
+    const int toolW = (int)(tool->w + 0.5f);
+    const int toolH = (int)(tool->h + 0.5f);
+    // maskRect 是本窗口的客户区坐标，换算到屏幕坐标
+    const int maskLeftScr = x + (int)cutMask->maskRect.left;
+    const int maskTopScr = y + (int)cutMask->maskRect.top;
+    const int maskRightScr = x + (int)cutMask->maskRect.right;
+    const int maskBottomScr = y + (int)cutMask->maskRect.bottom;
+
+    // 用框选区域所在显示器的工作区判断上/下方是否有足够空间
+    RECT maskScrRect{ maskLeftScr, maskTopScr, maskRightScr, maskBottomScr };
+    HMONITOR hMon = MonitorFromRect(&maskScrRect, MONITOR_DEFAULTTONEAREST);
+    MONITORINFO mi{ sizeof(MONITORINFO) };
+    GetMonitorInfo(hMon, &mi);
+
+    const int gap = (int)(cutMask->strokeWidth + 2.f * dpi + 0.5f); // 与框选边框的间距
+    const bool fitBelow = (maskBottomScr + gap + toolH) <= mi.rcWork.bottom;
+    const bool fitAbove = (maskTopScr - gap - toolH) >= mi.rcWork.top;
+
+    // 工具条右侧与框选区域右侧对齐
+    int toolX = maskRightScr - toolW;
+    int toolY = 0;
+    if (fitBelow) {
+        // 右下方
+        toolY = maskBottomScr + gap;
+    }
+    else if (fitAbove) {
+        // 右上方
+        toolY = maskTopScr - gap - toolH;
+    }
+    else {
+        // 叠加在框选区域右下方内部，与右/底各留 3*dpi
+        const int overlapPad = (int)(3.f * dpi + 0.5f);
+        toolX = maskRightScr - toolW - overlapPad;
+        toolY = maskBottomScr - toolH - overlapPad;
+    }
+
+    // 兜底：不越出所在显示器工作区
+    if (toolX < mi.rcWork.left) toolX = mi.rcWork.left;
+    if (toolX + toolW > mi.rcWork.right) toolX = mi.rcWork.right - toolW;
+    tool->setPosition(toolX, toolY);
+}
+
+void WinCap::enterLiveStage()
+{
+    // 底图是拖框那一刻的静态截图，从这里开始不能再画它 ——
+    // 否则录屏和滚动截图从屏幕上拿到的都是这张死图。只留遮罩，选区内是透明的洞。
+    hideScreenImg = true;
+    if (toolCap) toolCap->hide();
+    // 原来的 WinLong / WinVideo 建窗口时就是 topmost，这里补上
+    SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+    refresh();
+}
+
+void WinCap::startPin()
+{
+    if (!cutMask->hasRect()) return;
+    auto& maskRect = cutMask->maskRect;
+    // WinPin 构造里会回头来取 getCutImg()，所以得先把它建起来再关自己
+    WinPin::init(int(maskRect.left) + x, int(maskRect.top) + y,
+        int(maskRect.right - maskRect.left), int(maskRect.bottom - maskRect.top));
+    close();
+}
+
+void WinCap::startLong()
+{
+    if (stage != CapStage::Adjust || !cutMask->hasRect()) return;
+    stage = CapStage::Long;
+    enterLiveStage();
+    // 选区已经定了，接下来光标移进选区会出现"开始"按钮，点一下才真的开始滚
+    capLong = std::make_unique<CapLong>(this);
+}
+
+void WinCap::startVideo()
+{
+    if (stage != CapStage::Adjust || !cutMask->hasRect()) return;
+    stage = CapStage::Video;
+    enterLiveStage();
+    capVideo = std::make_unique<CapVideo>(this);
+    // ToolCap 原地换成 ToolVideo
+    capVideo->makeTool();
+}
+
+void WinCap::startMp4(bool useSpeaker, bool useMic)
+{
+    if (capVideo) capVideo->startMp4(useSpeaker, useMic);
+}
+
+void WinCap::startGif()
+{
+    if (capVideo) capVideo->startGif();
+}
+
+std::wstring WinCap::stopRecord()
+{
+    return capVideo ? capVideo->stop() : L"";
+}
+
+void WinCap::longPin()
+{
+    if (capLong) capLong->pin();
+}
+
+void WinCap::longSaveToFile()
+{
+    if (capLong) capLong->saveToFile();
+}
+
+void WinCap::longCopyToClipboard()
+{
+    if (capLong) capLong->copyToClipboard();
+}
+
+void WinCap::hollowWin()
+{
+    HRGN rgn1 = CreateRectRgn(0, 0, (int)w, (int)h);
+    auto& r = cutMask->maskRect;
+    HRGN rgn2 = CreateRectRgn((int)r.left, (int)r.top, (int)r.right, (int)r.bottom);
+    CombineRgn(rgn1, rgn1, rgn2, RGN_DIFF);
+    DeleteObject(rgn2);
+    if (SetWindowRgn(hwnd, rgn1, TRUE) == 0) {
+        DeleteObject(rgn1);
+    }
+}
+
+void WinCap::restoreWin()
+{
+    SetWindowRgn(hwnd, NULL, TRUE);
+}
+
+void WinCap::setMouseTransparent(bool transparent)
+{
+    isMouseTransparent = transparent;
+    if (!hwnd) return;
+    LONG_PTR exStyle = GetWindowLongPtr(hwnd, GWL_EXSTYLE);
+    if (transparent) {
+        exStyle |= WS_EX_LAYERED;
+        exStyle |= WS_EX_TRANSPARENT;
+        if (GetCapture() == hwnd) {
+            ReleaseCapture();
+        }
+        isPress = false;
+        SetLayeredWindowAttributes(hwnd, 0, 255, LWA_ALPHA);
+    }
+    else {
+        exStyle &= ~WS_EX_TRANSPARENT;
+        exStyle &= ~WS_EX_LAYERED;
+    }
+    SetWindowLongPtr(hwnd, GWL_EXSTYLE, exStyle);
+    SetWindowPos(hwnd, nullptr, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED);
+}
+
+void WinCap::saveToFile()
+{
+    std::vector<BYTE> pixels;
+    int cw{ 0 }, ch{ 0 };
+    if (!getCutPixels(pixels, cw, ch)) return;
+    auto path = Util::getSaveFilePath(hwnd);
+    if (path.empty()) {
+        // 用户取消了。对话框关掉后本窗口会被激活，工具条得重新压回最上层
+        if (toolCap && toolCap->hwnd) {
+            SetWindowPos(toolCap->hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+        }
+        return;
+    }
+    if (Util::saveToFile(path, cw, ch, pixels.data())) {
+        close();
+    }
+}
+
+void WinCap::copyToClipboard()
+{
+    std::vector<BYTE> pixels;
+    int cw{ 0 }, ch{ 0 };
+    if (!getCutPixels(pixels, cw, ch)) return;
+    Util::saveToClipboard(cw, ch, pixels.data());
+    close();
+}
+
+// 从底图上把选区那块像素读回来。screenImg 在 GPU 上，不能直接 Map，
+// 得先拷到一块带 CPU_READ 的位图上。
+bool WinCap::getCutPixels(std::vector<BYTE>& pixels, int& cw, int& ch)
+{
+    if (!screenImg || !cutMask->hasRect()) return false;
+    auto& maskRect = cutMask->maskRect;
+    const UINT32 cutW = (UINT32)(maskRect.right - maskRect.left);
+    const UINT32 cutH = (UINT32)(maskRect.bottom - maskRect.top);
+    if (cutW == 0 || cutH == 0) return false;
+    D2D1_BITMAP_PROPERTIES1 prop{
+        .pixelFormat{ screenImg->GetPixelFormat() },
+        .dpiX{ 96.0f }, .dpiY{ 96.0f },
+        .bitmapOptions{ D2D1_BITMAP_OPTIONS_CPU_READ | D2D1_BITMAP_OPTIONS_CANNOT_DRAW }
+    };
+    ComPtr<ID2D1Bitmap1> cpuBmp;
+    auto hr = Ling::D2D::get()->deviceContext->CreateBitmap(D2D1::SizeU(cutW, cutH), nullptr, 0, &prop, cpuBmp.GetAddressOf());
+    if (FAILED(hr)) return false;
+    auto start = D2D1::Point2U(0, 0);
+    auto rect = D2D1::RectU((UINT32)maskRect.left, (UINT32)maskRect.top, (UINT32)maskRect.left + cutW, (UINT32)maskRect.top + cutH);
+    if (FAILED(cpuBmp->CopyFromBitmap(&start, screenImg.Get(), &rect))) return false;
+    D2D1_MAPPED_RECT mapped{};
+    if (FAILED(cpuBmp->Map(D2D1_MAP_OPTIONS_READ, &mapped))) return false;
+    // mapped.pitch 按 GPU 行对齐，可能大于 cutW*4；剪切板和 WIC 都要求紧凑步长，逐行紧缩
+    const UINT32 rowBytes = cutW * 4;
+    pixels.resize((size_t)rowBytes * cutH);
+    for (UINT32 row = 0; row < cutH; row++)
+    {
+        auto dst = pixels.data() + (size_t)row * rowBytes;
+        CopyMemory(dst, mapped.bits + (size_t)row * mapped.pitch, rowBytes);
+        // 底图是 GDI 抓来的，alpha 全 0（它自己是 ALPHA_MODE_IGNORE 所以无所谓），
+        // 但 PNG 和剪切板会当真，这里统一按不透明补上
+        for (UINT32 i = 3; i < rowBytes; i += 4) dst[i] = 255;
+    }
+    cpuBmp->Unmap();
+    cw = (int)cutW;
+    ch = (int)cutH;
+    return true;
 }

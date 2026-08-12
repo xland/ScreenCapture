@@ -1,7 +1,10 @@
 ﻿#pragma once
 #include <include/Ling.h>
 
-// 框选遮罩。WinCap / WinLong 共用：四块半透明遮罩 + 蓝色选区边框 + 左上角尺寸标签。
+// 光标落在选区的哪个部位。8 个调整柄 + 内部 + 都不沾
+enum class MaskHit { None, Inside, Left, Top, Right, Bottom, TopLeft, TopRight, BottomRight, BottomLeft };
+
+// 框选遮罩。四块半透明遮罩 + 蓝色选区边框 + 左上角尺寸标签。
 // 自己不持有绘制目标，paint 时由宿主窗口把当前的 context 传进来。
 // 所有坐标都是宿主窗口的客户区坐标。
 class CutMask
@@ -12,6 +15,14 @@ public:
 	bool highlight(POINT pos);
 	void startMakeRect(POINT pos);
 	void makeRect(POINT pos);
+	// 选区横竖各三等分，光标落在哪一格就是哪个方位；选区外面一律 None
+	MaskHit hitTest(POINT pos) const;
+	// 开始调整：记下方向和起始矩形。按的是边或角时，这一下就把那条边吸到光标处
+	void startAdjust(POINT pos);
+	// 调整中：按 startAdjust 记下的方向改选区
+	void adjust(POINT pos);
+	// 宽高都大于 0 才算真的框出了东西
+	bool hasRect() const;
 	void paint(ID2D1DeviceContext* ctx);
 public:
 	D2D1_RECT_F maskRect{};
@@ -30,4 +41,10 @@ private:
 	POINT pressPos{};
 	Ling::WinBase* win{ nullptr };
 	float paddingTop{ 2.f }, paddingMargin{3.f};
+	MaskHit adjustHit{ MaskHit::None };
+	// 调整全程以按下那一刻的矩形为基准算，不做累加，免得漂移
+	D2D1_RECT_F adjustStartRect{};
+	POINT adjustPressPos{};
+	// 选区最小尺寸，别让它塌成 0 宽 0 高
+	static constexpr float minSize{ 4.f };
 };

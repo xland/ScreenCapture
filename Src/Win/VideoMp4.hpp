@@ -37,7 +37,7 @@
 #include <audiosessiontypes.h>
 
 
-namespace WinVideoMp4{
+namespace VideoMp4{
 // {1884E6DC-2AE3-4499-A3D7-1A27E3B2AC39}
 inline static const GUID MyFakeFmt = { 0x1884e6dc, 0x2ae3, 0x4499, { 0xa3, 0xd7, 0x1a, 0x27, 0xe3, 0xb2, 0xac, 0x39 } };
 
