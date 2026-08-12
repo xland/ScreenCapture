@@ -36,6 +36,10 @@ private:
 	int dismissTime{ 0 };
 	int changeStartY{ -1 };
 	D2D1_RECT_F stopTextRect{};
+	// 两处文字的绘制起点。IDWriteTextLayout 默认左上对齐，DrawTextLayout 给的又是
+	// layout 框的左上角，所以得先测出文本实际宽高，才能算出居中要的那个起点
+	D2D1_POINT_2F stopTextPos{};
+	D2D1_SIZE_F startTextSize{};
 	Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> textBrush;
 	Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> bgBrush;
 	Microsoft::WRL::ComPtr<IDWriteTextLayout> layoutTextStart;

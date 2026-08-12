@@ -24,6 +24,9 @@ public:
 	// 同目录找，再找 %appdata%\ScreenCapture\plugin，都找不到就用默认浏览器打开它的
 	// release 页面让用户自己下。缓存图由插件读完后自己删。
 	static bool openWithImageReader(const int w, const int h, BYTE* data);
+	// 用 quirc 识别图里的二维码，返回识别到的内容，没识别到返回空串。
+	// 图里有多个码时用换行拼在一起
+	static std::wstring decodeQrCode(const int w, const int h, BYTE* data);
 	// 直接建一个 IDWriteTextLayout。Ling 的 Label/Text 走的是 Composition 节点树，
 	// 而 CutMask / WinLong 是在自己的 D2D context 上手绘文字，需要裸的 layout。
 	static Microsoft::WRL::ComPtr<IDWriteTextLayout> makeTextLayout(const std::wstring& text, float w, float h, float fontSize);

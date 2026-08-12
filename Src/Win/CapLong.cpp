@@ -63,6 +63,11 @@ CapLong::CapLong(WinCap* win) : win(win)
     d2d->deviceContext->CreateSolidColorBrush(D2D1::ColorF(0x000000, 0.68f), bgBrush.GetAddressOf());
     auto size{ startCircleR * 2 };
     layoutTextStart = Util::makeTextLayout(Lang::get(L"long.start"), size, size, 16 * win->dpi);
+    if (layoutTextStart) {
+        DWRITE_TEXT_METRICS tm{};
+        layoutTextStart->GetMetrics(&tm);
+        startTextSize = { tm.width, tm.height };
+    }
 }
 
 CapLong::~CapLong()
@@ -82,11 +87,12 @@ void CapLong::paint(ID2D1DeviceContext* ctx)
     if (isFinish) {
         auto borderRadius{ 4.f * win->dpi };
         ctx->FillRoundedRectangle(D2D1::RoundedRect(stopTextRect, borderRadius, borderRadius), bgBrush.Get());
-        ctx->DrawTextLayout({ stopTextRect.left, stopTextRect.top }, layoutTextEnd.Get(), textBrush.Get(), D2D1_DRAW_TEXT_OPTIONS_NONE);
+        ctx->DrawTextLayout(stopTextPos, layoutTextEnd.Get(), textBrush.Get(), D2D1_DRAW_TEXT_OPTIONS_NONE);
     }
     else if (isShowStartBtn) {
         ctx->FillEllipse(D2D1::Ellipse(D2D1::Point2F((float)circleCenter.x, (float)circleCenter.y), startCircleR, startCircleR), bgBrush.Get());
-        ctx->DrawTextLayout({ circleCenter.x - startCircleR, circleCenter.y - startCircleR }, layoutTextStart.Get(), textBrush.Get(), D2D1_DRAW_TEXT_OPTIONS_NONE);
+        ctx->DrawTextLayout({ circleCenter.x - startTextSize.width / 2, circleCenter.y - startTextSize.height / 2 },
+            layoutTextStart.Get(), textBrush.Get(), D2D1_DRAW_TEXT_OPTIONS_NONE);
     }
 }
 
@@ -329,6 +335,8 @@ void CapLong::makeStopText()
     stopTextRect.bottom = maskRect.bottom - padding;
     layoutTextEnd->SetMaxWidth(stopTextRect.right - stopTextRect.left);
     layoutTextEnd->SetMaxHeight(stopTextRect.bottom - stopTextRect.top);
+    // 圆角矩形是按文本宽度加 padding 撑出来的，文本本身要摆回它的正中
+    stopTextPos = { halfX - halfW, stopTextRect.top + (stopTextRect.bottom - stopTextRect.top - tm.height) / 2 };
 }
 
 void CapLong::copyToClipboard()

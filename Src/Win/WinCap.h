@@ -30,6 +30,7 @@ public:
 	void startLong();
 	void startVideo();
 	void startOcr();
+	void startQrcode();
 	void saveToFile();
 	void copyToClipboard();
 	// ToolVideo，转给 capVideo

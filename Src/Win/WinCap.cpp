@@ -5,6 +5,7 @@
 #include "CutMask.h"
 #include "../App.h"
 #include "../Util.h"
+#include "../Lang.h"
 #include "CapLong.h"
 #include "CapVideo.h"
 #include "../Tool/ToolCap.h"
@@ -570,6 +571,30 @@ void WinCap::startOcr()
     if (!getCutPixels(pixels, cw, ch)) return;
     // 插件缺失时 openWithImageReader 会打开下载页，同样得让位，所以不看返回值
     Util::openWithImageReader(cw, ch, pixels.data());
+    close();
+}
+
+void WinCap::startQrcode()
+{
+    std::vector<BYTE> pixels;
+    int cw{ 0 }, ch{ 0 };
+    if (!getCutPixels(pixels, cw, ch)) return;
+    auto text = Util::decodeQrCode(cw, ch, pixels.data());
+    // 先让截图窗口连工具条一起从屏幕上消失，弹框独占桌面。这里只 hide 不 close：
+    // close() 是把销毁排进 dq 队列的，而 MessageBox 的模态循环同样在泵消息，
+    // 真关了就会在弹框还开着的时候把脚下的 this 抽掉，弹框关闭后再真正退场
+    hide();
+    if (toolCap) toolCap->hide();
+    auto title = Lang::get(L"about.sysTip");
+    if (text.empty()) {
+        MessageBox(nullptr, Lang::get(L"cap.qrcodeEmpty").data(), title.data(), MB_OK | MB_ICONINFORMATION);
+    }
+    else {
+        auto tip = text + L"\n\n" + Lang::get(L"cap.qrcodeCopy");
+        if (MessageBox(nullptr, tip.data(), title.data(), MB_OKCANCEL | MB_ICONINFORMATION) == IDOK) {
+            Ling::Util::setTextToClipboard(text);
+        }
+    }
     close();
 }
 
