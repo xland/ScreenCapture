@@ -10,42 +10,66 @@ namespace {
         return key == L"Ctrl" || key == L"Alt" || key == L"Shift" || key == L"Win" || key == L"LWin" || key == L"RWin";
     }
 
-    bool isForbiddenShortcutCommonKey(const std::wstring& key)
+    // 不配修饰键、单独按下也能当快捷键的那一类：它们本来就不承担输入职能，占用了不影响
+    // 用户正常打字。字母、数字、符号、方向键、Esc / Tab / Space / Enter 这些必须配修饰键，
+    // 否则用户一敲键盘就开始截图
+    bool canBeUsedAlone(const std::wstring& key)
     {
-        return key == L"Enter" || key == L"Backspace" || key == L"Delete";
+        if (key.size() >= 2 && key[0] == L'F') { //F1 ~ F12
+            auto num = key.substr(1);
+            auto isDigit = [](wchar_t c) { return c >= L'0' && c <= L'9'; };
+            if (std::all_of(num.begin(), num.end(), isDigit)) return true;
+        }
+        return key == L"PrintScreen" || key == L"ScrollLock" || key == L"Pause";
     }
 
-    bool isForbiddenCtrlCommonShortcutKey(const std::wstring& key)
+    // 抢不得的那一小批。前一组是所有软件里手指记忆最强的编辑键，抢了用户会难受；
+    // 后一组被系统独占，让用户设上了也注册不成功（Ctrl+Alt+Delete 连消息都到不了应用）。
+    // 除这些之外一律放开，冲不冲突交给用户自己判断
+    bool isReservedShortcut(const std::wstring& shortcut)
     {
-        return key == L"Z" || key == L"Y" || key == L"S" || key == L"C" || key == L"X" || key == L"A";
+        static const std::vector<std::wstring> reserved{
+            L"Ctrl+C", L"Ctrl+V", L"Ctrl+X", L"Ctrl+Z", L"Ctrl+Y", L"Ctrl+A", L"Ctrl+S",
+            L"Ctrl+Alt+Delete", L"Ctrl+Shift+Esc", L"Ctrl+Esc",
+            L"Alt+Tab", L"Alt+Esc", L"Alt+F4",
+            L"Win+L", L"Win+D", L"Win+E", L"Win+R", L"Win+Tab",
+        };
+        return std::find(reserved.begin(), reserved.end(), shortcut) != reserved.end();
     }
+
+    // keys 进来之前已经用 normalizeShortcutKeys 排过序，拼起来就是 "Ctrl+Alt+A" 这种规范写法。
+    // LWin / RWin 都按 Win 记，好跟上面的黑名单对上
+    std::wstring joinShortcutKeys(const std::vector<std::wstring>& keys)
+    {
+        std::wstring result;
+        for (const auto& key : keys) {
+            if (!result.empty()) result += L"+";
+            result += (key == L"LWin" || key == L"RWin") ? L"Win" : key;
+        }
+        return result;
+    }
+
     bool isValidShortcutKeys(const std::vector<std::wstring>& keys)
     {
-        bool hasModifier = false;
-        bool hasNormalKey = false;
-        bool hasCtrl = false;
-        bool hasOtherModifier = false;
-        bool hasForbiddenCtrlCommonKey = false;
+        bool hasModifier{ false };
+        std::wstring normalKey;
         for (const auto& key : keys) {
             if (isShortcutModifierKey(key)) {
                 hasModifier = true;
-                if (key == L"Ctrl") {
-                    hasCtrl = true;
-                }
-                else {
-                    hasOtherModifier = true;
-                }
                 continue;
             }
-            hasNormalKey = true;
-            if (isForbiddenShortcutCommonKey(key)) {
-                return false;
-            }
-            if (isForbiddenCtrlCommonShortcutKey(key)) {
-                hasForbiddenCtrlCommonKey = true;
-            }
+            //两个普通键凑不成快捷键，RegisterHotKey 也只认一个
+            if (!normalKey.empty()) return false;
+            normalKey = key;
         }
-        return hasModifier && hasNormalKey && !(hasCtrl && !hasOtherModifier && hasForbiddenCtrlCommonKey);
+        if (normalKey.empty()) return false;                            //光按修饰键不算快捷键
+        if (!hasModifier && !canBeUsedAlone(normalKey)) return false;
+        // 注册热键时 Ling 要把这个键名再翻回虚拟键码，翻不出来的（比如 CapsLock）
+        // 让用户设上了也是个按了没反应的死键，这里先拦住
+        std::wstring lowerKey = normalKey;
+        std::transform(lowerKey.begin(), lowerKey.end(), lowerKey.begin(), ::towlower);
+        if (Ling::Util::strToKey(lowerKey) == 0) return false;
+        return !isReservedShortcut(joinShortcutKeys(keys));
     }
 
     // 修饰键固定排序：Ctrl > Alt > Shift > Win > LWin > RWin > 普通键
