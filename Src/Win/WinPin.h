@@ -14,6 +14,9 @@ public:
 	// 底图不来自 WinCap 的截屏，而是外部给的一块 BGRA、top-down、行紧凑（步长 = w*4）像素。
 	// 滚动截图（WinLong）拼出来的长图走这条路进贴图窗口。
 	static void initFromData(int x, int y, int w, int h, std::vector<BYTE>& data);
+	// 当前屏幕上还有没有贴图窗口。用完即走模式靠它判断"活干完了没"：
+	// 截图窗口关掉时贴图窗口可能才刚建起来，那时候不能退进程
+	static bool hasWindow();
 	void layoutTools();
 	// 把底图与所有未撤销的 shape 合成后写入剪切板，成功即关窗
 	void copyToClipboard();

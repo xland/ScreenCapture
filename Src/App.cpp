@@ -23,14 +23,6 @@ App* App::get()
     return app.get();
 }
 
-bool App::isAutoQuit()
-{
-    for (auto& [key, val] : Ling::App::get()->args) {
-        if (key.find(L"auto-quit") != std::wstring::npos) return true;
-    }
-    return false;
-}
-
 void App::takeScreenShot(int x, int y, int w, int h, ID2D1Bitmap1** img)
 {
     HDC hScreen = GetDC(NULL);
@@ -77,8 +69,8 @@ App::App()
     app->onBeforeQuit.add([]() { WinCap::stopIfRecording(); });
     Setting::init();
     Lang::init();
-    if (isAutoQuit()) {
-        //用完即走模式
+    if (app->args[L"--auto-quit"] == L"true") {
+        WinCap::init();
     }
     else {
         bool flag = app->refuseSecondInstance();

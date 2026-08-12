@@ -382,8 +382,10 @@ void WinCap::onClosed()
     if (toolCap) toolCap->close();
     Ling::App::get()->dq.TryEnqueue([]() {
         winCap.reset();
-        // 用完即走模式下截图结束就退出进程，与 App 构造里的判断对称
-        if (App::isAutoQuit()) {
+        // 用完即走模式下截图结束就退出进程，与 App 构造里的判断对称。
+        // 但标注、长截图这两条路是先把图钉到桌面上再关自己的，那种情况下活还没干完，
+        // 退出的活交给最后一个关掉的贴图窗口
+        if (!WinPin::hasWindow() && Ling::App::get()->args[L"--auto-quit"] == L"true") {
             Ling::App::get()->quit(0);
         }
     });
@@ -603,16 +605,27 @@ void WinCap::saveToFile()
     std::vector<BYTE> pixels;
     int cw{ 0 }, ch{ 0 };
     if (!getCutPixels(pixels, cw, ch)) return;
+    // 另存为对话框是 WinCap 的附属窗口，而 WinCap 自己不是 topmost，对话框也就待在普通层；
+    // ToolCap 却是 topmost 的，topmost 那一层永远盖在普通层之上，于是工具条浮在对话框上面。
+    // 所以开对话框前先把工具条降回普通层，关掉之后再压回去
+    auto setToolTopmost = [this](bool topmost) {
+        if (!toolCap || !toolCap->hwnd) return;
+        SetWindowPos(toolCap->hwnd, topmost ? HWND_TOPMOST : HWND_NOTOPMOST,
+            0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+    };
+    setToolTopmost(false);
     auto path = Util::getSaveFilePath(hwnd);
-    if (path.empty()) {
-        // 用户取消了。对话框关掉后本窗口会被激活，工具条得重新压回最上层
-        if (toolCap && toolCap->hwnd) {
-            SetWindowPos(toolCap->hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
-        }
+    // 对话框关掉后本窗口会被激活（会盖住降下来的工具条），所以只要还留在截图里，
+    // 工具条就得重新压回最上层
+    if (path.empty()) { //用户取消了
+        setToolTopmost(true);
         return;
     }
     if (Util::saveToFile(path, cw, ch, pixels.data())) {
         close();
+    }
+    else {
+        setToolTopmost(true);
     }
 }
 

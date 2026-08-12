@@ -13,14 +13,18 @@
 - Modify or delete drawn elements at any time (hover the mouse over an element).
 - Undo (`Ctrl+Z`), redo (`Ctrl+Y`), save to file (`Ctrl+S`), save to clipboard (`Ctrl+C` or double-click).
 - Scrolling screenshot (long screenshot), screen recording (output Gif\Mp4 format).
+- Based on the [Ling](https://github.com/xland/Ling) GUI framework.
+- Supports the OCR text recognition plugin [ImageReader(25MB)](https://github.com/xland/ImageReader).
+- Supports QR code recognition.
 - Fast performance with low memory usage.
 - Small size, a single executable file, no installation required, does not depend on any dynamic link libraries.
 - Supports directly launching specified functions via command-line arguments.
 - Supports one-time execution mode (the process will not remain resident in the system).
+- Multi-language support.
 
 ## Download
 
-[Release](https://github.com/xland/ScreenCapture/releases/) (~800KB)
+[Release](https://github.com/xland/ScreenCapture/releases/) (1MB)
 
 ## Supported Operating Systems
 
@@ -28,43 +32,20 @@
 
 ## Compilation
 
-- This project has no third-party library dependencies other than libraries built into the operating system.
+- The main branch depends on the [Ling](https://github.com/xland/Ling) GUI framework.
 - The project can be compiled with Visual Studio 2026 (installed with the C++ Desktop Development Kit).
+- [2.4.25 (based on D2D)](https://github.com/xland/ScreenCapture/tree/2.4.25) and [2.3.3 (based on Qt)](https://github.com/xland/ScreenCapture/tree/2.3.3_qt) are the previous stable branches.
 
 ## Command Line
 
-- Do not add spaces on either side of the equal sign in command-line arguments.
-- The three types of arguments below can be used in combination. Example: 
 ```
-> ScreenCapture.exe enter=long tray=false auto-quit=true
-```
-
-```
-// Launch and directly enter screenshot mode (default).
-> ScreenCapture.exe enter=cap
-
-// Launch and enter long scrolling screenshot mode.
-> ScreenCapture.exe enter=long
-
-// Launch and enter screen recording mode.
-> ScreenCapture.exe enter=video
+// Terminate the process immediately after the capture is finished.
+> ScreenCapture.exe --auto-quit=true
 ```
 
-```
-// Show system tray icon (default).
-> ScreenCapture.exe tray=true
+## Text Recognition (OCR) Plugin
 
-// Hide system tray icon; 
-> ScreenCapture.exe tray=false
-```
-
-```
-// Keep the process running after screenshot capture.
-> auto-quit=false
-
-// Terminate the process immediately after screenshot capture.
-> auto-quit=true
-```
+Download the latest version of the text recognition tool [ImageReader.exe](https://github.com/xland/ImageReader/releases) (about 25MB), place this file in the same directory as ScreenCapture.exe, or in the `%appdata%\ScreenCapture\plugin` directory, then restart the application to use it.
 
 ## Sponsor
 

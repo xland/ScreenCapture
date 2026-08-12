@@ -13,14 +13,18 @@
 - Mengubah atau menghapus elemen yang telah digambar kapan saja (arahkan kursor mouse pada elemen).
 - Urungkan (`Ctrl+Z`), ulangi (`Ctrl+Y`), simpan ke file (`Ctrl+S`), simpan ke clipboard (`Ctrl+C` atau klik dua kali).
 - Screenshot panjang dengan scroll, perekaman layar (format output GIF/Mp4).
+- Dibangun di atas kerangka GUI [Ling](https://github.com/xland/Ling).
+- Mendukung plugin pengenalan teks OCR [ImageReader(25MB)](https://github.com/xland/ImageReader).
+- Mendukung pengenalan kode QR.
 - Performa cepat dengan penggunaan memori minimal.
 - Ukuran kecil, hanya satu file eksekusi, tanpa instalasi, tidak memerlukan pustaka tautan dinamis.
 - Mendukung menjalankan fungsi tertentu secara langsung melalui argumen baris perintah.
 - Mendukung mode sekali pakai (proses tidak akan terus berjalan di sistem).
+- Dukungan multibahasa.
 
 ## Unduh
 
-[Release](https://github.com/xland/ScreenCapture/releases/) (~800KB)
+[Release](https://github.com/xland/ScreenCapture/releases/) (1MB)
 
 ## Sistem Operasi yang Didukung
 
@@ -28,43 +32,20 @@
 
 ## Kompilasi
 
-- Proyek ini tidak memiliki ketergantungan pustaka pihak ketiga selain pustaka bawaan sistem operasi.
+- Branch main bergantung pada kerangka GUI [Ling](https://github.com/xland/Ling).
 - Proyek ini dapat dikompilasi dengan Visual Studio 2026 (dengan C++ Desktop Dev Kit terpasang).
+- [2.4.25 (berbasis D2D)](https://github.com/xland/ScreenCapture/tree/2.4.25) atau [2.3.3 (berbasis Qt)](https://github.com/xland/ScreenCapture/tree/2.3.3_qt) adalah branch stabil sebelumnya.
 
 ## Baris Perintah
 
-- Jangan menambahkan spasi di kedua sisi tanda sama dengan pada argumen baris perintah.
-- Ketiga jenis argumen berikut dapat digunakan secara bersamaan. Contoh:
 ```
-> ScreenCapture.exe enter=long tray=false auto-quit=true
-```
-
-```
-// Jalankan dan langsung masuk ke mode screenshot (default).
-> ScreenCapture.exe enter=cap
-
-// Jalankan dan masuk ke mode screenshot panjang (scroll).
-> ScreenCapture.exe enter=long
-
-// Jalankan dan masuk ke mode perekaman layar.
-> ScreenCapture.exe enter=video
+// Hentikan proses segera setelah pengambilan gambar selesai.
+> ScreenCapture.exe --auto-quit=true
 ```
 
-```
-// Tampilkan ikon di system tray (default).
-> ScreenCapture.exe tray=true
+## Plugin Pengenalan Teks (OCR)
 
-// Sembunyikan ikon system tray.
-> ScreenCapture.exe tray=false
-```
-
-```
-// Biarkan proses tetap berjalan setelah screenshot selesai.
-> auto-quit=false
-
-// Hentikan proses segera setelah screenshot selesai.
-> auto-quit=true
-```
+Unduh versi terbaru alat pengenalan teks [ImageReader.exe](https://github.com/xland/ImageReader/releases) (sekitar 25MB), lalu letakkan file tersebut di direktori yang sama dengan ScreenCapture.exe, atau di direktori `%appdata%\ScreenCapture\plugin`, kemudian jalankan ulang aplikasi untuk menggunakannya.
 
 ## Sponsor
 

@@ -13,6 +13,9 @@
 - 可以随时修改、删除已绘制的元素（鼠标移到元素上）。
 - 撤销（`Ctrl+Z`）、重做（`Ctrl+Y`）、保存为文件（`Ctrl+S`）、保存到剪贴板（`Ctrl+C`或双击）。
 - 滚动截图（截长图）、屏幕录制（输出Gif\Mp4格式）。
+- 基于[Ling](https://github.com/xland/Ling) GUI 框架。
+- 支持文字识别插件 OCR [ImageReader(25MB)](https://github.com/xland/ImageReader)。
+- 支持二维码识别功能。
 - 运行速度快、内存占用低。
 - 体积小、仅一个可执行文件，无需安装，不依赖任何动态链接库。
 - 支持通过命令行参数直接启动指定的功能。
@@ -21,7 +24,7 @@
 
 ## 下载
 
-[Release](https://github.com/xland/ScreenCapture/releases/) （~800KB）
+[Release](https://github.com/xland/ScreenCapture/releases/) （1MB）
 
 ## 支持的操作系统
 
@@ -29,45 +32,20 @@
 
 ## 编译
 
-- main分支上的代码是 2.5.x（基于Composition UI）的代码，尚不稳定。[2.4.25（基于D2D）](https://github.com/xland/ScreenCapture/tree/2.4.25)或 [2.3.3（基于Qt）](https://github.com/xland/ScreenCapture/tree/2.3.3_qt)是稳定分支。
-- main分支依赖 [Ling](https://github.com/xland/Ling).
+- main分支依赖 [Ling](https://github.com/xland/Ling) GUI 框架.
 - 使用 Visual Studio 2026（With C++ Desktop Dev Kit）即可编译项目。
+- [2.4.25（基于D2D）](https://github.com/xland/ScreenCapture/tree/2.4.25)或 [2.3.3（基于Qt）](https://github.com/xland/ScreenCapture/tree/2.3.3_qt)是以前的稳定分支。
 
 ## 命令行
 
-- 命令行中，等号两侧不要有空格
-- 以下三种命令可以组合使用，比如：
-
 ```
-ScreenCapture.exe enter=long tray=false auto-quit=true
-```
-
-```
-// 启动后立即进入屏幕截图逻辑（默认）
-> ScreenCapture.exe enter=cap
-
-// 启动后进入长截图（滚动截图）逻辑
-> ScreenCapture.exe enter=long
-
-// 启动后进入录屏逻辑
-> ScreenCapture.exe enter=video
-```
-
-```
-// 显示托盘图标（默认）
-> ScreenCapture.exe tray=true
-
-// 不显示托盘图标
-> ScreenCapture.exe tray=false
-```
-
-```
-// 截图完成后，进程不退出，随时待命（默认）
-> ScreenCapture.exe auto-quit=false
-
 // 截图完成后即退出进程。
-> ScreenCapture.exe auto-quit=true
+> ScreenCapture.exe --auto-quit=true
 ```
+
+## 文字识别插件
+
+下载最新版本的文字识别工具 [ImageReader.exe](https://github.com/xland/ImageReader/releases) (约25MB) 并把此文件放置到ScreenCapture.exe同目录下，或者放置到`%appdata%\ScreenCapture\plugin`目录下，然后重启应用即可使用
 
 ## 赞助
 

@@ -78,7 +78,17 @@ void WinPin::onClosed()
 	// screenImg / canvas / history 都是成员（canvas 挂在 body 的子节点上），随下面这次 erase 一并释放
 	Ling::App::get()->dq.TryEnqueue([this]() {
 		std::erase_if(winPins, [this](const std::unique_ptr<WinPin>& p) { return p.get() == this; });
+		// 用完即走模式下，最后一个贴图窗口关掉就退出进程，不驻留在系统里。
+		// 贴图可以同时开好几个（标注、长截图各来一张），所以得等它们都没了才退
+		if (winPins.empty() && Ling::App::get()->args[L"--auto-quit"] == L"true") {
+			Ling::App::get()->quit(0);
+		}
 	});
+}
+
+bool WinPin::hasWindow()
+{
+	return !winPins.empty();
 }
 
 // 把 ToolMain / ToolSub 摆到 WinPin 周围，始终靠 WinPin 右对齐，并尽量留在屏幕可视区内。
