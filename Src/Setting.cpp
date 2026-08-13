@@ -11,12 +11,10 @@ namespace {
 }
 
 
-Setting::Setting() :dataPath{initDataPath()}
+Setting::Setting() :dataPath{ initDataPath() }, configPath{ initConfigPath() }
 {
-    auto dataPath = this->dataPath; //复制一份路径对象
-    auto path = dataPath.append("config.json");
-    if (std::filesystem::exists(path)) {
-        auto pathStr = path.wstring();
+    if (std::filesystem::exists(configPath)) {
+        auto pathStr = configPath.wstring();
         std::wstring content = Ling::Util::readFile(pathStr);
         configObj = JsonObject::Parse(content.data());
     }
@@ -125,12 +123,23 @@ std::filesystem::path Setting::initDataPath()
     return dataPath;
 }
 
+std::filesystem::path Setting::initConfigPath()
+{
+    // 与插件的查找顺序一致（见 Util.cpp 里的 findImageReader）：先看 exe 同目录。
+    // 只有那份文件本来就存在时才认它 —— 不存在就不要在程序目录里新建，
+    // 装在 Program Files 下时那儿通常没有写权限，况且默认位置该是 appdata
+    wchar_t buffer[MAX_PATH]{};
+    GetModuleFileName(nullptr, buffer, MAX_PATH);
+    auto path = std::filesystem::path{ buffer }.parent_path().append(L"config.json");
+    if (std::filesystem::exists(path)) return path;
+    auto fallback = this->dataPath; //复制一份路径对象，append 会就地改
+    return fallback.append(L"config.json");
+}
+
 void Setting::save()
 {
     std::wstring str{ configObj.Stringify() };
-    auto dataPath = this->dataPath;
-    auto pathStr = dataPath.append("config.json").wstring();
-    Ling::Util::saveFile(pathStr, str);
+    Ling::Util::saveFile(configPath.wstring(), str);
 }
 
 std::wstring Setting::getLang()

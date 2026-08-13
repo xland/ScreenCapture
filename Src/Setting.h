@@ -22,9 +22,15 @@ public:
 private:
 	Setting();
 	std::filesystem::path initDataPath();
+	// 决定配置文件用哪一份：exe 同目录有 config.json 就用它（绿色版，配置跟着程序走），
+	// 否则用 %appdata%\ScreenCapture\config.json。二者只认一个，读哪儿就写哪儿。
+	std::filesystem::path initConfigPath();
 	void save();
 private:
 	const std::filesystem::path dataPath;
+	// 必须声明在 dataPath 之后：initConfigPath 找不到 exe 同目录的配置时要回落到 dataPath 上，
+	// 成员按声明顺序初始化
+	const std::filesystem::path configPath;
 	JsonObject configObj;
 };
 
