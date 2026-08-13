@@ -35,6 +35,11 @@ void Setting::init()
     setting.reset(ptr);
 }
 
+void Setting::dispose()
+{
+    setting.reset();
+}
+
 Setting* Setting::get()
 {
     return setting.get();

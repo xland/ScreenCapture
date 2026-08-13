@@ -30,6 +30,13 @@ void App::init()
     app.reset(ptr);
 }
 
+void App::dispose()
+{
+    Lang::dispose();
+    Setting::dispose();
+    app.reset();
+}
+
 App* App::get()
 {
     return app.get();

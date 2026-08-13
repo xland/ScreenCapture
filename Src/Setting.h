@@ -9,6 +9,8 @@ class Setting
 public:
 	~Setting();
 	static void init();
+	// 必须在 CoUninitialize 之前调用：configObj 是 WinRT 对象，晚一步释放就是野内存
+	static void dispose();
 	static Setting* get();
 	std::filesystem::path getDataPath();
 	const JsonObject getConfigObj();

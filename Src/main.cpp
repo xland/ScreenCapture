@@ -10,6 +10,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
         TranslateMessage(&msg);
         DispatchMessage(&msg);
     }
+    App::dispose(); //趁 COM 还活着把单例拆掉，别留给 CoUninitialize 之后的静态析构
     Ling::dispose();
     return 0;
 }

@@ -38,6 +38,11 @@ void Lang::init()
 	lang->initLang(Setting::get()->getLang());
 }
 
+void Lang::dispose()
+{
+	lang.reset();
+}
+
 Lang* Lang::get()
 {
 	return lang.get();

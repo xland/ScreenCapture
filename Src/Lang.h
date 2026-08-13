@@ -9,6 +9,8 @@ class Lang
 public:
 	~Lang();
 	static void init();
+	// 同 Setting::dispose：langObj 也是 WinRT 对象，得趁 COM 还活着放掉
+	static void dispose();
 	static Lang* get();
 	static std::wstring get(const std::wstring& keyPath);
 	std::vector<std::pair<std::wstring, std::wstring>> getSupportedLang();
