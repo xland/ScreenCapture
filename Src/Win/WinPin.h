@@ -39,6 +39,11 @@ public:
 	std::unique_ptr<ToolMain> toolMain;
 	std::unique_ptr<ToolSub> toolSub;
 	ShapeBase* shapeHover{ nullptr };
+	// 本次按下新建出来的 shape（不是拖已有元素）。抬手时只对它做"有没有画出东西"的判定
+	ShapeBase* newShape{ nullptr };
+	// 本次按下之后光标有没有真的移动过。判"按下马上弹起"只认这个，
+	// 不去看各 shape 的几何 —— 那些成员的初值状态不一，不可靠
+	bool hasDragged{ false };
 	std::unique_ptr<History> history;
 	// 贴图窗口的底图。ShapeMosaic 要读它算马赛克块，ShapeEraser 拿它当"擦回原样"的画刷
 	Microsoft::WRL::ComPtr<ID2D1Bitmap1> screenImg;

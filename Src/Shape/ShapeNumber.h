@@ -14,6 +14,8 @@ public:
 	void mouseMove(const float x, const float y) override;
 	void mouseWheel(const float x, const float y, const short delta) override;
 	void setCursor() override;
+	// 单击就是它的正常用法：落一个序号徽章，不需要拖动
+	bool isValidWithoutDrag() override { return true; };
 public:
 private:
 	static int getNextVal(WinPin* win);

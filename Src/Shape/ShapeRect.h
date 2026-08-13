@@ -16,7 +16,9 @@ public:
 public:
 private:
 	std::vector<D2D1_RECT_F> draggers;
-	D2D1_RECT_F rect;
+	// 给初值：mouseDown 只记按下点，rect 要等第一次 mouseDrag 才算出来，
+	// 而这之间已经可能来一次 paint（刷新时机不受控），不初始化就是拿垃圾值画矩形
+	D2D1_RECT_F rect{ 0,0,0,0 };
 	Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> brush;
 	float strokeWidth, pressX, pressY;
 	bool isFill{ false };

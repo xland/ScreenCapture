@@ -344,6 +344,7 @@ void WinPin::onDown(POINT pos, BOOL isRight)
 	pressPos.x = pos.x;
 	pressPos.y = pos.y;
 	isMouseDown = true;
+	hasDragged = false;
 	SetCapture(hwnd);
 	if (!isTopmost) {
 		//左键：从"未置顶"状态恢复。先重新置顶，并复位工具条状态；
@@ -364,10 +365,12 @@ void WinPin::onDown(POINT pos, BOOL isRight)
 	// 以下都是交给 shape 的坐标，一律换算成底图像素（拖窗口那条路仍用窗口坐标）
 	auto imgPos = toImgPos(pos);
 	if (shapeHover) {
+		newShape = nullptr; //改的是已有元素，不参与空元素判定
 		shapeHover->mouseDown((float)imgPos.x, (float)imgPos.y);
 		return;
 	}
 	shapeHover = history->createShape(toolMain->curId, imgPos.x, imgPos.y);
+	newShape = shapeHover;
 }
 
 void WinPin::onMove(POINT pos)
@@ -382,6 +385,8 @@ void WinPin::onMove(POINT pos)
 			return;
 		}
 		else if(shapeHover) {
+			// 光标一步没挪也会来 WM_MOUSEMOVE，所以跟按下点比一下再算拖动
+			if (pos.x != pressPos.x || pos.y != pressPos.y) hasDragged = true;
 			shapeHover->mouseDrag((float)imgPos.x, (float)imgPos.y);
 			refresh();
 		}
@@ -414,11 +419,19 @@ void WinPin::onUp(POINT pos, BOOL isRight)
 {
 	isMouseDown = false;
 	ReleaseCapture();
+	auto justCreated = newShape;
+	newShape = nullptr;
 	if (toolMain->curId == L"") { //state为空时，是在拖动窗口
 		layoutTools();
 		toolMain->show();
 	}
 	else if (shapeHover) {
+		// 新建的这一笔按下马上弹起，什么也没画出来：直接丢掉，
+		// 也省了 mouseUp 里的收尾开销（马赛克那边要把 GPU 像素读回内存，不该为一个要删的元素白做）
+		if (shapeHover == justCreated && !hasDragged && !shapeHover->isValidWithoutDrag()) {
+			history->removeShape(shapeHover); //它会顺手清掉 shapeHover 并刷新
+			return;
+		}
 		auto imgPos = toImgPos(pos);
 		shapeHover->mouseUp((float)imgPos.x, (float)imgPos.y);
 		refresh();

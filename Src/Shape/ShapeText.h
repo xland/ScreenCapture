@@ -20,6 +20,8 @@ public:
 	void mouseDown(const float x, const float y) override;
 	void mouseMove(const float x, const float y) override;
 	void setCursor() override;
+	// 单击进编辑态，留不留由 finishEdit 按文本是否为空决定，这里不能提前删
+	bool isValidWithoutDrag() override { return true; };
 	// 收尾：把 TextBox 里的文字取回来自己画，空文本则把自己从 history 里删掉。
 	// 除了本类内部，WinPin（导出图片前）和 History（删除 shape 前）也会调。
 	void finishEdit();
