@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#include <cstdio>
 #include "pch.h"
 //#include "gifski.h"
 #include "Util.h"
@@ -87,14 +88,26 @@ namespace VideoGif {
     }
 
     inline void createGif(GifParam* param) {
-        auto path = Util::convertToStr(param->path);
+        // cgif 的 path 是窄字符串，内部走 fopen —— 按 ANSI 代码页解释路径，
+        // 用户名带中文时 %appdata% 下那条路径根本打不开，GIF 一帧都写不出来。
+        // 所以文件由我们自己用宽字符 API 打开，只把写回调交给 cgif
+        FILE* file{ nullptr };
+        if (_wfopen_s(&file, param->path.data(), L"wb") != 0 || !file) return;
         CGIFrgb_Config config = { 0 };
-        config.path = path.data();
+        config.pWriteFn = [](void* ctx, const uint8_t* data, const size_t size) -> int {
+            return fwrite(data, 1, size, static_cast<FILE*>(ctx)) == size ? 0 : -1; //0 成功，-1 失败
+        };
+        config.pContext = file;
         config.width = param->w;
         config.height = param->h;
         config.attrFlags = 0;
         config.genFlags = CGIF_FRAME_GEN_USE_DIFF_WINDOW | CGIF_FRAME_GEN_USE_TRANSPARENCY; // 启用帧优化：只编码变化区域 + 透明优化
         CGIFrgb* pGIF = cgif_rgb_newgif(&config);
+        // 建不起来就别往下走：cgif_rgb_addframe 上来就解引用它，空指针进去是直接崩
+        if (!pGIF) {
+            fclose(file);
+            return;
+        }
         CGIFrgb_FrameConfig fconfig = { 0 };
         fconfig.fmtChan = CGIF_CHAN_FMT_RGB;
         fconfig.delay = static_cast<uint16_t>(std::max(2, static_cast<int>(100.0 / param->fps + 0.5)));
@@ -135,6 +148,7 @@ namespace VideoGif {
             index += 1;
         }
         cgif_result r = cgif_rgb_close(pGIF);
+        fclose(file); //走的是写回调，文件句柄归我们自己管，cgif 不会去关
         SelectObject(hMemDC, hOldBitmap);
         DeleteObject(hBitmap);
         DeleteDC(hMemDC);
