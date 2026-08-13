@@ -37,8 +37,10 @@ void ShapeText::paint(ID2D1DeviceContext* ctx)
 	if (isEditing) {
 		// 编辑中文字由 TextBox 自己那层画，这里不重复画（重复的话会和它错位、还会糊在一起）。
 		// 它的宽高跟着文本内容长，顺手把框的矩形同步过来 —— 本函数在 yoga 排布之后才跑，取到的是本帧的值。
+		// TextBox 的 x/y/w/h 是窗口坐标（物理像素），rect 存的是底图坐标，差一个缩放倍数
 		auto tb = win->getTextBox();
-		rect = D2D1::RectF(tb->x, tb->y, tb->x + tb->w, tb->y + tb->h);
+		auto s = win->scale;
+		rect = D2D1::RectF(tb->x / s, tb->y / s, (tb->x + tb->w) / s, (tb->y + tb->h) / s);
 		return;
 	}
 	// makeTextLayout 要等编辑结束才跑，这之前可能先来一次 paint
@@ -131,19 +133,25 @@ void ShapeText::startEdit()
 	setAttr();
 	auto tb = win->getTextBox();
 	auto d = win->dpi;
-	tb->setPosition(Ling::Edge::Left, rect.left / d);
-	tb->setPosition(Ling::Edge::Top, rect.top / d);
+	// rect 是底图坐标，TextBox 是挂在窗口上的真控件、收的是逻辑像素，
+	// 所以要先乘上缩放倍数（窗口坐标）再除以 dpi（逻辑像素）
+	auto s = win->scale;
+	tb->setPosition(Ling::Edge::Left, rect.left * s / d);
+	tb->setPosition(Ling::Edge::Top, rect.top * s / d);
 	// 顺手把布局坐标也写成本 shape 的矩形：TextBox 刚显示出来时 x/y/w/h 还是上一次的旧值，
 	// 而紧跟着到来的鼠标事件要靠 isPosIn 判断该不该失焦，拿旧值会把刚拿到的焦点当场弹掉。
 	// 下一帧 yoga 会用同样的位置把它们覆盖回来。
-	tb->x = rect.left;
-	tb->y = rect.top;
-	tb->w = rect.right - rect.left;
-	tb->h = rect.bottom - rect.top;
+	tb->x = rect.left * s;
+	tb->y = rect.top * s;
+	tb->w = (rect.right - rect.left) * s;
+	tb->h = (rect.bottom - rect.top) * s;
 	tb->setColor(Ling::Color(colorValue));
 	tb->setCaretColor(Ling::Color(colorValue));
-	// fontSize 是物理像素，setFontSize 收逻辑像素（内部再乘 dpi）
-	tb->setFontSize(fontSize / d);
+	// 内边距也得跟着倍数走：borderPadding 是底图空间的，而 TextBox 的 padding 是窗口空间的
+	// （Ling 默认 6.f 逻辑像素），不乘倍数的话提交后文字会比编辑时偏出去 borderPadding*(scale-1)
+	tb->setPadding(borderPadding * s / d);
+	// fontSize 是底图上的物理像素，setFontSize 收逻辑像素（内部再乘 dpi），中间还差一个缩放倍数
+	tb->setFontSize(fontSize * s / d);
 	tb->setBold(isBold);
 	tb->setItalic(isItalic);
 	tb->setText(text);
@@ -195,7 +203,7 @@ void ShapeText::applyStyle()
 	auto tb = win->getTextBox();
 	tb->setColor(Ling::Color(colorValue));
 	tb->setCaretColor(Ling::Color(colorValue));
-	tb->setFontSize(fontSize / win->dpi);
+	tb->setFontSize(fontSize * win->scale / win->dpi);
 	tb->setBold(isBold);
 	tb->setItalic(isItalic);
 	win->refresh();

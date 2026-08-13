@@ -57,7 +57,7 @@ WinPin::WinPin(int x, int y, int w, int h, const std::vector<BYTE>* data) : Ling
 	onSizeChanged.add([this]() {
 		if (!dpiChanged) return;
 		dpiChanged = false;
-		restoreImgSize();
+		applyWinSize();
 		layoutTools();
 	});
 	onMouseDown.add([this](POINT pos, BOOL isRight) {this->onDown(pos, isRight);});
@@ -66,8 +66,15 @@ WinPin::WinPin(int x, int y, int w, int h, const std::vector<BYTE>* data) : Ling
 	// Ling 传进来的是已经换算成滚动距离的 space（一格 = 60 逻辑像素 × dpi），
 	// shape 只关心方向，这里按符号还原成 ±WHEEL_DELTA
 	onMouseWheel.add([this](POINT pos, float space) {
+		// Ling 的滚轮事件不带修饰键状态，自己查：按住 Ctrl 是缩放窗口，不是调 shape
+		if (GetKeyState(VK_CONTROL) & 0x8000) {
+			// 一格 10%，按当前倍数等比走，放大和缩小的手感才对称
+			applyScale(scale * (space > 0 ? 1.1f : 1.f / 1.1f), pos);
+			return;
+		}
 		if (!shapeHover) return;
-		shapeHover->mouseWheel((float)pos.x, (float)pos.y, space > 0 ? (short)WHEEL_DELTA : (short)-WHEEL_DELTA);
+		auto imgPos = toImgPos(pos);
+		shapeHover->mouseWheel((float)imgPos.x, (float)imgPos.y, space > 0 ? (short)WHEEL_DELTA : (short)-WHEEL_DELTA);
 	});
 	onTimer.add([this](UINT id) {this->onTimerCB(id);});
 	onKeyDown.add([this](UINT key) {this->onKey(key);});
@@ -105,6 +112,81 @@ bool WinPin::hasWindow()
 	return !winPins.empty();
 }
 
+D2D1_SIZE_U WinPin::getImgSize() const
+{
+	if (!screenImg) return D2D1::SizeU(0, 0);
+	// 要的是像素数，所以问 GetPixelSize 而不是 GetSize（后者返回的是按位图自身 dpi 折算的 DIP）
+	return screenImg->GetPixelSize();
+}
+
+void WinPin::applyWinSize()
+{
+	auto sz = getImgSize();
+	if (!hwnd || sz.width == 0 || sz.height == 0) return;
+	auto newW = std::max(1, static_cast<int>(std::lround(sz.width * scale)));
+	auto newH = std::max(1, static_cast<int>(std::lround(sz.height * scale)));
+	w = static_cast<float>(newW);
+	h = static_cast<float>(newH);
+	// 不走 setSize：它收的是逻辑像素、内部还要乘一遍 dpi，而这里的宽高本来就是物理像素
+	SetWindowPos(hwnd, nullptr, 0, 0, newW, newH, SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOREDRAW);
+}
+
+POINT WinPin::toImgPos(const POINT& pos) const
+{
+	if (scale == 1.f) return pos;
+	return POINT{ static_cast<LONG>(std::lround(pos.x / scale)), static_cast<LONG>(std::lround(pos.y / scale)) };
+}
+
+void WinPin::applyScale(float newScale, POINT anchor)
+{
+	auto sz = getImgSize();
+	if (sz.width == 0 || sz.height == 0) return;
+	// 上限跟着底图大小走：窗口边长再大，swap chain 那块显存也吃不消，人也看不过来；
+	// 但至少要能回到 1 倍，所以下面用 max 兜一下
+	auto maxScale = std::max(1.f, std::min(8.f, 16000.f / std::max(sz.width, sz.height)));
+	newScale = std::clamp(newScale, 0.1f, maxScale);
+	if (std::abs(newScale - scale) < 0.0001f) return;
+	// 编辑中的文字是 TextBox（真控件）画的，缩放期间它的位置、字号都得跟着重算，
+	// 与其在缩放过程里一路同步，不如先收尾把文字交回 ShapeText 自己画 —— 之后它就跟着一起缩了
+	if (editingText) editingText->finishEdit();
+	// anchor 底下那个底图上的点，缩放前后都要停在光标下：屏幕坐标 = 窗口原点 + 底图点 × 倍数
+	auto imgX = anchor.x / scale;
+	auto imgY = anchor.y / scale;
+	scale = newScale;
+	applyWinSize();
+	// setPosition 内部会 SetWindowPos，随后的 WM_MOVE 会带出 onMoved -> layoutTools
+	setPosition(x + anchor.x - static_cast<int>(std::lround(imgX * scale)),
+		y + anchor.y - static_cast<int>(std::lround(imgY * scale)));
+	makeScaleTip();
+	// 停手 800 毫秒后由定时器把倍数提示收掉。同一个 id 再调一次 SetTimer 就是重新计时，
+	// 所以连续滚动期间它一直不会触发
+	setTimer(800, 101);
+	layoutTools();
+	refresh();
+}
+
+void WinPin::makeScaleTip()
+{
+	scaleTip = Util::makeTextLayout(std::format(L"{}%", static_cast<int>(std::lround(scale * 100.f))),
+		FLT_MAX, FLT_MAX, 11.f * dpi);
+}
+
+// 画在窗口右上角，半透明底 + 白字，与 CutMask 上那个坐标标签一个路子。
+// 调用方要先把缩放变换收回去：这是窗口装饰，不跟着图一起放大
+void WinPin::paintScaleTip(ID2D1DeviceContext* ctx)
+{
+	if (!scaleTip || !brushTipBg) return;
+	DWRITE_TEXT_METRICS tm{};
+	if (FAILED(scaleTip->GetMetrics(&tm))) return;
+	auto pad = 3.f * dpi;
+	auto margin = 5.f * dpi;
+	D2D1_RECT_F bgRect{ w - margin - tm.width - pad * 2, margin, w - margin, margin + tm.height + pad * 2 };
+	// 图小到装不下提示时，贴着左边画，别画到窗口外面去
+	if (bgRect.left < margin) bgRect.left = margin;
+	ctx->FillRectangle(bgRect, brushTipBg.Get());
+	ctx->DrawTextLayout({ bgRect.left + pad, bgRect.top + pad }, scaleTip.Get(), brushTipText.Get(), D2D1_DRAW_TEXT_OPTIONS_NONE);
+}
+
 // 把 ToolMain / ToolSub 摆到 WinPin 周围，始终靠 WinPin 右对齐，并尽量留在屏幕可视区内。
 // 三种模式，按 ToolMain+ToolSub 的总高度决定（与 curId 是否为空无关，避免选中按钮时整组跳动）：
 //   bottom : WinPin 下方，自上而下 ToolMain -> ToolSub
@@ -112,18 +194,6 @@ bool WinPin::hasWindow()
 //   overlay: 上下都不足时覆盖在 WinPin 右下角，整组贴 WinPin 底边
 // ToolSub 只在 curId 非空时显示，此时 ToolMain 上移为它腾出空间；ToolSub 永远紧贴 ToolMain 下方，
 // 所以它那个朝上的小箭头在三种模式下都不需要翻转。
-void WinPin::restoreImgSize()
-{
-	if (!screenImg || !hwnd) return;
-	// 要的是像素数，所以问 GetPixelSize 而不是 GetSize（后者返回的是按位图自身 dpi 折算的 DIP）
-	auto sz = screenImg->GetPixelSize();
-	if (sz.width == 0 || sz.height == 0) return;
-	w = static_cast<float>(sz.width);
-	h = static_cast<float>(sz.height);
-	// 不走 setSize：它收的是逻辑像素、内部还要乘一遍 dpi，而这里的宽高本来就是物理像素
-	SetWindowPos(hwnd, nullptr, 0, 0, sz.width, sz.height, SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOREDRAW);
-}
-
 void WinPin::layoutTools()
 {
 	if (!toolMain || !toolSub) return;
@@ -196,6 +266,8 @@ void WinPin::onCreated()
     canvas->enableSwapChain();
     canvas->setSizePercent(100.f, 100.f);
     d2d->deviceContext->CreateSolidColorBrush(D2D1::ColorF(0x1677ff), borderBrush.GetAddressOf());
+    d2d->deviceContext->CreateSolidColorBrush(D2D1::ColorF(0x000000, 0.46f), brushTipBg.GetAddressOf());
+    d2d->deviceContext->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White), brushTipText.GetAddressOf());
     show();
 }
 
@@ -208,6 +280,9 @@ void WinPin::layout()
     ctx->Clear(0);
     auto sz = screenImg->GetSize();
     D2D1_RECT_F destRect = D2D1::RectF(0, 0, sz.width, sz.height);
+    // 底图和 shape 都是按底图像素画的，放大缩小整个交给这个变换，
+    // 笔宽、夹点跟着一起缩 —— 鼠标坐标进来时也除掉了倍数，所以命中判定天然对得上
+    ctx->SetTransform(D2D1::Matrix3x2F::Scale(scale, scale));
     ctx->DrawBitmap(screenImg.Get(), destRect);
 	for (auto& shape : history->shapes)
 	{
@@ -218,7 +293,11 @@ void WinPin::layout()
 	if (!isMouseDown && shapeHover) {
 		shapeHover->paintDragger(ctx);
 	}
-	ctx->DrawRectangle(destRect, borderBrush.Get(), 2*dpi);
+	// 蓝边框和倍数提示属于窗口装饰，不跟着图缩放：变换收回来，按窗口坐标画。
+	// 边框也因此从"底图矩形"改成"窗口矩形"，任何倍数下都是 2*dpi 粗
+	ctx->SetTransform(D2D1::Matrix3x2F::Identity());
+	ctx->DrawRectangle(D2D1::RectF(0.f, 0.f, w, h), borderBrush.Get(), 2*dpi);
+	paintScaleTip(ctx);
     canvas->finishPaint();
 }
 
@@ -231,6 +310,10 @@ void WinPin::onMinMaxInfo(MINMAXINFO* mmi)
 	mmi->ptMaxSize.y = h;
 	mmi->ptMinTrackSize.x = 1;
 	mmi->ptMinTrackSize.y = 1;
+	// Ctrl+滚轮放大后窗口可以比屏幕大（超出的部分自然被裁掉）。默认的最大跟踪尺寸只有
+	// 主显示器那么大，不放开的话 SetWindowPos 会被系统按住，放大就到此为止了
+	mmi->ptMaxTrackSize.x = 20000;
+	mmi->ptMaxTrackSize.y = 20000;
 }
 
 void WinPin::onDown(POINT pos, BOOL isRight)
@@ -273,24 +356,28 @@ void WinPin::onDown(POINT pos, BOOL isRight)
 		toolMain->hide();
 		return;
 	}
+	// 以下都是交给 shape 的坐标，一律换算成底图像素（拖窗口那条路仍用窗口坐标）
+	auto imgPos = toImgPos(pos);
 	if (shapeHover) {
-		shapeHover->mouseDown((float)pos.x, (float)pos.y);
+		shapeHover->mouseDown((float)imgPos.x, (float)imgPos.y);
 		return;
 	}
-	shapeHover = history->createShape(toolMain->curId, pos.x, pos.y);
+	shapeHover = history->createShape(toolMain->curId, imgPos.x, imgPos.y);
 }
 
 void WinPin::onMove(POINT pos)
 {
 	// 同 onDown：文本框里的移动归 TextBox（拖选、滚动条 hover），不参与 shape 的 hover 判定
 	if (editingText && textBox && textBox->isPosIn(pos)) return;
+	// 拖窗口用的是窗口坐标（pressPos 也是），只有交给 shape 的才换算成底图像素
+	auto imgPos = toImgPos(pos);
 	if (isMouseDown) {
 		if (toolMain->curId == L"") {
 			setPosition(x + pos.x - pressPos.x, y + pos.y - pressPos.y);
 			return;
 		}
 		else if(shapeHover) {
-			shapeHover->mouseDrag((float)pos.x, (float)pos.y);
+			shapeHover->mouseDrag((float)imgPos.x, (float)imgPos.y);
 			refresh();
 		}
 	}
@@ -302,7 +389,7 @@ void WinPin::onMove(POINT pos)
 		{
 			auto cur = history->shapes[i].get();
 			if (cur->isUndo) continue;
-			cur->mouseMove((float)pos.x, (float)pos.y);
+			cur->mouseMove((float)imgPos.x, (float)imgPos.y);
 			if (cur->hoverDraggerIndex >= 0) {
 				if (shapeHover != cur) {
 					shapeHover = cur;
@@ -327,7 +414,8 @@ void WinPin::onUp(POINT pos, BOOL isRight)
 		toolMain->show();
 	}
 	else if (shapeHover) {
-		shapeHover->mouseUp((float)pos.x, (float)pos.y);
+		auto imgPos = toImgPos(pos);
+		shapeHover->mouseUp((float)imgPos.x, (float)imgPos.y);
 		refresh();
 		setTimer(800, 100);
 	}
@@ -336,6 +424,12 @@ void WinPin::onUp(POINT pos, BOOL isRight)
 
 void WinPin::onTimerCB(UINT id)
 {
+	if (id == 101) { //缩放停手了，收掉右上角的倍数提示
+		killTimer(101);
+		scaleTip = nullptr;
+		refresh();
+		return;
+	}
 	if (id != 100) return;
 	if (!shapeHover) {
 		refresh();
@@ -447,11 +541,14 @@ void WinPin::restoreWindowState(HWND foregroundBeforeDialog)
 // 用 d2d->deviceContext 做离屏是安全的，SetTarget → BeginDraw → EndDraw → SetTarget(nullptr) 在本函数内闭环。
 bool WinPin::getImagePixels(std::vector<BYTE>& pixels)
 {
-	if (!screenImg || w <= 0 || h <= 0) return false;
+	// 尺寸一律取底图的像素尺寸，不用窗口的 w/h —— Ctrl+滚轮缩放改的是窗口，
+	// 导出的图该始终是原始大小
+	auto imgSize = getImgSize();
+	if (imgSize.width == 0 || imgSize.height == 0) return false;
 	// 编辑中的文字是 TextBox 自己那层画的，进不了下面这个离屏 target。
 	// 先收尾，把文字交回 ShapeText 自己画，保存/复制出去的图才有它。
 	if (editingText) editingText->finishEdit();
-	auto size = D2D1::SizeU((UINT32)w, (UINT32)h);
+	auto size = imgSize;
 	auto d2d = Ling::D2D::get();
 	auto ctx = d2d->deviceContext.Get();
 
@@ -468,7 +565,7 @@ bool WinPin::getImagePixels(std::vector<BYTE>& pixels)
 	ctx->SetTransform(D2D1::Matrix3x2F::Identity());
 	ctx->BeginDraw();
 	ctx->Clear(D2D1::ColorF(0, 0.0f));
-	ctx->DrawBitmap(screenImg.Get(), D2D1::RectF(0, 0, w, h));
+	ctx->DrawBitmap(screenImg.Get(), D2D1::RectF(0.f, 0.f, (float)imgSize.width, (float)imgSize.height));
 	for (auto& shape : history->shapes)
 	{
 		if (!shape->isUndo) {

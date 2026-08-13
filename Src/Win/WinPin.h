@@ -31,6 +31,11 @@ public:
 	// ToolSub 上的颜色 / 字号 / 粗体 / 斜体变了，转给正在编辑的文本立即生效
 	void onToolStyleChanged();
 public:
+	// Ctrl+滚轮的缩放倍数，1 = 原始大小。底图与所有 shape 的坐标一律按底图的原始像素存，
+	// 缩放只体现在两处：画的时候给 D2D 上一个缩放变换、收到鼠标坐标时先除回原始像素。
+	// 存盘/复制走的是另一条不带变换的离屏绘制，所以导出的图永远是原始大小。
+	// ShapeText 编辑中的文字是真控件（TextBox）画的，D2D 的变换管不到，它得自己乘这个倍数
+	float scale{ 1.f };
 	std::unique_ptr<ToolMain> toolMain;
 	std::unique_ptr<ToolSub> toolSub;
 	ShapeBase* shapeHover{ nullptr };
@@ -54,9 +59,19 @@ private:
 	bool getImagePixels(std::vector<BYTE>& pixels);
 	// 另存为对话框会抢走前台并把 WinPin 激活，取消保存后用它把窗口层级和前台窗口恢复原样
 	void restoreWindowState(HWND foregroundBeforeDialog);
-	// 把窗口尺寸掰回底图的像素大小。系统在 DPI 变化时会按新旧缩放比缩放窗口，
-	// 而贴图窗口的尺寸是钉死在底图上的，见构造函数里的注释
-	void restoreImgSize();
+	// 把窗口尺寸掰成"底图像素 × scale"。系统在 DPI 变化时会按新旧缩放比擅自缩放窗口
+	// （贴图窗口的尺寸其实是钉死在底图上的，见构造函数里的注释），缩放倍数变了也用它
+	void applyWinSize();
+	// 底图的像素尺寸，也就是导出图的尺寸
+	D2D1_SIZE_U getImgSize() const;
+	// 窗口客户区坐标（物理像素）→ 底图坐标。shape 存的、认的都是底图像素
+	POINT toImgPos(const POINT& pos) const;
+	// 缩放到新倍数。anchor 是窗口客户区里要保持不动的那一点（一般就是光标位置），
+	// 缩放后窗口跟着改大小，并反向挪一下窗口位置，让 anchor 底下的那块图还停在原处
+	void applyScale(float newScale, POINT anchor);
+	// 右上角那个倍数提示：重建文本、以及把它画出来
+	void makeScaleTip();
+	void paintScaleTip(ID2D1DeviceContext* ctx);
 private:
 	// 整个窗口内容都画在这块画布上，走 swap chain 后端：贴图窗口拖动 shape 时每帧重绘，
 	// 单缓冲的合成表面会被采样到"擦干净→逐个重画"的中间态，表现为 shape 和边框整帧闪掉。
@@ -66,6 +81,9 @@ private:
 	Ling::TextBox* textBox{ nullptr };
 	ShapeText* editingText{ nullptr };
 	Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> borderBrush;
+	// 右上角的倍数提示。非空即显示，缩放停手一会儿由定时器清掉
+	Microsoft::WRL::ComPtr<IDWriteTextLayout> scaleTip;
+	Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> brushTipBg, brushTipText;
 	bool isTopmost{ true }, isMouseDown{false}, isClosed{ false };
 	// onDpiChanged 与 onSizeChanged 之间的接力标记，见构造函数里的注释
 	bool dpiChanged{ false };
