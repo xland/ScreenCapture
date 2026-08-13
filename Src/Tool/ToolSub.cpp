@@ -122,6 +122,9 @@ void ToolSub::showLineTools()
 	contentNode->removeAllChildren();
 	initSize(1, true);
 	makeToggleBtn(L"\ue607", &isLineTransparent, L"tool.semiTransparent");
+	sliderMin = 1.f;
+	sliderMax = 60.f;
+	sliderVal = 12.f;
 	initSlider();
 	initColorBtns();
 }

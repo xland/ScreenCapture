@@ -368,10 +368,18 @@ float  ShapeEraser::pointToSegmentDistance(const D2D1_POINT_2F& p, const D2D1_PO
 
 void ShapeEraser::hitTest(const D2D1_POINT_2F& mousePos)
 {
-	float half = strokeWidth * 0.5f + win->dpi;
+	// 只有笔画边缘那一圈算命中：粗笔画（马赛克、橡皮擦尤其明显）整片都能拖的话，
+	// 就没法在已有笔画上面再画一笔了 —— 鼠标一按下会变成拖动旧元素。
+	// 矩形模式本来就是只有边框附近才响应，这里跟它对齐
+	float outer = strokeWidth * 0.5f + win->dpi; //外沿保持原来的判定范围
+	float inner = outer - draggerSize / 2; //往里让出这么宽算内部。细笔画算出来是负数，等于整条线都能拖
+	// 得先在所有线段里取最小距离再判断：自交的笔画里，某一段的边缘可能正好压在另一段的
+	// 内部，那种位置视觉上是在笔画里面，逐段判断会误判成边缘
+	float minDist{ FLT_MAX };
 	for (size_t i = 0; i + 1 < linePoints.size(); ++i) {
-		if (pointToSegmentDistance(mousePos, linePoints[i], linePoints[i + 1]) <= half) {
-			hoverDraggerIndex = 8;
-		}
+		minDist = std::min(minDist, pointToSegmentDistance(mousePos, linePoints[i], linePoints[i + 1]));
+	}
+	if (minDist <= outer && minDist >= inner) {
+		hoverDraggerIndex = 8;
 	}
 }
