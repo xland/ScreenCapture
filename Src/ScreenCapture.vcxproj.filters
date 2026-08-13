@@ -90,6 +90,48 @@
     <ClCompile Include="Shape\ShapeEraser.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Tool\ToolCap.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Tool\ToolLong.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Tool\ToolVideo.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Util.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Win\cgif\cgif.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Win\cgif\cgif_raw.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Win\cgif\cgif_rgb.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="quirc\decode.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="quirc\identify.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="quirc\quirc.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="quirc\version_db.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Win\CutMask.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Win\CapLong.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Win\CapVideo.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Res\Resource.rc">
@@ -100,9 +142,6 @@
     <Image Include="Res\logo.ico">
       <Filter>资源文件</Filter>
     </Image>
-  </ItemGroup>
-  <ItemGroup>
-    <Font Include="Res\icon.ttf" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h">
@@ -177,5 +216,47 @@
     <ClInclude Include="Shape\ShapeEraser.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="Tool\ToolCap.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Tool\ToolLong.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Tool\ToolVideo.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Util.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="quirc\quirc.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="quirc\quirc_internal.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Win\cgif\cgif.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Win\cgif\cgif_raw.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Win\CutMask.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Win\CapLong.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Win\CapVideo.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Win\VideoGif.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Win\VideoMp4.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="Res\iconfont.ttf" />
   </ItemGroup>
 </Project>

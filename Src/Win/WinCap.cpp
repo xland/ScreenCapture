@@ -412,8 +412,13 @@ void WinCap::onClosed()
         // 用完即走模式下截图结束就退出进程，与 App 构造里的判断对称。
         // 但标注、长截图这两条路是先把图钉到桌面上再关自己的，那种情况下活还没干完，
         // 退出的活交给最后一个关掉的贴图窗口
-        if (!WinPin::hasWindow() && Ling::App::get()->args[L"--auto-quit"] == L"true") {
-            Ling::App::get()->quit(0);
+        if (!WinPin::hasWindow()) {
+            if (Ling::App::get()->args[L"--auto-quit"] == L"true") {
+                Ling::App::get()->quit(0);
+            }
+            else {
+                App::trimMemoryLater(); //只剩托盘图标了，把显卡那边的缓存还回去
+            }
         }
     });
 }

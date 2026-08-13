@@ -101,8 +101,13 @@ void WinPin::onClosed()
 		std::erase_if(winPins, [this](const std::unique_ptr<WinPin>& p) { return p.get() == this; });
 		// 用完即走模式下，最后一个贴图窗口关掉就退出进程，不驻留在系统里。
 		// 贴图可以同时开好几个（标注、长截图各来一张），所以得等它们都没了才退
-		if (winPins.empty() && Ling::App::get()->args[L"--auto-quit"] == L"true") {
-			Ling::App::get()->quit(0);
+		if (winPins.empty()) {
+			if (Ling::App::get()->args[L"--auto-quit"] == L"true") {
+				Ling::App::get()->quit(0);
+			}
+			else {
+				App::trimMemoryLater(); //只剩托盘图标了，把显卡那边的缓存还回去
+			}
 		}
 	});
 }

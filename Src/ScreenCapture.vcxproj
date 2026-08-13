@@ -237,9 +237,6 @@
     <Image Include="Res\logo.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Font Include="Res\icon.ttf" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="App.h" />
     <ClInclude Include="History.h" />
     <ClInclude Include="Lang.h" />
@@ -277,6 +274,9 @@
     <ClInclude Include="Win\CapVideo.h" />
     <ClInclude Include="Win\VideoGif.hpp" />
     <ClInclude Include="Win\VideoMp4.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="Res\iconfont.ttf" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -7,6 +7,18 @@
 
 std::unique_ptr<App> app;
 
+namespace {
+    UINT_PTR trimTimer{ 0 };
+
+    void CALLBACK onTrimTimer(HWND, UINT, UINT_PTR id, DWORD)
+    {
+        KillTimer(nullptr, id);
+        if (trimTimer == id) trimTimer = 0;
+        auto d2d = Ling::D2D::get();
+        if (d2d) d2d->trim();
+    }
+}
+
 
 App::~App()
 {
@@ -21,6 +33,19 @@ void App::init()
 App* App::get()
 {
     return app.get();
+}
+
+// 延时 3 秒是为了躲开"刚关掉截图窗口马上又要截一张"：那种情况下还回去立刻又要重新分配，
+// 纯属白折腾。3 秒内再调一次就重新计时。
+void App::trimMemoryLater()
+{
+    if (trimTimer) {
+        KillTimer(nullptr, trimTimer);
+        trimTimer = 0;
+    }
+    // hwnd 传 nullptr：WM_TIMER 直接投到线程队列，由消息循环的 DispatchMessage 调上面那个
+    // 回调，不需要任何窗口 —— 托盘常驻时进程里可能一个窗口都没有
+    trimTimer = SetTimer(nullptr, 0, 3000, onTrimTimer);
 }
 
 void App::takeScreenShot(int x, int y, int w, int h, ID2D1Bitmap1** img)
@@ -76,7 +101,11 @@ App::App()
         bool flag = app->refuseSecondInstance();
         if (flag) return;
         Tray::init();
-		if (app->args[L"--auto-start"] == L"true") return; //开机自启模式不启动截图
+		if (app->args[L"--auto-start"] == L"true") {
+			//开机自启模式不启动截图。图形设备刚建好就没人用，先把缓存还回去
+			trimMemoryLater();
+			return;
+		}
 		WinCap::init();//默认情况下，应用启动随即进入截图模式
     }
 }
