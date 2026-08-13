@@ -26,8 +26,13 @@ void CapVideo::makeTool()
 {
     tool = std::make_unique<ToolVideo>(win);
     // 尺寸在 ToolVideo 构造里算好了，这里只定位；两者都要在建窗口之前设好
-    win->layoutTool(tool.get());
+    layoutTool();
     tool->createNativeWindow(WS_EX_TOPMOST | WS_EX_NOACTIVATE | WS_EX_TOOLWINDOW, WS_POPUP);
+}
+
+void CapVideo::layoutTool()
+{
+    if (tool) win->layoutTool(tool.get());
 }
 
 void CapVideo::dispose()

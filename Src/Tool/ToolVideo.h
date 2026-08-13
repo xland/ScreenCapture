@@ -31,8 +31,13 @@ private:
 	Ling::Node* makeSpliter();
 	float settingWidth() const;
 	float recordingWidth() const;
+	// 按当前 dpi 与当前形态（未录制 / 录制中）把窗口尺寸算出来并应用
+	void refreshSize();
 private:
 	WinCap* win;
+	// onDpiChanged 与 onSizeChanged 之间的接力标记，见构造函数里的注释
+	bool dpiChanged{ false };
+
 	std::unique_ptr<Tip> tip;
 	Ling::Button* btnMp4{ nullptr };
 	Ling::Button* btnGif{ nullptr };

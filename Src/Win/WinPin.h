@@ -54,6 +54,9 @@ private:
 	bool getImagePixels(std::vector<BYTE>& pixels);
 	// 另存为对话框会抢走前台并把 WinPin 激活，取消保存后用它把窗口层级和前台窗口恢复原样
 	void restoreWindowState(HWND foregroundBeforeDialog);
+	// 把窗口尺寸掰回底图的像素大小。系统在 DPI 变化时会按新旧缩放比缩放窗口，
+	// 而贴图窗口的尺寸是钉死在底图上的，见构造函数里的注释
+	void restoreImgSize();
 private:
 	// 整个窗口内容都画在这块画布上，走 swap chain 后端：贴图窗口拖动 shape 时每帧重绘，
 	// 单缓冲的合成表面会被采样到"擦干净→逐个重画"的中间态，表现为 shape 和边框整帧闪掉。
@@ -64,6 +67,8 @@ private:
 	ShapeText* editingText{ nullptr };
 	Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> borderBrush;
 	bool isTopmost{ true }, isMouseDown{false}, isClosed{ false };
+	// onDpiChanged 与 onSizeChanged 之间的接力标记，见构造函数里的注释
+	bool dpiChanged{ false };
 	POINT pressPos{ 0,0 };
 };
 

@@ -18,6 +18,9 @@ public:
 	~CapVideo();
 	// ToolCap 原地换成 ToolVideo
 	void makeTool();
+	// ToolVideo 的摆放规则（就是 WinCap 那套通用规则）。建窗口时走一遍，
+	// 工具条或宿主的 DPI 变了之后回头再走一遍
+	void layoutTool();
 	// 宿主窗口要销毁了：停掉录制、收掉工具条
 	void dispose();
 	bool isRecording() const;

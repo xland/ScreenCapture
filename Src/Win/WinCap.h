@@ -38,6 +38,8 @@ public:
 	void startGif();
 	std::wstring stopRecord();
 	// ToolLong，转给 capLong
+	// ToolLong 的摆放规则在 CapLong 手里，它 DPI 变了要重走一遍，从这里转进去
+	void layoutLongTool();
 	void longPin();
 	void longSaveToFile();
 	void longCopyToClipboard();
@@ -59,6 +61,8 @@ private:
 	void onUp(POINT pos, bool isRight);
 	void onClosed();
 	void makeToolCap();
+	// DPI 变了之后重走一遍工具条的摆放规则（哪个阶段就重排哪个工具条）
+	void relayoutTool();
 	// 进长图 / 录屏阶段的公共动作：收掉底图与工具条，并提到最上层
 	void enterLiveStage();
 	// 选区内的像素。BGRA、top-down、行紧凑，可以直接喂 Util 的存盘与剪切板
@@ -78,6 +82,8 @@ private:
 	Ling::Canvas* canvas{ nullptr };
 	POINT pixPos;
 	bool isPress{ false }, isClosed{ false }, isMouseTransparent{ false };
+	// onDpiChanged 与 onSizeChanged 之间的接力标记，见构造函数里的注释
+	bool dpiChanged{ false };
 	// 自己认双击用的上一次按下时间与位置。Ling 的窗口类没带 CS_DBLCLKS，
 	// 收不到 WM_LBUTTONDBLCLK，只能按系统的双击间隔和双击判定框自己算
 	ULONGLONG lastDownTime{ 0 };

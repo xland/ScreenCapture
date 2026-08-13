@@ -8,24 +8,37 @@
 
 ToolMain::ToolMain(WinPin* win) : Ling::WinBase(), win(win)
 {
-	auto btnSize{ 32.f * win->dpi };
+	// 跟着宿主窗口的缩放走：WinBase 构造里取的是系统 dpi，WinPin 可能在另一块缩放比例不同的屏上
+	dpi = win->dpi;
 	// 初始位置由 WinPin::layoutTools() 统一决定，这里只算尺寸
 	x = win->x;
 	y = win->y + win->h + 5.f * win->dpi;
-	for (size_t i = 0; i < btnIds.size(); i++)
-	{
-		if (btnIds[i] == L"|") {
-			w += win->dpi;
-		}
-		else {
-			w += btnSize;
-		}
-	}
-	h = btnSize;
+	refreshSize();
 	// 点按钮会把 ToolMain 激活，此后键盘消息进的是它而不是 WinPin。
 	// 直接把按键转触给 WinPin 的同名事件，快捷键在两个窗口上表现一致。
 	onKeyDown.add([this](UINT key) { this->win->onKeyDown(key); });
+	// DPI 变了（工具条被挪到缩放比例不同的显示器上，或者用户改了系统缩放）：
+	// Ling 只会把窗口按系统给的建议矩形整体缩放一遍，我们自己定的那套摆放规则不会重跑，
+	// 工具条就歪在别处了。位置也不能在 onDpiChanged 里直接改 —— 那个事件在 Ling 应用建议矩形
+	// 之前触发，改了马上被覆盖，所以这里只记个标记，等建议矩形应用后紧随而来的 WM_SIZE 再动手
+	onDpiChanged.add([this]() { dpiChanged = true; });
+	onSizeChanged.add([this]() {
+		if (!dpiChanged) return;
+		dpiChanged = false;
+		refreshSize();                    //宿主的摆放规则要用宽高，先按新 dpi 把尺寸定下来
+		this->win->layoutTools();
+	});
 	createNativeWindow(WS_EX_TOPMOST | WS_EX_TOOLWINDOW, WS_POPUP);
+}
+
+// 宽度 = 各按钮宽度之和（btnIds 里的 "|" 是分隔符，只占 spliterW），高度 = 按钮高
+void ToolMain::refreshSize()
+{
+	float logicW{ 0.f };
+	for (auto& id : btnIds) {
+		logicW += (id == L"|") ? spliterW : btnSize;
+	}
+	setSize(logicW, btnSize);
 }
 
 ToolMain::~ToolMain()

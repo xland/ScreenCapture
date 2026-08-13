@@ -273,8 +273,17 @@ void CapLong::capStep()
 
 void CapLong::makeTool()
 {
-    auto btnSize{ 32.f * win->dpi };
-    auto toolW{ btnSize * 4 };
+    tool = std::make_unique<ToolLong>(win);
+    // 尺寸在 ToolLong 构造里算好了，这里只定位；两者都要在建窗口之前设好
+    layoutTool();
+    tool->createNativeWindow(WS_EX_TOPMOST | WS_EX_NOACTIVATE | WS_EX_TOOLWINDOW, WS_POPUP);
+}
+
+void CapLong::layoutTool()
+{
+    if (!tool) return;
+    // 宽高一律现问 tool 要，不再按 dpi 自己算：DPI 变化后工具条会重算尺寸再回头调这里
+    auto toolW{ tool->w };
     POINT pos{ 0,0 };
     auto& cutMask = win->cutMask;
     if (win->w - cutMask->maskRect.right - 2 * win->dpi < toolW) {
@@ -283,12 +292,9 @@ void CapLong::makeTool()
     else {
         pos.x = (LONG)(cutMask->maskRect.right + cutMask->strokeWidth + 2 * win->dpi);
     }
-    pos.y = (LONG)(cutMask->maskRect.bottom - btnSize);
+    pos.y = (LONG)(cutMask->maskRect.bottom - tool->h);
     ClientToScreen(win->hwnd, &pos);
-    tool = std::make_unique<ToolLong>(win);
-    // 尺寸在 ToolLong 构造里算好了，这里只定位；两者都要在建窗口之前设好
     tool->setPosition(pos.x, pos.y);
-    tool->createNativeWindow(WS_EX_TOPMOST | WS_EX_NOACTIVATE | WS_EX_TOOLWINDOW, WS_POPUP);
 }
 
 void CapLong::paintImgPreview(ID2D1DeviceContext* ctx)

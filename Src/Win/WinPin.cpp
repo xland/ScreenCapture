@@ -46,6 +46,20 @@ WinPin::WinPin(int x, int y, int w, int h, const std::vector<BYTE>* data) : Ling
     toolSub = std::make_unique<ToolSub>(this);
 	layoutTools();
 	onMoved.add([this]() { layoutTools(); });
+	// DPI 变了（用户改了缩放比例，或者窗口被拖到缩放比例不同的显示器上）：系统会按新旧缩放比
+	// 把窗口整体放大一圈，但贴图窗口的尺寸是钉死在底图像素上的 —— 底图按原始像素画，
+	// shape 的坐标也都是相对底图的物理像素，跟着缩放只会让窗口比图大一圈：
+	// 右边、下边多出一条空白，边框看着比左上两边粗（描边居中，左上那半截被窗口边裁掉了），
+	// 工具条也会按虚高的宽高往右下偏。所以等系统把建议矩形应用完（紧随而来的 WM_SIZE）
+	// 再把尺寸掰回底图大小，并重排工具条。位置不能在 onDpiChanged 里改 ——
+	// 那个事件在系统建议矩形生效之前触发，改了马上被覆盖
+	onDpiChanged.add([this]() { dpiChanged = true; });
+	onSizeChanged.add([this]() {
+		if (!dpiChanged) return;
+		dpiChanged = false;
+		restoreImgSize();
+		layoutTools();
+	});
 	onMouseDown.add([this](POINT pos, BOOL isRight) {this->onDown(pos, isRight);});
 	onMouseMove.add([this](POINT pos) {this->onMove(pos);});
 	onMouseUp.add([this](POINT pos, BOOL isRight) {this->onUp(pos, isRight);});
@@ -98,6 +112,18 @@ bool WinPin::hasWindow()
 //   overlay: 上下都不足时覆盖在 WinPin 右下角，整组贴 WinPin 底边
 // ToolSub 只在 curId 非空时显示，此时 ToolMain 上移为它腾出空间；ToolSub 永远紧贴 ToolMain 下方，
 // 所以它那个朝上的小箭头在三种模式下都不需要翻转。
+void WinPin::restoreImgSize()
+{
+	if (!screenImg || !hwnd) return;
+	// 要的是像素数，所以问 GetPixelSize 而不是 GetSize（后者返回的是按位图自身 dpi 折算的 DIP）
+	auto sz = screenImg->GetPixelSize();
+	if (sz.width == 0 || sz.height == 0) return;
+	w = static_cast<float>(sz.width);
+	h = static_cast<float>(sz.height);
+	// 不走 setSize：它收的是逻辑像素、内部还要乘一遍 dpi，而这里的宽高本来就是物理像素
+	SetWindowPos(hwnd, nullptr, 0, 0, sz.width, sz.height, SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOREDRAW);
+}
+
 void WinPin::layoutTools()
 {
 	if (!toolMain || !toolSub) return;

@@ -50,6 +50,8 @@ private:
 	// 按内容算出窗口尺寸并应用。btnCount 只数工具按钮，不含颜色按钮。
 	// centerOnBtn 为 true 时窗口居中对齐到 ToolMain 上选中的那个按钮，否则与 ToolMain 左对齐。
 	void initSize(int btnCount, bool withColors, bool centerOnBtn = false);
+	// 内容不变、只是 dpi 变了：按上次 initSize 的入参重算一遍尺寸
+	void refreshSize();
 	// 逻辑像素 → 物理像素
 	float toPx(float logical) const;
 private:
@@ -76,6 +78,11 @@ private:
 	bool isVisible{ false };
 	bool hasTools{ false };
 	bool centerOnBtn{ false };
+	// onDpiChanged 与 onSizeChanged 之间的接力标记，见构造函数里的注释
+	bool dpiChanged{ false };
+	// 上一次 initSize 的入参，DPI 变了要照原样再算一遍尺寸
+	int sizeBtnCount{ 0 };
+	bool sizeWithColors{ false };
 	UINT selectColorIndex{ 0 };
 	// 滑块值。跨工具切换保留，初值取值域中点附近的 2（1px 线太细看不清）。
 	float sliderVal{ 2.f };

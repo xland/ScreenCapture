@@ -32,6 +32,20 @@ WinCap::WinCap() : Ling::WinBase()
     // 滚动截图的定时器借的是本窗口的，转给 CapLong
     onTimer.add([this](UINT id) { if (capLong) capLong->onTimerCB(id); });
     onDestroy.add([this]() { this->onClosed(); });
+    // DPI 变了（用户改了缩放比例）：系统会按新旧缩放比把窗口整体缩放一圈，但本窗口是铺满整个
+    // 虚拟桌面的，缩放之后就盖不住桌面了，而且底图、选区（cutMask->maskRect）用的都是物理像素，
+    // 窗口一变形它们全部错位，挂在选区上的工具条自然也跟着偏。改缩放不会改分辨率，
+    // 桌面还是那么多像素，所以等系统把建议矩形应用完（紧随而来的 WM_SIZE）再把窗口掰回桌面大小。
+    // 位置不能在 onDpiChanged 里改 —— 那个事件在建议矩形生效之前触发，改了马上被覆盖
+    onDpiChanged.add([this]() { dpiChanged = true; });
+    onSizeChanged.add([this]() {
+        if (!dpiChanged) return;
+        dpiChanged = false;
+        auto [x1, y1, w1, h1] = App::get()->getScreenArea();
+        this->x = x1; this->y = y1; this->w = w1; this->h = h1;
+        SetWindowPos(hwnd, nullptr, x1, y1, (int)w1, (int)h1, SWP_NOZORDER | SWP_NOACTIVATE);
+        relayoutTool();
+    });
 }
 
 WinCap::~WinCap()
@@ -424,6 +438,13 @@ void WinCap::makeToolCap()
     toolCap->createNativeWindow(WS_EX_TOPMOST | WS_EX_NOACTIVATE | WS_EX_TOOLWINDOW, WS_POPUP);
 }
 
+void WinCap::relayoutTool()
+{
+    if (capLong) capLong->layoutTool();
+    else if (capVideo) capVideo->layoutTool();
+    else if (toolCap) layoutTool(toolCap.get());
+}
+
 void WinCap::layoutTool(Ling::WinBase* tool)
 {
     if (!tool) return;
@@ -441,7 +462,9 @@ void WinCap::layoutTool(Ling::WinBase* tool)
     MONITORINFO mi{ sizeof(MONITORINFO) };
     GetMonitorInfo(hMon, &mi);
 
-    const int gap = (int)(cutMask->strokeWidth + 2.f * dpi + 0.5f); // 与框选边框的间距
+    // 间距按工具条自己所在显示器的缩放算：本窗口铺满整个虚拟桌面，dpi 是系统缩放，
+    // 混合缩放的多屏下和选区所在的那块屏不一定是一回事
+    const int gap = (int)(cutMask->strokeWidth + 2.f * tool->dpi + 0.5f); // 与框选边框的间距
     const bool fitBelow = (maskBottomScr + gap + toolH) <= mi.rcWork.bottom;
     const bool fitAbove = (maskTopScr - gap - toolH) >= mi.rcWork.top;
 
@@ -458,7 +481,7 @@ void WinCap::layoutTool(Ling::WinBase* tool)
     }
     else {
         // 叠加在框选区域右下方内部，与右/底各留 3*dpi
-        const int overlapPad = (int)(3.f * dpi + 0.5f);
+        const int overlapPad = (int)(3.f * tool->dpi + 0.5f);
         toolX = maskRightScr - toolW - overlapPad;
         toolY = maskBottomScr - toolH - overlapPad;
     }
@@ -522,6 +545,11 @@ void WinCap::startGif()
 std::wstring WinCap::stopRecord()
 {
     return capVideo ? capVideo->stop() : L"";
+}
+
+void WinCap::layoutLongTool()
+{
+    if (capLong) capLong->layoutTool();
 }
 
 void WinCap::longPin()

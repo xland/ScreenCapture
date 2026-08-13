@@ -14,8 +14,13 @@ private:
 	void onCreated() override;
 	void onMinMaxInfo(MINMAXINFO* mmi) override;
 	void onClick(Ling::Button* btn);
+	// 按当前 dpi 把窗口尺寸算出来并应用。构造时算一次，DPI 变了再算一次
+	void refreshSize();
 private:
 	WinCap* win;
+	// onDpiChanged 与 onSizeChanged 之间的接力标记，见构造函数里的注释
+	bool dpiChanged{ false };
+
 	// 悬停提示。要 hwnd，所以在 onCreated 里才建得起来
 	std::unique_ptr<Tip> tip;
 	// 三张表一一对应。spliter 是竖线分隔符，不是按钮
