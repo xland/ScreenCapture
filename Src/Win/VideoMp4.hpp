@@ -654,6 +654,17 @@ public:
 
         D3D_FEATURE_LEVEL FeatureLevel;
 
+        // 指定了适配器时 DriverType 必须传 UNKNOWN，否则 D3D11CreateDevice 直接 E_INVALIDARG，
+        // 下面那个循环三种 DriverType 会全军覆没
+        if (g)
+        {
+            hr = D3D11CreateDevice(g, D3D_DRIVER_TYPE_UNKNOWN, nullptr, D3D11_CREATE_DEVICE_VIDEO_SUPPORT, FeatureLevels, NumFeatureLevels,
+                D3D11_SDK_VERSION, &device, &FeatureLevel, &context);
+            if (SUCCEEDED(hr))
+                return S_OK;
+            g = nullptr; //指定的那块建不起来就退回默认适配器，别整个录制卡死在这
+        }
+
         // Create device
         for (UINT DriverTypeIndex = 0; DriverTypeIndex < NumDriverTypes; ++DriverTypeIndex)
         {

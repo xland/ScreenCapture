@@ -6,11 +6,72 @@
 #include "../Tool/ToolVideo.h"
 #include "../App.h"
 #include "../Setting.h"
+#include "../Lang.h"
 // VideoMp4.hpp / VideoGif.hpp 里用的是裸 ComPtr，本项目的 pch 没有这条 using，
 // 在包含它们之前补上，头文件本身保持原样。
 using namespace Microsoft::WRL;
 #include "VideoMp4.hpp"
 #include "VideoGif.hpp"
+
+namespace {
+    // MP4 录制失败以前是静默 return，用户那边就是"录完什么都没有"，连缓存文件都不生成。
+    // 失败原因基本都在对方机器上（混合显卡笔记本把进程放在独显上跑，桌面复制就不成立），
+    // 实测让用户在系统图形设置里给本程序选"节能"（把进程放回核显）能解决，
+    // 所以不去区分错误码了，统一给这一句最有用的话。
+    // 录制界面的窗口是 WS_EX_TOPMOST 的，弹框得跟上，不然会被压在后面看不见
+    void showRecordError(const std::wstring& text, const std::wstring& title)
+    {
+        MessageBoxW(nullptr, text.data(), title.data(), MB_OK | MB_ICONERROR | MB_TOPMOST | MB_SETFOREGROUND);
+    }
+
+    // 可能管着录制区域那块屏的 (适配器, 输出) 组合
+    struct DupTarget
+    {
+        CComPtr<IDXGIAdapter1> ad;
+        UINT output{ 0 };
+        RECT mon{}; //这块屏在虚拟桌面里的位置
+    };
+
+    // 按 DXGI 枚举顺序收集所有报告了 rect 所在那块屏的 (适配器, 输出)。
+    // 原来 dp.ad / dp.nOutput 全是 0，意思是"默认适配器的第 0 个输出"：双显卡笔记本上
+    // 默认适配器可能是独显而内屏挂在核显上，独显的 EnumOutputs(0) 直接失败；
+    // 多显示器时也永远只录得到枚举出来的第一块屏。
+    // 收成一个列表而不是直接挑一个，是因为混合显卡笔记本上独显和核显会同时报告同一块屏，
+    // 而 DuplicateOutput 只在真正拥有这块屏的那个适配器上成立，另一个返回
+    // DXGI_ERROR_UNSUPPORTED(0x887A0004) —— 光看 desc 分不出来，只能一个个试
+    void collectDupTargets(const RECT& rect, std::vector<DupTarget>& targets)
+    {
+        HMONITOR hMon = MonitorFromRect(&rect, MONITOR_DEFAULTTONEAREST);
+        if (!hMon) return;
+        CComPtr<IDXGIFactory1> factory;
+        if (FAILED(CreateDXGIFactory1(__uuidof(IDXGIFactory1), (void**)&factory)) || !factory) return;
+        for (UINT i = 0;; ++i) {
+            CComPtr<IDXGIAdapter1> ad;
+            if (FAILED(factory->EnumAdapters1(i, &ad)) || !ad) break;
+            for (UINT j = 0;; ++j) {
+                CComPtr<IDXGIOutput> output;
+                if (FAILED(ad->EnumOutputs(j, &output)) || !output) break;
+                DXGI_OUTPUT_DESC desc{};
+                if (FAILED(output->GetDesc(&desc)) || desc.Monitor != hMon) continue;
+                targets.push_back({ ad, j, desc.DesktopCoordinates });
+            }
+        }
+    }
+
+    // 把桌面坐标的录制区域换算成某块屏的局部坐标 —— DesktopCapture 的裁剪是相对复制出来
+    // 那张纹理算的，纹理原点是这块屏的左上角，不是虚拟桌面的原点。
+    // 宽高的对齐要求见 startMp4 里的注释，平移之后得重新对一遍
+    RECT toLocalRect(const RECT& rect, const RECT& mon)
+    {
+        long l = std::max(rect.left, mon.left) - mon.left;
+        long t = std::max(rect.top, mon.top) - mon.top;
+        long r = std::min(rect.right, mon.right) - mon.left;
+        long b = std::min(rect.bottom, mon.bottom) - mon.top;
+        l = (l + 3) & ~3l;
+        t = (t + 1) & ~1l;
+        return { l, t, l + std::max(4l, (r - l) & ~3l), t + std::max(2l, (b - t) & ~1l) };
+    }
+}
 
 CapVideo::CapVideo(WinCap* win) : win(win)
 {
@@ -76,12 +137,39 @@ void CapVideo::startMp4(bool useSpeaker, bool useMic)
     mp4Param->Qu = 50;
     mp4Param->MustEnd = false;
     VideoMp4::setAudio(mp4Param.get(), useSpeaker, useMic);
-    captureThread = std::jthread([this](std::stop_token st) {
+    // 文案在这里先取出来按值带进线程：langObj 是 WinRT 对象，不往采集线程里带
+    auto errText = Lang::get(L"video.recordFailed");
+    auto errTitle = Lang::get(L"about.sysTip");
+    captureThread = std::jthread([this, errText, errTitle](std::stop_token st) {
         HRESULT hr = MFStartup(MF_VERSION);
-        if (FAILED(hr)) return;
+        if (FAILED(hr)) {
+            showRecordError(errText, errTitle);
+            return;
+        }
         hr = CoInitializeEx(0, COINIT_APARTMENTTHREADED);
-        if (FAILED(hr)) return;
-        VideoMp4::DesktopCapture(*(mp4Param.get()));
+        if (FAILED(hr)) {
+            showRecordError(errText, errTitle);
+            return;
+        }
+        // 逐个候选试到桌面复制能成立为止。Prepare 挂得很早（缓存文件都还没建），
+        // 所以换个候选整个重来最省事，也不用为了预探测多建一次复制对象。
+        // targets 得活到 DesktopCapture 返回：dp.ad 是裸指针，生命周期归我们管
+        std::vector<DupTarget> targets;
+        collectDupTargets(mp4Param->rx, targets);
+        const RECT deskRx = mp4Param->rx; //每个候选都从桌面坐标重新换算
+        int code = 0;
+        if (targets.empty()) {
+            code = VideoMp4::DesktopCapture(*(mp4Param.get())); //一个都没匹配上，走库原来的默认行为
+        }
+        for (auto& t : targets) {
+            if (mp4Param->MustEnd) break; //已经点了停止，别再起新的
+            mp4Param->ad = t.ad;
+            mp4Param->nOutput = t.output;
+            mp4Param->rx = toLocalRect(deskRx, t.mon);
+            code = VideoMp4::DesktopCapture(*(mp4Param.get()));
+            if (code != -2) break; //成功了，或者失败在跟适配器无关的地方
+        }
+        if (code != 0) showRecordError(errText, errTitle);
         CoUninitialize();
         MFShutdown();
     });
