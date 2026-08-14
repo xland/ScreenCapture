@@ -148,8 +148,8 @@ void ToolSub::showMosaicTools()
 	tip->hide();
 	contentNode->removeAllChildren();
 	sliderMin = 18.f;
-	sliderMax = 50.f;
-	sliderVal = 20.f;
+	sliderMax = 68.f;
+	sliderVal = 28.f;
 	initSize(1, false, true);
 	makeToggleBtn(L"\ue602", &isMosaicRect, L"tool.rectFill");
 	initSlider();
@@ -160,8 +160,8 @@ void ToolSub::showEraserTools()
 	tip->hide();
 	contentNode->removeAllChildren();
 	sliderMin = 18.f;
-	sliderMax = 50.f;
-	sliderVal = 20.f;
+	sliderMax = 68.f;
+	sliderVal = 28.f;
 	initSize(1, false, true);
 	makeToggleBtn(L"\ue602", &isEraserRect, L"tool.rectFill");
 	initSlider();

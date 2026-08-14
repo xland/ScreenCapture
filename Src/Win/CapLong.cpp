@@ -14,6 +14,11 @@ namespace {
     constexpr UINT scrollMsgId = 18;
     constexpr UINT scrollEndMsgId = 19;
     constexpr int comparisonH = 100;  // 匹配比较用的条带高度
+    // 连续这么多次滚不动才认为到底了。以前是 2 次，反馈里有明明还能滚就提示触底的：
+    // 滚轮发出去之后目标窗口不一定跟着动 —— 惯性滚动还没停、页面在加载、
+    // 或者鼠标底下那一层刚好不接收滚轮，多试几次就过去了。
+    // 每次重试之间隔 500ms，多等几轮的代价只是到底时晚几秒出提示
+    constexpr int maxDismissTime = 8;
 
     // 将 BGRA 像素条带转为灰度图
     std::vector<BYTE> toGrayscale(const BYTE* bgra, int width, int height, int stride)
@@ -230,7 +235,7 @@ void CapLong::capStep()
         if (changeStartY == -1) {
             // 没有检测到变化，可能滚动未生效
             dismissTime++;
-            if (dismissTime > 5) { stopCap(); return; }
+            if (dismissTime > maxDismissTime) { stopCap(); return; }
             win->setTimer(500, scrollMsgId);
             return;
         }
@@ -246,7 +251,7 @@ void CapLong::capStep()
     int y = findMostSimilarY(gray1.data(), img1StripH, gray2.data(), stripH, imgW);
     if (y == 0) { // 未检测到滚动
         dismissTime++;
-        if (dismissTime > 2) { stopCap(); return; }
+        if (dismissTime > maxDismissTime) { stopCap(); return; }
         win->setTimer(500, scrollMsgId);
         return;
     }
