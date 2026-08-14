@@ -39,6 +39,8 @@ ToolVideo::~ToolVideo()
 void ToolVideo::onCreated()
 {
 	tip = std::make_unique<Tip>(this);
+	// 提示气泡是独立顶层窗口，本窗口被摘出屏幕捕获它不跟着走，得单独说一声
+	tip->excludeFromCapture();
 	body->setBg(0xFFFFFFFF);
 	body->setBorder(1.f, 0xA8A8A8ff);
 	body->setAlignItems(Ling::Align::Center);

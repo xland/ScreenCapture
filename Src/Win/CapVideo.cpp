@@ -89,6 +89,8 @@ void CapVideo::makeTool()
     // 尺寸在 ToolVideo 构造里算好了，这里只定位；两者都要在建窗口之前设好
     layoutTool();
     tool->createNativeWindow(WS_EX_TOPMOST | WS_EX_NOACTIVATE | WS_EX_TOOLWINDOW, WS_POPUP);
+    // 全屏录制时工具条只能压在录制区内部（选区外面上下都放不下），不摘出去就会被录进去
+    App::excludeFromCapture(tool->hwnd);
 }
 
 void CapVideo::layoutTool()

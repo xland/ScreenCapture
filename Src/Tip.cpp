@@ -1,6 +1,7 @@
 #include "pch.h"
 #include <CommCtrl.h>
 #include "Tip.h"
+#include "App.h"
 
 namespace {
 	// 气泡窗口尺寸减去文字尺寸剩下的那圈（边框 + 内边距）。
@@ -106,6 +107,11 @@ void Tip::hide()
 	ti.uId = 0;
 	SendMessage(tipHwnd, TTM_TRACKACTIVATE, FALSE, (LPARAM)&ti);
 	SendMessage(tipHwnd, TTM_ACTIVATE, FALSE, 0);
+}
+
+void Tip::excludeFromCapture()
+{
+	App::excludeFromCapture(tipHwnd);
 }
 
 SIZE Tip::measureText(const std::wstring& str)

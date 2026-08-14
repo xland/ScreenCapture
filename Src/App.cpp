@@ -91,6 +91,13 @@ std::tuple<int, int, int, int> App::getScreenArea()
         GetSystemMetrics(SM_CYVIRTUALSCREEN));
 }
 
+void App::excludeFromCapture(HWND hwnd)
+{
+    if (!hwnd) return;
+    // 失败只可能是系统太老（Win10 2004 以下不认这个标记），没有补救办法，也不值得打扰用户
+    SetWindowDisplayAffinity(hwnd, WDA_EXCLUDEFROMCAPTURE);
+}
+
 App::App()
 {
     Ling::init();

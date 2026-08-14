@@ -552,6 +552,10 @@ void WinCap::startVideo()
     if (stage != CapStage::Adjust || !cutMask->hasRect()) return;
     stage = CapStage::Video;
     enterLiveStage();
+    // 宿主窗口自己也得摘出屏幕捕获：录制期间它还在画遮罩，而 CutMask 的尺寸标签在
+    // 选区上方放不下时会折回选区内部（全屏录制必然如此），不摘出去它会被录进去。
+    // 长图那条路不需要这么做 —— CapLong 是用 hollowWin() 把选区抠成洞来避开的
+    App::excludeFromCapture(hwnd);
     capVideo = std::make_unique<CapVideo>(this);
     // ToolCap 原地换成 ToolVideo
     capVideo->makeTool();
