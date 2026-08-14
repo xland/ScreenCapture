@@ -89,9 +89,17 @@ private:
 	// 右上角的倍数提示。非空即显示，缩放停手一会儿由定时器清掉
 	Microsoft::WRL::ComPtr<IDWriteTextLayout> scaleTip;
 	Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> brushTipBg, brushTipText;
-	bool isTopmost{ true }, isMouseDown{false}, isClosed{ false };
+	bool isMouseDown{ false }, isClosed{ false };
 	// onDpiChanged 与 onSizeChanged 之间的接力标记，见构造函数里的注释
 	bool dpiChanged{ false };
 	POINT pressPos{ 0,0 };
+	// 自己认双击用的上一次按下时间与位置。同 WinCap：Ling 的窗口类没带 CS_DBLCLKS，
+	// 收不到 WM_LBUTTONDBLCLK，只能按系统的双击间隔和双击判定框自己算。
+	// 位置存的是屏幕坐标 —— 拖窗口时光标的客户区坐标不动，只有屏幕坐标能区分拖动和双击
+	ULONGLONG lastDownTime{ 0 };
+	POINT lastDownPos{ 0,0 };
+	// 上一次按下是不是新建了一个留得住的元素（现在只有序号：按一下就成形，
+	// 别的都在抬手时按"没画出东西"清掉了）。双击的前半段放下的东西不该被复制进剪切板
+	bool prevPressCreatedShape{ false };
 };
 

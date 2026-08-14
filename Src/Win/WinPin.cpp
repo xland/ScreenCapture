@@ -326,18 +326,31 @@ void WinPin::onDown(POINT pos, BOOL isRight)
 	// 编辑文本时，落在文本框里的点击整个交给 TextBox（它自己订阅了窗口的鼠标事件）。
 	// 这里不能抢先 SetCapture / 置 isMouseDown，否则拖选文本会被当成拖 shape。
 	if (editingText && textBox && textBox->isPosIn(pos)) return;
-	if (isRight) {
-		//右键：取消置顶并隐藏工具条；再次左键按下时恢复
-		if (isTopmost) {
-			SetWindowPos(hwnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
-			LONG_PTR exStyle = GetWindowLongPtr(hwnd, GWL_EXSTYLE);
-			exStyle &= ~WS_EX_TOOLWINDOW;
-			exStyle |= WS_EX_APPWINDOW;
-			SetWindowLongPtr(hwnd, GWL_EXSTYLE, exStyle);
-			toolMain->cancelSelect();
-			toolMain->hide();
-			isTopmost = false;
-		}
+	// 右键在贴图窗口上没有任何动作
+	if (isRight) return;
+	// 双击判定得自己做，做法同 WinCap::onDown：Ling 的窗口类没带 CS_DBLCLKS，
+	// WM_LBUTTONDBLCLK 根本不会来，只能拿系统的双击间隔和双击判定框自己认。
+	// 与 WinCap 唯一的不同是这里比屏幕坐标而不是客户区坐标：拖动贴图窗口时窗口跟着光标走，
+	// 抓住的那一点始终停在光标下，光标的客户区坐标几乎不变 —— 用客户区坐标会把
+	// "拖一下松手再拖一下"当成双击，图和标注就这么被复制走关掉了。
+	// 而拖动必然意味着光标在屏幕上真的移动过，屏幕坐标能把这种情况分开
+	POINT screenPos{};
+	GetCursorPos(&screenPos);
+	auto now = GetTickCount64();
+	bool isDblClick = (now - lastDownTime <= GetDoubleClickTime())
+		&& std::abs(screenPos.x - lastDownPos.x) <= GetSystemMetrics(SM_CXDOUBLECLK)
+		&& std::abs(screenPos.y - lastDownPos.y) <= GetSystemMetrics(SM_CYDOUBLECLK);
+	lastDownTime = now;
+	lastDownPos = screenPos;
+	// 双击 = Ctrl+C：把图连标注一起送进剪切板并关窗，选着画笔也一样（等价于按 Ctrl+C，
+	// 手里拿着什么工具都不该影响这个手势）。要在下面所有分支之前处理：
+	// 这一下既不是画画也不是拖窗，不该留下 capture、更不该新建 shape。
+	// 编辑文字时不算：双击归文本框（选中单词），点在框外才会走到这里
+	if (isDblClick && !editingText) {
+		// 前半段那一下点击是这个手势的一部分，它顺手放下的元素（只有序号是按一下就成形的，
+		// 别的都在抬手时按"没画出东西"清掉了）不该被带进剪切板
+		if (prevPressCreatedShape) history->undo();
+		copyToClipboard();
 		return;
 	}
 	// 记的是按下点在窗口内的偏移（客户区坐标），拖动时用它把抓住的那一点保持在光标下
@@ -346,19 +359,7 @@ void WinPin::onDown(POINT pos, BOOL isRight)
 	isMouseDown = true;
 	hasDragged = false;
 	SetCapture(hwnd);
-	if (!isTopmost) {
-		//左键：从"未置顶"状态恢复。先重新置顶，并复位工具条状态；
-		//ToolMain 的显示交给 onMouseUp 走"拖窗结束"的通用路径，避免拖拽时工具条不跟随
-		SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
-		LONG_PTR exStyle = GetWindowLongPtr(hwnd, GWL_EXSTYLE);
-		exStyle &= ~WS_EX_APPWINDOW;
-		exStyle |= WS_EX_TOOLWINDOW;
-		SetWindowLongPtr(hwnd, GWL_EXSTYLE, exStyle);
-		toolMain->cancelSelect();
-		isTopmost = true;
-		return;
-	}
-	if (toolMain->curId == L"") {
+	if (toolMain->curId == L"") { //没选画笔，左键是拖窗口，拖的时候把工具条收起来
 		toolMain->hide();
 		return;
 	}
@@ -421,6 +422,8 @@ void WinPin::onUp(POINT pos, BOOL isRight)
 	ReleaseCapture();
 	auto justCreated = newShape;
 	newShape = nullptr;
+	// 这一下按下有没有新建出一个留得住的元素：紧接着来第二下凑成双击时要把它撤掉（见 onDown）
+	prevPressCreatedShape = false;
 	if (toolMain->curId == L"") { //state为空时，是在拖动窗口
 		layoutTools();
 		toolMain->show();
@@ -432,6 +435,7 @@ void WinPin::onUp(POINT pos, BOOL isRight)
 			history->removeShape(shapeHover); //它会顺手清掉 shapeHover 并刷新
 			return;
 		}
+		prevPressCreatedShape = (shapeHover == justCreated);
 		auto imgPos = toImgPos(pos);
 		shapeHover->mouseUp((float)imgPos.x, (float)imgPos.y);
 		refresh();
