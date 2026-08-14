@@ -47,6 +47,7 @@
 
 下载最新版本的文字识别工具 [ImageReader.exe](https://github.com/xland/ImageReader/releases) (约25MB) 并把此文件放置到ScreenCapture.exe同目录下，或者放置到`%appdata%\ScreenCapture\plugin`目录下，然后重启应用即可使用
 
+
 ## 赞助
 
 <table>

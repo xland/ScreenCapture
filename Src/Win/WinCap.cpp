@@ -385,6 +385,11 @@ void WinCap::onUp(POINT pos, bool isRight)
         isPress = false;
         // 只是点了一下，又没吸附到任何窗口，那就接着让用户框
         if (!cutMask->hasRect()) return;
+        // 按住 Ctrl 框选：跳过调整和工具条，直接钉到桌面上
+        if (GetKeyState(VK_CONTROL) & 0x8000) {
+            startPin();
+            return;
+        }
         stage = CapStage::Adjust;
         refresh();  // 收掉放大镜
         makeToolCap();
