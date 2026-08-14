@@ -86,6 +86,9 @@ void ToolSub::showEllipseTools()
 	contentNode->removeAllChildren();
 	initSize(1, true);
 	makeToggleBtn(L"\ue600", &isEllipseFill, L"tool.ellipseFill");
+	sliderMin = 1.f;
+	sliderMax = 26.f;
+	sliderVal = 2.f;
 	initSlider();
 	initColorBtns();
 }
