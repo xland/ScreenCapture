@@ -74,8 +74,8 @@ void ToolSub::showRectTools()
 	initSize(1, true);
 	makeToggleBtn(L"\ue602", &isRectFill, L"tool.rectFill");
 	sliderMin = 1.f;
-	sliderMax = 16.f;
-	sliderVal = 1.f;
+	sliderMax = 26.f;
+	sliderVal = 2.f;
 	initSlider();
 	initColorBtns();
 }
