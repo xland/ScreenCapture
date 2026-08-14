@@ -264,6 +264,15 @@ void ToolVideo::saveFile()
 	win->close();
 }
 
+bool ToolVideo::onSaveKey(bool toClipboard)
+{
+	if (!isRecording) return false;
+	// 停录、存盘、关掉整个流程，这两条都在下面两个函数里一条龙做完
+	if (toClipboard) finishRecord(true);
+	else saveFile();
+	return true;
+}
+
 void ToolVideo::finishRecord(bool toClipboard)
 {
 	hide();

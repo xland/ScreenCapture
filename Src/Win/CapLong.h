@@ -17,10 +17,13 @@ public:
 	void onTimerCB(UINT timerId);
 	void setCursor();
 	void paint(ID2D1DeviceContext* ctx);
-	// 三个都是 ToolLong 的按钮动作，做完由 ToolLong 关掉宿主窗口
+	// 三个都是 ToolLong 的按钮动作，做完由 ToolLong 关掉宿主窗口。
+	// saveToFile 返回是否真的存下来了：用户在另存为对话框里按了取消时不该收工
 	void copyToClipboard();
-	void saveToFile();
+	bool saveToFile();
 	void pin();
+	// Ctrl+S / Ctrl+C 用：还没点"开始"的时候一张图都没有，此时快捷键不该生效
+	bool hasImage() const { return !imgData.empty(); }
 	// ToolLong 的摆放规则：摆在选区右侧（右边放不下就改到左侧），底边与选区底边齐。
 	// 建窗口时走一遍，工具条的 DPI 变了之后由它回头再走一遍
 	void layoutTool();

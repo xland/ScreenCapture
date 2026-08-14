@@ -28,6 +28,8 @@ public:
 	void startGif();
 	// 停止录制并返回录好的临时文件路径；没在录制时返回空串
 	std::wstring stop();
+	// Ctrl+S / Ctrl+C 转给工具条上的"存文件" / "存剪切板"；没在录制时返回 false
+	bool onSaveKey(bool toClipboard);
 private:
 	WinCap* win;
 	std::unique_ptr<ToolVideo> tool;

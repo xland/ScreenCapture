@@ -67,7 +67,8 @@ void ToolLong::onClick(Ling::Button* btn)
 		win->longCopyToClipboard();
 	}
 	else if (btn->id == L"save") {
-		win->longSaveToFile();
+		// 唯一的例外：另存为对话框被取消了，滚了半天的图还在，别就这么关掉
+		if (!win->longSaveToFile()) return;
 	}
 	win->close();
 }

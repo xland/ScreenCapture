@@ -41,7 +41,8 @@ public:
 	// ToolLong 的摆放规则在 CapLong 手里，它 DPI 变了要重走一遍，从这里转进去
 	void layoutLongTool();
 	void longPin();
-	void longSaveToFile();
+	// 用户在另存为对话框里取消时返回 false，此时图还在，不该收工
+	bool longSaveToFile();
 	void longCopyToClipboard();
 public:
 	// CapLong / CapVideo 用的就是这一份选区，它们自己不再框选

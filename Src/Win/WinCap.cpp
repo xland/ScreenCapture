@@ -284,6 +284,21 @@ void WinCap::onKey(UINT key)
         Ling::Util::setTextToClipboard(std::format(L"{},{}", pos.x, pos.y));
         close();
     }
+    // 长图与录屏阶段：Ctrl+S 存文件，Ctrl+C 存剪切板，等价于各自工具条上的那两个按钮。
+    // 这两个阶段里键盘消息进的往往是工具条，ToolLong / ToolVideo 会把 onKeyDown 转回这里
+    else if ((key == 'S' || key == 'C') && (GetKeyState(VK_CONTROL) & 0x8000)) {
+        const bool toClipboard{ key == 'C' };
+        if (stage == CapStage::Long && capLong && capLong->hasImage()) {
+            // 与 ToolLong::onClick 同一套规则：存盘被取消了就留在原地，图还没丢
+            if (toClipboard) longCopyToClipboard();
+            else if (!longSaveToFile()) return;
+            close();
+        }
+        else if (stage == CapStage::Video && capVideo) {
+            // 停录、存盘、关窗都在 ToolVideo 那边一条龙做完
+            capVideo->onSaveKey(toClipboard);
+        }
+    }
 }
 
 std::tuple<int, int, int, int> WinCap::getCMYK(const BYTE& r, const BYTE& g, const BYTE& b)
@@ -567,9 +582,9 @@ void WinCap::longPin()
     if (capLong) capLong->pin();
 }
 
-void WinCap::longSaveToFile()
+bool WinCap::longSaveToFile()
 {
-    if (capLong) capLong->saveToFile();
+    return capLong ? capLong->saveToFile() : false;
 }
 
 void WinCap::longCopyToClipboard()

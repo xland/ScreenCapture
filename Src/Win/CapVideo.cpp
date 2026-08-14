@@ -190,6 +190,11 @@ void CapVideo::startGif()
     });
 }
 
+bool CapVideo::onSaveKey(bool toClipboard)
+{
+    return tool ? tool->onSaveKey(toClipboard) : false;
+}
+
 std::wstring CapVideo::stop()
 {
     if (!mp4Param && !gifParam) return L"";

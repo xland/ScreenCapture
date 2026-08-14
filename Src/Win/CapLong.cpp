@@ -356,12 +356,12 @@ void CapLong::copyToClipboard()
     Util::saveToClipboard(imgW, resultH, imgData.data());
 }
 
-void CapLong::saveToFile()
+bool CapLong::saveToFile()
 {
-    if (imgData.empty()) return;
+    if (imgData.empty()) return false;
     auto path = Util::getSaveFilePath(win->hwnd);
-    if (path.empty()) return;
-    Util::saveToFile(path, imgW, resultH, imgData.data());
+    if (path.empty()) return false;
+    return Util::saveToFile(path, imgW, resultH, imgData.data());
 }
 
 void CapLong::pin()
