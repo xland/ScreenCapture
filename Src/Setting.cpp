@@ -162,6 +162,45 @@ void Setting::setLang(const std::wstring& langCode)
 	Lang::get()->initLang(langCode);
 }
 
+JsonObject Setting::getToolObj(const std::wstring& tool)
+{
+    // 用带默认值的重载：这两层在旧配置文件里都不存在，直接 GetNamedObject 会抛异常，
+    // 值被手工改成非对象时它也一样返回默认值，不会炸
+    auto root = configObj.GetNamedObject(L"toolPin", nullptr);
+    if (!root) {
+        root = JsonObject();
+        configObj.SetNamedValue(L"toolPin", root);
+    }
+    auto obj = root.GetNamedObject(tool, nullptr);
+    if (!obj) {
+        obj = JsonObject();
+        root.SetNamedValue(tool, obj);
+    }
+    return obj;
+}
+
+bool Setting::getToolFlag(const std::wstring& tool, const std::wstring& key, bool def)
+{
+    return getToolObj(tool).GetNamedBoolean(key, def);
+}
+
+void Setting::setToolFlag(const std::wstring& tool, const std::wstring& key, bool val)
+{
+    getToolObj(tool).SetNamedValue(key, JsonValue::CreateBooleanValue(val));
+    save();
+}
+
+float Setting::getToolNum(const std::wstring& tool, const std::wstring& key, float def)
+{
+    return static_cast<float>(getToolObj(tool).GetNamedNumber(key, def));
+}
+
+void Setting::setToolNum(const std::wstring& tool, const std::wstring& key, float val)
+{
+    getToolObj(tool).SetNamedValue(key, JsonValue::CreateNumberValue(val));
+    save();
+}
+
 void Setting::initShortcutKeys()
 {
     auto lingApp = Ling::App::get();

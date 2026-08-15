@@ -21,8 +21,9 @@ public:
 	bool hasContent();
 	float getDesiredHeight();
 	void updatePosition(const RECT& workArea);
-	// 当前选中的颜色，直接可喂给 CreateSolidColorBrush。切换工具时颜色按钮会重建，
-	// 但选中项由 selectColorIndex 记着，不会丢；mosaic/eraser 没有颜色按钮，返回的是上次选中的颜色。
+	// 当前选中的颜色，直接可喂给 CreateSolidColorBrush。颜色是每工具各存一份的
+	// （见 beginTool），切工具时颜色按钮会重建并按配置文件里那一份重新选中。
+	// mosaic/eraser 没有颜色按钮，它们的图形也用不到颜色。
 	D2D1_COLOR_F getSelectedColor() const;
 	// 同一个颜色的 RGBA 原值。Ling::Color 没有从 D2D1_COLOR_F 构造的口子，
 	// TextBox::setColor 这类要 Ling::Color 的地方得用它。
@@ -30,6 +31,9 @@ public:
 	// 滑块当前值（逻辑像素语义，用作线宽/字号等；D2D 里当物理像素用的话记得乘 dpi）。
 	// 值存在 sliderVal 里而不是问 Slider 节点要 —— 节点每次切换工具都被销毁重建。
 	float getSliderVal() const;
+	// 序号工具专用：拖拽或滚轮改了某个序号的半径之后回填过来（入参是物理像素）。
+	// 序号的大小与别的工具的"线宽"是同一个滑块，所以走滑块回写，顺带落盘。
+	void setNumberRadius(float radiusPx);
 	// ToolMain 与 ToolSub 之间的间距，WinPin::layoutTools() 计算整组高度时要用
 	static constexpr float mainGap{ 2.f };
 public:
@@ -44,9 +48,14 @@ private:
 	void initSlider();
 	// 选中/未选中两套配色，与 ToolMain 的选中效果保持一致
 	void applyToggleStyle(Ling::Button* btn, bool selected);
-	// 建一个可切换的工具按钮：初始配色跟着 flag，点击时翻转 flag 并刷新配色。
-	// tipKey 是提示文字的语言键（如 tool.rectFill）。
-	Ling::Button* makeToggleBtn(const std::wstring& text, bool* flag, const std::wstring& tipKey);
+	// 建一个可切换的工具按钮：初始态从配置文件读（写回 flag），点击时翻转 flag、刷新配色并落盘。
+	// tipKey 是提示文字的语言键（如 tool.rectFill），cfgKey 是这个开关在 config.json 里的键名
+	// （fill / semiTransparent / bold / …，同一工具下不能重名）。
+	Ling::Button* makeToggleBtn(const std::wstring& text, bool* flag, const std::wstring& tipKey, const std::wstring& cfgKey);
+	// 每个 show*Tools 开头都要做的事：收提示、清旧内容、记下当前工具，
+	// 再把这个工具存在 config.json 里的滑块值和颜色读回来（读不到就用 defVal / 第一个颜色）。
+	// sliderKey 是滑块值在配置里的键名，各工具语义不同（width / radius / fontSize）。
+	void beginTool(const std::wstring& id, const std::wstring& sliderKey, float min, float max, float defVal);
 	// 按内容算出窗口尺寸并应用。btnCount 只数工具按钮，不含颜色按钮。
 	// centerOnBtn 为 true 时窗口居中对齐到 ToolMain 上选中的那个按钮，否则与 ToolMain 左对齐。
 	void initSize(int btnCount, bool withColors, bool centerOnBtn = false);
@@ -84,8 +93,14 @@ private:
 	int sizeBtnCount{ 0 };
 	bool sizeWithColors{ false };
 	UINT selectColorIndex{ 0 };
-	// 滑块值。跨工具切换保留，初值取值域中点附近的 2（1px 线太细看不清）。
+	// 滑块值。每次切换工具都由 beginTool 从 config.json 里换成那个工具自己的那份。
 	float sliderVal{ 2.f };
 	float sliderMin{ 1.f }, sliderMax{ 20.f };
+	// 当前工具在 config.json 里的组名（即 ToolMain 的按钮 id）与滑块值的键名，
+	// 落盘时要用。没选工具时是空的，此时不该有任何写入。
+	std::wstring curToolId, curSliderKey;
+	// 序号半径的取值范围（逻辑像素）。下限跟着 ShapeNumber 拖拽/滚轮的下限走，
+	// 上限给滑块留个头 —— 再大就超出滑块能表达的范围了，拖拽仍可继续放大，只是不再回写
+	static constexpr float numberMin{ 6.f }, numberMax{ 86.f };
 	std::vector<UINT32> colors = { 0XCF1322FF, 0XD48806FF, 0X389E0DFF, 0X13C2C2FF, 0X0958D9FF, 0X722ED1FF, 0XEB2F96FF, 0X000000FF, 0XFFFFFFFF };
 };

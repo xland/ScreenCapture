@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "../Win/WinPin.h"
 #include "../Lang.h"
+#include "../Setting.h"
 #include "../Tip.h"
 #include "ToolSub.h"
 #include "ToolMain.h"
@@ -66,108 +67,112 @@ void ToolSub::onCreated()
 	});
 }
 
-void ToolSub::showRectTools()
+// 各工具在 config.json 里的那一组（组名 = ToolMain 的按钮 id）就是唯一的状态存放处：
+// 切到某个工具时从里面读，用户一改就写回去，所以内存里不用再留一份每工具的状态。
+void ToolSub::beginTool(const std::wstring& id, const std::wstring& sliderKey, float min, float max, float defVal)
 {
 	// 按钮和滑块马上要被销毁，onLeave 不会触发，提示得手动收掉
 	tip->hide();
 	contentNode->removeAllChildren();
+	curToolId = id;
+	curSliderKey = sliderKey;
+	sliderMin = min;
+	sliderMax = max;
+	auto setting = Setting::get();
+	// 夹一遍值域：配置文件可能是上个版本写的（值域变过），也可能被手工改坏，
+	// 而这个值会直接当线宽/字号喂给 D2D，超出范围要么看不见要么慢得离谱
+	sliderVal = std::clamp(setting->getToolNum(id, sliderKey, defVal), min, max);
+	// colors[selectColorIndex] 那几处都不做边界检查，越界就读到界外了
+	auto idx = static_cast<UINT>(setting->getToolNum(id, L"colorIndex", 0.f));
+	selectColorIndex = idx < colors.size() ? idx : 0;
+}
+
+void ToolSub::showRectTools()
+{
+	beginTool(L"rect", L"width", 1.f, 26.f, 2.f);
 	initSize(1, true);
-	makeToggleBtn(L"\ue602", &isRectFill, L"tool.rectFill");
-	sliderMin = 1.f;
-	sliderMax = 26.f;
-	sliderVal = 2.f;
+	makeToggleBtn(L"\ue602", &isRectFill, L"tool.rectFill", L"fill");
 	initSlider();
 	initColorBtns();
 }
 
 void ToolSub::showEllipseTools()
 {
-	tip->hide();
-	contentNode->removeAllChildren();
+	beginTool(L"ellipse", L"width", 1.f, 26.f, 2.f);
 	initSize(1, true);
-	makeToggleBtn(L"\ue600", &isEllipseFill, L"tool.ellipseFill");
-	sliderMin = 1.f;
-	sliderMax = 26.f;
-	sliderVal = 2.f;
+	makeToggleBtn(L"\ue600", &isEllipseFill, L"tool.ellipseFill", L"fill");
 	initSlider();
 	initColorBtns();
 }
 
 void ToolSub::showArrowTools()
 {
-	tip->hide();
-	contentNode->removeAllChildren();
+	beginTool(L"arrow", L"width", 1.f, 16.f, 3.f);
 	initSize(1, true);
-	makeToggleBtn(L"\ue604", &isArrowFill, L"tool.arrowFill");
-	sliderMin = 1.f;
-	sliderMax = 16.f;
-	sliderVal = 3.f;
+	makeToggleBtn(L"\ue604", &isArrowFill, L"tool.arrowFill", L"fill");
 	initSlider();
 	initColorBtns();
 }
 
 void ToolSub::showNumberTools()
 {
-	tip->hide();
-	contentNode->removeAllChildren();
+	// 序号的滑块调的是圆半径（ShapeNumber 直接拿 getSliderVal 当 r），不是线宽，
+	// 值域也跟着 ShapeNumber 拖拽/滚轮的下限来，不再是原来那套空转的 1~36
+	beginTool(L"number", L"radius", numberMin, numberMax, 16.f);
 	initSize(1, true);
-	makeToggleBtn(L"\ue605", &isNumberFill, L"tool.numberFill");
-	sliderMin = 1.f;
-	sliderMax = 36.f;
-	sliderVal = 3.f;
+	makeToggleBtn(L"\ue605", &isNumberFill, L"tool.numberFill", L"fill");
 	initSlider();
 	initColorBtns();
 }
 
 void ToolSub::showLineTools()
 {
-	tip->hide();
-	contentNode->removeAllChildren();
+	beginTool(L"line", L"width", 1.f, 60.f, 12.f);
 	initSize(1, true);
-	makeToggleBtn(L"\ue607", &isLineTransparent, L"tool.semiTransparent");
-	sliderMin = 1.f;
-	sliderMax = 60.f;
-	sliderVal = 12.f;
+	makeToggleBtn(L"\ue607", &isLineTransparent, L"tool.semiTransparent", L"semiTransparent");
 	initSlider();
 	initColorBtns();
 }
 
 void ToolSub::showTextTools()
 {
-	tip->hide();
-	contentNode->removeAllChildren();
+	beginTool(L"text", L"fontSize", 10.f, 60.f, 20.f);
 	initSize(2, true);
-	makeToggleBtn(L"\ue634", &isTextBold, L"tool.bold");
-	makeToggleBtn(L"\ue682", &isTextItalic, L"tool.italic");
-	sliderMin = 10.f;
-	sliderMax = 60.f;
-	sliderVal = 20.f;
+	makeToggleBtn(L"\ue634", &isTextBold, L"tool.bold", L"bold");
+	makeToggleBtn(L"\ue682", &isTextItalic, L"tool.italic", L"italic");
 	initSlider();
 	initColorBtns();
 }
 
 void ToolSub::showMosaicTools()
 {
-	tip->hide();
-	contentNode->removeAllChildren();
-	sliderMin = 18.f;
-	sliderMax = 68.f;
-	sliderVal = 28.f;
+	// 这两个没有颜色按钮、窗口窄，initSize 要居中对齐到按钮上；
+	// initSize 也会用到滑块宽度，所以 beginTool 仍排在它前面
+	beginTool(L"mosaic", L"width", 18.f, 68.f, 28.f);
 	initSize(1, false, true);
-	makeToggleBtn(L"\ue602", &isMosaicRect, L"tool.rectFill");
+	makeToggleBtn(L"\ue602", &isMosaicRect, L"tool.rectFill", L"rect");
 	initSlider();
 }
 
 void ToolSub::showEraserTools()
 {
-	tip->hide();
-	contentNode->removeAllChildren();
-	sliderMin = 18.f;
-	sliderMax = 68.f;
-	sliderVal = 28.f;
+	beginTool(L"eraser", L"width", 18.f, 68.f, 28.f);
 	initSize(1, false, true);
-	makeToggleBtn(L"\ue602", &isEraserRect, L"tool.rectFill");
+	makeToggleBtn(L"\ue602", &isEraserRect, L"tool.rectFill", L"rect");
 	initSlider();
+}
+
+void ToolSub::setNumberRadius(float radiusPx)
+{
+	auto logical = std::clamp(radiusPx / dpi, numberMin, numberMax);
+	// 序号工具正显示着（拖拽/滚轮改半径时基本都是这种情况）：走滑块，
+	// 它的 onValueChanged 会同步 sliderVal 并落盘，滑块上的位置也跟着动。
+	// 值没变时 Slider::setValue 会提前返回，不会白写一次盘
+	if (curToolId == L"number" && slider) {
+		slider->setValue(logical);
+		return;
+	}
+	Setting::get()->setToolNum(L"number", L"radius", logical);
 }
 
 void ToolSub::layout()
@@ -235,6 +240,7 @@ void ToolSub::onColorSelect(Ling::Button* btn)
 			break;
 		}
 	}
+	Setting::get()->setToolNum(curToolId, L"colorIndex", static_cast<float>(selectColorIndex));
 	win->onToolStyleChanged();
 }
 
@@ -292,8 +298,10 @@ void ToolSub::applyToggleStyle(Ling::Button* btn, bool selected)
 	}
 }
 
-Ling::Button* ToolSub::makeToggleBtn(const std::wstring& text, bool* flag, const std::wstring& tipKey)
+Ling::Button* ToolSub::makeToggleBtn(const std::wstring& text, bool* flag, const std::wstring& tipKey, const std::wstring& cfgKey)
 {
+	// 上次退出前的状态在配置文件里，先取回来盖掉内存里那份（成员的初值只是"从没设置过"时的默认）
+	*flag = Setting::get()->getToolFlag(curToolId, cfgKey, *flag);
 	auto btn = contentNode->makeChild<Ling::Button>();
 	btn->setText(text);
 	btn->setHeight(btnSize - 2.5);
@@ -302,10 +310,12 @@ Ling::Button* ToolSub::makeToggleBtn(const std::wstring& text, bool* flag, const
 	btn->setFontSize(13.f);
 	applyToggleStyle(btn, *flag);
 	tip->bind(btn, Lang::get(tipKey));
-	// flag 指向 ToolSub 的成员，生命周期与 this 相同，btn 也挂在 this 的节点树上，捕获裸指针安全
-	btn->onClick.add([this, flag](Ling::Button* b) {
+	// flag 指向 ToolSub 的成员，生命周期与 this 相同，btn 也挂在 this 的节点树上，捕获裸指针安全。
+	// cfgKey 按值捕获：调用方传进来的是临时量
+	btn->onClick.add([this, flag, cfgKey](Ling::Button* b) {
 		*flag = !*flag;
 		applyToggleStyle(b, *flag);
+		Setting::get()->setToolFlag(curToolId, cfgKey, *flag);
 		win->onToolStyleChanged();
 	});
 	return btn;
@@ -320,12 +330,14 @@ void ToolSub::initSlider()
 	slider->setMarginLeft(sliderMargin);
 	slider->setMarginRight(sliderMargin);
 	slider->setHeightPercent(100.f);
-	// 值域与当前值都从字段来：切换工具时滑块会被销毁重建，靠 sliderVal 把用户调过的值带过来
+	// 值域与当前值都从字段来：切换工具时滑块会被销毁重建，靠 beginTool 把配置里那份带过来。
+	// setValue 排在 onValueChanged 之前，加载配置这一下不会反过来又写一次盘
 	slider->setRange(sliderMin, sliderMax);
 	slider->setValue(sliderVal);
 	slider->setStep(1.f);
 	slider->onValueChanged.add([this](Ling::Slider*, float val) {
 		sliderVal = val;
+		Setting::get()->setToolNum(curToolId, curSliderKey, val);
 		// 正在编辑的文本要立刻跟着变字号，不然得点完再看效果
 		win->onToolStyleChanged();
 	});

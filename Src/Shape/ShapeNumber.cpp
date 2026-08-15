@@ -8,27 +8,14 @@
 
 using Microsoft::WRL::ComPtr;
 
-namespace {
-	// 半径在所有序号之间共享：滚轮/拖拽改过之后，后面新建的序号沿用同一大小。
-	// 存的是逻辑像素，读写时按当前窗口 dpi 折算，跨屏也不会跳。
-	float defaultRadius{ 16.f };
-
-	float getDefaultRadius(WinPin* win)
-	{
-		return defaultRadius * win->dpi;
-	}
-
-	void setDefaultRadius(WinPin* win, const float radius)
-	{
-		defaultRadius = radius / win->dpi;
-	}
-}
-
 ShapeNumber::ShapeNumber(WinPin* win) :ShapeBase(win), draggers{
 	D2D1::RectF(0,0,0,0),
 	D2D1::RectF(0,0,0,0),
 	D2D1::RectF(0,0,0,0) },
-	r{getDefaultRadius(win)},
+	// 半径就是工具栏滑块的值（物理像素），跟别的工具的"线宽"是同一个滑块。
+	// 拖拽/滚轮改过之后会回写给滑块（见 setNumberRadius），所以后面新建的序号沿用同一大小，
+	// 关掉应用再打开也还是这个大小 —— 值存在 config.json 的 toolPin.number.radius 里
+	r{ win->toolSub->getSliderVal() },
 	val{getNextVal(win)}
 {
 	auto toolSub = win->toolSub.get();
@@ -112,7 +99,7 @@ void ShapeNumber::mouseDrag(const float x, const float y)
 		r = sqrtf(dx * dx + dy * dy);
 		auto minR{ 8.f * win->dpi };
 		if (r < minR) r = minR;
-		setDefaultRadius(win, r);
+		win->toolSub->setNumberRadius(r);
 		makePath();
 		makeTextLayout();
 	}
@@ -188,7 +175,7 @@ void ShapeNumber::mouseWheel(const float x, const float y, const short delta)
 	else {
 		r++;
 	}
-	setDefaultRadius(win, r);
+	win->toolSub->setNumberRadius(r);
 	makePath();
 	makeTextLayout();
 	win->refresh();
