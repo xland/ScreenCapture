@@ -59,9 +59,11 @@ private:
 	void onTimerCB(UINT id);
 	void onClosed();
 	BOOL setCursor() override;
-	// 离屏合成出最终图像的像素（BGRA、top-down、行步长紧凑为 w*4）。
+	// 离屏合成出最终图像的像素（BGRA、top-down、行步长紧凑为 size.width*4）。
 	// 只画底图和未撤销的 shape，不含蓝色边框和夹点。
-	bool getImagePixels(std::vector<BYTE>& pixels);
+	// size 是出参，给的是底图的原始尺寸 —— 必须拿它去解释 pixels，不能用窗口的 w/h：
+	// Ctrl+滚轮缩放改的只有窗口大小，两者对不上就是按错误的宽高读缓冲区（越界崩溃、图也是花的）
+	bool getImagePixels(std::vector<BYTE>& pixels, D2D1_SIZE_U& size);
 	// 另存为对话框会抢走前台并把 WinPin 激活，取消保存后用它把窗口层级和前台窗口恢复原样
 	void restoreWindowState(HWND foregroundBeforeDialog);
 	// 把窗口尺寸掰成"底图像素 × scale"。系统在 DPI 变化时会按新旧缩放比擅自缩放窗口

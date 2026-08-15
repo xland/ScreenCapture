@@ -539,8 +539,9 @@ void WinPin::onKey(UINT key)
 void WinPin::copyToClipboard()
 {
 	std::vector<BYTE> pixels;
-	if (!getImagePixels(pixels)) return;
-	Util::saveToClipboard((int)w, (int)h, pixels.data());
+	D2D1_SIZE_U size{};
+	if (!getImagePixels(pixels, size)) return;
+	Util::saveToClipboard((int)size.width, (int)size.height, pixels.data());
 	close();
 }
 
@@ -553,11 +554,12 @@ void WinPin::saveToFile()
 		return;
 	}
 	std::vector<BYTE> pixels;
-	if (!getImagePixels(pixels)) {
+	D2D1_SIZE_U size{};
+	if (!getImagePixels(pixels, size)) {
 		restoreWindowState(foregroundBeforeDialog);
 		return;
 	}
-	if (Util::saveToFile(path, (int)w, (int)h, pixels.data())) {
+	if (Util::saveToFile(path, (int)size.width, (int)size.height, pixels.data())) {
 		close();
 	}
 	else {
@@ -585,16 +587,16 @@ void WinPin::restoreWindowState(HWND foregroundBeforeDialog)
 // 不直接画到 screenImg 上：它是 ShapeEraser 的"原样"来源，也是 ShapeMosaic 的取样来源，
 // 一旦被 shape 覆写，之后再擦除/打码就会拿到已经画过的画面。
 // 用 d2d->deviceContext 做离屏是安全的，SetTarget → BeginDraw → EndDraw → SetTarget(nullptr) 在本函数内闭环。
-bool WinPin::getImagePixels(std::vector<BYTE>& pixels)
+bool WinPin::getImagePixels(std::vector<BYTE>& pixels, D2D1_SIZE_U& size)
 {
 	// 尺寸一律取底图的像素尺寸，不用窗口的 w/h —— Ctrl+滚轮缩放改的是窗口，
-	// 导出的图该始终是原始大小
+	// 导出的图该始终是原始大小。调用方也得按这个尺寸解释 pixels，所以用出参交出去
 	auto imgSize = getImgSize();
 	if (imgSize.width == 0 || imgSize.height == 0) return false;
 	// 编辑中的文字是 TextBox 自己那层画的，进不了下面这个离屏 target。
 	// 先收尾，把文字交回 ShapeText 自己画，保存/复制出去的图才有它。
 	if (editingText) editingText->finishEdit();
-	auto size = imgSize;
+	size = imgSize;
 	auto d2d = Ling::D2D::get();
 	auto ctx = d2d->deviceContext.Get();
 
