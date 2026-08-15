@@ -57,6 +57,10 @@ private:
 	void getPixImg(POINT pos);
 	void paintPix(ID2D1DeviceContext* ctx);
 	void onKey(UINT key);
+	// Enter 用：把当前阶段手上的图存进剪切板，效果与 Ctrl+C 一致。
+	// 三个阶段各有各的图（选区像素 / 拼好的长图 / 录到的视频），
+	// 还在拖框取色（Select）时手上什么都没有，什么也不做
+	void copyCurrentStage();
 	void onDown(POINT pos, bool isRight);
 	void onMove(POINT pos);
 	void onUp(POINT pos, bool isRight);

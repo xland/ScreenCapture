@@ -299,6 +299,28 @@ void WinCap::onKey(UINT key)
             capVideo->onSaveKey(toClipboard);
         }
     }
+    // Enter 与 Ctrl+C 一个意思：把图存进剪切板。比 Ctrl+C 多管一个阶段 ——
+    // 选区刚框好（Adjust）时也认，那会儿等于点了 ToolCap 上的复制按钮
+    else if (key == VK_RETURN) {
+        copyCurrentStage();
+    }
+}
+
+void WinCap::copyCurrentStage()
+{
+    if (stage == CapStage::Adjust) {
+        // 选区里的像素，与在窗口里双击同一条路（见 onDown）。它自己会关窗
+        copyToClipboard();
+    }
+    else if (stage == CapStage::Long && capLong && capLong->hasImage()) {
+        // 还没点"开始"滚动时一张图都没有（hasImage），此时不该收工
+        longCopyToClipboard();
+        close();
+    }
+    else if (stage == CapStage::Video && capVideo) {
+        // 停录、存盘、关窗都在 ToolVideo 那边一条龙做完
+        capVideo->onSaveKey(true);
+    }
 }
 
 std::tuple<int, int, int, int> WinCap::getCMYK(const BYTE& r, const BYTE& g, const BYTE& b)
