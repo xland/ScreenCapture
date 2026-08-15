@@ -8,6 +8,36 @@
 
 using namespace Microsoft::WRL;
 
+namespace {
+	// 每个工具的滑块：值在 config.json 里的键名、值域、默认值（都是逻辑像素）。
+	// 键名各工具语义不同 —— 矩形/椭圆/箭头/线条是线宽，序号是圆半径，文字是字号。
+	// 集中放这一张表，是因为值域有两处要用：beginTool 建滑块，以及在图形上滚滚轮
+	// 改尺寸时（setShapeSliderVal）夹值 —— 分开写迟早会对不上。
+	struct SliderCfg {
+		const wchar_t* key;
+		float min, max, def;
+	};
+	const std::pair<const wchar_t*, SliderCfg> sliderCfgs[]{
+		{ L"rect",    { L"width",     1.f, 26.f,  2.f } },
+		{ L"ellipse", { L"width",     1.f, 26.f,  2.f } },
+		{ L"arrow",   { L"width",     1.f, 16.f,  3.f } },
+		{ L"number",  { L"radius",    6.f, 86.f, 16.f } },
+		{ L"line",    { L"width",     1.f, 60.f, 12.f } },
+		{ L"text",    { L"fontSize", 10.f, 60.f, 20.f } },
+		{ L"mosaic",  { L"width",    18.f, 68.f, 28.f } },
+		{ L"eraser",  { L"width",    18.f, 68.f, 28.f } },
+	};
+	// 找不到就返回 nullptr：调用方传的都是本文件里的字面量或图形自己的工具名，
+	// 真没命中说明表漏了一项，此时什么都不做比崩掉或按错值域夹要好
+	const SliderCfg* findSliderCfg(const std::wstring& tool)
+	{
+		for (auto& [id, cfg] : sliderCfgs) {
+			if (tool == id) return &cfg;
+		}
+		return nullptr;
+	}
+}
+
 ToolSub::ToolSub(WinPin* win) :Ling::WinBase(), win(win)
 {
 	// 跟着宿主窗口的缩放走：WinBase 构造里取的是系统 dpi，WinPin 可能在另一块缩放比例不同的屏上
@@ -69,19 +99,21 @@ void ToolSub::onCreated()
 
 // 各工具在 config.json 里的那一组（组名 = ToolMain 的按钮 id）就是唯一的状态存放处：
 // 切到某个工具时从里面读，用户一改就写回去，所以内存里不用再留一份每工具的状态。
-void ToolSub::beginTool(const std::wstring& id, const std::wstring& sliderKey, float min, float max, float defVal)
+void ToolSub::beginTool(const std::wstring& id)
 {
 	// 按钮和滑块马上要被销毁，onLeave 不会触发，提示得手动收掉
 	tip->hide();
 	contentNode->removeAllChildren();
 	curToolId = id;
-	curSliderKey = sliderKey;
-	sliderMin = min;
-	sliderMax = max;
+	auto cfg = findSliderCfg(id);
+	if (!cfg) return;
+	curSliderKey = cfg->key;
+	sliderMin = cfg->min;
+	sliderMax = cfg->max;
 	auto setting = Setting::get();
 	// 夹一遍值域：配置文件可能是上个版本写的（值域变过），也可能被手工改坏，
 	// 而这个值会直接当线宽/字号喂给 D2D，超出范围要么看不见要么慢得离谱
-	sliderVal = std::clamp(setting->getToolNum(id, sliderKey, defVal), min, max);
+	sliderVal = std::clamp(setting->getToolNum(id, cfg->key, cfg->def), cfg->min, cfg->max);
 	// colors[selectColorIndex] 那几处都不做边界检查，越界就读到界外了
 	auto idx = static_cast<UINT>(setting->getToolNum(id, L"colorIndex", 0.f));
 	selectColorIndex = idx < colors.size() ? idx : 0;
@@ -89,7 +121,7 @@ void ToolSub::beginTool(const std::wstring& id, const std::wstring& sliderKey, f
 
 void ToolSub::showRectTools()
 {
-	beginTool(L"rect", L"width", 1.f, 26.f, 2.f);
+	beginTool(L"rect");
 	initSize(1, true);
 	makeToggleBtn(L"\ue602", &isRectFill, L"tool.rectFill", L"fill");
 	initSlider();
@@ -98,7 +130,7 @@ void ToolSub::showRectTools()
 
 void ToolSub::showEllipseTools()
 {
-	beginTool(L"ellipse", L"width", 1.f, 26.f, 2.f);
+	beginTool(L"ellipse");
 	initSize(1, true);
 	makeToggleBtn(L"\ue600", &isEllipseFill, L"tool.ellipseFill", L"fill");
 	initSlider();
@@ -107,7 +139,7 @@ void ToolSub::showEllipseTools()
 
 void ToolSub::showArrowTools()
 {
-	beginTool(L"arrow", L"width", 1.f, 16.f, 3.f);
+	beginTool(L"arrow");
 	initSize(1, true);
 	makeToggleBtn(L"\ue604", &isArrowFill, L"tool.arrowFill", L"fill");
 	initSlider();
@@ -116,9 +148,8 @@ void ToolSub::showArrowTools()
 
 void ToolSub::showNumberTools()
 {
-	// 序号的滑块调的是圆半径（ShapeNumber 直接拿 getSliderVal 当 r），不是线宽，
-	// 值域也跟着 ShapeNumber 拖拽/滚轮的下限来，不再是原来那套空转的 1~36
-	beginTool(L"number", L"radius", numberMin, numberMax, 16.f);
+	// 序号的滑块调的是圆半径（ShapeNumber 直接拿 getSliderVal 当 r），不是线宽
+	beginTool(L"number");
 	initSize(1, true);
 	makeToggleBtn(L"\ue605", &isNumberFill, L"tool.numberFill", L"fill");
 	initSlider();
@@ -127,7 +158,7 @@ void ToolSub::showNumberTools()
 
 void ToolSub::showLineTools()
 {
-	beginTool(L"line", L"width", 1.f, 60.f, 12.f);
+	beginTool(L"line");
 	initSize(1, true);
 	makeToggleBtn(L"\ue607", &isLineTransparent, L"tool.semiTransparent", L"semiTransparent");
 	initSlider();
@@ -136,7 +167,7 @@ void ToolSub::showLineTools()
 
 void ToolSub::showTextTools()
 {
-	beginTool(L"text", L"fontSize", 10.f, 60.f, 20.f);
+	beginTool(L"text");
 	initSize(2, true);
 	makeToggleBtn(L"\ue634", &isTextBold, L"tool.bold", L"bold");
 	makeToggleBtn(L"\ue682", &isTextItalic, L"tool.italic", L"italic");
@@ -146,9 +177,8 @@ void ToolSub::showTextTools()
 
 void ToolSub::showMosaicTools()
 {
-	// 这两个没有颜色按钮、窗口窄，initSize 要居中对齐到按钮上；
-	// initSize 也会用到滑块宽度，所以 beginTool 仍排在它前面
-	beginTool(L"mosaic", L"width", 18.f, 68.f, 28.f);
+	// 这两个没有颜色按钮、窗口窄，initSize 要居中对齐到按钮上
+	beginTool(L"mosaic");
 	initSize(1, false, true);
 	makeToggleBtn(L"\ue602", &isMosaicRect, L"tool.rectFill", L"rect");
 	initSlider();
@@ -156,23 +186,29 @@ void ToolSub::showMosaicTools()
 
 void ToolSub::showEraserTools()
 {
-	beginTool(L"eraser", L"width", 18.f, 68.f, 28.f);
+	beginTool(L"eraser");
 	initSize(1, false, true);
 	makeToggleBtn(L"\ue602", &isEraserRect, L"tool.rectFill", L"rect");
 	initSlider();
 }
 
-void ToolSub::setNumberRadius(float radiusPx)
+float ToolSub::setShapeSliderVal(const std::wstring& tool, float px)
 {
-	auto logical = std::clamp(radiusPx / dpi, numberMin, numberMax);
-	// 序号工具正显示着（拖拽/滚轮改半径时基本都是这种情况）：走滑块，
-	// 它的 onValueChanged 会同步 sliderVal 并落盘，滑块上的位置也跟着动。
+	auto cfg = findSliderCfg(tool);
+	if (!cfg) return px;
+	auto logical = std::clamp(px / dpi, cfg->min, cfg->max);
+	// 正显示着这个工具的工具条（在自己刚画的图形上滚滚轮，基本都是这种情况）：走滑块，
+	// 让滑块上的位置也跟着动，它的 onValueChanged 会同步 sliderVal 并落盘。
 	// 值没变时 Slider::setValue 会提前返回，不会白写一次盘
-	if (curToolId == L"number" && slider) {
+	if (curToolId == tool && slider) {
 		slider->setValue(logical);
-		return;
 	}
-	Setting::get()->setToolNum(L"number", L"radius", logical);
+	else {
+		// 滚的是别的工具画出来的图形（比如选着椭圆工具，在一个已有的矩形边框上滚）：
+		// 只更新那个工具的配置，别去动当前这条工具条的滑块
+		Setting::get()->setToolNum(tool, cfg->key, logical);
+	}
+	return logical * dpi;
 }
 
 void ToolSub::layout()

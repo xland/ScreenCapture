@@ -13,7 +13,7 @@ ShapeNumber::ShapeNumber(WinPin* win) :ShapeBase(win), draggers{
 	D2D1::RectF(0,0,0,0),
 	D2D1::RectF(0,0,0,0) },
 	// 半径就是工具栏滑块的值（物理像素），跟别的工具的"线宽"是同一个滑块。
-	// 拖拽/滚轮改过之后会回写给滑块（见 setNumberRadius），所以后面新建的序号沿用同一大小，
+	// 拖拽/滚轮改过之后会回写给滑块（见 ToolSub::setShapeSliderVal），所以后面新建的序号沿用同一大小，
 	// 关掉应用再打开也还是这个大小 —— 值存在 config.json 的 toolPin.number.radius 里
 	r{ win->toolSub->getSliderVal() },
 	val{getNextVal(win)}
@@ -99,7 +99,8 @@ void ShapeNumber::mouseDrag(const float x, const float y)
 		r = sqrtf(dx * dx + dy * dy);
 		auto minR{ 8.f * win->dpi };
 		if (r < minR) r = minR;
-		win->toolSub->setNumberRadius(r);
+		// 用它夹好的返回值：半径不能超出工具栏滑块的值域，否则滑块显示的就不是真实大小了
+		r = win->toolSub->setShapeSliderVal(L"number", r);
 		makePath();
 		makeTextLayout();
 	}
@@ -175,7 +176,7 @@ void ShapeNumber::mouseWheel(const float x, const float y, const short delta)
 	else {
 		r++;
 	}
-	win->toolSub->setNumberRadius(r);
+	r = win->toolSub->setShapeSliderVal(L"number", r);
 	makePath();
 	makeTextLayout();
 	win->refresh();

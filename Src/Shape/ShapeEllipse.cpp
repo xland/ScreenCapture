@@ -243,6 +243,17 @@ void ShapeEllipse::mouseMove(const float x, const float y)
 	}
 }
 
+// 同 ShapeRect::mouseWheel：光标停在边框或八个 dragger 上时滚滚轮 = 调线宽
+void ShapeEllipse::mouseWheel(const float x, const float y, const short delta)
+{
+	if (isFill) return;
+	auto next = strokeWidth + (delta < 0 ? -win->dpi : win->dpi);
+	auto applied = win->toolSub->setShapeSliderVal(L"ellipse", next);
+	if (applied == strokeWidth) return;
+	strokeWidth = applied;
+	win->refresh();
+}
+
 void ShapeEllipse::setCursor()
 {
 	if (hoverDraggerIndex == 0 || hoverDraggerIndex == 4) {

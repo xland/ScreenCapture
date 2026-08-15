@@ -31,9 +31,10 @@ public:
 	// 滑块当前值（逻辑像素语义，用作线宽/字号等；D2D 里当物理像素用的话记得乘 dpi）。
 	// 值存在 sliderVal 里而不是问 Slider 节点要 —— 节点每次切换工具都被销毁重建。
 	float getSliderVal() const;
-	// 序号工具专用：拖拽或滚轮改了某个序号的半径之后回填过来（入参是物理像素）。
-	// 序号的大小与别的工具的"线宽"是同一个滑块，所以走滑块回写，顺带落盘。
-	void setNumberRadius(float radiusPx);
+	// 在图形上滚滚轮改了尺寸之后回填过来（序号的圆半径、矩形/椭圆的线宽），入参是物理像素。
+	// 返回夹到该工具滑块值域内的物理像素值 —— 调用方拿它当最终尺寸，图形就不会滚出滑块的范围。
+	// 正显示着这个工具的工具条时滑块跟着动，顺带落盘；滚的是别的工具画的图形时只更新配置。
+	float setShapeSliderVal(const std::wstring& tool, float px);
 	// ToolMain 与 ToolSub 之间的间距，WinPin::layoutTools() 计算整组高度时要用
 	static constexpr float mainGap{ 2.f };
 public:
@@ -53,9 +54,9 @@ private:
 	// （fill / semiTransparent / bold / …，同一工具下不能重名）。
 	Ling::Button* makeToggleBtn(const std::wstring& text, bool* flag, const std::wstring& tipKey, const std::wstring& cfgKey);
 	// 每个 show*Tools 开头都要做的事：收提示、清旧内容、记下当前工具，
-	// 再把这个工具存在 config.json 里的滑块值和颜色读回来（读不到就用 defVal / 第一个颜色）。
-	// sliderKey 是滑块值在配置里的键名，各工具语义不同（width / radius / fontSize）。
-	void beginTool(const std::wstring& id, const std::wstring& sliderKey, float min, float max, float defVal);
+	// 再把这个工具存在 config.json 里的滑块值和颜色读回来（读不到就用默认值 / 第一个颜色）。
+	// 滑块的键名与值域查 .cpp 里那张表，id 必须是表里有的（就是 ToolMain 的按钮 id）。
+	void beginTool(const std::wstring& id);
 	// 按内容算出窗口尺寸并应用。btnCount 只数工具按钮，不含颜色按钮。
 	// centerOnBtn 为 true 时窗口居中对齐到 ToolMain 上选中的那个按钮，否则与 ToolMain 左对齐。
 	void initSize(int btnCount, bool withColors, bool centerOnBtn = false);

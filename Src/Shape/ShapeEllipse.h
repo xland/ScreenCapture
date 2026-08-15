@@ -12,6 +12,7 @@ public:
 	void mouseDown(const float x, const float y) override;
 	void mouseUp(const float x, const float y) override;
 	void mouseMove(const float x, const float y) override;
+	void mouseWheel(const float x, const float y, const short delta) override;
 	void setCursor() override;
 public:
 private:

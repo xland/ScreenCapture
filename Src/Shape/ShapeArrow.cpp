@@ -130,6 +130,21 @@ void ShapeArrow::mouseMove(const float x, const float y)
 	}
 }
 
+// 光标停在两端的 dragger 或箭头身上（此时 WinPin 才把滚轮事件转过来）滚滚轮 = 调箭头大小，
+// 与矩形/椭圆用滚轮调线宽是一回事。
+void ShapeArrow::mouseWheel(const float x, const float y, const short delta)
+{
+	// arrowSize 是滑块值的 4 倍（见构造函数），所以换算回滑块那个尺度再交给 ToolSub 夹值，
+	// 它返回的也是滑块尺度的物理像素，再乘回 4。一格走一个滑块刻度
+	auto step{ 4.f * win->dpi };
+	auto next = arrowSize + (delta < 0 ? -step : step);
+	auto applied = win->toolSub->setShapeSliderVal(L"arrow", next / 4.f) * 4.f;
+	if (applied == arrowSize) return;   //已经顶到值域的头了，不用重画
+	arrowSize = applied;
+	makeArrow();                        //形状是按 arrowSize 算出来的，得重建
+	win->refresh();
+}
+
 void ShapeArrow::setCursor()
 {
 	SetCursor(LoadCursor(nullptr, IDC_SIZEALL));
