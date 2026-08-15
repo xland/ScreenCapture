@@ -99,6 +99,9 @@
     <ClCompile Include="Tool\ToolVideo.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Update.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
     <ClCompile Include="Util.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -223,6 +226,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Tool\ToolVideo.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Update.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Util.h">

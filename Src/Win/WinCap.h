@@ -66,6 +66,10 @@ private:
 	void onUp(POINT pos, bool isRight);
 	void onClosed();
 	void makeToolCap();
+	// 命令行给了 --enter=xxx（long / video / ocr / qr / pin）时，框完选区不出 ToolCap，
+	// 直接走对应的那条路 —— 等于替用户点了工具条上的那个按钮。
+	// 返回是否已经接手；值不认识（拼错了）就返回 false，照常出工具条
+	bool enterByArg();
 	// DPI 变了之后重走一遍工具条的摆放规则（哪个阶段就重排哪个工具条）
 	void relayoutTool();
 	// 进长图 / 录屏阶段的公共动作：收掉底图与工具条，并提到最上层

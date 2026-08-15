@@ -6,19 +6,15 @@
 
 ## Fitur
 
-- Screenshot, anotasi, screenshot panjang (scroll), perekaman layar.
+- Screenshot, anotasi, screenshot panjang (scroll), perekaman layar (GIF/MP4), pengenalan teks (OCR), pengenalan kode QR.
 - Pipet warna dengan pintasan keyboard untuk menyalin warna RGB (`Ctrl+R`), HEX (`Ctrl+H`), dan CMYK (`Ctrl+K`).
-- Menggambar elips dengan atau tanpa isi, lingkaran sempurna (tahan `Shift`), persegi panjang, persegi (tahan `Shift`), panah, label bernomor, dll.
+- Menggambar elips, lingkaran sempurna (tahan `Shift`), persegi panjang, persegi (tahan `Shift`), panah, label bernomor, dll.
 - Menggambar kurva, garis lurus (tahan `Shift`), mosaik, penghapus, teks.
 - Mengubah atau menghapus elemen yang telah digambar kapan saja (arahkan kursor mouse pada elemen).
 - Urungkan (`Ctrl+Z`), ulangi (`Ctrl+Y`), simpan ke file (`Ctrl+S`), simpan ke clipboard (`Ctrl+C` atau klik dua kali).
-- Screenshot panjang dengan scroll, perekaman layar (format output GIF/Mp4).
-- Dibangun di atas kerangka GUI [Ling](https://github.com/xland/Ling).
-- Mendukung plugin pengenalan teks OCR [ImageReader(25MB)](https://github.com/xland/ImageReader).
-- Mendukung pengenalan kode QR.
 - Performa cepat dengan penggunaan memori minimal.
-- Ukuran kecil, hanya satu file eksekusi, tanpa instalasi, tidak memerlukan pustaka tautan dinamis.
-- Mendukung menjalankan fungsi tertentu secara langsung melalui argumen baris perintah.
+- Ukuran kecil, hanya satu file eksekusi, tanpa instalasi, tidak memerlukan pustaka tautan dinamis (kecuali pengenalan teks).
+- Mendukung berbagai argumen baris perintah untuk langsung menjalankan fungsi tertentu.
 - Mendukung mode sekali pakai (proses tidak akan terus berjalan di sistem).
 - Dukungan multibahasa.
 
@@ -41,6 +37,19 @@
 ```
 // Hentikan proses segera setelah pengambilan gambar selesai.
 > ScreenCapture.exe --auto-quit=true
+
+// Lewati bilah alat setelah area dipilih dan langsung masuk ke fungsi yang ditentukan:
+// long = tangkapan bergulir (screenshot panjang)
+> ScreenCapture.exe --enter=long
+// video = perekaman layar
+> ScreenCapture.exe --enter=video
+// ocr = pengenalan teks
+> ScreenCapture.exe --enter=ocr
+// qr = pengenalan kode QR
+> ScreenCapture.exe --enter=qr
+
+// Kedua argumen bisa digabung, misalnya: tanpa ikon tray, proses langsung keluar setelah screenshot panjang selesai.
+> ScreenCapture.exe --enter=long --auto-quit=true
 ```
 
 ## Plugin Pengenalan Teks (OCR)

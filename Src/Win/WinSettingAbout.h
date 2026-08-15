@@ -6,8 +6,6 @@ public:
 	WinSettingAbout(Ling::WinBase* parent);
 	~WinSettingAbout();
 private:
-	std::wstring getVer();
-private:
 	std::vector<Ling::Button*> btns;
 };
 

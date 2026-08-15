@@ -270,6 +270,22 @@ void Setting::setToolNum(const std::wstring& tool, const std::wstring& key, floa
     save();
 }
 
+long long Setting::getUpdateCheckDay()
+{
+    auto common = configObj.GetNamedObject(L"common", nullptr);
+    if (!common) return 0;
+    return static_cast<long long>(common.GetNamedNumber(L"updateCheckDay", 0));
+}
+
+void Setting::setUpdateCheckDay(long long day)
+{
+    auto common = configObj.GetNamedObject(L"common", nullptr);
+    if (!common) return;
+    // 这项不写进 defaultConfig：它是程序自己的记账，不是给用户改的配置
+    common.SetNamedValue(L"updateCheckDay", JsonValue::CreateNumberValue(static_cast<double>(day)));
+    save();
+}
+
 void Setting::initShortcutKeys()
 {
     auto lingApp = Ling::App::get();

@@ -2,6 +2,7 @@
 #include "../Lang.h"
 #include "WinSetting.h"
 #include "WinSettingAbout.h"
+#include "../Util.h"
 
 WinSettingAbout::WinSettingAbout(Ling::WinBase* parent):Ling::Node(parent)
 {
@@ -22,7 +23,7 @@ WinSettingAbout::WinSettingAbout(Ling::WinBase* parent):Ling::Node(parent)
         auto btn = box->makeChild<Ling::Button>();
         btn->setId(key);
         if (key == L"version") {
-            btn->setText(getVer());
+            btn->setText(Util::getVer());
         }
         else if (key == L"project") {
             btn->setText(L"github.com/xland/ScreenCapture");
@@ -58,33 +59,4 @@ WinSettingAbout::WinSettingAbout(Ling::WinBase* parent):Ling::Node(parent)
 WinSettingAbout::~WinSettingAbout()
 {
 
-}
-
-std::wstring WinSettingAbout::getVer()
-{
-    std::vector<wchar_t> exePath(MAX_PATH);
-    //获取exe文件的路径（自身路径）
-    if (GetModuleFileName(nullptr, exePath.data(), static_cast<DWORD>(exePath.size())) == 0) {
-        return L"0.0.0";
-    }
-    DWORD dummy;
-    //获取版本资源大小
-    DWORD versionSize = GetFileVersionInfoSize(exePath.data(), &dummy);
-    if (versionSize == 0) {
-        return L"0.0.0";
-    }
-    std::vector<BYTE> versionData(versionSize);
-    //获取版本信息
-    if (!GetFileVersionInfo(exePath.data(), 0, versionSize, versionData.data())) {
-        return L"0.0.0";
-    }
-    VS_FIXEDFILEINFO* fileInfo = nullptr;
-    UINT fileInfoSize = 0;
-    if (!VerQueryValue(versionData.data(), L"\\", reinterpret_cast<void**>(&fileInfo), &fileInfoSize)) {
-        return L"0.0.0";
-    }
-    int major = (fileInfo->dwFileVersionMS >> 16) & 0xFFFF;
-    int minor = fileInfo->dwFileVersionMS & 0xFFFF;
-    int patch = (fileInfo->dwFileVersionLS >> 16) & 0xFFFF;
-    return std::format(L"{}.{}.{}", major, minor, patch);
 }

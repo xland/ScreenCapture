@@ -6,19 +6,15 @@
 
 ## Features
 
-- Screenshot, drawing annotations, scrolling screenshot (long screenshot), screen recording.
+- Screenshot, drawing annotations, scrolling screenshot (long screenshot), screen recording (GIF/MP4), text recognition (OCR), QR code recognition.
 - Color picker, supports shortcut keys to copy RGB color (`Ctrl+R`), HEX color (`Ctrl+H`) and CMYK color (`Ctrl+K`).
-- Draw filled and unfilled ellipses, perfect circles (hold `Shift`), rectangles, squares (hold `Shift`), arrows, numbered labels, etc.
+- Draw ellipses, perfect circles (hold `Shift`), rectangles, squares (hold `Shift`), arrows, numbered labels, etc.
 - Draw curves, straight lines (hold `Shift`), mosaic, eraser, text.
 - Modify or delete drawn elements at any time (hover the mouse over an element).
 - Undo (`Ctrl+Z`), redo (`Ctrl+Y`), save to file (`Ctrl+S`), save to clipboard (`Ctrl+C` or double-click).
-- Scrolling screenshot (long screenshot), screen recording (output Gif\Mp4 format).
-- Based on the [Ling](https://github.com/xland/Ling) GUI framework.
-- Supports the OCR text recognition plugin [ImageReader(25MB)](https://github.com/xland/ImageReader).
-- Supports QR code recognition.
 - Fast performance with low memory usage.
-- Small size, a single executable file, no installation required, does not depend on any dynamic link libraries.
-- Supports directly launching specified functions via command-line arguments.
+- Small size, a single executable file, no installation required, does not depend on any dynamic link libraries (except for text recognition).
+- Supports a variety of command-line arguments for launching a specified function directly.
 - Supports one-time execution mode (the process will not remain resident in the system).
 - Multi-language support.
 
@@ -41,6 +37,19 @@
 ```
 // Terminate the process immediately after the capture is finished.
 > ScreenCapture.exe --auto-quit=true
+
+// Skip the toolbar once the region is selected and go straight into the specified feature:
+// long = scrolling capture (long screenshot)
+> ScreenCapture.exe --enter=long
+// video = screen recording
+> ScreenCapture.exe --enter=video
+// ocr = text recognition
+> ScreenCapture.exe --enter=ocr
+// qr = QR code recognition
+> ScreenCapture.exe --enter=qr
+
+// The two arguments can be combined, for example: no tray icon, and the process quits right after the long screenshot is taken.
+> ScreenCapture.exe --enter=long --auto-quit=true
 ```
 
 ## Text Recognition (OCR) Plugin

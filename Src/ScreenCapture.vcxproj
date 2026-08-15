@@ -187,6 +187,7 @@
     <ClCompile Include="Tool\ToolVideo.cpp" />
     <ClCompile Include="Tip.cpp" />
     <ClCompile Include="Tray.cpp" />
+    <ClCompile Include="Update.cpp" />
     <ClCompile Include="Util.cpp" />
     <ClCompile Include="Win\cgif\cgif.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
@@ -258,6 +259,7 @@
     <ClInclude Include="Tool\ToolVideo.h" />
     <ClInclude Include="Tip.h" />
     <ClInclude Include="Tray.h" />
+    <ClInclude Include="Update.h" />
     <ClInclude Include="Util.h" />
     <ClInclude Include="quirc\quirc.h" />
     <ClInclude Include="quirc\quirc_internal.h" />

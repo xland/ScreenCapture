@@ -3,6 +3,7 @@
 #include "Setting.h"
 #include "Tray.h"
 #include "Lang.h"
+#include "Update.h"
 #include "./Win/WinCap.h"
 
 std::unique_ptr<App> app;
@@ -46,6 +47,9 @@ App* App::get()
 // 纯属白折腾。3 秒内再调一次就重新计时。
 void App::trimMemoryLater()
 {
+    // 这个函数就是"活干完了、只剩托盘图标"这个时机本身，自动升级也挂在这儿：
+    // 启动时就去请求服务端会跟截图抢资源，而且用户可能就是抓一张图就走的
+    Update::checkLater();
     if (trimTimer) {
         KillTimer(nullptr, trimTimer);
         trimTimer = 0;
@@ -115,8 +119,9 @@ App::App()
         bool flag = app->refuseSecondInstance();
         if (flag) return;
         Tray::init();
-		if (app->args[L"--auto-start"] == L"true") {
-			//开机自启模式不启动截图。图形设备刚建好就没人用，先把缓存还回去
+		// 开机自启不启动截图；--enter=tray 也一样，升级完重启新版本走的就是它 ——
+		// 都是"只挂个托盘图标待命"。图形设备刚建好就没人用，先把缓存还回去
+		if (app->args[L"--auto-start"] == L"true" || app->args[L"--enter"] == L"tray") {
 			trimMemoryLater();
 			return;
 		}

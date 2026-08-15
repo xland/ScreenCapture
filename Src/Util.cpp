@@ -364,6 +364,37 @@ std::string Util::convertToStr(const std::wstring& wstr)
 	return str;
 }
 
+std::array<int, 3> Util::getVerNum(const std::wstring& exePath)
+{
+	std::array<int, 3> result{ 0,0,0 };
+	std::wstring path{ exePath };
+	if (path.empty()) {
+		std::vector<wchar_t> buf(MAX_PATH);
+		auto len = GetModuleFileName(nullptr, buf.data(), static_cast<DWORD>(buf.size()));
+		if (len == 0) return result;
+		path.assign(buf.data(), len);
+	}
+	DWORD dummy;
+	//版本资源的大小。不是 PE 文件、或者没打版本资源，这里就是 0
+	DWORD versionSize = GetFileVersionInfoSize(path.data(), &dummy);
+	if (versionSize == 0) return result;
+	std::vector<BYTE> versionData(versionSize);
+	if (!GetFileVersionInfo(path.data(), 0, versionSize, versionData.data())) return result;
+	VS_FIXEDFILEINFO* fileInfo = nullptr;
+	UINT fileInfoSize = 0;
+	if (!VerQueryValue(versionData.data(), L"\\", reinterpret_cast<void**>(&fileInfo), &fileInfoSize)) return result;
+	result[0] = (fileInfo->dwFileVersionMS >> 16) & 0xFFFF;
+	result[1] = fileInfo->dwFileVersionMS & 0xFFFF;
+	result[2] = (fileInfo->dwFileVersionLS >> 16) & 0xFFFF;
+	return result;
+}
+
+std::wstring Util::getVer(const std::wstring& exePath)
+{
+	auto ver = getVerNum(exePath);
+	return std::format(L"{}.{}.{}", ver[0], ver[1], ver[2]);
+}
+
 ComPtr<IDWriteTextLayout> Util::makeTextLayout(const std::wstring& text, float w, float h, float fontSize)
 {
 	ComPtr<IDWriteTextLayout> layout;

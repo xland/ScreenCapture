@@ -422,6 +422,9 @@ void WinCap::onUp(POINT pos, bool isRight)
         isPress = false;
         // 只是点了一下，又没吸附到任何窗口，那就接着让用户框
         if (!cutMask->hasRect()) return;
+        // 命令行指定了直奔某个阶段：它比下面 Ctrl 那条钉图的快捷路径更优先 ——
+        // 参数是用户明确要求的，Ctrl 只是顺手按上的
+        if (enterByArg()) return;
         // 按住 Ctrl 框选：跳过调整和工具条，直接钉到桌面上
         if (GetKeyState(VK_CONTROL) & 0x8000) {
             startPin();
@@ -483,6 +486,26 @@ void WinCap::makeToolCap()
     // 尺寸在 ToolCap 构造里算好了，这里只定位；两者都要在建窗口之前设好
     layoutTool(toolCap.get());
     toolCap->createNativeWindow(WS_EX_TOPMOST | WS_EX_NOACTIVATE | WS_EX_TOOLWINDOW, WS_POPUP);
+}
+
+bool WinCap::enterByArg()
+{
+    auto& args = Ling::App::get()->args;
+    auto it = args.find(L"--enter");
+    if (it == args.end()) return false;
+    auto& val = it->second;
+    // 下面这几条路本来都是从 ToolCap 的按钮进的，start* 会检查选区是不是已经定下来了
+    stage = CapStage::Adjust;
+    refresh();      //收掉放大镜：这几条路都是马上要换阶段或者弹窗，屏幕上不能留着它
+    if (val == L"long") startLong();
+    else if (val == L"video") startVideo();
+    else if (val == L"ocr") startOcr();
+    else if (val == L"qr" || val == L"qrcode") startQrcode();
+    else if (val == L"pin") startPin();   //等于替用户按住了 Ctrl 框选
+    // 值不认识（用户拼错了）：当没给这个参数，照常出工具条。上面那两句白做了，
+    // 但调用方接着也是这两句，重复一遍没有副作用
+    else return false;
+    return true;
 }
 
 void WinCap::relayoutTool()

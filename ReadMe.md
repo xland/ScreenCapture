@@ -6,19 +6,15 @@
 
 ## 特性
 
-- 截图、绘图标注、滚动截图（截长图）、录屏。
-- 取景框，支持快捷键复制 RGB 颜色（`Ctrl+R`）、 HEX 颜色（`Ctrl+H`）与 CMYK 颜色（`Ctrl+K`）。
-- 绘制填充、非填充的椭圆、正圆（按住`Shift`）、矩形、正方形（按住`Shift`）、箭头、标号等。
+- 截图、绘图标注、滚动截图（截长图）、录屏（GIF/MP4）、文字识别（OCR）、二维码识别。
+- 取景框（拾色器），支持快捷键复制 RGB 颜色（`Ctrl+R`）、 HEX 颜色（`Ctrl+H`）与 CMYK 颜色（`Ctrl+K`）。
+- 绘制椭圆、正圆（按住`Shift`）、矩形、正方形（按住`Shift`）、箭头、标号等。
 - 绘制曲线、直线（按住`Shift`）、马赛克、橡皮擦、文本。
 - 可以随时修改、删除已绘制的元素（鼠标移到元素上）。
 - 撤销（`Ctrl+Z`）、重做（`Ctrl+Y`）、保存为文件（`Ctrl+S`）、保存到剪贴板（`Ctrl+C`或双击）。
-- 滚动截图（截长图）、屏幕录制（输出Gif\Mp4格式）。
-- 基于[Ling](https://github.com/xland/Ling) GUI 框架。
-- 支持文字识别插件 OCR [ImageReader(25MB)](https://github.com/xland/ImageReader)。
-- 支持二维码识别功能。
 - 运行速度快、内存占用低。
-- 体积小、仅一个可执行文件，无需安装，不依赖任何动态链接库。
-- 支持通过命令行参数直接启动指定的功能。
+- 体积小、仅一个可执行文件，无需安装，不依赖任何动态链接库（文字识别除外）。
+- 支持多种命令行参数直接启动指定的功能。
 - 支持用完即走（进程不驻留在系统中）。
 - 多语言支持。
 
@@ -41,6 +37,23 @@
 ```
 // 截图完成后即退出进程。
 > ScreenCapture.exe --auto-quit=true
+
+// 框选完成后不显示工具条，直接进入指定功能：
+// pin 钉图/图像标记
+> ScreenCapture.exe --enter=pin
+// long 长截图
+> ScreenCapture.exe --enter=long
+// video 屏幕录制
+> ScreenCapture.exe --enter=video
+// ocr 文字识别
+> ScreenCapture.exe --enter=ocr
+// qr 二维码识别
+> ScreenCapture.exe --enter=qr
+// tray 仅注册托盘图标，不执行任何操作
+> ScreenCapture.exe --enter=tray
+
+// 两个参数可以联合使用，比如：不注册托盘图标，截完长图后进程直接退出
+> ScreenCapture.exe --enter=long --auto-quit=true
 ```
 
 ## 文字识别插件

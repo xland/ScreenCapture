@@ -23,11 +23,12 @@
 - 全屏录制时，不录制工具栏，工具栏不出现在最终生成的视频中
 - **持久化工具栏的状态**（比如：矩形边框粗细调整后，下次启动程序，会使用调整后的边框粗细值）
 - 鼠标滚轮可以调整矩形、椭圆边框粗细，箭头、标号的大小
+- 支持命令行参数 --enter=long/video/ocr/qr：框选完成后不显示工具条，直接进入长截图、屏幕录制、文字识别、二维码识别，可与 --auto-quit 联合使用
 
 开源地址：
 
 [https://github.com/xland/ScreenCapture](https://github.com/xland/ScreenCapture)
-[https://gitcode.com/liulun1/ScreenCapture](https://gitcode.com/liulun1/ScreenCapture)
+[https://gitee.com/horsejs_admin/ScreenCapture](https://gitee.com/horsejs_admin/ScreenCapture)
 
 项目说明：
 

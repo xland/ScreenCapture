@@ -30,6 +30,10 @@ public:
 	void setToolFlag(const std::wstring& tool, const std::wstring& key, bool val);
 	float getToolNum(const std::wstring& tool, const std::wstring& key, float def);
 	void setToolNum(const std::wstring& tool, const std::wstring& key, float val);
+	// 上次检查更新是哪一天（std::chrono::days 的计数，即 1970-01-01 以来的天数），
+	// 从来没查过返回 0。一天最多查一次服务端，靠它记账 —— 每次空闲都去请求纯属浪费人家的流量
+	long long getUpdateCheckDay();
+	void setUpdateCheckDay(long long day);
 private:
 	Setting();
 	// 把 config.json 读进 configObj。文件不存在 / 空文件 / 内容不是合法 JSON 都回落到
