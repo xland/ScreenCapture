@@ -32,6 +32,14 @@ public:
 	void setToolNum(const std::wstring& tool, const std::wstring& key, float val);
 private:
 	Setting();
+	// 把 config.json 读进 configObj。文件不存在 / 空文件 / 内容不是合法 JSON 都回落到
+	// 默认配置，一律不抛异常 —— 往 exe 目录里丢个空的 config.json 就该能用起来。
+	// 返回是否真的从文件里读到了配置（没读到就说明内存里这份是默认值，得落盘补上）
+	bool loadConfig();
+	// 默认配置里有、当前配置里缺的键，补齐。老版本写下的配置文件、用户手工改坏的配置文件
+	// 都可能缺键，而代码里有几处是直接按名字取的，缺一个就抛异常。
+	// 返回是否补过东西 —— 补过就得落盘
+	bool ensureDefaults();
 	// toolPin.<tool> 那个 JsonObject。缺哪一层就现建一层挂上去 ——
 	// SetNamedValue 得有个落脚的对象，而这两层在旧配置文件里都不存在
 	JsonObject getToolObj(const std::wstring& tool);

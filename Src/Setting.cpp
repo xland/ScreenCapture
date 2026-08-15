@@ -4,23 +4,89 @@
 #include "Lang.h"
 #include "Win/WinCap.h"
 #include "App.h"
+#include <fstream>
 
 namespace {
     std::unique_ptr<Setting> setting;
     constexpr int capShortcutMsgId{ 100 };
+    // 配置文件的默认内容。空文件、坏 JSON、缺键都拿它兜底，所以这里列出的每一项
+    // 都是代码里会直接按名字取的（见 getLang / getAutoStart / initShortcutKeys）
+    constexpr std::wstring_view defaultConfig{ LR"""({"common":{"autoStart":false,"language":"zh-CN"},"shortcutKey":{"cap":"Ctrl+Alt+A"}})""" };
+
+    // 自己读文件而不用 Ling::Util::readFile：那个只认 UTF-16LE，而且是按字节数 resize 的，
+    // 后面会跟着一半长度的 \0。用户拿记事本新建的 config.json 默认是 UTF-8，
+    // 得认出来 —— 不然就会被当成坏文件，把人家写的配置直接盖掉
+    std::wstring readConfigText(const std::filesystem::path& path)
+    {
+        std::ifstream file{ path, std::ios::binary };
+        if (!file) return L"";
+        std::string bytes{ std::istreambuf_iterator<char>{file}, std::istreambuf_iterator<char>{} };
+        // UTF-16LE（save() 写出来的就是这个）：跳过 BOM，按 wchar_t 重新解释。
+        // 字节数是奇数说明文件本来就坏了，末尾那半个字符丢掉，后面解析失败会走默认值
+        if (bytes.size() >= 2 && static_cast<unsigned char>(bytes[0]) == 0xFF
+            && static_cast<unsigned char>(bytes[1]) == 0xFE) {
+            std::wstring str((bytes.size() - 2) / sizeof(wchar_t), L'\0');
+            memcpy(str.data(), bytes.data() + 2, str.size() * sizeof(wchar_t));
+            return str;
+        }
+        if (bytes.starts_with("\xEF\xBB\xBF")) bytes.erase(0, 3); //UTF-8 BOM
+        if (bytes.empty()) return L"";                            //空文件，含只有一个 BOM 的
+        // 剩下的一律按 UTF-8 认：记事本、VSCode 新建的文件都是这个，纯 ASCII 的 JSON 也照样过
+        auto len = MultiByteToWideChar(CP_UTF8, 0, bytes.data(), static_cast<int>(bytes.size()), nullptr, 0);
+        if (len <= 0) return L"";
+        std::wstring str(len, L'\0');
+        MultiByteToWideChar(CP_UTF8, 0, bytes.data(), static_cast<int>(bytes.size()), str.data(), len);
+        return str;
+    }
 }
 
 
 Setting::Setting() :dataPath{ initDataPath() }, configPath{ initConfigPath() }
 {
+    // 分两句写而不是 dirty = !loadConfig() || ensureDefaults()：那样 ensureDefaults 会被短路掉
+    bool dirty = !loadConfig();
+    if (ensureDefaults()) dirty = true;
+    // 回落到默认值或补过键就写回去：下次启动不用再兜底一遍，用户也能在文件里看到有哪些项可改
+    if (dirty) save();
+}
+
+bool Setting::loadConfig()
+{
     if (std::filesystem::exists(configPath)) {
-        auto pathStr = configPath.wstring();
-        std::wstring content = Ling::Util::readFile(pathStr);
-        configObj = JsonObject::Parse(content.data());
+        auto content = readConfigText(configPath);
+        JsonObject obj{ nullptr };
+        // 用 TryParse 而不是 Parse：后者解析失败是抛 winrt::hresult_error，
+        // 空文件、写坏的 JSON、根节点不是对象（比如一个数组）都会失败，这里一律当没读到
+        if (JsonObject::TryParse(content, obj)) {
+            configObj = obj;
+            return true;
+        }
     }
-    else {
-        configObj = JsonObject::Parse(LR"""({"common":{"autoStart":false,"language":"zh-CN"},"shortcutKey":{"cap":"Ctrl+Alt+A"}})""");
+    configObj = JsonObject::Parse(defaultConfig); //字面量，不会失败
+    return false;
+}
+
+bool Setting::ensureDefaults()
+{
+    auto def = JsonObject::Parse(defaultConfig);
+    bool dirty{ false };
+    for (auto&& group : def) {                                   //common / shortcutKey
+        auto name = group.Key();
+        auto defObj = group.Value().GetObject();
+        // 带默认值的重载：这一层缺了、或者被手工改成了字符串之类的非对象，都返回 nullptr
+        auto obj = configObj.GetNamedObject(name, nullptr);
+        if (!obj) {
+            configObj.SetNamedValue(name, defObj);
+            dirty = true;
+            continue;
+        }
+        for (auto&& item : defObj) {
+            if (obj.HasKey(item.Key())) continue;                 //用户自己的值一概不动
+            obj.SetNamedValue(item.Key(), item.Value());
+            dirty = true;
+        }
     }
+    return dirty;
 }
 
 Setting::~Setting()
@@ -73,8 +139,11 @@ void Setting::setShortcutKey(const std::wstring& type, const std::vector<std::ws
 
 std::wstring Setting::getShortcutKey(const std::wstring& type)
 {
-    auto obj = configObj.GetNamedObject(L"shortcutKey");
-    return std::wstring{ obj.GetNamedString(type) };
+    // 一路用带默认值的重载：启动时 ensureDefaults 已经补齐过，这里只是别让运行期
+    // 意外（配置被外部改动、问了个没配过的 type）变成一次崩溃
+    auto obj = configObj.GetNamedObject(L"shortcutKey", nullptr);
+    if (!obj) return L"";
+    return std::wstring{ obj.GetNamedString(type, L"") };
 }
 
 void Setting::setAutoStart(bool autoStart)
@@ -105,8 +174,8 @@ void Setting::setAutoStart(bool autoStart)
 
 bool Setting::getAutoStart()
 {
-    auto common = configObj.GetNamedObject(L"common");
-    return common.GetNamedBoolean(L"autoStart");
+    auto common = configObj.GetNamedObject(L"common", nullptr);
+    return common && common.GetNamedBoolean(L"autoStart", false);
 }
 
 std::filesystem::path Setting::initDataPath()
@@ -149,9 +218,9 @@ void Setting::save()
 
 std::wstring Setting::getLang()
 {
-    auto common = configObj.GetNamedObject(L"common");
-    auto lang = common.GetNamedString(L"language");
-    return std::wstring{ lang };
+    auto common = configObj.GetNamedObject(L"common", nullptr);
+    if (!common) return L"zh-CN";
+    return std::wstring{ common.GetNamedString(L"language", L"zh-CN") };
 }
 
 void Setting::setLang(const std::wstring& langCode)
@@ -204,8 +273,9 @@ void Setting::setToolNum(const std::wstring& tool, const std::wstring& key, floa
 void Setting::initShortcutKeys()
 {
     auto lingApp = Ling::App::get();
-    auto configShortcut = Setting::get()->getConfigObj().GetNamedObject(L"shortcutKey");
-    std::wstring capStr{ configShortcut.GetNamedString(L"cap") };
+    // 取不到就用默认的那个组合：热键注册不上顶多是快捷键不好用，不该让程序起不来
+    std::wstring capStr{ getShortcutKey(L"cap") };
+    if (capStr.empty()) capStr = L"Ctrl+Alt+A";
     lingApp->regHotKey(capStr, capShortcutMsgId);
 
     lingApp->onHotKey.add([this](UINT msg) {
