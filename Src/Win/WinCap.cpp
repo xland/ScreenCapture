@@ -573,6 +573,10 @@ void WinCap::enterLiveStage()
     // 底图是拖框那一刻的静态截图，从这里开始不能再画它 ——
     // 否则录屏和滚动截图从屏幕上拿到的都是这张死图。只留遮罩，选区内是透明的洞。
     hideScreenImg = true;
+    // 尺寸标签放不下时会折回选区内部（全屏必然如此），那就会被录进去 / 滚进长图。
+    // 选区这时已经定死了，标签也没什么可看的，直接不画 —— 这样选区内就真的什么都不画了，
+    // 不必再拿 WDA_EXCLUDEFROMCAPTURE 去摘整块屏幕大小的宿主窗口
+    cutMask->hideLabel = true;
     if (toolCap) toolCap->hide();
     // 原来的 WinLong / WinVideo 建窗口时就是 topmost，这里补上
     SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
@@ -603,10 +607,6 @@ void WinCap::startVideo()
     if (stage != CapStage::Adjust || !cutMask->hasRect()) return;
     stage = CapStage::Video;
     enterLiveStage();
-    // 宿主窗口自己也得摘出屏幕捕获：录制期间它还在画遮罩，而 CutMask 的尺寸标签在
-    // 选区上方放不下时会折回选区内部（全屏录制必然如此），不摘出去它会被录进去。
-    // 长图那条路不需要这么做 —— CapLong 是用 hollowWin() 把选区抠成洞来避开的
-    App::excludeFromCapture(hwnd);
     capVideo = std::make_unique<CapVideo>(this);
     // ToolCap 原地换成 ToolVideo
     capVideo->makeTool();

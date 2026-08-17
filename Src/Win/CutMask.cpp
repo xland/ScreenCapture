@@ -196,6 +196,7 @@ void CutMask::paint(ID2D1DeviceContext* ctx)
 	ctx->FillRectangle(D2D1::RectF(maskRect.right, maskRect.top, win->w, maskRect.bottom), brushBg.Get());
 	auto halfStrokeWidth{ strokeWidth / 2.f };
 	ctx->DrawRectangle(D2D1::RectF(maskRect.left - halfStrokeWidth, maskRect.top - halfStrokeWidth, maskRect.right + halfStrokeWidth, maskRect.bottom + halfStrokeWidth), brushBorder.Get(), strokeWidth);
+	if (hideLabel) return;
 	ctx->FillRectangle(layoutRect, brushBg.Get());
 	ctx->DrawTextLayout({ layoutRect.left+ paddingMargin, layoutRect.top+ paddingMargin }, layout.Get(), brushText.Get(), D2D1_DRAW_TEXT_OPTIONS_NONE);
 }

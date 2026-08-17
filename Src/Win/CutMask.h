@@ -27,6 +27,8 @@ public:
 public:
 	D2D1_RECT_F maskRect{};
 	float strokeWidth{ 2.f };
+	// 选区定死之后（录屏 / 滚动截图）标签就没用了，而它可能压在选区内部被录进去
+	bool hideLabel{ false };
 private:
 	void initWinRect();
 	// 尺寸标签只在 maskRect 变化时重建，不必每帧现建

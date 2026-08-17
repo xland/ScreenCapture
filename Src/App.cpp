@@ -77,7 +77,17 @@ std::tuple<int, int, int, int> App::getScreenArea()
 void App::excludeFromCapture(HWND hwnd)
 {
     if (!hwnd) return;
-    // 失败只可能是系统太老（Win10 2004 以下不认这个标记），没有补救办法，也不值得打扰用户
+    // 老系统上这个调用不但不失败，还会把窗口变成捕获画面里的一整块黑（实测 build 18363：
+    // 返回 TRUE，读回来的 affinity 就是 0x11 —— 内核照存，可那会儿的 DWM 只认"非零即
+    // 受保护内容"，一律涂黑）。所以必须自己拦住，让老系统退回"照旧被录进去"。
+    // GetVersionEx 会被兼容性清单骗，只有 RtlGetVersion 给的是真版本号
+    static const bool supported = []() {
+        OSVERSIONINFOW vi{ sizeof(vi) };
+        auto rtlGetVersion = (LONG(WINAPI*)(OSVERSIONINFOW*))GetProcAddress(
+            GetModuleHandleW(L"ntdll.dll"), "RtlGetVersion");
+        return rtlGetVersion && rtlGetVersion(&vi) == 0 && vi.dwBuildNumber >= 19041;
+    }();
+    if (!supported) return;
     SetWindowDisplayAffinity(hwnd, WDA_EXCLUDEFROMCAPTURE);
 }
 
