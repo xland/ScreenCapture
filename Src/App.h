@@ -6,9 +6,10 @@ class App
 	public:
 		~App();
 		static void init();
-		// 消息循环退出后、Ling::dispose 之前调用：单例里存着 WinRT 对象（配置和语言都是
-		// JsonObject），等到进程退出后的静态析构时 CoUninitialize 早跑完了，
-		// com_ptr 析构里那句 Release 打到的是已经拆掉的对象 —— 表现为读取访问权限冲突
+		// 消息循环退出后、Ling::dispose 之前调用：单例和窗口对象里存着 WinRT / D2D 对象
+		//（配置和语言是 JsonObject，贴图窗口攥着位图和画刷），等到进程退出后的静态析构时
+		// CoUninitialize 早跑完了，析构里那句 Release 打到的是已经拆掉的对象 ——
+		// 表现为读取访问权限冲突
 		static void dispose();
 		static App* get();
 		void takeScreenShot(int x, int y, int w, int h,ID2D1Bitmap1** img);
@@ -19,9 +20,6 @@ class App
 		// 需要 Windows 10 2004（build 19041）以上，更老的系统上调用直接失败，此时维持原样
 		//（照旧录进去）—— 退回 WDA_MONITOR 会在录像里留一块纯黑，比录到工具条更难解释
 		static void excludeFromCapture(HWND hwnd);
-		// 活干完了（回到只剩托盘图标的状态）：延时把显卡那边的缓存还回去。
-		// Ling 自己判断不出这个时机 —— 它不跟踪活动窗口，也不知道"托盘常驻"这回事
-		static void trimMemoryLater();
 	private:
 		App();
 };

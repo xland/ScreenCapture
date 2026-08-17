@@ -11,6 +11,13 @@ std::unique_ptr<WinSetting> winSetting;
 
 WinSetting::WinSetting() :Ling::WinBase()
 {
+	// 关窗按钮是 body 的子节点，而 close() 正是从它的点击回调里一路进来的 ——
+	// 在那里同步 winSetting.reset() 就是 use-after-free，所以推迟到下一轮消息循环。
+	// 不放掉的话这个对象会一直活着，Ling 那边就永远看不到"一个窗口都不剩"，D2D 设备
+	// 也就永远还不回去
+	onDestroy.add([]() {
+		Ling::App::get()->dq.TryEnqueue([]() { winSetting.reset(); });
+	});
 	setTitle(Lang::get(L"setting.title"));
 	setSize(680, 560);
 	setCenter();
@@ -24,9 +31,18 @@ WinSetting::~WinSetting()
 
 void WinSetting::init()
 {
-	if (winSetting) winSetting->close();
-	auto ptr = new WinSetting();
-	winSetting.reset(ptr);
+	// 已经开着就拉到前台，不建第二个。原来是"关掉旧的再建新的"，那样会和上面那个
+	// 延迟释放撞车：排在队列里的 reset 跑起来时放掉的是刚建好的这一个
+	if (winSetting) {
+		SetForegroundWindow(winSetting->hwnd);
+		return;
+	}
+	winSetting.reset(new WinSetting());
+}
+
+void WinSetting::dispose()
+{
+	winSetting.reset();
 }
 
 void WinSetting::onCreated()

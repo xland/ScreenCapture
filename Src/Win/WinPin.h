@@ -17,6 +17,8 @@ public:
 	// 当前屏幕上还有没有贴图窗口。用完即走模式靠它判断"活干完了没"：
 	// 截图窗口关掉时贴图窗口可能才刚建起来，那时候不能退进程
 	static bool hasWindow();
+	// 退出流程里调：窗口对象是文件级静态变量，交给静态析构就在 CoUninitialize 之后了
+	static void dispose();
 	void layoutTools();
 	// 把底图与所有未撤销的 shape 合成后写入剪切板，成功即关窗
 	void copyToClipboard();

@@ -8,6 +8,7 @@
 #include "History.h"
 #include "../App.h"
 #include "../Util.h"
+#include "../Update.h"
 
 using namespace Microsoft::WRL;
 namespace {
@@ -106,7 +107,7 @@ void WinPin::onClosed()
 				Ling::App::get()->quit(0);
 			}
 			else {
-				App::trimMemoryLater(); //只剩托盘图标了，把显卡那边的缓存还回去
+				Update::checkLater(); //只剩托盘图标了，顺便查一下更新
 			}
 		}
 	});
@@ -115,6 +116,11 @@ void WinPin::onClosed()
 bool WinPin::hasWindow()
 {
 	return !winPins.empty();
+}
+
+void WinPin::dispose()
+{
+	winPins.clear();
 }
 
 D2D1_SIZE_U WinPin::getImgSize() const

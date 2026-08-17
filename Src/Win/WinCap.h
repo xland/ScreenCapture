@@ -13,6 +13,8 @@ public:
 	~WinCap();
 	static void init();
 	static WinCap* get();
+	// 退出流程里调：窗口对象是文件级静态变量，交给静态析构就在 CoUninitialize 之后了
+	static void dispose();
 	// 退出流程里调：正在录制时先把编码线程停掉，否则线程与设备会卡住
 	static void stopIfRecording();
 	Microsoft::WRL::ComPtr<ID2D1Bitmap1> getCutImg();

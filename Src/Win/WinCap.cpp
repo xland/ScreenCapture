@@ -6,6 +6,7 @@
 #include "../App.h"
 #include "../Util.h"
 #include "../Lang.h"
+#include "../Update.h"
 #include "CapLong.h"
 #include "CapVideo.h"
 #include "../Tool/ToolCap.h"
@@ -65,6 +66,11 @@ void WinCap::init()
 WinCap* WinCap::get()
 {
     return winCap.get();
+}
+
+void WinCap::dispose()
+{
+    winCap.reset();
 }
 
 void WinCap::onCreated()
@@ -462,7 +468,7 @@ void WinCap::onClosed()
                 Ling::App::get()->quit(0);
             }
             else {
-                App::trimMemoryLater(); //只剩托盘图标了，把显卡那边的缓存还回去
+                Update::checkLater(); //只剩托盘图标了，顺便查一下更新
             }
         }
     });

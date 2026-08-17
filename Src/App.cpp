@@ -5,20 +5,10 @@
 #include "Lang.h"
 #include "Update.h"
 #include "./Win/WinCap.h"
+#include "./Win/WinPin.h"
+#include "./Win/WinSetting.h"
 
 std::unique_ptr<App> app;
-
-namespace {
-    UINT_PTR trimTimer{ 0 };
-
-    void CALLBACK onTrimTimer(HWND, UINT, UINT_PTR id, DWORD)
-    {
-        KillTimer(nullptr, id);
-        if (trimTimer == id) trimTimer = 0;
-        auto d2d = Ling::D2D::get();
-        if (d2d) d2d->trim();
-    }
-}
 
 
 App::~App()
@@ -33,6 +23,11 @@ void App::init()
 
 void App::dispose()
 {
+    // 窗口对象是文件级静态变量，交给静态析构就晚了（那时 CoUninitialize 已经跑完），
+    // 所以趁这里把还开着的窗口先放掉
+    WinPin::dispose();
+    WinCap::dispose();
+    WinSetting::dispose();
     Lang::dispose();
     Setting::dispose();
     app.reset();
@@ -41,22 +36,6 @@ void App::dispose()
 App* App::get()
 {
     return app.get();
-}
-
-// 延时 3 秒是为了躲开"刚关掉截图窗口马上又要截一张"：那种情况下还回去立刻又要重新分配，
-// 纯属白折腾。3 秒内再调一次就重新计时。
-void App::trimMemoryLater()
-{
-    // 这个函数就是"活干完了、只剩托盘图标"这个时机本身，自动升级也挂在这儿：
-    // 启动时就去请求服务端会跟截图抢资源，而且用户可能就是抓一张图就走的
-    Update::checkLater();
-    if (trimTimer) {
-        KillTimer(nullptr, trimTimer);
-        trimTimer = 0;
-    }
-    // hwnd 传 nullptr：WM_TIMER 直接投到线程队列，由消息循环的 DispatchMessage 调上面那个
-    // 回调，不需要任何窗口 —— 托盘常驻时进程里可能一个窗口都没有
-    trimTimer = SetTimer(nullptr, 0, 3000, onTrimTimer);
 }
 
 void App::takeScreenShot(int x, int y, int w, int h, ID2D1Bitmap1** img)
@@ -107,7 +86,7 @@ App::App()
     Ling::init();
     auto app = Ling::App::get();
     app->initArgs();
-    Ling::D2D::get()->addFonts({ L"icon.ttf" });
+    Ling::D2D::addFonts({ L"icon.ttf" });
     // 录制中直接退出会让编码线程和 D3D 设备一起卡住，退出前先把录制停掉
     app->onBeforeQuit.add([]() { WinCap::stopIfRecording(); });
     Setting::init();
@@ -120,9 +99,9 @@ App::App()
         if (flag) return;
         Tray::init();
 		// 开机自启不启动截图；--enter=tray 也一样，升级完重启新版本走的就是它 ——
-		// 都是"只挂个托盘图标待命"。图形设备刚建好就没人用，先把缓存还回去
+		// 都是"只挂个托盘图标待命"，这条路上一个窗口都不建，图形设备也就根本不会创建
 		if (app->args[L"--auto-start"] == L"true" || app->args[L"--enter"] == L"tray") {
-			trimMemoryLater();
+			Update::checkLater();
 			return;
 		}
 		WinCap::init();//默认情况下，应用启动随即进入截图模式
