@@ -258,6 +258,11 @@ void ToolVideo::saveFile()
 	hide();
 	killTimer(tickTimerId);
 	auto srcPath = win->stopRecord();
+	// 空路径 = 一帧都没录到（刚开录就停了），没什么可存的，别弹保存框去打扰用户
+	if (srcPath.empty()) {
+		win->close();
+		return;
+	}
 	auto tarPath = Util::getSaveFilePath(nullptr, selectIndex == 1 ? L"gif" : L"mp4");
 	if (!tarPath.empty()) {
 		CopyFile(srcPath.data(), tarPath.data(), false);
@@ -281,8 +286,10 @@ void ToolVideo::finishRecord(bool toClipboard)
 	killTimer(tickTimerId);
 	auto srcPath = win->stopRecord();
 	if (toClipboard) {
-		// 文件留在临时目录里，剪切板持有的是它的路径，不能删
-		Util::addFileToClipboard(srcPath);
+		// 文件留在临时目录里，剪切板持有的是它的路径，不能删。
+		// 空路径 = 一帧都没录到，没东西可放进剪切板
+		if (!srcPath.empty())
+			Util::addFileToClipboard(srcPath);
 	}
 	else {
 		DeleteFile(srcPath.data());

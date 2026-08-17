@@ -28,6 +28,7 @@
 #include <dxgi.h>
 #include <wincodec.h>
 #include <dxgi1_2.h>
+#include <dxgi1_5.h>
 #include <d3d11.h>
 #include <shlobj.h>
 #include <propvarutil.h>
@@ -627,6 +628,8 @@ public:
 
     DXGI_FORMAT InHDR = DXGI_FORMAT_UNKNOWN;
     int ConvertHDR = 2; // 0 no convert, 1 convert, 1 convert and go updown
+    // 是否成功要到了"系统帮我转成 8 位"的桌面复制，见 Prepare
+    bool SDRForced = false;
     HRESULT CreateDirect3DDevice(IDXGIAdapter1* g)
     {
         HRESULT hr = S_OK;
@@ -869,17 +872,38 @@ public:
         lDxgiOutput = 0;
 
         // Create desktop duplication
-        hr = lDxgiOutput1->DuplicateOutput(
-            device,
-            &lDeskDupl);
+        // 开着 HDR 的屏，桌面复制默认给的是 FP16(scRGB)，编码器一个都吃不下，得自己转：
+        // 转 10 位只有 HEVC 能收（编码器不是每台机器都有），自己降到 8 位则一片黑（FP16 表面
+        // 的 alpha 是未定义的，WIC 从 float 转 8 位时那一遍预乘 alpha 会把画面乘成 0）。
+        // DuplicateOutput1 可以直接指定"我只要 BGRA8"，转换和色调映射都交给系统做，于是
+        // HDR 屏走的就是和普通屏一样那条验证过的路，连光标叠加都能用上。
+        // Win10 1703 才有，且要求进程 per-monitor DPI aware；要不到就退回老接口
+        CComPtr<IDXGIOutput5> lDxgiOutput5;
+        lDxgiOutput5 = lDxgiOutput1;
+        SDRForced = false;
+        if (lDxgiOutput5)
+        {
+            const DXGI_FORMAT want[] = { DXGI_FORMAT_B8G8R8A8_UNORM };
+            hr = lDxgiOutput5->DuplicateOutput1(device, 0, 1, want, &lDeskDupl);
+            SDRForced = SUCCEEDED(hr);
+        }
+        if (!SDRForced)
+            hr = lDxgiOutput1->DuplicateOutput(
+                device,
+                &lDeskDupl);
 
         if (FAILED(hr))
             return 0;
 
+        lDxgiOutput5 = 0;
         lDxgiOutput1 = 0;
 
         // Create GUI drawing texture
         lDeskDupl->GetDesc(&lOutputDuplDesc);
+        // 只列了 BGRA8 一个，拿到的帧就只可能是它 —— 别听 GetDesc 报的显示模式格式，
+        // 那个在 HDR 屏上仍是 FP16，照它建纹理会让下面的 CopyResource 拿不到画面
+        if (SDRForced)
+            lOutputDuplDesc.ModeDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
         D3D11_TEXTURE2D_DESC desc = {};
         desc.Width = lOutputDuplDesc.ModeDesc.Width;
         desc.Height = lOutputDuplDesc.ModeDesc.Height;
@@ -1009,6 +1033,10 @@ struct DESKTOPCAPTUREPARAMS
     unsigned long long EndMS = 0; // 0, none
     bool MustEnd = false;
     bool Pause = false;
+
+    // 真正 WriteSample 成功的视频帧数。一帧都没写就不是有效视频，函数末尾据此报错 ——
+    // 循环里所有失败都是 break，跟"用户点停止"走同一个出口，光看返回值分不出这两种情况
+    unsigned long long framesWritten = 0;
 };
 struct VectorStreamX2 : public IMFByteStream
 {
@@ -1487,6 +1515,7 @@ inline int DesktopCapture(DESKTOPCAPTUREPARAMS& dp)
             return -1;
         if (!cap.Prepare(dp.nOutput))
             return -2;
+        // 桌面复制退回到 FP16 那条路时（Prepare 里要不到 BGRA8），只有 HEVC 收 10 位输入
         if (cap.InHDR)
             dp.VIDEO_ENCODING_FORMAT = MFVideoFormat_HEVC;
         wi = cap.lOutputDuplDesc.ModeDesc.Width;
@@ -1793,7 +1822,10 @@ inline int DesktopCapture(DESKTOPCAPTUREPARAMS& dp)
     if (!NV12)
         pMediaTypeVideoIn->SetGUID(MF_MT_SUBTYPE, MFVideoFormat_RGB32);
 
-    if (cap.InHDR != DXGI_FORMAT_UNKNOWN)
+    // FP16 那条路才要给编码器喂 10 位输入，下面这套门道也只在那时候走
+    const bool hdr10 = cap.InHDR != DXGI_FORMAT_UNKNOWN;
+
+    if (hdr10)
     {
         // Force our Nvidia MFT encoder to load by calling first our fake guid
         pMediaTypeVideoIn->SetGUID(MF_MT_SUBTYPE, MyFakeFmt);
@@ -1805,7 +1837,7 @@ inline int DesktopCapture(DESKTOPCAPTUREPARAMS& dp)
         if (FAILED(hr)) return -10;
 
 
-        if (cap.InHDR != DXGI_FORMAT_UNKNOWN)
+        if (hdr10)
         {
             // Now put the real value
             pMediaTypeVideoIn->SetGUID(MF_MT_SUBTYPE, MFVideoFormat_RGB10);
@@ -2133,7 +2165,7 @@ inline int DesktopCapture(DESKTOPCAPTUREPARAMS& dp)
             if (FAILED(hr))
                 break;
 
-                
+
 
             // take a time stamp here
             // Get the current time point
@@ -2172,7 +2204,7 @@ inline int DesktopCapture(DESKTOPCAPTUREPARAMS& dp)
             }
             if (cap.InHDR == DXGI_FORMAT_R16G16B16A16_FLOAT && cap.ConvertHDR)
             {
-                // 64-bit float 16 bit each float, convert 
+                // 64-bit float 16 bit each float, convert
                 void* fld = cap.buf.data();
                 auto hr2 = cap.Convert(fld, wi, he, hdrout, GUID_WICPixelFormat64bppRGBAHalf);
                 if (FAILED(hr2))
@@ -2200,7 +2232,8 @@ inline int DesktopCapture(DESKTOPCAPTUREPARAMS& dp)
             if (!pVideoBuffer)
             {
                 hr = MFCreateMemoryBuffer(VideoBufferSize, &pVideoBuffer);
-                if (FAILED(hr)) break;
+                if (FAILED(hr))
+                    break;
             }
 
             hr = pVideoBuffer->Lock(&pData, NULL, NULL);
@@ -2267,7 +2300,9 @@ inline int DesktopCapture(DESKTOPCAPTUREPARAMS& dp)
                 hr = pVideoSample->SetSampleDuration(ThisDurV);
                 if (FAILED(hr)) break;
                 hr = pSinkWriter->WriteSample(OutVideoStreamIndex, pVideoSample);
-                if (FAILED(hr)) break;
+                if (FAILED(hr))
+                    break;
+                dp.framesWritten++;
             }
         }
 
@@ -2345,6 +2380,13 @@ inline int DesktopCapture(DESKTOPCAPTUREPARAMS& dp)
         hr = pSinkWriter->Finalize();
     if (FAILED(hr))
         return -14;
+    // 循环里每一处失败都是 break，跟"用户点了停止"走同一个出口，之后照样 Finalize ——
+    // 而 Finalize 一个没写过样本的 MP4 是会成功的，于是调用方拿到 0 却得到个 0 字节文件，
+    // 一句报错都没有。既然一帧都没写就不可能是有效视频，这里明确报错。
+    // 但"刚开录就点了停止"同样是一帧都没有，那是用户自己清楚的操作，不该拿报错去打扰他 ——
+    // 那种情况 MustEnd 已经立起来了，交给调用方照 framesWritten 静静收场
+    if (dp.HasVideo && !dp.Framer && dp.framesWritten == 0 && !dp.MustEnd)
+        return -15;
 	return 0;
 }
 

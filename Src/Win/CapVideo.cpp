@@ -114,7 +114,7 @@ void CapVideo::startMp4(bool useSpeaker, bool useMic)
     auto& cutMask = win->cutMask;
     auto videoTempPath = Setting::get()->getDataPath();
     mp4Param = std::make_unique<VideoMp4::DESKTOPCAPTUREPARAMS>();
-    mp4Param->VIDEO_ENCODING_FORMAT = MFVideoFormat_HEVC;
+    // 编码格式不在这里定，交给下面采集线程里那个"HEVC 不行就退 H.264"的循环
     // 录制区域先夹回桌面范围，再做对齐 —— 只会往里缩，不会越出桌面。
     // HEVC 编码器要求宽高是偶数，链路中间的 RGB32->NV12 转换还会按对齐后的 stride
     // 去读我们交出去的缓冲区，宽度不是 4 的倍数（stride 凑不满 16 字节）时，
@@ -160,21 +160,34 @@ void CapVideo::startMp4(bool useSpeaker, bool useMic)
         collectDupTargets(mp4Param->rx, targets);
         const RECT deskRx = mp4Param->rx; //每个候选都从桌面坐标重新换算
         int code = 0;
-        if (targets.empty()) {
-            code = VideoMp4::DesktopCapture(*(mp4Param.get())); //一个都没匹配上，走库原来的默认行为
-        }
-        for (auto& t : targets) {
-            if (mp4Param->MustEnd) break; //已经点了停止，别再起新的
-            mp4Param->ad = t.ad;
-            mp4Param->nOutput = t.output;
-            mp4Param->rx = toLocalRect(deskRx, t.mon);
-            code = VideoMp4::DesktopCapture(*(mp4Param.get()));
-            if (code != -2) break; //成功了，或者失败在跟适配器无关的地方
+        // 编码格式也得按可用性退让。HEVC 文件小得多，但它的编码器不是每台机器都有 ——
+        // 有的只带解码，有的靠显卡的硬件 MFT 而显卡没有。缺了的时候 AddStream 照样成功
+        //（那一步只是记下输出类型），要到 SetInputMediaType 解析编码器时才失败(-10)。
+        // 退回 H.264：它从 Win7 起就带软件编码器，没有装不上的道理，代价是同画质下文件更大
+        for (auto codec : { MFVideoFormat_HEVC, MFVideoFormat_H264 }) {
+            mp4Param->VIDEO_ENCODING_FORMAT = codec;
+            if (targets.empty()) {
+                mp4Param->rx = deskRx;
+                code = VideoMp4::DesktopCapture(*(mp4Param.get())); //一个都没匹配上，走库原来的默认行为
+            }
+            for (auto& t : targets) {
+                if (mp4Param->MustEnd) break; //已经点了停止，别再起新的
+                mp4Param->ad = t.ad;
+                mp4Param->nOutput = t.output;
+                mp4Param->rx = toLocalRect(deskRx, t.mon);
+                code = VideoMp4::DesktopCapture(*(mp4Param.get()));
+                if (code != -2) break; //成功了，或者失败在跟适配器无关的地方
+            }
+            if (mp4Param->MustEnd) break;
+            // 只有这两个码是"这台机器认不了这个编码器"，换编码器才有意义
+            if (code != -5 && code != -10) break;
         }
         if (code != 0) showRecordError(errText, errTitle);
         CoUninitialize();
         MFShutdown();
     });
+
+
 }
 
 void CapVideo::startGif()
@@ -213,6 +226,13 @@ std::wstring CapVideo::stop()
     }
     if (captureThread.joinable()) {
         captureThread.join();
+    }
+    // 刚开录就点了停止，一帧都没采到 —— 这时 Finalize 出来的是个 0 字节的空壳。
+    // 别拿它去走存盘流程（那会白弹一次保存框，存出来还是个打不开的文件），
+    // 直接删掉、回空路径，让整个流程无声收场
+    if (mp4Param && mp4Param->framesWritten == 0) {
+        DeleteFile(filePath.data());
+        filePath.clear();
     }
     // 参数置空即"已停止"，stopIfRecording / dispose 再进来时不会重复 join
     mp4Param.reset();
