@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include <filesystem>
 #include "Lang.h"
+#include "Util.h"
 #include "Setting.h"
 
 std::unique_ptr<Lang> lang;
@@ -97,7 +98,7 @@ void Lang::initLang(const std::wstring& langCode)
 			std::wstring filename = entry.filename().wstring();
 			if (filename.find(langCode) == std::wstring::npos) continue;
 			auto pathStr = entry.wstring();
-			std::wstring content = Ling::Util::readFile(pathStr);
+			std::wstring content = Util::readTextFile(entry);
 			JsonObject obj{ nullptr };
 			if (JsonObject::TryParse(content, obj)) {
 				langObj = obj;

@@ -1,10 +1,10 @@
 ﻿#include "pch.h"
 #include <include/Ling.h>
 #include "Setting.h"
+#include "Util.h"
 #include "Lang.h"
 #include "Win/WinCap.h"
 #include "App.h"
-#include <fstream>
 
 namespace {
     std::unique_ptr<Setting> setting;
@@ -12,32 +12,6 @@ namespace {
     // 配置文件的默认内容。空文件、坏 JSON、缺键都拿它兜底，所以这里列出的每一项
     // 都是代码里会直接按名字取的（见 getLang / getAutoStart / initShortcutKeys）
     constexpr std::wstring_view defaultConfig{ LR"""({"common":{"autoStart":false,"language":"zh-CN"},"shortcutKey":{"cap":"Ctrl+Alt+A"}})""" };
-
-    // 自己读文件而不用 Ling::Util::readFile：那个只认 UTF-16LE，而且是按字节数 resize 的，
-    // 后面会跟着一半长度的 \0。用户拿记事本新建的 config.json 默认是 UTF-8，
-    // 得认出来 —— 不然就会被当成坏文件，把人家写的配置直接盖掉
-    std::wstring readConfigText(const std::filesystem::path& path)
-    {
-        std::ifstream file{ path, std::ios::binary };
-        if (!file) return L"";
-        std::string bytes{ std::istreambuf_iterator<char>{file}, std::istreambuf_iterator<char>{} };
-        // UTF-16LE（save() 写出来的就是这个）：跳过 BOM，按 wchar_t 重新解释。
-        // 字节数是奇数说明文件本来就坏了，末尾那半个字符丢掉，后面解析失败会走默认值
-        if (bytes.size() >= 2 && static_cast<unsigned char>(bytes[0]) == 0xFF
-            && static_cast<unsigned char>(bytes[1]) == 0xFE) {
-            std::wstring str((bytes.size() - 2) / sizeof(wchar_t), L'\0');
-            memcpy(str.data(), bytes.data() + 2, str.size() * sizeof(wchar_t));
-            return str;
-        }
-        if (bytes.starts_with("\xEF\xBB\xBF")) bytes.erase(0, 3); //UTF-8 BOM
-        if (bytes.empty()) return L"";                            //空文件，含只有一个 BOM 的
-        // 剩下的一律按 UTF-8 认：记事本、VSCode 新建的文件都是这个，纯 ASCII 的 JSON 也照样过
-        auto len = MultiByteToWideChar(CP_UTF8, 0, bytes.data(), static_cast<int>(bytes.size()), nullptr, 0);
-        if (len <= 0) return L"";
-        std::wstring str(len, L'\0');
-        MultiByteToWideChar(CP_UTF8, 0, bytes.data(), static_cast<int>(bytes.size()), str.data(), len);
-        return str;
-    }
 }
 
 
@@ -53,7 +27,7 @@ Setting::Setting() :dataPath{ initDataPath() }, configPath{ initConfigPath() }
 bool Setting::loadConfig()
 {
     if (std::filesystem::exists(configPath)) {
-        auto content = readConfigText(configPath);
+        auto content = Util::readTextFile(configPath);
         JsonObject obj{ nullptr };
         // 用 TryParse 而不是 Parse：后者解析失败是抛 winrt::hresult_error，
         // 空文件、写坏的 JSON、根节点不是对象（比如一个数组）都会失败，这里一律当没读到
