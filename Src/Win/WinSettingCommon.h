@@ -11,6 +11,7 @@ public:
 private:
 	void initAutoStartCtrls();
 	void initLangCtrls();
+	void initClipboardDirCtrls();
 	void setAutoStartBtn(Ling::Button* btn);
 	void showSelectBox(Ling::Button* btn);
 private:

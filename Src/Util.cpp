@@ -79,6 +79,11 @@ void Util::saveToClipboard(const int w, const int h, BYTE* data)
 	DWORD rowBytes = (DWORD)w * 4;
 	DWORD imgBytes = rowBytes * (DWORD)h;
 
+	// 资源管理器只能从 CF_HDROP 粘贴文件，不能把剪切板里的 DIB/PNG 自动落盘。
+	// 文件必须一直留着，直到用户真正粘贴，所以不要放在临时目录里立即删除。
+	auto filePath = Setting::get()->getDataPath().append(L"clipboard_" + createFileName(L"png"));
+	const bool fileReady = saveToFile(filePath.wstring(), w, h, data);
+
 	// ---------- 1) PNG 编码到内存流 ----------
 	ComPtr<IStream> pngStream;
 	if (FAILED(CreateStreamOnHGlobal(nullptr, TRUE, pngStream.GetAddressOf()))) return;
@@ -155,8 +160,34 @@ void Util::saveToClipboard(const int w, const int h, BYTE* data)
 	}
 	GlobalUnlock(hDib);
 
-	// ---------- 4) 写入剪切板 ----------
+	// ---------- 4) 构造 CF_HDROP（资源管理器粘贴文件） ----------
+	HGLOBAL hDrop{ nullptr };
+	if (fileReady) {
+		auto filePathStr = filePath.wstring();
+			auto dropSize = sizeof(DROPFILES) + (filePathStr.length() + 3) * sizeof(wchar_t);
+
+		hDrop = GlobalAlloc(GMEM_MOVEABLE, dropSize);
+		if (hDrop) {
+			auto drop = static_cast<DROPFILES*>(GlobalLock(hDrop));
+			if (drop) {
+				drop->pFiles = sizeof(DROPFILES);
+				drop->fWide = TRUE;
+				auto dropPath = reinterpret_cast<wchar_t*>(drop + 1);
+				wcscpy_s(dropPath, filePathStr.length() + 1, filePathStr.c_str());
+				dropPath[filePathStr.length() + 1] = L'\0';
+				GlobalUnlock(hDrop);
+			}
+			else {
+				GlobalFree(hDrop);
+				hDrop = nullptr;
+			}
+		}
+	}
+
+	// ---------- 5) 写入剪切板 ----------
+
 	if (!OpenClipboard(nullptr)) {
+		GlobalFree(hDrop);
 		GlobalFree(hDib);
 		GlobalFree(hDibV5);
 		GlobalFree(hPng);
@@ -169,6 +200,25 @@ void Util::saveToClipboard(const int w, const int h, BYTE* data)
 	}
 	if (!SetClipboardData(CF_DIB, hDib)) {
 		GlobalFree(hDib);
+	}
+	if (hDrop && !SetClipboardData(CF_HDROP, hDrop)) {
+		GlobalFree(hDrop);
+	}
+	// 告诉资源管理器这是复制而不是移动，Ctrl+V 时按普通文件复制处理。
+	UINT cfPreferredDropEffect = RegisterClipboardFormatW(CFSTR_PREFERREDDROPEFFECT);
+	if (cfPreferredDropEffect != 0) {
+		HGLOBAL hDropEffect = GlobalAlloc(GMEM_MOVEABLE, sizeof(DWORD));
+		if (hDropEffect) {
+			auto effect = static_cast<DWORD*>(GlobalLock(hDropEffect));
+			if (effect) {
+				*effect = DROPEFFECT_COPY;
+				GlobalUnlock(hDropEffect);
+				if (!SetClipboardData(cfPreferredDropEffect, hDropEffect)) GlobalFree(hDropEffect);
+			}
+			else {
+				GlobalFree(hDropEffect);
+			}
+		}
 	}
 	UINT cfPng = RegisterClipboardFormatW(L"PNG");
 	if (cfPng == 0 || !SetClipboardData(cfPng, hPng)) {
@@ -261,7 +311,7 @@ void Util::addFileToClipboard(const std::wstring& filePath)
 	if (!OpenClipboard(nullptr)) return;
 	EmptyClipboard();
 	// DROPFILES 之后紧跟双 \0 结尾的路径列表，这里只放一条
-	auto totalSize = sizeof(DROPFILES) + (filePath.length() + 2) * sizeof(wchar_t);
+	auto totalSize = sizeof(DROPFILES) + (filePath.length() + 3) * sizeof(wchar_t);
 	auto hGlobal = GlobalAlloc(GMEM_MOVEABLE, totalSize);
 	if (!hGlobal) {
 		CloseClipboard();

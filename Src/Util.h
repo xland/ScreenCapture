@@ -7,8 +7,8 @@
 class Util
 {
 public:
-	// 同时写入 CF_DIBV5（Office / 微信 / WPS 这类原生程序认）和 "PNG" 注册格式
-	//（浏览器 / Electron 程序认），两份都带 alpha
+	// 同时写入图像格式和 CF_HDROP：图像程序按 PNG/DIB 粘贴，资源管理器按 PNG 文件粘贴。
+	// CF_HDROP 对应的缓存文件会保留，直到用户清理数据目录。
 	static void saveToClipboard(const int w, const int h, BYTE* data);
 	static bool saveToFile(const std::wstring& path, const int w, const int h, BYTE* data);
 	// 弹系统另存为对话框，返回空串表示用户取消
