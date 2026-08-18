@@ -53,11 +53,12 @@ WinCap::~WinCap()
 {
 }
 
-void WinCap::init()
+void WinCap::init(const std::wstring& enter)
 {
     // 双击托盘图标会连着来两下，已经开着就不再建第二个
     if (winCap) return;
     auto ptr = new WinCap();
+    ptr->pendingEnter = enter;
     winCap.reset(ptr);
 	ptr->cutMask = std::make_unique<CutMask>(ptr);
     ptr->createNativeWindow(WS_EX_TOOLWINDOW, WS_POPUP);//WS_EX_TOPMOST
@@ -290,9 +291,13 @@ void WinCap::onKey(UINT key)
         Ling::Util::setTextToClipboard(std::format(L"{},{}", pos.x, pos.y));
         close();
     }
-    // 长图与录屏阶段：Ctrl+S 存文件，Ctrl+C 存剪切板，等价于各自工具条上的那两个按钮。
-    // 这两个阶段里键盘消息进的往往是工具条，ToolLong / ToolVideo 会把 onKeyDown 转回这里
+    // 各阶段的 Ctrl+C / Ctrl+S 等价于工具条上的复制和保存按钮。
+    // 工具条获得焦点时也会把键盘消息转回这里。
     else if ((key == 'S' || key == 'C') && (GetKeyState(VK_CONTROL) & 0x8000)) {
+        if (stage == CapStage::Adjust && key == 'C') {
+            copyToClipboard();
+            return;
+        }
         const bool toClipboard{ key == 'C' };
         if (stage == CapStage::Long && capLong && capLong->hasImage()) {
             // 与 ToolLong::onClick 同一套规则：存盘被取消了就留在原地，图还没丢
@@ -430,7 +435,7 @@ void WinCap::onUp(POINT pos, bool isRight)
         if (!cutMask->hasRect()) return;
         // 命令行指定了直奔某个阶段：它比下面 Ctrl 那条钉图的快捷路径更优先 ——
         // 参数是用户明确要求的，Ctrl 只是顺手按上的
-        if (enterByArg()) return;
+        if (enterByShortcut() || enterByArg()) return;
         // 按住 Ctrl 框选：跳过调整和工具条，直接钉到桌面上
         if (GetKeyState(VK_CONTROL) & 0x8000) {
             startPin();
@@ -500,6 +505,9 @@ bool WinCap::enterByArg()
     auto it = args.find(L"--enter");
     if (it == args.end()) return false;
     auto& val = it->second;
+    const bool recognized = val == L"long" || val == L"video" || val == L"ocr"
+        || val == L"qr" || val == L"qrcode" || val == L"pin";
+    if (!recognized) return false;
     // 下面这几条路本来都是从 ToolCap 的按钮进的，start* 会检查选区是不是已经定下来了
     stage = CapStage::Adjust;
     refresh();      //收掉放大镜：这几条路都是马上要换阶段或者弹窗，屏幕上不能留着它
@@ -507,10 +515,21 @@ bool WinCap::enterByArg()
     else if (val == L"video") startVideo();
     else if (val == L"ocr") startOcr();
     else if (val == L"qr" || val == L"qrcode") startQrcode();
-    else if (val == L"pin") startPin();   //等于替用户按住了 Ctrl 框选
-    // 值不认识（用户拼错了）：当没给这个参数，照常出工具条。上面那两句白做了，
-    // 但调用方接着也是这两句，重复一遍没有副作用
-    else return false;
+    else startPin();   //等于替用户按住了 Ctrl 框选
+    return true;
+}
+
+bool WinCap::enterByShortcut()
+{
+    if (pendingEnter != L"long" && pendingEnter != L"video") {
+        pendingEnter.clear();
+        return false;
+    }
+    auto enter = std::exchange(pendingEnter, L"");
+    stage = CapStage::Adjust;
+    refresh();
+    if (enter == L"long") startLong();
+    else startVideo();
     return true;
 }
 

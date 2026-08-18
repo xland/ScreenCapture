@@ -8,10 +8,20 @@
 
 namespace {
     std::unique_ptr<Setting> setting;
-    constexpr int capShortcutMsgId{ 100 };
+    constexpr UINT capShortcutMsgId{ 100 };
+    constexpr UINT longShortcutMsgId{ 101 };
+    constexpr UINT videoShortcutMsgId{ 102 };
     // 配置文件的默认内容。空文件、坏 JSON、缺键都拿它兜底，所以这里列出的每一项
     // 都是代码里会直接按名字取的（见 getLang / getAutoStart / initShortcutKeys）
-    constexpr std::wstring_view defaultConfig{ LR"""({"common":{"autoStart":false,"language":"zh-CN"},"shortcutKey":{"cap":"Ctrl+Alt+A"}})""" };
+    constexpr std::wstring_view defaultConfig{ LR"""({"common":{"autoStart":false,"language":"zh-CN"},"shortcutKey":{"cap":"Ctrl+Alt+A","long":"","video":""}})""" };
+
+    UINT shortcutMsgId(const std::wstring& type)
+    {
+        if (type == L"cap") return capShortcutMsgId;
+        if (type == L"long") return longShortcutMsgId;
+        if (type == L"video") return videoShortcutMsgId;
+        return 0;
+    }
 
     // 自己读文件而不用 Ling::Util::readFile：那个只认 UTF-16LE，而且是按字节数 resize 的，
     // 后面会跟着一半长度的 \0。用户拿记事本新建的 config.json 默认是 UTF-8，
@@ -92,8 +102,10 @@ bool Setting::ensureDefaults()
 
 Setting::~Setting()
 {
-    //auto lingApp = Ling::App::get();
-    //lingApp->unRegHotKey(capShortcutMsgId);
+    auto lingApp = Ling::App::get();
+    lingApp->unRegHotKey(capShortcutMsgId);
+    lingApp->unRegHotKey(longShortcutMsgId);
+    lingApp->unRegHotKey(videoShortcutMsgId);
 }
 
 void Setting::init()
@@ -125,16 +137,18 @@ const JsonObject Setting::getConfigObj()
 void Setting::setShortcutKey(const std::wstring& type, const std::vector<std::wstring>& keys)
 {
     std::wstring str;
-    for (size_t i = 0; i < keys.size(); i++)
-    {
-        str += L"+" + keys[i];
+    for (const auto& key : keys) {
+        if (!str.empty()) str += L"+";
+        str += key;
     }
-    str.erase(0,1);
     auto shortcutKey = configObj.GetNamedObject(L"shortcutKey");
     shortcutKey.SetNamedValue(type, JsonValue::CreateStringValue(str));
-    auto app = Ling::App::get();
-    app->unRegHotKey(capShortcutMsgId);
-    app->regHotKey(str, capShortcutMsgId);
+    auto msgId = shortcutMsgId(type);
+    if (msgId != 0) {
+        auto app = Ling::App::get();
+        app->unRegHotKey(msgId);
+        if (!str.empty()) app->regHotKey(str, msgId);
+    }
     save();
 }
 
@@ -290,14 +304,23 @@ void Setting::setUpdateCheckDay(long long day)
 void Setting::initShortcutKeys()
 {
     auto lingApp = Ling::App::get();
-    // 取不到就用默认的那个组合：热键注册不上顶多是快捷键不好用，不该让程序起不来
-    std::wstring capStr{ getShortcutKey(L"cap") };
-    if (capStr.empty()) capStr = L"Ctrl+Alt+A";
-    lingApp->regHotKey(capStr, capShortcutMsgId);
+    auto registerShortcut = [lingApp](const std::wstring& type, UINT msgId) {
+        auto shortcut = Setting::get()->getShortcutKey(type);
+        if (!shortcut.empty()) lingApp->regHotKey(shortcut, msgId);
+    };
+    registerShortcut(L"cap", capShortcutMsgId);
+    registerShortcut(L"long", longShortcutMsgId);
+    registerShortcut(L"video", videoShortcutMsgId);
 
     lingApp->onHotKey.add([this](UINT msg) {
         if (msg == capShortcutMsgId) {
             WinCap::init();
+        }
+        else if (msg == longShortcutMsgId) {
+            WinCap::init(L"long");
+        }
+        else if (msg == videoShortcutMsgId) {
+            WinCap::init(L"video");
         }
     });
     lingApp->onSecondInstance.add([this]() {

@@ -11,7 +11,7 @@ class WinCap:public Ling::WinBase
 {
 public:
 	~WinCap();
-	static void init();
+	static void init(const std::wstring& enter = L"");
 	static WinCap* get();
 	// 退出流程里调：窗口对象是文件级静态变量，交给静态析构就在 CoUninitialize 之后了
 	static void dispose();
@@ -68,10 +68,11 @@ private:
 	void onUp(POINT pos, bool isRight);
 	void onClosed();
 	void makeToolCap();
-	// 命令行给了 --enter=xxx（long / video / ocr / qr / pin）时，框完选区不出 ToolCap，
+	// 命令行或全局快捷键指定了直奔某阶段时，框完选区不出 ToolCap，
 	// 直接走对应的那条路 —— 等于替用户点了工具条上的那个按钮。
 	// 返回是否已经接手；值不认识（拼错了）就返回 false，照常出工具条
 	bool enterByArg();
+	bool enterByShortcut();
 	// DPI 变了之后重走一遍工具条的摆放规则（哪个阶段就重排哪个工具条）
 	void relayoutTool();
 	// 进长图 / 录屏阶段的公共动作：收掉底图与工具条，并提到最上层
@@ -93,6 +94,7 @@ private:
 	Ling::Canvas* canvas{ nullptr };
 	POINT pixPos;
 	bool isPress{ false }, isClosed{ false }, isMouseTransparent{ false };
+	std::wstring pendingEnter;
 	// onDpiChanged 与 onSizeChanged 之间的接力标记，见构造函数里的注释
 	bool dpiChanged{ false };
 	// 自己认双击用的上一次按下时间与位置。Ling 的窗口类没带 CS_DBLCLKS，

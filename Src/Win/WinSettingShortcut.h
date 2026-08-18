@@ -13,7 +13,8 @@ private:
 	void onKeyUp(UINT key);
 	std::wstring keyToStr(UINT vkCode);
 private:
-	std::vector<Ling::Button*> btns;
+	std::vector<Ling::Button*> allBtns;
+	std::vector<Ling::Button*> shortcutBtns;
 	std::wstring curKey;
 	winrt::event_token onMouseDownToken, onKeyDownToken, onKeyUpToken;
 	std::vector<std::wstring> tempKeys;

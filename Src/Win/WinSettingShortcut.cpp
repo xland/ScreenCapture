@@ -97,7 +97,7 @@ namespace {
 
 WinSettingShortcut::WinSettingShortcut(Ling::WinBase* parent):Ling::Node(parent)
 {
-    std::vector<std::wstring> keys = { L"cap" };
+    std::vector<std::wstring> keys = { L"cap", L"long", L"video" };
     for (auto& key:keys)
     {
         auto box = makeChild<Ling::Node>();
@@ -113,14 +113,27 @@ WinSettingShortcut::WinSettingShortcut(Ling::WinBase* parent):Ling::Node(parent)
 
         auto btn = box->makeChild<Ling::Button>();
         btn->setId(key);
-        btn->setText(Setting::get()->getShortcutKey(key));
+        auto shortcut = Setting::get()->getShortcutKey(key);
+        btn->setText(shortcut.empty() ? Lang::get(L"shortcut.disabled") : shortcut);
         btn->setHeight(28.f);
         btn->setWidth(120.f);
         btn->setBg(0xFFFFFFFF);
         btn->setHoverBg(0xFFFFFFFF);
         btn->setBorder(1.f, 0xE0E0E0FF);
         btn->onClick.add([this](Ling::Button* btn) {this->onBtnClick(btn);});
-        btns.push_back(btn);
+        shortcutBtns.push_back(btn);
+        allBtns.push_back(btn);
+
+        auto clearBtn = box->makeChild<Ling::Button>();
+        clearBtn->setId(L"clear:" + key);
+        clearBtn->setText(Lang::get(L"shortcut.clear"));
+        clearBtn->setHeight(28.f);
+        clearBtn->setWidth(72.f);
+        clearBtn->setBg(0xFFFFFFFF);
+        clearBtn->setHoverBg(0xFFF0F0FF);
+        clearBtn->setBorder(1.f, 0xE0E0E0FF);
+        clearBtn->onClick.add([this](Ling::Button* btn) {this->onBtnClick(btn);});
+        allBtns.push_back(clearBtn);
 
         auto border = makeChild<Ling::Node>();
         border->setHeight(1.f);
@@ -141,7 +154,7 @@ WinSettingShortcut::WinSettingShortcut(Ling::WinBase* parent):Ling::Node(parent)
     onMouseDownToken = win->onMouseDown.add([this,weakThis](POINT pos, bool isRight) {
         if (!weakThis.lock()) return;
         if (this->curKey.empty()) return;
-        for (auto btn: this->btns)
+        for (auto btn: this->allBtns)
         {
             if(btn->isPosIn(pos)) return;
         }
@@ -158,6 +171,18 @@ WinSettingShortcut::~WinSettingShortcut()
 
 void WinSettingShortcut::onBtnClick(Ling::Button* btn)
 {
+    if (btn->id.starts_with(L"clear:")) {
+        if (!curKey.empty()) endCapture();
+        auto key = btn->id.substr(6);
+        Setting::get()->setShortcutKey(key, {});
+        for (auto shortcutBtn : shortcutBtns) {
+            if (shortcutBtn->id == key) {
+                shortcutBtn->setText(Lang::get(L"shortcut.disabled"));
+                break;
+            }
+        }
+        return;
+    }
     // 再次点击当前正在捕获的按钮 → 取消
     if (curKey == btn->id) {
         endCapture();
@@ -180,10 +205,11 @@ void WinSettingShortcut::beginCapture(Ling::Button* btn)
 void WinSettingShortcut::endCapture()
 {
     if (curKey.empty()) return;
-    for (auto& btn : btns)
+    for (auto& btn : shortcutBtns)
     {
         if (btn->id == curKey) {
-            btn->setText(Setting::get()->getShortcutKey(curKey));
+            auto shortcut = Setting::get()->getShortcutKey(curKey);
+            btn->setText(shortcut.empty() ? Lang::get(L"shortcut.disabled") : shortcut);
             break;
         }
     }

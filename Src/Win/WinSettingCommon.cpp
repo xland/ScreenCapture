@@ -8,6 +8,7 @@ WinSettingCommon::WinSettingCommon(Ling::WinBase* parent):Ling::Node(parent)
 {    
     initAutoStartCtrls();
     initLangCtrls();
+    initClipboardDirCtrls();
     auto weakThis = getWeakThis();
     // 这个回调一直挂在窗口上，而本节点可能在窗口关闭之前就被菜单切换换掉了，
     // 所以先确认自己还活着再去碰成员
@@ -48,6 +49,35 @@ void WinSettingCommon::initAutoStartCtrls()
         auto isAutoStart = setting->getAutoStart();
         setting->setAutoStart(!isAutoStart);
         setAutoStartBtn(btn);
+    });
+
+    auto border = makeChild<Ling::Node>();
+    border->setHeight(1.f);
+    border->setBg(0xE0E0E0FF);
+}
+
+void WinSettingCommon::initClipboardDirCtrls()
+{
+    auto box = makeChild<Ling::Node>();
+    box->setHeight(39.f);
+    box->setFlexDirection(Ling::FlexDirection::Row);
+    box->setAlignItems(Ling::Align::Center);
+
+    auto label = box->makeChild<Ling::Label>();
+    label->setText(Lang::get(L"setting.clipboardDir"));
+    label->setHeightPercent(100.f);
+    label->setJustifyContent(Ling::Justify::Center);
+    label->setFlexGrow(1.f);
+
+    auto btn = box->makeChild<Ling::Button>();
+    btn->setText(Lang::get(L"setting.openClipboardDir"));
+    btn->setHeight(28.f);
+    btn->setWidth(120.f);
+    btn->setBorder(1.f, 0xE0E0E0FF);
+    btn->setHoverBg(0xFFFFFFFF);
+    btn->onClick.add([](Ling::Button* btn) {
+        auto path = Setting::get()->getDataPath().wstring();
+        ShellExecute(nullptr, L"open", path.c_str(), nullptr, nullptr, SW_SHOWNORMAL);
     });
 
     auto border = makeChild<Ling::Node>();
