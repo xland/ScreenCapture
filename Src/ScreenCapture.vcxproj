@@ -117,7 +117,7 @@
       <PreprocessorDefinitions>NOMINMAX;WIN32_LEAN_AND_MEAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>D:\project\Ling;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\sdk\gifski;D:\project\Ling;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -128,7 +128,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>D:\project\Ling\x64\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>dwmapi.lib;windowsapp.lib;comctl32.lib;imm32.lib;version.lib;mf.lib;mfreadwrite.lib;mfplat.lib;mfuuid.lib;Yoga.lib;Ling.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dwmapi.lib;windowsapp.lib;comctl32.lib;imm32.lib;version.lib;mf.lib;mfreadwrite.lib;mfplat.lib;mfuuid.lib;ntdll.lib;Userenv.lib;Yoga.lib;Ling.lib;D:\sdk\gifski\target\release\gifski.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Manifest>
       <EnableSegmentHeap>true</EnableSegmentHeap>
@@ -144,7 +144,7 @@
       <PreprocessorDefinitions>NOMINMAX;WIN32_LEAN_AND_MEAN;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>D:\project\Ling;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\sdk\gifski;D:\project\Ling;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -154,7 +154,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>D:\project\Ling\x64\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>dwmapi.lib;windowsapp.lib;comctl32.lib;imm32.lib;version.lib;mf.lib;mfreadwrite.lib;mfplat.lib;mfuuid.lib;Yoga.lib;Ling.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dwmapi.lib;windowsapp.lib;comctl32.lib;imm32.lib;version.lib;mf.lib;mfreadwrite.lib;mfplat.lib;mfuuid.lib;ntdll.lib;Userenv.lib;Yoga.lib;Ling.lib;D:\sdk\gifski\target\release\gifski.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Manifest>
       <EnableSegmentHeap>true</EnableSegmentHeap>

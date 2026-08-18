@@ -6,14 +6,19 @@
 std::unique_ptr<Lang> lang;
 
 namespace {
-	// 列出 %appdata%\ScreenCapture\Lang 下的语言文件。这个目录是用户自己往里放语言文件
-	// 才会有的，全新安装的机器上并不存在，而 directory_iterator 碰到不存在的目录会抛
-	// filesystem_error —— 一路抛出消息循环就是整个进程直接没了（表现出来就是"点设置没反应"）。
-	// 所以这里用带 error_code 的重载，目录不在就当没有额外语言
+	// 语言文件优先从 exe 同目录的 Lang 子目录加载（绿色部署 / 调试方便），
+	// 那个目录不存在才退回 %appdata%\ScreenCapture\Lang。
+	// directory_iterator 碰到不存在的目录会抛 filesystem_error，
+	// 所以用带 error_code 的重载，目录不在就当没有额外语言。
 	std::vector<std::filesystem::path> getLangFiles()
 	{
 		std::vector<std::filesystem::path> result;
-		auto langPath = Setting::get()->getDataPath().append(L"Lang");
+		wchar_t buffer[MAX_PATH]{};
+		GetModuleFileName(nullptr, buffer, MAX_PATH);
+		auto langPath = std::filesystem::path{ buffer }.parent_path().append(L"Lang");
+		if (!std::filesystem::is_directory(langPath)) {
+			langPath = Setting::get()->getDataPath().append(L"Lang");
+		}
 		std::error_code ec;
 		std::filesystem::directory_iterator it{ langPath, ec }, end{};
 		for (; !ec && it != end; it.increment(ec)) {
@@ -97,6 +102,10 @@ void Lang::initLang(const std::wstring& langCode)
 			if (JsonObject::TryParse(content, obj)) {
 				langObj = obj;
 				loaded = true;
+			}
+			else {
+				auto msg = L"lang pare error：" + pathStr + L"\n use English";
+				MessageBox(nullptr, msg.data(), L"ScreenCapture", MB_OK | MB_ICONWARNING);
 			}
 			break;
 		}

@@ -61,6 +61,7 @@ bool Setting::loadConfig()
             configObj = obj;
             return true;
         }
+        MessageBox(nullptr, L"config.json parse error，use default config", L"ScreenCapture", MB_OK | MB_ICONWARNING);
     }
     configObj = JsonObject::Parse(defaultConfig); //字面量，不会失败
     return false;
