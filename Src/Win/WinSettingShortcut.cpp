@@ -121,7 +121,8 @@ WinSettingShortcut::WinSettingShortcut(Ling::WinBase* parent):Ling::Node(parent)
         btn->setHoverBg(0xFFFFFFFF);
         btn->setBorder(1.f, 0xE0E0E0FF);
         btn->onClick.add([this](Ling::Button* btn) {this->onBtnClick(btn);});
-        btns.push_back(btn);
+        shortcutBtns.push_back(btn);
+        allBtns.push_back(btn);
 
         auto clearBtn = box->makeChild<Ling::Button>();
         clearBtn->setId(L"clear:" + key);
@@ -132,7 +133,7 @@ WinSettingShortcut::WinSettingShortcut(Ling::WinBase* parent):Ling::Node(parent)
         clearBtn->setHoverBg(0xFFF0F0FF);
         clearBtn->setBorder(1.f, 0xE0E0E0FF);
         clearBtn->onClick.add([this](Ling::Button* btn) {this->onBtnClick(btn);});
-        btns.push_back(clearBtn);
+        allBtns.push_back(clearBtn);
 
         auto border = makeChild<Ling::Node>();
         border->setHeight(1.f);
@@ -153,7 +154,7 @@ WinSettingShortcut::WinSettingShortcut(Ling::WinBase* parent):Ling::Node(parent)
     onMouseDownToken = win->onMouseDown.add([this,weakThis](POINT pos, bool isRight) {
         if (!weakThis.lock()) return;
         if (this->curKey.empty()) return;
-        for (auto btn: this->btns)
+        for (auto btn: this->allBtns)
         {
             if(btn->isPosIn(pos)) return;
         }
@@ -174,7 +175,7 @@ void WinSettingShortcut::onBtnClick(Ling::Button* btn)
         if (!curKey.empty()) endCapture();
         auto key = btn->id.substr(6);
         Setting::get()->setShortcutKey(key, {});
-        for (auto shortcutBtn : btns) {
+        for (auto shortcutBtn : shortcutBtns) {
             if (shortcutBtn->id == key) {
                 shortcutBtn->setText(Lang::get(L"shortcut.disabled"));
                 break;
@@ -204,7 +205,7 @@ void WinSettingShortcut::beginCapture(Ling::Button* btn)
 void WinSettingShortcut::endCapture()
 {
     if (curKey.empty()) return;
-    for (auto& btn : btns)
+    for (auto& btn : shortcutBtns)
     {
         if (btn->id == curKey) {
             auto shortcut = Setting::get()->getShortcutKey(curKey);

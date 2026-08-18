@@ -505,6 +505,9 @@ bool WinCap::enterByArg()
     auto it = args.find(L"--enter");
     if (it == args.end()) return false;
     auto& val = it->second;
+    const bool recognized = val == L"long" || val == L"video" || val == L"ocr"
+        || val == L"qr" || val == L"qrcode" || val == L"pin";
+    if (!recognized) return false;
     // 下面这几条路本来都是从 ToolCap 的按钮进的，start* 会检查选区是不是已经定下来了
     stage = CapStage::Adjust;
     refresh();      //收掉放大镜：这几条路都是马上要换阶段或者弹窗，屏幕上不能留着它
@@ -512,22 +515,21 @@ bool WinCap::enterByArg()
     else if (val == L"video") startVideo();
     else if (val == L"ocr") startOcr();
     else if (val == L"qr" || val == L"qrcode") startQrcode();
-    else if (val == L"pin") startPin();   //等于替用户按住了 Ctrl 框选
-    // 值不认识（用户拼错了）：当没给这个参数，照常出工具条。上面那两句白做了，
-    // 但调用方接着也是这两句，重复一遍没有副作用
-    else return false;
+    else startPin();   //等于替用户按住了 Ctrl 框选
     return true;
 }
 
 bool WinCap::enterByShortcut()
 {
-    if (pendingEnter.empty()) return false;
+    if (pendingEnter != L"long" && pendingEnter != L"video") {
+        pendingEnter.clear();
+        return false;
+    }
     auto enter = std::exchange(pendingEnter, L"");
     stage = CapStage::Adjust;
     refresh();
     if (enter == L"long") startLong();
-    else if (enter == L"video") startVideo();
-    else return false;
+    else startVideo();
     return true;
 }
 

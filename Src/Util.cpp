@@ -40,6 +40,28 @@ namespace {
 		return SUCCEEDED(encoder->Commit());
 	}
 
+	HGLOBAL makeFileDropHandle(const std::wstring& filePath)
+	{
+		if (filePath.empty()) return nullptr;
+		const size_t maxChars = (SIZE_MAX - sizeof(DROPFILES)) / sizeof(wchar_t);
+		if (filePath.length() > maxChars - 3) return nullptr;
+		const size_t charCount = filePath.length() + 3;
+		auto hDrop = GlobalAlloc(GMEM_MOVEABLE, sizeof(DROPFILES) + charCount * sizeof(wchar_t));
+		if (!hDrop) return nullptr;
+		auto drop = static_cast<DROPFILES*>(GlobalLock(hDrop));
+		if (!drop) {
+			GlobalFree(hDrop);
+			return nullptr;
+		}
+		drop->pFiles = sizeof(DROPFILES);
+		drop->fWide = TRUE;
+		auto dropPath = reinterpret_cast<wchar_t*>(drop + 1);
+		wcscpy_s(dropPath, charCount, filePath.c_str());
+		dropPath[filePath.length() + 1] = L'\0';
+		GlobalUnlock(hDrop);
+		return hDrop;
+	}
+
 	// quirc 交出来的是裸字节流：BYTE 类型的二维码现实中基本都是 UTF-8（微信、支付宝
 	// 生成的都是），Kanji 类型按 ISO 18004 规定是 Shift-JIS。所以先按 UTF-8 严格解，
 	// 解不通再退回对应的本地代码页，避免把中文变成一堆问号
@@ -78,11 +100,6 @@ void Util::saveToClipboard(const int w, const int h, BYTE* data)
 	if (w <= 0 || h <= 0 || !data) return;
 	DWORD rowBytes = (DWORD)w * 4;
 	DWORD imgBytes = rowBytes * (DWORD)h;
-
-	// 资源管理器只能从 CF_HDROP 粘贴文件，不能把剪切板里的 DIB/PNG 自动落盘。
-	// 文件必须一直留着，直到用户真正粘贴，所以不要放在临时目录里立即删除。
-	auto filePath = Setting::get()->getDataPath().append(L"clipboard_" + createFileName(L"png"));
-	const bool fileReady = saveToFile(filePath.wstring(), w, h, data);
 
 	// ---------- 1) PNG 编码到内存流 ----------
 	ComPtr<IStream> pngStream;
@@ -161,39 +178,42 @@ void Util::saveToClipboard(const int w, const int h, BYTE* data)
 	GlobalUnlock(hDib);
 
 	// ---------- 4) 构造 CF_HDROP（资源管理器粘贴文件） ----------
-	HGLOBAL hDrop{ nullptr };
-	if (fileReady) {
-		auto filePathStr = filePath.wstring();
-			auto dropSize = sizeof(DROPFILES) + (filePathStr.length() + 3) * sizeof(wchar_t);
-
-		hDrop = GlobalAlloc(GMEM_MOVEABLE, dropSize);
-		if (hDrop) {
-			auto drop = static_cast<DROPFILES*>(GlobalLock(hDrop));
-			if (drop) {
-				drop->pFiles = sizeof(DROPFILES);
-				drop->fWide = TRUE;
-				auto dropPath = reinterpret_cast<wchar_t*>(drop + 1);
-				wcscpy_s(dropPath, filePathStr.length() + 1, filePathStr.c_str());
-				dropPath[filePathStr.length() + 1] = L'\0';
-				GlobalUnlock(hDrop);
-			}
-			else {
-				GlobalFree(hDrop);
-				hDrop = nullptr;
-			}
-		}
+	// 文件必须留到用户真正粘贴，只有内存格式均已准备好后才落盘，避免前面的失败路径留下垃圾文件。
+	auto filePath = Setting::get()->getDataPath().append(L"clipboard_" + createFileName(L"png"));
+	const bool fileReady = saveToFile(filePath.wstring(), w, h, data);
+	if (!fileReady) {
+		std::error_code ec;
+		std::filesystem::remove(filePath, ec);
+	}
+	HGLOBAL hDrop = fileReady ? makeFileDropHandle(filePath.wstring()) : nullptr;
+	if (fileReady && !hDrop) {
+		std::error_code ec;
+		std::filesystem::remove(filePath, ec);
 	}
 
 	// ---------- 5) 写入剪切板 ----------
-
+	auto discardFile = [&]() {
+		if (!fileReady) return;
+		std::error_code ec;
+		std::filesystem::remove(filePath, ec);
+	};
 	if (!OpenClipboard(nullptr)) {
 		GlobalFree(hDrop);
 		GlobalFree(hDib);
 		GlobalFree(hDibV5);
 		GlobalFree(hPng);
+		discardFile();
 		return;
 	}
-	EmptyClipboard();
+	if (!EmptyClipboard()) {
+		CloseClipboard();
+		GlobalFree(hDrop);
+		GlobalFree(hDib);
+		GlobalFree(hDibV5);
+		GlobalFree(hPng);
+		discardFile();
+		return;
+	}
 	// SetClipboardData 成功后 HGLOBAL 归剪切板所有，不能再 GlobalFree；失败了才要自己释放
 	if (!SetClipboardData(CF_DIBV5, hDibV5)) {
 		GlobalFree(hDibV5);
@@ -201,11 +221,13 @@ void Util::saveToClipboard(const int w, const int h, BYTE* data)
 	if (!SetClipboardData(CF_DIB, hDib)) {
 		GlobalFree(hDib);
 	}
-	if (hDrop && !SetClipboardData(CF_HDROP, hDrop)) {
+	const bool dropPublished = hDrop && SetClipboardData(CF_HDROP, hDrop);
+	if (hDrop && !dropPublished) {
 		GlobalFree(hDrop);
+		discardFile();
 	}
 	// 告诉资源管理器这是复制而不是移动，Ctrl+V 时按普通文件复制处理。
-	UINT cfPreferredDropEffect = RegisterClipboardFormatW(CFSTR_PREFERREDDROPEFFECT);
+	UINT cfPreferredDropEffect = dropPublished ? RegisterClipboardFormatW(CFSTR_PREFERREDDROPEFFECT) : 0;
 	if (cfPreferredDropEffect != 0) {
 		HGLOBAL hDropEffect = GlobalAlloc(GMEM_MOVEABLE, sizeof(DWORD));
 		if (hDropEffect) {
@@ -308,31 +330,19 @@ std::vector<BYTE> Util::captureScreen(const int x, const int y, const int w, con
 
 void Util::addFileToClipboard(const std::wstring& filePath)
 {
-	if (!OpenClipboard(nullptr)) return;
-	EmptyClipboard();
-	// DROPFILES 之后紧跟双 \0 结尾的路径列表，这里只放一条
-	auto totalSize = sizeof(DROPFILES) + (filePath.length() + 3) * sizeof(wchar_t);
-	auto hGlobal = GlobalAlloc(GMEM_MOVEABLE, totalSize);
-	if (!hGlobal) {
-		CloseClipboard();
+	auto hDrop = makeFileDropHandle(filePath);
+	if (!hDrop) return;
+	if (!OpenClipboard(nullptr)) {
+		GlobalFree(hDrop);
 		return;
 	}
-	auto pDropFiles = static_cast<DROPFILES*>(GlobalLock(hGlobal));
-	if (!pDropFiles) {
-		GlobalFree(hGlobal);
+	if (!EmptyClipboard()) {
 		CloseClipboard();
+		GlobalFree(hDrop);
 		return;
 	}
-	pDropFiles->pFiles = sizeof(DROPFILES);
-	pDropFiles->fWide = TRUE;
-	auto dest = reinterpret_cast<wchar_t*>(pDropFiles + 1);
-	wcscpy_s(dest, filePath.length() + 1, filePath.c_str());
-	dest[filePath.length() + 1] = L'\0';
-	GlobalUnlock(hGlobal);
 	// 成功后 HGLOBAL 归剪切板所有，只在失败时自己释放
-	if (!SetClipboardData(CF_HDROP, hGlobal)) {
-		GlobalFree(hGlobal);
-	}
+	if (!SetClipboardData(CF_HDROP, hDrop)) GlobalFree(hDrop);
 	CloseClipboard();
 }
 
