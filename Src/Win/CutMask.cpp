@@ -42,8 +42,9 @@ void CutMask::initWinRect()
 		{
 			if (!hwnd) return TRUE;
 			if (!IsWindowVisible(hwnd)) return TRUE;
-			if (IsIconic(hwnd)) return TRUE;
-			if (GetWindowTextLength(hwnd) < 1) return TRUE;
+			BOOL cloaked = FALSE;
+			DwmGetWindowAttribute(hwnd, DWMWA_CLOAKED, &cloaked, sizeof(cloaked));
+			if (cloaked) return TRUE;
 			RECT rect;
 			DwmGetWindowAttribute(hwnd, DWMWA_EXTENDED_FRAME_BOUNDS, &rect, sizeof(RECT));
 			if (rect.right - rect.left <= 6 || rect.bottom - rect.top <= 6) return TRUE;
