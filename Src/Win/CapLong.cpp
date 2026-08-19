@@ -270,7 +270,7 @@ void CapLong::capStep()
     imgData = std::move(newResult);
     img1 = data;
     resultH = newResultH;
-    if (resultH > 20000) { stopCap(); return; }
+    if (resultH > 36000) { stopCap(); return; }
     makeImgPreview();
     win->refresh();
     win->setTimer(500, scrollMsgId); //准备下次滚动
@@ -327,7 +327,7 @@ void CapLong::stopCap()
 
 void CapLong::makeStopText()
 {
-    if (resultH > 20000) {
+    if (resultH > 36000) {
         layoutTextEnd = Util::makeTextLayout(Lang::get(L"long.tooLong"), FLT_MAX, FLT_MAX, 13 * win->dpi);
     }
     else {
