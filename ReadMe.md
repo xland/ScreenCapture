@@ -22,6 +22,13 @@
 
 [Release](https://github.com/xland/ScreenCapture/releases/) （1MB）
 
+## 常用功能与问题
+
+- 按住 `Ctrl键` 框选截图区域后，直接进入图像标记窗口（钉图窗口）
+- 按住 `Ctrl键` 滚动鼠标滚轮可以放大、缩小图像标记窗口（钉图窗口）
+- 长截图拼接不符合预期时，尝试调整截图区域往往能解决问题
+- 如手动下载新版本，则必须退出老版本再启动新版本
+
 ## 支持的操作系统
 
 - Windows 10 1607 or Later
@@ -58,8 +65,17 @@
 
 ## 文字识别插件
 
-下载最新版本的文字识别工具 [ImageReader.exe](https://github.com/xland/ImageReader/releases) (约25MB) 并把此文件放置到ScreenCapture.exe同目录下，或者放置到`%appdata%\ScreenCapture\plugin`目录下，然后重启应用即可使用
+下载最新版本的文字识别工具 [ImageReader.exe](https://github.com/xland/ImageReader/releases) (约25MB) 并把此文件放置到 `%appdata%\ScreenCapture\plugin`目录下，然后重启应用即可使用（或 `ScreenCapture.exe` 同目录下亦可）
 
+## 便携能力
+
+默认情况下 ScreenCapture 会从 `%appdata%\ScreenCapture\Lang` 目录下读取配置信息、语言文件及插件。
+
+但用户可以在 `ScreenCapture.exe` 同目录下创建一个 `config.json` 的空文件，重启应用，`ScreenCapture` 即会在此文件中设置配置信息。
+
+`ScreenCapture.exe` 同目录下创建一个 `Lang` 子目录，然后把语言文件放置到此目录下，`ScreenCapture` 即会读取此目录下的语言文件。
+
+文字识别插件 `ImageReader.exe` 也可以放置在 `ScreenCapture.exe` 同目录下
 
 ## 赞助
 
