@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include <include/Ling.h>
+#include <fstream>
 #include <array>
 
 // 图像输出相关的工具函数。data 一律要求 BGRA、top-down、行紧凑（步长 = w*4），

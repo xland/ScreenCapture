@@ -177,7 +177,6 @@ void ToolVideo::showRecording()
 	timerLabel->setHeightPercent(100.f);
 	timerLabel->setAlignItems(Ling::Align::Center);
 	timerLabel->setJustifyContent(Ling::Justify::Center);
-	timerLabel->setFontSize(15.f);
 	updateTimerText();
 
 	makeSpliter();
@@ -236,8 +235,8 @@ void ToolVideo::startRecord()
 void ToolVideo::updateTimerText()
 {
 	if (!timerLabel) return;
-	// GIF 上限 6 分钟，MP4 上限 60 分钟
-	const int maxMinutes = (selectIndex == 1) ? 6 : 60;
+	// GIF 上限 6 分钟，MP4 上限 120 分钟
+	const int maxMinutes = (selectIndex == 1) ? 6 : 120;
 	timerLabel->setText(std::format(L"{:02d}:{:02d} / {:02d}:00", totalSeconds / 60, totalSeconds % 60, maxMinutes));
 }
 
@@ -246,7 +245,7 @@ void ToolVideo::onTimerCB(UINT id)
 	if (id != tickTimerId) return;
 	totalSeconds += 1;
 	updateTimerText();
-	const int maxSeconds = ((selectIndex == 1) ? 6 : 60) * 60;
+	const int maxSeconds = ((selectIndex == 1) ? 6 : 120) * 60;
 	if (totalSeconds >= maxSeconds) {
 		// 到上限就自动存盘收工
 		saveFile();
