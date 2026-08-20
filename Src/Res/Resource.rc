@@ -3,12 +3,14 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 1 ICON "logo.ico"
 icon.ttf RCDATA "iconfont.ttf"
-
+icon.ttf RCDATA "iconfont.ttf"
+zh-CN RCDATA "../../Lang/简体中文.zh-CN.json"
+en-US RCDATA "../../Lang/English.en-US.json"
 
 // 配置可执行文件产品信息
 VS_VERSION_INFO VERSIONINFO
-FILEVERSION 2,5,13,0
-PRODUCTVERSION 2,5,13,0
+FILEVERSION 2,5,14,0
+PRODUCTVERSION 2,5,14,0
 FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
 FILEFLAGS 0x1L
@@ -25,12 +27,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "LiuXiaoLun"
             VALUE "FileDescription", "ScreenCapture"
-            VALUE "FileVersion", "2.5.13.0"
+            VALUE "FileVersion", "2.5.14.0"
             VALUE "InternalName", "ScreenCapture.exe"
             VALUE "LegalCopyright", "Copyright (C) LiuXiaoLun 2023-2026"
             VALUE "OriginalFilename", "ScreenCapture.exe"
             VALUE "ProductName", "ScreenCapture"
-            VALUE "ProductVersion", "2.5.13.0"
+            VALUE "ProductVersion", "2.5.14.0"
         END
     END
     BLOCK "VarFileInfo"

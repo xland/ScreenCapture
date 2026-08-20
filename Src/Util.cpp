@@ -396,29 +396,40 @@ std::wstring Util::getVer(const std::wstring& exePath)
 	return std::format(L"{}.{}.{}", ver[0], ver[1], ver[2]);
 }
 
+std::wstring Util::readTextFromBytes(const void* data, size_t size)
+{
+	if (!data || size == 0) return L"";
+	auto bytes = reinterpret_cast<const char*>(data);
+	// UTF-16LE BOM（程序自己 save 出来的就是这个）：跳过 BOM，按 wchar_t 重新解释。
+	// 字节数是奇数说明数据坏了，末尾那半个字符丢掉
+	if (size >= 2 && static_cast<unsigned char>(bytes[0]) == 0xFF
+		&& static_cast<unsigned char>(bytes[1]) == 0xFE) {
+		std::wstring str((size - 2) / sizeof(wchar_t), L'\0');
+		memcpy(str.data(), bytes + 2, str.size() * sizeof(wchar_t));
+		return str;
+	}
+	// UTF-8 BOM：跳过
+	size_t offset = 0;
+	if (size >= 3 && static_cast<unsigned char>(bytes[0]) == 0xEF
+		&& static_cast<unsigned char>(bytes[1]) == 0xBB
+		&& static_cast<unsigned char>(bytes[2]) == 0xBF) {
+		offset = 3;
+	}
+	if (offset >= size) return L"";
+	// 剩下的一律按 UTF-8 认
+	auto len = MultiByteToWideChar(CP_UTF8, 0, bytes + offset, static_cast<int>(size - offset), nullptr, 0);
+	if (len <= 0) return L"";
+	std::wstring str(len, L'\0');
+	MultiByteToWideChar(CP_UTF8, 0, bytes + offset, static_cast<int>(size - offset), str.data(), len);
+	return str;
+}
+
 std::wstring Util::readTextFile(const std::filesystem::path& path)
 {
 	std::ifstream file{ path, std::ios::binary };
 	if (!file) return L"";
 	std::string bytes{ std::istreambuf_iterator<char>{file}, std::istreambuf_iterator<char>{} };
-	if (bytes.empty()) return L"";
-	// UTF-16LE BOM（程序自己 save 出来的就是这个）：跳过 BOM，按 wchar_t 重新解释。
-	// 字节数是奇数说明文件坏了，末尾那半个字符丢掉，后面解析失败会报错
-	if (bytes.size() >= 2 && static_cast<unsigned char>(bytes[0]) == 0xFF
-		&& static_cast<unsigned char>(bytes[1]) == 0xFE) {
-		std::wstring str((bytes.size() - 2) / sizeof(wchar_t), L'\0');
-		memcpy(str.data(), bytes.data() + 2, str.size() * sizeof(wchar_t));
-		return str;
-	}
-	// UTF-8 BOM：跳过
-	if (bytes.starts_with("\xEF\xBB\xBF")) bytes.erase(0, 3);
-	if (bytes.empty()) return L"";
-	// 剩下的一律按 UTF-8 认：记事本、VSCode 新建的文件都是这个，纯 ASCII 的 JSON 也照样过
-	auto len = MultiByteToWideChar(CP_UTF8, 0, bytes.data(), static_cast<int>(bytes.size()), nullptr, 0);
-	if (len <= 0) return L"";
-	std::wstring str(len, L'\0');
-	MultiByteToWideChar(CP_UTF8, 0, bytes.data(), static_cast<int>(bytes.size()), str.data(), len);
-	return str;
+	return readTextFromBytes(bytes.data(), bytes.size());
 }
 
 ComPtr<IDWriteTextLayout> Util::makeTextLayout(const std::wstring& text, float w, float h, float fontSize)

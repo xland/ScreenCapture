@@ -38,6 +38,9 @@ public:
 	// 读文本文件，自动识别编码：UTF-16LE BOM / UTF-8 BOM / 无 BOM 按 UTF-8。
 	// 用户拿记事本建的 JSON 默认是 UTF-8，程序自己 save 出来的是 UTF-16LE，都得认
 	static std::wstring readTextFile(const std::filesystem::path& path);
+	// 从内存字节流解出 wstring，编码检测与 readTextFile 相同。
+	// 用于从 exe 资源加载的 JSON 数据（资源是裸字节，不一定是什么编码）
+	static std::wstring readTextFromBytes(const void* data, size_t size);
 	// 直接建一个 IDWriteTextLayout。Ling 的 Label/Text 走的是 Composition 节点树，
 	// 而 CutMask / WinLong 是在自己的 D2D context 上手绘文字，需要裸的 layout。
 	static Microsoft::WRL::ComPtr<IDWriteTextLayout> makeTextLayout(const std::wstring& text, float w, float h, float fontSize);
