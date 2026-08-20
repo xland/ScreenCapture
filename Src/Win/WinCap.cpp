@@ -60,7 +60,7 @@ void WinCap::init()
     auto ptr = new WinCap();
     winCap.reset(ptr);
 	ptr->cutMask = std::make_unique<CutMask>(ptr);
-    ptr->createNativeWindow(WS_EX_TOOLWINDOW, WS_POPUP);//WS_EX_TOPMOST
+    ptr->createNativeWindow(WS_EX_TOOLWINDOW | WS_EX_TOPMOST, WS_POPUP);//WS_EX_TOPMOST
 }
 
 WinCap* WinCap::get()
