@@ -19,6 +19,17 @@ namespace {
     // 或者鼠标底下那一层刚好不接收滚轮，多试几次就过去了。
     // 每次重试之间隔 500ms，多等几轮的代价只是到底时晚几秒出提示
     constexpr int maxDismissTime = 8;
+    // 滚轮发出去之后等多久再抓屏：太短会抓到滚动动画还没走完（甚至还没开始）的
+    // 中间帧，滚动量被误判成 0，导致最后一截内容没接上、成图偏短。
+    // 浏览器 / Electron 这类目标是动画式滚动，要给它留足时间
+    constexpr int scrollSettleMs = 250;
+    // 抓到"帧在变但匹配不出滚动量"的帧时，多半是滚动动画还没停。此时先不急着发
+    // 下一次滚轮，隔一会儿重新抓一帧等它停稳；最多连续等这么多次，避免一直卡住
+    constexpr int settleRecheckMs = 250;
+    constexpr int maxSettleRecheck = 2;
+    // 底部条带兜底匹配的置信度门槛
+    constexpr double bottomMatchMinRatio = 0.9;   // 最佳误差要低于 s=0 误差的这个比例才采信
+    constexpr double bottomMatchMaxError = 40000; // 平均每像素灰度误差超过这个值视为根本没对上
 
     // 将 BGRA 像素条带转为灰度图
     std::vector<BYTE> toGrayscale(const BYTE* bgra, int width, int height, int stride)
@@ -61,6 +72,48 @@ namespace {
             }
         }
         return bestY;
+    }
+
+    // 判断两帧是否完全相同（内存比较，快）
+    bool framesDiffer(const std::vector<BYTE>& a, const std::vector<BYTE>& b)
+    {
+        if (a.size() != b.size()) return true;
+        return memcmp(a.data(), b.data(), a.size()) != 0;
+    }
+
+    // 用新旧两帧"底部条带"反推滚动量：滚动 s 像素后，新帧底部条带的前 stripH-s 行
+    // 还是旧帧底部条带里的内容（整体上移了 s 行），最后 s 行才是新滚进来的内容。
+    // 顶部条带是纯色/空白、常规匹配不上时用它兜底 —— 页面底部的真实内容往往在这里。
+    // 返回滚动量 s；0 表示没对上（比如整条都是新内容，或条带太"平"匹配不可信）。
+    int findScrollByBottomStrip(const BYTE* grayOld, const BYTE* grayNew, int width, int stripH)
+    {
+        double minAvgError = DBL_MAX;
+        double avgAtZero = DBL_MAX;
+        int bestS = 0;
+        for (int s = 0; s < stripH; s++) {
+            int rows = stripH - s; // 条带里还能和旧帧对上的行数
+            double error = 0.0;
+            for (int r = 0; r < rows; r++) {
+                const BYTE* row1 = grayOld + (size_t)(s + r) * width;
+                const BYTE* row2 = grayNew + (size_t)r * width;
+                for (int x = 0; x < width; x++) {
+                    int diff = (int)row1[x] - (int)row2[x];
+                    error += diff * diff;
+                }
+            }
+            double avgError = error / rows;
+            if (s == 0) avgAtZero = avgError;
+            if (avgError < minAvgError) {
+                minAvgError = avgError;
+                bestS = s;
+            }
+        }
+        if (bestS <= 0) return 0;
+        // 纯色/空白时所有偏移的误差都差不多（严格小于比较会让 bestS 停在 0），
+        // 这里再兜一道：最佳误差必须明显小于 s=0，且绝对误差不能太大
+        if (minAvgError >= avgAtZero * bottomMatchMinRatio) return 0;
+        if (minAvgError > bottomMatchMaxError) return 0;
+        return bestS;
     }
 }
 
@@ -166,7 +219,7 @@ void CapLong::onTimerCB(UINT timerId)
         input.mi.dwFlags = MOUSEEVENTF_WHEEL;
         input.mi.mouseData = -WHEEL_DELTA;
         SendInput(1, &input, sizeof(INPUT));
-        win->setTimer(88, scrollEndMsgId); //滚动开始
+        win->setTimer(scrollSettleMs, scrollEndMsgId); //滚动开始
     }
     else if (scrollEndMsgId == timerId) {
         win->killTimer(scrollEndMsgId); //滚动完成
@@ -253,13 +306,31 @@ void CapLong::capStep()
     auto gray1 = toGrayscale(img1.data() + changeStartY * rowPix, imgW, img1StripH, rowPix);
     auto gray2 = toGrayscale(data.data() + changeStartY * rowPix, imgW, stripH, rowPix);
     int y = findMostSimilarY(gray1.data(), img1StripH, gray2.data(), stripH, imgW);
+    if (y == 0) {
+        // 顶部条带没对上：可能滚动区域顶部是纯色/空白（比如页面底部的留白），
+        // 换用新帧底部的条带再反推一次滚动量
+        auto gray1Bottom = toGrayscale(img1.data() + (imgH - stripH) * rowPix, imgW, stripH, rowPix);
+        auto gray2Bottom = toGrayscale(data.data() + (imgH - stripH) * rowPix, imgW, stripH, rowPix);
+        y = findScrollByBottomStrip(gray1Bottom.data(), gray2Bottom.data(), imgW, stripH);
+    }
     if (y == 0) { // 未检测到滚动
+        if (framesDiffer(data, img1)) {
+            // 帧在变但匹配不出滚动量：多半是滚动动画还没停、或页面还在加载。
+            // 这时不急着判"滚不动"，隔一会儿重抓一帧等它停稳，最多等几次再放弃
+            if (settleRecheckCount < maxSettleRecheck) {
+                settleRecheckCount++;
+                win->setTimer(settleRecheckMs, scrollEndMsgId);
+                return;
+            }
+        }
+        settleRecheckCount = 0;
         dismissTime++;
         if (dismissTime > maxDismissTime) { stopCap(); return; }
         win->setTimer(500, scrollMsgId);
         return;
     }
     dismissTime = 0;
+    settleRecheckCount = 0;
     // 计算拼接位置
     int paintStart = resultH - (imgH - y - changeStartY);
     int newResultH = paintStart + (imgH - changeStartY);

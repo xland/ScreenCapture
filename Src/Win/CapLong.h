@@ -40,6 +40,8 @@ private:
 	bool isShowStartBtn{ false }, isScrolling{ false }, isFinish{ false };
 	bool firstCheck{ true };
 	int dismissTime{ 0 };
+	// 抓到"帧在变但匹配不出滚动量"的帧时连续等待的次数，防止一直卡住
+	int settleRecheckCount{ 0 };
 	int changeStartY{ -1 };
 	D2D1_RECT_F stopTextRect{};
 	// 两处文字的绘制起点。IDWriteTextLayout 默认左上对齐，DrawTextLayout 给的又是
