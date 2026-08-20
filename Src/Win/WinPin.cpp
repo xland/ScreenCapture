@@ -168,18 +168,12 @@ void WinPin::applyScale(float newScale, POINT anchor)
 	// setPosition 内部会 SetWindowPos，随后的 WM_MOVE 会带出 onMoved -> layoutTools
 	setPosition(x + anchor.x - static_cast<int>(std::lround(imgX * scale)),
 		y + anchor.y - static_cast<int>(std::lround(imgY * scale)));
-	makeScaleTip();
+	scaleTip = Ling::D2D::get()->makeTextLayout(std::format(L"{}%", static_cast<int>(std::lround(scale * 100.f))), 11.f * dpi);
 	// 停手 800 毫秒后由定时器把倍数提示收掉。同一个 id 再调一次 SetTimer 就是重新计时，
 	// 所以连续滚动期间它一直不会触发
 	setTimer(800, 101);
 	layoutTools();
 	refresh();
-}
-
-void WinPin::makeScaleTip()
-{
-	scaleTip = Util::makeTextLayout(std::format(L"{}%", static_cast<int>(std::lround(scale * 100.f))),
-		FLT_MAX, FLT_MAX, 11.f * dpi);
 }
 
 // 画在窗口右上角，半透明底 + 白字，与 CutMask 上那个坐标标签一个路子。

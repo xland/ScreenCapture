@@ -49,7 +49,7 @@ namespace VideoGif {
             .fast{true},
             .repeat{0}//循环
         };
-        auto path = Util::convertToStr(param->path);
+        auto path = Ling::Util::convertToStr(param->path);
         gifski* encoder = gifski_new(&setting);
         if (!encoder) return;
         gifski_set_file_output(encoder, path.data());

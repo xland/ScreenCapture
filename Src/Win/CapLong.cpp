@@ -124,7 +124,7 @@ CapLong::CapLong(WinCap* win) : win(win)
     d2d->deviceContext->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White), textBrush.GetAddressOf());
     d2d->deviceContext->CreateSolidColorBrush(D2D1::ColorF(0x000000, 0.68f), bgBrush.GetAddressOf());
     auto size{ startCircleR * 2 };
-    layoutTextStart = Util::makeTextLayout(Lang::get(L"long.start"), size, size, 16 * win->dpi);
+    layoutTextStart = Ling::D2D::get()->makeTextLayout(Lang::get(L"long.start"), 16 * win->dpi, size, size);
     if (layoutTextStart) {
         DWRITE_TEXT_METRICS tm{};
         layoutTextStart->GetMetrics(&tm);
@@ -403,10 +403,10 @@ void CapLong::stopCap()
 void CapLong::makeStopText()
 {
     if (resultH > 36000) {
-        layoutTextEnd = Util::makeTextLayout(Lang::get(L"long.tooLong"), FLT_MAX, FLT_MAX, 13 * win->dpi);
+        layoutTextEnd = Ling::D2D::get()->makeTextLayout(Lang::get(L"long.tooLong"), 13 * win->dpi);
     }
     else {
-        layoutTextEnd = Util::makeTextLayout(Lang::get(L"long.reachedBottom"), FLT_MAX, FLT_MAX, 13 * win->dpi);
+        layoutTextEnd = Ling::D2D::get()->makeTextLayout(Lang::get(L"long.reachedBottom"), 13 * win->dpi);
     }
     if (!layoutTextEnd) return;
     DWRITE_TEXT_METRICS tm = {};

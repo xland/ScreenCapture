@@ -69,7 +69,7 @@ void CutMask::makeLayout()
 	auto layoutStr = std::format(L"X:{} Y:{} R:{} B:{} W:{} H:{}",
 		maskRect.left, maskRect.top, maskRect.right, maskRect.bottom,
 		maskRect.right - maskRect.left, maskRect.bottom - maskRect.top);
-	layout = Util::makeTextLayout(layoutStr, FLT_MAX, FLT_MAX, 10 * win->dpi);
+	layout = Ling::D2D::get()->makeTextLayout(layoutStr, 10 * win->dpi);
 	if (!layout) return;
 	DWRITE_TEXT_METRICS tm = {};
 	layout->GetMetrics(&tm);

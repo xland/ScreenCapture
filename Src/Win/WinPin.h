@@ -78,8 +78,6 @@ private:
 	// 缩放到新倍数。anchor 是窗口客户区里要保持不动的那一点（一般就是光标位置），
 	// 缩放后窗口跟着改大小，并反向挪一下窗口位置，让 anchor 底下的那块图还停在原处
 	void applyScale(float newScale, POINT anchor);
-	// 右上角那个倍数提示：重建文本、以及把它画出来
-	void makeScaleTip();
 	void paintScaleTip(ID2D1DeviceContext* ctx);
 private:
 	// 整个窗口内容都画在这块画布上，走 swap chain 后端：贴图窗口拖动 shape 时每帧重绘，

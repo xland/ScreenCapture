@@ -23,7 +23,9 @@ WinSettingAbout::WinSettingAbout(Ling::WinBase* parent):Ling::Node(parent)
         auto btn = box->makeChild<Ling::Button>();
         btn->setId(key);
         if (key == L"version") {
-            btn->setText(Util::getVer());
+            auto ver = Ling::Util::getVerNum();
+            auto verStr = std::format(L"{}.{}.{}", ver[0], ver[1], ver[2]);
+            btn->setText(verStr);
         }
         else if (key == L"project") {
             btn->setText(L"github.com/xland/ScreenCapture");

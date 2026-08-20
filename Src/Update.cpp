@@ -119,7 +119,7 @@ namespace {
 			// %appdata% 就是）会整段乱掉，所以写 UTF-8 + BOM
 			std::ofstream file{ scriptPath, std::ios::binary | std::ios::trunc };
 			if (!file) return false;
-			file << "\xEF\xBB\xBF" << Util::convertToStr(script);
+			file << "\xEF\xBB\xBF" << Ling::Util::convertToStr(script);
 			if (!file.good()) return false;
 		}
 		std::wstring cmd{ L"powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -WindowStyle Hidden -File \"" };
@@ -220,7 +220,7 @@ namespace {
 				remote[i] = static_cast<int>(arr.GetNumberAt(i)); //不是数字就抛，外面 catch 收着
 			}
 			//std::array 的比较就是逐个元素比下去，正好是版本号的比法
-			if (remote <= Util::getVerNum()) co_return;
+			if (remote <= Ling::Util::getVerNum()) co_return;
 			auto verStr = std::format(L"{}.{}.{}", remote[0], remote[1], remote[2]);
 			if (!canWrite(exePath.parent_path())) {
 				Ling::App::get()->dq.TryEnqueue([verStr]() { promptNoPermission(verStr); });
@@ -241,7 +241,7 @@ namespace {
 				file.write(reinterpret_cast<const char*>(bytes.data()), bytes.size());
 			}
 			// 下回来的到底是不是服务端说的那个版本：对不上就不敢拿它替换用户的 exe
-			if (Util::getVerNum(target.wstring()) != remote) {
+			if (Ling::Util::getVerNum(target.wstring()) != remote) {
 				std::filesystem::remove(target, ec);
 				co_return;
 			}

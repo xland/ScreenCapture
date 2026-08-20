@@ -212,7 +212,7 @@ void ShapeText::applyStyle()
 void ShapeText::makeTextLayout()
 {
 	// 不折行，宽高都放开，与 TextBox 的 autoSize 一致
-	textLayout = Util::makeTextLayout(text, FLT_MAX, FLT_MAX, fontSize);
+	textLayout = Ling::D2D::get()->makeTextLayout(text, fontSize);
 	if (!textLayout) return;
 	textLayout->SetFontWeight(isBold ? DWRITE_FONT_WEIGHT_BOLD : DWRITE_FONT_WEIGHT_NORMAL, { 0, INT_MAX });
 	textLayout->SetFontStyle(isItalic ? DWRITE_FONT_STYLE_ITALIC : DWRITE_FONT_STYLE_NORMAL, { 0, INT_MAX });

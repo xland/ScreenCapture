@@ -77,12 +77,10 @@ std::wstring Lang::get(const std::wstring& keyPath)
 
 void Lang::initLang(const std::wstring& langCode)
 {
-	// 内置语言从 exe 资源加载（资源名与 langCode 一致：zh-CN / en-US）
-	auto resName = (langCode == L"zh-CN") ? L"zh-CN" : L"en-US";
-	auto [pData, size] = Ling::Util::getRes(resName);
+	auto [pData, size] = Ling::Util::getRes(langCode);
 	std::wstring builtinJson;
 	if (pData && size > 0)
-		builtinJson = Util::readTextFromBytes(pData, size);
+		builtinJson = Ling::Util::readTextFromBytes(pData, size);
 	JsonObject builtinObj{ nullptr };
 	if (!builtinJson.empty())
 		builtinObj = JsonObject::Parse(builtinJson);
@@ -100,7 +98,7 @@ void Lang::initLang(const std::wstring& langCode)
 		std::wstring filename = entry.filename().wstring();
 		if (filename.find(langCode) == std::wstring::npos) continue;
 		auto pathStr = entry.wstring();
-		std::wstring content = Util::readTextFile(entry);
+		std::wstring content = Ling::Util::readFileText(entry);
 		JsonObject obj{ nullptr };
 		if (JsonObject::TryParse(content, obj)) {
 			langObj = obj;

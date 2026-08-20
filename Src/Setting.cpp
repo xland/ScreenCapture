@@ -27,7 +27,7 @@ Setting::Setting() :dataPath{ initDataPath() }, configPath{ initConfigPath() }
 bool Setting::loadConfig()
 {
     if (std::filesystem::exists(configPath)) {
-        auto content = Util::readTextFile(configPath);
+        auto content = Ling::Util::readFileText(configPath);
         JsonObject obj{ nullptr };
         // 用 TryParse 而不是 Parse：后者解析失败是抛 winrt::hresult_error，
         // 空文件、写坏的 JSON、根节点不是对象（比如一个数组）都会失败，这里一律当没读到
