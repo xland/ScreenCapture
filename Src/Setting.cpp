@@ -17,57 +17,28 @@ namespace {
 
 Setting::Setting() :dataPath{ initDataPath() }, configPath{ initConfigPath() }
 {
-    // 分两句写而不是 dirty = !loadConfig() || ensureDefaults()：那样 ensureDefaults 会被短路掉
-    bool dirty = !loadConfig();
-    if (ensureDefaults()) dirty = true;
-    // 回落到默认值或补过键就写回去：下次启动不用再兜底一遍，用户也能在文件里看到有哪些项可改
-    if (dirty) save();
-}
-
-bool Setting::loadConfig()
-{
     if (std::filesystem::exists(configPath)) {
         auto content = Ling::Util::readFileText(configPath);
+        if (content.empty() || content.find_first_not_of(L" \t\r\n") == std::wstring::npos) {
+            configObj = JsonObject::Parse(defaultConfig);
+            save();
+            return;
+        }
         JsonObject obj{ nullptr };
-        // 用 TryParse 而不是 Parse：后者解析失败是抛 winrt::hresult_error，
-        // 空文件、写坏的 JSON、根节点不是对象（比如一个数组）都会失败，这里一律当没读到
         if (JsonObject::TryParse(content, obj)) {
             configObj = obj;
-            return true;
+            return;
         }
         MessageBox(nullptr, L"config.json parse error，use default config", L"ScreenCapture", MB_OK | MB_ICONWARNING);
     }
-    configObj = JsonObject::Parse(defaultConfig); //字面量，不会失败
-    return false;
+    configObj = JsonObject::Parse(defaultConfig); 
 }
 
-bool Setting::ensureDefaults()
-{
-    auto def = JsonObject::Parse(defaultConfig);
-    bool dirty{ false };
-    for (auto&& group : def) {                                   //common / shortcutKey
-        auto name = group.Key();
-        auto defObj = group.Value().GetObject();
-        // 带默认值的重载：这一层缺了、或者被手工改成了字符串之类的非对象，都返回 nullptr
-        auto obj = configObj.GetNamedObject(name, nullptr);
-        if (!obj) {
-            configObj.SetNamedValue(name, defObj);
-            dirty = true;
-            continue;
-        }
-        for (auto&& item : defObj) {
-            if (obj.HasKey(item.Key())) continue;                 //用户自己的值一概不动
-            obj.SetNamedValue(item.Key(), item.Value());
-            dirty = true;
-        }
-    }
-    return dirty;
-}
+
 
 Setting::~Setting()
 {
-    //auto lingApp = Ling::App::get();
-    //lingApp->unRegHotKey(capShortcutMsgId);
+
 }
 
 void Setting::init()
@@ -142,7 +113,11 @@ void Setting::setAutoStart(bool autoStart)
             RegCloseKey(hKey);
         }
     }
-    auto common = configObj.GetNamedObject(L"common");
+    auto common = configObj.GetNamedObject(L"common", nullptr);
+    if (!common) {
+        common = JsonObject();
+        configObj.SetNamedValue(L"common", common);
+    }
     common.SetNamedValue(L"autoStart", JsonValue::CreateBooleanValue(autoStart));
     save();
 }
@@ -200,7 +175,11 @@ std::wstring Setting::getLang()
 
 void Setting::setLang(const std::wstring& langCode)
 {
-    auto common = setting->configObj.GetNamedObject(L"common");
+    auto common = setting->configObj.GetNamedObject(L"common", nullptr);
+    if (!common) {
+        common = JsonObject();
+        setting->configObj.SetNamedValue(L"common", common);
+    }
     common.SetNamedValue(L"language", JsonValue::CreateStringValue(langCode));
     setting->save();
 	Lang::get()->initLang(langCode);
