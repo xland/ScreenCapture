@@ -3,7 +3,6 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 1 ICON "logo.ico"
 icon.ttf RCDATA "iconfont.ttf"
-icon.ttf RCDATA "iconfont.ttf"
 zh-CN RCDATA "../../Lang/简体中文.zh-CN.json"
 en-US RCDATA "../../Lang/English.en-US.json"
 

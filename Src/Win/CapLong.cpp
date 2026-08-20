@@ -34,16 +34,19 @@ namespace {
         return gray;
     }
 
-    // 在 gray1 中搜索与 gray2 最相似的偏移 y（SSD 匹配）
+    // 在 gray1 中搜索与 gray2 最相似的偏移 y（MSE 匹配）
+    // 用平均误差而非累积误差，避免比较行数不同时 y=0 占便宜：
+    // 累积 SSD 在 y=0 比较 100 行、y=15 比较 85 行，前者"容错空间"大，
+    // 当滚动量小且内容有平滑区域时，y=0 的总误差反而更低，导致误判为"没滚动"。
     int findMostSimilarY(const BYTE* gray1, int gray1H, const BYTE* gray2, int gray2H, int width)
     {
         int searchH = gray1H - gray2H + 1;
         if (searchH <= 0) return 0;
-        double minError = DBL_MAX;
+        double minAvgError = DBL_MAX;
         int bestY = 0;
         for (int y = 0; y < searchH; y++) {
             double error = 0.0;
-            for (int row = 0; row < gray2H && error < minError; row++) {
+            for (int row = 0; row < gray2H; row++) {
                 const BYTE* row1 = gray1 + (y + row) * width;
                 const BYTE* row2 = gray2 + row * width;
                 for (int x = 0; x < width; x++) {
@@ -51,8 +54,9 @@ namespace {
                     error += diff * diff;
                 }
             }
-            if (error < minError) {
-                minError = error;
+            double avgError = error / gray2H;
+            if (avgError < minAvgError) {
+                minAvgError = avgError;
                 bestY = y;
             }
         }
