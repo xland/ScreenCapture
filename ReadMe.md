@@ -31,7 +31,7 @@
 
 ## 支持的操作系统
 
-- Windows 10 1607 or Later
+- Windows 10 1803 or Later
 
 ## 编译
 
