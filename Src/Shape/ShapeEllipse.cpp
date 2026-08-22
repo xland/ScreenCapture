@@ -229,7 +229,9 @@ void ShapeEllipse::mouseMove(const float x, const float y)
 	}
 	if (hoverDraggerIndex == -1)
 	{
-		auto half{ strokeWidth / 2.f + win->dpi };
+		// 填充椭圆没有可见边框，边缘命中区用固定宽度（2 逻辑像素）即可，
+		// 别跟滑块线宽走 —— 填充时滑块那套值跟这条边没有任何关系
+		auto half{ isFill ? 2.f * win->dpi : strokeWidth / 2.f + win->dpi };
 		auto dx = x - cx;
 		auto dy = y - cy;
 		auto outerRx = rx + half, outerRy = ry + half;

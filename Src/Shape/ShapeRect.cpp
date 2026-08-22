@@ -212,7 +212,9 @@ void ShapeRect::mouseMove(const float x, const float y)
     }
     if (hoverDraggerIndex == -1)
     {
-        auto half{ strokeWidth / 2.f+win->dpi };//多个一个dpi，让范围更大点
+        // 填充矩形没有可见边框，边缘命中区用固定宽度（2 逻辑像素）即可，
+        // 别跟滑块线宽走 —— 填充时滑块那套值跟这条边没有任何关系
+        auto half{ isFill ? 2.f * win->dpi : strokeWidth / 2.f + win->dpi };//多个一个dpi，让范围更大点
         if (x >= rect.left - half && x <= rect.right + half && y >= rect.top - half && y <= rect.bottom + half ) 
 		{
 			if (x <= rect.left + half || x >= rect.right - half || y <= rect.top + half || y >= rect.bottom - half) {

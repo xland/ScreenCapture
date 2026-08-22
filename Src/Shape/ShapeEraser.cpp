@@ -240,7 +240,9 @@ void ShapeEraser::mouseMove(const float x, const float y)
 				return;
 			}
 		}
-		auto half{ strokeWidth / 2.f + win->dpi };//多个一个dpi，让范围更大点
+		// 橡皮擦矩形是整块擦除、没有可见边框，边缘命中区用固定宽度（2 逻辑像素），
+		// 别跟滑块笔刷尺寸走 —— 笔刷大小跟这条边没有任何关系
+		auto half{ 2.f * win->dpi };//多个一个dpi，让范围更大点
 		if (x >= rect.left - half && x <= rect.right + half && y >= rect.top - half && y <= rect.bottom + half)
 		{
 			if (x <= rect.left + half || x >= rect.right - half || y <= rect.top + half || y >= rect.bottom - half) {
