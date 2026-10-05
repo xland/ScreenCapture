@@ -266,8 +266,8 @@ void WinCap::onKey(UINT key)
     else if (key == 'H' && (GetKeyState(VK_CONTROL) & 0x8000)) {
 		auto cr = func();
         BYTE r = GetRValue(cr), g = GetGValue(cr), b = GetBValue(cr);
-        wchar_t hex[8];
-        swprintf_s(hex, L"#%02X%02X%02X", r, g, b);
+        wchar_t hex[7];
+        swprintf_s(hex, L"%02X%02X%02X", r, g, b);
         Ling::Util::setTextToClipboard(hex);
         close();
     }
