@@ -11,7 +11,9 @@ public:
 private:
 	void initAutoStartCtrls();
 	void initLangCtrls();
+	void initImageReaderCtrls();
 	void setAutoStartBtn(Ling::Button* btn);
+	void setImageReaderBtn(Ling::Button* btn);
 	void showSelectBox(Ling::Button* btn);
 private:
 	Ling::Button* selectBtn{ nullptr };

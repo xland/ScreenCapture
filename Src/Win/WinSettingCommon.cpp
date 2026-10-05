@@ -8,6 +8,7 @@ WinSettingCommon::WinSettingCommon(Ling::WinBase* parent):Ling::Node(parent)
 {    
     initAutoStartCtrls();
     initLangCtrls();
+    initImageReaderCtrls();
     auto weakThis = getWeakThis();
     // 这个回调一直挂在窗口上，而本节点可能在窗口关闭之前就被菜单切换换掉了，
     // 所以先确认自己还活着再去碰成员
@@ -93,6 +94,35 @@ void WinSettingCommon::initLangCtrls()
     border->setBg(0xE0E0E0FF);
 }
 
+void WinSettingCommon::initImageReaderCtrls()
+{
+    auto box = makeChild<Ling::Node>();
+    box->setHeight(39.f);
+    box->setFlexDirection(Ling::FlexDirection::Row);
+    box->setAlignItems(Ling::Align::Center);
+
+    auto label = box->makeChild<Ling::Label>();
+    label->setText(Lang::get(L"setting.imageReader"));
+    label->setHeightPercent(100.f);
+    label->setJustifyContent(Ling::Justify::Center);
+    label->setFlexGrow(1.f);
+
+    auto btn = box->makeChild<Ling::Button>();
+    btn->setHeight(28.f);
+    btn->setWidth(160.f);
+    btn->setBorder(1.f, 0xE0E0E0FF);
+    btn->setHoverBg(0XFFFFFFFF);
+    setImageReaderBtn(btn);
+
+    btn->onClick.add([this](Ling::Button* btn) {
+        // TODO
+    });
+
+    auto border = makeChild<Ling::Node>();
+    border->setHeight(1.f);
+    border->setBg(0xE0E0E0FF);
+}
+
 void WinSettingCommon::setAutoStartBtn(Ling::Button* btn)
 {
     auto setting = Setting::get();
@@ -107,6 +137,12 @@ void WinSettingCommon::setAutoStartBtn(Ling::Button* btn)
         btn->setColor(0x666666FF);
         btn->setHoverColor(0x666666FF);
     }
+}
+
+void WinSettingCommon::setImageReaderBtn(Ling::Button* btn)
+{
+    auto path = Setting::get()->getImageReaderPath();
+    btn->setText(path.empty() ? Lang::get(L"setting.imageReaderAuto") : std::filesystem::path{ path }.filename().wstring());
 }
 
 void WinSettingCommon::hideSelectBox()
