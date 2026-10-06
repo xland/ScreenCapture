@@ -115,7 +115,12 @@ void WinSettingCommon::initImageReaderCtrls()
     setImageReaderBtn(btn);
 
     btn->onClick.add([this](Ling::Button* btn) {
-        // TODO
+        auto typeName = Lang::get(L"util.file");
+        COMDLG_FILTERSPEC filterSpec[]{ { typeName.c_str(), L"*.exe" } };
+        auto path = win->openFileDialog(filterSpec);
+        if (path.empty()) return;
+        Setting::get()->setImageReaderPath(path);
+        this->setImageReaderBtn(btn);
     });
 
     auto border = makeChild<Ling::Node>();
