@@ -20,6 +20,8 @@ public:
 	bool getAutoStart();
 	std::wstring getLang();
 	void setLang(const std::wstring& lang);
+	std::wstring getImageReaderPath();
+	void setImageReaderPath(const std::wstring& path);
 	void initShortcutKeys();
 	// 贴图窗口子工具栏（ToolSub）的状态。每个工具在 config.json 的 toolPin 下各占一组，
 	// 组名就是 ToolMain 上的按钮 id（rect / ellipse / ... / eraser），键名由调用方给
