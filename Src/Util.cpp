@@ -60,10 +60,16 @@ namespace {
 		return convert(dataType == QUIRC_DATA_TYPE_KANJI ? 932 : CP_ACP, 0);
 	}
 
-	// 插件的查找顺序：先本 exe 同目录（绿色包一起解压的情况），
-	// 再 %appdata%\ScreenCapture\plugin（后来单独下载的情况）
+	// 插件的查找顺序
+	// 配置中指定的路径
+	// 本 exe 同目录（绿色包一起解压的情况），
+	// %appdata%\ScreenCapture\plugin（后来单独下载的情况）
 	std::filesystem::path findImageReader()
 	{
+		auto configured = Setting::get()->getImageReaderPath();
+		if (!configured.empty() && std::filesystem::exists(configured)) {
+			return configured;
+		}
 		wchar_t buffer[MAX_PATH]{};
 		GetModuleFileName(nullptr, buffer, MAX_PATH);
 		auto path = std::filesystem::path{ buffer }.parent_path().append(L"ImageReader.exe");

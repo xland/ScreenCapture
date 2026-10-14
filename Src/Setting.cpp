@@ -185,6 +185,24 @@ void Setting::setLang(const std::wstring& langCode)
 	Lang::get()->initLang(langCode);
 }
 
+std::wstring Setting::getImageReaderPath()
+{
+	auto common = configObj.GetNamedObject(L"common", nullptr);
+	if (!common) return L"";
+	return std::wstring{ common.GetNamedString(L"imageReader", L"") };
+}
+
+void Setting::setImageReaderPath(const std::wstring& path)
+{
+	auto common = setting->configObj.GetNamedObject(L"common", nullptr);
+	if (!common) {
+		common = JsonObject();
+		setting->configObj.SetNamedValue(L"common", common);
+	}
+	common.SetNamedValue(L"imageReader", JsonValue::CreateStringValue(path));
+	setting->save();
+}
+
 JsonObject Setting::getToolObj(const std::wstring& tool)
 {
     // 用带默认值的重载：这两层在旧配置文件里都不存在，直接 GetNamedObject 会抛异常，
